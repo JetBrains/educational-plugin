@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPa
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -103,7 +104,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
         coursesProvider.loadCourses()
       }.filter {
         val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+        it is HyperskillCourse || compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
       })
     loadingFinished = true
     if (isShowing) {
