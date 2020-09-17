@@ -5,8 +5,8 @@
                         testServiceImplementation="com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.codeforces.CodeforcesSettings"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.codeforces.CodeforcesStartupActivity"/>
-    <projectConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
-                         id="Codeforces" displayName="Codeforces"/>
+    <applicationConfigurable groupId="Educational" instance="com.jetbrains.edu.learning.codeforces.CodeforcesOptions"
+                             id="Codeforces" displayName="Codeforces"/>
   </extensions>
 
   <extensionPoints>

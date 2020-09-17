@@ -207,8 +207,8 @@
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>
 
-    <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
-                         id="Educational" displayName="Education"/>
+    <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
+                             id="Educational" displayName="Education"/>
 
     <toolWindow id="Task" anchor="right"
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
