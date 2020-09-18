@@ -50,15 +50,20 @@ class OpenCourseButton : CourseButtonBase() {
       if (!FileUtil.exists(coursePath)) {
         if (showNoCourseDialog(coursePath) == Messages.CANCEL) {
           coursesStorage.removeCourseByLocation(coursePath)
-          val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this)
-          dialog?.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
+          closeDialog()
           JoinCourseDialog(courseInfo.course).show()
         }
         return@invokeAndWait
       }
+      closeDialog()
       val project = ProjectUtil.openProject(coursePath, null, true)
       ProjectUtil.focusProjectWindow(project, true)
     }
+  }
+
+  private fun closeDialog() {
+    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this) ?: error("Dialog is null")
+    dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
   }
 
   private fun showNoCourseDialog(coursePath: String): Int {
