@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
@@ -36,7 +37,11 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
                           courseMode: CourseMode,
                           coursePanel: CoursePanel) {
 
-    if (courseInfo.course is HyperskillCourse) {
+    val course = courseInfo.course
+    if (course is HyperskillCourse) {
+      computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.stages")) {
+        HyperskillConnector.getInstance().loadStages(course)
+      }
       super.joinAction(courseInfo, courseMode, coursePanel)
       return
     }
