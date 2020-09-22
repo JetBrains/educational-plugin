@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <defaultLiveTemplatesProvider implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateProvider"/>
-  </extensions>
-</idea-plugin>
