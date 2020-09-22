@@ -24,7 +24,6 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduUtils.showNotification;
-import static com.jetbrains.edu.learning.messages.UtilsKt.makeLazy;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {
@@ -62,12 +61,10 @@ public class CCPushTask extends DumbAwareAction {
       final Task task = lesson.getTask(taskDir.getName());
       if (task != null) {
         if (task.getId() <= 0) {
-          // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
-          e.getPresentation().setText(makeLazy(getUploadToStepikTitleMessage(TASK_TYPE)));
+          e.getPresentation().setText(() -> getUploadToStepikTitleMessage(TASK_TYPE));
         }
         else {
-          // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
-          e.getPresentation().setText(makeLazy(getUpdateOnStepikTitleMessage(TASK_TYPE)));
+          e.getPresentation().setText(() -> getUpdateOnStepikTitleMessage(TASK_TYPE));
         }
       }
     }

@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
+import com.intellij.featureStatistics.FeatureStatisticsBundleEP
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -20,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerComponentInstance
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
@@ -51,6 +54,7 @@ import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
+import java.util.*
 
 abstract class EduTestCase : BasePlatformTestCase() {
   private lateinit var myManager: FileEditorManagerImpl
@@ -78,10 +82,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     registerAdditionalResourceBundleProviders(testRootDisposable)
 
-    myManager = createFileEditorManager(myFixture.project)
+    myManager = FileEditorManagerImpl(myFixture.project)
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
-    project.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
+    project.registerComponentInstance(FileEditorManager::class.java, myManager, testRootDisposable)!!
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
@@ -330,5 +334,27 @@ abstract class EduTestCase : BasePlatformTestCase() {
   @Throws(IOException::class)
   protected fun loadText(fileName: String): String {
     return FileUtil.loadFile(File(testDataPath, fileName))
+  }
+}
+
+// AS relies on a feature statistic bundle provided by CIDR, but it is not registered in tests for some reason.
+// And it leads to fail of some tests.
+// This hack register this bundle manually.
+//
+// Inspired by kotlin plugin
+private fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
+  val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
+  if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
+    try {
+      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.loaderForClass)
+      extensionPoint.registerExtension(TestOCBundleProvider, disposable)
+    }
+    catch (ignore: MissingResourceException) {}
+  }
+}
+
+private object TestOCBundleProvider : FeatureStatisticsBundleEP() {
+  init {
+    qualifiedName = "messages.OCBundle"
   }
 }

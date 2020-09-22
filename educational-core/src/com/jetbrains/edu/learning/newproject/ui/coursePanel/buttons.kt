@@ -70,7 +70,7 @@ class OpenCourseButton : CourseButtonBase() {
     return Messages.showOkCancelDialog(null,
                                        EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
                                        EduCoreBundle.message("course.dialog.course.not.found.title"),
-                                       getOKButtonText(),
+                                       Messages.getOkButton(),
                                        EduCoreBundle.message("course.dialog.course.not.found.reopen.button"),
                                        Messages.getErrorIcon())
   }

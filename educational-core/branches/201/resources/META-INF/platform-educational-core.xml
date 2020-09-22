@@ -1,5 +1,2 @@
 <idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <defaultLiveTemplates file="liveTemplates/hint.xml"/>
-  </extensions>
 </idea-plugin>

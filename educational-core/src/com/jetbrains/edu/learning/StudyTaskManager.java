@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.Disposable;
@@ -286,7 +287,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   public static StudyTaskManager getInstance(@NotNull final Project project) {
     StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
     if (!project.isDefault() &&
-        !OpenApiExtCompatibility.isLight(project) &&
+        !LightEdit.owns(project) &&
         manager != null &&
         manager.getCourse() == null &&
         YamlFormatSettings.isEduYamlProject(project)) {

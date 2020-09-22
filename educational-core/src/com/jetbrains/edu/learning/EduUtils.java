@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -226,7 +227,7 @@ public class EduUtils {
 
   @Nullable
   public static String getCourseModeForNewlyCreatedProject(@NotNull Project project) {
-    if (project.isDefault() || OpenApiExtCompatibility.isLight(project)) return null;
+    if (project.isDefault() || LightEdit.owns(project)) return null;
     VirtualFile baseDir = OpenApiExtKt.getCourseDir(project);
     return baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE);
   }

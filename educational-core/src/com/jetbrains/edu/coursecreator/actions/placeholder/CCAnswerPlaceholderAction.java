@@ -19,15 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-import static com.jetbrains.edu.learning.messages.UtilsKt.pass;
-
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
-  protected CCAnswerPlaceholderAction(
-    @NotNull Supplier<String> text,
-    @NotNull Supplier<String> description) {
-    // BACKCOMPAT: 2019.3 need to delete pass call
-    super(pass(text), pass(description), null);
+  protected CCAnswerPlaceholderAction(@NotNull Supplier<String> text, @NotNull Supplier<String> description) {
+    super(text, description, null);
   }
 
   @Nullable

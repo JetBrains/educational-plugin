@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.isFeedbackAsked
 import com.jetbrains.edu.learning.statistics.showNotification
@@ -29,13 +28,12 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import javax.swing.Icon
 
-// BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
 abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected val itemType: StudyItemType,
   icon: Icon
 ) : DumbAwareAction(
-  itemType.presentableTitleName.makeLazy(),
-  itemType.createItemMessage.makeLazy(),
+  { itemType.presentableTitleName },
+  { itemType.createItemMessage },
   icon
 ) {
 

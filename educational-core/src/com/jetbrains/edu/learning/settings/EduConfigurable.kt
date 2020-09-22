@@ -15,13 +15,16 @@
  */
 package com.jetbrains.edu.learning.settings
 
+import com.intellij.openapi.extensions.BaseExtensionPointName
+import com.intellij.openapi.options.CompositeConfigurable
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class EduConfigurable : EduConfigurableBase() {
+class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.WithEpDependencies {
   private val mainPanel: JPanel = JPanel(VerticalFlowLayout())
 
   @Nls
@@ -40,6 +43,8 @@ class EduConfigurable : EduConfigurableBase() {
   override fun createConfigurables(): List<OptionsProvider> {
     return ConfigurableWrapper.createConfigurables(OptionsProvider.EP_NAME).filter { it.isAvailable }
   }
+
+  override fun getDependencies(): Collection<BaseExtensionPointName<*>> = listOf(OptionsProvider.EP_NAME)
 
   companion object {
     const val ID = "com.jetbrains.edu.learning.stepik.EduConfigurable"

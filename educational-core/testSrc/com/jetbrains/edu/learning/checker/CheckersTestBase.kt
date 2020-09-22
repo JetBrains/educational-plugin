@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.registerComponentInstance
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.RefreshCause
@@ -22,8 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.createFileEditorManager
-import com.jetbrains.edu.learning.registerComponent
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
@@ -144,8 +143,8 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        myManager = createFileEditorManager(myProject)
-        myProject.registerComponent(FileEditorManager::class.java, myManager, testRootDisposable)
+        myManager = FileEditorManagerImpl(myProject)
+        myProject.registerComponentInstance(FileEditorManager::class.java, myManager, testRootDisposable)!!
         (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
 

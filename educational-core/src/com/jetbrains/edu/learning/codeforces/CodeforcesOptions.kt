@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.extensions.BaseExtensionPointName
+import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
@@ -7,7 +9,7 @@ import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
-class CodeforcesOptions : CodeforcesOptionsBase() {
+class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
   private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")
@@ -59,6 +61,10 @@ class CodeforcesOptions : CodeforcesOptionsBase() {
 
   private fun initLanguagePreferencesCheckBox(codeforcesSettings: CodeforcesSettings) {
     doNotShowLanguageDialogCheckBox.isSelected = codeforcesSettings.doNotShowLanguageDialog
+  }
+
+  override fun getDependencies(): Collection<BaseExtensionPointName<*>> {
+    return listOf(CodeforcesLanguageProvider.EP_NAME)
   }
 
   override fun getDisplayName(): String = "Codeforces"

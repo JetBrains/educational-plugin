@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
+import com.intellij.testFramework.ServiceContainerUtil;
 import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.ui.docking.DockManager;
@@ -29,7 +30,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.UtilsKt;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.jetbrains.edu.learning.UtilsKt.registerComponent;
 
 // TODO: merge it with EduTestCase
 public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase {
@@ -83,10 +81,10 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     super.setUp();
 
     DockManager dockManager = DockManager.getInstance(myFixture.getProject());
-    myManager = UtilsKt.createFileEditorManager(myFixture.getProject());
+    myManager = new FileEditorManagerImpl(myFixture.getProject());
     // Copied from TestEditorManagerImpl's constructor
     myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
-    registerComponent(getProject(), FileEditorManager.class, myManager, getTestRootDisposable());
+    ServiceContainerUtil.registerComponentInstance(getProject(), FileEditorManager.class, myManager, getTestRootDisposable());
     ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
     MessageBusConnection connection = getProject().getMessageBus().connect(getTestRootDisposable());
     connection.subscribe(StudyTaskManager.COURSE_SET, course -> {

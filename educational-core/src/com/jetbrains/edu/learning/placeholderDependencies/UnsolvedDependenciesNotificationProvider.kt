@@ -7,17 +7,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.UnsolvedDependenciesNotificationPanel
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<UnsolvedDependenciesNotificationPanel>(), DumbAware {
+class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
   companion object {
-    val KEY: Key<UnsolvedDependenciesNotificationPanel> = Key.create("Edu.unsolvedDependencies")
+    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.unsolvedDependencies")
 
     @VisibleForTesting
     fun getText(taskNames: List<String>): String {
@@ -28,7 +28,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
 
   override fun getKey() = KEY
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): UnsolvedDependenciesNotificationPanel? {
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
     if (!EduUtils.isStudentProject(project)) {
       return null
     }
@@ -37,7 +37,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
     if (taskDependencies.isEmpty()) {
       return null
     }
-    val panel = UnsolvedDependenciesNotificationPanel()
+    val panel = EditorNotificationPanel()
     panel.setText(getText(taskDependencies.map { it.name }))
     panel.createActionLabel("Solve '${taskDependencies[0].name}'") {
       NavigationUtils.navigateToTask(project, taskDependencies[0], task)

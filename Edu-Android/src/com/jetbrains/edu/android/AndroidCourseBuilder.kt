@@ -1,6 +1,7 @@
 package com.jetbrains.edu.android
 
 import com.android.ide.common.repository.GradleCoordinate
+import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project

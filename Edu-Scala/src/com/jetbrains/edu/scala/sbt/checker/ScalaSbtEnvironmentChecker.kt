@@ -8,14 +8,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.scala.messages.EduScalaBundle
-import com.jetbrains.edu.scala.sbt.isSbtProject
+import org.jetbrains.sbt.SbtUtil
 
 class ScalaSbtEnvironmentChecker : EnvironmentChecker() {
   override fun checkEnvironment(project: Project, task: Task): CheckResult? {
     if (ProjectRootManager.getInstance(project).projectSdk == null) {
       return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.no.sdk"))
     }
-    if (!project.isSbtProject) {
+    if (!SbtUtil.isSbtProject(project)) {
       return CheckResult(CheckStatus.Unchecked, EduScalaBundle.message("error.no.sbt.project"))
     }
     return null

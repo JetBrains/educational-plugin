@@ -17,15 +17,12 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.pass
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.createCourseArchive
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
-abstract class CreateCourseArchiveAction(text: Supplier<String>)
-// BACKCOMPAT: 2019.3 need to delete pass call
-  : DumbAwareAction(text.pass()) {
+abstract class CreateCourseArchiveAction(text: Supplier<String>) : DumbAwareAction(text) {
 
   constructor(@Nls(capitalization = Nls.Capitalization.Title) text: String) : this(Supplier { text })
 

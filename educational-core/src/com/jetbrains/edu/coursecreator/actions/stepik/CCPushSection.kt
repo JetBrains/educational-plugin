@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.makeLazy
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -49,12 +48,10 @@ class CCPushSection : DumbAwareAction(
     if (section != null && course.id > 0) {
       e.presentation.isEnabledAndVisible = true
       if (section.id <= 0) {
-        // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
-        e.presentation.setText(SECTION_TYPE.uploadToStepikTitleMessage.makeLazy())
+        e.presentation.setText { SECTION_TYPE.uploadToStepikTitleMessage }
       }
       else {
-        // BACKCOMPAT: 2019.3 need to delete mackLazy call and use lambdas
-        e.presentation.setText(SECTION_TYPE.updateOnStepikTitleMessage.makeLazy())
+        e.presentation.setText { SECTION_TYPE.updateOnStepikTitleMessage }
       }
     }
   }

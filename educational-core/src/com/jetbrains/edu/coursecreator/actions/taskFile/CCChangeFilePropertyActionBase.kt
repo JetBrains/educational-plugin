@@ -14,14 +14,11 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
-import com.jetbrains.edu.learning.messages.pass
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import org.jetbrains.annotations.Nls
 import java.util.function.Supplier
 
-abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>)
-// BACKCOMPAT: 2019.3 need to delete pass call
-  : DumbAwareAction(name.pass()) {
+abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>) : DumbAwareAction(name) {
 
   constructor(@Nls(capitalization = Nls.Capitalization.Title) name: String) : this(Supplier { name })
 
