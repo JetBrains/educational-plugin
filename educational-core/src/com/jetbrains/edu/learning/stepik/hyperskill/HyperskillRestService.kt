@@ -49,7 +49,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
-      val code = getStringParameter("code", urlDecoder)!! // cannot be null because of pattern
+      val code = getStringParameter(CODE, urlDecoder)!! // cannot be null because of pattern
 
       val success = HyperskillConnector.getInstance().login(code)
       if (success) {
@@ -100,7 +100,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val stepId = getIntParameter("step_id", urlDecoder)
+    val stepId = getIntParameter(STEP_ID, urlDecoder)
     val language = getStringParameter("language", urlDecoder) ?: error("No language for open step request")
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account)
@@ -112,8 +112,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
-    val stageId = getIntParameter("stage_id", decoder)
-    val projectId = getIntParameter("project_id", decoder)
+    val stageId = getIntParameter(STAGE_ID, decoder)
+    val projectId = getIntParameter(PROJECT_ID, decoder)
     return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
   }
 
@@ -145,10 +145,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()
 
   companion object {
-    const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill"
-    private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\\?code=(\\w+)")
-    private val OPEN_COURSE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?stage_id=.+&project_id=.+")
-    private val OPEN_STEP_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?step_id=.+")
+    // Parameters
+    private const val CODE = "code"
+    private const val PROJECT_ID = "project_id"
+    private const val STAGE_ID = "stage_id"
+    private const val STEP_ID = "step_id"
+
+    const val EDU_HYPERSKILL_SERVICE_NAME: String = "edu/hyperskill"
+    private val OAUTH_CODE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\?$CODE=(\w+)""")
+    private val OPEN_COURSE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STAGE_ID=.+&$PROJECT_ID=.+""")
+    private val OPEN_STEP_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STEP_ID=.+""")
     private val PLUGIN_INFO = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/info")
   }
 
