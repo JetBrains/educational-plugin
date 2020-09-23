@@ -33,9 +33,9 @@ const val UPDATED_AT = "updated_at"
 const val TOKEN = "token"
 const val URL = "url"
 
-class HyperskillAccount : OAuthAccount<HyperskillUserInfo>()
+class HyperskillAccount : OAuthAccount<HyperskillProfileInfo>()
 
-class HyperskillUserInfo {
+class HyperskillProfileInfo {
   @JsonProperty(ID)
   var id: Int = -1
 
@@ -141,9 +141,9 @@ class Solution {
 
 // lists
 
-class UsersList {
+class ProfilesList {
   @JsonProperty(PROFILES)
-  lateinit var profiles: List<HyperskillUserInfo>
+  lateinit var profiles: List<HyperskillProfileInfo>
 }
 
 class StagesList {

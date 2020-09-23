@@ -31,7 +31,7 @@ interface HyperskillService {
   ): Call<TokenInfo>
 
   @GET("api/profiles/current")
-  fun getCurrentUserInfo(): Call<UsersList>
+  fun getCurrentUserInfo(): Call<ProfilesList>
 
   @GET("api/stages")
   fun stages(@Query("project") projectId: Int): Call<StagesList>

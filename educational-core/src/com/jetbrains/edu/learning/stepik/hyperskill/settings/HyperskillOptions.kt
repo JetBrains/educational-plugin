@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.settings.OauthOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROFILE_PATH
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProfileInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
@@ -51,7 +51,7 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
 
   override fun getProfileUrl(userInfo: Any): String {
     val userId = try {
-      (userInfo as HyperskillUserInfo).id
+      (userInfo as HyperskillProfileInfo).id
     }
     catch (e: ClassCastException) {
       Logger.getInstance(HyperskillOptions::class.java).error(e.message)

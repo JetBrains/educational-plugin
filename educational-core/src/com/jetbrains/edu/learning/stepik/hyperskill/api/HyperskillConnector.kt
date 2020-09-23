@@ -125,7 +125,7 @@ abstract class HyperskillConnector {
 
   // Get requests:
 
-  fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
+  fun getCurrentUser(account: HyperskillAccount): HyperskillProfileInfo? {
     val response = service(account).getCurrentUserInfo().executeHandlingExceptions()
     val userInfo = response?.body()?.profiles?.firstOrNull()
     if (userInfo?.isGuest == true) {
