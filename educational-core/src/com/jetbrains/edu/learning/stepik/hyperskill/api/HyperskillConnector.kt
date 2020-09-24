@@ -255,8 +255,8 @@ abstract class HyperskillConnector {
     return true
   }
 
-  fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
-    return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
+  private fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
+    return FeedbackLink("${stageLink(project, stage.id)}$HYPERSKILL_COMMENT_ANCHOR")
   }
 
   fun getSubmissions(stepIds: Set<Int>): List<Submission> {

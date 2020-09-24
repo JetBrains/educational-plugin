@@ -105,16 +105,28 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getEduState(project)?.task ?: return
-    val course = task.course as? HyperskillCourse ?: return
-    val url = if (course.isTaskInProject(task)) task.feedbackLink.link else stepLink(task.id)
-    if (url.isNullOrEmpty()) return
-    EduBrowser.browse("$url#solutions")
+    val url = taskLink(task)
+    EduBrowser.browse("$url$HYPERSKILL_SOLUTIONS_ANCHOR")
   }
 
   companion object {
     const val ACTION_ID = "Hyperskill.PeekSolution"
   }
 }
+
+fun taskLink(task: Task): String {
+  val course = task.course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
+  return if (course.isTaskInProject(task)) stageLink(task) else stepLink(task.id)
+}
+
+fun stageLink(task: Task): String {
+  val course = task.course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
+  val projectId = course.hyperskillProject?.id ?: error("Course doesn't have Hyperskill project")
+  val stageId = course.stages[task.index - 1].id
+  return stageLink(projectId, stageId)
+}
+
+fun stageLink(projectId: Int, stageId: Int) = "$HYPERSKILL_PROJECTS_URL/$projectId/stages/$stageId/implement"
 
 fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
 
@@ -185,8 +197,6 @@ val Task.successMessage: String
     if (!course.isStudy) {
       return CheckUtils.CONGRATULATIONS
     }
-    val hyperskillCourse = this.course as HyperskillCourse
-    val stageId = hyperskillCourse.stages[this.index - 1].id
-    val link = "${HYPERSKILL_PROJECTS_URL}/${hyperskillCourse.hyperskillProject!!.id}/stages/$stageId/implement"
+    val link = stageLink(this)
     return "${CheckUtils.CONGRATULATIONS} ${EduCoreBundle.message("hyperskill.continue", link, EduNames.JBA)}"
   }
