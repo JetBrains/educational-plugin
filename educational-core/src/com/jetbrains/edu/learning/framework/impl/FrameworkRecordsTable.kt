@@ -1,10 +1,9 @@
 package com.jetbrains.edu.learning.framework.impl
 
 import com.intellij.util.io.PagePool
-import com.intellij.util.io.storage.AbstractRecordsTable
-import java.io.File
+import java.nio.file.Path
 
-class FrameworkRecordsTable(storageFilePath: File, pool: PagePool) : AbstractRecordsTable(storageFilePath, pool) {
+class FrameworkRecordsTable(storageFilePath: Path, pool: PagePool) : FrameworkRecordsTableBase(storageFilePath, pool) {
 
   override fun getImplVersion(): Int = 1
 

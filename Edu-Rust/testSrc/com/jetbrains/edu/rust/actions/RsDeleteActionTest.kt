@@ -4,7 +4,7 @@ import com.intellij.ide.actions.DeleteAction
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
 import org.rust.lang.RsLanguage
@@ -190,7 +190,7 @@ class RsDeleteActionTest : RsActionTestBase() {
 
   private fun doTest(course: Course, path: String, @Language("TOML") expectedText: String) {
     withVirtualFileListener(course) {
-      withTestDialog(EduTestDialog()) {
+      withEduTestDialog(EduTestDialog()) {
         testAction(dataContext(findFile(path)), DeleteAction())
       }
     }

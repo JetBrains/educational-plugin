@@ -42,6 +42,8 @@ private const val CONTENT: String = "CONTENT"
 private const val HEADER_FONT_SIZE = 26.0f
 private const val MAIN_FONT_SIZE = 13.0f
 
+// BACKCOMPAT: 2020.1. Used since 2020.2
+@Suppress("unused")
 class EduWelcomeTabPanel : JPanel() {
   private val cardLayout: CardLayout = CardLayout()
   private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(),

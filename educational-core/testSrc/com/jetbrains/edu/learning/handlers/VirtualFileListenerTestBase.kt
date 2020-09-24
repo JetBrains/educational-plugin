@@ -115,11 +115,11 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     checks.forEach(FileCheck::check)
 
     val dialog = EduTestDialog()
-    withTestDialog(dialog) {
+    withEduTestDialog(dialog) {
       UndoManager.getInstance(project).undo(null)
     }
     checks.map(FileCheck::invert).forEach(FileCheck::check)
-    withTestDialog(dialog) {
+    withEduTestDialog(dialog) {
       UndoManager.getInstance(project).redo(null)
     }
     checks.forEach(FileCheck::check)

@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.hyperskill
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.python.PythonLanguage
@@ -13,9 +14,10 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val settings: Any get() = PyNewProjectSettings()
   override val courseProducer: () -> Course = ::HyperskillCourse
 
-  override fun runTest() {
+  override fun runTestInternal(context: TestContext) {
+    // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
-      super.runTest()
+      super.runTestInternal(context)
     }
   }
 

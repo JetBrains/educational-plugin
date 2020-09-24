@@ -21,6 +21,8 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Keeps list of [Change]s for each task. Change list is difference between initial task state and latest one.
@@ -339,8 +341,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     const val VERSION: Int = 1
 
     @VisibleForTesting
-    fun constructStoragePath(project: Project): String =
-      FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistory", "storage")
+    fun constructStoragePath(project: Project): Path =
+      Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistory", "storage"))
 
     @VisibleForTesting
     fun createStorage(project: Project): FrameworkStorage {
@@ -352,7 +354,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       }
       catch (e: IOException) {
         LOG.error(e)
-        AbstractStorage.deleteFiles(storageFilePath)
+        AbstractStorage.deleteFiles(storageFilePath.toString())
         FrameworkStorage(storageFilePath, VERSION)
       }
     }

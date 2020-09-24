@@ -49,7 +49,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
 
   private fun setupSbtSettings(project: Project) {
     val location = project.basePath!!
-    val systemSettings = ExternalSystemApiUtil.getSettings(project, SbtProjectSystem.Id())
+    val systemSettings = ExternalSystemApiUtil.getSettings(project, sbtProjectSystemId)
 
     val projectSettings = SbtProjectSettings()
     projectSettings.isUseAutoImport = true
@@ -58,7 +58,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
     projects.add(projectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
-    ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id())
+    ExternalSystemUtil.ensureToolWindowInitialized(project, sbtProjectSystemId)
   }
 
   companion object {

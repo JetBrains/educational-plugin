@@ -195,8 +195,9 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   companion object {
     fun extractComparisonErrorMessage(node: SMTestProxy): String {
-      val index = StringUtil.indexOfIgnoreCase(node.errorMessage, "expected:", 0)
-      return if (index != -1) node.errorMessage.substring(0, index).trim() else node.errorMessage
+      val errorMessage = node.errorMessage.orEmpty()
+      val index = StringUtil.indexOfIgnoreCase(errorMessage, "expected:", 0)
+      return if (index != -1) errorMessage.substring(0, index).trim() else errorMessage
     }
 
     private fun createConfigurationTypeComparator(configurationType: ConfigurationType?): Comparator<ConfigurationFromContext> {

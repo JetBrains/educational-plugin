@@ -2,10 +2,7 @@ package com.jetbrains.edu.python.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.FileTreeBuilder
-import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
@@ -16,9 +13,10 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyHyperskillCourseGenerationTest : EduTestCase() {
 
-  override fun runTest() {
+  override fun runTestInternal(context: TestContext) {
+    // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
-      super.runTest()
+      super.runTestInternal(context)
     }
   }
 

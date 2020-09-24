@@ -1,12 +1,20 @@
 package com.jetbrains.edu.learning.framework.impl.migration
 
-import com.intellij.testFramework.HeavyPlatformTestCase
+import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorageData
 
-class FrameworkStorageMigrationTest : HeavyPlatformTestCase() {
+class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
+
+  override val defaultSettings: Unit get() = Unit
+
+  override fun setUpProject() {
+    val course = course {}
+    createCourseStructure(course)
+  }
 
   fun `test migrate from 0 to current`() {
     val storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))

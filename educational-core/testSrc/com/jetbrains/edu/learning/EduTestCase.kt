@@ -56,7 +56,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-abstract class EduTestCase : BasePlatformTestCase() {
+abstract class EduTestCase : EduTestCaseBase() {
   private lateinit var myManager: FileEditorManagerImpl
 
   @Throws(Exception::class)
@@ -346,7 +346,7 @@ private fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
   val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
   if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
     try {
-      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.loaderForClass)
+      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.classLoader)
       extensionPoint.registerExtension(TestOCBundleProvider, disposable)
     }
     catch (ignore: MissingResourceException) {}
@@ -357,4 +357,7 @@ private object TestOCBundleProvider : FeatureStatisticsBundleEP() {
   init {
     qualifiedName = "messages.OCBundle"
   }
+
+  val classLoader: ClassLoader
+    get() = pluginDescriptor?.pluginClassLoader ?: javaClass.classLoader
 }

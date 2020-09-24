@@ -13,7 +13,7 @@ class RefreshTaskTest : EduTestCase() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(13)
     myFixture.type("test")
-    withTestDialog(EduTestDialog(Messages.OK)) {
+    withEduTestDialog(EduTestDialog(Messages.OK)) {
       myFixture.testAction(RevertTaskAction())
     }
 
@@ -24,7 +24,7 @@ class RefreshTaskTest : EduTestCase() {
     configureByTaskFile(1, 2, "taskFile2.txt")
     myFixture.editor.caretModel.moveToOffset(4)
     myFixture.type("test")
-    withTestDialog(EduTestDialog(Messages.OK)) {
+    withEduTestDialog(EduTestDialog(Messages.OK)) {
       myFixture.testAction(RevertTaskAction())
     }
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
@@ -38,7 +38,7 @@ class RefreshTaskTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(5)
     myFixture.type("test")
     PsiDocumentManager.getInstance(project).commitAllDocuments()
-    withTestDialog(EduTestDialog(Messages.OK)) {
+    withEduTestDialog(EduTestDialog(Messages.OK)) {
       myFixture.testAction(RevertTaskAction())
     }
     val fileName = "lesson1/task3/taskFile1.txt"
@@ -59,7 +59,7 @@ class RefreshTaskTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(0)
     myFixture.type("test")
     PsiDocumentManager.getInstance(project).commitAllDocuments()
-    withTestDialog(EduTestDialog(Messages.OK)) {
+    withEduTestDialog(EduTestDialog(Messages.OK)) {
       myFixture.testAction(RevertTaskAction())
     }
 

@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 
 class HyperskillLoadingTest : NavigationTestBase() {
   override fun setUp() {
@@ -385,7 +385,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
     val task1 = course.findTask("lesson1", "task1")
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestDialog(Messages.NO)) {
+      withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
         myFixture.testAction(NextTaskAction())
       }

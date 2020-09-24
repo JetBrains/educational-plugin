@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.move
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 
 class MoveTest : MoveTestBase() {
 
@@ -18,7 +18,7 @@ class MoveTest : MoveTestBase() {
     val source = findPsiDirectory(sectionName1)
     val target = findPsiDirectory(sectionName2)
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       doMoveAction(course, source, target, delta = 1)
     }.checkWasShown()
 
@@ -43,7 +43,7 @@ class MoveTest : MoveTestBase() {
     val source = findPsiDirectory("$sectionName1/$lessonName")
     val target = findPsiDirectory(sectionName2)
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       doMoveAction(course, source, target)
     }.checkWasShown()
 
@@ -68,7 +68,7 @@ class MoveTest : MoveTestBase() {
     val source = findPsiDirectory("$lessonName1/$taskName")
     val target = findPsiDirectory(lessonName2)
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       doMoveAction(course, source, target)
     }.checkWasShown()
 
@@ -94,7 +94,7 @@ class MoveTest : MoveTestBase() {
     val sourceFile = findPsiFile("$lessonName/$taskName/src/$taskFileName")
     val targetDir = findPsiDirectory("$lessonName/$taskName")
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       doMoveAction(course, sourceFile, targetDir)
     }.checkWasShown()
 
@@ -148,7 +148,7 @@ class MoveTest : MoveTestBase() {
     val sourceFile = findPsiFile("$lessonName/$taskName1/$taskFileName")
     val targetDir = findPsiDirectory("$lessonName/$taskName2")
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       doMoveAction(course, sourceFile, targetDir)
     }.checkWasShown()
 

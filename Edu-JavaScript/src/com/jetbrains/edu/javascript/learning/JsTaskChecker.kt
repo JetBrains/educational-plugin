@@ -27,9 +27,13 @@ open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
 
   override fun getErrorMessage(node: SMTestProxy): String {
     val failedMessageStart = "Failed: \""
-    return if (node.errorMessage.startsWith(failedMessageStart))
-      node.errorMessage.substringAfter(failedMessageStart).substringBeforeLast('"').replace("\\\"", "\"")
-    else node.errorMessage
+    val errorMessage = node.errorMessage.orEmpty()
+    return if (errorMessage.startsWith(failedMessageStart)) {
+      errorMessage.substringAfter(failedMessageStart).substringBeforeLast('"').replace("\\\"", "\"")
+    }
+    else {
+      errorMessage
+    }
   }
 
   override fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? {

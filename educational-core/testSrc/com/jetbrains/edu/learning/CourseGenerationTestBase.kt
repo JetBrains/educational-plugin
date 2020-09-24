@@ -6,11 +6,11 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
-abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
+abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCaseBase() {
 
   abstract val defaultSettings: Settings
 
-  protected lateinit var rootDir: VirtualFile
+  protected val rootDir: VirtualFile by lazy { createVirtualDir() }
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
@@ -28,11 +28,6 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
     val course = createCourseFromJson(pathToCourseJson, courseMode)
     createCourseStructure(course)
     return course
-  }
-
-  override fun setUp() {
-    super.setUp()
-    rootDir = tempDir.createTempVDir()
   }
 
   /**

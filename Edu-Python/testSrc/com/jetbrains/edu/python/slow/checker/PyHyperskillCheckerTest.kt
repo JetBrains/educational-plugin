@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.slow.checker
 
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -12,9 +13,10 @@ import com.jetbrains.python.PythonLanguage
 
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
 
-  override fun runTest() {
+  override fun runTestInternal(context: TestContext) {
+    // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
-      super.runTest()
+      super.runTestInternal(context)
     }
   }
 

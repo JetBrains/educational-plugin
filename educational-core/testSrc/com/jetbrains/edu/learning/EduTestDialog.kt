@@ -44,25 +44,13 @@ open class EduTestInputDialog(override val defaultReturnValue: String) : EduTest
   }
 }
 
-inline fun <T: EduTestDialogBase<*>> withTestDialog(dialog: T, action: () -> Unit): T {
-
+inline fun <T: EduTestDialogBase<*>> withEduTestDialog(dialog: T, action: () -> Unit): T {
   when (dialog) {
     is EduTestDialog -> {
-      val oldDialog = Messages.setTestDialog(dialog)
-      try {
-        action()
-      } finally {
-        UIUtil.dispatchAllInvocationEvents()
-        Messages.setTestDialog(oldDialog)
-      }
+      withTestDialog(dialog, action)
     }
     is EduTestInputDialog -> {
-      val oldDialog = Messages.setTestInputDialog(dialog)
-      try {
-        action()
-      } finally {
-        Messages.setTestInputDialog(oldDialog)
-      }
+      withTestDialog(dialog, action)
     }
     else -> error("Unexpected dialog type: `${dialog.javaClass.canonicalName}`")
   }

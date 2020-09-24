@@ -4,7 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestInputDialog
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
 
 class CCWrapInSectionTest : EduActionTestCase() {
@@ -19,7 +19,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     course.courseMode = CCUtils.COURSE_MODE
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
-    withTestDialog(EduTestInputDialog("section1")) {
+    withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(dataContext(arrayOf(lesson2, lesson3)), CCWrapWithSection())
     }
     TestCase.assertEquals(3, course.items.size)
@@ -39,7 +39,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     }
     val lesson2 = findFile("lesson2")
     val lesson4 = findFile("lesson4")
-    withTestDialog(EduTestInputDialog("section1")) {
+    withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(dataContext(arrayOf(lesson2, lesson4)), CCWrapWithSection())
     }
     TestCase.assertEquals(4, course.items.size)
@@ -62,7 +62,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
       lesson()
     }
     val lesson2 = findFile("lesson2")
-    withTestDialog(EduTestInputDialog("section1")) {
+    withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(dataContext(arrayOf(lesson2)), CCWrapWithSection())
     }
     TestCase.assertEquals(5, course.items.size)
@@ -85,7 +85,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     val lesson1 = findFile("lesson1")
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
-    withTestDialog(EduTestInputDialog("section1")) {
+    withEduTestDialog(EduTestInputDialog("section1")) {
       testAction(dataContext(arrayOf(lesson1, lesson2, lesson3)), CCWrapWithSection())
     }
     TestCase.assertEquals(1, course.items.size)

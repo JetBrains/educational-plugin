@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
@@ -124,7 +124,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
-      withTestDialog(EduTestDialog(Messages.YES)) {
+      withEduTestDialog(EduTestDialog(Messages.YES)) {
         myFixture.testAction(NextTaskAction())
       }.checkWasShown()
     }
@@ -176,7 +176,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
 
 
       task1.openTaskFileInEditor("src/Task.kt")
-      val dialog = withTestDialog(EduTestDialog(Messages.NO)) {
+      val dialog = withEduTestDialog(EduTestDialog(Messages.NO)) {
         myFixture.testAction(NextTaskAction())
       }
 
@@ -232,7 +232,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
-      withTestDialog(EduTestDialog(Messages.NO)) {
+      withEduTestDialog(EduTestDialog(Messages.NO)) {
         myFixture.testAction(NextTaskAction())
       }.checkWasShown()
     }
@@ -330,7 +330,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     frameworkLessonManager.saveExternalChanges(task2, externalState)
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestDialog(Messages.YES)) {
+      withEduTestDialog(EduTestDialog(Messages.YES)) {
         task1.openTaskFileInEditor("src/Task.kt")
         myFixture.testAction(NextTaskAction())
       }
@@ -373,7 +373,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     val task2 = course.findTask("lesson1", "task2")
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestDialog(Messages.NO)) {
+      withEduTestDialog(EduTestDialog(Messages.NO)) {
         runWriteAction {
           findFile("lesson1/task/src/Baz.kt").delete(HyperskillNavigationTest::class.java)
         }

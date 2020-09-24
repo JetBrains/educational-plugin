@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 
 abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActionTestCase() {
 
@@ -36,12 +36,12 @@ abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActi
     check(regularChecks)
 
     val dialog = EduTestDialog()
-    withTestDialog(dialog) {
+    withEduTestDialog(dialog) {
       UndoManager.getInstance(project).undo(null)
     }
     check(regularChecks.map(FileCheck::invert))
 
-    withTestDialog(dialog) {
+    withEduTestDialog(dialog) {
       UndoManager.getInstance(project).redo(null)
     }
     check(regularChecks)

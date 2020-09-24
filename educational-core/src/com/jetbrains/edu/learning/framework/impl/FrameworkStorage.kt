@@ -1,36 +1,26 @@
 package com.jetbrains.edu.learning.framework.impl
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.util.io.PagePool
 import com.intellij.util.io.UnsyncByteArrayInputStream
 import com.intellij.util.io.UnsyncByteArrayOutputStream
-import com.intellij.util.io.storage.AbstractRecordsTable
-import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
 import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
-class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePath) {
+class FrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) {
 
-  constructor(storageFilePath: String, version: Int) : this(storageFilePath) {
+  constructor(storageFilePath: Path, version: Int) : this(storageFilePath) {
     setVersion(version)
   }
 
-  override fun createRecordsTable(pool: PagePool, recordsFile: File): AbstractRecordsTable =
-    FrameworkRecordsTable(recordsFile, pool)
-
   @Throws(IOException::class)
   fun updateUserChanges(record: Int, changes: UserChanges): Int {
-    return synchronized(myLock) {
-      val id = if (record == -1) {
-        createNewRecord()
-      } else {
-        record
-      }
+    return withWriteLock<Int, IOException> {
+      val id = if (record == -1) createNewRecord() else record
       writeStream(id, true).use(changes::write)
       id
     }
@@ -44,8 +34,9 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
   fun getUserChanges(record: Int): UserChanges {
     return if (record == -1) {
       UserChanges.empty()
-    } else {
-      synchronized(myLock) {
+    }
+    else {
+      withReadLock<UserChanges, IOException> {
         readStream(record).use(UserChanges.Companion::read)
       }
     }
@@ -54,9 +45,9 @@ class FrameworkStorage(storageFilePath: String) : AbstractStorage(storageFilePat
   @Throws(IOException::class)
   fun migrate(newVersion: Int) {
     val migrationTime = measureTimeMillis {
-      synchronized(myLock) {
+      withWriteLock<Unit, IOException> {
         val currentVersion = version
-        if (currentVersion >= newVersion) return
+        if (currentVersion >= newVersion) return@withWriteLock
 
         val recordIterator = myRecordsTable.createRecordIdIterator()
         while (recordIterator.hasNextId()) {

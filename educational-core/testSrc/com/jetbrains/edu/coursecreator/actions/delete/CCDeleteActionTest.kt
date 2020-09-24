@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 
 class CCDeleteActionTest : EduActionTestCase() {
 
@@ -23,7 +23,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     val taskFile = findFile("lesson1/task1")
 
     val testDialog = TestDeleteDialog()
-    withTestDialog(testDialog) {
+    withEduTestDialog(testDialog) {
       testAction(dataContext(taskFile), DeleteAction())
     }.checkWasShown()
 
@@ -62,7 +62,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     val testDialog = TestDeleteDialog(listOf(task2), listOf(task3))
 
     val taskFile = findFile("lesson1/task1")
-    withTestDialog(testDialog) {
+    withEduTestDialog(testDialog) {
       testAction(dataContext(taskFile), DeleteAction())
     }.checkWasShown()
 
@@ -94,7 +94,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     }
 
     val lessonFile = findFile("lesson1")
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       testAction(dataContext(lessonFile), DeleteAction())
     }
 
@@ -141,7 +141,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     val testDialog = TestDeleteDialog(listOf(task3), listOf(task2, task4))
 
     val lessonFile = findFile("lesson1")
-    withTestDialog(testDialog) {
+    withEduTestDialog(testDialog) {
       testAction(dataContext(lessonFile), DeleteAction())
     }.checkWasShown()
 
@@ -177,7 +177,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     val sectionFile = findFile("section1")
     
     val testDialog = TestDeleteDialog()
-    withTestDialog(testDialog) {
+    withEduTestDialog(testDialog) {
       testAction(dataContext(sectionFile), DeleteAction())
     }.checkWasShown()
 
@@ -241,7 +241,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     val testDialog = TestDeleteDialog(listOf(task3, task5), listOf(task4, task6))
 
     val section1 = findFile("section1")
-    withTestDialog(testDialog) {
+    withEduTestDialog(testDialog) {
       testAction(dataContext(section1), DeleteAction())
     }.checkWasShown()
 

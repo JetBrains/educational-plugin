@@ -11,7 +11,7 @@ import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.withEduTestDialog
 
 class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   fun `test show error if placeholder is broken`() {
@@ -27,7 +27,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
     }.checkWasShown(EduCoreBundle.message("exception.message.placeholder.info.single", 1000, 0))
   }
@@ -42,7 +42,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
     course.description = "my summary"
 
-    withTestDialog(EduTestDialog()) {
+    withEduTestDialog(EduTestDialog()) {
       testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
     }.checkWasShown(EduCoreBundle.message("dialog.message.no.preview.for.file"))
   }

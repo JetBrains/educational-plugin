@@ -7,40 +7,31 @@ import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.registerComponentInstance
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.HeavyPlatformTestCaseBase
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.withTestDialog
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
-abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
+abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
     private lateinit var myManager: FileEditorManagerImpl
 
-    protected lateinit var myCourse: Course
+    private lateinit var myCourse: Course
 
-    private lateinit var checkerFixture: EduCheckerFixture<Settings>
-
-    override fun runBare() {
-        // Usually, fixture objects are initialized in `setUp` method.
-        // But in our case, it's necessary to skip test if environment cannot be set up.
-        // The most convenient place to locate the corresponding code is `EduCheckerFixture` itself.
-        // So, `checkerFixture` should be initialized before `shouldRunTest`.
-        // That's why it's created here
-        checkerFixture = createCheckerFixture()
-        super.runBare()
+    private val checkerFixture: EduCheckerFixture<Settings> by lazy {
+        createCheckerFixture()
     }
 
     override fun shouldRunTest(): Boolean {
@@ -69,7 +60,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
         }
     }
 
-    protected fun refreshProject() {
+    private fun refreshProject() {
         myCourse.configurator!!.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 
@@ -117,7 +108,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {
         val context = MapDataContext()
         context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
-        context.put<Project>(CommonDataKeys.PROJECT, myProject)
+        context.put(CommonDataKeys.PROJECT, myProject)
         return TestActionEvent(context, action)
     }
 
@@ -127,16 +118,12 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
         myCourse = createCourse()
         val settings = checkerFixture.projectSettings
 
-        val prevDialog = Messages.setTestDialog(TestDialog.NO)
-        try {
-            val rootDir = tempDir.createTempDir()
+        withTestDialog(TestDialog.NO) {
+            val rootDir = createVirtualDir()
             val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                             ?: error("Failed to get `CourseProjectGenerator`")
-            myProject = generator.doCreateCourseProject(rootDir.absolutePath, settings as Any)
+            myProject = generator.doCreateCourseProject(rootDir.path, settings as Any)
                         ?: error("Cannot create project with name ${projectName()}")
-
-        } finally {
-            Messages.setTestDialog(prevDialog)
         }
     }
 

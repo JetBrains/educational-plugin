@@ -30,7 +30,7 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
 
   override fun getErrorMessage(node: SMTestProxy): String {
     return node.stacktrace?.lineSequence()?.firstOrNull { it.startsWith(ASSERTION_ERROR) }?.substringAfter(ASSERTION_ERROR)
-           ?: node.errorMessage
+           ?: node.errorMessage.orEmpty()
   }
 
   companion object {
