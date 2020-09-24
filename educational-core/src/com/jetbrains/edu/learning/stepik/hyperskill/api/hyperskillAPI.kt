@@ -31,6 +31,7 @@ const val TOPICS = "topics"
 const val TOPIC_THEORY = "topic_theory"
 const val UPDATED_AT = "updated_at"
 const val URL = "url"
+const val USERS = "users"
 const val USE_IDE = "use_ide"
 
 class HyperskillAccount : OAuthAccount<HyperskillProfileInfo>()
@@ -139,6 +140,14 @@ class Solution {
   lateinit var reply: String
 }
 
+class User {
+  @JsonProperty(ID)
+  var id: Int = 0
+
+  @JsonProperty(FULL_NAME)
+  var fullname: String = ""
+}
+
 // lists
 
 class ProfilesList {
@@ -172,6 +181,11 @@ class HyperskillStepsList {
 class SolutionsList {
   @JsonProperty(SOLUTIONS)
   lateinit var solutions: List<Solution>
+}
+
+class UsersList {
+  @JsonProperty(USERS)
+  lateinit var users: List<User>
 }
 
 class WebSocketConfiguration {

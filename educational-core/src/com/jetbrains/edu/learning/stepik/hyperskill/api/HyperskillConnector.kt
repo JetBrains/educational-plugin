@@ -280,6 +280,10 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
+  fun getUser(userId: Int): Result<User, String> {
+    return service.user(userId).executeAndExtractFirst(UsersList::users)
+  }
+
   // Post requests:
 
   fun postSubmission(submission: Submission): Result<Submission, String> {

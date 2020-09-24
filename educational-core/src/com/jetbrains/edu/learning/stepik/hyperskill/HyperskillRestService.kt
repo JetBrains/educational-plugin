@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.ui.Messages
@@ -77,26 +78,60 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     if (OPEN_COURSE_PATTERN.matcher(uri).matches()) {
-      return withHyperskillAuthorization { openStage(urlDecoder, request, context) }
+      val userId = getIntParameter(USER_ID, urlDecoder)
+      return withHyperskillAuthorization(userId) { openStage(urlDecoder, request, context) }
     }
 
     if (OPEN_STEP_PATTERN.matcher(uri).matches()) {
-      return withHyperskillAuthorization { openProblem(urlDecoder, request, context) }
+      val userId = getIntParameter(USER_ID, urlDecoder)
+      return withHyperskillAuthorization(userId) { openProblem(urlDecoder, request, context) }
     }
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
   }
 
-  private fun withHyperskillAuthorization(action: () -> String?): String? {
+  private fun withHyperskillAuthorization(userId: Int, action: () -> String?): String? {
     val account = HyperskillSettings.INSTANCE.account
     return if (account == null) {
       HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
       null
     }
     else {
-      action()
+      withUserIdCheck(userId) { action() }
     }
+  }
+
+  private fun withUserIdCheck(userId: Int, action: () -> String?): String? {
+    if (userId == -1) return action()
+
+    val localAccount = HyperskillSettings.INSTANCE.account
+    if (localAccount == null) {
+      val message = "Attempt to verify unauthorized user"
+      LOG.warn(message)
+      return message
+    }
+    if (localAccount.userInfo.id == userId) {
+      return action()
+    }
+
+    val reLogin = try {
+      askToReLogin(userId)
+    }
+    catch (e: IllegalStateException) {
+      LOG.error(e)
+      return e.message
+    }
+    if (!reLogin) return action()
+
+    // logout
+    HyperskillSettings.INSTANCE.account = null
+    val messageBus = ApplicationManager.getApplication().messageBus
+    messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+
+    // login
+    HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
+    return null
   }
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
@@ -115,6 +150,24 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val stageId = getIntParameter(STAGE_ID, decoder)
     val projectId = getIntParameter(PROJECT_ID, decoder)
     return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
+  }
+
+  private fun askToReLogin(userId: Int): Boolean {
+    val localAccount = HyperskillSettings.INSTANCE.account ?: error("Attempt to re-login unauthorized user")
+    val browserAccount = HyperskillConnector.getInstance().getUser(userId).onError {
+      error("Request to get user with $userId id is failed")
+    }
+
+    return getInEdt {
+      Messages.showOkCancelDialog(
+        "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
+                                       browserAccount.fullname)}</html>",
+        EduCoreBundle.message("hyperskill.accounts.are.different.title"),
+        EduCoreBundle.message("hyperskill.accounts.are.different.re.login", browserAccount.fullname),
+        EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.fullname),
+        null
+      ) == Messages.OK
+    }
   }
 
   private fun openInIDE(openInProjectRequest: HyperskillOpenInProjectRequest,
@@ -150,6 +203,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private const val PROJECT_ID = "project_id"
     private const val STAGE_ID = "stage_id"
     private const val STEP_ID = "step_id"
+    private const val USER_ID = "user_id"
 
     const val EDU_HYPERSKILL_SERVICE_NAME: String = "edu/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\?$CODE=(\w+)""")

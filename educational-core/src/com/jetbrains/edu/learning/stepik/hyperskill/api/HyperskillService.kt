@@ -54,6 +54,9 @@ interface HyperskillService {
   @GET("api/solutions")
   fun solutions(@Query("step") step: Int): Call<SolutionsList>
 
+  @GET("api/users/{id}")
+  fun user(@Path("id") id: Int): Call<UsersList>
+
   @POST("api/attempts")
   fun attempt(@Body attempt: Attempt): Call<AttemptsList>
 
