@@ -52,9 +52,6 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
-// BACKCOMPAT: 2019.3. Drop it
-val isAtLeast201 = environmentName.toInt() >= 201
-
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
@@ -492,9 +489,6 @@ project(":Edu-Python") {
   intellij {
     val plugins = listOfNotNull(
       pythonPlugin,
-      // BACKCOMPAT: 2019.3
-      // python pro plugin has mandatory dependency on yaml plugin
-      "yaml",
       if (isJvmCenteredIDE) "java" else null
     )
     setPlugins(*plugins.toTypedArray())
@@ -517,9 +511,6 @@ project(":Edu-Python:Idea") {
 
     val plugins = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
-      // BACKCOMPAT: 2019.3
-      // python pro plugin has mandatory dependency on yaml plugin
-      "yaml",
       "java"
     )
     setPlugins(*plugins.toTypedArray())
@@ -538,10 +529,7 @@ project(":Edu-Python:PyCharm") {
       localPath = null
       version = ideaVersion
     }
-    // BACKCOMPAT: 2019.3
-    // python pro plugin has mandatory dependency on yaml plugin
-    val plugins = listOfNotNull(pythonPlugin, "yaml")
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(pythonPlugin)
   }
 
   dependencies {
