@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.application.ApplicationManager
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
 
