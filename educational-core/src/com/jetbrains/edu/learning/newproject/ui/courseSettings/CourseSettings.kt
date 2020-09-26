@@ -37,16 +37,16 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
 
   private var locationField: LabeledComponent<TextFieldWithBrowseButton>? = null
   private val context: UserDataHolder = UserDataHolderBase()
-  private val myAdvancedSettings = JPanel()
+  private val advancedSettings = JPanel()
   private var decorator: HideableNoLineDecorator
 
   init {
     border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, leftMargin, 0, 0)
-    myAdvancedSettings.layout = BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS)
-    myAdvancedSettings.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
-    add(myAdvancedSettings, BorderLayout.CENTER)
+    advancedSettings.layout = BoxLayout(advancedSettings, BoxLayout.Y_AXIS)
+    advancedSettings.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
+    add(advancedSettings, BorderLayout.CENTER)
     decorator = HideableNoLineDecorator(this, EduCoreBundle.message("course.dialog.settings"))
-    decorator.setContentComponent(myAdvancedSettings)
+    decorator.setContentComponent(advancedSettings)
 
     if (isLocationFieldNeeded) {
       locationField = createLocationComponent()
@@ -54,14 +54,14 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
   }
 
   fun setSettingsComponents(settings: List<LabeledComponent<*>>) {
-    myAdvancedSettings.removeAll()
+    advancedSettings.removeAll()
     for (setting in settings) {
-      myAdvancedSettings.add(setting, BorderLayout.PAGE_END)
+      advancedSettings.add(setting, BorderLayout.PAGE_END)
     }
     UIUtil.mergeComponentsWithAnchor(settings)
-    UIUtil.setBackgroundRecursively(myAdvancedSettings, background)
-    myAdvancedSettings.revalidate()
-    myAdvancedSettings.repaint()
+    UIUtil.setBackgroundRecursively(advancedSettings, background)
+    advancedSettings.revalidate()
+    advancedSettings.repaint()
   }
 
   fun setOn(on: Boolean) {
