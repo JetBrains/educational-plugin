@@ -27,8 +27,8 @@ import static com.jetbrains.edu.learning.EduUtils.showNotification;
 public class SyncStepikCourseAction extends SyncCourseAction {
 
   public SyncStepikCourseAction() {
-    super(EduCoreBundle.message("action.synchronize.course"),
-          EduCoreBundle.message("action.synchronize.course"),
+    super(EduCoreBundle.lazyMessage("action.synchronize.course"),
+          EduCoreBundle.lazyMessage("action.synchronize.course"),
           EducationalCoreIcons.StepikRefresh);
   }
 

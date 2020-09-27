@@ -18,11 +18,12 @@ import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.NonNls
+import java.util.function.Supplier
 
 open class ImportLocalCourseAction(
-  text: String = EduCoreBundle.message("course.dialog.open.course.from.disk"),
-  suffix: String = ""
-) : DumbAwareAction(text + suffix) {
+  text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk"),
+) : DumbAwareAction(text) {
   override fun actionPerformed(e: AnActionEvent) {
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
@@ -68,8 +69,8 @@ open class ImportLocalCourseAction(
   }
 
   companion object {
+    @NonNls
     private const val LAST_IMPORT_LOCATION = "Edu.LastImportLocation"
-    private const val IMPORT_ERROR_DIALOG_TITLE = "Failed to Add Local Course"
 
     @JvmStatic
     fun importLocation(): VirtualFile? {
@@ -86,7 +87,10 @@ open class ImportLocalCourseAction(
 
     @JvmStatic
     fun showInvalidCourseDialog() {
-      Messages.showErrorDialog("Selected archive doesn't contain a valid course", IMPORT_ERROR_DIALOG_TITLE)
+      Messages.showErrorDialog(
+        EduCoreBundle.message("dialog.message.no.course.in.archive"),
+        EduCoreBundle.message("dialog.title.failed.to.add.local.course")
+      )
     }
   }
 }

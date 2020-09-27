@@ -13,15 +13,16 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RefreshAnswerPlaceholder extends DumbAwareAction {
 
-  public static final String NAME = "Refresh Answer Placeholder";
-
   public RefreshAnswerPlaceholder() {
-    super(NAME, NAME, AllIcons.Actions.Refresh);
+    super(EduCoreBundle.lazyMessage("action.refresh.answer.placeholder.text"),
+          EduCoreBundle.lazyMessage("action.refresh.answer.placeholder.description"),
+          AllIcons.Actions.Refresh);
   }
 
   @Override

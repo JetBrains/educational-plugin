@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import icons.EducationalCoreIcons;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.ui.Messages.*;
@@ -37,12 +38,13 @@ import static com.jetbrains.edu.learning.courseFormat.ext.TaskExt.revertTaskPara
 
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
+  @NonNls
   public static final String ACTION_ID = "Educational.RefreshTask";
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
 
   public RevertTaskAction() {
-    super(EduCoreBundle.message("action.reset.request"),
-          EduCoreBundle.message("action.reset.to.initial.state"),
+    super(EduCoreBundle.lazyMessage("action.reset.request"),
+          EduCoreBundle.lazyMessage("action.reset.to.initial.state"),
           EducationalCoreIcons.ResetTask);
   }
 

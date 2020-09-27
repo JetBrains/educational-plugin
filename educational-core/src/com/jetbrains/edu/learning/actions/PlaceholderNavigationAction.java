@@ -16,10 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.function.Supplier;
 
 abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
-  protected PlaceholderNavigationAction(String actionId, String description, Icon icon) {
+  protected PlaceholderNavigationAction(Supplier<String> actionId, Supplier<String> description, Icon icon) {
     super(actionId, description, icon);
   }
 

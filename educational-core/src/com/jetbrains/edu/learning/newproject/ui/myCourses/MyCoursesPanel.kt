@@ -39,7 +39,7 @@ class MyCoursesPanel(
   }
 
   override fun toolbarAction(): AnAction? {
-    return ImportLocalCourseAction(suffix = "...")
+    return ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.ellipsis"))
   }
 
   override fun createNoCoursesPanel(): JPanel {
@@ -49,7 +49,7 @@ class MyCoursesPanel(
         EduCoreBundle.message("course.dialog.open.course.from.disk"),
         SimpleTextAttributes.LINK_ATTRIBUTES,
         ActionListener {
-          val action = ImportLocalCourseAction(suffix = "...")
+          val action = ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.ellipsis"))
           val dataContext = DataManager.getInstance().getDataContext(this)
           val actionEvent = AnActionEvent.createFromAnAction(action, null, ACTION_PLACE, dataContext)
           action.actionPerformed(actionEvent)

@@ -26,11 +26,13 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
+import org.jetbrains.annotations.NonNls
 
-open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("compare.with.answer.title"),
-                                                     EduCoreBundle.message("compare.with.answer.description"),
+open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.lazyMessage("compare.with.answer.title"),
+                                                     EduCoreBundle.lazyMessage("compare.with.answer.description"),
                                                      AllIcons.Actions.Diff) {
   companion object {
+    @NonNls
     const val ACTION_ID = "Educational.CompareWithAnswer"
   }
 
@@ -60,7 +62,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
     }
     if (requests.isEmpty()) {
       val message = JBPopupFactory.getInstance()
-        .createHtmlTextBalloonBuilder("No solution provided for this step", MessageType.INFO, null)
+        .createHtmlTextBalloonBuilder(EduCoreBundle.message("popup.content.no.solution.provided.for.step"), MessageType.INFO, null)
       message.createBalloon().show(JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext), Balloon.Position.above)
       return
     }

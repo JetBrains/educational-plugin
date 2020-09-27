@@ -6,10 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import org.jetbrains.annotations.NonNls
 
 class NextTaskAction : TaskNavigationAction(
-  EduCoreBundle.message("action.navigation.next.text"),
-  EduCoreBundle.message("action.navigation.next.description"),
+  EduCoreBundle.lazyMessage("action.navigation.next.text"),
+  EduCoreBundle.lazyMessage("action.navigation.next.description"),
   AllIcons.Actions.Forward
 ) {
 
@@ -26,6 +27,7 @@ class NextTaskAction : TaskNavigationAction(
   }
 
   companion object {
+    @NonNls
     const val ACTION_ID = "Educational.NextTask"
   }
 }

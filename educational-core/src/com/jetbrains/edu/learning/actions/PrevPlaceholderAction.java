@@ -4,17 +4,21 @@ import com.intellij.icons.AllIcons;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import kotlin.collections.CollectionsKt;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class PrevPlaceholderAction extends PlaceholderNavigationAction {
+  @NonNls
   public static final String ACTION_ID = "Educational.PrevPlaceholder";
 
   public PrevPlaceholderAction() {
-    super("Navigate to the Previous Answer Placeholder", "Navigate to the previous answer placeholder",
+    super(EduCoreBundle.lazyMessage("action.previous.placeholder.text"),
+          EduCoreBundle.lazyMessage("action.previous.placeholder.description"),
           AllIcons.Actions.Back);
   }
 

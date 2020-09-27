@@ -4,6 +4,8 @@ import com.intellij.icons.AllIcons;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +15,13 @@ import java.util.List;
  * move caret to next answer placeholder
  */
 public class NextPlaceholderAction extends PlaceholderNavigationAction {
+  @NonNls
   public static final String ACTION_ID = "Educational.NextPlaceholder";
 
   public NextPlaceholderAction() {
-    super("Navigate to the Next Answer Placeholder", "Navigate to the next answer placeholder", AllIcons.Actions.Forward);
+    super(EduCoreBundle.lazyMessage("action.next.placeholder.text"),
+          EduCoreBundle.lazyMessage("action.next.placeholder.description"),
+          AllIcons.Actions.Forward);
   }
 
   @Nullable

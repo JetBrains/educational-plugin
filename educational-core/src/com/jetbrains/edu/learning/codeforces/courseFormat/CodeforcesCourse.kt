@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
@@ -34,7 +35,7 @@ class CodeforcesCourse : Course {
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
   override fun getId(): Int = myId
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
-  override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
+  override fun getCheckAction(): CheckAction = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   fun getContestUrl(): String = getContestURLFromID(id)

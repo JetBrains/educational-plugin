@@ -10,15 +10,17 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.JavaUILibrary.*
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import org.jetbrains.annotations.NonNls
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JLabel
 
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
-class SwitchTaskPanelAction : DumbAwareAction() {
+class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.switch.task.description.text")) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
@@ -38,7 +40,7 @@ class SwitchTaskPanelAction : DumbAwareAction() {
 
     override fun createCenterPanel(): JComponent? = myComboBox
 
-    override fun createNorthPanel(): JComponent? = JLabel("Choose panel: ")
+    override fun createNorthPanel(): JComponent? = JLabel(EduCoreBundle.message("ui.label.choose.panel"))
 
     override fun getPreferredFocusedComponent(): JComponent? = myComboBox
 
@@ -60,7 +62,7 @@ class SwitchTaskPanelAction : DumbAwareAction() {
 
       comboBoxModel.selectedItem = EduSettings.getInstance().javaUiLibraryWithCheck
       myComboBox.model = comboBoxModel
-      title = "Switch Task Description Panel"
+      title = EduCoreBundle.message("dialog.title.switch.task.description.panel")
       myComboBox.setMinimumAndPreferredWidth(250)
       init()
     }
@@ -73,6 +75,7 @@ class SwitchTaskPanelAction : DumbAwareAction() {
   }
 
   companion object {
+    @NonNls
     const val ACTION_ID = "Educational.SwitchTaskDescriptionPanel"
   }
 }

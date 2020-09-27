@@ -7,13 +7,14 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesTaskLink
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
+import org.jetbrains.annotations.NonNls
 
-private const val OPEN_TASK_ON_SITE_ACTION = "Open task on site"
 
 @Suppress("ComponentNotRegistered")
-class OpenTaskOnSiteAction : DumbAwareAction(OPEN_TASK_ON_SITE_ACTION), RightAlignedToolbarAction {
+class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.open.on.site.text")), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -38,6 +39,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(OPEN_TASK_ON_SITE_ACTION), RightAli
   }
 
   companion object {
+    @NonNls
     const val ACTION_ID: String = "Educational.OpenTaskOnSiteAction"
   }
 }

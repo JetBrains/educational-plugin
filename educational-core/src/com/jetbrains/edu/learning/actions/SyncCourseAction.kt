@@ -3,12 +3,13 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import java.util.function.Supplier
 import javax.swing.Icon
 
-abstract class SyncCourseAction(private val text: String,
-                                description: String,
+abstract class SyncCourseAction(private val text: Supplier<String>,
+                                description: Supplier<String>,
                                 icon: Icon?) : DumbAwareAction(text, description, icon) {
-  open val loginWidgetText: String get() = text
+  open val loginWidgetText: String get() = text.get()
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

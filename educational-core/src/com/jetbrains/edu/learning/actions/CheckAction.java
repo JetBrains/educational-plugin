@@ -54,6 +54,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,30 +62,34 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CheckAction extends DumbAwareAction {
+  @NonNls
   public static final String ACTION_ID = "Educational.Check";
   private static final Logger LOG = Logger.getInstance(CheckAction.class);
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(EduCoreBundle.message("check"), EduCoreBundle.message("check.solution"), null);
+    super(EduCoreBundle.lazyMessage("action.check.text"),
+          EduCoreBundle.lazyMessage("action.check.description"), null);
   }
 
-  public CheckAction(String text) {
-    super(text, text, null);
+  public CheckAction(Supplier<String> dynamicText) {
+    super(dynamicText, dynamicText, null);
   }
 
-  private CheckAction(String text, String description) {
-    super(text, description, null);
+  private CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
+    super(dynamicText, dynamicDescription, null);
   }
 
   public static CheckAction createCheckAction(@NotNull Task task) {
     if (task instanceof TheoryTask) {
-      return new CheckAction(EduCoreBundle.message("check.run"), EduCoreBundle.message("check.run.solution"));
+      return new CheckAction(EduCoreBundle.lazyMessage("action.check.run.text"),
+                             EduCoreBundle.lazyMessage("action.check.run.description"));
     }
     return task.getCheckAction();
   }
@@ -136,7 +141,7 @@ public class CheckAction extends DumbAwareAction {
   private static void showCheckUnavailablePopup(Project project) {
     Balloon balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
-        ActionUtil.getUnavailableMessage(EduCoreBundle.message("check"), false),
+        ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.title"), false),
         null,
         UIUtil.getToolTipActionBackground(),
         EduBrowserHyperlinkListener.INSTANCE)
@@ -165,12 +170,12 @@ public class CheckAction extends DumbAwareAction {
     if (taskFile != null) {
       final Task task = taskFile.getTask();
       if (task instanceof TheoryTask) {
-        presentation.setText(EduCoreBundle.message("check.run"));
-        presentation.setDescription(EduCoreBundle.message("check.run.solution"));
+        presentation.setText(EduCoreBundle.lazyMessage("action.check.run.text"));
+        presentation.setDescription(EduCoreBundle.lazyMessage("action.check.run.description"));
       }
       else {
-        presentation.setText(EduCoreBundle.message("check"));
-        presentation.setDescription(EduCoreBundle.message("check.solution"));
+        presentation.setText(EduCoreBundle.lazyMessage("action.check.text"));
+        presentation.setDescription(EduCoreBundle.lazyMessage("action.check.description"));
       }
     }
     if (presentation.isEnabled()) {
@@ -194,10 +199,11 @@ public class CheckAction extends DumbAwareAction {
     private final Task myTask;
     @Nullable private final TaskChecker<?> myChecker;
     private CheckResult myResult;
+    @NonNls
     private static final String TEST_RESULTS_DISPLAY_ID = "Test Results: Run";
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
-      super(project, EduCoreBundle.message("checking.solution"), true);
+      super(project, EduCoreBundle.message("progress.title.checking.solution"), true);
       myProject = project;
       myTask = task;
       final Course course = task.getLesson().getCourse();

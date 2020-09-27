@@ -33,7 +33,7 @@ class HyperskillTaskBuilder(
     val options = stepSource.block?.options as? PyCharmStepOptions
     if (options?.hasHeaderOrFooter(langId) == true) {
       appendln("<b>${EduCoreBundle.message("label.caution")}</b><br><br>")
-      appendln(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check")))
+      appendln(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")))
       appendln("<br><br>")
     }
 

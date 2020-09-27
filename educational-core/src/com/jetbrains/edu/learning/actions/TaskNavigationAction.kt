@@ -8,11 +8,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import java.util.function.Supplier
 import javax.swing.Icon
 
 abstract class TaskNavigationAction(
-  text: String,
-  description: String,
+  text: Supplier<String>,
+  description: Supplier<String>,
   icon: Icon
 ) : DumbAwareAction(text, description, icon) {
 

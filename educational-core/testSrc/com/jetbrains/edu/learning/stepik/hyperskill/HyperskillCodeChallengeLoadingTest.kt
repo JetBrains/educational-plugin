@@ -28,7 +28,7 @@ class HyperskillCodeChallengeLoadingTest : EduTestCase() {
     val course = createHyperskillCourse()
     val problem = course.findTask(HYPERSKILL_PROBLEMS, "Violator")
     assertEquals(shouldContainWarning,
-                 EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check")) in problem.descriptionText)
+                 EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in problem.descriptionText)
   }
 
   private fun createHyperskillCourse(): HyperskillCourse {

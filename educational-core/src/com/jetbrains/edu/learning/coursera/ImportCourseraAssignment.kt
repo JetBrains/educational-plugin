@@ -5,8 +5,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class ImportCourseraAssignment : ImportLocalCourseAction("Start Coursera Assignment") {
+class ImportCourseraAssignment : ImportLocalCourseAction(EduCoreBundle.lazyMessage("action.import.coursera.assigment.text")) {
 
   override fun initCourse(course: Course): Course {
     super.initCourse(course)

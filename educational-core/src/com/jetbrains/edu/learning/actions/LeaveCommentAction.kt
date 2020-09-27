@@ -9,16 +9,15 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
-private const val LEAVE_A_COMMENT_ACTION = "Leave a comment"
-private const val SHOW_DISCUSSIONS_ACTION = "Show discussions"
-
 @Suppress("ComponentNotRegistered")
-class LeaveCommentAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMENT_ACTION, EducationalCoreIcons.CommentTask),
+class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.leave.comment.text"),
+                                           EduCoreBundle.lazyMessage("action.leave.comment.text"), EducationalCoreIcons.CommentTask),
                            RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -38,9 +37,9 @@ class LeaveCommentAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMME
     val course = task.course
 
     if (course is HyperskillCourse) {
-      e.presentation.text = SHOW_DISCUSSIONS_ACTION
-      e.presentation.description = SHOW_DISCUSSIONS_ACTION
-      addSynonym(SHOW_DISCUSSIONS_ACTION)
+      e.presentation.text = EduCoreBundle.message("action.show.discussions.text")
+      e.presentation.description = EduCoreBundle.message("action.show.discussions.description")
+      addSynonym(EduCoreBundle.message("action.show.discussions.text"))
     }
 
     val feedbackLink = task.feedbackLink
