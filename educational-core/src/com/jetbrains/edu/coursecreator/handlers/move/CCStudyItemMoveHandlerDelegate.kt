@@ -9,9 +9,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
-abstract class CCStudyItemMoveHandlerDelegate(private val itemName: String) : MoveHandlerDelegate() {
+abstract class CCStudyItemMoveHandlerDelegate(private val itemType: StudyItemType) : MoveHandlerDelegate() {
 
   override fun canMove(dataContext: DataContext): Boolean {
     val directory = CommonDataKeys.PSI_ELEMENT.getData(dataContext) as? PsiDirectory ?: return false
@@ -26,7 +27,7 @@ abstract class CCStudyItemMoveHandlerDelegate(private val itemName: String) : Mo
   override fun isValidTarget(psiElement: PsiElement?, sources: Array<PsiElement>): Boolean = true
 
   protected open fun getDelta(project: Project, targetItem: StudyItem): Int? {
-    return showMoveStudyItemDialog(project, itemName, targetItem.name)
+    return showMoveStudyItemDialog(project, itemType, targetItem.name)
   }
 
   override fun tryToMove(

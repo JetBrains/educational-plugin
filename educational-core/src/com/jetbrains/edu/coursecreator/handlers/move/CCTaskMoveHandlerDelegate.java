@@ -10,12 +10,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,12 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
+import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
+
 public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
   private static final Logger LOG = Logger.getInstance(CCTaskMoveHandlerDelegate.class);
 
   public CCTaskMoveHandlerDelegate() {
-    super(EduNames.TASK);
+    super(TASK_TYPE);
   }
 
   @Override
@@ -48,7 +50,8 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
     final VirtualFile targetVFile = ((PsiDirectory)targetContainer).getVirtualFile();
 
     if (!VirtualFileExt.isTaskDirectory(targetVFile, project) && !VirtualFileExt.isLessonDirectory(targetVFile, project)) {
-      Messages.showInfoMessage("Tasks can be moved only to other lessons or inside lesson", "Incorrect Target For Move");
+      Messages.showInfoMessage(EduCoreBundle.message("dialog.message.incorrect.movement.task"),
+                               EduCoreBundle.message("dialog.title.incorrect.target.for.move"));
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -70,7 +73,8 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
         return;
       }
       if (targetVFile.findChild(taskToMove.getName()) != null) {
-        Messages.showInfoMessage("Lesson contains task with the same name", "Incorrect Target For Move");
+        Messages.showInfoMessage(EduCoreBundle.message("dialog.message.task.name.conflict.in.lesson"),
+                                 EduCoreBundle.message("dialog.title.incorrect.target.for.move"));
         return;
       }
       List<Task> taskList = targetLesson.getTaskList();

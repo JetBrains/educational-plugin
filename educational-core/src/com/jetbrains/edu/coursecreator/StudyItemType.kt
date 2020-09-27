@@ -119,6 +119,15 @@ val StudyItemType.uploadToStepikTitleMessage: String
     TASK_TYPE -> message("item.upload.to.0.task.title", STEPIK)
   }
 
+val StudyItemType.moveItemMessage: String
+  @Nls(capitalization = Nls.Capitalization.Title)
+  get() = when(this) {
+    COURSE_TYPE -> message("dialog.title.move.course")
+    SECTION_TYPE -> message("dialog.title.move.section")
+    LESSON_TYPE -> message("dialog.title.move.lesson")
+    TASK_TYPE -> message("dialog.title.move.task")
+  }
+
 @Nls(capitalization = Nls.Capitalization.Sentence)
 fun StudyItemType.failedToFindItemMessage(@NonNls itemName: String): String =
   when (this) {

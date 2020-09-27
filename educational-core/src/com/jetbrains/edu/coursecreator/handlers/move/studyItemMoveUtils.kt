@@ -4,6 +4,7 @@ package com.jetbrains.edu.coursecreator.handlers.move
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
@@ -11,13 +12,13 @@ import org.jetbrains.annotations.TestOnly
 private var MOCK: MoveStudyItemUI? = null
 
 /** Returns delta */
-fun showMoveStudyItemDialog(project: Project, itemName: String, thresholdName: String): Int? {
+fun showMoveStudyItemDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int? {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("Mock UI should be set via `withMockMoveStudyItemUI`")
   } else {
     DialogMoveStudyItemUI()
   }
-  return ui.showDialog(project, itemName, thresholdName)
+  return ui.showDialog(project, itemType, thresholdName)
 }
 
 @TestOnly
@@ -31,12 +32,12 @@ fun withMockMoveStudyItemUI(mockUi: MoveStudyItemUI, action: () -> Unit) {
 }
 
 interface MoveStudyItemUI {
-  fun showDialog(project: Project, itemName: String, thresholdName: String): Int?
+  fun showDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int?
 }
 
 class DialogMoveStudyItemUI : MoveStudyItemUI {
-  override fun showDialog(project: Project, itemName: String, thresholdName: String): Int? {
-    val dialog = CCMoveStudyItemDialog(project, itemName, thresholdName)
+  override fun showDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int? {
+    val dialog = CCMoveStudyItemDialog(project, itemType, thresholdName)
     dialog.show()
     return if (dialog.exitCode != DialogWrapper.OK_EXIT_CODE) null else dialog.indexDelta
   }

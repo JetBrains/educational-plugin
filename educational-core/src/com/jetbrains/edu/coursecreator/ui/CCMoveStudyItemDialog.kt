@@ -4,14 +4,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.moveItemMessage
 import javax.swing.JComponent
 
-class CCMoveStudyItemDialog(project: Project, itemName: String, thresholdName: String) : DialogWrapper(project) {
+class CCMoveStudyItemDialog(
+  project: Project,
+  itemType: StudyItemType,
+  thresholdName: String
+) : DialogWrapper(project) {
 
   private val positionPanel: CCItemPositionPanel = CCItemPositionPanel(thresholdName)
 
   init {
-    title = "Move ${StringUtil.toTitleCase(itemName)}"
+    title = itemType.moveItemMessage
     init()
   }
 

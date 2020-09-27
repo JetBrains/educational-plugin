@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.actions.MoveAction
 import com.intellij.testFramework.MapDataContext
+import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.handlers.move.MoveStudyItemUI
 import com.jetbrains.edu.coursecreator.handlers.move.withMockMoveStudyItemUI
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
@@ -20,7 +21,7 @@ abstract class MoveTestBase : EduActionTestCase() {
   protected fun doMoveAction(course: Course, source: PsiElement, targetDir: PsiDirectory, delta: Int? = null) {
     val dataContext = dataContext(source).withTarget(targetDir)
     withMockMoveStudyItemUI(object : MoveStudyItemUI {
-      override fun showDialog(project: Project, itemName: String, thresholdName: String): Int? {
+      override fun showDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int? {
         return when (delta) {
           BEFORE_DELTA, AFTER_DELTA -> delta
           null -> error("Pass `delta` value explicitly")

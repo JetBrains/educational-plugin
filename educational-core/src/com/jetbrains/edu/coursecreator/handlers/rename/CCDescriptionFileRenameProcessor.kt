@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.handlers.rename.EduRenameDialogBase
 import com.jetbrains.edu.learning.handlers.rename.RenameDialogFactory
 import com.jetbrains.edu.learning.handlers.rename.createRenameDialog
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
 
@@ -46,7 +47,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
       return object : EduRenameDialogBase(project, element, nameSuggestionContext, editor) {
 
         init {
-          title = "Rename description file"
+          title = EduCoreBundle.message("dialog.title.rename.description.file")
         }
 
         override fun performRename(newName: String) {
@@ -58,7 +59,9 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
         @Throws(ConfigurationException::class)
         override fun canRun() {
           if (!EduUtils.isTaskDescriptionFile(newName)) {
-            throw ConfigurationException("Description file should be named '${EduNames.TASK_HTML}' or '${EduNames.TASK_MD}'.")
+            throw ConfigurationException(
+              EduCoreBundle.message("dialog.message.incorrect.description.file.name", EduNames.TASK_HTML, EduNames.TASK_MD)
+            )
           }
         }
       }

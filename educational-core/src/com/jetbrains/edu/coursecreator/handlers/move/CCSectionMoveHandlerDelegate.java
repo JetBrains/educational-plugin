@@ -8,18 +8,23 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
+
 public class CCSectionMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
   public CCSectionMoveHandlerDelegate() {
-    super(EduNames.SECTION);
+    super(SECTION_TYPE);
   }
 
   @Override
@@ -47,7 +52,8 @@ public class CCSectionMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate
 
     StudyItem targetItem = course.getItem(((PsiDirectory)targetDirectory).getName());
     if (targetItem == null) {
-      Messages.showInfoMessage("Sections can be moved only to top level", "Incorrect Target For Move");
+      Messages.showInfoMessage(EduCoreBundle.message("dialog.message.incorrect.movement.section"),
+                               EduCoreBundle.message("dialog.title.incorrect.target.for.move"));
       return;
     }
 

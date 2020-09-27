@@ -11,20 +11,25 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.move.MoveCallback;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
+import static com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE;
+
 public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
 
   private static final Logger LOG = Logger.getInstance(CCLessonMoveHandlerDelegate.class);
 
   public CCLessonMoveHandlerDelegate() {
-    super(EduNames.LESSON);
+    super(LESSON_TYPE);
   }
 
   @Override
@@ -54,7 +59,8 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     final VirtualFile targetVFile = ((PsiDirectory)targetDirectory).getVirtualFile();
     StudyItem targetItem = getTargetItem(course, targetVFile, project);
     if (targetItem == null) {
-      Messages.showInfoMessage("Lessons can be moved only to other lessons or sections", "Incorrect Target For Move");
+      Messages.showInfoMessage(EduCoreBundle.message("dialog.message.incorrect.movement.lesson"),
+                               EduCoreBundle.message("dialog.title.incorrect.target.for.move"));
       return;
     }
     VirtualFile sourceParentDir = sourceVFile.getParent();
@@ -62,8 +68,10 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
 
     if (targetItem instanceof Section || targetItem instanceof Course) {
       if (targetParentDir.findChild(sourceLesson.getName()) != null) {
-        String prefix = targetItem instanceof Section ? "Section" : "Course";
-        Messages.showInfoMessage(prefix + " contains lesson with the same name", "Incorrect Target For Move");
+        String message = targetItem instanceof Section
+                         ? EduCoreBundle.message("dialog.message.lesson.name.conflict.in.section")
+                         : EduCoreBundle.message("dialog.message.lesson.name.conflict.in.course");
+        Messages.showInfoMessage(message, EduCoreBundle.message("dialog.title.incorrect.target.for.move"));
         return;
       }
 
