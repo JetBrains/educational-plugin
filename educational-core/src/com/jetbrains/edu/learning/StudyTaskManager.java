@@ -55,6 +55,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware, Disposable {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
+  private volatile boolean courseLoadedWithError = false;
 
   @Transient
   private Course myCourse;
@@ -290,9 +291,13 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         !LightEdit.owns(project) &&
         manager != null &&
         manager.getCourse() == null &&
-        YamlFormatSettings.isEduYamlProject(project)) {
+        YamlFormatSettings.isEduYamlProject(project) &&
+        !manager.courseLoadedWithError) {
       Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
-      manager.setCourse(course);
+      manager.courseLoadedWithError = course == null;
+      if (course != null) {
+        manager.setCourse(course);
+      }
       YamlFormatSynchronizer.startSynchronization(project);
     }
     return manager;
