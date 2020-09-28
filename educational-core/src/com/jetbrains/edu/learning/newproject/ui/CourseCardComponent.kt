@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.icons.AllIcons
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CourseMetaInfo
@@ -142,7 +143,7 @@ class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, Cours
 
 }
 
-class CommunityCourseInfoComponent(course: EduCourse) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
+class CommunityCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayout(INFO_HGAP)) {
   private val rating: JLabel = JLabel()
   private val downloads: JLabel = JLabel()
   private val authorComponent: JLabel = JLabel()
@@ -176,6 +177,7 @@ class CommunityCourseInfoComponent(course: EduCourse) : JPanel(FlowLayout(FlowLa
     add(rating)
     add(downloads)
     add(authorComponent)
+    border = JBUI.Borders.emptyBottom(5)
   }
 }
 
