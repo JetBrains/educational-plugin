@@ -62,7 +62,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     else {
       if (course is HyperskillCourse) {
         val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), GoToTaskUrlAction.ACTION_ID)
-        link.border = JBUI.Borders.empty(9, 0, 0, 0)
+        link.border = JBUI.Borders.empty(9, 10, 0, 0)
         rightActionsToolbar.add(link)
       }
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
