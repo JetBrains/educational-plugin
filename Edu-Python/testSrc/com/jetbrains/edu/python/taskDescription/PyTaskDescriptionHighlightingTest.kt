@@ -29,14 +29,14 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>foo():
-          print <span style="...">"Hello!"</span>
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">foo():</span>
+          <span style="...">print </span><span style="...">"Hello!"</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>foo():
-          print <span style="...">"Hello!"</span>
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">foo():</span>
+          <span style="...">print </span><span style="...">"Hello!"</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">__name__ == </span><span style="...">"__main__"</span></span></p>
      </body>
     </html>
   """)
@@ -60,14 +60,14 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>foo():
-          print <span style="...">"Hello!"</span>
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">foo():</span>
+          <span style="...">print </span><span style="...">"Hello!"</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>foo():
-          print <span style="...">"Hello!"</span>
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">foo():</span>
+          <span style="...">print </span><span style="...">"Hello!"</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">__name__ == </span><span style="...">"__main__"</span></span></p>
      </body>
     </html>
   """)

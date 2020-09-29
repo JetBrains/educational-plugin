@@ -27,22 +27,22 @@ class JsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
 
     Inline code `const a = "hello"`
   """, """
-  <html>
-   <head></head>
-   <body>
-    <p>Code block with default language:</p>
-    <span class="code-block"><pre>  <span style="...">function </span>sum(a, b) {
-      <span style="...">return </span>a + b;
-    }
-  </pre> </span>
-    <p>Code block with specific language:</p>
-    <span class="code-block"><pre>   <span style="...">function </span>sum(a, b) {
-        <span style="...">return </span>a + b;
-     }
-  </pre> </span>
-    <p>Inline code <span class="code"><span style="...">const </span>a = <span style="...">"hello"</span></span></p>
-   </body>
-  </html>
+    <html>
+     <head></head>
+     <body>
+      <p>Code block with default language:</p>
+      <span class="code-block"><pre>  <span style="...">function </span><span style="...">sum(a</span><span style="...">, </span><span style="...">b) {</span>
+        <span style="...">return </span><span style="...">a + b</span><span style="...">;</span>
+      <span style="...">}</span>
+    </pre> </span>
+      <p>Code block with specific language:</p>
+      <span class="code-block"><pre>   <span style="...">function </span><span style="...">sum(a</span><span style="...">, </span><span style="...">b) {</span>
+          <span style="...">return </span><span style="...">a + b</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">const </span><span style="...">a = </span><span style="...">"hello"</span></span></p>
+     </body>
+    </html>
   """)
 
   fun `test html description highlighting`() = doHtmlTest("""
@@ -62,21 +62,21 @@ class JsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     <p>Inline code <code>const a = "hello"</code></p>
     </html>
   """, """
-  <html>
-   <head></head>
-   <body>
-    <p>Code block with default language:</p>
-    <span class="code-block"><pre>  <span style="...">function </span>sum(a, b) {
-      <span style="...">return </span>a + b;
-    }
-  </pre> </span>
-    <p>Code block with specific language:</p>
-    <span class="code-block"><pre>  <span style="...">function </span>sum(a, b) {
-        <span style="...">return </span>a + b;
-     }
-  </pre> </span>
-    <p>Inline code <span class="code"><span style="...">const </span>a = <span style="...">"hello"</span></span></p>
-   </body>
-  </html>
+    <html>
+     <head></head>
+     <body>
+      <p>Code block with default language:</p>
+      <span class="code-block"><pre>  <span style="...">function </span><span style="...">sum(a</span><span style="...">, </span><span style="...">b) {</span>
+        <span style="...">return </span><span style="...">a + b</span><span style="...">;</span>
+      <span style="...">}</span>
+    </pre> </span>
+      <p>Code block with specific language:</p>
+      <span class="code-block"><pre>  <span style="...">function </span><span style="...">sum(a</span><span style="...">, </span><span style="...">b) {</span>
+          <span style="...">return </span><span style="...">a + b</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">const </span><span style="...">a = </span><span style="...">"hello"</span></span></p>
+     </body>
+    </html>
   """)
 }

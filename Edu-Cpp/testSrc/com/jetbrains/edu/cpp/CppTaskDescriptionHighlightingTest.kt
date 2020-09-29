@@ -29,28 +29,28 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
     ```
 
     Inline code `if (condition) {} else {}`
-  """, """<html>
- <head></head>
- <body>
-  <p>Code block with default language:</p>
-  <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
-      <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
-      cout &lt;&lt; <span style="...">"Hello world!"</span>;
-      <span style="...">return </span><span style="...">0</span>;
-   }
-</pre> </span>
-  <p>Code block with specific language:</p>
-  <span class="code-block"><pre>   <span style="...">int </span>main(<span style="...">void</span>) {
-      <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
-      cout &lt;&lt; <span style="...">"Hello world!"</span>;
-      <span style="...">return </span><span style="...">0</span>;
-   }
-</pre> </span>
-  <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
- </body>
-</html>
+  """, """
+    <html>
+     <head></head>
+     <body>
+      <p>Code block with default language:</p>
+      <span class="code-block"><pre>  <span style="...">int </span><span style="...">main(</span><span style="...">void</span><span style="...">) {</span>
+          <span style="...">double </span><span style="...">x = </span><span style="...">1e-6 </span><span style="...">+ </span><span style="...">5.0</span><span style="...">;</span>
+          <span style="...">cout &lt;&lt; </span><span style="...">"Hello world!"</span><span style="...">;</span>
+          <span style="...">return </span><span style="...">0</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Code block with specific language:</p>
+      <span class="code-block"><pre>   <span style="...">int </span><span style="...">main(</span><span style="...">void</span><span style="...">) {</span>
+          <span style="...">double </span><span style="...">x = </span><span style="...">1e-6 </span><span style="...">+ </span><span style="...">5.0</span><span style="...">;</span>
+          <span style="...">cout &lt;&lt; </span><span style="...">"Hello world!"</span><span style="...">;</span>
+          <span style="...">return </span><span style="...">0</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
+     </body>
+    </html>
   """)
-
 
   fun `test html description highlighting`() = doHtmlTest("""
     <html>
@@ -72,26 +72,26 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
     </code></pre>
     <p>Inline code <code>const a = "hello"</code></p>
     </html>
-  """, """<html>
- <head></head>
- <body>
-  <p>Code block with default language:</p>
-  <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
-      <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
-      cout &lt;&lt; <span style="...">"Hello world!"</span>;
-      <span style="...">return </span><span style="...">0</span>;
-   }
-</pre> </span>
-  <p>Code block with specific language:</p>
-  <span class="code-block"><pre>  <span style="...">int </span>main(<span style="...">void</span>) {
-      <span style="...">double </span>x = <span style="...">1e-6 </span>+ <span style="...">5.0</span>;
-      cout &lt;&lt; <span style="...">"Hello world!"</span>;
-      <span style="...">return </span><span style="...">0</span>;
-   }
-</pre> </span>
-  <p>Inline code <span class="code"><span style="...">const </span>a = <span style="...">"hello"</span></span></p>
- </body>
-</html>
+  """, """
+    <html>
+     <head></head>
+     <body>
+      <p>Code block with default language:</p>
+      <span class="code-block"><pre>  <span style="...">int </span><span style="...">main(</span><span style="...">void</span><span style="...">) {</span>
+          <span style="...">double </span><span style="...">x = </span><span style="...">1e-6 </span><span style="...">+ </span><span style="...">5.0</span><span style="...">;</span>
+          <span style="...">cout &lt;&lt; </span><span style="...">"Hello world!"</span><span style="...">;</span>
+          <span style="...">return </span><span style="...">0</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Code block with specific language:</p>
+      <span class="code-block"><pre>  <span style="...">int </span><span style="...">main(</span><span style="...">void</span><span style="...">) {</span>
+          <span style="...">double </span><span style="...">x = </span><span style="...">1e-6 </span><span style="...">+ </span><span style="...">5.0</span><span style="...">;</span>
+          <span style="...">cout &lt;&lt; </span><span style="...">"Hello world!"</span><span style="...">;</span>
+          <span style="...">return </span><span style="...">0</span><span style="...">;</span>
+       <span style="...">}</span>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">const </span><span style="...">a = </span><span style="...">"hello"</span></span></p>
+     </body>
+    </html>
   """)
 }
-

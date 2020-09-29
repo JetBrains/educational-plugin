@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.taskDescription
 
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.colors.EditorColorsScheme
+import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
@@ -10,6 +13,31 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
   protected abstract val language: com.intellij.lang.Language
   open val environment: String = ""
   protected abstract val settings: Any
+
+  private var oldColorScheme: EditorColorsScheme? = null
+
+  override fun setUp() {
+    super.setUp()
+    // BACKCOMPAT: 2020.2.
+    //  Since 2020.3 `HTMLTextPainter.convertCodeFragmentToHTMLFragmentWithInlineStyles` that we use in `EduCodeHighlighter`
+    //  adds `span` attribute for all identifiers that have "default" color (see `HtmlStyleManager.isDefaultAttributes`).
+    //  To avoid different tests for all supported platform,
+    //  dark editor theme is set up here to force `HTMLTextPainter` add `span` attribute for all identifiers on all platforms
+    val colorsManager = EditorColorsManager.getInstance()
+    val oldColorScheme = colorsManager.globalScheme
+    val darkScheme = colorsManager.allSchemes.find {
+      // Copied from `com.intellij.openapi.editor.colors.EditorColorsManager.isDarkEditor`
+      ColorUtil.isDark(it.defaultBackground)
+    } ?: oldColorScheme
+    colorsManager.globalScheme = darkScheme
+  }
+
+  override fun tearDown() {
+    oldColorScheme?.let {
+      EditorColorsManager.getInstance().globalScheme = it
+    }
+    super.tearDown()
+  }
 
   protected fun doHtmlTest(@Language("HTML") taskDescription: String, @Language("HTML") expectedText: String) =
     doTest(taskDescription, DescriptionFormat.HTML, expectedText)

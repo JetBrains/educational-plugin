@@ -8,6 +8,9 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
   protected abstract val codeSample: String
   protected abstract val codeSampleWithHighlighting: String
 
+  protected open val codeSampleWithBasicHighlighting: String
+    get() = """<span style="...">$codeSample</span>"""
+
   override fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
     courseWithFiles(courseProducer = ::HyperskillCourse, language = language, environment = environment, settings = settings) {
       lesson {
@@ -27,7 +30,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
       <html>
        <head></head>
        <body>
-        <span class="code">$codeSample</span>
+        <span class="code">$codeSampleWithBasicHighlighting</span>
        </body>
       </html>
         """)
@@ -44,7 +47,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
       <html>
        <head></head>
        <body>
-        <span class="code">$codeSample</span>
+        <span class="code">$codeSampleWithBasicHighlighting</span>
        </body>
       </html>
         """)

@@ -14,7 +14,6 @@ class KtHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHig
 
   override val codeSample: String
     get() = """fun main() {}"""
-
   override val codeSampleWithHighlighting: String
-    get() = """<span style="...">fun </span>main() {}"""
+    get() = """<span style="...">fun </span><span style="...">main() {}</span>"""
 }

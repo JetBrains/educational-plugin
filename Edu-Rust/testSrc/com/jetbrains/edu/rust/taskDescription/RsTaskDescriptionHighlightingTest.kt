@@ -30,16 +30,16 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">pub struct </span>Foo&lt;<span style="...">'a</span>&gt; {
-          s: &amp;<span style="...">'a </span>str
-      }
+      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo</span><span style="...">&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+          <span style="...">s</span><span style="...">: &amp;</span><span style="...">'a </span><span style="...">str</span>
+      <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fn </span>main() {
-          println!(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main</span><span style="...">() {</span>
+          <span style="...">println</span><span style="...">!(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>condition { <span style="...">1 </span>} <span style="...">else </span>{ <span style="...">2 </span>}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition </span><span style="...">{ </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
      </body>
     </html>
   """)
@@ -65,16 +65,16 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">pub struct </span>Foo&lt;<span style="...">'a</span>&gt; {
-          s: &amp;<span style="...">'a </span>str
-      }
+      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo</span><span style="...">&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+          <span style="...">s</span><span style="...">: &amp;</span><span style="...">'a </span><span style="...">str</span>
+      <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fn </span>main() {
-          println!(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main</span><span style="...">() {</span>
+          <span style="...">println</span><span style="...">!(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>condition { <span style="...">1 </span>} <span style="...">else </span>{ <span style="...">2 </span>}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition </span><span style="...">{ </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
      </body>
     </html>
   """)

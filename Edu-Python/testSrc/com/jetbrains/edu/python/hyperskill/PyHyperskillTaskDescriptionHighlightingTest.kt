@@ -24,7 +24,6 @@ class PyHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHig
 
   override val codeSample: String
     get() = """print(1)"""
-
   override val codeSampleWithHighlighting: String
-    get() = """print(<span style="...">1</span>)"""
+    get() = """<span style="...">print(</span><span style="...">1</span><span style="...">)</span>"""
 }

@@ -9,7 +9,7 @@ class JHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHigh
   override val codeSample: String get() = """class Main {}"""
 
   override val codeSampleWithHighlighting: String
-    get() = """<span style="...">class </span>Main {}"""
+    get() = """<span style="...">class </span><span style="...">Main {}</span>"""
 
   override val language: Language get() = JavaLanguage.INSTANCE
 

@@ -32,16 +32,16 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
-        println(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+        <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
-        println(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+        <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
      </body>
     </html>
   """)
@@ -67,16 +67,16 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
-        println(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+        <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span>main(args: Array[String]): Unit = {
-        println(<span style="...">"Hello!"</span>)
-      }
+      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+        <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
      </body>
     </html>
   """)
