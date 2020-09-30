@@ -4,5 +4,6 @@ object EduExperimentalFeatures {
   const val ANDROID_COURSES = "com.jetbrains.edu.android"
   const val SPLIT_EDITOR = "edu.course.creator.split.editor"
   const val CC_HYPERSKILL = "edu.course.hyperskill"
+  const val CC_STEPIK = "edu.course.stepik"
   const val MARKETPLACE = "edu.course.marketplace"
 }

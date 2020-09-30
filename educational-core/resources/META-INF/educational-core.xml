@@ -172,6 +172,7 @@
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
     <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
     <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.actions.stepik.CCShowChangedFiles"/>
+    <action id="Educational.Educator.StepikChangeHost" class="com.jetbrains.edu.learning.stepik.StepikChangeHost"/>
 
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>
@@ -278,6 +279,9 @@
     <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
+    </experimentalFeature>
+    <experimentalFeature id="edu.course.stepik" percentOfUsers="100" internalFeature="true">
+      <description>Enables action to change Stepik host</description>
     </experimentalFeature>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/hint.xml"/>
