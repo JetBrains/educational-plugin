@@ -17,13 +17,14 @@ object EduBrowser {
 
   fun countUsage(link: String) {
     when {
-      link.startsWith(StepikNames.STEPIK_URL) -> {
+      link.startsWith(StepikNames.getStepikUrl()) -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
       }
       link.startsWith(CodeforcesNames.CODEFORCES_URL) -> {
         if (link.contains(CodeforcesNames.CODEFORCES_SUBMIT)) {
           EduCounterUsageCollector.codeforcesSubmitSolution()
-        } else {
+        }
+        else {
           EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.CODEFORCES)
         }
       }

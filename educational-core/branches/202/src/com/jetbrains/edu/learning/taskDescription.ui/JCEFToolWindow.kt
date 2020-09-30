@@ -11,7 +11,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
@@ -137,7 +137,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private inner class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
     override fun processExternalLink(url: String): Boolean {
       val urlToOpen = when {
-        url.startsWith(FILE_PROTOCOL_PREFIX) -> STEPIK_URL + url.substringAfter(FILE_PROTOCOL_PREFIX)
+        url.startsWith(FILE_PROTOCOL_PREFIX) -> getStepikUrl() + url.substringAfter(FILE_PROTOCOL_PREFIX)
         else -> url
       }
       EduBrowser.browse(urlToOpen)

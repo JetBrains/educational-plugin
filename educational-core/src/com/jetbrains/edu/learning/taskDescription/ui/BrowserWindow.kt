@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.HINT_HEADER_EXPANDED
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -172,7 +172,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
     override fun processExternalLink(url: String): Boolean {
       myEngine.isJavaScriptEnabled = true
       myEngine.loadWorker.cancel()
-      val urlToOpen = if (isRelativeLink(url)) STEPIK_URL + url else url
+      val urlToOpen = if (isRelativeLink(url)) getStepikUrl() + url else url
       EduBrowser.browse(urlToOpen)
       return true
     }

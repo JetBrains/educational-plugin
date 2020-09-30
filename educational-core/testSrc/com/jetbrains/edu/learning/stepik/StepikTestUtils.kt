@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.stepik.StepikNames.getTokenUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.Consts
@@ -66,7 +67,7 @@ object StepikTestUtils {
   }
 
   private fun getTokens(parameters: List<NameValuePair>, credentials: String): TokenInfo? {
-    val request = HttpPost(StepikNames.TOKEN_URL)
+    val request = HttpPost(getTokenUrl())
     request.addHeader("Authorization", "Basic " + Base64.encodeBase64String(credentials.toByteArray(Consts.UTF_8)))
     request.entity = UrlEncodedFormEntity(parameters, Consts.UTF_8)
 

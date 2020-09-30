@@ -12,6 +12,8 @@ import org.jetbrains.ide.BuiltInServerManager;
 
 import java.io.IOException;
 
+import static com.jetbrains.edu.learning.stepik.StepikNames.getClientId;
+
 public class StepikAuthorizer {
   private static final Logger LOG = Logger.getInstance(StepikAuthorizer.class.getName());
 
@@ -19,8 +21,9 @@ public class StepikAuthorizer {
 
   @NotNull
   public static String createOAuthLink(String authRedirectUrl) {
-    return "https://stepik.org/oauth2/authorize/" +
-           "?client_id=" + StepikNames.CLIENT_ID +
+    return StepikNames.getStepikUrl() +
+           "/oauth2/authorize/" +
+           "?client_id=" + getClientId() +
            "&redirect_uri=" + URLUtil.encodeURIComponent(authRedirectUrl) +
            "&response_type=code";
   }

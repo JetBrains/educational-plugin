@@ -103,7 +103,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
     ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.STEPIK_URL));
+        indicator.setText(EduCoreBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.getStepikUrl()));
         doPush(lesson, project);
         YamlFormatSynchronizer.saveRemoteInfo(lesson);
       }

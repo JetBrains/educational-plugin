@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
@@ -95,7 +96,7 @@ private fun markStepAsSolved(lessonId: Int, task: Task) {
 }
 
 fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
-  val attachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"
+  val attachmentLink = "${getStepikUrl()}/media/attachments/lesson/${lesson.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = StepikConnector.getInstance().loadAttachment(attachmentLink) ?: return
   val lessonInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, LessonAdditionalInfo::class.java)
 
@@ -114,7 +115,7 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
 }
 
 fun loadAndFillAdditionalCourseInfo(course: Course, attachmentLink: String? = null) {
-  val link = attachmentLink ?: "${StepikNames.STEPIK_URL}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
+  val link = attachmentLink ?: "${getStepikUrl()}/media/attachments/course/${course.id}/${StepikNames.ADDITIONAL_INFO}"
   val infoText = StepikConnector.getInstance().loadAttachment(link) ?: return
   val courseInfo = HyperskillConnector.getInstance().objectMapper.readValue(infoText, CourseAdditionalInfo::class.java)
 

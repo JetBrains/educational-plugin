@@ -92,7 +92,7 @@ class CCPushLesson : DumbAwareAction(
 
     ProgressManager.getInstance().run(object : Modal(project, EduCoreBundle.message("action.push.lesson.uploading"), true) {
       override fun run(indicator: ProgressIndicator) {
-        indicator.text = EduCoreBundle.message("action.push.lesson.uploading.to", StepikNames.STEPIK_URL)
+        indicator.text = EduCoreBundle.message("action.push.lesson.uploading.to", StepikNames.getStepikUrl())
         doPush(lesson, project, course)
         YamlFormatSynchronizer.saveRemoteInfo(lesson)
       }

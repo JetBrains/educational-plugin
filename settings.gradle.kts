@@ -41,12 +41,32 @@ fun configureSecretProperties() {
 
   val secretProperties = loadProperties(secretProperties)
 
-  secretProperties.extractAndStore("educational-core/resources/stepik/stepik.properties", "stepikClientId", "stepikClientSecret")
-  secretProperties.extractAndStore("educational-core/resources/hyperskill/hyperskill-oauth.properties", "hyperskillClientId", "hyperskillClientSecret")
-  secretProperties.extractAndStore("educational-core/resources/twitter/oauth_twitter.properties", "twitterConsumerKey", "twitterConsumerSecret")
-  secretProperties.extractAndStore("Edu-Python/resources/checkio/py-checkio-oauth.properties", "pyCheckioClientId", "pyCheckioClientSecret")
-  secretProperties.extractAndStore("Edu-JavaScript/resources/checkio/js-checkio-oauth.properties", "jsCheckioClientId", "jsCheckioClientSecret")
-  secretProperties.extractAndStore("educational-core/resources/aes/aes.properties", "aesKey")
+  secretProperties.extractAndStore(
+    "educational-core/resources/stepik/stepik.properties",
+    "stepikClientId",
+    "stepikClientSecret",
+    "stepikTestClientId",
+    "stepikTestClientSecret"
+  )
+  secretProperties.extractAndStore(
+    "educational-core/resources/hyperskill/hyperskill-oauth.properties",
+    "hyperskillClientId",
+    "hyperskillClientSecret")
+  secretProperties.extractAndStore(
+    "educational-core/resources/twitter/oauth_twitter.properties",
+    "twitterConsumerKey",
+    "twitterConsumerSecret")
+  secretProperties.extractAndStore(
+    "Edu-Python/resources/checkio/py-checkio-oauth.properties",
+    "pyCheckioClientId",
+    "pyCheckioClientSecret")
+  secretProperties.extractAndStore(
+    "Edu-JavaScript/resources/checkio/js-checkio-oauth.properties",
+    "jsCheckioClientId",
+    "jsCheckioClientSecret")
+  secretProperties.extractAndStore(
+    "educational-core/resources/aes/aes.properties",
+    "aesKey")
 }
 
 fun download(url: URL, dstPath: String) {

@@ -75,7 +75,7 @@ class CCPushSection : DumbAwareAction(
     fun doPush(project: Project, section: Section, course: EduCourse) {
       ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreBundle.message("action.push.section.uploading"), true) {
         override fun run(indicator: ProgressIndicator) {
-          indicator.text = EduCoreBundle.message("action.push.section.uploading.to", StepikNames.STEPIK_URL)
+          indicator.text = EduCoreBundle.message("action.push.section.uploading.to", StepikNames.getStepikUrl())
           if (section.id > 0) {
             updateSection(section, course, project)
           }

@@ -55,7 +55,7 @@ fun setCourseLanguageEnvironment(info: EduCourse) {
 }
 
 fun getStepikLink(task: Task, lesson: Lesson): String {
-  return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
+  return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"
 }
 
 /**

@@ -97,7 +97,7 @@ public class CCPushTask extends DumbAwareAction {
     ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.task.uploading"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreBundle.message("action.push.task.uploading.to", StepikNames.STEPIK_URL));
+        indicator.setText(EduCoreBundle.message("action.push.task.uploading.to", StepikNames.getStepikUrl()));
         if (task.getId() <= 0) {
           postNewTask(project, task, lesson);
         }

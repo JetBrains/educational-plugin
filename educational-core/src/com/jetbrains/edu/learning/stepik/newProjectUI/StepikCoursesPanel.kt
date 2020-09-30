@@ -28,7 +28,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
   override fun tabInfo(): TabInfo? {
     val infoText = EduCoreBundle.message("stepik.courses.explanation", StepikNames.STEPIK)
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
-    val linkInfo = LinkInfo(linkText, StepikNames.STEPIK_URL)
+    val linkInfo = LinkInfo(linkText, StepikNames.getStepikUrl())
     val loginComponent = StepikLoginPanel()
     return TabInfo(infoText, linkInfo, loginComponent)
   }

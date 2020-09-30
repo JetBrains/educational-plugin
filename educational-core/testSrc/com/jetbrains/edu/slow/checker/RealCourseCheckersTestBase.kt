@@ -29,7 +29,7 @@ abstract class RealCourseCheckersTestBase<Settings>(private val courseId: Int) :
 
   override fun createCourse(): Course {
     val mockStepikConnector = StepikConnector.getInstance() as MockStepikConnector
-    mockStepikConnector.setBaseUrl(StepikNames.STEPIK_URL, testRootDisposable)
+    mockStepikConnector.setBaseUrl(StepikNames.getStepikUrl(), testRootDisposable)
     StepikTestUtils.login(testRootDisposable)
     val course = mockStepikConnector.getCourseInfo(courseId) as EduCourse
     println("'${course.name}' ($courseId) course loading started")

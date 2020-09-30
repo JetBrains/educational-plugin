@@ -39,7 +39,7 @@ class HyperskillLessonTest : EduTestCase() {
       mockResponse(responseFileName)
     }
 
-    val lessonAttachmentLink = "${StepikNames.STEPIK_URL}/media/attachments/lesson/${lessonId}/${StepikNames.ADDITIONAL_INFO}"
+    val lessonAttachmentLink = "${StepikNames.getStepikUrl()}/media/attachments/lesson/${lessonId}/${StepikNames.ADDITIONAL_INFO}"
     mockConnector.withAttachments(mapOf(lessonAttachmentLink to FileUtil.loadFile(File(getTestFile("attachments.json")))))
 
     val course = GetHyperskillLesson().createCourse(lessonId.toString()) ?: error("Failed to get course")

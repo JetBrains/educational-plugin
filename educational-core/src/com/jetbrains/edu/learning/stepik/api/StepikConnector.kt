@@ -13,6 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
+import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -65,7 +67,7 @@ abstract class StepikConnector {
   private fun StepikUser.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
     val response = authorizationService
-      .refreshTokens("refresh_token", StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, refreshToken).executeHandlingExceptions()
+      .refreshTokens("refresh_token", getClientId(), getClientSecret(), refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)
@@ -74,7 +76,7 @@ abstract class StepikConnector {
 
   fun login(code: String, redirectUri: String): Boolean {
     val response = authorizationService.getTokens(
-      StepikNames.CLIENT_ID, StepikNames.CLIENT_SECRET, redirectUri, code, "authorization_code"
+      getClientId(), getClientSecret(), redirectUri, code, "authorization_code"
     ).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val stepikUser = StepikUser(tokenInfo)

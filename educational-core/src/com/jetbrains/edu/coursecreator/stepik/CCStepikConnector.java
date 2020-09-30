@@ -72,7 +72,7 @@ public class CCStepikConnector {
       LOG.warn("User is null when posting the course");
       return;
     }
-    updateProgress("Uploading course to " + StepikNames.STEPIK_URL);
+    updateProgress("Uploading course to " + StepikNames.getStepikUrl());
     final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<StepikUserInfo> courseAuthors = course.getAuthors();
@@ -504,7 +504,7 @@ public class CCStepikConnector {
     return new AnAction(EduCoreBundle.message("action.open.on.text", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        EduBrowser.INSTANCE.browse(StepikNames.STEPIK_URL + url);
+        EduBrowser.INSTANCE.browse(StepikNames.getStepikUrl() + url);
       }
     };
   }
