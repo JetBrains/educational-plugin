@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.python.run.PythonRunConfiguration
+import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration
 
 class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
@@ -22,7 +22,7 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
   }
 
   override fun ConfigurationContext.selectPreferredConfiguration(): RunnerAndConfigurationSettings? {
-    return configuration?.takeIf { it.configuration is PythonRunConfiguration }
+    return configuration?.takeIf { it.configuration is AbstractPythonTestRunConfiguration<*> }
   }
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult =
