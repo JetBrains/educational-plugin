@@ -24,7 +24,7 @@ class PyNewCheckersTest : PyCheckersTestBase() {
             taskFile("__init__.py")
             taskFile("tests.py", """
               import unittest
-              from ..task import sum
+              from task import sum
               class TestCase(unittest.TestCase):
                   def test_add(self):
                       self.assertEqual(sum(1, 2), 3, msg="error")

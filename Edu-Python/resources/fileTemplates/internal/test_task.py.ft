@@ -1,6 +1,6 @@
 import unittest
 
-from ..task import sum
+from task import sum
 
 
 # todo: replace this with an actual test
