@@ -7,6 +7,8 @@ import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.psi.PsiDocumentListener
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.FindUsagesProcessPresentation
 import com.intellij.usages.UsageInfo2UsageAdapter
@@ -335,6 +337,7 @@ class EduDocumentListenerTest : EduTestCase() {
     val lesson1 = createLesson(1, 2)
     course.addLesson(lesson1)
     course.init(null, null, false)
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
   }
 
   override fun getTestDataPath(): String {
