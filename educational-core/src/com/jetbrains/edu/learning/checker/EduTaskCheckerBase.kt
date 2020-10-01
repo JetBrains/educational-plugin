@@ -164,7 +164,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     return task.getAllTestDirectories(project).mapNotNull { createTestConfigurationFromPsiElement(it) }
   }
 
-  protected fun createTestConfigurationFromPsiElement(element: PsiElement): RunnerAndConfigurationSettings? {
+  protected open fun createTestConfigurationFromPsiElement(element: PsiElement): RunnerAndConfigurationSettings? {
     return ConfigurationContext(element).selectPreferredConfiguration()
   }
 
