@@ -271,6 +271,14 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     val codeforcesTask = CodeforcesTask()
     task(codeforcesTask, name, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
   }
+
+  fun ideTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) = task(IdeTask(), name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

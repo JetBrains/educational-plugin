@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -289,7 +290,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static CheckStatus checkStatus(@Nullable Task task, boolean solved) {
-    return solved ? CheckStatus.Solved : task instanceof TheoryTask ? CheckStatus.Unchecked : CheckStatus.Failed;
+    return solved ? CheckStatus.Solved : task instanceof TheoryTask || task instanceof IdeTask ? CheckStatus.Unchecked : CheckStatus.Failed;
   }
 
   private void addFileOpenListener() {
@@ -459,7 +460,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task) {
-    if (task instanceof TheoryTask) return true;
+    if (task instanceof TheoryTask || task instanceof IdeTask) return true;
     Submission submission = getLastSubmission(submissionsManager, task.getId());
     if (submission != null) {
       Date submissionTime = submission.getTime();

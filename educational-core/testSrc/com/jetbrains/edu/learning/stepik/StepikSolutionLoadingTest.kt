@@ -39,6 +39,23 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Solved))
   }
 
+  fun `test unchecked IdeTask status`() {
+    configureSubmissionsResponse(mapOf(1 to "submissions_response_empty.json"))
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::EduCourse,
+      id = 1
+    ) {
+      lesson("lesson1") {
+        ideTask("task1", stepId = 1) {
+        }
+      }
+    } as EduCourse
+    setUpdateDate(course)
+    StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
+    checkTaskStatuses(course.allTasks, listOf(CheckStatus.Unchecked))
+  }
+
   fun `test do not set expired task status and solution`() {
     configureSubmissionsResponse(mapOf(1 to "submissions_response_expired.json", 2 to "submissions_response_2.json"))
     val course = createStepikCourse()
