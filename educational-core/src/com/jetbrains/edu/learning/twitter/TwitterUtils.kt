@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.io.exists
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -98,7 +99,7 @@ object TwitterUtils {
       update.media(mediaPath.toFile())
     }
     twitter.updateStatus(update)
-    BrowserUtil.browse("https://twitter.com/")
+    EduBrowser.browse("https://twitter.com/")
   }
 
   /**

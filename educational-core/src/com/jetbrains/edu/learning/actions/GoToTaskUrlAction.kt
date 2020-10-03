@@ -1,19 +1,17 @@
 package com.jetbrains.edu.learning.actions
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.ui.components.labels.ActionLink
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink.LinkType.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
@@ -27,18 +25,7 @@ class GoToTaskUrlAction : DumbAwareAction(GO_TO_TASK_URL_ACTION, GO_TO_TASK_URL_
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
     val link = getLink(task)
-    BrowserUtil.browse(link)
-    when {
-      task is CodeforcesTask -> {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.CODEFORCES)
-      }
-      task.course is HyperskillCourse && isOpenOnJBAAction(e) -> {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.JBA)
-      }
-      else -> {
-        EduCounterUsageCollector.leaveFeedback()
-      }
-    }
+    EduBrowser.browse(link)
   }
 
   override fun update(e: AnActionEvent) {

@@ -1,12 +1,12 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
@@ -170,14 +170,10 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
   inner class JavaFXToolWindowLinkHandler : ToolWindowLinkHandler(myProject) {
     override fun processExternalLink(url: String): Boolean {
-      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
       myEngine.isJavaScriptEnabled = true
       myEngine.loadWorker.cancel()
       val urlToOpen = if (isRelativeLink(url)) STEPIK_URL + url else url
-      BrowserUtil.browse(urlToOpen)
-      if (urlToOpen.startsWith(STEPIK_URL)) {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
-      }
+      EduBrowser.browse(urlToOpen)
       return true
     }
   }

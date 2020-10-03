@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
-import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -15,10 +14,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -508,7 +504,7 @@ public class CCStepikConnector {
     return new AnAction(EduCoreBundle.message("action.open.on.text", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        BrowserUtil.browse(StepikNames.STEPIK_URL + url);
+        EduBrowser.INSTANCE.browse(StepikNames.STEPIK_URL + url);
       }
     };
   }

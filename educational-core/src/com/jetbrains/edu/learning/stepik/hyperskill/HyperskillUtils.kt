@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
@@ -9,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduState.Companion.getEduState
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
@@ -108,7 +108,7 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
     val course = task.course as? HyperskillCourse ?: return
     val url = if (course.isTaskInProject(task)) task.feedbackLink.link else stepLink(task.id)
     if (url.isNullOrEmpty()) return
-    BrowserUtil.browse("$url#solutions")
+    EduBrowser.browse("$url#solutions")
   }
 
   companion object {

@@ -1,18 +1,18 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import icons.EducationalCoreIcons
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import icons.EducationalCoreIcons
 import java.awt.Component
 import javax.swing.Icon
 
@@ -81,6 +81,6 @@ fun browseHyperlink(message: ValidationMessage?) {
   }
   val hyperlink = message.hyperlinkAddress
   if (hyperlink != null) {
-    BrowserUtil.browse(hyperlink)
+    EduBrowser.browse(hyperlink)
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,6 +10,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.labels.ActionLink
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -83,7 +83,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : NotificationListener
     }
     else {
       if (url != null) {
-        BrowserUtil.browse(url)
+        EduBrowser.browse(url)
       }
     }
   }

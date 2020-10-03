@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
@@ -13,6 +11,7 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -152,7 +151,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
                              SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide2", EduNames.NO_COURSES_URL),
-                             SimpleTextAttributes.LINK_ATTRIBUTES, ActionListener { BrowserUtil.browse(EduNames.NO_COURSES_URL) })
+                             SimpleTextAttributes.LINK_ATTRIBUTES, ActionListener { EduBrowser.browse(EduNames.NO_COURSES_URL) })
     return panel
   }
 

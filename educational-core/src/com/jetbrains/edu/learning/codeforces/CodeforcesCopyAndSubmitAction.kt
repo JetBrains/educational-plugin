@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -30,7 +30,7 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val solution = taskFile.getDocument(project)?.text ?: return
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
     if (!isUnitTestMode) {
-      BrowserUtil.browse(course.getSubmissionUrl())
+      EduBrowser.browse(course.getSubmissionUrl())
     }
   }
 

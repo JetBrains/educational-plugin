@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
@@ -8,6 +7,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.event.HyperlinkEvent
@@ -37,7 +37,7 @@ class MyNotification(content: String, feedbackUrl : String) :
     "Congratulations", content, NotificationType.INFORMATION,
         object : NotificationListener.Adapter() {
           override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-            BrowserUtil.browse(feedbackUrl)
+            EduBrowser.browse(feedbackUrl)
           }
         }), NotificationFullContent
 
