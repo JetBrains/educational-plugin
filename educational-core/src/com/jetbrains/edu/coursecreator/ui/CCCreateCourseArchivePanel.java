@@ -65,10 +65,12 @@ public class CCCreateCourseArchivePanel extends JPanel {
 
   protected void setErrorVisible(boolean isVisible) {
     myErrorComponent.setVisible(isVisible);
+    revalidate();
+    repaint();
   }
 
   protected void setError() {
-    myErrorComponent.setErrorMessage(new ValidationMessage("Invalid location. File already exists.",
+    myErrorComponent.setErrorMessage(new ValidationMessage("Invalid location. File should have '.zip' extension.",
                                                            "",
                                                            "",
                                                            null,

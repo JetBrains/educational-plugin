@@ -2,8 +2,8 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.io.File
 import javax.swing.JComponent
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -37,10 +37,10 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
 
   private fun validateLocation() {
     myPanel.setErrorVisible(false)
-    val file = File(locationPath)
-    if (file.exists()) {
+    if (!EduUtils.isZip(locationPath)) {
       isOKActionEnabled = false
       myPanel.setError()
+      return
     }
     isOKActionEnabled = true
   }

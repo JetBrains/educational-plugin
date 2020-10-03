@@ -77,7 +77,7 @@ public class EduUtils {
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
   public static boolean isZip(String fileName) {
-    return fileName.contains(".zip");
+    return StringUtil.endsWithIgnoreCase(fileName, ".zip");
   }
 
   @Nullable
