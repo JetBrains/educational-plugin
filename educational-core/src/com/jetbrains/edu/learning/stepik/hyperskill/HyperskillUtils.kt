@@ -105,7 +105,7 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = getEduState(project)?.task ?: return
-    val url = taskLink(task)
+    val url = hyperskillTaskLink(task)
     EduBrowser.browse("$url$HYPERSKILL_SOLUTIONS_ANCHOR")
   }
 
@@ -114,7 +114,7 @@ class HSPeekSolutionAction : CompareWithAnswerAction() {
   }
 }
 
-fun taskLink(task: Task): String {
+fun hyperskillTaskLink(task: Task): String {
   val course = task.course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
   return if (course.isTaskInProject(task)) stageLink(task) else stepLink(task.id)
 }

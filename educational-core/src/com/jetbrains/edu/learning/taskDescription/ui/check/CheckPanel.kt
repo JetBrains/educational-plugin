@@ -15,10 +15,7 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.actions.GoToTaskUrlAction
-import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.actions.RevertTaskAction
+import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
@@ -56,17 +53,17 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun createRightActionsToolbar(): JPanel {
     if (course is CodeforcesCourse) {
-      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), GoToTaskUrlAction.ACTION_ID))
+      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
       rightActionsToolbar.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
     }
     else {
       if (course is HyperskillCourse) {
-        val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), GoToTaskUrlAction.ACTION_ID)
+        val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID)
         link.border = JBUI.Borders.empty(9, 10, 0, 0)
         rightActionsToolbar.add(link)
       }
       rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-      rightActionsToolbar.add(createSingleActionToolbar(GoToTaskUrlAction.ACTION_ID))
+      rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
     }
     return rightActionsToolbar
   }

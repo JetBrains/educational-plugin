@@ -74,9 +74,7 @@ open class CodeforcesTask : Task() {
         // This replacement is needed for proper MathJax visualization
         .replace("$$$", "$")
 
-      task.feedbackLink = FeedbackLink(
-        "${(task.course as CodeforcesCourse).getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${task.course.languageCode}"
-      )
+      task.feedbackLink = FeedbackLink(codeforcesTaskLink(task))
 
       CodeforcesLanguageProvider.generateTaskFiles(task)?.forEach {
         task.addTaskFile(it)
@@ -87,6 +85,11 @@ open class CodeforcesTask : Task() {
         task.addSampleTests(sampleTests)
       }
       return task
+    }
+
+    fun codeforcesTaskLink(task: Task): String {
+      val course = task.course as CodeforcesCourse
+      return "${course.getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${course.languageCode}"
     }
 
     private fun isStandardIOType(element: Element): Boolean {

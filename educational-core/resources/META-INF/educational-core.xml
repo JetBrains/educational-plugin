@@ -66,7 +66,8 @@
     <action id="Educational.RefreshTask" class="com.jetbrains.edu.learning.actions.RevertTaskAction"
             text="Reset Task"
             description="Revert current task to the initial state"/>
-    <action id="Educational.GoToTaskUrlAction" class="com.jetbrains.edu.learning.actions.GoToTaskUrlAction"/>
+    <action id="Educational.LeaveCommentAction" class="com.jetbrains.edu.learning.actions.LeaveCommentAction"/>
+    <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
     <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
             text="Compare with Answer"
             description="Compare your solution with answer"/>
