@@ -63,6 +63,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     answerPlaceholder.setOffset(offset);
 
     @NonNls String defaultPlaceholderText = getDefaultPlaceholderText(project);
+    answerPlaceholder.setPlaceholderText(defaultPlaceholderText);
     CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);
     if (!dlg.showAndGet()) {
       return;
