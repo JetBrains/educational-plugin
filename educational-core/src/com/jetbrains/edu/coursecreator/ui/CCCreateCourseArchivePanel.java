@@ -7,13 +7,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.newproject.ui.ErrorComponent;
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,25 +20,26 @@ import java.awt.*;
 public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;
   private TextFieldWithBrowseButton myLocationField;
-  private ErrorComponent myErrorComponent;
   private JTextField myAuthorField;
   private JLabel myAuthorLabel;
 
   public CCCreateCourseArchivePanel(@NotNull final Project project, String name, boolean showAuthorField) {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
-    setErrorVisible(false);
     myAuthorField.setText(getAuthorInitialValue(project));
     myLocationField.setText(getArchiveLocation(project, name));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     myLocationField.addBrowseFolderListener("Choose Location Folder", null, project, descriptor);
     myAuthorLabel.setVisible(showAuthorField);
     myAuthorField.setVisible(showAuthorField);
-    myErrorComponent.setBorder(JBUI.Borders.empty(2, 1));
   }
 
   public void addLocationListener(DocumentListener listener) {
     myLocationField.getTextField().getDocument().addDocumentListener(listener);
+  }
+
+  public TextFieldWithBrowseButton getLocationField() {
+    return myLocationField;
   }
 
   @NotNull
@@ -61,21 +58,6 @@ public class CCCreateCourseArchivePanel extends JPanel {
       return StringUtil.capitalize(userName);
     }
     return "User";
-  }
-
-  protected void setErrorVisible(boolean isVisible) {
-    myErrorComponent.setVisible(isVisible);
-    revalidate();
-    repaint();
-  }
-
-  protected void setError() {
-    myErrorComponent.setErrorMessage(new ValidationMessage("Invalid location. File should have '.zip' extension.",
-                                                           "",
-                                                           "",
-                                                           null,
-                                                           ValidationMessageType.ERROR));
-    setErrorVisible(true);
   }
 
   public String getLocationPath() {

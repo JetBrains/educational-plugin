@@ -36,10 +36,10 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
   }
 
   private fun validateLocation() {
-    myPanel.setErrorVisible(false)
+    setErrorText(null, myPanel.locationField)
     if (!EduUtils.isZip(locationPath)) {
       isOKActionEnabled = false
-      myPanel.setError()
+      setErrorText("Invalid location. File should have '.zip' extension.", myPanel.locationField)
       return
     }
     isOKActionEnabled = true
