@@ -2,11 +2,11 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.ValidationInfo
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import java.io.File
 import javax.swing.JComponent
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 
 class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuthorField: Boolean) : DialogWrapper(project) {
   private val myPanel: CCCreateCourseArchivePanel
@@ -14,35 +14,23 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
   init {
     title = EduCoreBundle.message("action.create.course.archive.text")
     myPanel = CCCreateCourseArchivePanel(project, courseName, showAuthorField)
-    addPanelListener()
-    validateLocation()
+    myPreferredFocusedComponent = myPanel.locationField
     init()
   }
 
-  private fun addPanelListener() {
-    myPanel.addLocationListener(object : DocumentListener {
-      override fun insertUpdate(e: DocumentEvent) {
-        validateLocation()
-      }
-
-      override fun removeUpdate(e: DocumentEvent) {
-        validateLocation()
-      }
-
-      override fun changedUpdate(e: DocumentEvent) {
-        validateLocation()
-      }
-    })
+  override fun postponeValidation(): Boolean {
+    return false
   }
 
-  private fun validateLocation() {
-    setErrorText(null, myPanel.locationField)
-    if (!EduUtils.isZip(locationPath)) {
-      isOKActionEnabled = false
-      setErrorText("Invalid location. File should have '.zip' extension.", myPanel.locationField)
-      return
+  override fun doValidate(): ValidationInfo? {
+    val file = File(locationPath)
+    if (file.exists()) {
+      return ValidationInfo("Invalid location. File already exists.", myPanel.locationField).asWarning().withOKEnabled()
     }
-    isOKActionEnabled = true
+    if (!EduUtils.isZip(locationPath)) {
+      return ValidationInfo("Invalid location. File should have '.zip' extension.", myPanel.locationField)
+    }
+    return super.doValidate()
   }
 
   override fun createCenterPanel(): JComponent? {
