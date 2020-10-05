@@ -28,6 +28,13 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.pluginVersion
 
+/**
+ * If you need to change something in the marketplace course archive format, you should do the following:
+ * - Add description to the `educational-core/resources/marketplace/format_description.md`
+ * - Create a pull request to the `https://github.com/JetBrains/intellij-plugin-verifier/tree/master/intellij-plugin-structure/structure-edu`
+ * and wait for it to be accepted and deployed.
+ */
+
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, PLUGIN_VERSION,  VENDOR,
