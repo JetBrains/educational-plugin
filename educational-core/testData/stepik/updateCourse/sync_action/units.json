@@ -1,0 +1,20 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "units" : [
+    {
+      "id" : 3,
+      "section" : 2,
+      "lesson" : 403997,
+      "assignments" : [
+        1482004,
+        1482005
+      ],
+      "position" : 1,
+      "progress" : "80-3"
+    }
+  ]
+}

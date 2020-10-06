@@ -1,0 +1,28 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "lessons" : [
+    {
+      "id" : 403997,
+      "steps" : [
+        1,
+        2
+      ],
+      "progress" : "76-403997",
+      "courses" : [
+        83503
+      ],
+      "units" : [
+        393192
+      ],
+      "owner" : 21766907,
+      "language" : "en",
+      "is_featured" : false,
+      "is_public" : true,
+      "title" : "newLesson"
+    }
+  ]
+}
