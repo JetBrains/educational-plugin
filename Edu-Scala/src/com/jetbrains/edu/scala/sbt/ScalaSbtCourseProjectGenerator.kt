@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import org.jetbrains.plugins.scala.project.Version
 import org.jetbrains.sbt.Sbt
-import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
 class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
@@ -52,7 +51,6 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     val systemSettings = ExternalSystemApiUtil.getSettings(project, sbtProjectSystemId)
 
     val projectSettings = SbtProjectSettings()
-    projectSettings.isUseAutoImport = true
     projectSettings.externalProjectPath = location
 
     val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())

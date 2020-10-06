@@ -155,11 +155,8 @@ object TwitterUtils {
   fun pluginRelativePath(path: String): Path? {
     require(!FileUtil.isAbsolute(path)) { "`$path` shouldn't be absolute" }
 
-     // BACKCOMPAT: 2019.3. Use `pluginPath` instead of `path?.toPath()`
-    @Suppress("DEPRECATION")
     return PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))
-      ?.path
-      ?.toPath()
+      ?.pluginPath
       ?.resolve(path)
       ?.takeIf { it.exists() }
   }

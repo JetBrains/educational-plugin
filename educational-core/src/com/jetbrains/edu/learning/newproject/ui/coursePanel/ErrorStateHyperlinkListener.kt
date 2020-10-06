@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
@@ -58,14 +59,10 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       ErrorState.JavaFXorJCEFRequired -> invokeSwitchUILibrary(coursePanel)
-      // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
-      ErrorState.IncompatibleVersion -> @Suppress("DEPRECATION") PluginsAdvertiser.installAndEnablePlugins(setOf(EduNames.PLUGIN_ID)) {}
+      ErrorState.IncompatibleVersion -> PluginsAdvertiser.installAndEnable(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {
-        // BACKCOMPAT: 2019.3. just use `state.pluginIds`
-        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.stringId }
-        // BACKCOMPAT: 2019.3. Use `PluginsAdvertiser.installAndEnable`
-        @Suppress("DEPRECATION")
-        PluginsAdvertiser.installAndEnablePlugins(pluginStringIds) {}
+        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
+        PluginsAdvertiser.installAndEnable(pluginStringIds) {}
       }
       ErrorState.RestartNeeded -> ApplicationManagerEx.getApplicationEx().restart(true)
       is ErrorState.CustomSevereError -> state.action?.run()

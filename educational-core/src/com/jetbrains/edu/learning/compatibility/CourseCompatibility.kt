@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
@@ -70,9 +71,7 @@ sealed class CourseCompatibility {
       val loadedPlugins = PluginManager.getLoadedPlugins()
       val notLoadedPlugins = requiredPlugins
         .mapNotNull {
-          // BACKCOMPAT: 2019.3. Use `PluginManagerCore#getPlugin` instead
-          @Suppress("DEPRECATION")
-          val pluginDescriptor = PluginManager.getPlugin(it.id)
+          val pluginDescriptor = PluginManagerCore.getPlugin(it.id)
           if (pluginDescriptor == null || pluginDescriptor !in loadedPlugins) {
             it to pluginDescriptor
           }

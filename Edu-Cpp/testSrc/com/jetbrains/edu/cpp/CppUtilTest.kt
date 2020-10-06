@@ -2,8 +2,7 @@ package com.jetbrains.edu.cpp
 
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.edu.learning.EduTestCase
-import org.hamcrest.Description
-import org.hamcrest.TypeSafeMatcher
+import org.hamcrest.text.IsEqualIgnoringCase
 import org.junit.Assert.assertThat
 
 class CppUtilTest : EduTestCase() {
@@ -42,21 +41,5 @@ class CppUtilTest : EduTestCase() {
     else {
       assertNull(result)
     }
-  }
-}
-
-// BACKCOMPAT: 2019.3. Use `org.hamcrest.text.IsEqualIgnoringCase` instead
-private class IsEqualIgnoringCase(private val string: String) : TypeSafeMatcher<String>() {
-
-  override fun matchesSafely(item: String): Boolean {
-    return string.equals(item, ignoreCase = true)
-  }
-
-  override fun describeMismatchSafely(item: String, mismatchDescription: Description) {
-    mismatchDescription.appendText("was $item")
-  }
-
-  override fun describeTo(description: Description) {
-    description.appendText("equalToIgnoringCase($string)")
   }
 }

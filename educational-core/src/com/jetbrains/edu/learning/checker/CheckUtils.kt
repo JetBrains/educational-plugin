@@ -160,15 +160,13 @@ object CheckUtils {
           isConfigurationBroken = true
           continue
         }
-        environments.add(env)
-        // BACKCOMPAT: 2019.3
-        @Suppress("DEPRECATION")
-        runner.execute(env) { descriptor ->
+        @Suppress("UnstableApiUsage")
+        env.callback = ProgramRunner.Callback { descriptor ->
           // Descriptor can be null in some cases.
           // For example, IntelliJ Rust's test runner provides null here if compilation fails
           if (descriptor == null) {
             latch.countDown()
-            return@execute
+            return@Callback
           }
 
           Disposer.register(rootDisposable, Disposable {
@@ -184,6 +182,9 @@ object CheckUtils {
             processListener?.let { processHandler.addProcessListener(it) }
           }
         }
+
+        environments.add(env)
+        runner.execute(env)
       }
     }
 

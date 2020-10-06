@@ -41,23 +41,19 @@ class JLanguageSettings : JdkLanguageSettings() {
                               ?: return ValidationMessage(EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription))
 
       val jdkItem = myJdkSettings.jdkItem
-      // BACKCOMPAT: 2019.3
-      @Suppress("DEPRECATION")
-      if (jdkItem !is JdkComboBox.SuggestedJdkItem) {
-        val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"))
+      val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"))
 
-        val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                             ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"))
-        if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
-          return null
-        }
-        return ValidationMessage(
-          EduJavaBundle.message("error.old.java", courseJavaVersionDescription),
-          EduJavaBundle.message("download.java"),
-          "",
-          "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
-        )
+      val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
+                           ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"))
+      if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
+        return null
       }
+      return ValidationMessage(
+        EduJavaBundle.message("error.old.java", courseJavaVersionDescription),
+        EduJavaBundle.message("download.java"),
+        "",
+        "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
+      )
     }
     return super.validate(course, courseLocation)
   }

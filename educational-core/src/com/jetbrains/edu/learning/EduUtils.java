@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -27,7 +26,6 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -562,13 +560,6 @@ public class EduUtils {
       catch (TimeoutException ignored) {
       }
     }
-  }
-
-  // BACKCOMPAT: 2019.3. Inline it
-  //  Moved here to avoid kotlin compiler error
-  @SuppressWarnings("deprecation")
-  public static NotificationGroup getUpdateNotificationGroup() {
-    return UpdateChecker.NOTIFICATIONS;
   }
 
   public static boolean isNewlyCreated(@NotNull Project project) {

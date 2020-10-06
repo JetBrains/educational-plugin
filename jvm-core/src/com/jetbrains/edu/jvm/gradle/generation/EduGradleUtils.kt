@@ -61,9 +61,6 @@ object EduGradleUtils {
 
     val gradleProjectSettings = GradleProjectSettings()
     gradleProjectSettings.distributionType = distributionType
-    // BACKCOMPAT: 2019.3
-    @Suppress("DEPRECATION")
-    gradleProjectSettings.isUseAutoImport = true
     gradleProjectSettings.externalProjectPath = location
     // IDEA runner is much more faster and it doesn't write redundant messages into console.
     // Note, it doesn't affect tests - they still are run with gradle runner

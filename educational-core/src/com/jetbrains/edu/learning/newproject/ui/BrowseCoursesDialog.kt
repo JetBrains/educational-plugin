@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
@@ -10,8 +10,8 @@ import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
+import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +53,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
       // TODO: find out a better way to be notified when plugin installation finishes
       .subscribe(Notifications.TOPIC, object : Notifications {
         override fun notify(notification: Notification) {
-          if (notification.groupId == EduUtils.getUpdateNotificationGroup().displayId) {
+          if (notification.groupId == UpdateChecker.getNotificationGroup().displayId) {
             panel.doValidation()
             // TODO: investigate why it leads to IDE freeze when you install python plugin
             // ApplicationManager.getApplication().invokeLater {
@@ -65,13 +65,9 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
 
     val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { panel.doValidation() } }
     Disposer.register(disposable, Disposable {
-      // BACKCOMPAT: 2019.3
-      @Suppress("DEPRECATION")
-      PluginManagerCore.removeDisablePluginListener(disablePluginListener)
+      PluginManager.getInstance().removeDisablePluginListener(disablePluginListener)
     })
-    // BACKCOMPAT: 2019.3
-    @Suppress("DEPRECATION")
-    PluginManagerCore.addDisablePluginListener(disablePluginListener)
+    PluginManager.getInstance().addDisablePluginListener(disablePluginListener)
   }
 
 

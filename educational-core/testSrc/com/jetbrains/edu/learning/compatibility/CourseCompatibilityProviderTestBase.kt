@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.compatibility
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -32,9 +32,7 @@ abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out
         check(configurators.isNotEmpty()) { "Cannot find configurator for ${clazz.qualifiedName}" }
 
         for (info in requiredPlugins) {
-          // BACKCOMPAT: 2019.3
-          @Suppress("DEPRECATION")
-          check(PluginManager.getPlugin(info.id) != null) { "Cannot find plugin with `${info.stringId}` id" }
+          check(PluginManagerCore.getPlugin(info.id) != null) { "Cannot find plugin with `${info.stringId}` id" }
         }
       }
       else {
