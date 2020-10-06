@@ -7,11 +7,9 @@ import com.jetbrains.edu.learning.canBeAddedToTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.util.function.Supplier
 
 class CCIncludeIntoTask
-// BACKCOMPAT: 2019.3 Use lazyMessage call instead
-  : CCChangeFilePropertyActionBase(Supplier { EduCoreBundle.message("action.include.into.task.title") }) {
+  : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.include.into.task.title")) {
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
     file.canBeAddedToTask(project)

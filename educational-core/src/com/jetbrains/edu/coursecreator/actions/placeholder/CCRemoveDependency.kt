@@ -5,10 +5,9 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-// BACKCOMPAT: 2019.3 Use lazyMessage call instead
 class CCRemoveDependency : CCAnswerPlaceholderAction(
-  { EduCoreBundle.message("action.remove.dependency.text") },
-  { EduCoreBundle.message("action.remove.dependency.description") }
+  EduCoreBundle.lazyMessage("action.remove.dependency.text"),
+  EduCoreBundle.lazyMessage("action.remove.dependency.description")
 ) {
   override fun performAnswerPlaceholderAction(state: CCState) {
     val answerPlaceholder = state.answerPlaceholder ?: return

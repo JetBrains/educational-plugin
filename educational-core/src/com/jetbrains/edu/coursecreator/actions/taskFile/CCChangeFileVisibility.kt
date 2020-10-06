@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -14,12 +13,10 @@ import org.jetbrains.annotations.Nls
 import java.util.function.Supplier
 
 class CCMakeVisibleToLearner
-// BACKCOMPAT: 2019.3 Use lazyMessage call instead
-  : CCChangeFileVisibility(Supplier { EduCoreBundle.message("action.make.visible.to.learner.title") }, true)
+  : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.make.visible.to.learner.title"), true)
 
 class CCHideFromLearner
-// BACKCOMPAT: 2019.3 Use lazyMessage call instead
-  : CCChangeFileVisibility(Supplier { EduCoreBundle.message("action.hide.from.learner.title") }, false)
+  : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.hide.from.learner.title"), false)
 
 abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
 

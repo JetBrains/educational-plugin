@@ -28,9 +28,8 @@ import java.util.List;
 public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCAddAnswerPlaceholder() {
-    // BACKCOMPAT: 2019.3 Use lazyMessage call instead
-    super(() -> EduCoreBundle.message("action.add.answer.placeholder.text"),
-          () -> EduCoreBundle.message("action.add.answer.placeholder.description"));
+    super(EduCoreBundle.lazyMessage("action.add.answer.placeholder.text"),
+          EduCoreBundle.lazyMessage("action.add.answer.placeholder.description"));
   }
 
 

@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   public CCDeleteAnswerPlaceholder() {
-    // BACKCOMPAT: 2019.3 Use lazyMessage call instead
-    super(() -> EduCoreBundle.message("label.delete"), () -> EduCoreBundle.message("action.delete.answer.placeholder.description"));
+    super(EduCoreBundle.lazyMessage("label.delete"), EduCoreBundle.lazyMessage("action.delete.answer.placeholder.description"));
   }
 
   @Override

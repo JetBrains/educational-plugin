@@ -4,15 +4,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.util.function.Supplier
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class CreateMarketplaceArchive
-// BACKCOMPAT: 2019.3 Use lazyMessage call instead
-  : CreateCourseArchiveAction(Supplier { EduCoreBundle.message("action.create.course.archive.marketplace") }) {
+  : CreateCourseArchiveAction(EduCoreBundle.lazyMessage("action.create.course.archive.marketplace")) {
 
   override fun showAuthorField(): Boolean = false
 
