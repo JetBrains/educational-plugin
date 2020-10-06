@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -9,9 +8,9 @@ import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
@@ -137,15 +136,11 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   private inner class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
     override fun processExternalLink(url: String): Boolean {
-      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
       val urlToOpen = when {
         url.startsWith(FILE_PROTOCOL_PREFIX) -> STEPIK_URL + url.substringAfter(FILE_PROTOCOL_PREFIX)
         else -> url
       }
-      BrowserUtil.browse(urlToOpen)
-      if (urlToOpen.startsWith(STEPIK_URL)) {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
-      }
+      EduBrowser.browse(urlToOpen)
       return true
     }
   }
