@@ -3,4 +3,10 @@
     <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
               topic="com.intellij.ide.plugins.DynamicPluginListener"/>
   </applicationListeners>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <welcomeTabFactory id="EducationalWelcomeTab"
+                       implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
+                       order="first"/>
+  </extensions>
 </idea-plugin>
