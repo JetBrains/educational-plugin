@@ -252,6 +252,7 @@ abstract class AnswerPlaceholderMixin {
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
   @JsonProperty(POSSIBLE_ANSWER)
+  @Encrypt
   private lateinit var myPossibleAnswer: String
 }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.format.yaml
 
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
@@ -343,14 +344,48 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  fun `test edu task in student mode with encrypted text`() {
+    val task = course(courseMode = EduNames.STUDY) {
+      lesson {
+        eduTask {
+          taskFile("Test.txt", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here\nand here")
+          }
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: Test.txt
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: |-
+    |      type here
+    |      and here
+    |    initialized_from_dependency: false
+    |    selected: false
+    |    status: Unchecked
+    |    encrypted_possible_answer: 6zkm3NpDQQaIQ+CAebF//w==
+    |  encrypted_text: lrKTY22nc3exEO7HQjXPxaXf97REIR5R1llqKFTGca0=
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
   fun `test task with placeholders`() {
     val taskSolution = "42 is the answer"
+    val possibleAnswer = "answer"
+    val encryptedPossibleAnswer = AES256.encrypt(possibleAnswer, getAesKey())
     val taskSolutionEncrypted = AES256.encrypt(taskSolution, getAesKey())
     val task = courseWithFiles {
       lesson {
         eduTask {
           taskFile("task.txt", "<p>$taskSolution</p>") {
-            placeholder(0, placeholderText = "")
+            placeholder(0, placeholderText = "", possibleAnswer = possibleAnswer)
           }
         }
       }
@@ -371,6 +406,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
+    |    encrypted_possible_answer: $encryptedPossibleAnswer
     |  encrypted_text: $taskSolutionEncrypted
     |  learner_created: false
     |status: Unchecked

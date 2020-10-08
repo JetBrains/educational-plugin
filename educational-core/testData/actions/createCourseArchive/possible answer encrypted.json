@@ -11,24 +11,18 @@
         {
           "name" : "task1",
           "files" : {
-            "fizz.kt" : {
-              "name" : "fizz.kt",
+            "Task.kt" : {
+              "name" : "Task.kt",
               "placeholders" : [
                 {
-                  "offset" : 13,
+                  "offset" : 20,
                   "length" : 6,
-                  "possible_answer" : "6zkm3NpDQQaIQ+CAebF//w==",
-                  "placeholder_text" : "TODO()"
-                },
-                {
-                  "offset" : 32,
-                  "length" : 6,
-                  "possible_answer" : "6zkm3NpDQQaIQ+CAebF//w==",
+                  "possible_answer" : "YHy7k6TLDgQ5klWwH+OQRA==",
                   "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
-              "text" : "Ypx0FM/A4RqT2NIKNhcmlrxpV7d4q85XwjBvQyB0fi1tpedpF+MM0t8nRvkmJ7li"
+              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
             }
           },
           "description_text" : "solve task",
@@ -40,14 +34,6 @@
         }
       ],
       "type" : "lesson"
-    }
-  ],
-  "additional_files" : [
-    {
-      "name" : "additional.txt",
-      "placeholders" : [ ],
-      "is_visible" : true,
-      "text" : "0vSewMnXdop+aaoDCcNsxA=="
     }
   ],
   "version" : 12

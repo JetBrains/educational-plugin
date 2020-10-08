@@ -63,6 +63,20 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test possible answer encrypted`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
   fun `test coursera course archive submit manually`() {
     val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CCUtils.COURSE_MODE) {
       lesson {

@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENCRYPTED_POSSIBLE_ANSWER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.INITIAL_STATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.INIT_FROM_DEPENDENCY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
@@ -31,7 +33,8 @@ abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() 
   @JsonProperty(INIT_FROM_DEPENDENCY)
   private var myIsInitializedFromDependency = false
 
-  @JsonProperty(POSSIBLE_ANSWER)
+  @JsonProperty(ENCRYPTED_POSSIBLE_ANSWER)
+  @Encrypt
   private var myPossibleAnswer = ""
 
   @JsonProperty(SELECTED)
@@ -56,6 +59,7 @@ class EduAnswerPlaceholderBuilder(
   @JsonProperty(INIT_FROM_DEPENDENCY) private val isInitializedFromDependency: Boolean,
   private val initialState: AnswerPlaceholder.MyInitialState,
   private val possibleAnswer: String = "",
+  @Encrypt @JsonProperty(ENCRYPTED_POSSIBLE_ANSWER) private val encryptedPossibleAnswer: String?,
   private val selected: Boolean,
   private val status: CheckStatus,
   private val studentAnswer: String? = null,
@@ -68,7 +72,7 @@ class EduAnswerPlaceholderBuilder(
     val placeholder = super.createPlaceholder()
     placeholder.initialState = initialState
     placeholder.isInitializedFromDependency = isInitializedFromDependency
-    placeholder.possibleAnswer = possibleAnswer
+    placeholder.possibleAnswer = encryptedPossibleAnswer ?: possibleAnswer
     placeholder.selected = selected
     placeholder.status = status
     placeholder.studentAnswer = studentAnswer

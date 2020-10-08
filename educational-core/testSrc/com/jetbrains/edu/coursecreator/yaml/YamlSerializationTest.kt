@@ -39,37 +39,6 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
-  fun `test edu task in student mode with encrypted text`() {
-    val task = course(courseMode = EduNames.STUDY) {
-      lesson {
-        eduTask {
-          taskFile("Test.txt", "<p>42 is the answer</p>") {
-            placeholder(0, placeholderText = "type here\nand here")
-          }
-        }
-      }
-    }.findTask("lesson1", "task1")
-    doTest(task, """
-    |type: edu
-    |files:
-    |- name: Test.txt
-    |  visible: true
-    |  placeholders:
-    |  - offset: 0
-    |    length: 16
-    |    placeholder_text: |-
-    |      type here
-    |      and here
-    |    initialized_from_dependency: false
-    |    selected: false
-    |    status: Unchecked
-    |  encrypted_text: lrKTY22nc3exEO7HQjXPxaXf97REIR5R1llqKFTGca0=
-    |  learner_created: false
-    |status: Unchecked
-    |record: -1
-    |""".trimMargin())
-  }
-
   fun `test empty placeholder`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {

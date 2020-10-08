@@ -98,6 +98,7 @@ object YamlMixinNames {
   const val STUDENT_ANSWER = "student_answer"
   const val INITIAL_STATE = "initial_state"
   const val POSSIBLE_ANSWER = "possible_answer"
+  const val ENCRYPTED_POSSIBLE_ANSWER = "encrypted_possible_answer"
   const val SELECTED = "selected"
 
   // placeholder dependency

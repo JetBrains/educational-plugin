@@ -15,6 +15,11 @@ class To12VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
       if (fileObject !is ObjectNode) continue
       val text = fileObject.get(SerializationUtils.Json.TEXT).asText()
       fileObject.put(SerializationUtils.Json.TEXT, AES256.encrypt(text, aesKey))
+
+      for (placeholder in fileObject.getJsonObjectList(SerializationUtils.Json.PLACEHOLDERS)) {
+        val possibleAnswer = placeholder.get(SerializationUtils.Json.POSSIBLE_ANSWER)?.asText() ?: continue
+        placeholder.put(SerializationUtils.Json.POSSIBLE_ANSWER, AES256.encrypt(possibleAnswer, aesKey))
+      }
     }
   }
 
