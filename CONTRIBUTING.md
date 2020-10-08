@@ -28,11 +28,11 @@ We support some latest releases of platform (for example, 2018.2 and 2018.3) and
 To be sure the plugin works with all releases, we have to build plugin with different versions of IDE.
 The plugin project has separate settings for each platform version (in general, IDE and plugin versions) 
 to avoid manual changes when you want to compile project with non default platform version.
-These settings are stored in `gradle-%platform.name%.properties` files.
+These settings are stored in `gradle-%platform.version%.properties` files.
 
 Sometimes there are not compatible changes in new platform version.
 To avoid creating several parallel vcs branches for each version, we have separate
-folders for each version to keep platform dependent code.
+directories for each version to keep platform dependent code.
 
 For example, `com.jetbrains.edu.android.AndroidVersionsInfoKt#loadTargetVersions` function in `Edu-Android` module
 should have separate implementations for 182 and 183 platforms.
@@ -48,11 +48,14 @@ Then source code structure of the corresponding module will be
      |   +-- src
      |       +-- other platfrom independent code
      
-Of course, only one batch of platform dependent code will be used in compilation.
+Of course, only one batch of platform-specific code will be used in compilation.
 To change platform version which you use during compilation, 
 i.e. change IDEA/Android Studio/plugins dependencies and platform dependent code,
 you need to modify `environmentName` property in `gradle.properties` file or 
-pass `-PenvironmentName=%platform.name%` argument to gradle command
+pass `-PenvironmentName=%platform.version%` argument to gradle command.
+
+See [Tips and tricks](#tips-and-tricks) section to get more details how to create platform-specific code.
+See [SupportNewPlatformVersion.md](/documentation/SupportNewPlatformVersion.md) for more details if you need to support a new platform version.
 
 ### Different IDEs
 
@@ -68,6 +71,57 @@ only with Android Studio.
 Such restrictions are already taken into account in the configuration of the corresponding modules
 in `build.gradle.kts` and when you choose base IDE for build unsupported in the particular module, 
 it will be compiled with some default IDE.
+
+### Tips and tricks
+
+Please, always remember a general advice - if you have to extract a code into platform-specific source sets, try to minimize it.
+It will simplify maintenance of this code in the future.
+
+A non-exhaustive list of tips how you can adapt your code for several platforms:
+* to execute specific code for certain platform in gradle build scripts (`build.gradle.kts` or `settings.gradle.kts`),
+just use `environmentName` property and `if`/`when` conditions
+* if you need to have different sources for each platform:
+    - check that you actually need to have specific code for each platform.
+    There is quite often a deprecated way to make necessary action.
+    If it's your case, don't forget to suppress the deprecation warning and add `// BACKCOMPAT: %platform.version%` comment to mark this code and
+    fix the deprecation in the future.
+    `// BACKCOMPAT: %platform.version%` means that the corresponding code should be fixed when we will stop support for `%platform.version%`
+    - extract different code into a function and place it into `compatibilityUtils.kt` file in each platform-specific source set.
+    It usually works well when you need to call specific public code to make the same things in each platform
+    - if code that you need to call is not public (for example, it uses some protected methods of parent class), use the inheritance mechanism.
+    Extract `AwesomeClassBase` from your `AwesomeClass`, inherit `AwesomeClass` from `AwesomeClassBase`,
+    move `AwesomeClassBase` into platform-specific source sets and move all platform-specific code into `AwesomeClassBase` as protected methods.
+    - sometimes, signatures of some methods might have changed during platform evolution.
+    For example, `protected abstract void foo(Bar<Baz> bar)` can be converted into `protected abstract void foo(Bar<? extends Baz> bar)` since `%platform.version%`
+    and you have to override this method in your implementation.
+    It introduces source incompatibility (although it doesn't break binary compatibility).
+    The simplest way to make it compile for each platform is to introduce platform-specific [`typealias`](https://kotlinlang.org/docs/reference/type-aliases.html),
+    i.e. `typealias PlaformBar = Bar<Baz>` for platforms before `%platform.version%` and 
+    `typealias PlaformBar = Bar<out Baz>` for `%platform.version%` and newer, and use it in signature of overridden method.
+    Also, this approach works well when some class you depend on was moved into another package. 
+    - if the creation of a platform-specific source set is too heavy for your case, there is a way how you can choose specific code in runtime.
+    Just create the corresponding condition using `com.intellij.openapi.application.ApplicationInfo.getBuild`.
+    Usually, it looks like
+    ```kotlin
+    val BUILD_%platform.version% = BuildNumber.fromString("%platform.version%")!!
+    if (ApplicationInfo.getInstance().build < BUILD_%platform.version%) {
+        // code for current platform(s) older than %platform.version%
+    } 
+    else {
+        // code for %platform.version% platform and newer
+    }
+    ```
+    Of course, code should be compilable with all supported platforms to use this approach.
+    This approach can be used to temporarily disable some tests to find out why they don't work later.
+* if you need to register different items in `%xml_name%.xml` for each platform:
+    1. create `platform-%xml_name%.xml` in all `%module_name%/branch/%platform.version%/resources/META-INF` directories
+    2. put platform specific definitions into these xml files
+    3. include platform specific xml into `%module_name%/resources/META-INF/%xml_name%.xml`, i.e. add the following code
+    ```xml
+    <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+        <xi:include href="/META-INF/platform-%xml_name%.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    </idea-plugin>  
+    ```
 
 
 ## Workflow for checking compatibility with different platform branches
