@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.VersionComparatorUtil
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
-val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.2.30", true)
+val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10", true)
 private val KOTLIN_VERSION_PATTERN = """(\d+\.\d+(.\d+)?(-(eap-|M|rc-)\d+)?).*""".toRegex()
 
 fun getDisabledPlugins(ids: List<String>): List<String> {
