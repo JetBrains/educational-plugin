@@ -72,6 +72,9 @@ abstract class StepikConnector {
     if (tokens != null) {
       updateTokens(tokens)
     }
+    else {
+      error("Failed to refresh tokens")
+    }
   }
 
   fun login(code: String, redirectUri: String): Boolean {
