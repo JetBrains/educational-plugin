@@ -164,7 +164,7 @@ allprojects {
   }
 
   dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    compileOnly(kotlin("stdlib-jdk8"))
     implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
     implementation("org.jsoup:jsoup:1.12.1")
     implementation("org.jetbrains:markdown:0.1.41") {
@@ -174,7 +174,7 @@ allprojects {
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
       exclude(module = "snakeyaml")
     }
-    compile(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
+    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
 
     //transitive dependency is specified explicitly to avoid conflict with lib bundled since idea 181
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
