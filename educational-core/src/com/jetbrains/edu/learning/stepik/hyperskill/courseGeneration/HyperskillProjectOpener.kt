@@ -98,7 +98,7 @@ object HyperskillProjectOpener {
     openInExistingProject(request, EduBuiltInServerUtils::openRecentProject)
 
 
-  private fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
+  fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
     return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
       getInEdt {
         requestFocus()

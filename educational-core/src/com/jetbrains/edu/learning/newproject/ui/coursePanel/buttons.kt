@@ -20,6 +20,10 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
+import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
@@ -46,12 +50,20 @@ class OpenCourseButton : CourseButtonBase() {
   override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
     ApplicationManager.getApplication().invokeAndWait {
       val coursesStorage = CoursesStorage.getInstance()
-      val coursePath = coursesStorage.getCoursePath(courseInfo.course) ?: return@invokeAndWait
+      val course = courseInfo.course
+      val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeAndWait
       if (!FileUtil.exists(coursePath)) {
         if (showNoCourseDialog(coursePath) == Messages.CANCEL) {
           coursesStorage.removeCourseByLocation(coursePath)
           closeDialog()
-          JoinCourseDialog(courseInfo.course).show()
+          if (course is HyperskillCourse) {
+            HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
+              Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+            }
+          }
+          else {
+            JoinCourseDialog(course).show()
+          }
         }
         return@invokeAndWait
       }
