@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -117,8 +118,8 @@ fun <T> withRegistryKeyOff(key: String, action: () -> T): T {
   }
 }
 
-fun <V> getInEdt(compute: () -> V): V {
-  return runBlocking(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
+fun <V> getInEdt(modalityState: ModalityState = ModalityState.defaultModalityState(), compute: () -> V): V {
+  return runBlocking(AppUIExecutor.onUiThread(modalityState).coroutineDispatchingContext()) {
     compute()
   }
 }

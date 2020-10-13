@@ -3,13 +3,13 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
+import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import com.jetbrains.edu.learning.pluginVersion
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -47,13 +47,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         .send(context.channel(), request)
       return null
     }
-    if (OPEN_COURSE_PATTERN.matcher(uri).matches()) {
-      return withHyperskillAuthorization { openStage(urlDecoder, request, context) }
-    }
-
-    if (OPEN_STEP_PATTERN.matcher(uri).matches()) {
-      return withHyperskillAuthorization { openProblem(urlDecoder, request, context) }
-    }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
       val code = getStringParameter("code", urlDecoder)!! // cannot be null because of pattern
@@ -66,6 +59,29 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         return null
       }
       return sendErrorResponse(request, context, "Failed to login using provided code")
+    }
+
+    val hasOpenDialogs = getInEdt(modalityState = ModalityState.any()) {
+      if (ModalityState.current() != ModalityState.NON_MODAL) {
+        HyperskillProjectOpener.requestFocus()
+        Messages.showInfoMessage(EduCoreBundle.message("hyperskill.rest.service.modal.dialogs.message"),
+                                 EduCoreBundle.message("hyperskill.rest.service.modal.dialogs.title"))
+        return@getInEdt false
+      }
+      true
+    }
+
+    if (!hasOpenDialogs) {
+      sendOk(request, context)
+      return null
+    }
+
+    if (OPEN_COURSE_PATTERN.matcher(uri).matches()) {
+      return withHyperskillAuthorization { openStage(urlDecoder, request, context) }
+    }
+
+    if (OPEN_STEP_PATTERN.matcher(uri).matches()) {
+      return withHyperskillAuthorization { openProblem(urlDecoder, request, context) }
     }
 
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
