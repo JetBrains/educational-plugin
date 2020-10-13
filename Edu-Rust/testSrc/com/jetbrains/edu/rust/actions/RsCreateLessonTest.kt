@@ -1,5 +1,7 @@
 package com.jetbrains.edu.rust.actions
 
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -13,6 +15,14 @@ import org.rust.cargo.CargoConstants
 import org.rust.lang.RsLanguage
 
 class RsCreateLessonTest : RsActionTestBase() {
+
+  // BACKCOMPAT: 2020.2. Inline property value into tests
+  private lateinit var indent: String
+
+  override fun setUp() {
+    super.setUp()
+    indent = if (ApplicationInfo.getInstance().build < BUILD_202) "" else "    "
+  }
 
   fun `test add lesson item no trailing comma`() = addLastLesson("""
     [workspace]
@@ -29,7 +39,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/",
-    "lesson2/*/",
+    $indent"lesson2/*/",
     ]
 
     exclude = [
@@ -52,7 +62,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/",
-    "lesson2/*/",
+    $indent"lesson2/*/",
     ]
     
     exclude = [
@@ -75,7 +85,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/", # very useful comment
-    "lesson2/*/",
+    $indent"lesson2/*/",
     ]
     
     exclude = [
@@ -98,7 +108,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/" ,
-    "lesson2/*/",
+    $indent"lesson2/*/",
     ]
     
     exclude = [
@@ -137,7 +147,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       
       members = [
           "section1/lesson1/*/",
-      "section1/lesson2/*/",
+      $indent"section1/lesson2/*/",
       ]
       
       exclude = [
@@ -171,7 +181,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       [workspace]
       
       members = [
-      "section1/lesson1/*/",
+      $indent"section1/lesson1/*/",
       ]
       
       exclude = [
@@ -214,7 +224,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       members = [
           "lesson1/*/",
           "lesson2/*/",
-      "lesson3/*/"
+      $indent"lesson3/*/"
       ]
 
       exclude = [
@@ -329,5 +339,10 @@ class RsCreateLessonTest : RsActionTestBase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       testAction(dataContext(lessonDir), CCCreateTask())
     }
+  }
+
+  companion object {
+    // BACKCOMPAT: 2020.2
+    private val BUILD_202 = BuildNumber.fromString("202")!!
   }
 }
