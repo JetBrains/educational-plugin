@@ -75,11 +75,11 @@ val jvmPlugins = arrayOf(
 
 plugins {
   idea
-  kotlin("jvm") version "1.4.0"
-  id("org.jetbrains.intellij") version "0.4.21"
+  kotlin("jvm") version "1.4.10"
+  id("org.jetbrains.intellij") version "0.5.0"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
-  id("org.openjfx.javafxplugin") version "0.0.8"
+  id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
 idea {
