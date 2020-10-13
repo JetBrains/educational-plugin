@@ -22,7 +22,7 @@ class TopicsTabPanel(project: Project,
     val topics = course.taskToTopics[task.index - 1]
     val descriptionText = buildString {
       val textStyleHeader = StyleManager().textStyleHeader
-      appendln("<h3 $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>")
+      appendln("<h3 $textStyleHeader;padding:0;>${EduCoreBundle.message("hyperskill.topics.for.stage")}</h3>")
       if (topics != null) {
         appendln("<ol $textStyleHeader;padding-top:4px>")
         for (topic in topics) {
