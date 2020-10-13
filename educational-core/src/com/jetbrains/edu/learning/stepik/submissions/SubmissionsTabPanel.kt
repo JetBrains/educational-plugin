@@ -8,7 +8,6 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.AsyncProcessIcon
 import com.jetbrains.edu.learning.EduNames
@@ -16,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -172,7 +172,7 @@ class SubmissionsTabPanel(project: Project,
     val submissionTexts = getSubmissionTexts(reply, task.name) ?: return
     val requests = taskFiles.mapNotNull {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
-      val currentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
+      val currentFileContent = DiffContentFactory.getInstance().create(virtualFile.document.text, virtualFile.fileType)
       val submissionText = submissionTexts[it.name] ?: submissionTexts[task.name]
       if (virtualFile.isTestsFile(project) || submissionText == null) {
         null
