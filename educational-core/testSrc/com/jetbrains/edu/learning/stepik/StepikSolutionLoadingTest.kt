@@ -61,6 +61,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     val course = createStepikCourse()
 
     StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
+    UIUtil.dispatchAllInvocationEvents()
 
     fileTree {
       dir("lesson1") {
