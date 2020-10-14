@@ -14,6 +14,7 @@ fun openNewProject(location: Path, callback: ProjectOpenedCallback): Project? {
     projectToClose = null,
     isNewProject = true,
     runConfigurators = true,
+    isProjectCreatedWithWizard = true,
     callback = callback
   )
 
