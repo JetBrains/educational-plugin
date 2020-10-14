@@ -64,9 +64,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null,
                                     force: Boolean = false) {
-    val submissions = if (progressIndicator != null)
+    val submissions = if (progressIndicator != null) {
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
-    else loadSubmissions(tasksToUpdate)
+    }
+    else {
+      loadSubmissions(tasksToUpdate)
+    }
 
     if (submissions != null) {
       updateTasks(course, tasksToUpdate, submissions, progressIndicator, force)
@@ -247,7 +250,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
     private fun Task.modifiedBefore(project: Project, taskSolutions: TaskSolutions): Boolean {
       val solutionDate = taskSolutions.date ?: return true
-      return solutionDate.isSignificantlyAfter(modificationDate(project))
+      val localTaskModificationDate = modificationDate(project)
+      return solutionDate.isSignificantlyAfter(localTaskModificationDate)
     }
 
     private fun applySolutions(project: Project,
