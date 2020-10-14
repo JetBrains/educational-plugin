@@ -6,6 +6,7 @@ import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.AppUIExecutor
@@ -116,7 +117,8 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       hyperskillNotificationGroup.displayId,
       EduNames.JBA,
       EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.MISMATCH_REDIRECT_URI_URL),
-      NotificationType.ERROR
+      NotificationType.ERROR,
+      NotificationListener.URL_OPENING_LISTENER
     ).notify(null)
   }
 
