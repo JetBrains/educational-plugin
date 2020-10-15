@@ -189,6 +189,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   fun setError(errorState: ErrorState) {
     coursePanel.setError(errorState)
+    revalidate()
   }
 
   private fun filterCourses(courses: List<Course>): List<Course> {

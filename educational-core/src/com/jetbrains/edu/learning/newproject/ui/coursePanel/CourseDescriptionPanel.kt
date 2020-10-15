@@ -5,13 +5,10 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
 import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
-import kotlinx.css.CSSBuilder
-import kotlinx.css.properties.lh
-import kotlinx.css.pt
-import kotlinx.css.px
 import java.awt.Font
 
 
@@ -65,7 +62,7 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
         <html>
         <head>
           <style>
-            ${createStylesheet()}
+            ${createCourseDescriptionStylesheet()}
           </style>
         </head>
         <body>
@@ -73,14 +70,6 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
         </body>
         </html>
       """.trimIndent())
-    }
-  }
-
-  private fun createStylesheet() = CSSBuilder().apply {
-    kotlinx.css.body {
-      fontFamily = "SF UI Text"
-      fontSize = JBUI.scaleFontSize(13.0f).pt
-      lineHeight = (JBUI.scaleFontSize(16.0f)).px.lh
     }
   }
 

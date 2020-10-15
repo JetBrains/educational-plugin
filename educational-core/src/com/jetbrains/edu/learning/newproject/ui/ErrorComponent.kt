@@ -8,7 +8,6 @@ import com.intellij.util.ui.JBUI.CurrentTheme.Validator.errorBackgroundColor
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.warningBackgroundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.Color
 import java.awt.Graphics
@@ -55,10 +54,16 @@ class ErrorComponent(
     }
 
     fun setErrorMessage(validationMessage: ValidationMessage) {
-      val textStyle = StyleManager().textStyleHeader
-      val text = "<span $textStyle>${validationMessage.beforeLink}</span>" +
-                 "<a $textStyle;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=>${validationMessage.linkText}</a>" +
-                 "<span $textStyle>${validationMessage.afterLink}</span>"
+      val text = """
+        <style>
+          ${createCourseDescriptionStylesheet()}
+        </style>
+        <body>
+          <span>${validationMessage.beforeLink}</span>
+          <a style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}href=>${validationMessage.linkText}</a>
+          <span>${validationMessage.afterLink}</span>
+        </body>
+      """.trimIndent()
       messageType = validationMessage.type
       errorTextPane.text = text
       errorTextPane.background = getComponentColor()

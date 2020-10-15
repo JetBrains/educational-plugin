@@ -13,6 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import icons.EducationalCoreIcons
+import kotlinx.css.CSSBuilder
+import kotlinx.css.body
+import kotlinx.css.properties.lh
+import kotlinx.css.pt
+import kotlinx.css.px
 import java.awt.Component
 import javax.swing.Icon
 
@@ -82,5 +87,13 @@ fun browseHyperlink(message: ValidationMessage?) {
   val hyperlink = message.hyperlinkAddress
   if (hyperlink != null) {
     EduBrowser.browse(hyperlink)
+  }
+}
+
+fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
+  body {
+    fontFamily = "SF UI Text"
+    fontSize = JBUI.scaleFontSize(13.0f).pt
+    lineHeight = (JBUI.scaleFontSize(16.0f)).px.lh
   }
 }
