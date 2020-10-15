@@ -47,7 +47,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
     return super.excludeFromArchive(project, file) ||
-           generateSequence(file, VirtualFile::getParent).any { it.name == "target" || it.name == "project" }
+           generateSequence(file, VirtualFile::getParent).any { it.name == "target"}
   }
 
   companion object {
