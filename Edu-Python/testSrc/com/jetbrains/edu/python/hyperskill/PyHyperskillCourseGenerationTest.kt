@@ -32,7 +32,6 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
         }
         file("task.html")
       }
-      file("test_helper.py")
     }
   }
 
