@@ -60,7 +60,7 @@ class ErrorComponent(
         </style>
         <body>
           <span>${validationMessage.beforeLink}</span>
-          <a style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}href=>${validationMessage.linkText}</a>
+          <a style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=>${validationMessage.linkText}</a>
           <span>${validationMessage.afterLink}</span>
         </body>
       """.trimIndent()
