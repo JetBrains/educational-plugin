@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.java.actions
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
@@ -32,13 +32,5 @@ class JMoveHandler : EduMoveDelegate() {
     if (element == null || project == null) return false
     val adjustedElement = adjustElement(element) ?: return false
     return isAvailable(project, adjustedElement)
-  }
-
-  private fun adjustElement(element: PsiElement): PsiElement? {
-    val psiClass = element as? PsiClass ?: return null
-    val containingFile = psiClass.containingFile
-    val virtualFile = containingFile.virtualFile ?: return null
-    val taskFile = virtualFile.getTaskFile(element.project) ?: return null
-    return if (!taskFile.isLearnerCreated && virtualFile.nameWithoutExtension == psiClass.name) containingFile else null
   }
 }
