@@ -15,6 +15,8 @@ object StyleResourcesManager {
 
   const val BROWSER_CSS: String = "/style/browser.css"
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
+  const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow.png"
+  const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow_dark.png"
   private const val JAVAFX_BASE_CSS: String = "/style/hint/base.css"
   private const val JAVAFX_DARCULA_CSS: String = "/style/hint/darcula.css"
   private const val JAVAFX_HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
@@ -42,6 +44,8 @@ object StyleResourcesManager {
   val resourcesList = listOf(
     BROWSER_CSS,
     CODEFORCES_TASK_CSS,
+    EXTERNAL_LINK_ARROW_PNG,
+    EXTERNAL_LINK_ARROW_DARK_PNG,
     JAVAFX_BASE_CSS,
     JAVAFX_DARCULA_CSS,
     JAVAFX_HIGH_CONTRAST_CSS,

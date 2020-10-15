@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -10,6 +12,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.ui.EduColors
+import icons.EducationalCoreIcons
+import java.net.URL
 
 class TopicsTabPanel(project: Project,
                      course: HyperskillCourse,
@@ -41,7 +45,18 @@ class TopicsTabPanel(project: Project,
     val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"
     val linkStyle = "$textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}"
     val topicLink = "https://hyperskill.org/learn/step/${topic.theoryId}/"
+    val pictureSize = StyleManager().bodyFontSize
 
-    return """<li $liStyle><a $linkStyle href=$topicLink>${topic.title}</a></li>"""
+    return """<li $liStyle><a $linkStyle href=$topicLink>${topic.title}</a><h><img src=${getExternalLinkArrowIconUrl()} hspace=2 width=$pictureSize height=$pictureSize/></h></li>"""
+  }
+
+  private fun getExternalLinkArrowIconUrl(): URL? {
+    val icon = if (UIUtil.isUnderDarcula()) {
+      EducationalCoreIcons.External_link_arrow_dark
+    }
+    else {
+      EducationalCoreIcons.External_link_arrow
+    }
+    return (icon as IconLoader.CachedImageIcon).url
   }
 }
