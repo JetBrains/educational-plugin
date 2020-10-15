@@ -1,8 +1,11 @@
 package com.jetbrains.edu.rust.actions
 
 import com.intellij.ide.actions.DeleteAction
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.withEduTestDialog
 import com.jetbrains.edu.rust.RsProjectSettings
@@ -10,6 +13,13 @@ import org.intellij.lang.annotations.Language
 import org.rust.lang.RsLanguage
 
 class RsDeleteActionTest : RsActionTestBase() {
+
+  override fun runTestInternal(context: TestContext) {
+    // https://youtrack.jetbrains.com/issue/EDU-3706
+    if (ApplicationInfo.getInstance().build < BUILD_203) {
+      super.runTestInternal(context)
+    }
+  }
 
   fun `test delete first lesson`() = doTest(createRustCourse(), "lesson1", """
       [workspace]
@@ -196,5 +206,9 @@ class RsDeleteActionTest : RsActionTestBase() {
     }
 
     checkCargoToml(expectedText)
+  }
+
+  companion object {
+    private val BUILD_203 = BuildNumber.fromString("203")!!
   }
 }
