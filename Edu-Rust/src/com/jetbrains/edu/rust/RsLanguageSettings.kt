@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.rust.messages.EduRustBundle
-import org.rust.cargo.toolchain.RustToolchain
 import java.awt.BorderLayout
 import java.nio.file.Paths
 import javax.swing.JComponent
@@ -19,10 +18,10 @@ import javax.swing.event.DocumentEvent
 class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
   private val toolchainLocation = TextFieldWithBrowseButton()
-  private var rustToolchain: RustToolchain? = null
+  private var rustToolchain: RsToolchain? = null
 
   init {
-    val toolchain = RustToolchain.suggest()
+    val toolchain = RsToolchain.suggest()
     if (toolchain != null) {
       toolchainLocation.text = toolchain.location.toString()
       rustToolchain = toolchain
@@ -36,7 +35,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     toolchainLocation.childComponent.document.addDocumentListener(object : DocumentAdapter() {
       override fun textChanged(e: DocumentEvent) {
         val location = toolchainLocation.text
-        rustToolchain = if (location.isNotBlank()) RustToolchain(Paths.get(location)) else null
+        rustToolchain = if (location.isNotBlank()) RsToolchain(Paths.get(location)) else null
         notifyListeners()
       }
     })

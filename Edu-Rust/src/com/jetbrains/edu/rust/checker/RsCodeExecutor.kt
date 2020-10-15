@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.rust.messages.EduRustBundle
+import com.jetbrains.edu.rust.rawCargo
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.lang.RsConstants.MAIN_RS_FILE
