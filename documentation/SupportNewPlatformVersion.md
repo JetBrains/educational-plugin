@@ -35,4 +35,7 @@ just [create](https://youtrack.jetbrains.com/newIssue?project=EDU&c=Priority%20M
 * Update TeamCity configuration to provide new subproject instead of the old one.
 At the moment of writing, it requires changing `EducationalSupportedReleases` in [`intellij-teamcity-config`](https://jetbrains.team/p/ij/code/intellij-teamcity-config) repo
 * Fix `BACKCOMPAT: %old%` comments. You can find all such comments via `Find in Path` action.
-Also, you can add `\bbackcompat\b.*` pattern into `Preferences | Editor | TODO` setting panel to show such comments in [`TODO`](https://www.jetbrains.com/help/idea/todo-tool-window.html) tool window 
+Also, you can add `\bbackcompat\b.*` pattern into `Preferences | Editor | TODO` setting panel to show such comments in [`TODO`](https://www.jetbrains.com/help/idea/todo-tool-window.html) tool window
+* Delete all Android Studio binaries for `old` platform from `edu-tools` repo at `https://repo.labs.intellij.net`.
+`delete_studio.py` script in `helpers` directory may hep you. Just run `python delete_studio.py --apiKey %your_key% --version %old%`.
+Note, `https://repo.labs.intellij.net` is only available with VPN
