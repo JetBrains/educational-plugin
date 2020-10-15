@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import icons.EducationalCoreIcons
+import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
 import java.time.ZonedDateTime
 import java.util.*
@@ -40,12 +41,12 @@ class CodeforcesCourse : Course {
   fun isOngoing(): Boolean = if (endDateTime == null) false else (endDateTime!! > ZonedDateTime.now())
 
   private fun parseResponseToAddContent(doc: Document) {
-    name = doc.selectFirst(".caption").text()
-
-    val problems = doc.select(".problem-statement")
+    @NonNls val error = "Parsing failed. Unable to find CSS elements:"
+    name = doc.selectFirst(".caption")?.text() ?: error("$error caption")
+    val problems = doc.select(".problem-statement") ?: error("$error problem-statement")
 
     description = problems.joinToString("\n") {
-      it.select("div.header").select("div.title").text()
+      it.select("div.header")?.select("div.title")?.text() ?: error("$error div.header, div.title")
     }
 
     val lesson = Lesson()
