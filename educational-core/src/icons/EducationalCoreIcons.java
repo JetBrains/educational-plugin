@@ -4,9 +4,6 @@ import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
-import static com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG;
-import static com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG;
-
 public class EducationalCoreIcons {
   private static Icon load(String path) {
     return IconLoader.getIcon(path, EducationalCoreIcons.class);
@@ -72,7 +69,4 @@ public class EducationalCoreIcons {
   public static final Icon User = load("/icons/com/jetbrains/edu/usersNumber.svg"); // 12x12
 
   public static final Icon CheckDetailsIcon = load("/icons/com/jetbrains/edu/learning/checkDetailsToolWindow.svg"); // 13x13
-
-  public static final Icon External_link_arrow = load(EXTERNAL_LINK_ARROW_PNG); //14x14
-  public static final Icon External_link_arrow_dark = load(EXTERNAL_LINK_ARROW_DARK_PNG); //14x14
 }

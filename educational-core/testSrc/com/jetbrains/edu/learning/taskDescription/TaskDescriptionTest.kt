@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.ui.laf.darcula.DarculaLaf
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.keymap.KeymapManager
@@ -17,17 +16,11 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
 import com.jetbrains.edu.learning.taskDescription.ui.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.KeyStroke
-import javax.swing.UIManager
-import javax.swing.UIManager.setLookAndFeel
 
 class TaskDescriptionTest : EduTestCase() {
   companion object {
@@ -189,7 +182,7 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   fun `test local png image replaced in dark theme`() {
-    runWithDarkTheme { doTestLocalImageReplaced(true, "screenshot.png", "screenshot_dark.png") }
+    doTestLocalImageReplaced(true, "screenshot.png", "screenshot_dark.png")
   }
 
   fun `test local png image not replaced in light theme`() {
@@ -197,7 +190,7 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   fun `test local svg image replaced in dark theme`() {
-    runWithDarkTheme { doTestLocalImageReplaced(true, "screenshot.svg", "screenshot_dark.svg") }
+    doTestLocalImageReplaced(true, "screenshot.svg", "screenshot_dark.svg")
   }
 
   fun `test local svg image not replaced in light theme`() {
@@ -205,53 +198,14 @@ class TaskDescriptionTest : EduTestCase() {
   }
 
   fun `test remote image replaced from srcset in dark theme`() {
-    runWithDarkTheme { doTestImageReplacedFromSrcset("https://dark.png") }
+    doTestImageReplacedFromSrcset("https://dark.png", true)
   }
 
   fun `test image not replaced from srcset in light theme`() {
-    doTestImageReplacedFromSrcset("https://light.png")
+    doTestImageReplacedFromSrcset("https://light.png", false)
   }
 
-  fun `test arrow icon added after external link in light theme`() {
-    doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
-  }
-
-  fun `test arrow icon added after external link in dark theme`() {
-    runWithDarkTheme { doTestArrowIconAdded(EXTERNAL_LINK_ARROW_DARK_PNG) }
-  }
-
-  private fun runWithDarkTheme(doTest: () -> Unit) {
-    val initialTheme = UIManager.getLookAndFeel()
-    setLookAndFeel(DarculaLaf())
-    doTest()
-    setLookAndFeel(initialTheme)
-  }
-
-  private fun doTestArrowIconAdded(expectedLinkArrowUrl: String) {
-    val taskText = """<a href="https://www.google.com/">Google</a>""".trimIndent()
-    courseWithFiles {
-      lesson {
-        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
-        }
-      }
-    }
-    val pictureSize = StyleManager().bodyFontSize
-    val expectedText = """
-      <html>
-       <head></head>
-       <body>
-        <a href="https://www.google.com/">Google<img src="${
-      StyleResourcesManager.resourceUrl(expectedLinkArrowUrl)
-    }" style="display:inline" width="$pictureSize" height="$pictureSize"></a>
-       </body>
-      </html>
-    """.trimIndent()
-
-    val actualText = addExternalLinkIcons(Jsoup.parse(taskText))
-    assertEquals(expectedText, actualText)
-  }
-
-  private fun doTestImageReplacedFromSrcset(expectedImage: String) {
+  private fun doTestImageReplacedFromSrcset(expectedImage: String, isDarkTheme: Boolean) {
     val taskText = """<p <img class=image-fullsize src=https://light.png srcset=https://dark.png width=400></p>""".trimIndent()
     courseWithFiles {
       lesson {
@@ -272,7 +226,7 @@ class TaskDescriptionTest : EduTestCase() {
     """.trimIndent()
 
     val task = findTask(0, 0)
-    val actualText = replaceImagesForTheme(project, task, taskText).toString()
+    val actualText = replaceImagesForTheme(project, task, taskText, isDarkTheme)
     assertEquals(expectedText, actualText)
   }
 
@@ -310,7 +264,7 @@ class TaskDescriptionTest : EduTestCase() {
       </html>
     """.trimIndent()
     val task = findTask(0, 0)
-    val actualText = replaceImagesForTheme(project, task, taskText).toString().trimIndent()
+    val actualText = replaceImagesForTheme(project, task, taskText, isDarkTheme).trimIndent()
     assertEquals(expectedText, actualText)
   }
 

@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.processImagesAndLinks
+import com.jetbrains.edu.learning.taskDescription.replaceImagesForTheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
@@ -102,11 +102,11 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
             return taskText
           }
 
-          val processedText = processImagesAndLinks(project, task, taskText)
+          val textWithImagesByTheme = replaceImagesForTheme(project, task, taskText)
 
           val course = task.course
-          val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText
-          return EduCodeHighlighter.highlightCodeFragments(project, processedText, language)
+          val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return textWithImagesByTheme
+          return EduCodeHighlighter.highlightCodeFragments(project, textWithImagesByTheme, language)
         }
       }
       return EduCoreBundle.message("label.open.task")

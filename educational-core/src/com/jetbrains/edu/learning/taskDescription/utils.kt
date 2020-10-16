@@ -12,12 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.mimeType
 import com.jetbrains.edu.learning.stepik.SOURCE
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 private const val SHORTCUT = "shortcut"
@@ -26,15 +21,10 @@ private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
 private const val VIDEO_TAG = "video"
 private const val IFRAME_TAG = "iframe"
 private const val YOUTUBE_VIDEO_ID_LENGTH = 11
-private const val A_TAG = "a"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
-private const val HEIGHT_ATTRIBUTE = "height"
-private const val HREF_ATTRIBUTE = "href"
-private const val STYLE_ATTRIBUTE = "style"
 private const val SRCSET_ATTRIBUTE = "srcset"
-private const val WIDTH_ATTRIBUTE = "width"
 private const val IMAGE_TYPE = "image"
 private const val DARK_SUFFIX = "_dark"
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskDescription.utils")
@@ -136,17 +126,11 @@ fun String.getYoutubeVideoId(): String? {
   }
 }
 
-fun processImagesAndLinks(project: Project, task: Task, taskText: String): String {
-  val documentWithImagesByTheme = replaceImagesForTheme(project, task, taskText)
-  return addExternalLinkIcons(documentWithImagesByTheme)
-}
-
-fun replaceImagesForTheme(project: Project, task: Task, taskText: String): Document {
+fun replaceImagesForTheme(project: Project, task: Task, taskText: String, isDarkTheme: Boolean = UIUtil.isUnderDarcula()): String {
   val document = Jsoup.parse(taskText)
   val imageElements = document.getElementsByTag(IMG_TAG)
   for (element in imageElements) {
     val srcAttr = element.attr(SRC_ATTRIBUTE)
-    val isDarkTheme = UIUtil.isUnderDarcula()
     if (isDarkTheme && task.containsLocalImages(project, srcAttr)) {
       val fileNameWithoutExtension = FileUtil.getNameWithoutExtension(srcAttr)
       val fileExtension = FileUtilRt.getExtension(srcAttr)
@@ -161,27 +145,6 @@ fun replaceImagesForTheme(project: Project, task: Task, taskText: String): Docum
       }
       element.removeAttr(SRCSET_ATTRIBUTE)
     }
-  }
-  return document
-}
-
-fun addExternalLinkIcons(document: Document): String {
-  val links = document.getElementsByTag(A_TAG)
-  val externalLinks = links.filter { it.attr(HREF_ATTRIBUTE).startsWith("https://") }
-  val arrowIcon = if (UIUtil.isUnderDarcula()) {
-    EXTERNAL_LINK_ARROW_DARK_PNG
-  }
-  else {
-    EXTERNAL_LINK_ARROW_PNG
-  }
-  for (link in externalLinks) {
-    val pictureSize = StyleManager().bodyFontSize
-    link.appendElement(IMG_TAG)
-    val img = link.getElementsByTag(IMG_TAG)
-    img.attr(SRC_ATTRIBUTE, StyleResourcesManager.resourceUrl(arrowIcon))
-    img.attr(STYLE_ATTRIBUTE, "display:inline")
-    img.attr(WIDTH_ATTRIBUTE, pictureSize.toString())
-    img.attr(HEIGHT_ATTRIBUTE, pictureSize.toString())
   }
   return document.toString()
 }
