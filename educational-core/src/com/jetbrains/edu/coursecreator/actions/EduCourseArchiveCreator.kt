@@ -25,7 +25,7 @@ class EduCourseArchiveCreator(project: Project, location: String, aesKey: String
       mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
       mapper.addMixIn(EduCourse::class.java, LocalEduCourseMixin::class.java)
       addStudyItemMixins(mapper)
-      commonMapperSetup(mapper, course, aesKey)
+      commonMapperSetup(mapper, course)
       return mapper
     }
 
@@ -37,7 +37,7 @@ class EduCourseArchiveCreator(project: Project, location: String, aesKey: String
       mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
       mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
       mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-      commonMapperSetup(mapper, course, aesKey)
+      commonMapperSetup(mapper, course)
       val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
       dateFormat.timeZone = TimeZone.getTimeZone("UTC")
       mapper.dateFormat = dateFormat

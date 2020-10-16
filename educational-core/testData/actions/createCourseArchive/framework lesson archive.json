@@ -17,12 +17,12 @@
                 {
                   "offset" : 20,
                   "length" : 6,
-                  "possible_answer" : "YHy7k6TLDgQ5klWwH+OQRA==",
+                  "possible_answer" : "\"Foo\"",
                   "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
-              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
+              "text" : "fun foo(): String = TODO()"
             }
           },
           "description_text" : "solve task",
@@ -36,5 +36,5 @@
       "type" : "framework"
     }
   ],
-  "version" : 12
+  "version" : 11
 }

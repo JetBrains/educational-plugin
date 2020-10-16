@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.MarketplaceCourseMixin
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.encrypt.EncryptionModule
 
 class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String?)
   : CourseArchiveCreator(project, location, aesKey) {
@@ -18,7 +19,8 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
       val mapper = ObjectMapper(factory)
       mapper.addMixIn(EduCourse::class.java, MarketplaceCourseMixin::class.java)
       addStudyItemMixins(mapper)
-      commonMapperSetup(mapper, course, aesKey)
+      mapper.registerModule(EncryptionModule(aesKey))
+      commonMapperSetup(mapper, course)
       return mapper
     }
 

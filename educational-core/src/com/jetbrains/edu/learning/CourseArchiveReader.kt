@@ -56,7 +56,6 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       8 -> converter = To9VersionLocalCourseConverter()
       9 -> converter = To10VersionLocalCourseConverter()
       10 -> converter = To11VersionLocalCourseConverter()
-      11 -> converter = To12VersionLocalCourseConverter()
     }
     if (converter != null) {
       jsonObject = converter.convert(jsonObject)
@@ -74,8 +73,6 @@ val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and r
     module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
     module.addDeserializer(Course::class.java, CourseDeserializer())
     mapper.registerModule(module)
-    val aesKey = if (!isUnitTestMode) EncryptionBundle.message("aesKey") else null
-    mapper.registerModule(EncryptionModule(aesKey))
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
     mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)

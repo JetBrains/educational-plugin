@@ -21,7 +21,7 @@
                 }
               ],
               "is_visible" : true,
-              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
+              "text" : "fun foo(): String = TODO()"
             }
           },
           "description_text" : "solve task",
@@ -36,5 +36,5 @@
     }
   ],
   "submit_manually" : true,
-  "version" : 12
+  "version" : 11
 }

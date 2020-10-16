@@ -17,12 +17,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, ENCRYPTED_TEXT, LEARNER_CREATED)
+@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, TEXT, LEARNER_CREATED)
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
 
-  @JsonProperty(ENCRYPTED_TEXT)
+  @JsonProperty(TEXT)
   @Encrypt
-  fun getTextToSerialize(): String {
+  open fun getTextToSerialize(): String {
     throw NotImplementedError()
   }
 
@@ -30,7 +30,7 @@ abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   private var myLearnerCreated = false
 }
 
-private class StudentTaskFileBuilder(
+class StudentTaskFileBuilder(
   @JsonProperty(TEXT) val textFromConfig: String?,
   @Encrypt @JsonProperty(ENCRYPTED_TEXT) val encryptedTextFromConfig: String?,
   @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,

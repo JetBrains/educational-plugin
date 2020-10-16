@@ -785,5 +785,4 @@
     }
     ```
 11. For Android courses replaced `Android` course type with `Pycharm` course type + `Android` environment
-  
-12. Store task file texts, additional files texts and possible answers with encrypted version.    
+    

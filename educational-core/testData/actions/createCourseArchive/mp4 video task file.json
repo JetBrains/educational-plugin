@@ -15,7 +15,7 @@
               "name" : "test.mp4",
               "placeholders" : [ ],
               "is_visible" : true,
-              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+              "text" : ""
             }
           },
           "description_text" : "solve task",
@@ -34,14 +34,14 @@
       "name" : "build.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : ""
     },
     {
       "name" : "settings.gradle",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+      "text" : ""
     }
   ],
-  "version" : 12
+  "version" : 11
 }

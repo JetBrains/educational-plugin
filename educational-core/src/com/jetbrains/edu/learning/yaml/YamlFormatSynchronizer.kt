@@ -90,8 +90,22 @@ object YamlFormatSynchronizer {
   val STUDENT_MAPPER: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
+    mapper.addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
+    mapper.addStudentMixIns()
+
+    mapper
+  }
+
+  @VisibleForTesting
+  @JvmStatic
+  val STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
+    val mapper = createMapper()
+    addMixIns(mapper)
     val aesKey = getAesKey()
     mapper.registerModule(EncryptionModule(aesKey))
+    mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
+    mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
     mapper.addStudentMixIns()
 
     mapper
@@ -161,8 +175,6 @@ object YamlFormatSynchronizer {
     addMixIn(CodeforcesTask::class.java, CodeforcesTaskYamlMixin::class.java)
     addMixIn(CodeforcesTaskWithFileIO::class.java, CodeforcesTaskWithFileIOYamlMixin::class.java)
 
-    addMixIn(TaskFile::class.java, StudentTaskFileYamlMixin::class.java)
-    addMixIn(AnswerPlaceholder::class.java, StudentAnswerPlaceholderYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }
@@ -299,7 +311,12 @@ object YamlFormatSynchronizer {
   }
 
   val Course.mapper: ObjectMapper
-    get() = if (isStudy) STUDENT_MAPPER else MAPPER
+    get() = if (isStudy) {
+      if (isMarketplace) STUDENT_MAPPER_WITH_ENCRYPTION else STUDENT_MAPPER
+    }
+    else {
+      MAPPER
+    }
 }
 
 val StudyItem.configFileName: String

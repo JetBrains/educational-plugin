@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.introspect.Annotated
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector
 import com.fasterxml.jackson.databind.node.TextNode
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
 import java.util.*
 import javax.crypto.Cipher
@@ -26,7 +28,7 @@ class EncryptionModule(private val aesKey: String?) : Module() {
   }
 
   override fun setupModule(setupContext: SetupContext) {
-    if (aesKey != null) {
+    if (aesKey != null && isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)) {
       setupContext.appendAnnotationIntrospector(EncryptAnnotationIntrospector(aesKey))
     }
   }

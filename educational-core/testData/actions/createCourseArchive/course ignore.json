@@ -15,7 +15,7 @@
               "name" : "taskFile1.txt",
               "placeholders" : [ ],
               "is_visible" : true,
-              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+              "text" : ""
             }
           },
           "description_text" : "solve task",
@@ -29,5 +29,5 @@
       "type" : "lesson"
     }
   ],
-  "version" : 12
+  "version" : 11
 }

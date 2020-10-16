@@ -17,7 +17,7 @@
               "name" : "taskFile1.txt",
               "placeholders" : [ ],
               "is_visible" : true,
-              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+              "text" : ""
             }
           },
           "description_text" : "solve task",
@@ -36,5 +36,5 @@
   "programming_language" : "TEXT",
   "language" : "en",
   "course_type" : "PyCharm",
-  "version" : 12
+  "version" : 11
 }

@@ -44,6 +44,20 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test possible answer encrypted`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/marketplaceCourseArchive"
   }

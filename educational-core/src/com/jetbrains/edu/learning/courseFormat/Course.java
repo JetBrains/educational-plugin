@@ -47,6 +47,7 @@ public abstract class Course extends LessonContainer {
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
 
   // Marketplace:
+  private boolean isMarketplace = false;
   private Vendor myVendor;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
@@ -320,5 +321,9 @@ public abstract class Course extends LessonContainer {
 
   public void setVendor(Vendor vendor) {
     myVendor = vendor;
+  }
+
+  public boolean isMarketplace() {
+    return isMarketplace;
   }
 }
