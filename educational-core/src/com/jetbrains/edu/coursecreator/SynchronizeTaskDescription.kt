@@ -28,10 +28,8 @@ class SynchronizeTaskDescription(project: Project, parentDisposable: Disposable)
     task.descriptionText = eventDocument.text
     if (ToolWindowManager.getInstance(project).getToolWindow(STUDY_TOOL_WINDOW) == null) return
 
-    updateQueue.queue(object : Update(TASK_DESCRIPTION_UPDATE) {
-      override fun run() {
-        TaskDescriptionView.getInstance(project).updateTaskDescription(task)
-      }
+    updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
+      TaskDescriptionView.getInstance(project).updateTaskDescription(task)
     })
   }
 
