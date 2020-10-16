@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
+import org.cef.handler.CefLifeSpanHandlerAdapter
 import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
@@ -30,8 +31,13 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser)
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
+  private val jcefLinkInToolWindowHandler by lazy {
+    JCefToolWindowLinkHandler()
+  }
+
   init {
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(), taskInfoJBCefBrowser.cefBrowser)
+    taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(TaskInfoLifeSpanHandler(), taskInfoJBCefBrowser.cefBrowser)
     taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
 
     jsQuerySetScrollHeight.addHandler { height ->
@@ -92,23 +98,20 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   private inner class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
-    private val jcefLinkInToolWindowHandler by lazy {
-      JCefToolWindowLinkHandler()
-    }
-
     override fun onBeforeBrowse(browser: CefBrowser?,
                                 frame: CefFrame?,
                                 request: CefRequest?,
                                 user_gesture: Boolean,
                                 is_redirect: Boolean): Boolean {
-      var url = request?.url ?: return false
-      when {
-        url.contains("about:blank") -> return false
-        url.startsWith(JCEF_URL_PREFIX) -> url = url.substringAfter(JCEF_URL_PREFIX)
-        url.containsYoutubeLink() -> return false
-      }
-
+      val url = request?.url ?: return false
       return jcefLinkInToolWindowHandler.process(url)
+    }
+  }
+
+  private inner class TaskInfoLifeSpanHandler : CefLifeSpanHandlerAdapter() {
+    override fun onBeforePopup(browser: CefBrowser?, frame: CefFrame?, targetUrl: String?, targetFrameName: String?): Boolean {
+      if (targetUrl == null) return true
+      return jcefLinkInToolWindowHandler.process(targetUrl)
     }
   }
 
@@ -135,6 +138,15 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   private inner class JCefToolWindowLinkHandler : ToolWindowLinkHandler(project) {
+    override fun process(url: String): Boolean {
+      return when {
+        url.contains("about:blank") -> false
+        url.startsWith(JCEF_URL_PREFIX) -> super.process(url.substringAfter(JCEF_URL_PREFIX))
+        url.containsYoutubeLink() -> false
+        else -> super.process(url)
+      }
+    }
+
     override fun processExternalLink(url: String): Boolean {
       val urlToOpen = when {
         url.startsWith(FILE_PROTOCOL_PREFIX) -> getStepikUrl() + url.substringAfter(FILE_PROTOCOL_PREFIX)

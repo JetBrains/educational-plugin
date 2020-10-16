@@ -16,7 +16,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class ToolWindowLinkHandler(val project: Project) {
-  fun process(url: String): Boolean {
+  open fun process(url: String): Boolean {
     val matcher = IN_COURSE_LINK.matcher(url)
     return when {
       url.startsWith(PSI_ELEMENT_PROTOCOL) -> processPsiElementLink(url)
