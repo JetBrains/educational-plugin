@@ -159,6 +159,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     return getInEdt {
+      HyperskillProjectOpener.requestFocus()
       Messages.showOkCancelDialog(
         "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
                                        browserAccount.fullname)}</html>",
