@@ -18,11 +18,13 @@ class PyHyperskillBaseConfigurator : PyConfigurator() {
   override fun getMockFileName(text: String): String = MAIN_PY
 
   override val courseBuilder: EduCourseBuilder<PyNewProjectSettings>
-    get() = object : PyCourseBuilder() {
-      override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
-        return GeneratorWithoutAdditionalFiles(this, course)
-      }
+    get() = PyHyperskillCourseBuilder()
+
+  private class PyHyperskillCourseBuilder : PyCourseBuilder() {
+    override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
+      return GeneratorWithoutAdditionalFiles(this, course)
     }
+  }
 
   private class GeneratorWithoutAdditionalFiles(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
     override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
