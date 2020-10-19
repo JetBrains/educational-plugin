@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import icons.EducationalCoreIcons
 
 private const val LEAVE_A_COMMENT_ACTION = "Leave a comment"
+private const val SHOW_DISCUSSIONS_ACTION = "Show discussions"
 
 @Suppress("ComponentNotRegistered")
 class LeaveCommentAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMMENT_ACTION, EducationalCoreIcons.CommentTask),
@@ -34,13 +35,19 @@ class LeaveCommentAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMME
     val project = e.project ?: return
     if (!EduUtils.isStudentProject(project)) return
     val task = EduUtils.getCurrentTask(project) ?: return
-    val feedbackLink = task.feedbackLink
     val course = task.course
 
+    if (course is HyperskillCourse) {
+      e.presentation.text = SHOW_DISCUSSIONS_ACTION
+      e.presentation.description = SHOW_DISCUSSIONS_ACTION
+      addSynonym(SHOW_DISCUSSIONS_ACTION)
+    }
+
+    val feedbackLink = task.feedbackLink
     e.presentation.isEnabledAndVisible = when (feedbackLink.type) {
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
+      FeedbackLink.LinkType.STEPIK -> course is EduCourse && course.isRemote
     }
   }
 

@@ -52,19 +52,20 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    if (course is CodeforcesCourse) {
-      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
-      rightActionsToolbar.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
-    }
-    else {
-      if (course is HyperskillCourse) {
+    when (course) {
+      is CodeforcesCourse -> {
+        rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
+        rightActionsToolbar.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
+        return rightActionsToolbar
+      }
+      is HyperskillCourse -> {
         val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID)
         link.border = JBUI.Borders.empty(9, 10, 0, 0)
         rightActionsToolbar.add(link)
       }
-      rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
-      rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
     }
+    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+    rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
     return rightActionsToolbar
   }
 
