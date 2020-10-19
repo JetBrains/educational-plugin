@@ -115,23 +115,29 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       return action()
     }
 
-    val reLogin = try {
+    val reLoginAskResult = try {
       askToReLogin(userId)
     }
     catch (e: IllegalStateException) {
       LOG.error(e)
       return e.message
     }
-    if (!reLogin) return action()
 
-    // logout
-    HyperskillSettings.INSTANCE.account = null
-    val messageBus = ApplicationManager.getApplication().messageBus
-    messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+    return when (reLoginAskResult) {
+      Messages.OK -> {
+        // logout
+        HyperskillSettings.INSTANCE.account = null
+        val messageBus = ApplicationManager.getApplication().messageBus
+        messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
 
-    // login
-    HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
-    return null
+        // login
+        HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
+        null
+      }
+      Messages.NO -> action()
+      Messages.CANCEL -> "Mismatching JetBrains Academy Accounts dialog has been canceled"
+      else -> "Unexpected result of Mismatching JetBrains Academy Accounts dialog"
+    }
   }
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
@@ -152,7 +158,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
   }
 
-  private fun askToReLogin(userId: Int): Boolean {
+  private fun askToReLogin(userId: Int): Int {
     val localAccount = HyperskillSettings.INSTANCE.account ?: error("Attempt to re-login unauthorized user")
     val browserAccount = HyperskillConnector.getInstance().getUser(userId).onError {
       error("Request to get user with $userId id is failed")
@@ -167,7 +173,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         EduCoreBundle.message("hyperskill.accounts.are.different.re.login", browserAccount.fullname),
         EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.fullname),
         null
-      ) == Messages.OK
+      )
     }
   }
 
