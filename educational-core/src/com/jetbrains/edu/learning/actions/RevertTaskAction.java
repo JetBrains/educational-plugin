@@ -9,12 +9,11 @@ import com.intellij.openapi.actionSystem.RightAlignedToolbarAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.WolfTheProblemSolver;
+import com.intellij.ui.EditorNotifications;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -24,7 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
@@ -56,7 +54,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     revertTaskParameters(task, project);
 
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
-    validateEditors(project);
+    EditorNotifications.getInstance(project).updateAllNotifications();
     Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "",
                                                  EduCoreBundle.message("action.reset.result"), NotificationType.INFORMATION, null);
     notification.notify(project);
@@ -64,15 +62,6 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
     ProgressUtil.updateCourseProgress(project);
-  }
-
-  private static void validateEditors(@NotNull Project project) {
-    final FileEditor[] editors = FileEditorManagerEx.getInstanceEx(project).getAllEditors();
-    for (FileEditor editor : editors) {
-      if (editor instanceof EduEditor) {
-        ((EduEditor)editor).validateTaskFile();
-      }
-    }
   }
 
   private static void revertTaskFiles(@NotNull Task task, @NotNull Project project) {

@@ -10,8 +10,6 @@ interface EduEditor : TextEditor {
   fun startLoading()
   fun stopLoading()
 
-  fun validateTaskFile()
-
   @JvmDefault
   override fun getState(level: FileEditorStateLevel): EduEditorState
 }

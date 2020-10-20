@@ -23,6 +23,7 @@ import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.EditorNotifications;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -323,7 +324,10 @@ public class StepikSolutionsLoader implements Disposable {
           EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().getName())) {
             selectedEditor.stopLoading();
-            selectedEditor.validateTaskFile();
+            VirtualFile file = selectedEditor.getFile();
+            if (file != null) {
+              EditorNotifications.getInstance(myProject).updateNotifications(file);
+            }
           }
         });
       }

@@ -17,6 +17,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -110,7 +111,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
             if (project.isDisposed) return@invokeAndWaitIfNeeded
             for (editor in getOpenTaskEditors(project, task)) {
               editor.stopLoading()
-              editor.validateTaskFile()
+              val file = editor.file
+              if (file != null) {
+                EditorNotifications.getInstance(project).updateNotifications(file)
+              }
             }
           }
         }
