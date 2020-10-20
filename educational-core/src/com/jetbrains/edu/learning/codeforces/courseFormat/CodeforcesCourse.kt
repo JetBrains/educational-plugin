@@ -35,6 +35,7 @@ class CodeforcesCourse : Course {
   override fun getId(): Int = myId
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
   override fun getCheckAction(): CheckAction = CheckAction(CodeforcesNames.RUN_LOCAL_TESTS)
+  override fun isViewAsEducatorEnabled(): Boolean = false
 
   fun getContestUrl(): String = getContestURLFromID(id)
   fun getSubmissionUrl(): String = "${getContestUrl()}/${CODEFORCES_SUBMIT}?locale=$languageCode"
