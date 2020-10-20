@@ -60,7 +60,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       }
       is HyperskillCourse -> {
         val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID)
-        link.border = JBUI.Borders.empty(9, 10, 0, 0)
         rightActionsToolbar.add(link)
       }
     }
@@ -74,9 +73,10 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     return createSingleActionToolbar(action)
   }
 
-  @Suppress("SameParameterValue")
   private fun createActionLink(actionText: String, actionId: String): ActionLink {
-    return LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId))
+    val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId))
+    link.border = JBUI.Borders.empty(9, 10, 0, 0)
+    return link
   }
 
   private fun createSingleActionToolbar(action: AnAction): JComponent {
