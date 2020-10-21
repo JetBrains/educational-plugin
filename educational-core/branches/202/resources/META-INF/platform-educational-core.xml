@@ -7,6 +7,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <welcomeTabFactory id="EducationalWelcomeTab"
                        implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
-                       order="first"/>
+                       order="last"/>
   </extensions>
 </idea-plugin>
