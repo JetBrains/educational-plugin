@@ -240,14 +240,15 @@ class TaskDescriptionTest : EduTestCase() {
         }
       }
     }
-    val pictureSize = StyleManager().bodyFontSize
+    val fontSize = StyleManager().bodyFontSize
+    val pictureSize = getPictureSize(fontSize)
     val expectedText = """
       <html>
        <head></head>
        <body>
-        <a href="$protocol://www.google.com/">Google<img src="${
+        <span><a href="$protocol://www.google.com/">Google<img src="${
       StyleResourcesManager.resourceUrl(expectedLinkArrowUrl)
-    }" style="display:inline" border="0" width="$pictureSize" height="$pictureSize"></a>
+    }" style="display:inline; position:relative; top:${fontSize * 0.18}; left:-${fontSize * 0.1}" border="0" width="$pictureSize" height="$pictureSize"></a></span>
        </body>
       </html>
     """.trimIndent()
@@ -255,7 +256,6 @@ class TaskDescriptionTest : EduTestCase() {
     val actualText = addExternalLinkIcons(Jsoup.parse(taskText))
     assertEquals(expectedText, actualText)
   }
-
 
   private fun doTestImageReplacedFromSrcset(expectedImage: String) {
     val taskText = """<p <img class=image-fullsize src=https://light.png srcset=https://dark.png width=400></p>""".trimIndent()

@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.mimeType
@@ -34,6 +35,7 @@ private const val A_TAG = "a"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
+private const val SPAN_ATTRIBUTE = "span"
 private const val HEIGHT_ATTRIBUTE = "height"
 private const val HREF_ATTRIBUTE = "href"
 private const val STYLE_ATTRIBUTE = "style"
@@ -181,16 +183,31 @@ fun addExternalLinkIcons(document: Document): String {
     EXTERNAL_LINK_ARROW_PNG
   }
   for (link in externalLinks) {
-    val pictureSize = StyleManager().bodyFontSize
+    val span = document.createElement(SPAN_ATTRIBUTE)
+    link.replaceWith(span)
+    span.appendChild(link)
     link.appendElement(IMG_TAG)
     val img = link.getElementsByTag(IMG_TAG)
+    val fontSize = StyleManager().bodyFontSize
+    val pictureSize = getPictureSize(fontSize)
+
     img.attr(SRC_ATTRIBUTE, StyleResourcesManager.resourceUrl(arrowIcon))
-    img.attr(STYLE_ATTRIBUTE, "display:inline")
+    img.attr(STYLE_ATTRIBUTE, "display:inline; position:relative; top:${fontSize * 0.18}; left:-${fontSize * 0.1}")
     img.attr(BORDER_ATTRIBUTE, "0")
-    img.attr(WIDTH_ATTRIBUTE, pictureSize.toString())
-    img.attr(HEIGHT_ATTRIBUTE, pictureSize.toString())
+    img.attr(WIDTH_ATTRIBUTE, pictureSize)
+    img.attr(HEIGHT_ATTRIBUTE, pictureSize)
   }
   return document.toString()
+}
+
+fun getPictureSize(fontSize: Int): String {
+  return if (isSwing()) {
+    fontSize
+  }
+  else {
+    // rounding it to int is needed here, because if we are passing a float number, an arrow disappears in studio
+    (fontSize * 1.2).toInt()
+  }.toString()
 }
 
 fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10, bottom: Int = 0, right: Int = 0): ActionLink {
