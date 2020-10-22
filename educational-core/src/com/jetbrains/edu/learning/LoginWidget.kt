@@ -30,7 +30,8 @@ abstract class LoginWidget(val project: Project,
     get() = IconUtil.desaturate(icon)
 
   open val syncStep: SynchronizationStep? = null
-  val component: JLabel = JLabel(getWidgetIcon())
+
+  private val component: JLabel = JLabel(getWidgetIcon())
 
   init {
     setToolTipText()
@@ -63,7 +64,7 @@ abstract class LoginWidget(val project: Project,
     setToolTipText()
   }
 
-  fun createPopup(user: OAuthAccount<out Any>?): ListPopup {
+  private fun createPopup(user: OAuthAccount<out Any>?): ListPopup {
     val loginText = "Log in"
     val logOutText = "Log out"
     val syncStepName = syncStep?.stepName
