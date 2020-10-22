@@ -64,6 +64,11 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       propertiesComponent.setValue(RECENT_COURSES_FILLED, true)
     }
 
+    if (!propertiesComponent.isValueSet(STEPIK_AUTH_RESET)) {
+      EduSettings.getInstance().user = null
+      propertiesComponent.setValue(STEPIK_AUTH_RESET, true)
+    }
+
     if (!propertiesComponent.isValueSet(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
       if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
         propertiesComponent.setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
@@ -124,5 +129,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
   companion object {
     const val RECENT_COURSES_FILLED = "Educational.recentCoursesFilled"
+    const val STEPIK_AUTH_RESET = "Educational.stepikOAuthReset"
   }
 }
