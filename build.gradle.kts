@@ -138,14 +138,6 @@ allprojects {
       withProp(secretProperties, "stepikTestClientId") { environment("STEPIK_TEST_CLIENT_ID", it) }
       withProp("excludeTests") { exclude(it) }
 
-      // HACK!
-      // 2020.3 platform contains old version of `okhttp` and `okio` libs that leads to `NoSuchMethodError` in test
-      // because of single class loader for both platform and plugin classes.
-      // Should be dropped in nearest future with whole `okhttp` lib.
-      // See https://youtrack.jetbrains.com/issue/IDEA-251713
-      val excludedLibs = listOf("okhttp-3.12.10.jar", "okio-1.15.0.jar")
-      classpath = classpath.filter { file -> excludedLibs.none { file.name.equals(it, true) } }
-
       ignoreFailures = true
       filter {
         isFailOnNoMatchingTests = false
