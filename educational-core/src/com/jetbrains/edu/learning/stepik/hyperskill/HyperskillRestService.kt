@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService.Companion.ReLoginDialogResult.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -124,19 +125,18 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     return when (reLoginAskResult) {
-      Messages.OK -> {
+      YES -> {
         // logout
         HyperskillSettings.INSTANCE.account = null
         val messageBus = ApplicationManager.getApplication().messageBus
-        messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+        messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
 
         // login
         HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
         null
       }
-      Messages.NO -> action()
-      Messages.CANCEL -> "Mismatching JetBrains Academy Accounts dialog has been canceled"
-      else -> "Unexpected result of Mismatching JetBrains Academy Accounts dialog"
+      NO -> action()
+      CANCEL -> "Mismatching JetBrains Academy Accounts dialog has been canceled"
     }
   }
 
@@ -158,7 +158,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return openInIDE(HyperskillOpenStageRequest(projectId, stageId), request, context)
   }
 
-  private fun askToReLogin(userId: Int): Int {
+  private fun askToReLogin(userId: Int): ReLoginDialogResult {
     val localAccount = HyperskillSettings.INSTANCE.account ?: error("Attempt to re-login unauthorized user")
     val browserAccount = HyperskillConnector.getInstance().getUser(userId).onError {
       error("Request to get user with $userId id is failed")
@@ -167,7 +167,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return getInEdt {
       HyperskillProjectOpener.requestFocus()
 
-      Messages.showDialog(
+      val dialogResult = Messages.showDialog(
         "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
                                        browserAccount.fullname)}</html>",
         EduCoreBundle.message("hyperskill.accounts.are.different.title"),
@@ -178,6 +178,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         0,
         null
       )
+      ReLoginDialogResult.valueOf(dialogResult)
     }
   }
 
@@ -221,6 +222,14 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private val OPEN_COURSE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STAGE_ID=.+&$PROJECT_ID=.+""")
     private val OPEN_STEP_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STEP_ID=.+""")
     private val PLUGIN_INFO = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/info")
+
+    private enum class ReLoginDialogResult(private val result: Int) {
+      YES(0), NO(1), CANCEL(-1);
+
+      companion object {
+        fun valueOf(value: Int): ReLoginDialogResult = values().find { it.result == value } ?: error("Unexpected value: $value")
+      }
+    }
   }
 
   private fun getIdeVersion(): String {
