@@ -1,24 +1,28 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.popup.ActiveIcon
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.ListPopup
-import com.intellij.openapi.ui.popup.PopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IconLikeCustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.layout.*
 import com.intellij.util.IconUtil
 import com.intellij.util.messages.Topic
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import java.awt.BorderLayout
 import java.awt.Point
 import java.awt.event.MouseEvent
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
+import javax.swing.JPanel
 
 abstract class LoginWidget(val project: Project,
                            topic: Topic<EduLogInListener>,
@@ -46,7 +50,7 @@ abstract class LoginWidget(val project: Project,
     object : ClickListener() {
       override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
         if (clickCount != 1) return false
-        val popup = createPopup(account)
+        val popup = createNewPopup(account)
         val preferredSize = popup.content.preferredSize
         val point = Point(-preferredSize.width, -preferredSize.height)
         popup.show(RelativePoint(component, point))
@@ -64,38 +68,53 @@ abstract class LoginWidget(val project: Project,
     setToolTipText()
   }
 
-  private fun createPopup(user: OAuthAccount<out Any>?): ListPopup {
-    val loginText = "Log in"
-    val logOutText = "Log out"
-    val syncStepName = syncStep?.stepName
+  private fun createNewPopup(account: OAuthAccount<out Any>?): JBPopup {
+    val wrapperPanel = JPanel(BorderLayout())
+    wrapperPanel.border = DialogWrapper.createDefaultBorder()
+    val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
+      .setTitle("${platformName} Account")
+      .setTitleIcon(ActiveIcon(icon, icon))
+      .createPopup()
 
-    val userActionStep = if (user == null) loginText else logOutText
-    val steps = mutableListOf<String>()
-    if (syncStep != null && user != null && syncStep!!.syncAction.isAvailable(project)) {
-      steps.add(syncStepName!!)
-    }
-    steps.add(userActionStep)
+    val panel = panel {
+      val loginText = if (account != null) {
+        """Logged in as <a href="https://hyperskill.org/">${account.userInfo}</a>"""
+      }
+      else {
+        "Not logged in to ${platformName}"
+      }
 
-    val step = object : BaseListPopupStep<String>(null, steps) {
-      override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-        return doFinalStep {
-          when (selectedValue) {
-            syncStepName -> {
-              syncStep!!.syncAction.synchronizeCourse(project)
-            }
-            loginText -> {
-              authorize()
-              EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
-            }
-            logOutText -> {
-              resetAccount()
-              EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
-            }
+      noteRow(loginText)
+
+      if (syncStep != null && account != null && syncStep!!.syncAction.isAvailable(project)) {
+        row {
+          link(syncStep!!.stepName) {
+            syncStep!!.syncAction.synchronizeCourse(project)
+            popup.closeOk(null)
+          }
+        }
+      }
+
+      row {
+        if (account == null) {
+          link("Log in") {
+            authorize()
+            popup.closeOk(null)
+            EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+          }
+        }
+        else {
+          link("Log out") {
+            resetAccount()
+            popup.closeOk(null)
+            EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
           }
         }
       }
     }
-    return JBPopupFactory.getInstance().createListPopup(step)
+    wrapperPanel.add(panel, BorderLayout.CENTER)
+    UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
+    return popup
   }
 
   abstract fun authorize()
