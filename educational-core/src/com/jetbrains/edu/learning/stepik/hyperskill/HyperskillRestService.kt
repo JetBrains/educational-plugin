@@ -166,12 +166,16 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
     return getInEdt {
       HyperskillProjectOpener.requestFocus()
-      Messages.showOkCancelDialog(
+
+      Messages.showDialog(
         "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
                                        browserAccount.fullname)}</html>",
         EduCoreBundle.message("hyperskill.accounts.are.different.title"),
-        EduCoreBundle.message("hyperskill.accounts.are.different.re.login", browserAccount.fullname),
-        EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.fullname),
+        arrayOf(
+          EduCoreBundle.message("hyperskill.accounts.are.different.re.login", browserAccount.fullname),
+          EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.fullname)
+        ),
+        0,
         null
       )
     }
