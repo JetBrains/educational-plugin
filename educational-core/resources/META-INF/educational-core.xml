@@ -221,7 +221,7 @@
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowCondition"/>
-    <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
+    <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider" order="first"/>
     <!-- placeholder size listener -->
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
