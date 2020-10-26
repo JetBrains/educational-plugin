@@ -18,5 +18,9 @@ class HumanLanguageFilterDropdown(humanLanguages: Set<String>, filterCourses: ()
 
   override fun isAccepted(course: Course): Boolean = course.humanLanguage in selectedItems
 
+  override fun resetSelection() {
+    selectedItems = languagesFromLocale()
+  }
+
   private fun languagesFromLocale() = setOf(Locale.ENGLISH.displayLanguage, Locale.getDefault().displayLanguage)
 }

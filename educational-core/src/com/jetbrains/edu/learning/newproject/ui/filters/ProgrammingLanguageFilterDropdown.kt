@@ -25,6 +25,10 @@ class ProgrammingLanguageFilterDropdown(
     }
   }
 
+  override fun resetSelection() {
+    selectedItems = allItems
+  }
+
   override fun defaultTitle() = EduCoreBundle.message("course.dialog.filter.programming.languages")
 
   override fun isAccepted(course: Course): Boolean = course.supportedTechnologies.intersect(selectedItems).isNotEmpty()

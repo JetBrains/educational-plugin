@@ -49,9 +49,13 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     coursesProvider.joinAction(courseInfo, courseMode, panel)
   }
 
-  private val coursesListPanel = CoursesListPanel { courseInfo, courseMode ->
-    coursesProvider.joinAction(courseInfo, courseMode, coursePanel)
-  }
+  private val coursesListPanel = CoursesListPanel(
+    { courseInfo, courseMode -> coursesProvider.joinAction(courseInfo, courseMode, coursePanel) },
+    {
+      resetSelection()
+      updateModel(courses, null, true)
+    }
+  )
 
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()
@@ -171,6 +175,11 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private fun updateFilters() {
     myHumanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
     myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
+  }
+
+  private fun resetSelection() {
+    myHumanLanguagesFilterDropdown.resetSelection()
+    myProgrammingLanguagesFilterDropdown.resetSelection()
   }
 
   open fun processSelectionChanged() {

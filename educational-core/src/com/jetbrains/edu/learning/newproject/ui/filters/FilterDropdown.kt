@@ -47,6 +47,8 @@ abstract class FilterDropdown(
     allItems = items
   }
 
+  abstract fun resetSelection()
+
   fun filter(courses: List<Course>): List<Course> {
     return courses.filter { isAccepted(it) }
   }

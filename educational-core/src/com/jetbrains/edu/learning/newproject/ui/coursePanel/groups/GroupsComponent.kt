@@ -1,15 +1,19 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
-import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import java.awt.event.ActionListener
 
-class GroupsComponent(private val joinCourse: (CourseInfo, CourseMode) -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent(
+  private val joinCourse: (CourseInfo, CourseMode) -> Unit,
+  resetFilters: () -> Unit
+) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
 
   private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
@@ -19,8 +23,11 @@ class GroupsComponent(private val joinCourse: (CourseInfo, CourseMode) -> Unit) 
   init {
     background = MAIN_BG_COLOR
     emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
-    emptyText.appendSecondaryText(EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"), StatusText.DEFAULT_ATTRIBUTES,
-                                  null)
+    emptyText.appendSecondaryText(
+      EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"),
+      SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES,
+      ActionListener { resetFilters() }
+    )
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {
