@@ -35,6 +35,7 @@ private const val HREF_ATTRIBUTE = "href"
 private const val STYLE_ATTRIBUTE = "style"
 private const val SRCSET_ATTRIBUTE = "srcset"
 private const val WIDTH_ATTRIBUTE = "width"
+private const val BORDER_ATTRIBUTE = "border"
 private const val IMAGE_TYPE = "image"
 private const val DARK_SUFFIX = "_dark"
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskDescription.utils")
@@ -181,6 +182,7 @@ fun addExternalLinkIcons(document: Document): String {
     val img = link.getElementsByTag(IMG_TAG)
     img.attr(SRC_ATTRIBUTE, StyleResourcesManager.resourceUrl(arrowIcon))
     img.attr(STYLE_ATTRIBUTE, "display:inline")
+    img.attr(BORDER_ATTRIBUTE, "0")
     img.attr(WIDTH_ATTRIBUTE, pictureSize.toString())
     img.attr(HEIGHT_ATTRIBUTE, pictureSize.toString())
   }
