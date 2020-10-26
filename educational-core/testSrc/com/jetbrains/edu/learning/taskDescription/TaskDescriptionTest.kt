@@ -247,7 +247,7 @@ class TaskDescriptionTest : EduTestCase() {
        <body>
         <a href="$protocol://www.google.com/">Google<img src="${
       StyleResourcesManager.resourceUrl(expectedLinkArrowUrl)
-    }" style="display:inline" width="$pictureSize" height="$pictureSize"></a>
+    }" style="display:inline" border="0" width="$pictureSize" height="$pictureSize"></a>
        </body>
       </html>
     """.trimIndent()
