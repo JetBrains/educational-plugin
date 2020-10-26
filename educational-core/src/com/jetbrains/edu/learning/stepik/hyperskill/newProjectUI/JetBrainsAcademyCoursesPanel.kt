@@ -24,7 +24,7 @@ class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcadem
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
   }
 
-  private inner class JetBrainsAcademyLoginPanel : LoginPanel(!isLoggedIn(),
+  private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),
                                                               EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
                                                               EduCoreBundle.message("course.dialog.log.in.to", EduNames.JBA),
                                                               { handleLogin() })  {
@@ -32,7 +32,7 @@ class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcadem
       get() = EduColors.warningTextForeground
   }
 
-  private fun isLoggedIn() = HyperskillSettings.INSTANCE.account != null
+  override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null
 
   private fun handleLogin() {
     HyperskillConnector.getInstance().doAuthorize(

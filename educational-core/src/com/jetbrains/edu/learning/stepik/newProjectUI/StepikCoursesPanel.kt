@@ -33,7 +33,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     return TabInfo(infoText, linkInfo, loginComponent)
   }
 
-  private inner class StepikLoginPanel : LoginPanel(!EduSettings.isLoggedIn(),
+  private inner class StepikLoginPanel : LoginPanel(isLoginNeeded(),
                                                     EduCoreBundle.message("course.dialog.log.in.label.before.link"),
                                                     EduCoreBundle.message("course.dialog.log.in.to", StepikNames.STEPIK).toLowerCase(),
                                                     { handleLogin() })
@@ -43,6 +43,8 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
+
+  override fun isLoginNeeded(): Boolean = !EduSettings.isLoggedIn()
 
   private fun addLoginListener(vararg postLoginActions: () -> Unit) {
     if (busConnection != null) {

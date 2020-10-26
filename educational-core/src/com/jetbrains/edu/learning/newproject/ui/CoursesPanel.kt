@@ -116,6 +116,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       updateFilters()
       updateModel(courses, null)
       showContent(courses.isEmpty())
+      if (!isLoginNeeded()) {
+        hideLoginPanel()
+      }
     }
   }
 
@@ -271,6 +274,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       coursesListPanel.setSelectedValue(courseToSelect)
     }
   }
+
+  protected open fun isLoginNeeded() = false
 
   inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {
 
