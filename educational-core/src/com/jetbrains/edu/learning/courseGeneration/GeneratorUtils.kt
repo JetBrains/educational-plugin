@@ -231,6 +231,10 @@ object GeneratorUtils {
     if (SystemInfo.isWindows && endsWith(".")) {
       validName = validName.trim('.').trim()
     }
+    // Small hack to avoid https://youtrack.jetbrains.com/issue/IDEA-253884
+    if (validName.endsWith("!")) {
+      validName = validName.replaceRange(validName.lastIndex, validName.lastIndex + 1, " ")
+    }
     return validName
   }
 
