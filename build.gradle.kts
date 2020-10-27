@@ -163,7 +163,9 @@ allprojects {
       excludeKotlinDeps()
     }
     //TODO: exclude unused modules
-    implementation(group = "com.jetbrains.hub", name = "hub-client-all", version = "2020.1.12358")
+    implementation(group = "com.jetbrains.hub", name = "hub-client-all", version = "2020.1.12358") {
+      excludeKotlinDeps()
+    }
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
       exclude(module = "snakeyaml")
     }
