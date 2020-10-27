@@ -233,7 +233,7 @@ object GeneratorUtils {
     }
     // Small hack to avoid https://youtrack.jetbrains.com/issue/IDEA-253884
     if (validName.endsWith("!")) {
-      validName = validName.replaceRange(validName.lastIndex, validName.lastIndex + 1, " ")
+      validName = validName.replaceRange(validName.lastIndex, validName.lastIndex + 1, "_")
     }
     return validName
   }
