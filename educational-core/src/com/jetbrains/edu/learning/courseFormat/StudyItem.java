@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.StudyItemType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +18,7 @@ import java.util.Date;
  * @see Lesson
  * @see FrameworkLesson
  * @see com.jetbrains.edu.learning.courseFormat.tasks.Task
- * @see com.jetbrains.edu.coursecreator.actions.StudyItemType
+ * @see StudyItemType
  */
 public abstract class StudyItem extends UserDataHolderBase {
   // from 1 to number of items
