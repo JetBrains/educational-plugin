@@ -30,6 +30,22 @@ class KtCheckersTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("EduTaskWithExclamationMark!") {
+        kotlinTaskFile("src/Task.kt", """
+          fun foo() = 42
+        """)
+        kotlinTaskFile("test/Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertTrue("foo() should return 42", foo() == 42)
+              }
+          }
+        """)
+      }
       theoryTask("TheoryTask") {
         kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
