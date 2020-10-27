@@ -43,24 +43,25 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
+abstract class CoursesPanel(
+  private val coursesProvider: CoursesPlatformProvider,
+  private val scope: CoroutineScope,
+  showButtonOnCard: Boolean = false
+) : JPanel() {
 
   protected var coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { courseInfo, courseMode, panel ->
     coursesProvider.joinAction(courseInfo, courseMode, panel)
   }
 
-  private val coursesListPanel = CoursesListPanel(
-    { courseInfo, courseMode -> coursesProvider.joinAction(courseInfo, courseMode, coursePanel) },
-    {
-      resetSelection()
-      updateModel(courses, null, true)
-    }
-  )
+  private val coursesListPanel = CoursesListPanel(showButtonOnCard) {
+    resetSelection()
+    updateModel(courses, null, true)
+  }
 
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected var courses: MutableList<Course> = mutableListOf()
-  private lateinit var myProgrammingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
-  private lateinit var myHumanLanguagesFilterDropdown: HumanLanguageFilterDropdown
+  private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
+  protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
   @Volatile private var loadingFinished = false
 
@@ -87,7 +88,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
-    this.add(createNoCoursesPanel(), NO_COURSES)
+    this.add(this.createNoCoursesPanel(), NO_COURSES)
     showProgressState()
   }
 
@@ -117,7 +118,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   fun onTabSelection() {
     if (loadingFinished) {
-      updateFilters()
+      updateFilters(courses)
       updateModel(courses, null)
       showContent(courses.isEmpty())
       if (!isLoginNeeded()) {
@@ -151,7 +152,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
-  private fun createNoCoursesPanel(): JPanel {
+  protected open fun createNoCoursesPanel(): JPanel {
     val panel = JBPanelWithEmptyText()
     val text = panel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
@@ -172,14 +173,14 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     cardLayout.show(this, CONTENT_CARD_NAME)
   }
 
-  private fun updateFilters() {
-    myHumanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
-    myProgrammingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
+  protected open fun updateFilters(courses: List<Course>) {
+    humanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
+    programmingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
 
   private fun resetSelection() {
-    myHumanLanguagesFilterDropdown.resetSelection()
-    myProgrammingLanguagesFilterDropdown.resetSelection()
+    humanLanguagesFilterDropdown.resetSelection()
+    programmingLanguagesFilterDropdown.resetSelection()
   }
 
   open fun processSelectionChanged() {
@@ -205,8 +206,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   private fun filterCourses(courses: List<Course>): List<Course> {
-    var filteredCourses = myProgrammingLanguagesFilterDropdown.filter(courses)
-    filteredCourses = myHumanLanguagesFilterDropdown.filter(filteredCourses)
+    var filteredCourses = programmingLanguagesFilterDropdown.filter(courses)
+    filteredCourses = humanLanguagesFilterDropdown.filter(filteredCourses)
     return filteredCourses
   }
 
@@ -247,15 +248,15 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     coursePanel.bindSearchField(searchField)
     searchPanel.add(searchField, BorderLayout.CENTER)
 
-    myProgrammingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
+    programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
       updateModel(courses, selectedCourse)
     }
-    myHumanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
+    humanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
       updateModel(courses, selectedCourse)
     }
     val filtersPanel = JPanel(HorizontalLayout(0))
-    filtersPanel.add(myProgrammingLanguagesFilterDropdown)
-    filtersPanel.add(myHumanLanguagesFilterDropdown)
+    filtersPanel.add(programmingLanguagesFilterDropdown)
+    filtersPanel.add(humanLanguagesFilterDropdown)
 
     searchPanel.add(filtersPanel, BorderLayout.LINE_END)
     searchPanel.border = JBUI.Borders.empty(8, 0)
@@ -272,7 +273,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   protected open suspend fun updateCoursesAfterLogin(preserveSelection: Boolean = true) {
-    updateFilters()
+    updateFilters(courses)
     showContent(courses.isEmpty())
 
     // hack: selection in com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel.updateModel can't scroll correctly

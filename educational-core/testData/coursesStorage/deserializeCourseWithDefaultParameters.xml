@@ -1,0 +1,14 @@
+<application>
+  <component name="CoursesStorage">
+    <courses>
+      <course>
+        <option name="description" value="The examples and exercises accompanying the AtomicKotlin book"/>
+        <option name="id" value="20403"/>
+        <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin"/>
+        <option name="name" value="AtomicKotlin"/>
+        <option name="programmingLanguage" value="kotlin"/>
+        <option name="type" value="PyCharm"/>
+      </course>
+    </courses>
+  </component>
+</application>

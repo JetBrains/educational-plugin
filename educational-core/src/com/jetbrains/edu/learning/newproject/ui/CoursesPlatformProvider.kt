@@ -20,7 +20,7 @@ import javax.swing.JPanel
 abstract class CoursesPlatformProvider {
   abstract val name: String
 
-  abstract val icon: Icon
+  abstract val icon: Icon?
 
   abstract fun createPanel(scope: CoroutineScope): CoursesPanel
 
@@ -67,4 +67,3 @@ abstract class CoursesPlatformProvider {
 
   }
 }
-

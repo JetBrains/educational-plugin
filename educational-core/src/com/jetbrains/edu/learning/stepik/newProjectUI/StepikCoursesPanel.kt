@@ -99,7 +99,6 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
 
     private fun importCourse() {
       val course = StartStepikCourseAction().importStepikCourse() ?: return
-      val courses = courses
       updateModel(courses.plus(course), course, false)
     }
 

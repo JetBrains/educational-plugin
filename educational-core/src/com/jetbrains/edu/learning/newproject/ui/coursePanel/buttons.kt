@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
+import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
@@ -53,16 +54,27 @@ class OpenCourseButton : CourseButtonBase() {
       val course = courseInfo.course
       val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeAndWait
       if (!FileUtil.exists(coursePath)) {
-        if (showNoCourseDialog(coursePath) == Messages.CANCEL) {
+        val isFromMyCoursesPage = MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(courseInfo.course)
+        val message = if (isFromMyCoursesPage) {
+          EduCoreBundle.message("course.dialog.my.courses.remove.course")
+        }
+        else {
+          EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
+        }
+
+        if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
           coursesStorage.removeCourseByLocation(coursePath)
-          closeDialog()
-          if (course is HyperskillCourse) {
-            HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
-              Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+          when {
+            course is HyperskillCourse -> {
+              closeDialog()
+              HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
+                Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+              }
             }
-          }
-          else {
-            JoinCourseDialog(course).show()
+            !isFromMyCoursesPage -> {
+              closeDialog()
+              JoinCourseDialog(course).show()
+            }
           }
         }
         return@invokeAndWait
@@ -78,12 +90,13 @@ class OpenCourseButton : CourseButtonBase() {
     dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
   }
 
-  private fun showNoCourseDialog(coursePath: String): Int {
+  private fun showNoCourseDialog(coursePath: String, cancelButtonText: String): Int {
     return Messages.showOkCancelDialog(null,
-                                       EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
+                                       EduCoreBundle.message("course.dialog.course.not.found.text",
+                                                             FileUtil.toSystemDependentName(coursePath)),
                                        EduCoreBundle.message("course.dialog.course.not.found.title"),
                                        Messages.getOkButton(),
-                                       EduCoreBundle.message("course.dialog.course.not.found.reopen.button"),
+                                       cancelButtonText,
                                        Messages.getErrorIcon())
   }
 
@@ -99,7 +112,6 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
     setWidth72(this)
   }
 
-  // we place this button on course card and course panel both
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
                                                     || !CoursesStorage.getInstance().hasCourse(course)
 
@@ -124,7 +136,7 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
+  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course)
 }
 
 /**

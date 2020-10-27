@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.openapi.Disposable
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
@@ -7,12 +8,15 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.NotNull
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout
@@ -29,9 +33,10 @@ private const val PANEL_HEIGHT = 750
 
 private const val SCROLL_PANE_WIDTH = 233
 
-class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
+class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: @NotNull Disposable) : JPanel() {
   private val coursesTab: CoursesTab
   private val coursesProvidersTree: JBScrollPane
+  private val myCoursesProvider: MyCoursesProvider = MyCoursesProvider(disposable)
 
   val languageSettings: LanguageSettings<*>? get() = coursesTab.languageSettings()
   val locationString get() = coursesTab.locationString()
@@ -47,18 +52,21 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
   }
 
   private fun createCourseProvidersTree(): JBScrollPane {
-    val root = DefaultMutableTreeNode(message("course.dialog.all.courses"))
-    CoursesPlatformProviderFactory.allProviders.forEach { root.add(DefaultMutableTreeNode(it)) }
-    val tree = Tree(root)
-    tree.apply {
+    val root = DefaultMutableTreeNode("")
+    val allCoursesNode = DefaultMutableTreeNode(message("course.dialog.all.courses"))
+    CoursesPlatformProviderFactory.allProviders.forEach { allCoursesNode.add(DefaultMutableTreeNode(it)) }
+    root.add(allCoursesNode)
+    root.add(DefaultMutableTreeNode(myCoursesProvider))
+    val tree = Tree(root).apply {
+      isRootVisible = false
       rowHeight = 0 // force row to calculate size basing on its content
       showsRootHandles = false
       border = null
       cellRenderer = ProviderWithIconCellRenderer()
-      selectionModel = UnselectableRootSelectionModel()
-      setSelectionRow(1)
+      TreeUtil.expandAll(this)
       focusListeners.forEach { removeFocusListener(it) }
       treeExpansionListeners.forEach { removeTreeExpansionListener(it) }
+      setSelectionRow(1)
     }
 
     tree.addTreeSelectionListener {
@@ -100,11 +108,17 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope) : JPanel() {
       layout = cardLayout
       val providers = CoursesPlatformProviderFactory.allProviders
       providers.forEach {
-        val panel = it.createPanel(scope)
-        panels.add(panel)
-        add(it.name, panel)
+        addPanel(it)
       }
+
+      addPanel(myCoursesProvider)
       showPanel(providers.first().name)
+    }
+
+    private fun addPanel(coursesPlatformProvider: CoursesPlatformProvider) {
+      val panel = coursesPlatformProvider.createPanel(scope)
+      panels.add(panel)
+      add(coursesPlatformProvider.name, panel)
     }
 
     fun loadCourses(scope: CoroutineScope) {
@@ -191,17 +205,19 @@ private class ProviderWithIconCellRenderer : DefaultTreeCellRenderer() {
                                             hasFocus: Boolean): Component {
     if (value is DefaultMutableTreeNode) {
       val userObject = value.userObject
-      if (userObject is CoursesPlatformProvider) {
-        iconLabel.icon = userObject.icon
-        textLabel.text = userObject.name
-        component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, PROVIDER_LEFT_OFFSET, PROVIDER_TOP_BOTTOM_OFFSET, 0)
-      }
-
-      if (userObject is String) {
-        isEnabled = false
-        iconLabel.icon = null
-        textLabel.text = UIUtil.toHtml("<b>$userObject</b>")
-        component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, 0)
+      val tabName = if (userObject is CoursesPlatformProvider) userObject.name else userObject.toString()
+      when (userObject) {
+        is MyCoursesProvider, is String -> {
+          val additionalText = (userObject as? MyCoursesProvider)?.additionalText ?: ""
+          textLabel.text = UIUtil.toHtml("<b>$tabName</b>$additionalText")
+          iconLabel.icon = null
+          component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, 0)
+        }
+        is CoursesPlatformProvider -> {
+          textLabel.text = tabName
+          iconLabel.icon = userObject.icon
+          component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, PROVIDER_LEFT_OFFSET, PROVIDER_TOP_BOTTOM_OFFSET, 0)
+        }
       }
       textLabel.foreground = UIUtil.getListForeground(selected, hasFocus)
     }

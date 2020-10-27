@@ -6,12 +6,14 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
 import java.awt.CardLayout
 import java.util.*
@@ -144,12 +146,24 @@ class CoursePanel(
         errorComponent.setErrorMessage(message)
         header.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
       }
+      is ErrorState.LoginRequired -> {
+        course?.let {
+          if (CoursesStorage.getInstance().hasCourse(it)) {
+            return
+          }
+        }
+        setError(message)
+      }
       else -> {
-        errorComponent.setErrorMessage(message)
-        header.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
+        setError(message)
       }
     }
     errorComponent.isVisible = true
+  }
+
+  private fun setError(message: ValidationMessage) {
+    errorComponent.setErrorMessage(message)
+    header.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
   }
 
   private fun canStartCourse(): Boolean = errorState.courseCanBeStarted

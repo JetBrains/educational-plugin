@@ -6,13 +6,16 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.CourseMetaInfo
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import icons.EducationalCoreIcons
@@ -42,9 +45,9 @@ private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.hoverBackgrou
 private val SELECTION_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B))
 val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBColor(Gray._120, Gray._135))
 
-class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+class CourseCardComponent(val courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
-  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, joinCourse)
+  private var courseNameInfoComponent: CourseNameInfoComponent = CourseNameInfoComponent(courseInfo, showOpenButton)
 
   init {
     border = JBUI.Borders.empty(CARD_GAP)
@@ -90,8 +93,8 @@ class CourseCardComponent(val courseInfo: CourseInfo, joinCourse: (CourseInfo, C
 
 }
 
-class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
-  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, joinCourse)
+class CourseNameInfoComponent(courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
+  private val nameComponent: CourseNameComponent = CourseNameComponent(courseInfo, showOpenButton)
   private val courseInfoComponent: JPanel
 
   init {
@@ -114,33 +117,21 @@ class CourseNameInfoComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, C
 
 }
 
-class CourseNameComponent(courseInfo: CourseInfo, joinCourse: (CourseInfo, CourseMode) -> Unit) : JPanel(BorderLayout()) {
+class CourseNameComponent(courseInfo: CourseInfo, showOpenButton: Boolean) : JPanel(BorderLayout()) {
   private val nameLabel: JLabel = JLabel()
-  private val button: CourseButtonBase
 
   init {
     nameLabel.text = courseInfo.course.name
     nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
+    add(nameLabel, BorderLayout.CENTER)
 
     val coursePath = CoursesStorage.getInstance().getCoursePath(courseInfo.course)
-    button = when {
-      coursePath != null -> {
-        OpenCourseButton()
-      }
-      else -> {
-        StartCourseButton(joinCourse, false)
-      }
-    }.apply {
-      // EDU-3618
-      // addListener(courseInfo)
-      // isEnabled = canStartCourse(courseInfo)
+    if (coursePath != null && showOpenButton) {
+      val openCourseButton = OpenCourseButton()
+      openCourseButton.addListener(courseInfo)
+      add(openCourseButton, BorderLayout.EAST)
     }
-
-    add(nameLabel, BorderLayout.CENTER)
-    // EDU-3618
-    // add(button, BorderLayout.EAST)
   }
-
 }
 
 class CommunityCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayout(INFO_HGAP)) {
@@ -197,22 +188,33 @@ class AcademyCourseInfoComponent(course: Course?) : JPanel(FlowLayout(FlowLayout
 
 class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
   private val progressBar: JProgressBar = ProgressUtil.createProgressBar()
-  private var progressLabel: JLabel = JLabel()
+  private var infoLabel: JLabel = JLabel()
 
   init {
+    infoLabel.foreground = GRAY_COLOR
+
+    if (courseMetaInfo.courseMode == CCUtils.COURSE_MODE) {
+      infoLabel.text = EduCoreBundle.message("course.dialog.my.courses.course.creation")
+    }
+    else {
+      createProgressBar(courseMetaInfo)
+    }
+    add(infoLabel)
+  }
+
+  private fun createProgressBar(courseMetaInfo: CourseMetaInfo) {
     val tasksSolved = courseMetaInfo.tasksSolved
     val tasksTotal = courseMetaInfo.tasksTotal
-    progressLabel.foreground = GRAY_COLOR
 
     when (tasksSolved) {
       0 -> {
-        progressLabel.text = NO_TASKS_COMPLETED_YET
+        infoLabel.text = NO_TASKS_COMPLETED_YET
       }
       tasksTotal -> {
-        progressLabel.text = COMPLETED
+        infoLabel.text = COMPLETED
       }
       else -> {
-        progressLabel.text = "${tasksSolved}/${tasksTotal}"
+        infoLabel.text = "${tasksSolved}/${tasksTotal}"
 
         progressBar.apply {
           border = JBUI.Borders.emptyRight(H_GAP)
@@ -222,7 +224,6 @@ class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(FlowLayout(
         add(progressBar)
       }
     }
-    add(progressLabel)
   }
 }
 

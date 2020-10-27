@@ -39,8 +39,8 @@ public abstract class Course extends LessonContainer {
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
   private String myLanguageCode = "en";
 
-  @NotNull private String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
-  protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
+  @NotNull protected String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
+  private String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   private boolean solutionsHidden;
 

@@ -20,7 +20,7 @@ import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
 
 class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
-  val panel = CoursesPanelWithTabs(this)
+  val panel = CoursesPanelWithTabs(this, disposable)
 
   private val job = Job()
 
