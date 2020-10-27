@@ -2,7 +2,9 @@ package com.jetbrains.edu.slow.integration.stepik
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.USER_AGENT
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.eduToolsUserAgent
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikApiUrl
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.StepikTestUtils
@@ -35,7 +37,7 @@ abstract class StepikTestCase : EduTestCase() {
     mockStepikConnector.setBaseUrl(getStepikUrl(), testRootDisposable)
     val user = StepikTestUtils.login(testRootDisposable)
     httpClient = HttpClients.custom()
-      .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken)))
+      .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken), BasicHeader(USER_AGENT, eduToolsUserAgent)))
       .setDefaultCookieStore(BasicCookieStore()).build()
   }
 
