@@ -35,7 +35,13 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
         featured.name != bundled.name
       }
     }
-    return communityCourses.plus(bundledCourses)
+
+    val comparator = Comparator
+      .comparing { course: Course -> course.visibility }
+      .thenComparing { course: Course -> course.name }
+
+
+    return bundledCourses.plus(communityCourses).sortedWith(comparator)
   }
 
   private fun loadBundledCourses(): List<Course> {

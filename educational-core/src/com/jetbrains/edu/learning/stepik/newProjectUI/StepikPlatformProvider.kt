@@ -25,7 +25,7 @@ class StepikPlatformProvider(private val coursesProvider: StepikCoursesProvider)
       return emptyList()
     }
     else {
-      coursesProvider.getStepikCourses()
+      coursesProvider.getStepikCourses().sortedBy { it.name }
     }
   }
 }

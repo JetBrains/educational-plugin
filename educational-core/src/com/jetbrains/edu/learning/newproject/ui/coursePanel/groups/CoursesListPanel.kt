@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -24,8 +22,7 @@ class CoursesListPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit, reset
     if (courseInfos.isEmpty()) {
       return
     }
-    val sortedCourseInfos = sortCourses(courseInfos)
-    val group = CoursesGroup("", sortedCourseInfos)
+    val group = CoursesGroup("", courseInfos)
     addGroup(group)  // TODO: use actual groups
 
     if (courseToSelect == null) {
@@ -33,17 +30,8 @@ class CoursesListPanel(joinCourseAction: (CourseInfo, CourseMode) -> Unit, reset
       return
     }
 
-    val newCourseToSelect = sortedCourseInfos.firstOrNull { courseInfo: CourseInfo -> courseInfo.course == courseToSelect }?.course
+    val newCourseToSelect = courseInfos.firstOrNull { courseInfo: CourseInfo -> courseInfo.course == courseToSelect }?.course
     setSelectedValue(newCourseToSelect)
-  }
-
-  private fun sortCourses(courseInfos: List<CourseInfo>): List<CourseInfo> {
-    val comparator = Comparator
-      .comparingInt { courseInfo: CourseInfo -> if (courseInfo.course is JetBrainsAcademyCourse) 0 else 1 }
-      .thenComparing { courseInfo: CourseInfo -> courseInfo.course.visibility }
-      .thenComparing { courseInfo: CourseInfo -> courseInfo.course.name }
-
-    return courseInfos.sortedWith(comparator)
   }
 
   private fun addGroup(coursesGroup: CoursesGroup) {

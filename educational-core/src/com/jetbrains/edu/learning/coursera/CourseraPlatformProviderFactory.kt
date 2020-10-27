@@ -54,8 +54,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
       }))
     }
 
-    return tasks.mapNotNull { it.get(60, TimeUnit.SECONDS) }
-
+    return tasks.mapNotNull { it.get(60, TimeUnit.SECONDS) }.sortedBy { it.name }
   }
 
   private fun getCourseLinks(): List<String> {
