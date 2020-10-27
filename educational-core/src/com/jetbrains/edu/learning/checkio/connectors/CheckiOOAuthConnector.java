@@ -72,7 +72,7 @@ public abstract class CheckiOOAuthConnector {
     requireClientPropertiesExist();
 
     return CHECKIO_OAUTH_INTERFACE.getTokens(
-      OAuthUtils.GRANT_TYPE.AUTHORIZATION_CODE,
+      OAuthUtils.GrantType.AUTHORIZATION_CODE,
       myClientSecret,
       myClientId,
       code,
@@ -90,7 +90,7 @@ public abstract class CheckiOOAuthConnector {
     requireClientPropertiesExist();
 
     return CHECKIO_OAUTH_INTERFACE.refreshTokens(
-      OAuthUtils.GRANT_TYPE.REFRESH_TOKEN,
+      OAuthUtils.GrantType.REFRESH_TOKEN,
       myClientSecret,
       myClientId,
       refreshToken

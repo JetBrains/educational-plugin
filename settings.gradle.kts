@@ -67,6 +67,10 @@ fun configureSecretProperties() {
   secretProperties.extractAndStore(
     "educational-core/resources/aes/aes.properties",
     "aesKey")
+  secretProperties.extractAndStore(
+    "educational-core/resources/marketplace/marketplace-oauth.properties",
+    "marketplaceClientId",
+    "marketplaceClientSecret")
 }
 
 fun download(url: URL, dstPath: String) {

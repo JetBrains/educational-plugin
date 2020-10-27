@@ -30,5 +30,4 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
     Element user = element.getChild(CheckiOAccount.class.getSimpleName());
     return deserializeAccount(user, CheckiOAccount.class, CheckiOUserInfo.class);
   }
-
 }

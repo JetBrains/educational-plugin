@@ -136,7 +136,6 @@
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
       <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
-      <action id="Educational.Educator.MarketplaceArchive" class="com.jetbrains.edu.coursecreator.actions.CreateMarketplaceArchive"/>
     </group>
 
     <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
@@ -288,9 +287,6 @@
     <registryKey key="edu.course.creator.solve.all"
                  description="Enables `Solve All Tasks Before` action"
                  defaultValue="false"/>
-    <experimentalFeature id="edu.course.marketplace" percentOfUsers="100" internalFeature="true">
-      <description>Enables marketplace integration</description>
-    </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
@@ -357,4 +353,5 @@
   <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
 </idea-plugin>

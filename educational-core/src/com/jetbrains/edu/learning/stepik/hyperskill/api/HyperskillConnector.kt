@@ -9,9 +9,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduNames.MISMATCH_REDIRECT_URI_URL
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -27,8 +28,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillT
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.*
-import org.jetbrains.builtInWebServer.BuiltInServerOptions
-import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
@@ -79,31 +78,15 @@ abstract class HyperskillConnector {
   // Authorization requests:
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
-    val port = BuiltInServerManager.getInstance().port
-    if (!isBuiltinPortValid(port)) {
-      showUnsupportedPortError(port)
-      return
-    }
+    if (!checkBuiltinPortValid()) return
 
     createAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(AUTHORISATION_CODE_URL)
   }
 
-  fun isBuiltinPortValid(port: Int): Boolean {
-    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
-
-    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
-    return port in defaultPort..defaultPort + 20 || port in HYPERSKILL_FAILOVER_PORTS
-  }
-
-  private fun showUnsupportedPortError(port: Int) {
-    Messages.showErrorDialog(EduCoreBundle.message("hyperskill.unsupported.port.message", port.toString(), MISMATCH_REDIRECT_URI_URL),
-                             EduCoreBundle.message("hyperskill.unsupported.port.title"))
-  }
-
   fun login(code: String): Boolean {
     val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code,
-                                                  "authorization_code").executeHandlingExceptions()
+                                                  AUTHORIZATION_CODE).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
@@ -116,7 +99,7 @@ abstract class HyperskillConnector {
 
   private fun HyperskillAccount.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
-    val response = authorizationService.refreshTokens("refresh_token", CLIENT_ID, CLIENT_SECRET, refreshToken).executeHandlingExceptions()
+    val response = authorizationService.refreshTokens(REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET, refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
       updateTokens(tokens)

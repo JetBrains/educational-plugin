@@ -1,0 +1,23 @@
+<idea-plugin>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.course.marketplace" percentOfUsers="100" internalFeature="true">
+      <description>Enables marketplace integration</description>
+    </experimentalFeature>
+    <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector"
+                        serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
+  </extensions>
+
+  <actions>
+    <action id="Educational.Educator.MarketplaceArchive" class="com.jetbrains.edu.coursecreator.actions.CreateMarketplaceArchive">
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+    </action>
+  </actions>
+</idea-plugin>
