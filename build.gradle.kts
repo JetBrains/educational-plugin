@@ -162,7 +162,6 @@ allprojects {
     implementation("org.jetbrains:markdown:0.1.41") {
       excludeKotlinDeps()
     }
-    //TODO: exclude unused modules
     implementation(group = "com.jetbrains.hub", name = "hub-client-all", version = "2020.1.12358") {
       excludeKotlinDeps()
     }
