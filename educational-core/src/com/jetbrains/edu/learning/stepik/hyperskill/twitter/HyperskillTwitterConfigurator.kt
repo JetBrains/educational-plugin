@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
 import com.jetbrains.edu.learning.twitter.TwitterUtils
 import java.nio.file.Path
+import kotlin.random.Random
 
 class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
 
@@ -38,11 +39,14 @@ class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   override fun getImagePath(solvedTask: Task): Path? {
-    return TwitterUtils.pluginRelativePath("twitter/hyperskill/achievement0.gif")
+    val gifIndex = Random.Default.nextInt(NUMBER_OF_IMAGES)
+    return TwitterUtils.pluginRelativePath("twitter/hyperskill/achievement$gifIndex.gif")
   }
 
   companion object {
     // BACKCOMPAT: 2020.1
     private val BUILD_202 = BuildNumber.fromString("202")!!
+
+    private const val NUMBER_OF_IMAGES = 3
   }
 }
