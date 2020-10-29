@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
@@ -15,6 +16,7 @@ abstract class EduActionTestCase : EduTestCase() {
   protected fun dataContext(files: Array<VirtualFile>): MapDataContext {
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
+      put(LangDataKeys.MODULE, myFixture.module)
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, files)
     }
   }
@@ -25,8 +27,12 @@ abstract class EduActionTestCase : EduTestCase() {
     val studyItem = file.getStudyItem(project)
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
+      put(LangDataKeys.MODULE, myFixture.module)
       put(CommonDataKeys.VIRTUAL_FILE, file)
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
+      if (psiFile is PsiFile) {
+        put(LangDataKeys.PSI_FILE, psiFile)
+      }
       put(CommonDataKeys.PSI_ELEMENT, psiFile)
       put(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
       if (studyItem != null) {
@@ -39,6 +45,7 @@ abstract class EduActionTestCase : EduTestCase() {
     val file = if (element is PsiFileSystemItem) element.virtualFile else element.containingFile.virtualFile
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
+      put(LangDataKeys.MODULE, myFixture.module)
       put(CommonDataKeys.VIRTUAL_FILE, file)
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
       put(CommonDataKeys.PSI_ELEMENT, element)

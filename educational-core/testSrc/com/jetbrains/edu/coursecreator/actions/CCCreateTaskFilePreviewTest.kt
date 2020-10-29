@@ -1,16 +1,10 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCTestCase.getPlaceholders
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -52,7 +46,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
 
     val file = findFile("lesson1/task1/src/Task.txt")
-    testAction(createDataContext(file), CCShowPreview())
+    testAction(dataContext(file), CCShowPreview())
     val editor = EditorFactory.getInstance().allEditors[0]
     try {
       val document = editor.document
@@ -64,7 +58,6 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
   }
 
-
   fun `test show error if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -73,28 +66,26 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
         }
       }
     }
-    course.description = "my summary"
     val placeholder = course.lessons.first().taskList.first().taskFiles["fizz.kt"]!!.answerPlaceholders?.firstOrNull()
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
     withEduTestDialog(EduTestDialog()) {
-      testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
+      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
     }.checkWasShown(EduCoreBundle.message("exception.message.placeholder.info.single", 1000, 0))
   }
 
   fun `test show error if we have no placeholders`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("fizz.kt", "no placeholders")
         }
       }
     }
-    course.description = "my summary"
 
     withEduTestDialog(EduTestDialog()) {
-      testAction(createDataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
+      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
     }.checkWasShown(EduCoreBundle.message("dialog.message.no.preview.for.file"))
   }
 
@@ -105,7 +96,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
       }
     }
 
-    testAction(createDataContext(findFile(taskFilePath)), CCShowPreview())
+    testAction(dataContext(findFile(taskFilePath)), CCShowPreview())
     val editor = EditorFactory.getInstance().allEditors[0]
 
     try {
@@ -125,13 +116,5 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     val tempDocument = EditorFactory.getInstance().createDocument(text)
     val placeholders = getPlaceholders(tempDocument, true)
     return tempDocument to placeholders
-  }
-
-  private fun createDataContext(file: VirtualFile): DataContext {
-    val context = MapDataContext()
-    context.put(CommonDataKeys.PSI_FILE, PsiManager.getInstance(project).findFile(file))
-    context.put(CommonDataKeys.PROJECT, project)
-    context.put(LangDataKeys.MODULE, myFixture.module)
-    return context
   }
 }
