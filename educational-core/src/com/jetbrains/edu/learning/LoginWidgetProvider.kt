@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetProvider
+import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -38,5 +39,5 @@ abstract class LoginWidgetProvider : StatusBarWidgetProvider {
 
   abstract fun isWidgetAvailable(course: Course): Boolean
 
-  abstract fun createLoginWidget(project: Project): LoginWidget
+  abstract fun createLoginWidget(project: Project): LoginWidget<out OAuthAccount<out Any>>
 }

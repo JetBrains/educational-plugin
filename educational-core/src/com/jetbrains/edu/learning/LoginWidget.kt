@@ -24,16 +24,20 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-abstract class LoginWidget(val project: Project,
-                           topic: Topic<EduLogInListener>,
-                           private val platformName: String
+abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
+                                                      topic: Topic<EduLogInListener>,
+                                                      private val platformName: String
 ) : IconLikeCustomStatusBarWidget {
-  abstract val account: OAuthAccount<out Any>?
+  abstract val account: T?
+
   abstract val icon: Icon
+
   open val disabledIcon: Icon
     get() = IconUtil.desaturate(icon)
 
   open val syncStep: SynchronizationStep? = null
+
+  protected abstract fun profileUrl(account: T): String
 
   private val component: JLabel = JLabel(getWidgetIcon())
 
@@ -68,7 +72,7 @@ abstract class LoginWidget(val project: Project,
     setToolTipText()
   }
 
-  private fun createNewPopup(account: OAuthAccount<out Any>?): JBPopup {
+  private fun createNewPopup(account: T?): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
@@ -78,10 +82,10 @@ abstract class LoginWidget(val project: Project,
 
     val panel = panel {
       val loginText = if (account != null) {
-        """Logged in as <a href="https://hyperskill.org/">${account.userInfo}</a>"""
+        """Logged in as <a href="${profileUrl(account)}">${account.userInfo}</a>"""
       }
       else {
-        "Not logged in to ${platformName}"
+        "Not logged in"
       }
 
       noteRow(loginText)
