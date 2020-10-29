@@ -1,7 +1,7 @@
 package com.jetbrains.edu.javascript.learning.checkio.settings;
 
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiOUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.options.CheckiOOptions;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
@@ -22,6 +22,6 @@ public class JsCheckiOOptions extends CheckiOOptions {
   @NotNull
   @Override
   protected String profileUrl(@NotNull CheckiOAccount account) {
-    return JsCheckiONames.JS_CHECKIO_API_HOST + CheckiONames.CHECKIO_USER + account.userInfo.getUsername();
+    return JsCheckiOUtils.getProfileUrl(account);
   }
 }

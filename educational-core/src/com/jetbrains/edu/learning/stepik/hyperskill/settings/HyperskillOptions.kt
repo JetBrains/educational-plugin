@@ -5,10 +5,10 @@ import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OauthOptions
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROFILE_PATH
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
+import com.jetbrains.edu.learning.stepik.hyperskill.profileUrl
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.event.HyperlinkEvent
@@ -47,9 +47,7 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
     }
   }
 
-  override fun profileUrl(account: HyperskillAccount): String {
-    return "${HYPERSKILL_PROFILE_PATH}${account.userInfo.id}"
-  }
+  override fun profileUrl(account: HyperskillAccount): String = account.profileUrl
 
   override fun getAdditionalComponents(): List<JComponent> {
     return listOf(automaticUpdateCheckBox)

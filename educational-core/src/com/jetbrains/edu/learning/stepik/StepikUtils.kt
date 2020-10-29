@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 
 const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
@@ -92,3 +93,5 @@ fun notificationListener(project: Project,
       "Updating Course", true, project)
   }
 }
+
+val StepikUser.profileUrl: String get() = "${getStepikProfilePath()}${userInfo.id}"

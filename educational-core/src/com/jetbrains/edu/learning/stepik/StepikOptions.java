@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 
-import static com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath;
-
 public class StepikOptions extends OauthOptions<StepikUser> {
   @Nullable
   @Override
@@ -78,6 +76,6 @@ public class StepikOptions extends OauthOptions<StepikUser> {
   @NotNull
   @Override
   protected String profileUrl(@NotNull StepikUser account) {
-    return getStepikProfilePath() + account.userInfo.getId();
+    return StepikUtils.getProfileUrl(account);
   }
 }

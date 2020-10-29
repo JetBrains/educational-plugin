@@ -201,3 +201,5 @@ val Task.successMessage: String
     val link = stageLink(this)
     return "${CheckUtils.CONGRATULATIONS} ${EduCoreBundle.message("hyperskill.continue", link, EduNames.JBA)}"
   }
+
+val HyperskillAccount.profileUrl: String get() = "${HYPERSKILL_PROFILE_PATH}${userInfo.id}"
