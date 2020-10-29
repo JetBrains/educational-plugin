@@ -5,8 +5,22 @@ import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.encrypt.getAesKey
+import junit.framework.TestCase
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
+
+  fun `test no vendor`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "some text")
+    }
+    val creator = getArchiveCreator()
+    val validationError = creator.validateCourse(course)
+    TestCase.assertNotNull(validationError)
+    TestCase.assertEquals("Course vendor is empty. Please, add vendor to the course.yaml", validationError)
+  }
 
   fun `test vendor with email`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}

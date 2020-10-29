@@ -24,4 +24,12 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
       return mapper
     }
 
+  override fun validateCourse(course: Course): String? {
+    val errors = super.validateCourse(course)
+    if (errors != null) return errors
+    if (course.vendor == null) {
+      return "Course vendor is empty. Please, add vendor to the course.yaml"
+    }
+    return null
+  }
 }

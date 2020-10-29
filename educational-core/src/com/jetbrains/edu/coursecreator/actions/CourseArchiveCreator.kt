@@ -49,7 +49,7 @@ abstract class CourseArchiveCreator(
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
-    val error = checkIgnoredFiles(project)
+    val error = validateCourse(course)
     if (error != null) {
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: $error")
@@ -79,6 +79,10 @@ abstract class CourseArchiveCreator(
       LOG.error("Failed to create course archive", e)
       EduCoreBundle.message("error.failed.to.write")
     }
+  }
+
+  open fun validateCourse(course: Course): String? {
+    return checkIgnoredFiles(project)
   }
 
   @VisibleForTesting
