@@ -9,7 +9,7 @@ class DependencyResolveTest : EduTestCase() {
   fun `test resolve dependency`() {
     courseWithFiles {
       lesson("Introduction") {
-        eduTask("Hello, world!") {
+        eduTask("Hello, world") {
           taskFile("Task.kt", """
           |def f():
           |  <p>print(1)</p>
@@ -22,7 +22,7 @@ class DependencyResolveTest : EduTestCase() {
           |def <p>foo</p>():
           |  <p>type here</p>
           """.trimMargin("|")) {
-            placeholder(1, dependency = "Introduction#Hello, world!#Task.kt#1")
+            placeholder(1, dependency = "Introduction#Hello, world#Task.kt#1")
           }
         }
       }
@@ -123,7 +123,7 @@ class DependencyResolveTest : EduTestCase() {
     courseWithFiles {
       section("First section") {
         lesson("Introduction") {
-          eduTask("Hello, world!") {
+          eduTask("Hello, world") {
             taskFile("Task.kt", """
             |def f():
             |  <p>print(1)</p>
@@ -137,7 +137,7 @@ class DependencyResolveTest : EduTestCase() {
           |def <p>foo</p>():
           |  <p>type here</p>
           """.trimMargin("|")) {
-            placeholder(1, dependency = "First section#Introduction#Hello, world!#Task.kt#1")
+            placeholder(1, dependency = "First section#Introduction#Hello, world#Task.kt#1")
           }
         }
       }

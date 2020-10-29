@@ -15,7 +15,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")
     val expectedFileTree = fileTree {
       dir("Introduction") {
-        dir("Hello, world!") {
+        dir("Hello, world") {
           dir("src") {
             file("Task.kt")
           }
@@ -75,7 +75,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
     generateCourseStructure("testData/newCourse/kotlin_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {
       dir("Introduction") {
-        dir("Hello, world!") {
+        dir("Hello, world") {
           dir("src") {
             file("Task.kt")
           }
