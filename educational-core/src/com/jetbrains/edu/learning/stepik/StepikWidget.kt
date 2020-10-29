@@ -8,15 +8,18 @@ import com.jetbrains.edu.learning.SynchronizationStep
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons
-import javax.swing.Icon
 
-class StepikWidget(project: Project) : LoginWidget<StepikUser>(project, EduSettings.SETTINGS_CHANGED, StepikNames.STEPIK) {
+class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
+                                                               EduCoreBundle.message("stepik.widget.title"),
+                                                               EducationalCoreIcons.Stepik) {
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
-  override val icon: Icon
-    get() = EducationalCoreIcons.Stepik
+
   override val syncStep: SynchronizationStep
     get() = SynchronizationStep(EduCoreBundle.message("action.synchronize.course"), SyncStepikCourseAction())
+
+  override val platformName: String
+    get() = StepikNames.STEPIK
 
   override fun profileUrl(account: StepikUser): String = account.profileUrl
 

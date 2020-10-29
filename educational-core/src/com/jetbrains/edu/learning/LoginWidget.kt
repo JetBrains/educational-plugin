@@ -10,9 +10,8 @@ import com.intellij.openapi.wm.IconLikeCustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.layout.*
-import com.intellij.util.IconUtil
-import com.intellij.util.messages.Topic
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -25,28 +24,21 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
-                                                      topic: Topic<EduLogInListener>,
-                                                      private val platformName: String
+                                                      private val title: String,
+                                                      private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
   abstract val account: T?
-
-  abstract val icon: Icon
-
-  open val disabledIcon: Icon
-    get() = IconUtil.desaturate(icon)
 
   open val syncStep: SynchronizationStep? = null
 
   protected abstract fun profileUrl(account: T): String
 
-  private val component: JLabel = JLabel(getWidgetIcon())
+  protected abstract val platformName: String
+
+  private val component: JLabel = JBLabel(icon)
 
   init {
-    setToolTipText()
-    project.messageBus.connect().subscribe(topic, object : EduLogInListener {
-      override fun userLoggedOut() = update()
-      override fun userLoggedIn() = update()
-    })
+    component.toolTipText = title
     installClickListener()
   }
 
@@ -62,21 +54,11 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       }
     }.installOn(component)
 
-  private fun setToolTipText() {
-    val logInLogOutText = if (account == null) "Log In to" else "Log Out from"
-    component.toolTipText = "$logInLogOutText ${platformName}"
-  }
-
-  private fun update() {
-    component.icon = getWidgetIcon()
-    setToolTipText()
-  }
-
   private fun createNewPopup(account: T?): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
-      .setTitle("${platformName} Account")
+      .setTitle(title)
       .setTitleIcon(ActiveIcon(icon, icon))
       .createPopup()
 
@@ -124,10 +106,6 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
   abstract fun authorize()
 
   abstract fun resetAccount()
-
-  private fun getWidgetIcon(): Icon {
-    return if (account == null) disabledIcon else icon
-  }
 
   override fun getComponent(): JComponent = component
 

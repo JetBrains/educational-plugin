@@ -12,14 +12,15 @@ import com.jetbrains.edu.learning.stepik.hyperskill.profileUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction
 import icons.EducationalCoreIcons
-import javax.swing.Icon
 
-class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(project, HyperskillConnector.AUTHORIZATION_TOPIC, EduNames.JBA) {
+class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(project, EduCoreBundle.message("hyperskill.widget.title"),
+                                                                          EducationalCoreIcons.JB_ACADEMY_ENABLED) {
   override val account: HyperskillAccount? get() = HyperskillSettings.INSTANCE.account
-  override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_ENABLED
-  override val disabledIcon: Icon get() = EducationalCoreIcons.JB_ACADEMY_DISABLED
   override val syncStep: SynchronizationStep
     get() = SynchronizationStep(EduCoreBundle.message("hyperskill.action.synchronize.project"), SyncHyperskillCourseAction())
+
+  override val platformName: String
+    get() = EduNames.JBA
 
   override fun profileUrl(account: HyperskillAccount): String = account.profileUrl
 

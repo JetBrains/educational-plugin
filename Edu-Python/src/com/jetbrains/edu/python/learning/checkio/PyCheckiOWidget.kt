@@ -8,15 +8,17 @@ import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import com.jetbrains.edu.python.learning.checkio.utils.profileUrl
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import icons.EducationalCoreIcons
-import javax.swing.Icon
 
-class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project, CheckiOOAuthConnector.getAuthorizationTopic(),
-                                                                      CheckiONames.PY_CHECKIO) {
+class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
+                                                                      EduPythonBundle.message("checkio.widget.title"),
+                                                                      EducationalCoreIcons.CheckiO) {
   override val account: CheckiOAccount?
     get() = PyCheckiOSettings.INSTANCE.account
-  override val icon: Icon
-    get() = EducationalCoreIcons.CheckiO
+
+  override val platformName: String
+    get() = CheckiONames.PY_CHECKIO
 
   override fun profileUrl(account: CheckiOAccount): String = account.profileUrl
 
