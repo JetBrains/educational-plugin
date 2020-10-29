@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.NotNull
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.FlowLayout
@@ -33,7 +32,7 @@ private const val PANEL_HEIGHT = 750
 
 private const val SCROLL_PANE_WIDTH = 233
 
-class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: @NotNull Disposable) : JPanel() {
+class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: Disposable) : JPanel() {
   private val coursesTab: CoursesTab
   private val coursesProvidersTree: JBScrollPane
   private val myCoursesProvider: MyCoursesProvider = MyCoursesProvider(disposable)
