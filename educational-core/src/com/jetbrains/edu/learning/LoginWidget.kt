@@ -13,6 +13,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -30,7 +31,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 ) : IconLikeCustomStatusBarWidget {
   abstract val account: T?
 
-  open val syncStep: SynchronizationStep? = null
+  open val synchronizeCourseAction: SyncCourseAction? = null
 
   protected abstract fun profileUrl(account: T): String
 
@@ -73,11 +74,15 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
       noteRow(loginText)
 
-      if (syncStep != null && account != null && syncStep!!.syncAction.isAvailable(project)) {
-        row {
-          link(syncStep!!.stepName) {
-            syncStep!!.syncAction.synchronizeCourse(project)
-            popup.closeOk(null)
+      val synchronizeCourseAction = synchronizeCourseAction
+
+      if (synchronizeCourseAction != null) {
+        if (account != null && synchronizeCourseAction.isAvailable(project)) {
+          row {
+            link(synchronizeCourseAction.loginWidgetName) {
+              synchronizeCourseAction.synchronizeCourse(project)
+              popup.closeOk(null)
+            }
           }
         }
       }

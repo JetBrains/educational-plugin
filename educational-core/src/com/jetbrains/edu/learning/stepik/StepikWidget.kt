@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.SynchronizationStep
+import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import icons.EducationalCoreIcons
@@ -15,8 +15,8 @@ class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
 
-  override val syncStep: SynchronizationStep
-    get() = SynchronizationStep(EduCoreBundle.message("action.synchronize.course"), SyncStepikCourseAction())
+  override val synchronizeCourseAction: SyncCourseAction
+    get() = SyncStepikCourseAction()
 
   override val platformName: String
     get() = StepikNames.STEPIK
