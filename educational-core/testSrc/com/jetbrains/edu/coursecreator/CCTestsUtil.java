@@ -1,26 +1,15 @@
 package com.jetbrains.edu.coursecreator;
 
-import com.google.common.collect.Collections2;
-import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 public class CCTestsUtil {
-  public static final String BEFORE_POSTFIX = "_before.txt";
-  public static final String AFTER_POSTFIX = "_after.txt";
 
   private CCTestsUtil() {
-  }
-
-  public static boolean comparePlaceholders(AnswerPlaceholder p1, AnswerPlaceholder p2) {
-    if (p1.getOffset() != p2.getOffset()) return false;
-    if (p1.getLength() != p2.getLength()) return false;
-    if (p1.getPossibleAnswerLength() != p2.getPossibleAnswerLength()) return false;
-    if (p1.getPossibleAnswer() != null ? !p1.getPossibleAnswer().equals(p2.getPossibleAnswer()) : p2.getPossibleAnswer() != null) return false;
-    if (p1.getPlaceholderText() != null ? !p1.getPlaceholderText().equals(p2.getPlaceholderText()) : p2.getPlaceholderText() != null) return false;
-    return true;
   }
 
   public static String getPlaceholderPresentation(AnswerPlaceholder placeholder) {
@@ -30,8 +19,25 @@ public class CCTestsUtil {
            " placeholderText=" + placeholder.getPlaceholderText();
   }
 
-  public static String getPlaceholdersPresentation(List<AnswerPlaceholder> placeholders) {
-    Collection<String> transformed = Collections2.transform(placeholders, placeholder -> getPlaceholderPresentation(placeholder));
-    return "[" + StringUtil.join(transformed, ",") + "]";
+  public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
+    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
+    if (paintedPlaceholders.contains(placeholder)) return;
+    for (AnswerPlaceholder paintedPlaceholder : paintedPlaceholders) {
+      if (paintedPlaceholder.getOffset() == placeholder.getOffset() &&
+          paintedPlaceholder.getLength() == placeholder.getLength()) {
+        return;
+      }
+    }
+    throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(placeholder));
+  }
+
+  public static void checkPainters(@NotNull TaskFile taskFile) {
+    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
+
+    for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
+      if (!paintedPlaceholders.contains(answerPlaceholder)) {
+        throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(answerPlaceholder));
+      }
+    }
   }
 }

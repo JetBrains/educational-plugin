@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
-import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import java.awt.Point
 
@@ -190,7 +189,7 @@ class PlaceholderPainterTest : EduTestCase() {
     myFixture.configureByText("file.txt", text.trimMargin("|"))
     if (useSoftWrap)
       EditorTestUtil.configureSoftWraps(myFixture.editor, 10)
-    val placeholders = CCTestCase.getPlaceholders(myFixture.editor.document, true)
+    val placeholders = getPlaceholders(myFixture.editor.document, true)
     assertEquals("Wrong number of placeholders", 1, placeholders.size)
     return placeholders
   }

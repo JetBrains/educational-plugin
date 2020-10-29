@@ -6,6 +6,8 @@ import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -16,14 +18,13 @@ import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.registerComponentInstance
-import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -55,6 +56,7 @@ import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
 import java.util.*
+import java.util.regex.Pattern
 
 abstract class EduTestCase : EduTestCaseBase() {
   private lateinit var myManager: FileEditorManagerImpl
@@ -156,8 +158,8 @@ abstract class EduTestCase : EduTestCaseBase() {
 
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     try {
-      val document = FileDocumentManager.getInstance().getDocument(file)
-      for (placeholder in CCTestCase.getPlaceholders(document, true)) {
+      val document = FileDocumentManager.getInstance().getDocument(file)!!
+      for (placeholder in getPlaceholders(document, true)) {
         taskFile.addAnswerPlaceholder(placeholder)
       }
     }
@@ -334,6 +336,58 @@ abstract class EduTestCase : EduTestCaseBase() {
   @Throws(IOException::class)
   protected fun loadText(fileName: String): String {
     return FileUtil.loadFile(File(testDataPath, fileName))
+  }
+
+  companion object {
+
+    @JvmStatic
+    fun getPlaceholders(document: Document, useLength: Boolean): List<AnswerPlaceholder> {
+      return WriteCommandAction.writeCommandAction(null).compute<List<AnswerPlaceholder>, RuntimeException> {
+        val placeholders = mutableListOf<AnswerPlaceholder>()
+        val openingTagRx = "<placeholder( taskText=\"(.+?)\")?( possibleAnswer=\"(.+?)\")?( hint=\"(.+?)\")?( hint2=\"(.+?)\")?>"
+        val closingTagRx = "</placeholder>"
+        val text = document.charsSequence
+        val openingMatcher = Pattern.compile(openingTagRx).matcher(text)
+        val closingMatcher = Pattern.compile(closingTagRx).matcher(text)
+        var pos = 0
+        while (openingMatcher.find(pos)) {
+          val answerPlaceholder = AnswerPlaceholder()
+          val taskText = openingMatcher.group(2)
+          if (taskText != null) {
+            answerPlaceholder.placeholderText = taskText
+            answerPlaceholder.length = taskText.length
+          }
+          var possibleAnswer = openingMatcher.group(4)
+          if (possibleAnswer != null) {
+            answerPlaceholder.possibleAnswer = possibleAnswer
+          }
+          answerPlaceholder.offset = openingMatcher.start()
+          if (!closingMatcher.find(openingMatcher.end())) {
+            LOG.error("No matching closing tag found")
+          }
+          var length: Int
+          if (useLength) {
+            answerPlaceholder.placeholderText = text.substring(openingMatcher.end(), closingMatcher.start())
+            answerPlaceholder.length = closingMatcher.start() - openingMatcher.end()
+            length = answerPlaceholder.length
+          }
+          else {
+            if (possibleAnswer == null) {
+              possibleAnswer = document.getText(TextRange.create(openingMatcher.end(), closingMatcher.start()))
+              answerPlaceholder.possibleAnswer = possibleAnswer
+              answerPlaceholder.length = possibleAnswer.length
+            }
+            length = answerPlaceholder.possibleAnswerLength
+          }
+          document.deleteString(closingMatcher.start(), closingMatcher.end())
+          document.deleteString(openingMatcher.start(), openingMatcher.end())
+          FileDocumentManager.getInstance().saveDocument(document)
+          placeholders.add(answerPlaceholder)
+          pos = answerPlaceholder.offset + length
+        }
+        placeholders
+      }
+    }
   }
 }
 

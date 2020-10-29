@@ -3,7 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.coursecreator.CCTestCase.checkPainters
+import com.jetbrains.edu.coursecreator.CCTestsUtil.checkPainters
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile

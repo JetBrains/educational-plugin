@@ -5,8 +5,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.coursecreator.CCTestCase
-import com.jetbrains.edu.coursecreator.CCTestCase.getPlaceholders
+import com.jetbrains.edu.coursecreator.CCTestsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview
 import com.jetbrains.edu.learning.EduActionTestCase
@@ -103,7 +102,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
       val (document, placeholders) = getPlaceholders("$name.txt")
       assertEquals("Files don't match", document.text, editor.document.text)
       for (placeholder in placeholders) {
-        CCTestCase.checkPainters(placeholder)
+        CCTestsUtil.checkPainters(placeholder)
       }
     }
     finally {
