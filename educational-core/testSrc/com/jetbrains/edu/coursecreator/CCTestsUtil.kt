@@ -1,42 +1,36 @@
-package com.jetbrains.edu.coursecreator;
+package com.jetbrains.edu.coursecreator
 
-import com.jetbrains.edu.learning.PlaceholderPainter;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.PlaceholderPainter.getPaintedPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
-import java.util.Set;
-
-public class CCTestsUtil {
-
-  private CCTestsUtil() {
+object CCTestsUtil {
+  private fun getPlaceholderPresentation(placeholder: AnswerPlaceholder): String {
+    return "offset=${placeholder.offset} " +
+           "length=${placeholder.length} " +
+           "possibleAnswer=${placeholder.possibleAnswer} " +
+           "placeholderText=${placeholder.placeholderText}"
   }
 
-  public static String getPlaceholderPresentation(AnswerPlaceholder placeholder) {
-    return "offset=" + placeholder.getOffset() +
-           " length=" + placeholder.getLength() +
-           " possibleAnswer=" + placeholder.getPossibleAnswer() +
-           " placeholderText=" + placeholder.getPlaceholderText();
-  }
-
-  public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
-    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
-    if (paintedPlaceholders.contains(placeholder)) return;
-    for (AnswerPlaceholder paintedPlaceholder : paintedPlaceholders) {
-      if (paintedPlaceholder.getOffset() == placeholder.getOffset() &&
-          paintedPlaceholder.getLength() == placeholder.getLength()) {
-        return;
+  @JvmStatic
+  fun checkPainters(placeholder: AnswerPlaceholder) {
+    val paintedPlaceholders = getPaintedPlaceholder()
+    if (paintedPlaceholders.contains(placeholder)) return
+    for (paintedPlaceholder in paintedPlaceholders) {
+      if (paintedPlaceholder.offset == placeholder.offset &&
+          paintedPlaceholder.length == placeholder.length) {
+        return
       }
     }
-    throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(placeholder));
+    throw AssertionError("No highlighter for placeholder: " + getPlaceholderPresentation(placeholder))
   }
 
-  public static void checkPainters(@NotNull TaskFile taskFile) {
-    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
-
-    for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
+  @JvmStatic
+  fun checkPainters(taskFile: TaskFile) {
+    val paintedPlaceholders = getPaintedPlaceholder()
+    for (answerPlaceholder in taskFile.answerPlaceholders) {
       if (!paintedPlaceholders.contains(answerPlaceholder)) {
-        throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(answerPlaceholder));
+        throw AssertionError("No highlighter for placeholder: " + getPlaceholderPresentation(answerPlaceholder))
       }
     }
   }
