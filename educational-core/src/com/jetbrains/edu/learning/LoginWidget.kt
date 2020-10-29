@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.awt.BorderLayout
 import java.awt.Point
@@ -64,10 +65,10 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
     val panel = panel {
       val loginText = if (account != null) {
-        """Logged in as <a href="${profileUrl(account)}">${account.userInfo}</a>"""
+        EduCoreBundle.message("account.widget.login.message", profileUrl(account), account.userInfo)
       }
       else {
-        "Not logged in"
+        EduCoreBundle.message("account.widget.no.login.message")
       }
 
       noteRow(loginText)
@@ -83,14 +84,14 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
       row {
         if (account == null) {
-          link("Log in") {
+          link(EduCoreBundle.message("account.widget.login")) {
             authorize()
             popup.closeOk(null)
             EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
           }
         }
         else {
-          link("Log out") {
+          link(EduCoreBundle.message("account.widget.logout")) {
             resetAccount()
             popup.closeOk(null)
             EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
