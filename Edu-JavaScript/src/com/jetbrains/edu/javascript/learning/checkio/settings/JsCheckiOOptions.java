@@ -2,9 +2,11 @@ package com.jetbrains.edu.javascript.learning.checkio.settings;
 
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.options.CheckiOOptions;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 public class JsCheckiOOptions extends CheckiOOptions {
   protected JsCheckiOOptions() {
@@ -17,8 +19,9 @@ public class JsCheckiOOptions extends CheckiOOptions {
     return CheckiONames.JS_CHECKIO;
   }
 
+  @NotNull
   @Override
-  protected String getApiHost() {
-    return JsCheckiONames.JS_CHECKIO_API_HOST;
+  protected String profileUrl(@NotNull CheckiOAccount account) {
+    return JsCheckiONames.JS_CHECKIO_API_HOST + CheckiONames.CHECKIO_USER + account.userInfo.getUsername();
   }
 }

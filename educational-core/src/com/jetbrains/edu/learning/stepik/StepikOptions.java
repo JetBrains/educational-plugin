@@ -16,7 +16,6 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.OauthOptions;
@@ -78,15 +77,7 @@ public class StepikOptions extends OauthOptions<StepikUser> {
 
   @NotNull
   @Override
-  public String getProfileUrl(@NotNull Object userInfo) {
-    String userId;
-    try {
-      userId = Integer.toString(((StepikUserInfo)userInfo).getId());
-    }
-    catch (ClassCastException e) {
-      Logger.getInstance(StepikOptions.class).error(e.getMessage());
-      userId = "";
-    }
-    return getStepikProfilePath() + userId;
+  protected String profileUrl(@NotNull StepikUser account) {
+    return getStepikProfilePath() + account.userInfo.getId();
   }
 }

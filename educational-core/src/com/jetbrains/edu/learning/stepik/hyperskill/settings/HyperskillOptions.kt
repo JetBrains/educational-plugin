@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -9,7 +8,6 @@ import com.jetbrains.edu.learning.settings.OauthOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROFILE_PATH
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProfileInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
@@ -49,16 +47,8 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
     }
   }
 
-  override fun getProfileUrl(userInfo: Any): String {
-    val userId = try {
-      (userInfo as HyperskillProfileInfo).id
-    }
-    catch (e: ClassCastException) {
-      Logger.getInstance(HyperskillOptions::class.java).error(e.message)
-      ""
-    }
-
-    return "${HYPERSKILL_PROFILE_PATH}${userId}"
+  override fun profileUrl(account: HyperskillAccount): String {
+    return "${HYPERSKILL_PROFILE_PATH}${account.userInfo.id}"
   }
 
   override fun getAdditionalComponents(): List<JComponent> {

@@ -27,7 +27,9 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
 
   abstract fun getCurrentAccount(): T?
   abstract fun setCurrentAccount(account: T?)
-  abstract fun getProfileUrl(userInfo: Any): String
+
+  protected abstract fun profileUrl(account: T): String
+
   protected abstract fun createAuthorizeListener(): LoginListener
 
   private fun initUI() {
@@ -110,15 +112,17 @@ abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
       loginLink.removeHyperlinkListener(loginListener)
     }
 
-    if (lastSavedAccount == null) {
+    val selectedAccount = lastSavedAccount
+
+    if (selectedAccount == null) {
       browseProfileLabel.text = "You're not logged in"
       loginLink.text = "Log in to $displayName"
 
       loginListener = createAuthorizeListener()
     }
     else {
-      val info = lastSavedAccount!!.userInfo
-      browseProfileLabel.text = "You're logged in as <a href=${getProfileUrl(info)}>${info}</a>"
+      val info = selectedAccount.userInfo
+      browseProfileLabel.text = "You're logged in as <a href=${profileUrl(selectedAccount)}>${info}</a>"
       loginLink.text = "Log out"
       loginListener = createLogoutListener()
     }
