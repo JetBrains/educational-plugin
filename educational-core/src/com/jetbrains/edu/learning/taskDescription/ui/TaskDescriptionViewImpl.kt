@@ -14,10 +14,9 @@ import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.JavaUILibrary.*
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -27,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTabPanel
+import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -204,11 +204,19 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     Disposer.register(contentManager, taskTextTW)
 
     val taskTextPanel = taskTextTW.createTaskInfoPanel()
-    val topPanel = JPanel(BorderLayout())
+    val centerPanel = JPanel(BorderLayout())
+    centerPanel.add(taskTextPanel, BorderLayout.CENTER)
+    centerPanel.border = JBUI.Borders.emptyBottom(10)
+    if (project.course is HyperskillCourse) {
+      val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 7, 0, 0, 22)
+      val linkPanel = JPanel(BorderLayout())
+      linkPanel.add(link, BorderLayout.EAST)
+      centerPanel.add(linkPanel, BorderLayout.SOUTH)
+    }
 
+    val topPanel = JPanel(BorderLayout())
     panel.add(topPanel, BorderLayout.NORTH)
-    panel.add(taskTextPanel, BorderLayout.CENTER)
-    taskTextPanel.border = JBUI.Borders.empty(0, 0, 10, 0)
+    panel.add(centerPanel, BorderLayout.CENTER)
 
     val bottomPanel = JPanel(BorderLayout())
 
