@@ -65,13 +65,16 @@ class OpenCourseButton : CourseButtonBase() {
         if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
           coursesStorage.removeCourseByLocation(coursePath)
           when {
+            isFromMyCoursesPage ->{
+              return@invokeAndWait
+            }
             course is HyperskillCourse -> {
               closeDialog()
               HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
                 Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
               }
             }
-            !isFromMyCoursesPage -> {
+            else -> {
               closeDialog()
               JoinCourseDialog(course).show()
             }
