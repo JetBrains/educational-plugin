@@ -31,7 +31,9 @@ class MyCoursesPanel(
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
       override fun courseDeleted(course: CourseMetaInfo) {
-        updateModel(CoursesStorage.getInstance().state.courses, null, true)
+        courses.clear()
+        courses.addAll(CoursesStorage.getInstance().state.courses)
+        onTabSelection()
       }
     })
   }
