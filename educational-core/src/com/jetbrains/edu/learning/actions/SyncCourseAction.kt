@@ -5,10 +5,10 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import javax.swing.Icon
 
-abstract class SyncCourseAction(val loginWidgetName: String,
-                                text: String,
+abstract class SyncCourseAction(private val text: String,
                                 description: String,
                                 icon: Icon?) : DumbAwareAction(text, description, icon) {
+  open val loginWidgetText: String get() = text
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

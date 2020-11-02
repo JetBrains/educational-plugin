@@ -79,7 +79,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       if (synchronizeCourseAction != null) {
         if (account != null && synchronizeCourseAction.isAvailable(project)) {
           row {
-            link(synchronizeCourseAction.loginWidgetName) {
+            link(synchronizeCourseAction.loginWidgetText) {
               synchronizeCourseAction.synchronizeCourse(project)
               popup.closeOk(null)
             }

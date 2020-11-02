@@ -14,9 +14,11 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillNotificationGroup
 
 @Suppress("ComponentNotRegistered")
-class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.message("hyperskill.action.synchronize.project"),
-                                                    EduCoreBundle.message("hyperskill.update.project"),
+class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.message("hyperskill.update.project"),
                                                     EduCoreBundle.message("hyperskill.update.project"), null) {
+
+  override val loginWidgetText: String
+    get() = EduCoreBundle.message("hyperskill.action.synchronize.project")
 
   override fun synchronizeCourse(project: Project) {
     val course = project.course as HyperskillCourse

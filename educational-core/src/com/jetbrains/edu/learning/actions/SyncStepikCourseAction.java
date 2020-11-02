@@ -29,7 +29,6 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   public SyncStepikCourseAction() {
     super(EduCoreBundle.message("action.synchronize.course"),
           EduCoreBundle.message("action.synchronize.course"),
-          EduCoreBundle.message("action.synchronize.course"),
           EducationalCoreIcons.StepikRefresh);
   }
 
