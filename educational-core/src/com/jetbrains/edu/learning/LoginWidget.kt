@@ -49,7 +49,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     object : ClickListener() {
       override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
         if (clickCount != 1) return false
-        val popup = createNewPopup()
+        val popup = createPopup()
         val preferredSize = popup.content.preferredSize
         val point = Point(-preferredSize.width, -preferredSize.height)
         popup.show(RelativePoint(component, point))
@@ -57,7 +57,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       }
     }.installOn(component)
 
-  private fun createNewPopup(): JBPopup {
+  private fun createPopup(): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
