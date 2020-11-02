@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.ActiveIcon
 import com.intellij.openapi.ui.popup.JBPopup
@@ -48,7 +49,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     object : ClickListener() {
       override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
         if (clickCount != 1) return false
-        val popup = createNewPopup(account)
+        val popup = createNewPopup()
         val preferredSize = popup.content.preferredSize
         val point = Point(-preferredSize.width, -preferredSize.height)
         popup.show(RelativePoint(component, point))
@@ -56,7 +57,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       }
     }.installOn(component)
 
-  private fun createNewPopup(account: T?): JBPopup {
+  private fun createNewPopup(): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
@@ -64,9 +65,22 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       .setTitleIcon(ActiveIcon(icon, icon))
       .createPopup()
 
-    val panel = panel {
-      val loginText = if (account != null) {
-        EduCoreBundle.message("account.widget.login.message", profileUrl(account), account.userInfo)
+    updateContent(wrapperPanel, popup)
+    return popup
+  }
+
+  private fun updateContent(wrapperPanel: JPanel, popup: JBPopup) {
+    wrapperPanel.removeAll()
+    wrapperPanel.add(createWidgetContent(account, popup, wrapperPanel), BorderLayout.CENTER)
+    wrapperPanel.revalidate()
+    wrapperPanel.repaint()
+    UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
+  }
+
+  private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel): DialogPanel {
+    return panel {
+      val loginText = if (currentAccount != null) {
+        EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
       }
       else {
         EduCoreBundle.message("account.widget.no.login.message")
@@ -77,7 +91,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       val synchronizeCourseAction = synchronizeCourseAction
 
       if (synchronizeCourseAction != null) {
-        if (account != null && synchronizeCourseAction.isAvailable(project)) {
+        if (currentAccount != null && synchronizeCourseAction.isAvailable(project)) {
           row {
             link(synchronizeCourseAction.loginWidgetText) {
               synchronizeCourseAction.synchronizeCourse(project)
@@ -88,7 +102,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       }
 
       row {
-        if (account == null) {
+        if (currentAccount == null) {
           link(EduCoreBundle.message("account.widget.login")) {
             authorize()
             popup.closeOk(null)
@@ -98,15 +112,12 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
         else {
           link(EduCoreBundle.message("account.widget.logout")) {
             resetAccount()
-            popup.closeOk(null)
+            updateContent(wrapperPanel, popup)
             EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
           }
         }
       }
     }
-    wrapperPanel.add(panel, BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
-    return popup
   }
 
   abstract fun authorize()
