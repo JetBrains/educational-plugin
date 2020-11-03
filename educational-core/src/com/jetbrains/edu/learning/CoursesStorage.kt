@@ -58,6 +58,8 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
     return listOf(courseCreatorCourses, inProgressCourses, solvedCourses).filter { it.courses.isNotEmpty() }
   }
 
+  fun isNotEmpty() = state.courses.isNotEmpty()
+
   companion object {
     val COURSE_DELETED = Topic.create("Edu.courseDeletedFromStorage", CourseDeletedListener::class.java)
 

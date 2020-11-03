@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
@@ -20,20 +19,18 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
+import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
 import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Rectangle
 import java.awt.event.ActionListener
-import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
-import kotlin.collections.HashSet
 
 
 private const val CONTENT_CARD_NAME = "CONTENT"
@@ -232,7 +229,7 @@ abstract class CoursesPanel(
 
   private fun createAndBindSearchComponent(): JPanel {
     val searchPanel = JPanel(BorderLayout())
-    val searchField = LanguagesFilterComponent()
+    val searchField = CoursesFilterComponent({ coursesGroups }, { groups -> updateModel(groups, null) })
     coursePanel.bindSearchField(searchField)
     searchPanel.add(searchField, BorderLayout.CENTER)
 
@@ -274,46 +271,6 @@ abstract class CoursesPanel(
   }
 
   protected open fun isLoginNeeded() = false
-
-  inner class LanguagesFilterComponent : FilterComponent("Edu.NewCourse", 5, true) {
-
-    init {
-      textEditor.border = null
-    }
-
-    override fun filter() {
-      val filteredCoursesGroups = coursesGroups.map { coursesGroup ->
-        CoursesGroup(coursesGroup.name, coursesGroup.courses.filter { accept(filter, it) })
-      }
-      updateModel(filteredCoursesGroups, null)
-    }
-
-    private fun accept(@NonNls filter: String, course: Course): Boolean {
-      if (filter.isEmpty()) {
-        return true
-      }
-      val filterParts = getFilterParts(filter)
-      val courseName = course.name.toLowerCase(Locale.getDefault())
-      for (filterPart in filterParts) {
-        if (courseName.contains(filterPart)) return true
-        for (tag in course.tags) {
-          if (tag.accept(filterPart)) {
-            return true
-          }
-        }
-        for (authorName in course.authorFullNames) {
-          if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
-            return true
-          }
-        }
-      }
-      return false
-    }
-
-    private fun getFilterParts(@NonNls filter: String): Set<String> {
-      return HashSet(listOf(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
-    }
-  }
 }
 
 private class CenteredIcon : AsyncProcessIcon.Big("Loading") {

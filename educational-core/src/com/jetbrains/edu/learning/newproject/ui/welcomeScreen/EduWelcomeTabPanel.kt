@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.welcomeScreen
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.ide.impl.DataManagerImpl
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -10,42 +11,35 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
+import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
+import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import java.awt.BorderLayout
-import java.awt.CardLayout
 import java.awt.Font
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
-private const val EMPTY: String = "EMPTY"
-
-@Suppress("unused") // will be used when implement MyCourses page
-private const val CONTENT: String = "CONTENT"
-private const val HEADER_FONT_SIZE = 26.0f
-private const val MAIN_FONT_SIZE = 13.0f
-
 // BACKCOMPAT: 2020.1. Used since 2020.2
 @Suppress("unused")
-class EduWelcomeTabPanel : JPanel() {
-  private val cardLayout: CardLayout = CardLayout()
+class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
   private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(),
                                                     ImportLocalCourseAction(),
                                                     StartStepikCourseAction(),
@@ -54,9 +48,12 @@ class EduWelcomeTabPanel : JPanel() {
                                                     StartCodeforcesContestAction())
 
   init {
-    layout = cardLayout
-    add(createEmptyPanel(), EMPTY)
-    cardLayout.show(this, EMPTY)
+    if (CoursesStorage.getInstance().isNotEmpty()) {
+      add(MyCoursesWelcomeScreenPanel(parentDisposable))
+    }
+    else {
+      add(createEmptyPanel())
+    }
   }
 
   private fun createEmptyPanel(): JPanel {
@@ -107,7 +104,7 @@ class EduWelcomeTabPanel : JPanel() {
   private fun createStartButtonPanel(): JPanel {
     val button = object : JButton(EduCoreBundle.message("course.dialog.welcome.screen.start.course")) {
       init {
-        font = font.deriveFont(Font.BOLD, MAIN_FONT_SIZE)
+        font = font.deriveFont(Font.BOLD, CoursesDialogFontManager.fontSize.toFloat())
         preferredSize = JBUI.size(158, 37)
         isOpaque = false
       }
@@ -135,7 +132,7 @@ class EduWelcomeTabPanel : JPanel() {
   }
 
   private fun createHeaderPanel(): JPanel {
-    val scaledFont = JBUIScale.scaleFontSize(HEADER_FONT_SIZE)
+    val scaledFont = CoursesDialogFontManager.headerFontSize
     val text = "<b>${EduCoreBundle.message("course.dialog.welcome.tab.title")}<b>"
     val label = JBLabel(UIUtil.toHtml("<span style='font-size: $scaledFont'>$text</span>"))
     label.isOpaque = false
@@ -144,5 +141,9 @@ class EduWelcomeTabPanel : JPanel() {
       border = JBUI.Borders.emptyBottom(20)
       add(label)
     }
+  }
+
+  companion object {
+    val IS_FROM_WELCOME_SCREEN = KeyWithDefaultValue.create("IS_FROM_MY_WELCOME_SCREEN", false)
   }
 }

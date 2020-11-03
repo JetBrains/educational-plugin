@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
+import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
@@ -82,7 +83,10 @@ class OpenCourseButton : CourseButtonBase() {
         }
         return@invokeAndWait
       }
-      closeDialog()
+
+      if (!EduWelcomeTabPanel.IS_FROM_WELCOME_SCREEN.getRequired(courseInfo.course)) {
+        closeDialog()
+      }
       val project = ProjectUtil.openProject(coursePath, null, true)
       ProjectUtil.focusProjectWindow(project, true)
     }

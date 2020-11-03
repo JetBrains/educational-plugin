@@ -11,7 +11,7 @@ class EduWelcomeTabFactory : WelcomeTabFactory {
   override fun createWelcomeTab(parentDisposable: Disposable): WelcomeScreenTab {
     return object : DefaultWelcomeScreenTab(EduCoreBundle.message("course.dialog.my.courses")) {
       override fun buildComponent(): JComponent {
-        return EduWelcomeTabPanel()
+        return EduWelcomeTabPanel(parentDisposable)
       }
     }
   }
