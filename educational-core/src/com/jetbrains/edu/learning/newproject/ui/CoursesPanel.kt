@@ -59,7 +59,8 @@ abstract class CoursesPanel(
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
-  @Volatile private var loadingFinished = false
+  @Volatile
+  private var loadingFinished = false
 
   val languageSettings get() = coursePanel.languageSettings
 
@@ -107,8 +108,7 @@ abstract class CoursesPanel(
     if (isShowing) {
       onTabSelection()
     }
-
-}
+  }
 
   fun onTabSelection() {
     if (loadingFinished) {
