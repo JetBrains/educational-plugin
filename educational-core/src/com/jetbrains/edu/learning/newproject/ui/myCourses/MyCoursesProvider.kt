@@ -46,6 +46,6 @@ class MyCoursesProvider(private val disposable: Disposable) : CoursesPlatformPro
   }
 
   companion object {
-    val IS_FROM_MY_COURSES = KeyWithDefaultValue.create<Boolean>("IS_FROM_MY_COURSES", false)
+    val IS_FROM_MY_COURSES = KeyWithDefaultValue.create("IS_FROM_MY_COURSES", false)
   }
 }
