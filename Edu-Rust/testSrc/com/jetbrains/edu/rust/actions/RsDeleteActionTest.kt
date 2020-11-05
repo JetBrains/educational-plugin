@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.withEduTestDialog
 import com.jetbrains.edu.rust.RsProjectSettings
@@ -14,12 +13,8 @@ import org.rust.lang.RsLanguage
 
 class RsDeleteActionTest : RsActionTestBase() {
 
-  override fun runTestInternal(context: TestContext) {
-    // https://youtrack.jetbrains.com/issue/EDU-3706
-    if (ApplicationInfo.getInstance().build < BUILD_203) {
-      super.runTestInternal(context)
-    }
-  }
+  // BACKCOMPAT: 2020.1. Drop it
+  private val indent: String get() = if (ApplicationInfo.getInstance().build < BUILD_202) "    " else ""
 
   fun `test delete first lesson`() = doTest(createRustCourse(), "lesson1", """
       [workspace]
@@ -42,7 +37,7 @@ class RsDeleteActionTest : RsActionTestBase() {
           "lesson1/*/",
           "section1/lesson2/*/",
           "section1/lesson3/*/" ,
-          ]
+      $indent]
       
       exclude = [
           "**/*.yaml"
@@ -84,7 +79,7 @@ class RsDeleteActionTest : RsActionTestBase() {
         
         members = [
             "lesson1/*/",
-            ]
+        $indent]
         
         exclude = [
             "**/*.yaml"
@@ -204,11 +199,11 @@ class RsDeleteActionTest : RsActionTestBase() {
         testAction(dataContext(findFile(path)), DeleteAction())
       }
     }
-
     checkCargoToml(expectedText)
   }
 
   companion object {
-    private val BUILD_203 = BuildNumber.fromString("203")!!
+    // BACKCOMPAT: 2020.1
+    private val BUILD_202 = BuildNumber.fromString("202")!!
   }
 }

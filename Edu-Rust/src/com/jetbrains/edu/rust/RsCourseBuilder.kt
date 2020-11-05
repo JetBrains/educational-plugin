@@ -1,11 +1,12 @@
 package com.jetbrains.edu.rust
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiParserFacade
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.StudyItemType
@@ -45,6 +46,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
     val course = StudyTaskManager.getInstance(project).course ?: return
+    if (!RsCourseProjectRefreshService.getInstance(project).isRefreshEnabled) return
     if (project.isSingleWorkspaceProject) {
       refreshWorkspace(project)
     }
@@ -158,34 +160,59 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
       is Task -> {
         val lesson = item.lesson
         if (lesson.items.size == 1) {
-          removeLesson(project, lesson, membersArray)
+          membersArray.removeLessonMembers(project, listOf(lesson))
         }
       }
-      is Lesson -> removeLesson(project, item, membersArray)
+      is Lesson -> membersArray.removeLessonMembers(project, listOf(item))
       is Section -> {
-        for (lesson in item.lessons) {
-          removeLesson(project, lesson, membersArray)
-        }
+        membersArray.removeLessonMembers(project, item.lessons)
       }
     }
   }
 
-  private fun removeLesson(project: Project, lesson: Lesson, membersArray: TomlArray) {
-    val path = lesson.courseRelativePath(project) ?: return
-    val item = membersArray.findStringLiteralElement { it.startsWith(path) } ?: return
-
-    var lastElementToDelete: PsiElement? = null
-    for (element in item.rightSiblings) {
-      if (element is TomlValue || element.elementType == TomlElementTypes.R_BRACKET) break
-      lastElementToDelete = element
-      if (element.isTomlComma) break
+  private fun TomlArray.removeLessonMembers(project: Project, lessons: List<Lesson>) {
+    val smartPointerManager = SmartPointerManager.getInstance(project)
+    val itemPointers = lessons.mapNotNull { lesson ->
+      val path = lesson.courseRelativePath(project) ?: return@mapNotNull null
+      val item = findStringLiteralElement { it.startsWith(path) } ?: return@mapNotNull null
+      // PSI may be changed between here and next `invokeLater`.
+      // To prevent using invalid PSI and storing strong reference to it, we use smart pointer here
+      smartPointerManager.createSmartPsiElementPointer(item)
     }
 
-    if (lastElementToDelete != null) {
-      membersArray.deleteChildRange(item, lastElementToDelete)
-    }
-    else {
-      item.delete()
+    if (itemPointers.isEmpty()) return
+
+    RsCourseProjectRefreshService.getInstance(project).disableProjectRefresh()
+
+    ApplicationManager.getApplication().invokeLater {
+      WriteCommandAction.runWriteCommandAction(project) {
+        try {
+          for (pointer in itemPointers) {
+            val item = pointer.element ?: return@runWriteCommandAction
+
+            var lastElementToDelete: PsiElement? = null
+            for (element in item.rightSiblings) {
+              if (element is TomlValue || element.elementType == TomlElementTypes.R_BRACKET) break
+              lastElementToDelete = element
+              if (element.isTomlComma) break
+            }
+
+            if (lastElementToDelete != null) {
+              deleteChildRange(item, lastElementToDelete)
+            }
+            else {
+              item.delete()
+            }
+          }
+
+          saveDocument()
+        }
+        finally {
+          RsCourseProjectRefreshService.getInstance(project).enableProjectRefresh()
+        }
+
+        refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+      }
     }
   }
 
@@ -220,6 +247,8 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     // Note, trailing comma is allowed in toml (see https://toml.io/en/v1.0.0-rc.1#array)
     val createdComma = membersArray.addAfter(factory.createComma(), createdElement)
     membersArray.addAfter(createNewline(project), createdComma)
+
+    membersArray.saveDocument()
   }
 
   private val Project.workspaceManifest: TomlFile?
@@ -260,6 +289,11 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
   private fun createNewline(project: Project): PsiElement =
     PsiParserFacade.SERVICE.getInstance(project).createWhiteSpaceFromText("\n")
+
+  private fun PsiElement.saveDocument() {
+    val document = PsiDocumentManager.getInstance(project).getDocument(containingFile) ?: error("Failed to find document for $containingFile")
+    FileDocumentManager.getInstance().saveDocument(document)
+  }
 
   private fun TomlPsiFactory.createComma(): PsiElement {
     return createArray("1, 2").childrenWithLeaves.first { it.isTomlComma }
