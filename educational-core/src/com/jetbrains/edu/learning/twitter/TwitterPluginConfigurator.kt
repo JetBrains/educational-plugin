@@ -23,8 +23,8 @@ interface TwitterPluginConfigurator {
   /**
    * @return panel that will be shown to user in ask to tweet dialog.
    */
-  fun getTweetDialogPanel(solvedTask: Task, disposable: Disposable): TwitterDialogPanel {
-    return DefaultTwitterDialogPanel(this, solvedTask, disposable)
+  fun getTweetDialogPanel(solvedTask: Task, imagePath: Path?, disposable: Disposable): TwitterDialogPanel {
+    return DefaultTwitterDialogPanel(this, solvedTask, imagePath, disposable)
   }
 
   fun getDefaultMessage(solvedTask: Task): String

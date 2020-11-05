@@ -51,12 +51,14 @@ object TwitterUtils {
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
     ApplicationManager.getApplication().invokeLater {
-      val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, it) }
+      val imagePath = configurator.getImagePath(task)
+
+      val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, imagePath, it) }
       if (dialog.showAndGet()) {
         val settings = TwitterSettings.getInstance()
         val isAuthorized = settings.accessToken.isNotEmpty()
         val twitter = twitter
-        val info = TweetInfo(dialog.message, configurator.getImagePath(task))
+        val info = TweetInfo(dialog.message, imagePath)
 
         ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
           override fun run(indicator: ProgressIndicator) {

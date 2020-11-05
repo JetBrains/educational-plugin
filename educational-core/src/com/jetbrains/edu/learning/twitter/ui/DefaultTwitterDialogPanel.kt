@@ -8,12 +8,14 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
+import java.nio.file.Path
 import javax.swing.Box
 import javax.swing.JTextArea
 
 class DefaultTwitterDialogPanel(
   configurator: TwitterPluginConfigurator,
   solvedTask: Task,
+  imagePath: Path?,
   disposable: Disposable
 ) : TwitterDialogPanel(VerticalFlowLayout(0, 0)) {
 
@@ -27,7 +29,6 @@ class DefaultTwitterDialogPanel(
     val scrollPane = JBScrollPane(twitterTextField)
     add(scrollPane)
 
-    val imagePath = configurator.getImagePath(solvedTask)
     if (imagePath != null) {
       val component = createImageComponent(imagePath, disposable)
       // Don't use border for component because it changes size of component content
