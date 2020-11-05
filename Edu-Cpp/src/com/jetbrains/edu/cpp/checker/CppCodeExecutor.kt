@@ -9,8 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
-import com.jetbrains.cidr.execution.CidrTargetRunLineMarkerProvider
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
+import com.jetbrains.edu.cpp.isInEntryPointBody
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -45,7 +45,7 @@ class CppCodeExecutor : DefaultCodeExecutor() {
   private fun findMainFunction(virtualFile: VirtualFile, project: Project): PsiElement? {
     val psiFile = PsiUtilBase.getPsiFile(project, virtualFile)
     val functions = PsiTreeUtil.findChildrenOfType(psiFile, OCFunctionDeclaration::class.java)
-    return functions.find { CidrTargetRunLineMarkerProvider.isInEntryPointBody(it) }
+    return functions.find { isInEntryPointBody(it) }
   }
 
   companion object {

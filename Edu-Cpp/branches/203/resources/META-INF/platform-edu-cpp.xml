@@ -1,0 +1,4 @@
+<idea-plugin>
+  <depends>com.intellij.clion</depends>
+  <depends>com.intellij.cidr.lang</depends>
+</idea-plugin>

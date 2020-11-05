@@ -52,6 +52,8 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
+val isAtLeast203 = environmentName.toInt() >= 203
+
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
@@ -579,7 +581,11 @@ project(":Edu-Cpp") {
   intellij {
     localPath = null
     version = clionVersion
-    setPlugins("clion-test-google", "clion-test-catch")
+    val pluginsList = mutableListOf("clion-test-google", "clion-test-catch")
+    if (isAtLeast203) {
+      pluginsList += listOf("clion","c-plugin")
+    }
+    setPlugins(*pluginsList.toTypedArray())
 }
 
   dependencies {
