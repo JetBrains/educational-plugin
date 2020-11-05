@@ -6,6 +6,8 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -21,6 +23,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import kotlinx.coroutines.runBlocking
 import java.util.*
 import java.util.concurrent.Callable
@@ -42,6 +45,12 @@ val Project.courseDir: VirtualFile
   get() {
     return guessProjectDir() ?: error("Failed to find course dir for $this")
   }
+
+val Project.selectedEditor: Editor? get() = selectedVirtualFile?.getEditor(this)
+
+val Project.selectedVirtualFile: VirtualFile? get() = FileEditorManager.getInstance(this).selectedFiles.firstOrNull()
+
+val Project.selectedTaskFile: TaskFile? get() = selectedVirtualFile?.getTaskFile(this)
 
 val Project.course: Course? get() = StudyTaskManager.getInstance(this).course
 

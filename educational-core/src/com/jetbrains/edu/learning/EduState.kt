@@ -16,14 +16,10 @@ class EduState private constructor(eduEditor: EduEditor, val virtualFile: Virtua
 
   companion object {
     @JvmStatic
-    fun create(eduEditor: EduEditor): EduState? {
+    fun getEduState(project: Project): EduState? {
+      val eduEditor = EduUtils.getSelectedEduEditor(project) ?: return null
       val virtualFile = FileDocumentManager.getInstance().getFile(eduEditor.editor.document) ?: return null
       return EduState(eduEditor, virtualFile)
-    }
-
-    fun getEduState(project: Project): EduState? {
-      val studyEditor = EduUtils.getSelectedEduEditor(project) ?: return null
-      return create(studyEditor)
     }
   }
 }

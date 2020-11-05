@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.TextEditor
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
+@Deprecated("Use Editor or TextEditor instead")
 interface EduEditor : TextEditor {
   var taskFile: TaskFile
 

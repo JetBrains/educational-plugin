@@ -4,7 +4,10 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
@@ -24,6 +27,11 @@ import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+
+fun VirtualFile.getEditor(project: Project): Editor? {
+  val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
+  return if (selectedEditor is TextEditor) selectedEditor.editor else null
+}
 
 val VirtualFile.document
   get() : Document = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")

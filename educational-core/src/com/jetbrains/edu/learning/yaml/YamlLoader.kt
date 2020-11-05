@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
@@ -146,11 +144,6 @@ object YamlLoader {
       YamlFormatSettings.TASK_CONFIG -> itemDir.getTask(project)
       else -> loadingError(unknownConfigMessage(name))
     }
-  }
-
-  fun VirtualFile.getEditor(project: Project): Editor? {
-    val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
-    return if (selectedEditor is TextEditor) selectedEditor.editor else null
   }
 }
 

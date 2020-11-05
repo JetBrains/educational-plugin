@@ -76,7 +76,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (eduEditor == null) {
       return null;
     }
-    final EduState eduState = EduState.create(eduEditor);
+    final EduState eduState = EduState.getEduState(project);
     if (eduState == null) {
       return null;
     }

@@ -133,7 +133,12 @@ public class EduUtils {
     return configurator.isTestFile(task, path);
   }
 
+  /**
+   * @see com.jetbrains.edu.learning.OpenApiExtKt#getSelectedEditor
+   * @deprecated Use com.jetbrains.edu.learning.OpenApiExtKt.getSelectedEditor
+   */
   @Nullable
+  @Deprecated
   public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
       EditorWithProviderComposite selectedEditor = FileEditorManagerEx.getInstanceEx(project)
@@ -152,7 +157,12 @@ public class EduUtils {
     return null;
   }
 
+  /**
+   * @see com.jetbrains.edu.learning.OpenApiExtKt#getSelectedEditor
+   * @deprecated Use com.jetbrains.edu.learning.OpenApiExtKt.getSelectedEditor
+   */
   @Nullable
+  @Deprecated
   public static Editor getSelectedEditor(@NotNull final Project project) {
     final EduEditor eduEditor = getSelectedEduEditor(project);
     if (eduEditor != null) {
