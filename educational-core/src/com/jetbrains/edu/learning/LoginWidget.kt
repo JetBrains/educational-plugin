@@ -79,14 +79,18 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
   private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel): DialogPanel {
     return panel {
-      val loginText = if (currentAccount != null) {
-        EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
-      }
-      else {
-        EduCoreBundle.message("account.widget.no.login.message")
-      }
+      blockRow {
+        val loginText = if (currentAccount != null) {
+          EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
+        }
+        else {
+          EduCoreBundle.message("account.widget.no.login.message")
+        }
 
-      noteRow(loginText)
+        val loginLabel = JBLabel(UIUtil.toHtml(loginText))
+        loginLabel.setCopyable(true) // enables hyperlinks support
+        loginLabel()
+      }
 
       val synchronizeCourseAction = synchronizeCourseAction
 
