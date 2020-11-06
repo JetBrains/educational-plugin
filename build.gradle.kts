@@ -78,7 +78,7 @@ val jvmPlugins = arrayOf(
 plugins {
   idea
   kotlin("jvm") version "1.4.10"
-  id("org.jetbrains.intellij") version "0.5.0"
+  id("org.jetbrains.intellij") version "0.6.3"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
   id("org.openjfx.javafxplugin") version "0.0.9"
@@ -583,7 +583,7 @@ project(":Edu-Cpp") {
     version = clionVersion
     val pluginsList = mutableListOf("clion-test-google", "clion-test-catch")
     if (isAtLeast203) {
-      pluginsList += listOf("clion","c-plugin")
+      pluginsList += listOf("clion", "c-plugin")
     }
     setPlugins(*pluginsList.toTypedArray())
 }
