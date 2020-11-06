@@ -202,4 +202,4 @@ val Task.successMessage: String
     return "${CheckUtils.CONGRATULATIONS} ${EduCoreBundle.message("hyperskill.continue", link, EduNames.JBA)}"
   }
 
-val HyperskillAccount.profileUrl: String get() = "${HYPERSKILL_PROFILE_PATH}${userInfo.id}"
+val HyperskillAccount.profileUrl: String get() = "$HYPERSKILL_PROFILE_PATH${userInfo.id}"
