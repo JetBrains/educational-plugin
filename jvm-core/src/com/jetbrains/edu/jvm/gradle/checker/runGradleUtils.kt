@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -194,8 +195,16 @@ private fun getSelectedFile(project: Project): VirtualFile? {
 fun Task.hasSeparateModule(project: Project): Boolean {
   val taskDir = getDir(project.courseDir) ?: error("Dir for task $name not found")
   val taskModule = ModuleUtil.findModuleForFile(taskDir, project) ?: error("Module for task $name not found")
-  val courseModule = ModuleUtil.findModuleForFile(project.courseDir, project)
-  return taskModule != courseModule
+  val courseModule = ModuleUtil.findModuleForFile(project.courseDir, project) ?: error("Module for course not found")
+  if (taskModule == courseModule) {
+    return false
+  }
+  return !taskModule.isRootTestModule(courseModule)
+}
+
+private fun Module.isRootTestModule(courseModule: Module): Boolean {
+  // BACKCOMPAT: 2020.2 replace with name == "${courseModule.name}.test"
+  return name.matches("${courseModule.name}[._]test".toRegex())
 }
 
 inline fun <T> withGradleTestRunner(project: Project, task: Task, action: () -> T): T? {

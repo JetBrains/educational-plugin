@@ -1,0 +1,214 @@
+package com.jetbrains.edu.kotlin.slow.checker
+
+import com.jetbrains.edu.jvm.slow.checker.JdkCheckerTestBase
+import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.gradle.GradleConstants
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.idea.KotlinLanguage
+
+@Suppress("GrUnresolvedAccess")
+class KtOneModuleCheckerTest : JdkCheckerTestBase() {
+  override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
+    lesson {
+      eduTask("EduTask") {
+        kotlinTaskFile("src/Task.kt", """
+          fun foo() = 42
+        """)
+        kotlinTaskFile("test/Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertTrue("foo() should return 42", foo() == 42)
+              }
+          }
+        """)
+      }
+      theoryTask("TheoryTask") {
+        kotlinTaskFile("src/Task1.kt", """
+          fun main(args: Array<String>) {
+              val a = 1
+              println(a)
+          }
+        """)
+      }
+      outputTask("OutputTask") {
+        kotlinTaskFile("src/Task2.kt", """
+          fun main(args: Array<String>) {
+              println("OK")
+          }
+        """)
+        taskFile("test/output.txt") {
+          withText("OK\n")
+        }
+      }
+    }
+
+    lesson("Unit Testing") {
+      theoryTask {
+        kotlinTaskFile("src/NoFramework.kt", """
+          // UnitTesting/NoFramework.kt
+          package unittesting
+          import kotlin.test.assertEquals
+          import kotlin.test.assertTrue
+          
+          fun fortyTwo() = 42
+          
+          fun testFortyTwo(n: Int = 42) {
+            assertEquals(
+              expected = n,
+              actual = fortyTwo(),
+              message = "Incorrect,")
+          }
+          
+          fun main(args: Array<String>){
+            testFortyTwo()
+            }
+    """)
+      }
+    }
+
+    additionalFile(GradleConstants.SETTINGS_GRADLE, ONE_MODULE_SETTINGS_GRADLE)
+    additionalFile(GradleConstants.BUILD_GRADLE, ONE_MODULE_BUILD_GRADLE)
+  }
+
+
+  fun `test kotlin course`() {
+    CheckActionListener.expectedMessage { task ->
+      when (task) {
+        is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
+        is TheoryTask -> ""
+        else -> null
+      }
+    }
+    doTest()
+  }
+
+  @Language("Groovy")
+  private val ONE_MODULE_SETTINGS_GRADLE = """
+    static String sanitizeName(String name) {
+          return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
+    }
+    rootProject.name = sanitizeName('AtomicKotlinCourse')
+  """
+
+
+  @Suppress("DifferentKotlinGradleVersion", "GroovyAssignabilityCheck", "GroovyUnusedAssignment")
+  @Language("Groovy")
+  private val ONE_MODULE_BUILD_GRADLE = """
+      buildscript {
+          ext.kotlin_version = '1.4.0'
+          repositories {
+              mavenCentral()
+          }
+          dependencies {
+              classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+          }
+      }
+
+      def printOutput(def output) {
+          return tasks.create("printOutput") {
+              for (line in output.toString().readLines()) {
+                  println "#educational_plugin" + line
+              }
+          }
+      }
+
+      allprojects {
+          apply plugin: 'java'
+          apply plugin: 'kotlin'
+          repositories {
+              jcenter()
+          }
+          dependencies {
+              compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
+
+              // kotlin.test
+              compile "org.jetbrains.kotlin:kotlin-test"
+              compile "org.jetbrains.kotlin:kotlin-test-junit"
+              compile "junit:junit:4.12"
+          }
+          compileKotlin.destinationDir = compileJava.destinationDir
+          compileKotlin {
+              kotlinOptions.jvmTarget = "1.8"
+          }
+          compileTestKotlin {
+              kotlinOptions.jvmTarget = "1.8"
+          }
+      }
+      apply plugin: 'application'
+      sourceCompatibility = 1.8
+      dependencies {
+          testCompile group: 'junit', name: 'junit', version: '4.12'
+          testCompile "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+          testCompile "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
+      }
+      def srcList = []
+      def testList = []
+      rootProject.projectDir.eachDirRecurse {
+          if (!isTaskDir(it) || it.path.contains(".idea") || "util".equals(it.path)) {
+              return
+          }
+          def srcDir = new File(it, "src")
+          if (it.path.contains("Unit Testing")) {
+              testList.add(srcDir)
+          } else {
+              srcList.add(srcDir)
+          }
+          def testDir = new File(it, "test")
+          testList.add(testDir)
+      }
+      sourceSets {
+          main {
+              java {
+                  srcDirs = srcList
+              }
+              kotlin {
+                  srcDirs = srcList
+              }
+          }
+          test {
+              java {
+                  srcDirs = testList
+              }
+              kotlin {
+                  srcDirs = testList
+              }
+          }
+      }
+
+      static def isTaskDir(File dir) {
+          return new File(dir, "src").exists()
+      }
+
+      mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+      test {
+          outputs.upToDateWhen { false }
+          afterTest { TestDescriptor test, TestResult result ->
+              if (result.resultType == TestResult.ResultType.FAILURE) {
+                  def message = result.exception?.message ?: "Wrong answer"
+                  def lines = message.readLines()
+                  println "#educational_plugin FAILED + " + lines[0]
+                  if (lines.size() > 1) {
+                      lines[1..-1].forEach { line ->
+                          println "#educational_plugin" + line
+                      }
+                  }
+                  // we need this to separate output of different tests
+                  println ""
+              }
+          }
+      }
+      def runOutput = new ByteArrayOutputStream()
+      tasks.run.setStandardOutput(runOutput)
+      tasks.run.doLast { printOutput(runOutput) }
+  """
+}
