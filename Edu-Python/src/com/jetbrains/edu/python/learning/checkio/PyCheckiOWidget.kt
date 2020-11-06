@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.learning.checkio
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
@@ -30,7 +29,6 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     PyCheckiOSettings.INSTANCE.account = null
-    project.messageBus.syncPublisher<EduLogInListener>(
-      CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedOut()
+    project.messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedOut()
   }
 }

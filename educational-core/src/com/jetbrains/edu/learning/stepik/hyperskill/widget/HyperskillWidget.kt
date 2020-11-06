@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.widget
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.actions.SyncCourseAction
@@ -32,6 +31,6 @@ class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(projec
 
   override fun resetAccount() {
     HyperskillSettings.INSTANCE.account = null
-    project.messageBus.syncPublisher<EduLogInListener>(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+    project.messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
   }
 }
