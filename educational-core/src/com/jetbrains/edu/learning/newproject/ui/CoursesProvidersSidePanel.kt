@@ -101,7 +101,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
         val tabName = if (userObject is CoursesPlatformProvider) userObject.name else userObject.toString()
         when (userObject) {
           is MyCoursesProvider, is String -> {
-            val additionalText = (userObject as? MyCoursesProvider)?.additionalText ?: ""
+            val additionalText = (userObject as? MyCoursesProvider)?.getAdditionalText(selected) ?: ""
             textLabel.text = UIUtil.toHtml("<b>$tabName</b>$additionalText")
             iconLabel.icon = null
             component.border = JBUI.Borders.empty(PROVIDER_TOP_BOTTOM_OFFSET, 0)

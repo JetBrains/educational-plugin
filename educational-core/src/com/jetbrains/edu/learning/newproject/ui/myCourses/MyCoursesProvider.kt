@@ -5,6 +5,7 @@ import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -27,23 +28,23 @@ class MyCoursesProvider(private val disposable: Disposable) : CoursesPlatformPro
     return CoursesGroup(CoursesStorage.getInstance().state.courses).asList()
   }
 
-  val additionalText: String
-    get() {
-      val courses = CoursesStorage.getInstance().state.courses
-      val studyCourses = courses.filter { it.courseMode == EduNames.STUDY }
-      val completedCourses = studyCourses.count { it.tasksTotal != 0 && it.tasksSolved == it.tasksTotal }
-      val inProgressCourses = studyCourses.size - completedCourses
+  fun getAdditionalText(isSelected: Boolean): String {
+    val courses = CoursesStorage.getInstance().state.courses
+    val studyCourses = courses.filter { it.courseMode == EduNames.STUDY }
+    val completedCourses = studyCourses.count { it.tasksTotal != 0 && it.tasksSolved == it.tasksTotal }
+    val inProgressCourses = studyCourses.size - completedCourses
 
-      val additionalText = if (completedCourses != 0) {
-        EduCoreBundle.message("course.dialog.my.courses.additional.text.full", inProgressCourses, completedCourses)
-      }
-      else {
-        EduCoreBundle.message("course.dialog.my.courses.additional.text", inProgressCourses)
-      }
-      val additionalTextFontSize = JBLabel().font.size - 2
-      val style = "font-size: ${additionalTextFontSize}; color: #${ColorUtil.toHex(GRAY_COLOR)}; margin-top: ${JBUIScale.scale(4)}px"
-      return """<div style="$style"}>$additionalText</span>"""
+    val additionalText = if (completedCourses != 0) {
+      EduCoreBundle.message("course.dialog.my.courses.additional.text.full", inProgressCourses, completedCourses)
     }
+    else {
+      EduCoreBundle.message("course.dialog.my.courses.additional.text", inProgressCourses)
+    }
+    val additionalTextFontSize = JBLabel().font.size - 2
+    val color = ColorUtil.toHex(if (isSelected) UIUtil.getTreeSelectionForeground(true) else GRAY_COLOR)
+    val style = "font-size: $additionalTextFontSize; color: #$color; margin-top: ${JBUIScale.scale(4)}px"
+    return """<div style="$style">$additionalText</div>"""
+  }
 
   companion object {
     val IS_FROM_MY_COURSES = KeyWithDefaultValue.create<Boolean>("IS_FROM_MY_COURSES", false)
