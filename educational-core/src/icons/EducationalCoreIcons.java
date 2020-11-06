@@ -28,8 +28,7 @@ public class EducationalCoreIcons {
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");
 
-  public static final Icon JB_ACADEMY_ENABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_enabled.svg");
-  public static final Icon JB_ACADEMY_DISABLED = load("/icons/com/jetbrains/edu/learning/JB_academy_disabled.svg");
+  public static final Icon JB_ACADEMY = load("/icons/com/jetbrains/edu/learning/JB_academy.svg");
   public static final Icon JB_ACADEMY_TAB = load("/icons/com/jetbrains/edu/learning/JB_academy_course_tab.svg"); // 24x24
 
   public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg"); // 24x24

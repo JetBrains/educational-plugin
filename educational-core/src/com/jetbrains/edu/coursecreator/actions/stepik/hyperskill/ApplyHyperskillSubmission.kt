@@ -22,7 +22,7 @@ import icons.EducationalCoreIcons
 class ApplyHyperskillSubmission : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
   EduCoreBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),
-  EducationalCoreIcons.JB_ACADEMY_ENABLED
+  EducationalCoreIcons.JB_ACADEMY
 ) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

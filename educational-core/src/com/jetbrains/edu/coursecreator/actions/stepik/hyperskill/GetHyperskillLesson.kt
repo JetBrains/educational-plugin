@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NonNls
 class GetHyperskillLesson : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
   EduCoreBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
-  EducationalCoreIcons.JB_ACADEMY_ENABLED
+  EducationalCoreIcons.JB_ACADEMY
 ) {
 
   override fun update(e: AnActionEvent) {
@@ -47,7 +47,7 @@ class GetHyperskillLesson : DumbAwareAction(
     val lessonId = Messages.showInputDialog(
       EduCoreBundle.message("action.get.lesson.enter.lesson.id"),
       EduCoreBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
-      EducationalCoreIcons.JB_ACADEMY_ENABLED
+      EducationalCoreIcons.JB_ACADEMY
     )
     if (lessonId != null && lessonId.isNotEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(

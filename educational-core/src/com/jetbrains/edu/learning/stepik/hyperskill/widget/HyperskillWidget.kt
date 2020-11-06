@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseA
 import icons.EducationalCoreIcons
 
 class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(project, EduCoreBundle.message("hyperskill.widget.title"),
-                                                                          EducationalCoreIcons.JB_ACADEMY_ENABLED) {
+                                                                          EducationalCoreIcons.JB_ACADEMY) {
   override val account: HyperskillAccount? get() = HyperskillSettings.INSTANCE.account
   override val synchronizeCourseAction: SyncCourseAction
     get() = SyncHyperskillCourseAction()
