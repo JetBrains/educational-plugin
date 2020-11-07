@@ -14,10 +14,11 @@ import java.awt.event.MouseEvent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
-val SECTION_HEADER_FOREGROUND: Color = JBColor(0x787878, 0x999999)
-val SECTION_HEADER_BACKGROUND: Color = JBColor(0xF7F7F7, 0x3C3F41)
-const val TOP_BOTTOM = 4
-const val LEFT_RIGHT = 10
+private val SECTION_HEADER_FOREGROUND: Color = JBColor(0x787878, 0x999999)
+private val SECTION_HEADER_BACKGROUND: Color = JBColor(0xF7F7F7, 0x3C3F41)
+private const val TOP_BOTTOM = 4
+private const val LEFT_RIGHT = 10
+private const val COLLAPSIBLE_GROUP_SIZE = 5
 
 class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : JPanel(VerticalFlowLayout(0, 0)) {
   private val courseCardsPanel = NonOpaquePanel(VerticalFlowLayout(0, 0))
@@ -25,16 +26,18 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
   init {
     background = MAIN_BG_COLOR
     val name = coursesGroup.name
-
-    add(createTitleLabel(name))
+    val showCollapseIcon = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
+    add(createTitleLabel(name, showCollapseIcon))
 
     fillCourseCardsPanel(coursesGroup, showOpenButton)
     add(courseCardsPanel)
   }
 
-  private fun createTitleLabel(name: String): JBLabel {
+  private fun createTitleLabel(name: String, showCollapseIcon: Boolean): JBLabel {
     val titleLabel = JBLabel(name).apply {
-      icon = AllIcons.General.ArrowDown
+      if (showCollapseIcon) {
+        icon = AllIcons.General.ArrowDown
+      }
       horizontalTextPosition = SwingConstants.TRAILING
       isOpaque = true
       toolTipText = name
@@ -46,7 +49,9 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
 
     titleLabel.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent?) {
-        titleLabel.icon = if (courseCardsPanel.isVisible) AllIcons.General.ArrowRight else AllIcons.General.ArrowDown
+        if (showCollapseIcon) {
+          titleLabel.icon = if (courseCardsPanel.isVisible) AllIcons.General.ArrowRight else AllIcons.General.ArrowDown
+        }
         courseCardsPanel.isVisible = !courseCardsPanel.isVisible
       }
     })

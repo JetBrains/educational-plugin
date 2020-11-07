@@ -6,6 +6,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
@@ -86,6 +87,64 @@ class CoursesStorageTest : EduTestCase() {
     }
 
     doSerializationTest(course)
+  }
+
+  fun testEmptyCoursesGroup() {
+    val coursesStorage = getCoursesStorage()
+    assertEmpty(coursesStorage.coursesInGroups())
+  }
+
+  fun testInProgressCoursesGroup() {
+    val coursesStorage = getCoursesStorage()
+    val course = course {}
+    coursesStorage.addCourse(course, "", 1, 10)
+    val coursesInGroups = coursesStorage.coursesInGroups()
+    assertSize(1, coursesInGroups)
+    assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups.first().name)
+  }
+
+  fun testCompletedCoursesGroup() {
+    val coursesStorage = getCoursesStorage()
+    val course = course {}
+    coursesStorage.addCourse(course, "", 10, 10)
+    val coursesInGroups = coursesStorage.coursesInGroups()
+    assertSize(1, coursesInGroups)
+    assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups.first().name)
+  }
+
+  private fun getCoursesStorage(): CoursesStorage {
+    val coursesStorage = CoursesStorage.getInstance()
+    coursesStorage.state.courses.clear()
+    return coursesStorage
+  }
+
+  fun testCCGroup() {
+    val coursesStorage = getCoursesStorage()
+    val educatorCourse = course(courseMode = CCUtils.COURSE_MODE) {}
+    coursesStorage.addCourse(educatorCourse, "", 0, 0)
+    val coursesInGroups = coursesStorage.coursesInGroups()
+    assertSize(1, coursesInGroups)
+    assertEquals(EduCoreBundle.message("course.dialog.my.courses.course.creation"), coursesInGroups.first().name)
+  }
+
+  fun testAllCoursesGroups() {
+    val coursesStorage = getCoursesStorage()
+
+    val educatorCourse = course(name="CC course", courseMode = CCUtils.COURSE_MODE) {}
+    coursesStorage.addCourse(educatorCourse, "/CC course", 0, 0)
+
+    val inProgressCourse = course(name="In Progress") {}
+    coursesStorage.addCourse(inProgressCourse, "/in_progress", 1, 10)
+
+    val completedCourse = course(name="Completed") {}
+    coursesStorage.addCourse(completedCourse, "/completed", 10, 10)
+
+    val coursesInGroups = coursesStorage.coursesInGroups()
+    assertSize(3, coursesInGroups)
+    assertEquals(EduCoreBundle.message("course.dialog.my.courses.course.creation"), coursesInGroups.first().name)
+    assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups[1].name)
+    assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups[2].name)
+
   }
 
   private fun doSerializationTest(course: Course) {

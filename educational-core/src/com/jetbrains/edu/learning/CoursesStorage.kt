@@ -11,6 +11,8 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider.Companion.IS_FROM_MY_COURSES
 import org.apache.commons.lang.LocaleUtils
 import java.util.*
@@ -42,6 +44,18 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
   fun removeCourseByLocation(location: String) {
     val deletedCourse = state.removeCourseByLocation(location) ?: return
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_DELETED).courseDeleted(deletedCourse)
+  }
+
+  fun coursesInGroups(): List<CoursesGroup> {
+    val courses = state.courses
+    val solvedCourses = CoursesGroup(EduCoreBundle.message("course.dialog.completed"),
+                                     courses.filter { it.isStudy && it.tasksSolved == it.tasksTotal })
+    val courseCreatorCourses = CoursesGroup(EduCoreBundle.message("course.dialog.my.courses.course.creation"),
+                                            courses.filter { !it.isStudy })
+    val inProgressCourses = CoursesGroup(EduCoreBundle.message("course.dialog.in.progress"),
+                                         courses.filter { it.isStudy && it.tasksSolved != it.tasksTotal })
+
+    return listOf(courseCreatorCourses, inProgressCourses, solvedCourses).filter { it.courses.isNotEmpty() }
   }
 
   companion object {

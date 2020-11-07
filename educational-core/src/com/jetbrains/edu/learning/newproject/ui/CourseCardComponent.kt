@@ -192,10 +192,7 @@ class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(FlowLayout(
   init {
     infoLabel.foreground = GRAY_COLOR
 
-    if (courseMetaInfo.courseMode == CCUtils.COURSE_MODE) {
-      infoLabel.text = EduCoreBundle.message("course.dialog.my.courses.course.creation")
-    }
-    else {
+    if (courseMetaInfo.courseMode != CCUtils.COURSE_MODE) {
       createProgressBar(courseMetaInfo)
     }
     add(infoLabel)
