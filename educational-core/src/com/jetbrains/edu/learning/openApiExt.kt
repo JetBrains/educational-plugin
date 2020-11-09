@@ -52,6 +52,14 @@ val Project.selectedVirtualFile: VirtualFile? get() = FileEditorManager.getInsta
 
 val Project.selectedTaskFile: TaskFile? get() = selectedVirtualFile?.getTaskFile(this)
 
+val Project.eduState: EduState?
+  get() {
+    val virtualFile = selectedVirtualFile ?: return null
+    val taskFile = virtualFile.getTaskFile(this) ?: return null
+    val editor = virtualFile.getEditor(this) ?: return null
+    return EduState(virtualFile, editor, taskFile)
+  }
+
 val Project.course: Course? get() = StudyTaskManager.getInstance(this).course
 
 val String.xmlEscaped: String get() = StringUtil.escapeXmlEntities(this)

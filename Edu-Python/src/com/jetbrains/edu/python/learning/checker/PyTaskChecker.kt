@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.nullize
-import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
@@ -27,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.editor.ACTION_TEXT
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
 import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
+import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
@@ -106,7 +106,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
           }
         }
       }
-      val eduState = EduState.getEduState(project) ?: return@invokeLater
+      val eduState = project.eduState ?: return@invokeLater
       CheckUtils.navigateToFailedPlaceholder(eduState, task, taskDir, project)
     }
   }

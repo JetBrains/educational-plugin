@@ -12,13 +12,13 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduState.Companion.getEduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.putSelectedTaskFileFirst
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
@@ -31,11 +31,13 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val studyState = getEduState(project) ?: return
-    val task = studyState.task
+
+    val eduState = project.eduState ?: return
+
+    val (_, _, taskFile, task) = eduState
 
     val taskFiles = getTaskFiles(task)
-    putSelectedTaskFileFirst(taskFiles, studyState.taskFile)
+    putSelectedTaskFileFirst(taskFiles, taskFile)
 
     val requests = taskFiles.mapNotNull {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")

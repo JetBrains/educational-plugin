@@ -5,7 +5,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
@@ -22,7 +21,7 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val project = e.project ?: return
     if (project.isDisposed) return
 
-    val task = EduState.getEduState(project)?.task as? CodeforcesTask ?: return
+    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
     val course = task.course as? CodeforcesCourse ?: return
 
     val studyEditor = FileEditorManager.getInstance(project).selectedEditor as EduEditor
@@ -41,7 +40,7 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val project = e.project ?: return
     if (!EduUtils.isStudentProject(project)) return
 
-    val task = EduState.getEduState(project)?.task ?: return
+    val task = EduUtils.getCurrentTask(project) ?: return
     if (task !is CodeforcesTask) return
 
     presentation.isEnabledAndVisible = true

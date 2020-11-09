@@ -6,7 +6,6 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduState.Companion.getEduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.SOLVED
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings.Companion.codeforcesNotificationGroup
@@ -24,7 +23,7 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(
     val project = e.project ?: return
     if (project.isDisposed) return
 
-    val task = getEduState(project)?.task as? CodeforcesTask ?: return
+    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
     task.status = CheckStatus.Solved
     task.feedback = CheckFeedback(checkResult = SOLVED, time = Date())
 
@@ -40,7 +39,7 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(
     val project = e.project ?: return
     if (!EduUtils.isStudentProject(project)) return
 
-    val task = getEduState(project)?.task ?: return
+    val task = EduUtils.getCurrentTask(project) ?: return
     if (task !is CodeforcesTask) return
 
     presentation.isEnabledAndVisible = true
