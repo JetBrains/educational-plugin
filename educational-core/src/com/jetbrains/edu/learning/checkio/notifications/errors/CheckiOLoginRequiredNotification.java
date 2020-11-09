@@ -5,16 +5,16 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 
 public class CheckiOLoginRequiredNotification extends CheckiONotification.Error {
-  private static final String CONTENT = "Please, log in to CheckiO and try again.\n" +
-                                        "<a href=\"#\">Log in</a>";
-
-  public CheckiOLoginRequiredNotification(@NotNull String title, @NotNull CheckiOOAuthConnector oAuthConnector) {
-    super(title, "", CONTENT, new LoginLinkListener(oAuthConnector));
+  public CheckiOLoginRequiredNotification(@NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+                                          @NotNull CheckiOOAuthConnector oAuthConnector) {
+    super(title, "", EduCoreBundle.message("notification.content.log.in.and.try.again.checkio"), new LoginLinkListener(oAuthConnector));
   }
 
   private static class LoginLinkListener extends NotificationListener.Adapter {

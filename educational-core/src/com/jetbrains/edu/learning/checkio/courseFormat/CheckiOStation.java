@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checkio.courseFormat;
 
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public class CheckiOStation extends Lesson {
   }
 
   @Override
+  @NonNls
   public String getItemType() {
     return "checkiO";
   }

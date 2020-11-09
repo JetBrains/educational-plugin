@@ -4,6 +4,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.learning.authUtils.OAuthAccount;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
@@ -18,7 +19,7 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
     setUserInfo(info);
   }
 
-  public Element serializeIntoService(@NotNull String serviceName) {
+  public Element serializeIntoService(@NotNull @NonNls String serviceName) {
     Element mainElement = new Element(serviceName);
     XmlSerializer.serializeInto(this, mainElement);
     Element userElement = serialize();

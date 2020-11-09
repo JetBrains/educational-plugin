@@ -14,14 +14,16 @@ import com.jetbrains.edu.learning.checker.details.CheckDetailsView.Companion.get
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
 class CheckiOTaskChecker(
   task: EduTask,
   private val envChecker: EnvironmentChecker,
   project: Project,
   oAuthConnector: CheckiOOAuthConnector,
-  interpreterName: String,
-  testFormTargetUrl: String
+  @NonNls interpreterName: String,
+  @NonNls testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
   private val missionCheck: CheckiOMissionCheck = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
@@ -42,7 +44,7 @@ class CheckiOTaskChecker(
       val checkResult = ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().progressIndicator)
 
       if (checkResult.status != CheckStatus.Unchecked) {
-        getInstance(project).showResult("CheckiO Response", missionCheck.getPanel())
+        getInstance(project).showResult(EduCoreBundle.message("tab.title.checkio.response"), missionCheck.getPanel())
       }
       checkResult
     }

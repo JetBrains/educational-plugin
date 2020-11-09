@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -139,9 +140,9 @@ public abstract class CheckiOOAuthConnector {
     catch (URISyntaxException | IOException e) {
       // IOException is thrown when there're no available ports, in some cases restarting can fix this
       Notifications.Bus.notify(new CheckiONotification.Error(
-        "Authorization failed",
+        EduCoreBundle.message("notification.title.failed.to.authorize"),
         null,
-        "Try to restart IDE and log in again",
+        EduCoreBundle.message("notification.content.try.to.restart.ide.and.log.in.again"),
         null
       ));
     }
@@ -165,6 +166,7 @@ public abstract class CheckiOOAuthConnector {
 
   @NotNull
   private URI getOauthLink(@NotNull String oauthRedirectUri) throws URISyntaxException {
+    //noinspection HardCodedStringLiteral
     return new URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
       .addParameter("redirect_uri", oauthRedirectUri)
       .addParameter("response_type", "code")

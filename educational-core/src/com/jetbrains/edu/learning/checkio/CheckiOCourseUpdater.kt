@@ -19,7 +19,9 @@ import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.Nls
 import java.io.IOException
 
 class CheckiOCourseUpdater(
@@ -34,8 +36,8 @@ class CheckiOCourseUpdater(
     val newStations = mutableSetOf<CheckiOStation>()
     val stationsWithNewMissions = mutableSetOf<CheckiOStation>()
     updateStations(stationsFromServer, newStations, stationsWithNewMissions)
-    showNewContentUnlockedNotification(newStations, "New stations unlocked")
-    showNewContentUnlockedNotification(stationsWithNewMissions, "New missions unlocked in")
+    showNewContentUnlockedNotification(newStations, EduCoreBundle.message("notification.title.new.station.unlocked"))
+    showNewContentUnlockedNotification(stationsWithNewMissions, EduCoreBundle.message("notification.title.new.missions.unlocked.in"))
 
     runInEdt {
       synchronize()
@@ -45,7 +47,10 @@ class CheckiOCourseUpdater(
     }
   }
 
-  private fun showNewContentUnlockedNotification(stations: Collection<CheckiOStation>, title: String) {
+  private fun showNewContentUnlockedNotification(
+    stations: Collection<CheckiOStation>,
+    @Nls(capitalization = Nls.Capitalization.Sentence) title: String
+  ) {
     if (stations.isNotEmpty()) {
       Notifications.Bus.notify(CheckiONotification.Info(title, "", stations.joinToString("\n") { it.name }, null))
     }

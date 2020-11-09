@@ -33,7 +33,9 @@ public final class CheckiOCourseGenerationUtils {
   private static ErrorState getErrorState(@NotNull Exception e, @Nullable CheckiOAccount account, String link) {
     if (e instanceof HttpException &&
         ((HttpException)e).getResponse().code() == 401 && account != null) {
-      return new ErrorState.CustomSevereError("", "Open", " CheckiO to verify account and try again",
+      return new ErrorState.CustomSevereError("",
+                                              EduCoreBundle.message("validation.open.checkio.to.verify.account.link"),
+                                              EduCoreBundle.message("validation.open.checkio.to.verify.account.after"),
                                               () -> EduBrowser.getInstance().browse(link + "/login/checkio/"));
     }
     else if (e instanceof NetworkException) {

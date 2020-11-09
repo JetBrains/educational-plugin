@@ -5,6 +5,7 @@ import com.intellij.util.messages.MessageBus;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.settings.OauthOptions;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

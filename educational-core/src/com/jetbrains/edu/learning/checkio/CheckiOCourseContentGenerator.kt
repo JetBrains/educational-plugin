@@ -5,9 +5,11 @@ import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames.*
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getSolutionsLink
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getTaskLink
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.*
 import java.util.Locale.ENGLISH
 
@@ -31,17 +33,19 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
   fun getStationsFromServerUnderProgress(): List<CheckiOStation> =
     ProgressManager.getInstance().runProcessWithProgressSynchronously<List<CheckiOStation>, Exception>(
       ::getStationsFromServer,
-      "Getting Course from Server",
+      EduCoreBundle.message("progress.title.getting.course.from.server"),
       false,
       null
     )
 
   private fun addLinks(mission: CheckiOMission) {
     val solutionsLink = getSolutionsLink(apiConnector.languageId, mission.slug)
-    val solutions = if (mission.status == CheckStatus.Solved) "<p><a href=\"$solutionsLink\">$VIEW_SOLUTIONS</a></p>" else ""
+    val solutions = if (mission.status == CheckStatus.Solved)
+      "<p><a href=\"$solutionsLink\">${EduCoreBundle.message("checkio.view.solutions")}</a></p>"
+    else ""
 
     val taskLink = getTaskLink(apiConnector.languageId, locale.language, mission.slug)
-    val task = "<p><a href=\"$taskLink\">$TASK_LINK</a></p>"
+    val task = "<p><a href=\"$taskLink\">${EduCoreBundle.message("checkio.open.task.on.site")}</a></p>"
 
     mission.descriptionText += "$solutions\n$task"
   }

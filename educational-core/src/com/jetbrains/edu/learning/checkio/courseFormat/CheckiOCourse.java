@@ -1,13 +1,16 @@
 package com.jetbrains.edu.learning.checkio.courseFormat;
 
 import com.jetbrains.edu.learning.courseFormat.Course;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE;
 
 public class CheckiOCourse extends Course {
+  @NonNls
   private static final String COURSE_DESCRIPTION =
     "CheckiO is a game where you code in Python or JavaScript.\n" +
     "Progress in the game by solving code challenges and compete for the most elegant and creative solutions.\n" +

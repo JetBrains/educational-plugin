@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checkio.api.exceptions;
 
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @see ParseException
  * */
 public abstract class ApiException extends Exception {
-  public ApiException(@NotNull String message) {
+  public ApiException(@NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String message) {
     super(message);
   }
 

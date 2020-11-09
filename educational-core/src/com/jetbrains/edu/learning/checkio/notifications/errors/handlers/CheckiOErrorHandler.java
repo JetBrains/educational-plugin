@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
 import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class CheckiOErrorHandler {
@@ -13,7 +14,8 @@ public class CheckiOErrorHandler {
   private final CheckiOErrorReporter myErrorReporter;
   private final CheckiOOAuthConnector myOAuthConnector;
 
-  public CheckiOErrorHandler(@NotNull String title, @NotNull CheckiOOAuthConnector oAuthConnector) {
+  public CheckiOErrorHandler(@NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+                             @NotNull CheckiOOAuthConnector oAuthConnector) {
     myErrorReporter = new CheckiOErrorReporter(title);
     myOAuthConnector = oAuthConnector;
   }

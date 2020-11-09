@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -28,8 +29,8 @@ import javax.swing.JComponent
 abstract class CheckiOMissionCheck(val project: Project,
                                    val task: Task,
                                    private val oAuthConnector: CheckiOOAuthConnector,
-                                   private val interpreterName: String,
-                                   private val testFormTargetUrl: String
+                                   @NonNls private val interpreterName: String,
+                                   @NonNls private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
   protected lateinit var checkResult: CheckResult
   private val latch = CountDownLatch(1)
@@ -45,7 +46,7 @@ abstract class CheckiOMissionCheck(val project: Project,
 
       val timeoutExceeded: Boolean = !latch.await(30L, TimeUnit.SECONDS)
       if (timeoutExceeded) {
-        return CheckResult(CheckStatus.Unchecked, "Checking took too much time")
+        return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("edu.check.took.too.much.time"))
       }
 
       if (checkResult === CONNECTION_FAILED) {
@@ -59,10 +60,10 @@ abstract class CheckiOMissionCheck(val project: Project,
       LOGIN_NEEDED
     }
     catch (e: InterruptedException) {
-      CheckResult(CheckStatus.Unchecked, "Checking was cancelled")
+      CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("edu.check.was.cancelled"))
     }
     catch (e: Exception) {
-      CheckiOErrorHandler("Failed to check the task", oAuthConnector).handle(e)
+      CheckiOErrorHandler(EduCoreBundle.message("notification.title.failed.to.check.task"), oAuthConnector).handle(e)
       failedToCheck
     }
     finally {
@@ -75,8 +76,8 @@ abstract class CheckiOMissionCheck(val project: Project,
 
   protected fun setCheckResult(result: Int) {
     checkResult = when (result) {
-      1 -> CheckResult(CheckStatus.Solved, "All tests passed")
-      else -> CheckResult(CheckStatus.Failed, "Tests failed")
+      1 -> CheckResult(CheckStatus.Solved, EduCoreBundle.message("edu.check.all.tests.passed"))
+      else -> CheckResult(CheckStatus.Failed, EduCoreBundle.message("edu.check.tests.failed"))
     }
     latch.countDown()
   }
@@ -111,6 +112,7 @@ abstract class CheckiOMissionCheck(val project: Project,
   }
 
   companion object {
+    @NonNls
     private const val CHECKIO_TEST_FORM_TEMPLATE = "checkioTestForm.html"
   }
 }

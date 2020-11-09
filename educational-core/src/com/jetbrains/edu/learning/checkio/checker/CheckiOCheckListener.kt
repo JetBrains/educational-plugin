@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 abstract class CheckiOCheckListener(
   private val contentGenerator: CheckiOCourseContentGenerator,
@@ -26,7 +27,7 @@ abstract class CheckiOCheckListener(
         }
         catch (e: Exception) {
           CheckiOErrorHandler(
-            "Failed to update the course",
+            EduCoreBundle.message("notification.title.failed.to.update.course"),
             oAuthConnector
           ).handle(e)
         }

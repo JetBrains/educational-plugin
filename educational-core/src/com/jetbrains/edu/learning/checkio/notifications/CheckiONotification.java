@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import icons.EducationalCoreIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +20,9 @@ public abstract class CheckiONotification extends Notification {
 
   private CheckiONotification(
     @NotNull String groupDisplayId,
-    @Nullable String title,
-    @Nullable String subtitle,
-    @Nullable String content,
+    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
+    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
     @NotNull NotificationType type,
     @Nullable NotificationListener listener
   ) {
@@ -30,9 +31,9 @@ public abstract class CheckiONotification extends Notification {
 
   public static class Error extends CheckiONotification {
     public Error(
-      @Nullable String title,
-      @Nullable String subtitle,
-      @Nullable String content,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
       super(CHECKIO_ERRORS.getDisplayId(), title, subtitle, content, ERROR, listener);
@@ -41,9 +42,9 @@ public abstract class CheckiONotification extends Notification {
 
   public static class Warning extends CheckiONotification {
     public Warning(
-      @Nullable String title,
-      @Nullable String subtitle,
-      @Nullable String content,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
       super(CHECKIO_WARNINGS.getDisplayId(), title, subtitle, content, WARNING, listener);
@@ -52,9 +53,9 @@ public abstract class CheckiONotification extends Notification {
 
   public static class Info extends CheckiONotification {
     public Info(
-      @Nullable String title,
-      @Nullable String subtitle,
-      @Nullable String content,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
+      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
       super(CHECKIO_INFOS.getDisplayId(), title, subtitle, content, INFORMATION, listener);

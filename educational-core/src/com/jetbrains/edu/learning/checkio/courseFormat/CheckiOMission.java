@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -15,9 +16,11 @@ public class CheckiOMission extends EduTask {
   private CheckiOStation myStation;
 
   @NotNull
+  @NonNls
   private String myCode;
 
   @NotNull
+  @NonNls
   private String mySlug;
 
   private long mySecondsFromLastChangeOnServer;
@@ -49,20 +52,22 @@ public class CheckiOMission extends EduTask {
   }
 
   @NotNull
+  @NonNls
   public String getCode() {
     return myCode;
   }
 
-  public void setCode(@NotNull String code) {
+  public void setCode(@NotNull @NonNls String code) {
     myCode = code;
   }
 
   @NotNull
+  @NonNls
   public String getSlug() {
     return mySlug;
   }
 
-  public void setSlug(@NotNull String slug) {
+  public void setSlug(@NotNull @NonNls String slug) {
     mySlug = slug;
   }
 
@@ -90,6 +95,7 @@ public class CheckiOMission extends EduTask {
   }
 
   @Override
+  @NonNls
   public String getItemType() {
     return "checkiO";
   }
@@ -113,9 +119,9 @@ public class CheckiOMission extends EduTask {
     return "CheckiOMission{" +
            "id=" + getId() +
            ", stationId=" + myStation.getId() +
-           ", stationName='" + myStation.getName() + '\'' +
-           ", title='" + getName() + '\'' +
+           ", stationName='" + myStation.getName() + "'" +
+           ", title='" + getName() + "'" +
            ", secondsPast=" + getSecondsFromLastChangeOnServer() +
-           '}';
+           "}";
   }
 }

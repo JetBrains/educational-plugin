@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio.api.exceptions;
 
 import com.jetbrains.edu.learning.checkio.call.CheckiOCall;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 
@@ -14,7 +15,7 @@ public class HttpException extends ApiException {
   @NotNull private final Response<?> myResponse;
 
   public HttpException(@NotNull Response<?> response) {
-    super("HTTP " + response.code() + " " + response.message());
+    super(EduCoreBundle.message("exception.message.http.info", response.code(), response.message()));
     myResponse = response;
   }
 

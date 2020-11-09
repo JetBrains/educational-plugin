@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.checkio.api.exceptions;
 
 import com.jetbrains.edu.learning.checkio.call.CheckiOCall;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -13,10 +15,10 @@ import java.io.IOException;
  * */
 public class NetworkException extends ApiException {
   public NetworkException() {
-    this("Connection failed");
+    this(EduCoreBundle.message("exception.message.connection.failed"));
   }
 
-  public NetworkException(@NotNull String message) {
+  public NetworkException(@NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String message) {
     super(message);
   }
 

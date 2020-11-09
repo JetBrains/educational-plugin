@@ -2,12 +2,14 @@ package com.jetbrains.edu.learning.checkio.notifications.errors;
 
 import com.intellij.notification.Notifications;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class CheckiOErrorReporter {
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   private final String myTitle;
 
-  public CheckiOErrorReporter(@NotNull String title) {
+  public CheckiOErrorReporter(@NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title) {
     myTitle = title;
   }
 
