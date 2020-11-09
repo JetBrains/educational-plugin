@@ -6,7 +6,6 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressIndicator
@@ -14,7 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
@@ -168,7 +166,7 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
 private fun findMainClass(project: Project, task: Task): String? =
   runReadActionInSmartMode(project) {
     val language = task.course.languageById ?: return@runReadActionInSmartMode null
-    val selectedFile = getSelectedFile(project)
+    val selectedFile = project.selectedVirtualFile
     if (selectedFile != null) {
       val fileTask = selectedFile.getContainingTask(project)
       if (fileTask == task) {
@@ -183,11 +181,6 @@ private fun findMainClass(project: Project, task: Task): String? =
     }
     null
   }
-
-private fun getSelectedFile(project: Project): VirtualFile? {
-  val editor = EduUtils.getSelectedEditor(project) ?: return null
-  return FileDocumentManager.getInstance().getFile(editor.document)
-}
 
 /**
  * There are two types of supported gradle projects: module-per-task and one module for the whole course

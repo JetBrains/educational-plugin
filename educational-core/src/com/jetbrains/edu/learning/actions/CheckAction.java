@@ -47,7 +47,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -162,9 +161,9 @@ public class CheckAction extends DumbAwareAction {
       return;
     }
 
-    final EduEditor studyEditor = EduUtils.getSelectedEduEditor(project);
-    if (studyEditor != null) {
-      final Task task = studyEditor.getTaskFile().getTask();
+    TaskFile taskFile = OpenApiExtKt.getSelectedTaskFile(project);
+    if (taskFile != null) {
+      final Task task = taskFile.getTask();
       if (task instanceof TheoryTask) {
         presentation.setText(EduCoreBundle.message("check.run"));
         presentation.setDescription(EduCoreBundle.message("check.run.solution"));

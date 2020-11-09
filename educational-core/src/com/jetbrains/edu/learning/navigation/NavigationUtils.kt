@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
@@ -22,7 +23,6 @@ import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import java.util.*
 import javax.swing.tree.TreePath
 
 object NavigationUtils {
@@ -244,8 +244,27 @@ object NavigationUtils {
       updateProjectView(project, fileToActivate)
     }
 
-    EduUtils.selectFirstAnswerPlaceholder(EduUtils.getSelectedEduEditor(project), project)
+    selectFirstAnswerPlaceholder(project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+  }
+
+  private fun selectFirstAnswerPlaceholder(project: Project) {
+    val eduState = project.eduState ?: return
+    val (_, editor, taskFile, _, _) = eduState
+
+    IdeFocusManager.getInstance(project).requestFocus(editor.contentComponent, true)
+    if (!taskFile.isValid(editor.document.text)) {
+      return
+    }
+
+    val placeholder = taskFile.answerPlaceholders.firstOrNull { it.isVisible } ?: return
+    val offsets = EduUtils.getPlaceholderOffsets(placeholder)
+
+    with(editor) {
+      selectionModel.setSelection(offsets.first, offsets.second)
+      caretModel.moveToOffset(offsets.first)
+      scrollingModel.scrollToCaret(ScrollType.CENTER)
+    }
   }
 
   private fun prepareFilesForTargetTask(

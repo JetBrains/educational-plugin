@@ -14,7 +14,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -33,7 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -84,10 +82,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private void init() {
-    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
-    if (selectedEduEditor != null) {
-      mySelectedTask = selectedEduEditor.getTaskFile().getTask();
-    }
+    mySelectedTask = EduUtils.getCurrentTask(myProject);
     addFileOpenListener();
   }
 
@@ -155,10 +150,8 @@ public class StepikSolutionsLoader implements Disposable {
       if (currentTask == null) {
         return;
       }
-      FileEditorManager manager = FileEditorManager.getInstance(myProject);
-      final FileEditor studyEditor = manager.getSelectedEditor();
-      if (studyEditor instanceof EduEditor) {
-        final Editor editor = ((EduEditor)studyEditor).getEditor();
+      Editor editor = OpenApiExtKt.getSelectedEditor(myProject);
+      if (editor != null) {
         if (currentTask.getStatus() == CheckStatus.Solved) {
           editor.getSelectionModel().removeSelection();
         }
@@ -211,9 +204,9 @@ public class StepikSolutionsLoader implements Disposable {
 
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
-        EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
-        if (selectedEduEditor != null) {
-          selectedEduEditor.startLoading();
+        VirtualFile file = OpenApiExtKt.getSelectedVirtualFile(myProject);
+        if (file != null) {
+          VirtualFileExt.startLoading(file, myProject);
           enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getId()));
         }
       }
@@ -299,13 +292,12 @@ public class StepikSolutionsLoader implements Disposable {
     myBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        EduEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
         TaskFile taskFile = VirtualFileExt.getTaskFile(file, myProject);
-        if (eduEditor != null && taskFile != null) {
+        if (taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
           if (myFutures.containsKey(task.getId())) {
-            eduEditor.startLoading();
+            VirtualFileExt.startLoading(file, myProject);
             Future future = myFutures.get(task.getId());
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
@@ -321,13 +313,10 @@ public class StepikSolutionsLoader implements Disposable {
       try {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
-          EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
-          if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().getName())) {
-            selectedEditor.stopLoading();
-            VirtualFile file = selectedEditor.getFile();
-            if (file != null) {
-              EditorNotifications.getInstance(myProject).updateNotifications(file);
-            }
+          EduState eduState = OpenApiExtKt.getEduState(myProject);
+          if (eduState != null && mySelectedTask.getTaskFiles().containsKey(eduState.getTaskFile().getName())) {
+            VirtualFileExt.stopLoading(eduState.getVirtualFile(), myProject);
+            EditorNotifications.getInstance(myProject).updateNotifications(eduState.getVirtualFile());
           }
         });
       }

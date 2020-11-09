@@ -84,7 +84,7 @@ object CheckUtils {
 
   fun createDefaultRunConfiguration(project: Project): RunnerAndConfigurationSettings? {
     return runReadAction {
-      val editor = EduUtils.getSelectedEditor(project) ?: return@runReadAction null
+      val editor = project.selectedEditor ?: return@runReadAction null
       val psiFile = editor.document.toPsiFile(project) ?: return@runReadAction null
       ConfigurationContext(psiFile).configuration
     }

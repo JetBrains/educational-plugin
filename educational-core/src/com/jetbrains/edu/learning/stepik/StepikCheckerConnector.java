@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -125,7 +125,7 @@ public class StepikCheckerConnector {
     if (attemptId != -1) {
       Course course = task.getLesson().getCourse();
       Language courseLanguage = course.getLanguageById();
-      final Editor editor = EduUtils.getSelectedEditor(project);
+      final Editor editor = OpenApiExtKt.getSelectedEditor(project);
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();

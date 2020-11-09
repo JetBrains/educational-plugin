@@ -17,13 +17,8 @@ import com.intellij.openapi.command.undo.UndoableAction;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -35,7 +30,6 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
@@ -48,7 +42,6 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
@@ -100,8 +93,8 @@ public class EduUtils {
     presentation.setEnabled(false);
     final Project project = e.getProject();
     if (project != null) {
-      final EduEditor eduEditor = getSelectedEduEditor(project);
-      if (eduEditor != null) {
+      TaskFile taskFile = OpenApiExtKt.getSelectedTaskFile(project);
+      if (taskFile != null) {
         presentation.setEnabledAndVisible(true);
       }
     }
@@ -131,44 +124,6 @@ public class EduUtils {
       return false;
     }
     return configurator.isTestFile(task, path);
-  }
-
-  /**
-   * @see com.jetbrains.edu.learning.OpenApiExtKt#getSelectedEditor
-   * @deprecated Use com.jetbrains.edu.learning.OpenApiExtKt.getSelectedEditor
-   */
-  @Nullable
-  @Deprecated
-  public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
-    try {
-      EditorWithProviderComposite selectedEditor = FileEditorManagerEx.getInstanceEx(project)
-        .getSplitters()
-        .getCurrentWindow()
-        .getSelectedEditor();
-      if (selectedEditor == null) return null;
-      final FileEditor fileEditor = selectedEditor.getSelectedWithProvider().getFileEditor();
-      if (fileEditor instanceof EduEditor) {
-        return (EduEditor)fileEditor;
-      }
-    }
-    catch (Exception e) {
-      return null;
-    }
-    return null;
-  }
-
-  /**
-   * @see com.jetbrains.edu.learning.OpenApiExtKt#getSelectedEditor
-   * @deprecated Use com.jetbrains.edu.learning.OpenApiExtKt.getSelectedEditor
-   */
-  @Nullable
-  @Deprecated
-  public static Editor getSelectedEditor(@NotNull final Project project) {
-    final EduEditor eduEditor = getSelectedEduEditor(project);
-    if (eduEditor != null) {
-      return eduEditor.getEditor();
-    }
-    return null;
   }
 
   @Nullable
@@ -333,20 +288,6 @@ public class EduUtils {
 
     VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
-  }
-
-  public static void selectFirstAnswerPlaceholder(@Nullable final EduEditor eduEditor, @NotNull final Project project) {
-    if (eduEditor == null) return;
-    final Editor editor = eduEditor.getEditor();
-    IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-    if (!eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
-    final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getAnswerPlaceholders();
-    final AnswerPlaceholder placeholder = placeholders.stream().filter(p -> p.isVisible()).findFirst().orElse(null);
-    if (placeholder == null) return;
-    Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder);
-    editor.getSelectionModel().setSelection(offsets.first, offsets.second);
-    editor.getCaretModel().moveToOffset(offsets.first);
-    editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
   }
 
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {

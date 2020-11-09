@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
@@ -18,23 +19,46 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.ui.components.JBLoadingPanel
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 
 fun VirtualFile.getEditor(project: Project): Editor? {
-  val selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(this)
+  val selectedEditor = getInEdt { FileEditorManager.getInstance(project).getSelectedEditor(this) }
   return if (selectedEditor is TextEditor) selectedEditor.editor else null
 }
 
 val VirtualFile.document
   get() : Document = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
+
+fun VirtualFile.startLoading(project: Project) {
+  val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
+
+  val textEditor = fileEditor as? TextEditor ?: return
+  (textEditor.editor as EditorEx).isViewer = true
+
+  val loadingPanel = fileEditor.component as JBLoadingPanel
+  loadingPanel.setLoadingText(EduCoreBundle.message("editor.loading.solution"))
+  loadingPanel.startLoading()
+}
+
+fun VirtualFile.stopLoading(project: Project) {
+  val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
+
+  val textEditor = fileEditor as? TextEditor ?: return
+  (textEditor.editor as EditorEx).isViewer = false
+
+  val loadingPanel = fileEditor.component as JBLoadingPanel
+  loadingPanel.stopLoading()
+}
 
 fun VirtualFile.getSection(project: Project): Section? {
   val course = project.course ?: return null
