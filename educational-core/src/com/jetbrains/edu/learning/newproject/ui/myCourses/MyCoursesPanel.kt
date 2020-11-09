@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope
 import java.awt.event.ActionListener
 import javax.swing.JPanel
@@ -33,7 +32,7 @@ class MyCoursesPanel(
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
       override fun courseDeleted(course: CourseMetaInfo) {
         coursesGroups.clear()
-        coursesGroups.addAll(CoursesGroup(CoursesStorage.getInstance().state.courses).asList())
+        coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
         onTabSelection()
       }
     })
