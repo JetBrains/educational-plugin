@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.ActiveIcon
 import com.intellij.openapi.ui.popup.JBPopup
@@ -12,12 +11,13 @@ import com.intellij.openapi.wm.StatusBar
 import com.intellij.ui.ClickListener
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.layout.*
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -77,49 +77,46 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
   }
 
-  private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel): DialogPanel {
-    return panel {
-      blockRow {
-        val loginText = if (currentAccount != null) {
-          EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
-        }
-        else {
-          EduCoreBundle.message("account.widget.no.login.message")
-        }
+  private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel): JPanel {
+    val accountInfoText = if (currentAccount != null) {
+      EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
+    }
+    else {
+      EduCoreBundle.message("account.widget.no.login.message")
+    }
 
-        val loginLabel = JBLabel(UIUtil.toHtml(loginText))
-        loginLabel.setCopyable(true) // enables hyperlinks support
-        loginLabel()
-      }
+    val contentPanel = JBUI.Panels.simplePanel(0, 10)
+    contentPanel.addToTop(EduHyperlinkLabel(accountInfoText))
 
-      val synchronizeCourseAction = synchronizeCourseAction
-
-      if (currentAccount != null && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
-        row {
-          link(synchronizeCourseAction.loginWidgetText) {
-            synchronizeCourseAction.synchronizeCourse(project)
-            popup.closeOk(null)
-          }
-        }
-      }
-
-      row {
-        if (currentAccount == null) {
-          link(EduCoreBundle.message("account.widget.login")) {
-            authorize()
-            popup.closeOk(null)
-            EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
-          }
-        }
-        else {
-          link(EduCoreBundle.message("account.widget.logout")) {
-            resetAccount()
-            updateContent(wrapperPanel, popup)
-            EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
-          }
-        }
+    val accountActionLabel = if (currentAccount == null) {
+      EduHyperlinkLabel(EduCoreBundle.message("account.widget.login"), true) {
+        authorize()
+        popup.closeOk(null)
+        EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
       }
     }
+    else {
+      EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
+        resetAccount()
+        updateContent(wrapperPanel, popup)
+        EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
+      }
+    }
+
+    val actionsPanel = JBUI.Panels.simplePanel(0, 10)
+    actionsPanel.addToCenter(accountActionLabel)
+
+    val synchronizeCourseAction = synchronizeCourseAction
+    if (currentAccount != null && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
+      actionsPanel.addToBottom(EduHyperlinkLabel(synchronizeCourseAction.loginWidgetText, true) {
+        synchronizeCourseAction.synchronizeCourse(project)
+        popup.closeOk(null)
+      })
+    }
+
+    contentPanel.addToBottom(actionsPanel)
+
+    return contentPanel
   }
 
   abstract fun authorize()
