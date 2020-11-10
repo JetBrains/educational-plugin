@@ -19,7 +19,6 @@ import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
-import com.jetbrains.python.sdk.PythonSdkUpdater
 
 class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
 
@@ -81,7 +80,7 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
     val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByPath(name) }
     val newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.path, PythonSdkType.getInstance())
     if (newSdk != null) {
-      PythonSdkUpdater.updateOrShowError(newSdk, null, project, null)
+      updateOrShowError(newSdk, project)
       SdkConfigurationUtil.addSdk(newSdk)
     }
     return newSdk
