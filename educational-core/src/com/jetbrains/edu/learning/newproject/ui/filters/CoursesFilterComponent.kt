@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.filters
 
+import com.intellij.ide.ui.LafManagerListener
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.FilterComponent
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -13,6 +15,10 @@ class CoursesFilterComponent(
 ) : FilterComponent("Edu.NewCourse", 5, true) {
 
   init {
+    removeBorder()
+  }
+
+  fun removeBorder() {
     textEditor.border = null
   }
 

@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui.welcomeScreen
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
+import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -11,6 +12,7 @@ import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.CourseDeletedListener
 import com.jetbrains.edu.learning.CourseMetaInfo
@@ -44,7 +46,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     coursesListPanel.border = JBUI.Borders.emptyTop(8)
     add(coursesListPanel, BorderLayout.CENTER)
 
-    val searchComponent = createSearchComponent()
+    val searchComponent = createSearchComponent(disposable)
     add(searchComponent, BorderLayout.NORTH)
 
     updateModel(createCoursesGroup())
@@ -68,7 +70,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     return coursesGroups
   }
 
-  private fun createSearchComponent(): JPanel {
+  private fun createSearchComponent(disposable: Disposable): JPanel {
     val panel = NonOpaquePanel()
     val searchField = CoursesFilterComponent({ CoursesGroup(CoursesStorage.getInstance().state.courses).asList() },
                                              { group -> updateModel(group) })
@@ -77,8 +79,15 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     panel.add(createActionToolbar(panel), BorderLayout.EAST)
     panel.border = JBUI.Borders.empty(8, 6, 8, 10)
 
+    ApplicationManager.getApplication().messageBus.connect(disposable)
+      .subscribe(LafManagerListener.TOPIC, LafManagerListener {
+        UIUtil.setBackgroundRecursively(panel, MAIN_BG_COLOR)
+        searchField.removeBorder()
+      })
+
     return Wrapper(panel).apply {
       border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 1, 0)
+      UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
     }
   }
 
