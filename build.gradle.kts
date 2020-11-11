@@ -64,6 +64,7 @@ val pythonPlugin = when (baseIDE) {
   "studio" -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
+val cPlugin = "c-plugin"
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
@@ -403,7 +404,16 @@ project(":jvm-core") {
 
 project(":Edu-YAML") {
   intellij {
-      setPlugins("yaml")
+    val pluginsList = mutableListOf("yaml")
+    if (baseIDE == "clion" && isAtLeast203) {
+      /**
+       * TODO: Remove it after CLion plugin will be fixed
+       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
+       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
+       */
+      pluginsList += cPlugin
+    }
+    setPlugins(*pluginsList.toTypedArray())
   }
 
   dependencies {
@@ -583,10 +593,10 @@ project(":Edu-Cpp") {
     version = clionVersion
     val pluginsList = mutableListOf("clion-test-google", "clion-test-catch")
     if (isAtLeast203) {
-      pluginsList += listOf("clion", "c-plugin")
+      pluginsList += listOf("clion", cPlugin)
     }
     setPlugins(*pluginsList.toTypedArray())
-}
+  }
 
   dependencies {
     implementation(project(":educational-core"))
