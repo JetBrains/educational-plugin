@@ -8,11 +8,13 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -26,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.createActionLink
+import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -45,17 +47,21 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
+    if (course is HyperskillCourse) {
+      val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 17, 0)
+      checkActionsPanel.add(link, BorderLayout.SOUTH)
+    }
     add(checkActionsPanel, BorderLayout.CENTER)
     add(checkDetailsPlaceholder, BorderLayout.SOUTH)
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    when (course) {
-      is CodeforcesCourse -> {
-        rightActionsToolbar.add(createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
-        rightActionsToolbar.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
-        return rightActionsToolbar
-      }
+    if (course is CodeforcesCourse) {
+      rightActionsToolbar.add(
+        createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
+      rightActionsToolbar.add(
+        createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
+      return rightActionsToolbar
     }
     rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
     rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
@@ -65,6 +71,12 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
     return createSingleActionToolbar(action)
+  }
+
+  private fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10): ActionLink {
+    val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId))
+    link.border = JBUI.Borders.empty(top, left, 0, 0)
+    return link
   }
 
   private fun createSingleActionToolbar(action: AnAction): JComponent {
