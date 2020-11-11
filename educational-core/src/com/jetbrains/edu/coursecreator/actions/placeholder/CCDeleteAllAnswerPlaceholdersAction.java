@@ -1,9 +1,10 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -22,20 +23,14 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   }
 
   @Override
-  public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setEnabledAndVisible(false);
-    CCState state = getState(e);
-    if (state == null) return;
-    if (!state.getTaskFile().getAnswerPlaceholders().isEmpty()) {
-      e.getPresentation().setEnabledAndVisible(true);
-    }
-    super.update(e);
+  protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
+    presentation.setEnabledAndVisible(!eduState.getTaskFile().getAnswerPlaceholders().isEmpty());
   }
 
   @Override
-  protected void performAnswerPlaceholderAction(@NotNull CCState state) {
-    final ClearPlaceholders action = new ClearPlaceholders(state.getProject(), state.getTaskFile(), state.getEditor());
-    EduUtils.runUndoableAction(state.getProject(), EduCoreBundle.message("action.delete.all.answer.placeholders.text"), action,
+  protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
+    final ClearPlaceholders action = new ClearPlaceholders(project, state.getTaskFile(), state.getEditor());
+    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.delete.all.answer.placeholders.text"), action,
                                UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 

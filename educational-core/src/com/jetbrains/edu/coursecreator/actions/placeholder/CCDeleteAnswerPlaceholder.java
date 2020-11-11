@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -15,14 +15,17 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   @Override
-  protected void performAnswerPlaceholderAction(@NotNull CCState state) {
-    deletePlaceholder(state);
+  protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
+    deletePlaceholder(project, state);
   }
 
-  private static void deletePlaceholder(@NotNull CCState state) {
-    Project project = state.getProject();
+  private static void deletePlaceholder(@NotNull Project project, @NotNull EduState state) {
     TaskFile taskFile = state.getTaskFile();
     AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
+    if (answerPlaceholder == null) {
+      throw new IllegalStateException("Delete Placeholder action called, but no placeholder found");
+    }
+
     EduUtils.runUndoableAction(project, EduCoreBundle.message("action.delete.answer.placeholder.text"),
                                new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
@@ -37,7 +40,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
                                });
   }
 
-  private static boolean canDeletePlaceholder(@NotNull CCState state) {
+  private static boolean canDeletePlaceholder(@NotNull EduState state) {
     if (state.getEditor().getSelectionModel().hasSelection()) {
       return false;
     }
@@ -45,17 +48,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event) {
-    final Presentation presentation = event.getPresentation();
-    presentation.setEnabledAndVisible(false);
-
-    CCState state = getState(event);
-    if (state == null) {
-      return;
-    }
-
-    if (canDeletePlaceholder(state)) {
-      presentation.setEnabledAndVisible(true);
-    }
+  protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
+    presentation.setEnabledAndVisible(canDeletePlaceholder(eduState));
   }
 }

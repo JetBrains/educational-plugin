@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -10,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -46,9 +46,8 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     return false;
   }
 
-  private void addPlaceholder(@NotNull CCState state) {
+  private void addPlaceholder(@NotNull Project project, @NotNull EduState state) {
     Editor editor = state.getEditor();
-    Project project = state.getProject();
     Document document = editor.getDocument();
     FileDocumentManager.getInstance().saveDocument(document);
     final SelectionModel model = editor.getSelectionModel();
@@ -130,28 +129,19 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   @Override
-  protected void performAnswerPlaceholderAction(@NotNull CCState state) {
-    addPlaceholder(state);
+  protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
+    addPlaceholder(project, state);
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event) {
-    final Presentation presentation = event.getPresentation();
-    presentation.setEnabledAndVisible(false);
-
-    CCState state = getState(event);
-    if (state == null) {
-      return;
-    }
-
+  protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
     presentation.setVisible(true);
-    if (canAddPlaceholder(state)) {
+    if (canAddPlaceholder(eduState)) {
       presentation.setEnabled(true);
     }
   }
 
-
-  private static boolean canAddPlaceholder(@NotNull CCState state) {
+  private static boolean canAddPlaceholder(@NotNull EduState state) {
     Editor editor = state.getEditor();
     SelectionModel selectionModel = editor.getSelectionModel();
     TaskFile taskFile = state.getTaskFile();
