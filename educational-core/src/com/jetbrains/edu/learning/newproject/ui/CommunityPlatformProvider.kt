@@ -5,7 +5,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -63,10 +62,7 @@ class CommunityPlatformProvider(private val coursesProvider: StepikCoursesProvid
       }
       courses.add(localCourse)
     }
-    return courses.filter {
-      val compatibility = it.compatibility
-      compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-    }
+    return courses
   }
 
   private fun getBundledCoursesPaths(): List<String> {

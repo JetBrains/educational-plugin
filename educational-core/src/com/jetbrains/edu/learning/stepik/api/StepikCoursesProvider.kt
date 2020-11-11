@@ -78,6 +78,7 @@ class StepikCoursesProvider : CoroutineScope {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
       .filter { it.isPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
+      .sortedBy { ListedCoursesIdsProvider.featuredCommunityCourses.indexOf(it.id) }
   }
 
   suspend fun getAllOtherCourses(): List<Course> {
