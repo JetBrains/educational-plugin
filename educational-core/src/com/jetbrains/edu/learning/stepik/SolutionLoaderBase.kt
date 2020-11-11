@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.editor.EduEditor
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Submission
@@ -90,8 +89,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     for (task in tasksToUpdate) {
       invokeAndWaitIfNeeded {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
-        for (editor in getOpenTaskEditors(project, task)) {
-          editor.startLoading()
+        for (file in getOpenFiles(project, task)) {
+          file.startLoading(project)
         }
       }
       futures[task.id] = ApplicationManager.getApplication().executeOnPooledThread<Boolean> {
@@ -109,12 +108,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           }
           invokeAndWaitIfNeeded {
             if (project.isDisposed) return@invokeAndWaitIfNeeded
-            for (editor in getOpenTaskEditors(project, task)) {
-              editor.stopLoading()
-              val file = editor.file
-              if (file != null) {
-                EditorNotifications.getInstance(project).updateNotifications(file)
-              }
+            for (file in getOpenFiles(project, task)) {
+              file.stopLoading(project)
+              EditorNotifications.getInstance(project).updateNotifications(file)
             }
           }
         }
@@ -131,7 +127,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         val task = file.getContainingTask(project) ?: return
         val future = futures[task.id] ?: return
         if (!future.isDone) {
-          (source.getSelectedEditor(file) as? EduEditor)?.startLoading()
+          file.startLoading(project)
         }
       }
     })
@@ -154,11 +150,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  private fun getOpenTaskEditors(project: Project, task: Task): List<EduEditor> {
-    return FileEditorManager.getInstance(project)
-      .allEditors
-      .filterIsInstance<EduEditor>()
-      .filter { it.taskFile.task == task }
+  private fun getOpenFiles(project: Project, task: Task): List<VirtualFile> {
+    return FileEditorManager.getInstance(project).openFiles.filter {
+      it.getTaskFile(project)?.task == task
+    }
   }
 
   private fun waitAllTasks(tasks: Collection<Future<*>>) {

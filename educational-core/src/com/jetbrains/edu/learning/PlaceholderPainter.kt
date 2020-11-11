@@ -4,6 +4,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.AbstractPainter
 import com.intellij.openapi.util.Disposer
@@ -11,7 +13,7 @@ import com.intellij.openapi.wm.IdeGlassPaneUtil
 import com.intellij.ui.scale.JBUIScale
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getEduEditors
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 import org.jetbrains.annotations.TestOnly
 import java.awt.BasicStroke
@@ -86,7 +88,12 @@ object PlaceholderPainter {
   }
 
   private fun TaskFile.getEditors(project: Project): List<Editor> {
-    return getEduEditors(project).map { it.editor }
+    val file = getVirtualFile(project) ?: return emptyList()
+    return FileEditorManager.getInstance(project)
+      .allEditors
+      .filterIsInstance<TextEditor>()
+      .filter { it.file == file }
+      .map { it.editor }
   }
 
   private fun isVisible(shape: Shape, editor: Editor): Boolean {

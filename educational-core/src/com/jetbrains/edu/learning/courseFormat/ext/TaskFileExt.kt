@@ -5,14 +5,11 @@ package com.jetbrains.edu.learning.courseFormat.ext
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.editor.EduEditor
-import com.jetbrains.edu.learning.editor.EduSplitEditor
 
 
 fun TaskFile.getDocument(project: Project): Document? {
@@ -26,23 +23,5 @@ fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
 }
 
 fun TaskFile.course() = task?.lesson?.course
-
-fun TaskFile.getEduEditors(project: Project): List<EduEditor> {
-  val file = getVirtualFile(project) ?: return emptyList()
-  return FileEditorManager.getInstance(project)
-    .allEditors
-    .asSequence()
-    .flatMap {
-      if (it is EduSplitEditor) {
-        sequenceOf(it.mainEditor, it.secondaryEditor)
-      }
-      else {
-        sequenceOf(it)
-      }
-    }
-    .filterIsInstance<EduEditor>()
-    .filter { it.file == file }
-    .toList()
-}
 
 fun TaskFile.getText(project: Project): String? = getDocument(project)?.text

@@ -10,22 +10,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.PlaceholderPainter
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getEduEditors
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.editor.EduEditor
+import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
@@ -115,19 +110,15 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   open fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
+    val existingTask = existingItem as Task
+    hideOldPlaceholdersForOpenedFiles(project, existingTask)
+
     deserializedItem.name = existingItem.name
     deserializedItem.index = existingItem.index
 
-    val parentItem = (existingItem as Task).lesson
+    val parentItem = existingTask.lesson
     parentItem.removeItem(existingItem)
     parentItem.addItemAsNew(project, deserializedItem)
-
-    deserializedItem.taskFiles.values.forEach { taskFile ->
-      taskFile.getEduEditors(project).forEach {
-        PlaceholderPainter.hidePlaceholders(it.taskFile)
-        it.taskFile = taskFile
-      }
-    }
   }
 
   private fun Task.applyTaskFileChanges(deserializedItem: Task) {
@@ -159,18 +150,14 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   private fun paintPlaceholdersForOpenedFiles(project: Project, task: Task) {
-    getOpenedEduEditors(project, task).forEach { PlaceholderPainter.showPlaceholders(project, it.taskFile) }
+    getOpenedTaskFiles(project, task).forEach { PlaceholderPainter.showPlaceholders(project, it) }
   }
 
   private fun hideOldPlaceholdersForOpenedFiles(project: Project, task: Task) {
-    getOpenedEduEditors(project, task).forEach { PlaceholderPainter.showPlaceholders(project, it.taskFile) }
+    getOpenedTaskFiles(project, task).forEach { PlaceholderPainter.hidePlaceholders(it) }
   }
 
-  private fun getOpenedEduEditors(project: Project, task: Task): List<EduEditor> {
-    val taskDir = task.getDir(project.courseDir) ?: error(noDirForItemMessage(task.name, EduNames.TASK))
-    return FileEditorManager.getInstance(project).openFiles
-      .filter { VfsUtil.isAncestor(taskDir, it, true) }
-      .map { FileEditorManager.getInstance(project).getSelectedEditor(it) }
-      .filterIsInstance(EduEditor::class.java)
+  private fun getOpenedTaskFiles(project: Project, task: Task): List<TaskFile> {
+    return FileEditorManager.getInstance(project).openFiles.mapNotNull { it.getTaskFile(project) }.filter { it.task == task }
   }
 }
