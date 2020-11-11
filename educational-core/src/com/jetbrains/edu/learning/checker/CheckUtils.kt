@@ -26,7 +26,6 @@ import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.editor.EduSingleFileEditor
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
 import java.util.concurrent.CountDownLatch
@@ -56,10 +55,8 @@ object CheckUtils {
         if (studyTaskManager.hasFailedAnswerPlaceholders(taskFile)) {
           taskFileToNavigate = taskFile
           val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-          val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)
-          if (fileEditor is EduSingleFileEditor) {
-            editor = fileEditor.editor
-          }
+          val fileEditor = virtualFile.getEditor(project) ?: continue
+          editor = fileEditor
           fileToNavigate = virtualFile
           break
         }

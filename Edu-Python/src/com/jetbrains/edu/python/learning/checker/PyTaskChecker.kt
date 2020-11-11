@@ -23,12 +23,10 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.editor.ACTION_TEXT
-import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_END
-import com.jetbrains.edu.learning.editor.BROKEN_SOLUTION_ERROR_TEXT_START
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
 
 /**
@@ -51,8 +49,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     if (!task.isValid(project)) {
-      return CheckResult(CheckStatus.Unchecked,
-                         BROKEN_SOLUTION_ERROR_TEXT_START + ACTION_TEXT + BROKEN_SOLUTION_ERROR_TEXT_END)
+      return CheckResult(CheckStatus.Unchecked, EduPythonBundle.message("error.solution.not.loaded"))
     }
     return super.check(indicator)
   }

@@ -220,7 +220,6 @@
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowCondition"/>
-    <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider" order="first"/>
     <!-- placeholder size listener -->
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
@@ -252,6 +251,7 @@
     <!--for educators-->
     <xml.xmlSuppressionProvider
         implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
+    <fileEditorProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.EduSplitFileEditorProvider" order="first"/>
 
     <!-- Rename -->
     <renamePsiElementProcessor implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameProcessor" order="first"/>

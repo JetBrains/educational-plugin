@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.editor
+package com.jetbrains.edu.coursecreator.framework.editor
 
 import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
@@ -7,13 +7,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jdom.Element
 
-class EduEditorState(
+class EduSplitEditorState(
   val mainEditorState: FileEditorState?,
   val secondaryEditorState: FileEditorState? = null
 ) : FileEditorState {
 
   override fun canBeMergedWith(otherState: FileEditorState?, level: FileEditorStateLevel): Boolean {
-    return otherState is EduEditorState &&
+    return otherState is EduSplitEditorState &&
            mainEditorState?.canBeMergedWith(otherState.mainEditorState, level) != false &&
            secondaryEditorState?.canBeMergedWith(otherState.secondaryEditorState, level) != false
   }
@@ -38,7 +38,7 @@ class EduEditorState(
     if (this === other) return true
     if (javaClass != other?.javaClass) return false
 
-    other as EduEditorState
+    other as EduSplitEditorState
 
     if (mainEditorState != other.mainEditorState) return false
     if (secondaryEditorState != other.secondaryEditorState) return false
@@ -58,7 +58,7 @@ class EduEditorState(
     private const val SECONDARY_EDITOR_STATE = "SecondaryEditorState"
 
     @JvmStatic
-    fun read(sourceElement: Element, project: Project, file: VirtualFile): EduEditorState? {
+    fun read(sourceElement: Element, project: Project, file: VirtualFile): EduSplitEditorState? {
       val splitEditorState = sourceElement.getChild(SPLIT_EDITOR_STATE) ?: return null
       val editorProvider = TextEditorProvider.getInstance()
       val mainEditorState = splitEditorState.getChild(MAIN_EDITOR_STATE)?.let {
@@ -67,7 +67,7 @@ class EduEditorState(
       val secondaryEditorState = splitEditorState.getChild(SECONDARY_EDITOR_STATE)?.let {
         editorProvider.readState(it, project, file)
       }
-      return EduEditorState(mainEditorState, secondaryEditorState)
+      return EduSplitEditorState(mainEditorState, secondaryEditorState)
     }
   }
 }

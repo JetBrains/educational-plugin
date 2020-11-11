@@ -1,10 +1,7 @@
-package com.jetbrains.edu.learning.editor
+package com.jetbrains.edu.coursecreator.framework.editor
 
 import com.intellij.ide.structureView.StructureViewBuilder
-import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.FileEditorState
-import com.intellij.openapi.fileEditor.FileEditorStateLevel
+import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
@@ -22,11 +19,11 @@ import javax.swing.JPanel
 
 class EduSplitEditor(
   private val project: Project,
-  val mainEditor: EduEditor,
+  val mainEditor: TextEditor,
   val secondaryEditor: FileEditor,
+  private val mainTaskFile: TaskFile,
   private val secondaryTaskFile: TaskFile
-) : EduEditor by mainEditor {
-
+) : TextEditor by mainEditor {
   private var component: JComponent? = null
 
   override fun getName(): String = "EduSplitEditor"
@@ -45,7 +42,7 @@ class EduSplitEditor(
         }
       })
     }
-    splitter.secondComponent = EditorComponent(mainEditor, mainEditor.taskFile)
+    splitter.secondComponent = EditorComponent(mainEditor, mainTaskFile)
     return JBUI.Panels.simplePanel(splitter).apply {
       component = this
     }
@@ -53,14 +50,15 @@ class EduSplitEditor(
 
   override fun getFile(): VirtualFile? = mainEditor.file
 
-  override fun getState(level: FileEditorStateLevel): EduEditorState {
-    val mainEditorState = mainEditor.getState(level)
-    return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
+  override fun getState(level: FileEditorStateLevel): EduSplitEditorState {
+    return EduSplitEditorState(mainEditor.getState(level), secondaryEditor.getState(level))
   }
 
   override fun setState(state: FileEditorState, exactState: Boolean) {
-    if (state is EduEditorState) {
-      mainEditor.setState(state, exactState)
+    if (state is EduSplitEditorState) {
+      state.mainEditorState?.also {
+        mainEditor.setState(it, exactState)
+      }
       state.secondaryEditorState?.also {
         secondaryEditor.setState(it, exactState)
       }

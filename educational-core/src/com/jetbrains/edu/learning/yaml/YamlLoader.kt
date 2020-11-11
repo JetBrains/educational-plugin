@@ -74,7 +74,7 @@ object YamlLoader {
   }
 
   /**
-   * For items that are added as new we have to reopen editors, because `EduEditor` wasn't created
+   * For items that are added as new we have to reopen editors, because `EduSplitEditor` wasn't created
    * for files that aren't task files.
    */
   private fun reopenEditors(project: Project) {
