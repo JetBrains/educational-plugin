@@ -142,18 +142,33 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
       }
 
       String url = event.getDescription();
-      if (url.startsWith(ToolWindowLinkHandler.PSI_ELEMENT_PROTOCOL)) {
-        ToolWindowLinkHandler.navigateToPsiElement(myProject, url);
-        return;
+      new SwingToolWindowLinkHandler(myProject, event).process(url);
+    }
+
+    private class SwingToolWindowLinkHandler extends ToolWindowLinkHandler {
+
+      private final HyperlinkEvent event;
+
+      public SwingToolWindowLinkHandler(@NotNull Project project, HyperlinkEvent event) {
+        super(project);
+        this.event = event;
       }
 
-      if (url.startsWith(HINT_PROTOCOL)) {
-        Element sourceElement = event.getSourceElement();
-        toggleHintElement(sourceElement);
-        return;
+      @Override
+      public boolean process(@NotNull String url) {
+        if (url.startsWith(HINT_PROTOCOL)) {
+          Element sourceElement = event.getSourceElement();
+          toggleHintElement(sourceElement);
+          return true;
+        }
+        return super.process(url);
       }
 
-      EduBrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(event);
+      @Override
+      public boolean processExternalLink(@NotNull String url) {
+        EduBrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(event);
+        return true;
+      }
     }
 
     private void toggleHintElement(@NotNull Element sourceElement) {
