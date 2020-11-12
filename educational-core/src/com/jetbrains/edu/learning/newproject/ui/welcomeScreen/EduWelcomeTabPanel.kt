@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.KeyWithDefaultValue
@@ -20,6 +21,8 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
+import com.jetbrains.edu.learning.CourseDeletedListener
+import com.jetbrains.edu.learning.CourseMetaInfo
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
@@ -31,11 +34,16 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import java.awt.BorderLayout
+import java.awt.CardLayout
 import java.awt.Font
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
+
+
+private const val EMPTY = "empty"
+private const val MY_COURSES_PANEL = "my-courses"
 
 // BACKCOMPAT: 2020.1. Used since 2020.2
 @Suppress("unused")
@@ -46,13 +54,34 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
                                                     CCNewCourseAction(),
                                                     NewHyperskillCourseAction(),
                                                     StartCodeforcesContestAction())
+  private val cardLayout: CardLayout = CardLayout()
 
   init {
+    layout = cardLayout
+
+    val welcomeScreenPanel = MyCoursesWelcomeScreenPanel(parentDisposable)
+    add(welcomeScreenPanel, MY_COURSES_PANEL)
+    add(createEmptyPanel(), EMPTY)
+    showPanel()
+    subscribeToCourseDeletedEvent(parentDisposable) { welcomeScreenPanel.updateModel() }
+  }
+
+  private fun subscribeToCourseDeletedEvent(disposable: Disposable, updateModel: () -> Unit) {
+    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
+    connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
+      override fun courseDeleted(course: CourseMetaInfo) {
+        updateModel()
+        showPanel()
+      }
+    })
+  }
+
+  private fun showPanel() {
     if (CoursesStorage.getInstance().isNotEmpty()) {
-      add(MyCoursesWelcomeScreenPanel(parentDisposable))
+      cardLayout.show(this, MY_COURSES_PANEL)
     }
     else {
-      add(createEmptyPanel())
+      cardLayout.show(this, EMPTY)
     }
   }
 

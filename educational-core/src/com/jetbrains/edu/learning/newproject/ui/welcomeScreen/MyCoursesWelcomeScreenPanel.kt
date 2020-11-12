@@ -14,8 +14,6 @@ import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
-import com.jetbrains.edu.learning.CourseDeletedListener
-import com.jetbrains.edu.learning.CourseMetaInfo
 import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -50,16 +48,6 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     add(searchComponent, BorderLayout.NORTH)
 
     updateModel(createCoursesGroup())
-    subscribeToCourseDeletedEvent(disposable)
-  }
-
-  private fun subscribeToCourseDeletedEvent(disposable: Disposable) {
-    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-    connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: CourseMetaInfo) {
-        coursesListPanel.updateModel(createCoursesGroup(), null)
-      }
-    })
   }
 
   private fun createCoursesGroup(): List<CoursesGroup> {
@@ -106,6 +94,10 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
       add(button, BorderLayout.LINE_START)
       add(createMoreActionsButton(), BorderLayout.LINE_END)
     }
+  }
+
+  fun updateModel() {
+    coursesListPanel.updateModel(createCoursesGroup(), null)
   }
 
   private fun updateModel(coursesGroup: List<CoursesGroup>) {
