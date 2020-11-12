@@ -195,7 +195,13 @@ object NavigationUtils {
 
   @JvmOverloads
   @JvmStatic
-  fun navigateToTask(project: Project, task: Task, fromTask: Task? = null, showDialogIfConflict: Boolean = true) {
+  fun navigateToTask(
+    project: Project,
+    task: Task,
+    fromTask: Task? = null,
+    showDialogIfConflict: Boolean = true,
+    fileToActivate: VirtualFile? = null
+  ) {
     for (file in FileEditorManager.getInstance(project).openFiles) {
       FileEditorManager.getInstance(project).closeFile(file)
     }
@@ -221,7 +227,8 @@ object NavigationUtils {
     // We need update dependencies before file opening to find out which placeholders are visible
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task)
 
-    var fileToActivate : VirtualFile? = null
+    @Suppress("NAME_SHADOWING")
+    var fileToActivate : VirtualFile? = fileToActivate
 
     for ((_, taskFile) in taskFiles) {
       if (taskFile.answerPlaceholders.isEmpty()) continue
