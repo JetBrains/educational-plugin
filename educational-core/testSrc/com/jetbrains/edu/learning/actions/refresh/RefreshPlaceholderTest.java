@@ -38,7 +38,7 @@ public class RefreshPlaceholderTest extends EduTestCase {
   }
 
   public void testSecondRefreshPlaceholder() {
-    configureByTaskFile(1, 3, "taskFile3.txt");
+    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
     myFixture.getEditor().getCaretModel().moveToOffset(16);
 
     myFixture.type("test");
@@ -52,7 +52,7 @@ public class RefreshPlaceholderTest extends EduTestCase {
   }
 
   public void testRefreshSecondPlaceholderStartOffset() {
-    configureByTaskFile(1, 3, "taskFile3.txt");
+    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
     myFixture.getEditor().getCaretModel().moveToOffset(16);
 
     myFixture.type("test test");
@@ -74,7 +74,7 @@ public class RefreshPlaceholderTest extends EduTestCase {
   }
 
   public void testFirstRefreshPlaceholder() {
-    configureByTaskFile(1, 3, "taskFile3.txt");
+    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
     myFixture.getEditor().getCaretModel().moveToOffset(16);
 
     myFixture.type("test");

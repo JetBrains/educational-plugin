@@ -169,6 +169,10 @@ abstract class EduTestCase : EduTestCaseBase() {
     taskFile.sortAnswerPlaceholders()
   }
 
+  /**
+   * Be aware: this method overrides any selection in editor
+   * because [com.intellij.testFramework.fixtures.CodeInsightTestFixture.configureFromExistingVirtualFile] loads selection and caret from markup in text
+   */
   protected fun configureByTaskFile(lessonIndex: Int, taskIndex: Int, taskFileName: String) {
     val fileName = "lesson$lessonIndex/task$taskIndex/$taskFileName"
     val file = myFixture.findFileInTempDir(fileName)
