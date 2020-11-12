@@ -22,44 +22,16 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 abstract class ToolWindowLinkHandler(val project: Project) {
   open fun process(url: String): Boolean {
-    val matcher = IN_COURSE_LINK.matcher(url)
     return when {
       url.startsWith(PSI_ELEMENT_PROTOCOL) -> processPsiElementLink(url)
       url.startsWith(IN_COURSE_PROTOCOL) -> {
         processInCourseLink(project, url)
         true
       }
-      matcher.matches() -> processInCourseLink(matcher)
       else -> processExternalLink(url)
-    }
-  }
-
-  private fun processInCourseLink(matcher: Matcher): Boolean {
-    try {
-      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.IN_COURSE)
-      var sectionName: String? = null
-      val lessonName: String
-      val taskName: String
-      if (matcher.group(3) != null) {
-        sectionName = matcher.group(1)
-        lessonName = matcher.group(2)
-        taskName = matcher.group(4)
-      }
-      else {
-        lessonName = matcher.group(1)
-        taskName = matcher.group(2)
-      }
-      NavigationUtils.navigateToTask(project, sectionName, lessonName, taskName)
-      return true
-    }
-    catch (e: Exception) {
-      LOG.error(e)
-      return false
     }
   }
 
@@ -79,7 +51,6 @@ abstract class ToolWindowLinkHandler(val project: Project) {
   companion object {
     const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
     private const val IN_COURSE_PROTOCOL: String = "course://"
-    private val IN_COURSE_LINK: Pattern = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?")
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
 
     @JvmStatic
