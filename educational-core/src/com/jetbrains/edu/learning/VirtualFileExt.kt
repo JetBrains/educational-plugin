@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.PlainTextFileType
@@ -20,6 +21,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -42,23 +44,28 @@ val VirtualFile.document
 fun VirtualFile.startLoading(project: Project) {
   val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
 
-  val textEditor = fileEditor as? TextEditor ?: return
-  (textEditor.editor as EditorEx).isViewer = true
+  fileEditor.setViewer(true)
 
-  val loadingPanel = fileEditor.component as JBLoadingPanel
-  loadingPanel.setLoadingText(EduCoreBundle.message("editor.loading.solution"))
-  loadingPanel.startLoading()
+  fileEditor.loadingPanel?.apply {
+    setLoadingText(EduCoreBundle.message("editor.loading.solution"))
+    startLoading()
+  }
 }
 
 fun VirtualFile.stopLoading(project: Project) {
   val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
 
-  val textEditor = fileEditor as? TextEditor ?: return
-  (textEditor.editor as EditorEx).isViewer = false
-
-  val loadingPanel = fileEditor.component as JBLoadingPanel
-  loadingPanel.stopLoading()
+  fileEditor.setViewer(false)
+  fileEditor.loadingPanel?.stopLoading()
 }
+
+private fun FileEditor.setViewer(isViewer: Boolean) {
+  val textEditor = this as? TextEditor ?: return
+  (textEditor.editor as EditorEx).isViewer = isViewer
+}
+
+private val FileEditor.loadingPanel: JBLoadingPanel?
+  get() = UIUtil.findComponentOfType(component, JBLoadingPanel::class.java)
 
 fun VirtualFile.getSection(project: Project): Section? {
   val course = project.course ?: return null
