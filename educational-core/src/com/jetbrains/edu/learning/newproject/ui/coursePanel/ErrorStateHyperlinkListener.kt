@@ -5,9 +5,9 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
@@ -64,7 +64,10 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
         PluginsAdvertiser.installAndEnable(pluginStringIds) {}
       }
-      ErrorState.RestartNeeded -> ApplicationManagerEx.getApplicationEx().restart(true)
+      ErrorState.RestartNeeded -> {
+        DialogWrapper.findInstance(coursesPanel)?.close(DialogWrapper.OK_EXIT_CODE)
+        ApplicationManager.getApplication().exit(true, true, true)
+      }
       is ErrorState.CustomSevereError -> state.action?.run()
       else -> browseHyperlink(state.message)
     }
