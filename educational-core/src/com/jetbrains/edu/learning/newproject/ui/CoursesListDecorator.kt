@@ -8,8 +8,8 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
@@ -19,7 +19,6 @@ private const val TOOLBAR_BOTTOM_OFFSET = 8
 private const val TOOLBAR_LEFT_OFFSET = 13
 
 class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: AnAction?) : JPanel(BorderLayout()) {
-
   private var tabInfoPanel: TabInfoPanel? = null
 
   init {
@@ -69,6 +68,4 @@ class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: 
 
     return hyperlinkPanel
   }
-
-
 }
