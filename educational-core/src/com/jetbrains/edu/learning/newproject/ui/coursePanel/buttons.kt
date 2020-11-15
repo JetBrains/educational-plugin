@@ -108,6 +108,7 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
+                                                    && course.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
                                                     && CoursesStorage.getInstance().hasCourse(course)
 }
 
@@ -120,6 +121,7 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
   }
 
   override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+                                                    || course.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
                                                     || !CoursesStorage.getInstance().hasCourse(course)
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
@@ -143,7 +145,8 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course)
+  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course) &&
+                                           course.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
 }
 
 /**

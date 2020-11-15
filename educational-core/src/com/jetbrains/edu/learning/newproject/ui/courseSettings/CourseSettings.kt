@@ -12,6 +12,7 @@ import com.intellij.util.PathUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_LOCAL_COURSE_KEY
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -100,7 +101,8 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
 
     if (settingsComponents.isNotEmpty()
         && course !is JetBrainsAcademyCourse
-        && !CoursesStorage.getInstance().hasCourse(course)) {
+        && (!CoursesStorage.getInstance().hasCourse(course))
+        || course.getUserData(IS_LOCAL_COURSE_KEY) == true) {
       isVisible = true
       setSettingsComponents(settingsComponents)
     }

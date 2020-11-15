@@ -131,8 +131,10 @@ class CCCreateCoursePreviewDialog(
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
     const val IS_COURSE_PREVIEW: String = "Edu.IsCoursePreview"
+    const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
 
     @JvmField
     val IS_COURSE_PREVIEW_KEY = Key.create<Boolean>(IS_COURSE_PREVIEW)
+    val IS_LOCAL_COURSE_KEY = Key.create<Boolean>(IS_LOCAL_COURSE)
   }
 }
