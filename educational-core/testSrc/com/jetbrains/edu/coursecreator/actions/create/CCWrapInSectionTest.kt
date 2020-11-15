@@ -30,7 +30,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test wrap random lessons`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
@@ -39,18 +39,10 @@ class CCWrapInSectionTest : EduActionTestCase() {
     }
     val lesson2 = findFile("lesson2")
     val lesson4 = findFile("lesson4")
-    withEduTestDialog(EduTestInputDialog("section1")) {
-      testAction(dataContext(arrayOf(lesson2, lesson4)), CCWrapWithSection())
-    }
-    TestCase.assertEquals(4, course.items.size)
-    val section = course.getSection("section1")
-    TestCase.assertNotNull(section)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section!!.index)
-    TestCase.assertEquals(3, course.getLesson("lesson3")!!.index)
-    TestCase.assertEquals(4, course.getLesson("lesson5")!!.index)
-    TestCase.assertEquals(1, section.getLesson("lesson2")!!.index)
-    TestCase.assertEquals(2, section.getLesson("lesson4")!!.index)
+
+    val context = dataContext(arrayOf(lesson2, lesson4))
+    val presentation = testAction(context, CCWrapWithSection(), false)
+    checkActionEnabled(presentation, false)
   }
 
   fun `test wrap one lesson`() {

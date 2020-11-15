@@ -20,7 +20,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitleName;
@@ -59,7 +61,21 @@ public class CCWrapWithSection extends DumbAwareAction {
         lessonsToWrap.add(lesson);
       }
     }
+    if (!isConsecutive(lessonsToWrap)) return new ArrayList<>();
     return lessonsToWrap;
+  }
+
+  private static boolean isConsecutive(ArrayList<Lesson> lessonsToWrap) {
+    List<Integer> indexes = lessonsToWrap.stream().map(it -> it.getIndex()).sorted().collect(Collectors.toList());
+    if (indexes.stream().distinct().count() != indexes.size()) {
+      return false;
+    }
+    Integer max = Collections.max(indexes);
+    Integer min = Collections.min(indexes);
+    if (max - min != indexes.size() - 1) {
+      return false;
+    }
+    return true;
   }
 
   public static void wrapLessonsIntoSection(@NotNull Project project, @NotNull Course course, @NotNull List<Lesson> lessonsToWrap) {
