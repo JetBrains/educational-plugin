@@ -6,6 +6,7 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.OnePixelDivider
@@ -113,6 +114,8 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     moreActionPresentation.icon = AllIcons.Actions.More
     moreActionPresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
 
-    return ActionButton(moreActionGroup, moreActionPresentation, ACTION_PLACE, JBUI.size(12, 12))
+    return ActionButton(moreActionGroup, moreActionPresentation, ACTION_PLACE, JBUI.size(12, 12)).apply {
+      setLook(ActionButtonLook.INPLACE_LOOK)
+    }
   }
 }
