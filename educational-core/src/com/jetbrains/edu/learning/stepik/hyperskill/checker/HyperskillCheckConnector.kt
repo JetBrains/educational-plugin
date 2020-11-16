@@ -189,7 +189,7 @@ fun Submission.toCheckResult(task: Task): CheckResult {
   val isSolved = status != "wrong"
   var message = hint.nullize() ?: "${StringUtil.capitalize(status)} solution"
   if (isSolved) {
-    message = "<html>$message<br/><br/>${EduCoreBundle.message("hyperskill.continue", task.feedbackLink.link!!, EduNames.JBA)}</html>"
+    message = "<html>$message</html>"
   }
   return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message)
 }

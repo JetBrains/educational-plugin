@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
@@ -28,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
+import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -37,6 +36,7 @@ import javax.swing.JPanel
 class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
+  private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
@@ -47,10 +47,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
-    if (course is HyperskillCourse) {
-      val link = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 17, 0)
-      checkActionsPanel.add(link, BorderLayout.SOUTH)
-    }
+    checkActionsPanel.add(linkPanel, BorderLayout.SOUTH)
     add(checkActionsPanel, BorderLayout.CENTER)
     add(checkDetailsPlaceholder, BorderLayout.SOUTH)
   }
@@ -73,12 +70,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     return createSingleActionToolbar(action)
   }
 
-  private fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10): ActionLink {
-    val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId))
-    link.border = JBUI.Borders.empty(top, left, 0, 0)
-    return link
-  }
-
   private fun createSingleActionToolbar(action: AnAction): JComponent {
     val toolbar = ActionManager.getInstance().createActionToolbar(ACTION_PLACE, DefaultActionGroup(action), true)
     //these options affect paddings
@@ -91,6 +82,9 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   fun readyToCheck() {
+    if (course is HyperskillCourse) {
+      linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3))
+    }
     checkFinishedPanel.removeAll()
     checkDetailsPlaceholder.removeAll()
     checkTimeAlarm.cancelAllRequests()
@@ -112,6 +106,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
     val checkResult = result ?: restoreSavedResult(task)
     if (checkResult != null) {
+      linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
     }
     updateBackground()

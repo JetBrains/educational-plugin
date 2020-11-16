@@ -13,8 +13,10 @@ import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
+import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -29,6 +31,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
@@ -67,7 +70,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (messagePanel.messageShortened) {
-      linksPanel.add(ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped).actionLink, BorderLayout.NORTH)
+      linksPanel.add(ShowFullOutputAction(project, checkResult.fullMessage.xmlUnescaped).actionLink, BorderLayout.CENTER)
     }
     return messagePanel
   }
@@ -77,6 +80,12 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     linksPanel.border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
 
     val course = task.course
+
+    if (course is HyperskillCourse) {
+      linksPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 16, 0),
+                     BorderLayout.NORTH)
+    }
+
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
       val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
@@ -102,8 +111,15 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (EduUtils.isStudentProject(project) && task.canShowSolution()) {
-      val peekSolution = LightColoredActionLink(EduCoreBundle.message("label.peek.solution"),
-                                                ActionManager.getInstance().getAction(getPeekSolutionAction(task)))
+      val isExternal = task.course is HyperskillCourse
+      val text = EduCoreBundle.message("label.peek.solution") + if (isExternal) {
+        ""
+      }
+      else {
+        "..."
+      }
+      val peekSolution = LightColoredActionLink(text, ActionManager.getInstance().getAction(getPeekSolutionAction(task)),
+                                                isExternal = isExternal)
       answerHintsPanel.value.add(peekSolution)
     }
 

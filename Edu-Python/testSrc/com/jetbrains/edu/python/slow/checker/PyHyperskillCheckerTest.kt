@@ -3,12 +3,12 @@ package com.jetbrains.edu.python.slow.checker
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.successMessage
 import com.jetbrains.python.PythonLanguage
 
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
@@ -35,7 +35,7 @@ class PyHyperskillCheckerTest : PyCheckersTestBase() {
   }
 
   fun testPythonCourse() {
-    CheckActionListener.expectedMessage { it.successMessage }
+    CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
     doTest()
   }
 }

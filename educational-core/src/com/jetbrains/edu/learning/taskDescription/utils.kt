@@ -2,17 +2,21 @@
 
 package com.jetbrains.edu.learning.taskDescription
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.ui.components.labels.ActionLink
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.mimeType
 import com.jetbrains.edu.learning.stepik.SOURCE
+import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
@@ -204,6 +208,13 @@ fun getPictureSize(fontSize: Int): String {
     // rounding it to int is needed here, because if we are passing a float number, an arrow disappears in studio
     (fontSize * 1.2).toInt()
   }.toString()
+}
+
+
+fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10): ActionLink {
+  val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
+  link.border = JBUI.Borders.empty(top, left, 0, 0)
+  return link
 }
 
 private fun Task.containsLocalImages(project: Project, fileName: String): Boolean {
