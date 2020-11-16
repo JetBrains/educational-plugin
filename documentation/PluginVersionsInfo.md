@@ -26,3 +26,4 @@
 |4.0      |PyCharm Edu 2020.2.1<br>IDEA Edu 2020.2.1|-      |11     |
 |4.1      |PyCharm Edu 2020.2.2<br>IDEA Edu 2020.2.2|-      |11     |
 |4.2      |PyCharm Edu 2020.2.3<br>IDEA Edu 2020.2.3|-      |11     |
+|4.3      |PyCharm Edu 2020.2.4<br>IDEA Edu 2020.2.4|-      |11     |
