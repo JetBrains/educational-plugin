@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.checker
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -12,4 +13,6 @@ class PyNewTaskCheckerProvider : TaskCheckerProvider {
 
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
     PyNewEduTaskChecker(task, envChecker, project)
+
+  override fun getCodeExecutor(): CodeExecutor = PyCodeExecutor()
 }
