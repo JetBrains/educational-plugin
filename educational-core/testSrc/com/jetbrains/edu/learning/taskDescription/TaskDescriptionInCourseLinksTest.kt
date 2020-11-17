@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription
 
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
@@ -42,14 +43,36 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
 
   fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt")
 
-  private fun doTest(url: String, expectedPath: String? = null, courseMode: String = EduNames.STUDY) {
+  fun `test don't close opened files 1`() =
+    doTest("course://lesson2/task2/TaskFile3.txt", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
+
+  fun `test don't close opened files 2`() =
+    doTest("course://lesson2/task2", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
+
+  private fun doTest(url: String, expectedPath: String? = null, courseMode: String = EduNames.STUDY, openedFile: String? = null) {
     createCourse(courseMode)
+    if (openedFile != null) {
+      val file = findFile(openedFile)
+      myFixture.openFileInEditor(file)
+    }
+
+    openInCourseLink(url, expectedPath)
+    if (openedFile != null) {
+      val file = findFile(openedFile)
+      val openFiles = FileEditorManager.getInstance(project).openFiles
+      check(file in openFiles) {
+        "$file should be opened"
+      }
+    }
+  }
+
+  private fun openInCourseLink(url: String, expectedPath: String?) {
     ToolWindowLinkHandler.processInCourseLink(project, url)
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
     val selectedFile = project.selectedVirtualFile
     if (expectedPath == null) {
-      check(selectedFile == null) { "unexpected $selectedFile is open" }   
+      check(selectedFile == null) { "unexpected $selectedFile is open" }
     }
     else {
       val expectedFile = findFile(expectedPath)

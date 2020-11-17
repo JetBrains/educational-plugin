@@ -200,10 +200,13 @@ object NavigationUtils {
     task: Task,
     fromTask: Task? = null,
     showDialogIfConflict: Boolean = true,
+    closeOpenedFiles: Boolean = true,
     fileToActivate: VirtualFile? = null
   ) {
-    for (file in FileEditorManager.getInstance(project).openFiles) {
-      FileEditorManager.getInstance(project).closeFile(file)
+    if (closeOpenedFiles) {
+      for (file in FileEditorManager.getInstance(project).openFiles) {
+        FileEditorManager.getInstance(project).closeFile(file)
+      }
     }
     val taskFiles = task.taskFiles
 

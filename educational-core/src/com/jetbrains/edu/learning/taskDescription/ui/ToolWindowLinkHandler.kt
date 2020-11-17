@@ -160,13 +160,13 @@ abstract class ToolWindowLinkHandler(val project: Project) {
     }
     class TaskDirectory(val task: Task, file: VirtualFile) : ParsedInCourseLink(file) {
       override fun navigate(project: Project) {
-        NavigationUtils.navigateToTask(project, task)
+        NavigationUtils.navigateToTask(project, task, closeOpenedFiles = false)
       }
     }
 
     class FileInTask(val task: Task, file: VirtualFile) : ParsedInCourseLink(file) {
       override fun navigate(project: Project) {
-        NavigationUtils.navigateToTask(project, task, fileToActivate = file)
+        NavigationUtils.navigateToTask(project, task, closeOpenedFiles = false, fileToActivate = file)
       }
     }
   }
