@@ -25,7 +25,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     return CheckResult.SOLVED
   }
 
-  protected open fun createTestConfiguration(): RunnerAndConfigurationSettings? = createDefaultRunConfiguration(project)
+  protected open fun createTestConfiguration(): RunnerAndConfigurationSettings? = createDefaultRunConfiguration(project, task)
 
   companion object {
     private val LOG = Logger.getInstance(TheoryTaskChecker::class.java)

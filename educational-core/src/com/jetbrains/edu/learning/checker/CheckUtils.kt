@@ -25,6 +25,8 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
@@ -79,10 +81,10 @@ object CheckUtils {
     }
   }
 
-  fun createDefaultRunConfiguration(project: Project): RunnerAndConfigurationSettings? {
+  fun createDefaultRunConfiguration(project: Project, task: Task): RunnerAndConfigurationSettings? {
+    val taskFile = task.getCodeTaskFile(project) ?: return null
     return runReadAction {
-      val editor = project.selectedEditor ?: return@runReadAction null
-      val psiFile = editor.document.toPsiFile(project) ?: return@runReadAction null
+      val psiFile = taskFile.getDocument(project)?.toPsiFile(project) ?: return@runReadAction null
       ConfigurationContext(psiFile).configuration
     }
   }

@@ -29,7 +29,7 @@ interface CodeExecutor {
   fun createRunConfiguration(
     project: Project,
     task: Task
-  ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project)
+  ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project, task)
 
   companion object {
     fun resultUnchecked(msg: String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))

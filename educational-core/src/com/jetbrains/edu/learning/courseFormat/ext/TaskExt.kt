@@ -146,7 +146,7 @@ fun Task.getCodeTaskFile(project: Project): TaskFile? {
     }
   }
   val editorTaskFile = project.selectedTaskFile
-  return if (editorTaskFile != null && editorTaskFile.task == this) {
+  return if (editorTaskFile?.task == this) {
     editorTaskFile
   }
   else {
