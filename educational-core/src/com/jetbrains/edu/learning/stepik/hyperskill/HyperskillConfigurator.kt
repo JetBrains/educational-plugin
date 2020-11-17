@@ -74,7 +74,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
     baseConfigurator.beforeCourseStarted(course)
   }
 
-  open fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile()
+  open fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
   companion object {
     const val HYPERSKILL_TEST_DIR = "hstest"

@@ -21,7 +21,7 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
     val course = task.course as? CodeforcesCourse ?: return
 
-    val taskFile = task.getCodeTaskFile() ?: return
+    val taskFile = task.getCodeTaskFile(project) ?: return
     val solution = taskFile.getDocument(project)?.text ?: return
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
     EduBrowser.getInstance().browse(course.getSubmissionUrl())

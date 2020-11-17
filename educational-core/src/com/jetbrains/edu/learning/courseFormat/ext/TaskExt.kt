@@ -135,7 +135,7 @@ fun Task.canShowSolution(): Boolean {
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
 
-fun Task.getCodeTaskFile(): TaskFile? {
+fun Task.getCodeTaskFile(project: Project): TaskFile? {
   val files = taskFiles.values
   if (files.size == 1) return files.firstOrNull()
   val mainFileName = course.configurator?.courseBuilder?.mainTemplateName
@@ -145,7 +145,13 @@ fun Task.getCodeTaskFile(): TaskFile? {
       return taskFiles[name]
     }
   }
-  return files.firstOrNull { !it.isLearnerCreated && it.isVisible }
+  val editorTaskFile = project.selectedTaskFile
+  return if (editorTaskFile != null && editorTaskFile.task == this) {
+    editorTaskFile
+  }
+  else {
+    files.firstOrNull { !it.isLearnerCreated && it.isVisible }
+  }
 }
 
 @JvmName("revertTaskParameters")
