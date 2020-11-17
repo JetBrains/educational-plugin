@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -21,7 +22,10 @@ open class CodeforcesTask : Task() {
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
 
-  fun getTestFolders(project: Project): Array<out VirtualFile> = getDir(project.courseDir)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()
+  fun getTestFolders(project: Project): Array<out VirtualFile> {
+    return getDir(project.courseDir)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()
+      .filter { it.isValidCodeforcesTestFolder(this) }.toTypedArray()
+  }
 
   private fun addSampleTests(htmlElement: Element) {
     htmlElement.select("div.input").forEachIndexed { index, inputElement ->
