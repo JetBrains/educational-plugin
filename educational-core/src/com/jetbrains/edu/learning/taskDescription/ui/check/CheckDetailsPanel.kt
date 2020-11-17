@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
@@ -118,7 +117,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       else {
         "..."
       }
-      val peekSolution = LightColoredActionLink(text, ActionManager.getInstance().getAction(getPeekSolutionAction(task)),
+      val peekSolution = LightColoredActionLink(text, ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID),
                                                 isExternal = isExternal)
       answerHintsPanel.value.add(peekSolution)
     }
@@ -143,10 +142,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     panel.add(message)
     panel.add(markAsCompleted)
     return panel
-  }
-
-  private fun getPeekSolutionAction(task: Task): String {
-    return if (task.course is HyperskillCourse) HSPeekSolutionAction.ACTION_ID else CompareWithAnswerAction.ACTION_ID
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {

@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
@@ -98,19 +97,6 @@ private class NavigateToProjectAction(private val project: Project, private val 
     val lesson = course.getProjectLesson() ?: return
     val currentTask = lesson.currentTask() ?: return
     NavigationUtils.navigateToTask(project, currentTask)
-  }
-}
-
-class HSPeekSolutionAction : CompareWithAnswerAction() {
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
-    val task = EduUtils.getCurrentTask(project) ?: return
-    val url = hyperskillTaskLink(task)
-    EduBrowser.browse("$url$HYPERSKILL_SOLUTIONS_ANCHOR")
-  }
-
-  companion object {
-    const val ACTION_ID = "Hyperskill.PeekSolution"
   }
 }
 

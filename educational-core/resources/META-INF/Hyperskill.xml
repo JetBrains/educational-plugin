@@ -29,7 +29,6 @@
   </extensions>
 
   <actions>
-    <action id="Hyperskill.PeekSolution" class="com.jetbrains.edu.learning.stepik.hyperskill.HSPeekSolutionAction"/>
     <action id="Educational.Educator.HyperskillChangeHost" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillChangeHost"/>
     <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction">
       <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.BrowseCourses" anchor="after"/>

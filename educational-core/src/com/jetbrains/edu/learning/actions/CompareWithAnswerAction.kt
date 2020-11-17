@@ -8,10 +8,12 @@ import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.putSelectedTaskFileFirst
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -21,6 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 
 open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("compare.with.answer.title"),
                                                      EduCoreBundle.message("compare.with.answer.description"),
@@ -35,6 +40,12 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
     val eduState = project.eduState ?: return
 
     val (_, _, taskFile, task) = eduState
+
+    if (task.course is HyperskillCourse) {
+      val url = hyperskillTaskLink(task)
+      EduBrowser.getInstance().browse("$url$HYPERSKILL_SOLUTIONS_ANCHOR")
+      return
+    }
 
     val taskFiles = getTaskFiles(task)
     putSelectedTaskFileFirst(taskFiles, taskFile)
@@ -53,8 +64,12 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
       message.createBalloon().show(JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext), Balloon.Position.above)
       return
     }
-    DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
+    showSolution(project, requests)
     EduCounterUsageCollector.solutionPeeked()
+  }
+
+  protected open fun showSolution(project: Project, requests: List<SimpleDiffRequest>) {
+    DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
   }
 
   private fun getTaskFiles(task: Task) =
@@ -80,6 +95,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.message("comp
       return
     }
     val task = EduUtils.getCurrentTask(project) ?: return
+
     presentation.isEnabledAndVisible = task.canShowSolution()
   }
 }
