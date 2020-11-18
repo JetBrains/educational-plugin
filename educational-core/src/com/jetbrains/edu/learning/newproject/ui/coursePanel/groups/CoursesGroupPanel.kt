@@ -26,16 +26,16 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
   init {
     background = MAIN_BG_COLOR
     val name = coursesGroup.name
-    val showCollapseIcon = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
-    add(createTitleLabel(name, showCollapseIcon))
+    val isCollapsible = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
+    add(createTitleLabel(name, isCollapsible))
 
     fillCourseCardsPanel(coursesGroup, showOpenButton)
     add(courseCardsPanel)
   }
 
-  private fun createTitleLabel(name: String, showCollapseIcon: Boolean): JBLabel {
+  private fun createTitleLabel(name: String, isCollapsible: Boolean): JBLabel {
     val titleLabel = JBLabel(name).apply {
-      if (showCollapseIcon) {
+      if (isCollapsible) {
         icon = AllIcons.General.ArrowDown
       }
       horizontalTextPosition = SwingConstants.TRAILING
@@ -46,15 +46,17 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
       border = JBUI.Borders.empty(TOP_BOTTOM, LEFT_RIGHT)
       isVisible = name.isNotEmpty()
     }
-
-    titleLabel.addMouseListener(object : MouseAdapter() {
-      override fun mouseClicked(e: MouseEvent?) {
-        if (showCollapseIcon) {
-          titleLabel.icon = if (courseCardsPanel.isVisible) AllIcons.General.ArrowRight else AllIcons.General.ArrowDown
+    
+    if (isCollapsible) {
+      titleLabel.addMouseListener(object : MouseAdapter() {
+        override fun mouseClicked(e: MouseEvent?) {
+          if (isCollapsible) {
+            titleLabel.icon = if (courseCardsPanel.isVisible) AllIcons.General.ArrowRight else AllIcons.General.ArrowDown
+          }
+          courseCardsPanel.isVisible = !courseCardsPanel.isVisible
         }
-        courseCardsPanel.isVisible = !courseCardsPanel.isVisible
-      }
-    })
+      })
+    }
 
     return titleLabel
   }
