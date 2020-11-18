@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
 import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
+import com.intellij.openapi.actionSystem.impl.Win10ActionButtonLook
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.OnePixelDivider
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -26,6 +28,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel.Companion.IS_FROM_WELCOME_SCREEN
 import java.awt.BorderLayout
+import java.awt.Graphics
 import java.awt.event.ActionListener
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -63,6 +66,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     val panel = NonOpaquePanel()
     val searchField = CoursesFilterComponent({ CoursesGroup(CoursesStorage.getInstance().state.courses).asList() },
                                              { group -> updateModel(group) })
+    UIUtil.setBackgroundRecursively(searchField, MAIN_BG_COLOR)
 
     panel.add(searchField, BorderLayout.CENTER)
     panel.add(createActionToolbar(panel), BorderLayout.EAST)
@@ -76,7 +80,6 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
     return Wrapper(panel).apply {
       border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 0, 0, 1, 0)
-      UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
     }
   }
 
@@ -115,7 +118,15 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     moreActionPresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
 
     return ActionButton(moreActionGroup, moreActionPresentation, ACTION_PLACE, JBUI.size(12, 12)).apply {
-      setLook(ActionButtonLook.INPLACE_LOOK)
+      setLook(ActionButtonLookWithHover())
+    }
+  }
+
+  private class ActionButtonLookWithHover : ActionButtonLook() {
+    private var delegate: ActionButtonLook = if (UIUtil.isUnderWin10LookAndFeel()) Win10ActionButtonLook() else IdeaActionButtonLook()
+
+    override fun paintBackground(g: Graphics?, component: JComponent?, state: Int) {
+      delegate.paintBackground(g, component, state)
     }
   }
 }
