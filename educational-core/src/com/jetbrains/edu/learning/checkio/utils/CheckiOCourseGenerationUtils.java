@@ -34,7 +34,7 @@ public final class CheckiOCourseGenerationUtils {
     if (e instanceof HttpException &&
         ((HttpException)e).getResponse().code() == 401 && account != null) {
       return new ErrorState.CustomSevereError("", "Open", " CheckiO to verify account and try again",
-                                              () -> EduBrowser.INSTANCE.browse(link + "/login/checkio/"));
+                                              () -> EduBrowser.getInstance().browse(link + "/login/checkio/"));
     }
     else if (e instanceof NetworkException) {
       return new ErrorState.CustomSevereError(EduCoreBundle.message("error.failed.to.connect"), "", "", null);

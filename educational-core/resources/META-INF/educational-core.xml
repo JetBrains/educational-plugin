@@ -190,6 +190,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
+                        serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
+                        testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>

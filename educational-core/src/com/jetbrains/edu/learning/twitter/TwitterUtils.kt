@@ -101,7 +101,7 @@ object TwitterUtils {
       update.media(mediaPath.toFile())
     }
     twitter.updateStatus(update)
-    EduBrowser.browse("https://twitter.com/")
+    EduBrowser.getInstance().browse("https://twitter.com/")
   }
 
   /**

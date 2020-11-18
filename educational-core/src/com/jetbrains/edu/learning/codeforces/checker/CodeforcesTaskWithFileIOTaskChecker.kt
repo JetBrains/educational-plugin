@@ -21,7 +21,7 @@ class CodeforcesTaskWithFileIOTaskChecker(task: CodeforcesTaskWithFileIO, projec
     val url = (task.course as CodeforcesCourse).getSubmissionUrl()
 
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
-    EduBrowser.browse(url)
+    EduBrowser.getInstance().browse(url)
     return CheckResult(CheckStatus.Unchecked, "")
   }
 }

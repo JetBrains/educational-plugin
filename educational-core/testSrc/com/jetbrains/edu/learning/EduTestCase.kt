@@ -105,6 +105,7 @@ abstract class EduTestCase : EduTestCaseBase() {
 
   override fun tearDown() {
     try {
+      (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
       SubmissionsManager.getInstance(project).clear()
       myManager.closeAllFiles()
 

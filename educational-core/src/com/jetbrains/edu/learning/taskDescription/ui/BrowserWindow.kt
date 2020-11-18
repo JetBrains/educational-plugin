@@ -173,7 +173,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       myEngine.isJavaScriptEnabled = true
       myEngine.loadWorker.cancel()
       val urlToOpen = if (isRelativeLink(url)) getStepikUrl() + url else url
-      EduBrowser.browse(urlToOpen)
+      EduBrowser.getInstance().browse(urlToOpen)
       return true
     }
   }

@@ -9,7 +9,7 @@ open class EduBrowserHyperlinkListener : BrowserHyperlinkListener() {
     super.hyperlinkActivated(e)
 
     val host = e.url?.toString() ?: return
-    EduBrowser.countUsage(host)
+    EduBrowser.getInstance().countUsage(host)
   }
 
   companion object {

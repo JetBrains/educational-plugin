@@ -37,7 +37,7 @@ class MyNotification(content: String, feedbackUrl : String) :
     "Congratulations", content, NotificationType.INFORMATION,
         object : NotificationListener.Adapter() {
           override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-            EduBrowser.browse(feedbackUrl)
+            EduBrowser.getInstance().browse(feedbackUrl)
           }
         }), NotificationFullContent
 

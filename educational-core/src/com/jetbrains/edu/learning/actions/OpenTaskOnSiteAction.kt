@@ -23,7 +23,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(OPEN_TASK_ON_SITE_ACTION), RightAli
       is HyperskillCourse -> hyperskillTaskLink(task)
       else -> error("Only Codeforces and Hyperskill are supported")
     }
-    EduBrowser.browse(link)
+    EduBrowser.getInstance().browse(link)
   }
 
   override fun update(e: AnActionEvent) {

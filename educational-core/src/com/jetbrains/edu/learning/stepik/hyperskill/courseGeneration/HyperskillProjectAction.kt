@@ -83,7 +83,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : NotificationListener
     }
     else {
       if (url != null) {
-        EduBrowser.browse(url)
+        EduBrowser.getInstance().browse(url)
       }
     }
   }

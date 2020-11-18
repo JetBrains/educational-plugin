@@ -1,16 +1,17 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import java.net.URL
 
-object EduBrowser {
+open class EduBrowser {
   fun browse(url: URL) = browse(url.toExternalForm())
 
-  fun browse(link: String) {
+  open fun browse(link: String) {
     BrowserUtil.browse(link)
     countUsage(link)
   }
@@ -35,5 +36,10 @@ object EduBrowser {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
       }
     }
+  }
+
+  companion object {
+    @JvmStatic
+    fun getInstance(): EduBrowser = service()
   }
 }

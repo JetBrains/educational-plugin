@@ -152,7 +152,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
         url.startsWith(FILE_PROTOCOL_PREFIX) -> getStepikUrl() + url.substringAfter(FILE_PROTOCOL_PREFIX)
         else -> url
       }
-      EduBrowser.browse(urlToOpen)
+      EduBrowser.getInstance().browse(urlToOpen)
       return true
     }
   }

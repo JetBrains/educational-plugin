@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.datatransfer.StringSelection
 
@@ -25,9 +24,7 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     val taskFile = task.getCodeTaskFile() ?: return
     val solution = taskFile.getDocument(project)?.text ?: return
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
-    if (!isUnitTestMode) {
-      EduBrowser.browse(course.getSubmissionUrl())
-    }
+    EduBrowser.getInstance().browse(course.getSubmissionUrl())
   }
 
   override fun update(e: AnActionEvent) {

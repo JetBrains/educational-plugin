@@ -150,7 +150,8 @@ abstract class CoursesPanel(
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
                              SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide2", EduNames.NO_COURSES_URL),
-                             SimpleTextAttributes.LINK_ATTRIBUTES, ActionListener { EduBrowser.browse(EduNames.NO_COURSES_URL) })
+                             SimpleTextAttributes.LINK_ATTRIBUTES,
+                             ActionListener { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) })
     return panel
   }
 

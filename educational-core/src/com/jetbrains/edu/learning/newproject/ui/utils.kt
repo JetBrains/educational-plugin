@@ -86,7 +86,7 @@ fun browseHyperlink(message: ValidationMessage?) {
   }
   val hyperlink = message.hyperlinkAddress
   if (hyperlink != null) {
-    EduBrowser.browse(hyperlink)
+    EduBrowser.getInstance().browse(hyperlink)
   }
 }
 

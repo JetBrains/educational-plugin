@@ -25,7 +25,7 @@ class LeaveCommentAction : DumbAwareAction(LEAVE_A_COMMENT_ACTION, LEAVE_A_COMME
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
     val link = getLink(task)
-    EduBrowser.browse(link)
+    EduBrowser.getInstance().browse(link)
     EduCounterUsageCollector.leaveFeedback()
   }
 

@@ -504,7 +504,7 @@ public class CCStepikConnector {
     return new AnAction(EduCoreBundle.message("action.open.on.text", StepikNames.STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        EduBrowser.INSTANCE.browse(StepikNames.getStepikUrl() + url);
+        EduBrowser.getInstance().browse(StepikNames.getStepikUrl() + url);
       }
     };
   }
