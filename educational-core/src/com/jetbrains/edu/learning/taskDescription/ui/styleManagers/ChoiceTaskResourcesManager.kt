@@ -72,6 +72,7 @@ class ChoiceTaskResourcesManager {
         borderWidth = 0.7.px
         borderColor = getBorderColor()
         borderStyle = BorderStyle.solid
+        outline = Outline.none
       }
       "#choiceOptions .checkbox" {
         borderRadius = 3.px
