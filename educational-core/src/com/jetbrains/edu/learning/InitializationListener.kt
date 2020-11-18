@@ -121,7 +121,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     Notification(
       hyperskillNotificationGroup.displayId,
       EduNames.JBA,
-      EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.MISMATCH_REDIRECT_URI_URL),
+      EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
       NotificationType.ERROR,
       NotificationListener.URL_OPENING_LISTENER
     ).notify(null)

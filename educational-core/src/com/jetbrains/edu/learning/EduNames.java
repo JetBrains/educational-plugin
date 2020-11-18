@@ -94,7 +94,7 @@ public class EduNames {
   public static final String NO_COURSES_URL = TROUBLESHOOTING_GUIDE_URL + "#no_courses_found";
   public static final String FAILED_TO_POST_TO_JBA_URL = TROUBLESHOOTING_GUIDE_URL + "#failed_submission_jba";
   public static final String FAILED_TO_CHECK_URL = TROUBLESHOOTING_GUIDE_URL + "#failed_to_launch_checking";
-  public static final String MISMATCH_REDIRECT_URI_URL = TROUBLESHOOTING_GUIDE_URL + "?section=Java#mismatching_redirect_URI";
+  public static final String OUTSIDE_OF_KNOWN_PORT_RANGE_URL = TROUBLESHOOTING_GUIDE_URL + "#outside_of_known_port_range";
 
   private EduNames() {
   }
