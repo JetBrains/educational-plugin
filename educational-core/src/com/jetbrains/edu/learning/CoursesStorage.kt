@@ -49,11 +49,11 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
   fun coursesInGroups(): List<CoursesGroup> {
     val courses = state.courses
     val solvedCourses = CoursesGroup(EduCoreBundle.message("course.dialog.completed"),
-                                     courses.filter { it.isStudy && it.tasksSolved == it.tasksTotal })
+                                     courses.filter { it.isStudy && it.tasksSolved != 0 && it.tasksSolved == it.tasksTotal })
     val courseCreatorCourses = CoursesGroup(EduCoreBundle.message("course.dialog.my.courses.course.creation"),
                                             courses.filter { !it.isStudy })
     val inProgressCourses = CoursesGroup(EduCoreBundle.message("course.dialog.in.progress"),
-                                         courses.filter { it.isStudy && it.tasksSolved != it.tasksTotal })
+                                         courses.filter { it.isStudy && (it.tasksSolved == 0 || it.tasksSolved != it.tasksTotal) })
 
     return listOf(courseCreatorCourses, inProgressCourses, solvedCourses).filter { it.courses.isNotEmpty() }
   }

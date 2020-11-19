@@ -112,6 +112,15 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups.first().name)
   }
 
+  fun testUntouchedCourse() {
+    val coursesStorage = getCoursesStorage()
+    val course = course {}
+    coursesStorage.addCourse(course, "", 0, 0)
+    val coursesInGroups = coursesStorage.coursesInGroups()
+    assertSize(1, coursesInGroups)
+    assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups.first().name)
+  }
+
   private fun getCoursesStorage(): CoursesStorage {
     val coursesStorage = CoursesStorage.getInstance()
     coursesStorage.state.courses.clear()
