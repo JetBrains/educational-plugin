@@ -66,7 +66,8 @@ public class CCWrapWithSection extends DumbAwareAction {
   }
 
   private static boolean isConsecutive(ArrayList<Lesson> lessonsToWrap) {
-    List<Integer> indexes = lessonsToWrap.stream().map(it -> it.getIndex()).sorted().collect(Collectors.toList());
+    List<Integer> indexes = lessonsToWrap.stream().map(it -> it.getIndex()).collect(Collectors.toList());
+    if (indexes.isEmpty()) return false;
     if (indexes.stream().distinct().count() != indexes.size()) {
       return false;
     }
