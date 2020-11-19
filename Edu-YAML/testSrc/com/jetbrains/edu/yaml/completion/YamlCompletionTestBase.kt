@@ -1,28 +1,31 @@
 package com.jetbrains.edu.yaml.completion
 
-import com.intellij.codeInsight.completion.CompletionType
+import com.jetbrains.edu.learning.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.yaml.YamlCodeInsightTest
 
 abstract class YamlCompletionTestBase : YamlCodeInsightTest() {
 
+  private lateinit var completionFixture: EduCompletionTextFixture
+
+  override fun setUp() {
+    super.setUp()
+    completionFixture = EduCompletionTextFixture(myFixture)
+    completionFixture.setUp()
+  }
+
+  override fun tearDown() {
+    completionFixture.tearDown()
+    super.tearDown()
+  }
+
   protected fun doSingleCompletion(item: StudyItem, before: String, after: String, invocationCount: Int = 1) {
     openConfigFileWithText(item, before)
-    val variants = myFixture.complete(CompletionType.BASIC, invocationCount)
-    if (variants != null) {
-      if (variants.size == 1) {
-        myFixture.type('\n')
-        return
-      }
-      error("Expected a single completion, but got ${variants.size}\n" + variants.joinToString("\n") { it.lookupString })
-    }
-    myFixture.checkResult(after)
+    completionFixture.doSingleCompletion(after, invocationCount)
   }
 
   protected fun checkNoCompletion(item: StudyItem, text: String) {
     openConfigFileWithText(item, text)
-    val variants = myFixture.completeBasic()
-    checkNotNull(variants) { "Expected zero completions, but one completion was auto inserted" }
-    assertEquals("Expected zero completions", 0, variants.size)
+    completionFixture.checkNoCompletion()
   }
 }
