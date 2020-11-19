@@ -1,3 +1,9 @@
 <idea-plugin>
   <depends>com.intellij.modules.xml</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="HTML"
+                            id="EduHtmlCompletionContributor"
+                            implementationClass="com.jetbrains.edu.html.taskDescription.EduHtmlCompletionContributor"/>
+  </extensions>
 </idea-plugin>

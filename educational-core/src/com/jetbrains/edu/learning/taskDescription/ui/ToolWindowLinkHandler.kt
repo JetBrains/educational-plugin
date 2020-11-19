@@ -42,7 +42,7 @@ abstract class ToolWindowLinkHandler(val project: Project) {
 
   companion object {
     const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
-    private const val IN_COURSE_PROTOCOL: String = "course://"
+    const val IN_COURSE_PROTOCOL: String = "course://"
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
 
     @JvmStatic
