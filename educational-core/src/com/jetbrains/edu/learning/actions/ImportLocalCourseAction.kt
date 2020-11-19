@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-open class ImportLocalCourseAction(text: String = EduCoreBundle.getMessage("course.dialog.open.course.from.disk")) : DumbAwareAction(text) {
+open class ImportLocalCourseAction(text: String = EduCoreBundle.message("course.dialog.open.course.from.disk")) : DumbAwareAction(text) {
   override fun actionPerformed(e: AnActionEvent) {
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
