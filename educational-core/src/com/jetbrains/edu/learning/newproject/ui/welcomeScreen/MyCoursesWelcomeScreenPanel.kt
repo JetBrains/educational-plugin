@@ -17,10 +17,10 @@ import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel

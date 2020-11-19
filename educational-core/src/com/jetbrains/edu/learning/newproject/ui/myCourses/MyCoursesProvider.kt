@@ -6,9 +6,9 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR

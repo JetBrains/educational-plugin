@@ -6,10 +6,10 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState

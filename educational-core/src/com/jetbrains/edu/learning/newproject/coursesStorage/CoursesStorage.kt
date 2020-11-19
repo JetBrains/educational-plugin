@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.newproject.coursesStorage
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.Transient
 import com.intellij.util.xmlb.annotations.XCollection
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle

@@ -7,12 +7,12 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.CourseMetaInfo
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton

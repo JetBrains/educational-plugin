@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.isBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillNotificationGroup
 import com.jetbrains.edu.learning.ui.SelectRolePanel

@@ -8,13 +8,13 @@ import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.awt.Color

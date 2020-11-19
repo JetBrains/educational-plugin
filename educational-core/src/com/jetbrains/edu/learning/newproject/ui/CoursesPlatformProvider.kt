@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel

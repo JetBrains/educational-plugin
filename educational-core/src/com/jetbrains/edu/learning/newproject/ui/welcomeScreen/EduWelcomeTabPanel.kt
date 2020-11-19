@@ -21,13 +21,13 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
-import com.jetbrains.edu.learning.CourseDeletedListener
-import com.jetbrains.edu.learning.CourseMetaInfo
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR

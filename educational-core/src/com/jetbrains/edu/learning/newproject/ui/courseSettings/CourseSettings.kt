@@ -12,7 +12,6 @@ import com.intellij.util.PathUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -20,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
 import java.awt.BorderLayout

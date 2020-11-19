@@ -13,10 +13,10 @@ import com.intellij.util.NotNullProducer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.CoursesStorage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
