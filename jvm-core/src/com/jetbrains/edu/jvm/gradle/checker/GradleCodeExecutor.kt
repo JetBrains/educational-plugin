@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class GradleCodeExecutor : CodeExecutor {
+open class GradleCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> =
     when (task) {
       // TODO https://youtrack.jetbrains.com/issue/EDU-3272
