@@ -39,7 +39,7 @@ class MyCoursesPanel(
   }
 
   override fun toolbarAction(): AnAction? {
-    return ImportLocalCourseAction(EduCoreBundle.message("course.dialog.open.course.from.disk"))
+    return ImportLocalCourseAction()
   }
 
   override fun createNoCoursesPanel(): JPanel {
