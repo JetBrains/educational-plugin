@@ -26,23 +26,15 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 abstract class ToolWindowLinkHandler(val project: Project) {
   open fun process(url: String): Boolean {
     return when {
-      url.startsWith(PSI_ELEMENT_PROTOCOL) -> processPsiElementLink(url)
+      url.startsWith(PSI_ELEMENT_PROTOCOL) -> {
+        processPsiElementLink(project, url)
+        true
+      }
       url.startsWith(IN_COURSE_PROTOCOL) -> {
         processInCourseLink(project, url)
         true
       }
       else -> processExternalLink(url)
-    }
-  }
-
-  private fun processPsiElementLink(url: String): Boolean {
-    return try {
-      navigateToPsiElement(project, url)
-      true
-    }
-    catch (e: Exception) {
-      LOG.error(e)
-      false
     }
   }
 
@@ -59,8 +51,8 @@ abstract class ToolWindowLinkHandler(val project: Project) {
     }
 
     @JvmStatic
-    fun navigateToPsiElement(project: Project, url: String) {
-      val urlEncodedName = url.replace(PSI_ELEMENT_PROTOCOL, "")
+    fun processPsiElementLink(project: Project, url: String) {
+      val urlEncodedName = url.substringAfter(PSI_ELEMENT_PROTOCOL)
       // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
       // For example, Java support produces `Foo#foo(int, int)` as reference for `foo` method in the following `Foo` class
       // ```
@@ -142,7 +134,7 @@ abstract class ToolWindowLinkHandler(val project: Project) {
         }
       }
 
-      val urlEncodedPath = url.replace(IN_COURSE_PROTOCOL, "")
+      val urlEncodedPath = url.substringAfter(IN_COURSE_PROTOCOL)
       val path = URLUtil.decode(urlEncodedPath)
       return parseNextItem(course, path)
     }

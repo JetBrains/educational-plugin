@@ -16,7 +16,7 @@ abstract class TaskDescriptionPsiLinksTestBase : EduTestCase() {
 
   protected fun doTest(linkText: String, expectedText: String, fileTreeBlock: FileTreeBuilder.() -> Unit) {
     fileTree(fileTreeBlock).create(LightPlatformTestCase.getSourceRoot())
-    ToolWindowLinkHandler.navigateToPsiElement(project, "${ToolWindowLinkHandler.PSI_ELEMENT_PROTOCOL}$linkText")
+    ToolWindowLinkHandler.processPsiElementLink(project, "${ToolWindowLinkHandler.PSI_ELEMENT_PROTOCOL}$linkText")
     UIUtil.dispatchAllInvocationEvents()
     val openedEditor = EditorFactory.getInstance().allEditors.single()
 
