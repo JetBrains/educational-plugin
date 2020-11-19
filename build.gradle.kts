@@ -69,6 +69,7 @@ val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
+val markdownPlugin = if (baseIDE == "studio") "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 
 val jvmPlugins = arrayOf(
   "java",
@@ -250,7 +251,8 @@ project(":") {
     val pluginsList = mutableListOf(
       rustPlugin,
       tomlPlugin,
-      "yaml"
+      "yaml",
+      markdownPlugin
     )
     pluginsList += listOfNotNull(pythonPlugin)
     if (isJvmCenteredIDE) {
@@ -265,6 +267,8 @@ project(":") {
 
   dependencies {
     implementation(project(":educational-core"))
+    implementation(project(":educational-core:html"))
+    implementation(project(":educational-core:markdown"))
     implementation(project(":jvm-core"))
     implementation(project(":Edu-YAML"))
     implementation(project(":Edu-Java"))
@@ -380,6 +384,45 @@ project(":educational-core") {
 
   dependencies {
     testOutput(sourceSets.getByName("test").output.classesDirs)
+  }
+}
+
+project(":educational-core:html") {
+  intellij {
+    if (baseIDE == "clion" && isAtLeast203) {
+      /**
+       * TODO: Remove it after CLion plugin will be fixed
+       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
+       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
+       */
+      setPlugins(cPlugin)
+    }
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":educational-core:markdown") {
+
+  intellij {
+    val plugins = mutableListOf(markdownPlugin)
+    if (baseIDE == "clion" && isAtLeast203) {
+      /**
+       * TODO: Remove it after CLion plugin will be fixed
+       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
+       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
+       */
+      plugins += cPlugin
+    }
+    setPlugins(*plugins.toTypedArray())
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 

@@ -1,0 +1,3 @@
+<idea-plugin>
+  <depends>org.intellij.plugins.markdown</depends>
+</idea-plugin>

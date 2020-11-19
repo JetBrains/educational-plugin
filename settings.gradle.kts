@@ -6,6 +6,8 @@ import java.util.*
 rootProject.name = "educational-plugin"
 include(
   "educational-core",
+  "educational-core:html",
+  "educational-core:markdown",
   "jvm-core",
   "Edu-YAML",
   "Edu-Java",
