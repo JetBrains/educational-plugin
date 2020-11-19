@@ -23,10 +23,11 @@ import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseAddedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
@@ -63,13 +64,19 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
     add(welcomeScreenPanel, MY_COURSES_PANEL)
     add(createEmptyPanel(), EMPTY)
     showPanel()
-    subscribeToCourseDeletedEvent(parentDisposable) { welcomeScreenPanel.updateModel() }
+    subscribeToCoursesStorageEvents(parentDisposable) { welcomeScreenPanel.updateModel() }
   }
 
-  private fun subscribeToCourseDeletedEvent(disposable: Disposable, updateModel: () -> Unit) {
+  private fun subscribeToCoursesStorageEvents(disposable: Disposable, updateModel: () -> Unit) {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: CourseMetaInfo) {
+      override fun courseDeleted(course: Course) {
+        updateModel()
+        showPanel()
+      }
+    })
+    connection.subscribe(CoursesStorage.COURSE_ADDED, object : CourseAddedListener {
+      override fun courseAdded(course: Course) {
         updateModel()
         showPanel()
       }

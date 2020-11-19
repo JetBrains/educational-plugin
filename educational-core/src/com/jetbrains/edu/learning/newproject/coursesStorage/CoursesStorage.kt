@@ -28,6 +28,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
+    ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_ADDED).courseAdded(course)
   }
 
   fun getCoursePath(course: Course): String? = getCourseMetaInfo(course)?.location
@@ -63,6 +64,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 
   companion object {
     val COURSE_DELETED = Topic.create("Edu.courseDeletedFromStorage", CourseDeletedListener::class.java)
+    val COURSE_ADDED = Topic.create("Edu.courseAddedToStorage", CourseAddedListener::class.java)
 
     fun getInstance(): CoursesStorage = service()
   }

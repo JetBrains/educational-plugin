@@ -8,9 +8,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -30,7 +30,7 @@ class MyCoursesPanel(
   init {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
     connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: CourseMetaInfo) {
+      override fun courseDeleted(course: Course) {
         coursesGroups.clear()
         coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
         onTabSelection()
