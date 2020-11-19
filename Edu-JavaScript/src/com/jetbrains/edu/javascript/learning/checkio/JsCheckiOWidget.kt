@@ -12,6 +12,7 @@ import icons.EducationalCoreIcons
 
 class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
                                                                       EduJavaScriptBundle.message("checkio.widget.title"),
+                                                                      EduJavaScriptBundle.message("checkio.widget.tooltip"),
                                                                       EducationalCoreIcons.JSCheckiO) {
   override val account: CheckiOAccount?
     get() = JsCheckiOSettings.getInstance().account

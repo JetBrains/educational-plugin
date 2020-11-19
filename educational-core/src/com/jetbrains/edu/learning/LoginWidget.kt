@@ -28,6 +28,7 @@ import javax.swing.JPanel
 
 abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
                                                       private val title: String,
+                                                      tooltipText: String,
                                                       private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
   abstract val account: T?
@@ -41,7 +42,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
   private val component: JLabel = JBLabel(icon)
 
   init {
-    component.toolTipText = title
+    component.toolTipText = tooltipText
     installClickListener()
   }
 

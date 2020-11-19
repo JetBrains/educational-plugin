@@ -12,6 +12,7 @@ import icons.EducationalCoreIcons
 
 class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
                                                                       EduPythonBundle.message("checkio.widget.title"),
+                                                                      EduPythonBundle.message("checkio.widget.tooltip"),
                                                                       EducationalCoreIcons.CheckiO) {
   override val account: CheckiOAccount?
     get() = PyCheckiOSettings.INSTANCE.account

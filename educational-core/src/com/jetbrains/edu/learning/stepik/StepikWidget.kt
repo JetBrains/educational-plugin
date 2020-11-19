@@ -11,6 +11,7 @@ import icons.EducationalCoreIcons
 
 class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
                                                                EduCoreBundle.message("stepik.widget.title"),
+                                                               EduCoreBundle.message("stepik.widget.tooltip"),
                                                                EducationalCoreIcons.Stepik) {
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
