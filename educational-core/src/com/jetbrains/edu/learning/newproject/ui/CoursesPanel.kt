@@ -7,6 +7,7 @@ import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -72,6 +73,7 @@ abstract class CoursesPanel(
 
   init {
     layout = cardLayout
+    background = MAIN_BG_COLOR
     coursesListPanel.setSelectionListener { processSelectionChanged() }
 
     addCourseValidationListener(object : CourseValidationListener {
@@ -125,7 +127,7 @@ abstract class CoursesPanel(
     splitPane.divider.background = CoursePanel.DIVIDER_COLOR
     splitPane.proportion = 0.46f
 
-    val splitPaneRoot = JPanel(BorderLayout()) // needed to set borders
+    val splitPaneRoot = NonOpaquePanel() // needed to set borders
     splitPaneRoot.add(splitPane, BorderLayout.CENTER)
     splitPaneRoot.border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 1, 0, 0, 0)
     return splitPaneRoot

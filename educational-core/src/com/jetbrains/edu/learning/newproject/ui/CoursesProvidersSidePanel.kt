@@ -1,7 +1,5 @@
-
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -12,6 +10,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.newproject.ui.createHyperlinkWithContextHelp
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
@@ -67,8 +66,9 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
     }
   }
 
-  private fun createCourseActionLink(): ActionLink {
-    return ActionLink(EduCoreBundle.message("course.dialog.create.course"), CCNewCourseAction()).apply {
+  private fun createCourseActionLink(): JPanel {
+    val courseAction = CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course"))
+    return createHyperlinkWithContextHelp(courseAction).apply {
       border = JBUI.Borders.empty(12, 12)
     }
   }

@@ -38,8 +38,8 @@ class MyCoursesPanel(
     })
   }
 
-  override fun toolbarAction(): AnAction? {
-    return ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.ellipsis"))
+  override fun toolbarAction(): AnAction {
+    return ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"))
   }
 
   override fun createNoCoursesPanel(): JPanel {

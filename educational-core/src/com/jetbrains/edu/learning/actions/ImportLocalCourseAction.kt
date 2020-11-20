@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NonNls
 import java.awt.Component
 import java.util.function.Supplier
 
-open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk")) : DumbAwareAction(text) {
+open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk")) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->

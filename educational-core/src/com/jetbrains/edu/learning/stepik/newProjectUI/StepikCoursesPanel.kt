@@ -71,7 +71,9 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     }
   }
 
-  private inner class OpenStepikCourseByLink : AnAction(EduCoreBundle.message("stepik.courses.open.by.link", StepikNames.STEPIK), null,
+  private inner class OpenStepikCourseByLink : AnAction(EduCoreBundle.lazyMessage("stepik.courses.open.by.link", StepikNames.STEPIK),
+                                                        EduCoreBundle.lazyMessage("stepik.courses.open.by.link.description",
+                                                                                  StepikNames.STEPIK),
                                                         null) {
     override fun actionPerformed(e: AnActionEvent) {
       if (EduSettings.isLoggedIn()) {
@@ -100,7 +102,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     private fun importCourse() {
       val course = StartStepikCourseAction().importStepikCourse() ?: return
       val coursesGroup = coursesGroups.first()
-      val alreadyAddedCourse = coursesGroup.courses.find { it.id == course.id && it.languageID == course.languageID}
+      val alreadyAddedCourse = coursesGroup.courses.find { it.id == course.id && it.languageID == course.languageID }
       if (alreadyAddedCourse != null) {
         updateModel(coursesGroups, alreadyAddedCourse, false)
       }

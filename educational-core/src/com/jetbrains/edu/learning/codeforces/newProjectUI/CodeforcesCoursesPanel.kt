@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 
 class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   override fun toolbarAction(): AnAction? {
-    return StartCodeforcesContestAction(EduCoreBundle.message("codeforces.open.contest.by.link"), false)
+    return StartCodeforcesContestAction(EduCoreBundle.lazyMessage("codeforces.open.contest.by.link"), false)
   }
 
   override fun tabInfo(): TabInfo? {

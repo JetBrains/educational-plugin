@@ -1,7 +1,11 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.HyperlinkLabel
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
@@ -18,10 +22,15 @@ import kotlinx.css.body
 import kotlinx.css.properties.lh
 import kotlinx.css.pt
 import kotlinx.css.px
+import org.jetbrains.annotations.NonNls
 import java.awt.Component
+import java.awt.FlowLayout
 import javax.swing.Icon
+import javax.swing.JPanel
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
+@NonNls
+private const val CONTEXT_HELP_ACTION_PLACE = "ContextHelp"
 
 val Course.logo: Icon?
   get() {
@@ -96,4 +105,26 @@ fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
     fontSize = JBUI.scaleFontSize(13.0f).pt
     lineHeight = (JBUI.scaleFontSize(16.0f)).px.lh
   }
+}
+
+fun createHyperlinkWithContextHelp(action: AnAction): JPanel {
+  val hyperlinkLabel = HyperlinkLabel(action.templateText)
+  hyperlinkLabel.addHyperlinkListener {
+    val actionEvent = AnActionEvent.createFromAnAction(action,
+                                                       null,
+                                                       CONTEXT_HELP_ACTION_PLACE,
+                                                       DataManager.getInstance().getDataContext(hyperlinkLabel))
+    action.actionPerformed(actionEvent)
+  }
+
+  val hyperlinkPanel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
+    isOpaque = false
+  }
+  hyperlinkPanel.add(hyperlinkLabel)
+
+  if (action is ContextHelpProvider) {
+    hyperlinkPanel.add(action.createContextHelpComponent())
+  }
+
+  return hyperlinkPanel
 }

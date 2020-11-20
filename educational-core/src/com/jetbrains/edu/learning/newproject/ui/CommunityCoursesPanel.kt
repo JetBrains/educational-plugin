@@ -19,9 +19,9 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
     return CCNewCourseAction(EduCoreBundle.lazyMessage ("course.dialog.create.course"))
   }
 
-  override fun tabInfo(): TabInfo? {
+  override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("community.courses.explanation")
-    val linkText = EduCoreBundle.message("community.courses.explanation.link")
+    val linkText = EduCoreBundle.message("course.dialog.learn.more")
     val linkInfo = LinkInfo(linkText, LEARN_COMMUNITY_COURSES)
     return TabInfo(infoText, linkInfo, null)
   }

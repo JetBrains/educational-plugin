@@ -1,14 +1,9 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
@@ -43,7 +38,9 @@ class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: 
     add(scrollPane, BorderLayout.CENTER)
 
     if (toolbarAction != null) {
-      val toolbarPanel = createToolbarPanel(toolbarAction)
+      val toolbarPanel = createHyperlinkWithContextHelp(toolbarAction).apply {
+        border = JBUI.Borders.empty(TOOLBAR_TOP_OFFSET, TOOLBAR_LEFT_OFFSET, TOOLBAR_BOTTOM_OFFSET, 0)
+      }
       add(toolbarPanel, BorderLayout.SOUTH)
       scrollPane.border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 1, 0)
     }
@@ -51,22 +48,5 @@ class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: 
 
   fun hideLoginPanel() {
     tabInfoPanel?.hideLoginPanel()
-  }
-
-  private fun createToolbarPanel(toolbarAction: AnAction): JPanel {
-    val hyperlinkLabel = HyperlinkLabel(toolbarAction.templateText)
-    hyperlinkLabel.addHyperlinkListener {
-      val actionEvent = AnActionEvent.createFromAnAction(toolbarAction, null,
-                                                         ActionPlaces.UNKNOWN,
-                                                         DataManager.getInstance().getDataContext(this))
-      toolbarAction.actionPerformed(actionEvent)
-    }
-
-    val hyperlinkPanel = JPanel(BorderLayout())
-    hyperlinkPanel.border = JBUI.Borders.empty(TOOLBAR_TOP_OFFSET, TOOLBAR_LEFT_OFFSET, TOOLBAR_BOTTOM_OFFSET, 0)
-    hyperlinkPanel.add(hyperlinkLabel, BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(hyperlinkPanel, MAIN_BG_COLOR)
-
-    return hyperlinkPanel
   }
 }
