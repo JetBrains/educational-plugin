@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -18,11 +19,11 @@ private const val TOOLBAR_TOP_OFFSET = 10
 private const val TOOLBAR_BOTTOM_OFFSET = 8
 private const val TOOLBAR_LEFT_OFFSET = 13
 
-class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: AnAction?) : JPanel(BorderLayout()) {
+class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: AnAction?) : NonOpaquePanel() {
   private var tabInfoPanel: TabInfoPanel? = null
 
   init {
-    val listWithTabInfo = JPanel(BorderLayout())
+    val listWithTabInfo = NonOpaquePanel()
     listWithTabInfo.add(mainPanel, BorderLayout.CENTER)
 
     if (tabInfo != null) {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.icons.AllIcons
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
@@ -20,7 +21,7 @@ private const val BOTTOM_LOGIN_OFFSET = 5
 
 private const val TOP_BOTTOM_INFO_OFFSET = 13
 
-class TabInfoPanel(tabInfo: TabInfo) : JPanel() {
+class TabInfoPanel(tabInfo: TabInfo) : NonOpaquePanel() {
   private val infoText: String
   private val infoLink: LinkInfo?
   private val loginComponent: JPanel?
