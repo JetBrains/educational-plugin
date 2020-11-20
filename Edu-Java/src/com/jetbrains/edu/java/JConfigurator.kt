@@ -3,7 +3,6 @@ package com.jetbrains.edu.java
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -22,7 +21,7 @@ class JConfigurator : GradleConfiguratorBase() {
     get() = !EduUtils.isAndroidStudio()
 
   override val taskCheckerProvider: TaskCheckerProvider
-    get() = GradleTaskCheckerProvider()
+    get() = JTaskCheckerProvider()
 
   override fun getMockFileName(text: String): String = fileName(JavaLanguage.INSTANCE, text)
 
