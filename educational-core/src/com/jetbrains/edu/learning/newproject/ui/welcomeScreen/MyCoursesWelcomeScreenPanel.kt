@@ -111,7 +111,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
   private fun createMoreActionsButton(): JComponent {
     val moreActionGroup = DefaultActionGroup("", true)
     moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course").capitalize()),
-                           ImportLocalCourseAction(EduCoreBundle.message("course.dialog.open.course.from.disk")))
+                           ImportLocalCourseAction())
 
     val moreActionPresentation = moreActionGroup.templatePresentation
     moreActionPresentation.icon = AllIcons.Actions.More
