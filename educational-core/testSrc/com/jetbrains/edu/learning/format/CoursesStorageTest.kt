@@ -4,9 +4,13 @@ import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.UserCoursesState
 import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
