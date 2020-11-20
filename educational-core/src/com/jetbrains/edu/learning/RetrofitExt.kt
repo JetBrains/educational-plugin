@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
@@ -23,6 +24,7 @@ import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.RetrofitExt")
@@ -119,7 +121,15 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   }
 
   return try {
-    val response = execute()
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
+
+    val response = if (progressIndicator != null) {
+      ApplicationUtil.runWithCheckCanceled(Callable { execute() }, progressIndicator)
+    }
+    else {
+      execute()
+    }
+
     ProgressManager.checkCanceled()
 
     val error = response.errorBody()?.string() ?: return Ok(response)
@@ -149,6 +159,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
     Err("${EduCoreBundle.message("error.failed.to.connect")} \n\n${e.message}")
   }
   catch (e: ProcessCanceledException) {
+    cancel()
     throw e
   }
   catch (e: RuntimeException) {
