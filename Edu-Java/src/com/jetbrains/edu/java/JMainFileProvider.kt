@@ -9,13 +9,16 @@ import com.intellij.psi.util.PsiMethodUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.jvm.MainFileProvider
 
-class JMainFileProvider: MainFileProvider {
-  override fun findMainClass(project: Project, file: VirtualFile): String? {
-    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-    val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
-      PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
-    } ?: return null
+class JMainFileProvider : MainFileProvider {
+  override fun findMainClassName(project: Project, file: VirtualFile): String? {
+    val psiElement = findMainPsi(project, file) ?: return null
+    return JavaExecutionUtil.getRuntimeQualifiedName(psiElement)
+  }
 
-    return JavaExecutionUtil.getRuntimeQualifiedName(mainClass)
+  override fun findMainPsi(project: Project, file: VirtualFile): PsiClass? {
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
+    return PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
+      PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
+    }
   }
 }
