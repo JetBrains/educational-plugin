@@ -1,9 +1,21 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
+import com.jetbrains.edu.learning.EduFileEditorTestFixture
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 
 class InvisibleDependencyTest : EduTestCase() {
+  private lateinit var fileEditorFixture: EduFileEditorTestFixture
+
+  override fun setUp() {
+    super.setUp()
+    fileEditorFixture = EduFileEditorTestFixture(myFixture).apply { setUp() }
+  }
+
+  override fun tearDown() {
+    fileEditorFixture.tearDown()
+    super.tearDown()
+  }
 
   fun `test invisible placeholder with invisible dependency`() = doTest(CheckStatus.Solved, false, "type Bar")
   fun `test visible placeholder with invisible dependency`() = doTest(CheckStatus.Unchecked, true, "type Foo")

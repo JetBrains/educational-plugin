@@ -3,15 +3,10 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
-import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
-import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
-import com.intellij.testFramework.registerComponentInstance
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.HeavyPlatformTestCaseBase
@@ -26,8 +21,6 @@ import org.junit.Assert
 import org.junit.ComparisonFailure
 
 abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
-    private lateinit var myManager: FileEditorManagerImpl
-
     private lateinit var myCourse: Course
 
     private val checkerFixture: EduCheckerFixture<Settings> by lazy {
@@ -130,9 +123,6 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
     override fun setUp() {
         super.setUp()
 
-        myManager = FileEditorManagerImpl(myProject)
-        myProject.registerComponentInstance(FileEditorManager::class.java, myManager, testRootDisposable)!!
-        (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
 
         CheckActionListener.registerListener(testRootDisposable)
@@ -142,15 +132,6 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
     override fun tearDown() {
         try {
             checkerFixture.tearDown()
-
-            myManager.closeAllFiles()
-
-            val editorHistoryManager = EditorHistoryManager.getInstance(myProject)
-            editorHistoryManager.files.forEach {
-                editorHistoryManager.removeFile(it)
-            }
-
-            (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         } finally {
             super.tearDown()
         }

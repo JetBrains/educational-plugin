@@ -11,11 +11,6 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
-import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
-import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
-import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
@@ -24,7 +19,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.registerComponentInstance
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -59,7 +53,6 @@ import java.util.*
 import java.util.regex.Pattern
 
 abstract class EduTestCase : EduTestCaseBase() {
-  private lateinit var myManager: FileEditorManagerImpl
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -84,11 +77,6 @@ abstract class EduTestCase : EduTestCaseBase() {
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
     registerAdditionalResourceBundleProviders(testRootDisposable)
 
-    myManager = FileEditorManagerImpl(myFixture.project)
-    // Copied from TestEditorManagerImpl's constructor
-    myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
-    project.registerComponentInstance(FileEditorManager::class.java, myManager, testRootDisposable)!!
-    (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
     connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
@@ -107,13 +95,7 @@ abstract class EduTestCase : EduTestCaseBase() {
     try {
       (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
       SubmissionsManager.getInstance(project).clear()
-      myManager.closeAllFiles()
 
-      EditorHistoryManager.getInstance(myFixture.project).files.forEach {
-        EditorHistoryManager.getInstance(myFixture.project).removeFile(it)
-      }
-
-      (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
     }
