@@ -33,6 +33,14 @@ class CoursesStorageTest : EduTestCase() {
     assertFalse(coursesStorage.hasCourse(studentCourse))
   }
 
+  fun testLanguageRespected() {
+    val coursesStorage = CoursesStorage.getInstance()
+    val courseWithDefaultId = course {}
+    coursesStorage.addCourse(courseWithDefaultId, "", 0, 0)
+    val courseWithLanguage = course {}.apply { language = EduNames.PYTHON }
+    assertFalse(coursesStorage.hasCourse(courseWithLanguage))
+  }
+
   fun testDeserializeFirstVersionCoursesStorage() {
     val deserialized = deserializeState()
     assertEquals(1, deserialized.courses.size)
@@ -157,7 +165,6 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.my.courses.course.creation"), coursesInGroups.first().name)
     assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups[1].name)
     assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups[2].name)
-
   }
 
   private fun doSerializationTest(course: Course) {

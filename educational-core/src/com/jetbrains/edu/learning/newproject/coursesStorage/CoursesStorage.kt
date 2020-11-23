@@ -36,7 +36,12 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
 
   fun getCourseMetaInfo(course: Course): CourseMetaInfo? {
-    return state.courses.find { it.name == course.name && it.id == course.id && it.courseMode == course.courseMode }
+    return state.courses.find {
+      it.name == course.name
+      && it.id == course.id
+      && it.courseMode == course.courseMode
+      && it.languageID == course.languageID
+    }
   }
 
   fun updateCourseProgress(course: Course, location: String, tasksSolved: Int, tasksTotal: Int) {
