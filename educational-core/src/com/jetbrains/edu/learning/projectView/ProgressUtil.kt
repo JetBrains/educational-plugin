@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -85,7 +86,7 @@ object ProgressUtil {
       pane.updateCourseProgress(tasksTotal, tasksSolved)
     }
     val location = project.basePath
-    if (location != null) {
+    if (location != null && course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == false) {
       CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
     }
   }
