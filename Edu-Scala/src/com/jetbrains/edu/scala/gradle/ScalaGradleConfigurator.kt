@@ -21,7 +21,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
     get() = !EduUtils.isAndroidStudio()
 
   override val taskCheckerProvider: TaskCheckerProvider
-    get() = ScalaTaskCheckerProvider()
+    get() = GradleTaskCheckerProvider()
 
   override val mockTemplate: String
     get() = getInternalTemplateText(MOCK_SCALA)
