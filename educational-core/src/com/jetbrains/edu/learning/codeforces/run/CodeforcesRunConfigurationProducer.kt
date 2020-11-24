@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -24,7 +25,7 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
     val selectedFile = context.location?.virtualFile ?: return false
     val testsFile = getInputFile(project, selectedFile) ?: return false
     val task = selectedFile.getContainingTask(project) as? CodeforcesTask ?: return false
-    val codeFile = task.getCodeTaskFile()?.getVirtualFile(project) ?: return false
+    val codeFile = task.getCodeTaskFile(project)?.getVirtualFile(project) ?: return false
     val codeExecutor = task.course.configurator?.taskCheckerProvider?.getCodeExecutor() ?: return false
 
     configuration.name = "${task.presentableName} (${testsFile.parent.name})"
@@ -51,9 +52,7 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
       val taskDir = task.getDir(project.courseDir) ?: return null
       val folderCandidate = getTestFolderCandidate(selectedFile, taskDir, task)
       val testFolder = if (folderCandidate != null) {
-        // dependency to other review
-        // if (folderCandidate.isValidCodeforcesTestFolder(task)) folderCandidate else null
-        folderCandidate
+        if (folderCandidate.isValidCodeforcesTestFolder(task)) folderCandidate else null
       }
       else {
         val allTestFolders = task.getTestFolders(project)

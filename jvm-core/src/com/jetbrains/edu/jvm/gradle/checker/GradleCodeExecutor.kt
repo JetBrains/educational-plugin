@@ -23,7 +23,7 @@ open class GradleCodeExecutor : CodeExecutor {
       else -> runGradleRunTask(project, task, indicator)
     }
 
-  override fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration? {
+  override fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
     return GradleCodeforcesRunConfiguration(project, factory)
   }
 
