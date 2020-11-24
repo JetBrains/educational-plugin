@@ -2,16 +2,17 @@ package com.jetbrains.edu.learning.codeforces.run
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isTestDataFolder
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -38,38 +39,43 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
     return CodeforcesRunConfigurationType.getInstance().configurationFactories[0]
   }
 
-  override fun isConfigurationFromContext(configuration: CodeforcesRunConfiguration,
-                                          context: ConfigurationContext): Boolean {
-    val selectedFile = context.location?.virtualFile ?: return false
+  override fun isConfigurationFromContext(configuration: CodeforcesRunConfiguration, context: ConfigurationContext): Boolean {
+    val selectedFiles = context.dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
+    if (selectedFiles.size != 1) return false
+    val selectedFile = selectedFiles.firstOrNull() ?: return false
     val testsFile = getInputFile(context.project, selectedFile) ?: return false
     return testsFile == configuration.getRedirectInputFile()
+  }
+
+  override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
+    return true
   }
 
   companion object {
     @VisibleForTesting
     fun getInputFile(project: Project, selectedFile: VirtualFile): VirtualFile? {
       val task = selectedFile.getContainingTask(project) as? CodeforcesTask ?: return null
-      val taskDir = task.getDir(project.courseDir) ?: return null
-      val folderCandidate = getTestFolderCandidate(selectedFile, taskDir, task)
-      val testFolder = if (folderCandidate != null) {
-        if (folderCandidate.isValidCodeforcesTestFolder(task)) folderCandidate else null
-      }
-      else {
-        val allTestFolders = task.getTestFolders(project)
-        if (allTestFolders.size == 1) allTestFolders.firstOrNull() else null
-      }
-      return testFolder?.findChild(task.inputFileName)
+      return selectedFile.getTestFolder(project, task)?.findChild(task.inputFileName)
     }
 
-    private fun getTestFolderCandidate(selectedFile: VirtualFile, taskDir: VirtualFile, task: CodeforcesTask): VirtualFile? {
-      var file = selectedFile
+    private fun VirtualFile.getTestFolder(project: Project, task: CodeforcesTask): VirtualFile? {
+      var resultCandidate = this
       while (true) {
-        if (file.name == task.name) return null // no need to go up
-        val testDataFolder = file.parent ?: return null
-        if (testDataFolder.name == CodeforcesNames.TEST_DATA_FOLDER && testDataFolder.parent == taskDir) {
-          return file
+        if (resultCandidate.name == task.name) break // no need to go up more
+        val testDataFolderCandidate = resultCandidate.parent ?: break
+        if (testDataFolderCandidate.isTestDataFolder(project, task)) {
+          // If it's not valid, we don't want to try another folders for creating configuration
+          return if (resultCandidate.isValidCodeforcesTestFolder(task)) resultCandidate else null
         }
-        file = testDataFolder
+        resultCandidate = testDataFolderCandidate
+      }
+
+      val allTestFolders = task.getTestFolders(project)
+      return if (allTestFolders.size == 1 && isTestDataFolder(project, task)) {
+        allTestFolders.firstOrNull { it.isValidCodeforcesTestFolder(task) }
+      }
+      else {
+        null
       }
     }
   }
