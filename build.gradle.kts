@@ -267,10 +267,10 @@ project(":") {
 
   dependencies {
     implementation(project(":educational-core"))
-    implementation(project(":educational-core:html"))
-    implementation(project(":educational-core:markdown"))
+    implementation(project(":code-insight:html"))
+    implementation(project(":code-insight:markdown"))
+    implementation(project(":code-insight:yaml"))
     implementation(project(":jvm-core"))
-    implementation(project(":Edu-YAML"))
     implementation(project(":Edu-Java"))
     implementation(project(":Edu-Kotlin"))
     implementation(project(":Edu-Python"))
@@ -387,7 +387,19 @@ project(":educational-core") {
   }
 }
 
-project(":educational-core:html") {
+project(":code-insight") {
+
+  val testOutput = configurations.create("testOutput")
+
+  dependencies {
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+
+    testOutput(sourceSets.getByName("test").output.classesDirs)
+  }
+}
+
+project(":code-insight:html") {
   intellij {
     if (baseIDE == "clion" && isAtLeast203) {
       /**
@@ -401,11 +413,14 @@ project(":educational-core:html") {
 
   dependencies {
     implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
+
     testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":code-insight", "testOutput"))
   }
 }
 
-project(":educational-core:markdown") {
+project(":code-insight:markdown") {
 
   intellij {
     val plugins = mutableListOf(markdownPlugin)
@@ -422,7 +437,33 @@ project(":educational-core:markdown") {
 
   dependencies {
     implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
+
     testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":code-insight", "testOutput"))
+  }
+}
+
+project(":code-insight:yaml") {
+  intellij {
+    val pluginsList = mutableListOf("yaml")
+    if (baseIDE == "clion" && isAtLeast203) {
+      /**
+       * TODO: Remove it after CLion plugin will be fixed
+       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
+       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
+       */
+      pluginsList += cPlugin
+    }
+    setPlugins(*pluginsList.toTypedArray())
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
+
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":code-insight", "testOutput"))
   }
 }
 
@@ -444,27 +485,6 @@ project(":jvm-core") {
     testOutput(sourceSets.getByName("test").output.classesDirs)
   }
 }
-
-project(":Edu-YAML") {
-  intellij {
-    val pluginsList = mutableListOf("yaml")
-    if (baseIDE == "clion" && isAtLeast203) {
-      /**
-       * TODO: Remove it after CLion plugin will be fixed
-       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
-       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
-       */
-      pluginsList += cPlugin
-    }
-    setPlugins(*pluginsList.toTypedArray())
-  }
-
-  dependencies {
-    implementation(project(":educational-core"))
-    testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
 
 project(":Edu-Java") {
   intellij {
