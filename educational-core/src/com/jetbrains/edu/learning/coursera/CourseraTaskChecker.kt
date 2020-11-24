@@ -16,21 +16,18 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.addProxy
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import okhttp3.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.HttpStatus
-import org.apache.http.StatusLine
-import org.apache.http.client.config.RequestConfig
-import org.apache.http.client.methods.CloseableHttpResponse
-import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.HttpClientBuilder
+import java.time.Duration
 
 class CourseraTaskChecker : RemoteTaskChecker {
   private val checkWithoutCredentials = CheckResult(CheckStatus.Unchecked, "Can't check on remote without credentials")
@@ -57,12 +54,12 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     return try {
       val response = postSubmission(createSubmissionJson(project, task, courseraSettings))
-      var statusLine = response.statusLine
-      if (statusLine.statusCode != HttpStatus.SC_CREATED && !askedForCredentials) {
-        askToEnterCredentials(task,statusLine.toCheckResult(task).message)
-        statusLine = postSubmission(createSubmissionJson(project, task, courseraSettings)).statusLine
+      var responseCode = response.code()
+      if (responseCode != HttpStatus.SC_CREATED && !askedForCredentials) {
+        askToEnterCredentials(task, createCheckResult(responseCode, task).message)
+        responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings)).code()
       }
-      statusLine.toCheckResult(task)
+      createCheckResult(responseCode, task)
     }
     catch (e: Exception) {
       Logger.getInstance(CourseraTaskChecker::class.java).warn(e)
@@ -70,7 +67,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     }
   }
 
-  private fun StatusLine.toCheckResult(task: Task): CheckResult {
+  private fun createCheckResult(statusCode: Int, task: Task): CheckResult {
     return when (statusCode) {
       HttpStatus.SC_CREATED -> {
         val link = getLinkToSubmission(task)
@@ -106,18 +103,17 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return ObjectMapper().writeValueAsString(submission)
   }
 
-  private fun postSubmission(json: String): CloseableHttpResponse {
-    val client = HttpClientBuilder.create().build()
-    val post = HttpPost(ON_DEMAND_SUBMIT)
-    post.entity = StringEntity(json, ContentType.APPLICATION_JSON)
-    val connectionTimeoutMs = TIMEOUT_SECONDS * 1000
-    val requestConfig = RequestConfig.custom()
-      .setConnectionRequestTimeout(connectionTimeoutMs)
-      .setConnectTimeout(connectionTimeoutMs)
-      .setSocketTimeout(connectionTimeoutMs)
-      .build()
-    post.config = requestConfig
-    return client.execute(post)
+  private fun postSubmission(json: String): Response {
+    val builder = OkHttpClient.Builder()
+      .connectTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
+      .callTimeout(Duration.ofSeconds(TIMEOUT_SECONDS.toLong()))
+    addProxy(ON_DEMAND_SUBMIT, builder)
+
+    val request = Request.Builder()
+      .url(ON_DEMAND_SUBMIT)
+      .method("POST", RequestBody.create(MediaType.get(ContentType.APPLICATION_JSON.mimeType), json)).build()
+
+    return builder.build().newCall(request).execute()
   }
 
   private fun askToEnterCredentials(task: Task, message: String? = null) {

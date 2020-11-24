@@ -62,6 +62,12 @@ private fun createOkHttpClient(baseUrl: String,
     .addInterceptor(logger)
     .dispatcher(dispatcher)
 
+  addProxy(baseUrl, builder)
+
+  return builder.build()
+}
+
+fun addProxy(baseUrl: String, builder: OkHttpClient.Builder) {
   val proxyConfigurable = HttpConfigurable.getInstance()
   val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(baseUrl))
   val address = proxies.firstOrNull()?.address() as? InetSocketAddress
@@ -72,8 +78,6 @@ private fun createOkHttpClient(baseUrl: String,
   val trustManager = CertificateManager.getInstance().trustManager
   val sslContext = CertificateManager.getInstance().sslContext
   builder.sslSocketFactory(sslContext.socketFactory, trustManager)
-
-  return builder.build()
 }
 
 val proxyAuthenticator: Authenticator
