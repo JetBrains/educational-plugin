@@ -1,6 +1,6 @@
 package com.jetbrains.edu.yaml.completion
 
-import com.jetbrains.edu.learning.codeInsight.EduCompletionTextFixture
+import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.yaml.YamlCodeInsightTest
 

@@ -13,9 +13,9 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import com.jetbrains.edu.codeInsight.inFileWithName
+import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.codeInsight.inFileWithName
-import com.jetbrains.edu.learning.codeInsight.psiElement
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG

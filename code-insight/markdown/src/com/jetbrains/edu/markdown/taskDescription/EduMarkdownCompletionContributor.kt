@@ -2,7 +2,7 @@ package com.jetbrains.edu.markdown.taskDescription
 
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
-import com.jetbrains.edu.coursecreator.taskDescription.EduUriSchemaCompletionProvider
+import com.jetbrains.edu.codeInsight.taskDescription.EduUriSchemaCompletionProvider
 
 class EduMarkdownCompletionContributor : CompletionContributor() {
 

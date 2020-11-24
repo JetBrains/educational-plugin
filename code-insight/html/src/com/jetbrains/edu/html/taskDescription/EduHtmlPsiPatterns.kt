@@ -5,9 +5,9 @@ import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlTokenType
+import com.jetbrains.edu.codeInsight.inCourse
+import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.codeInsight.inCourse
-import com.jetbrains.edu.learning.codeInsight.inFileWithName
 import com.jetbrains.edu.learning.taskDescription.A_TAG
 import com.jetbrains.edu.learning.taskDescription.HREF_ATTRIBUTE
 

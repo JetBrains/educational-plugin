@@ -2,7 +2,7 @@ package com.jetbrains.edu.markdown.taskDescription
 
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
-import com.jetbrains.edu.coursecreator.taskDescription.EduUriSchemaCompletionProviderTestBase
+import com.jetbrains.edu.codeInsight.taskDescription.EduUriSchemaCompletionProviderTestBase
 import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import org.intellij.lang.annotations.Language

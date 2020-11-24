@@ -1,8 +1,8 @@
-package com.jetbrains.edu.coursecreator.taskDescription
+package com.jetbrains.edu.codeInsight.taskDescription
 
+import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.codeInsight.EduCompletionTextFixture
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 
 abstract class EduUriSchemaCompletionProviderTestBase : EduTestCase() {

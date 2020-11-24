@@ -7,9 +7,9 @@ import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
+import com.jetbrains.edu.codeInsight.inFileWithName
+import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.codeInsight.inFileWithName
-import com.jetbrains.edu.learning.codeInsight.psiElement
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT

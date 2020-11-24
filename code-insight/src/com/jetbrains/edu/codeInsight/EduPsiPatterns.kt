@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.codeInsight
+package com.jetbrains.edu.codeInsight
 
 import com.intellij.patterns.*
 import com.intellij.psi.PsiElement
