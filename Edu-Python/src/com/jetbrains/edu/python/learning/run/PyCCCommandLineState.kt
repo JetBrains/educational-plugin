@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -60,7 +61,11 @@ class PyCCCommandLineState private constructor(
 
   @Throws(ExecutionException::class)
   override fun execute(executor: Executor, processStarter: PythonProcessStarter, vararg patchers: CommandLinePatcher): ExecutionResult {
-    runWriteAction { CheckUtils.flushWindows(task, taskDir) }
+    invokeAndWaitIfNeeded {
+      runWriteAction {
+        CheckUtils.flushWindows(task, taskDir)
+      }
+    }
     return super.execute(executor, processStarter, *patchers)
   }
 
