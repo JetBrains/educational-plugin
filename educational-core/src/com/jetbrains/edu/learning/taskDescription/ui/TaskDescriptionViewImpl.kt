@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
+import com.jetbrains.edu.learning.stepik.hyperskill.statistics.HyperskillStatisticsService
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
@@ -48,6 +49,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
         updateTopPanel(value)
         ui.taskTextTW.updateTaskSpecificPanel(value)
         updateAdditionalTaskTabs(value)
+        HyperskillStatisticsService.getInstance(project).viewEvent(value)
       }
       field = value
     }

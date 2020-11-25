@@ -65,4 +65,7 @@ interface HyperskillService {
 
   @POST("api/ws")
   fun websocket(): Call<WebSocketConfiguration>
+
+  @POST("/api/frontend-events")
+  fun sendStatistics(@Body events: List<HyperskillFrontendEvent>): Call<HyperskillFrontendEventList>
 }

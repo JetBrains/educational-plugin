@@ -1,18 +1,30 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
 import java.util.*
 
+const val ACTION = "action"
+const val CONTEXT = "context"
+const val CLIENT = "client"
+const val CLIENT_TIME = "client_time"
 const val DESCRIPTION = "description"
+const val EDUTOOLS = "edutools"
+const val EDUTOOLS_VERSION = "edutools_version"
 const val EMAIL = "email"
 const val ENVIRONMENT = "environment"
+const val FRONTEND_EVENTS = "frontend-events"
 const val FULL_NAME = "fullname"
 const val ID = "id"
 const val IDE_FILES = "ide_files"
+const val IDE_VERSION = "ide_version"
 const val IS_COMPLETED = "is_completed"
 const val IS_GUEST = "is_guest"
 const val IS_TEMPLATE_BASED = "is_template_based"
@@ -21,6 +33,7 @@ const val META = "meta"
 const val PROFILES = "profiles"
 const val PROJECT = "project"
 const val PROJECTS = "projects"
+const val ROUTE = "route"
 const val SOLUTIONS = "solutions"
 const val STAGES = "stages"
 const val STEP_ID = "step"
@@ -194,4 +207,47 @@ class WebSocketConfiguration {
 
   @JsonProperty(URL)
   lateinit var url: String
+}
+
+class HyperskillFrontendEvent {
+  @JsonProperty(ACTION)
+  lateinit var action: HyperskillFrontendEventType
+
+  @JsonProperty(ROUTE)
+  lateinit var route: String
+
+  @JsonProperty(CLIENT_TIME)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+  var clientTime: Date = Date()
+
+  @JsonProperty(CONTEXT)
+  var context: HyperskillFrontendEventContext = HyperskillFrontendEventContext()
+}
+
+enum class HyperskillFrontendEventType {
+  VIEW; // in the nearest future there will be more event types
+
+  /**
+   ** need this as enums are (de)serialized using toString
+   *  see mapper settings in [com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.objectMapper]
+   */
+  override fun toString(): String {
+    return name.toLowerCase()
+  }
+}
+
+class HyperskillFrontendEventContext {
+  @JsonProperty(CLIENT)
+  var client: String = EDUTOOLS
+
+  @JsonProperty(IDE_VERSION)
+  var ideVersion: String = with(ApplicationInfoImpl.getShadowInstance()) { "$versionName $fullVersion" }
+
+  @JsonProperty(EDUTOOLS_VERSION)
+  var eduToolsVersion: String? = pluginVersion(EduNames.PLUGIN_ID)
+}
+
+class HyperskillFrontendEventList {
+  @JsonProperty(FRONTEND_EVENTS)
+  lateinit var events: List<HyperskillFrontendEvent>
 }

@@ -30,7 +30,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import okhttp3.*
 import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -279,6 +278,10 @@ abstract class HyperskillConnector {
 
   fun getWebSocketConfiguration(): Result<WebSocketConfiguration, String> {
     return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
+  }
+
+  fun sendEvents(events: List<HyperskillFrontendEvent>): Result<HyperskillFrontendEventList, String> {
+    return withTokenRefreshIfNeeded { service.sendStatistics(events).executeAndExtractFromBody() }
   }
 
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {

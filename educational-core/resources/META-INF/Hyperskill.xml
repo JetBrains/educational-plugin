@@ -1,4 +1,8 @@
 <idea-plugin>
+  <applicationListeners>
+    <listener class="com.jetbrains.edu.learning.stepik.hyperskill.statistics.HyperskillStatisticsScheduler"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+  </applicationListeners>
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings"/>
