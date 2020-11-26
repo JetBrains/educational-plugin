@@ -68,24 +68,20 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected abstract val nextLessonIndex: Int
   protected abstract fun addLesson(lesson: Lesson)
 
-  fun frameworkLesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
-    lesson(name, "framework", buildLesson)
+  fun frameworkLesson(name: String? = null, buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}) {
+    lesson(name, FrameworkLesson(), buildLesson)
   }
 
-  fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
-    lesson(name, "edu", buildLesson)
+  fun lesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {
+    lesson(name, Lesson(), buildLesson)
   }
 
-  fun station(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
-    lesson(name, "checkiO", buildLesson)
+  fun station(name: String? = null, buildLesson: LessonBuilder<CheckiOStation>.() -> Unit = {}) {
+    lesson(name, CheckiOStation(), buildLesson)
   }
-  protected fun lesson(name: String? = null, type: String, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course, null, when(type) {
-      "framework" -> FrameworkLesson()
-      "checkiO" -> CheckiOStation()
-      else -> Lesson()
-    })
-    val lesson = lessonBuilder.lesson
+
+  protected fun <T : Lesson> lesson(name: String? = null, lesson: T, buildLesson: LessonBuilder<T>.() -> Unit) {
+    val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
     addLesson(lesson)
@@ -149,7 +145,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
   }
 }
 
-class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = Lesson()) {
+class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesson: T) {
 
   init {
     lesson.course = course
