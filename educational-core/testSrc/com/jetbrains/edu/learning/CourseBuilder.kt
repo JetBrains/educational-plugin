@@ -68,8 +68,9 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected abstract val nextLessonIndex: Int
   protected abstract fun addLesson(lesson: Lesson)
 
-  fun frameworkLesson(name: String? = null, buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}) {
-    lesson(name, FrameworkLesson(), buildLesson)
+  fun frameworkLesson(name: String? = null, isTemplateBased: Boolean = true, buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}) {
+    val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
+    lesson(name, lesson, buildLesson)
   }
 
   fun lesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {

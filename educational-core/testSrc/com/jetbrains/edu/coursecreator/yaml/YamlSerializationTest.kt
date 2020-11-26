@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -342,6 +343,18 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- Introduction Task
       |- Advanced Task
+      |
+    """.trimMargin())
+  }
+
+  fun `test non templated based framework lesson`() {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("lesson", isTemplateBased = false)
+    }
+
+    doTest(course.getItem("lesson")!!, """
+      |type: framework
+      |is_template_based: false
       |
     """.trimMargin())
   }

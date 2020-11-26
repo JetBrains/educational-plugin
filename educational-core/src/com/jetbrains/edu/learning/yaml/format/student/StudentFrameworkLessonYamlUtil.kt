@@ -5,16 +5,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.yaml.format.FrameworkLessonBuilder
 import com.jetbrains.edu.learning.yaml.format.FrameworkLessonYamlMixin
 import com.jetbrains.edu.learning.yaml.format.LessonBuilder
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CURRENT_TASK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentFrameworkLessonBuilder::class)
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT, CURRENT_TASK)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT, IS_TEMPLATE_BASED, CURRENT_TASK)
 abstract class StudentFrameworkLessonYamlMixin : FrameworkLessonYamlMixin() {
   @JsonProperty(CURRENT_TASK)
   private var currentTaskIndex: Int = 0
@@ -22,9 +24,10 @@ abstract class StudentFrameworkLessonYamlMixin : FrameworkLessonYamlMixin() {
 
 private class StudentFrameworkLessonBuilder(
   @JsonProperty(CURRENT_TASK) val currentTaskIndex: Int,
-  @JsonProperty(CONTENT) content: List<String?>
-) : LessonBuilder(content) {
-  override fun createLesson(): Lesson {
-    return FrameworkLesson().also { it.currentTaskIndex = currentTaskIndex }
+  @JsonProperty(IS_TEMPLATE_BASED) isTemplateBased: Boolean = true,
+  @JsonProperty(CONTENT) content: List<String?> = emptyList()
+) : FrameworkLessonBuilder(isTemplateBased, content) {
+  override fun createLesson(): FrameworkLesson {
+    return super.createLesson().also { it.currentTaskIndex = currentTaskIndex }
   }
 }

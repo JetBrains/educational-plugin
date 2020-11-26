@@ -38,6 +38,7 @@ object YamlMixinNames {
 
   // framework lesson
   const val CURRENT_TASK = "current_task"
+  const val IS_TEMPLATE_BASED = "is_template_based"
 
   // task
   const val FILES = "files"

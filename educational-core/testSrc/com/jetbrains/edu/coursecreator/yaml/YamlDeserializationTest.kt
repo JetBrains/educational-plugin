@@ -238,8 +238,9 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $secondTask
     """.trimMargin()
     val lesson = MAPPER.deserializeLesson(yamlContent)
-    assertTrue(lesson is FrameworkLesson)
+    check(lesson is FrameworkLesson)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
+    assertTrue(lesson.isTemplateBased)
   }
 
   fun `test empty framework lesson`() {
@@ -249,6 +250,16 @@ class YamlDeserializationTest : YamlTestCase() {
     """.trimMargin()
     val lesson = MAPPER.deserializeLesson(yamlContent)
     assertTrue(lesson is FrameworkLesson)
+  }
+
+  fun `test non templated based framework lesson`() {
+    val yamlContent = """
+      |type: framework
+      |is_template_based: false
+    """.trimMargin()
+    val lesson = MAPPER.deserializeLesson(yamlContent)
+    check(lesson is FrameworkLesson)
+    assertFalse(lesson.isTemplateBased)
   }
 
   fun `test output task`() {

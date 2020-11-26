@@ -19,6 +19,7 @@ class FrameworkLesson() : Lesson() {
   }
 
   var currentTaskIndex: Int = 0
+  var isTemplateBased: Boolean = true
 
   /**
    * currentTask is null when lesson is empty
