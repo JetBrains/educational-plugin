@@ -10,6 +10,7 @@ const val MARKETPLACE = "Marketplace"
 const val HUB_URL = "https://hub.jetbrains.com"
 const val HUB_AUTH_URL = "$HUB_URL/api/rest/"
 const val HUB_PROFILE_PATH = "$HUB_URL/users/"
+const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 
 var CLIENT_ID = MarketplaceOAuthBundle.valueOrDefault("marketplaceClientId", "")
 var CLIENT_SECRET = MarketplaceOAuthBundle.valueOrDefault("marketplaceClientSecret", "")

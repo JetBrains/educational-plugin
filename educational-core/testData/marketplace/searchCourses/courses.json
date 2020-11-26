@@ -1,0 +1,31 @@
+{
+  "data" : {
+    "plugins" : {
+      "total" : 1,
+      "plugins" : [
+        {
+          "id" : "1",
+          "name" : "Introduction to Python",
+          "description" : "Introduction course to Python",
+          "downloads" : 2,
+          "rating" : 5.0,
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "id" : "2",
+          "name" : "Introduction to Java",
+          "description" : "Introduction course to Java",
+          "downloads" : 5,
+          "rating" : 5.0,
+          "fields" : {
+            "programmingLanguage" : "JAVA",
+            "language" : "ru"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -9,7 +9,9 @@ class MockMarketplaceConnector : MarketplaceConnector() {
 
   private val helper = MockWebServerHelper(ApplicationManager.getApplication())
 
-  override val baseUrl: String = helper.baseUrl
+  override val authUrl: String = helper.baseUrl
+
+  override val repositoryUrl: String = helper.baseUrl
 
   fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockMarketplaceConnector {
     helper.addResponseHandler(disposable, handler)

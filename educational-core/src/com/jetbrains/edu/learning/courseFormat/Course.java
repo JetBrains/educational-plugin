@@ -326,4 +326,8 @@ public abstract class Course extends LessonContainer {
   public boolean isMarketplace() {
     return isMarketplace;
   }
+
+  public void setMarketplace(boolean isMarketplace) {
+    this.isMarketplace = isMarketplace;
+  }
 }

@@ -12,8 +12,10 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.CLIENT_ID
 import com.jetbrains.edu.learning.marketplace.CLIENT_SECRET
 import com.jetbrains.edu.learning.marketplace.HUB_AUTHORISATION_CODE_URL
@@ -29,7 +31,9 @@ abstract class MarketplaceConnector {
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper
 
-  protected abstract val baseUrl: String
+  protected abstract val authUrl: String
+
+  protected abstract val repositoryUrl: String
 
   init {
     val module = SimpleModule()
@@ -39,12 +43,27 @@ abstract class MarketplaceConnector {
 
   private val authorizationService: MarketplaceAuthService
     get() {
-      val retrofit = createRetrofitBuilder(baseUrl, connectionPool)
+      val retrofit = createRetrofitBuilder(authUrl, connectionPool)
         .addConverterFactory(converterFactory)
         .build()
 
       return retrofit.create(MarketplaceAuthService::class.java)
     }
+
+  private val repositoryService: MarketplaceRepositoryService
+    get() = repositoryService(MarketplaceSettings.INSTANCE.account)
+
+  private fun repositoryService(account: MarketplaceAccount?): MarketplaceRepositoryService {
+    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
+      account.refreshTokens()
+    }
+
+    val retrofit = createRetrofitBuilder(repositoryUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken)
+      .addConverterFactory(converterFactory)
+      .build()
+
+    return retrofit.create(MarketplaceRepositoryService::class.java)
+  }
 
   // Authorization requests:
 
@@ -72,8 +91,6 @@ abstract class MarketplaceConnector {
     return true
   }
 
-  //TODO: remove Suppress annotation when method will be used
-  @Suppress("unused")
   private fun MarketplaceAccount.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
     val response = authorizationService.refreshTokens(REFRESH_TOKEN,
@@ -104,6 +121,11 @@ abstract class MarketplaceConnector {
     return userInfo
   }
 
+  fun searchCourses(query: QueryData): List<EduCourse> {
+    val response = repositoryService.search(query).executeHandlingExceptions()
+    return response?.body()?.data?.plugins?.courses ?: return emptyList()
+  }
+
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
@@ -121,6 +143,7 @@ abstract class MarketplaceConnector {
   private fun createMapper(module: SimpleModule): ObjectMapper {
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+    objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
     objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
     objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
     objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
