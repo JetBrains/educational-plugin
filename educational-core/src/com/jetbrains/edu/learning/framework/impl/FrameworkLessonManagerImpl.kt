@@ -177,7 +177,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && previousCurrentState == currentState)
 
     val course = lesson.course
-    val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && course is HyperskillCourse && !course.isTemplateBased) {
+    val isNonTemplateBased = !lesson.isTemplateBased || course is HyperskillCourse && !course.isTemplateBased
+
+    val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && isNonTemplateBased) {
       calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
     }
     else {
