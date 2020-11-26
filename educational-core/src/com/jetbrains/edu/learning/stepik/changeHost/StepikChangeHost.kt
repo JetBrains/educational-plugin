@@ -47,5 +47,7 @@ class StepikChangeHostDialog : DialogWrapper(true) {
     row(EduCoreBundle.message("stepik.url")) { hostsCombo() }
   }
 
+  override fun getPreferredFocusedComponent(): JComponent = hostsCombo
+
   fun getSelectedItem(): StepikHost? = hostsCombo.selectedItem as StepikHost?
 }
