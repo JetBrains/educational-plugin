@@ -143,14 +143,9 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    val isEnabled = isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)
-    try {
-      setFeatureEnabled(EduExperimentalFeatures.MARKETPLACE, true)
+    withFeature(EduExperimentalFeatures.MARKETPLACE, true) {
       val actual = YamlFormatSynchronizer.STUDENT_MAPPER_WITH_ENCRYPTION.writeValueAsString(item)
       assertEquals(expected, actual)
-    }
-    finally {
-      setFeatureEnabled(EduExperimentalFeatures.MARKETPLACE, isEnabled)
     }
   }
 }
