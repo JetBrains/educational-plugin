@@ -116,4 +116,30 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
     val lookupElements = myFixture.completeBasic()
     assertEmpty(lookupElements)
   }
+
+  fun `test no completion for is_template_based property for common lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1")
+    }
+    val lesson = course.getLesson("lesson1")!!
+
+    checkNoCompletion(lesson, """
+      |is_templa<caret>
+    """.trimMargin())
+  }
+
+  fun `test is_template_based property completion for framework lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("lesson1")
+    }
+    val lesson = course.getLesson("lesson1")!!
+
+    doSingleCompletion(lesson, """
+      |type: framework
+      |is_templa<caret>
+    """.trimMargin(), """
+      |type: framework
+      |is_template_based: <selection>false</selection>
+    """.trimMargin())
+  }
 }

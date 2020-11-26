@@ -1,8 +1,10 @@
 package com.jetbrains.edu.yaml
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -12,6 +14,8 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.extension.SchemaType
 import com.jetbrains.jsonSchema.impl.JsonSchemaVersion
+import org.jetbrains.yaml.psi.YAMLFile
+import org.jetbrains.yaml.psi.YAMLMapping
 
 class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   override fun getProviders(project: Project): List<StudyItemConfigSchemaProvider> {
@@ -20,7 +24,8 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     return listOf(
       StudyItemConfigSchemaProvider(project, EduNames.COURSE),
       StudyItemConfigSchemaProvider(project, EduNames.SECTION),
-      StudyItemConfigSchemaProvider(project, EduNames.LESSON),
+      LessonConfigSchemaProvider(project),
+      FrameworkLessonConfigSchemaProvider(project),
       TaskGeneralConfigSchemaProvider(project, tasksWithSpecificProvider),
       *tasksWithSpecificProvider
         .map { TaskSpecificConfigSchemaProvider(project, it) }
@@ -70,4 +75,33 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
       return super.isAvailable(file) && !tasksWithSpecificProvider.contains(task.itemType)
     }
   }
+
+  class FrameworkLessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, EduNames.LESSON) {
+
+    override fun getName(): String = "Framework Lesson Configuration"
+
+    override fun isAvailable(file: VirtualFile): Boolean {
+      if (!super.isAvailable(file)) return false
+      return file.isFrameworkLessonConfig(project)
+    }
+
+    override fun getSchemaResourcePath(): String = "/yaml/framework-lesson-schema.json"
+  }
+
+  class LessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, EduNames.LESSON) {
+    override fun isAvailable(file: VirtualFile): Boolean {
+      if (!super.isAvailable(file)) return false
+      return !file.isFrameworkLessonConfig(project)
+    }
+  }
 }
+
+private fun VirtualFile.isFrameworkLessonConfig(project: Project): Boolean {
+  return runReadAction {
+    val psiFile = PsiManager.getInstance(project).findFile(this) as? YAMLFile ?: return@runReadAction false
+    val mapping = psiFile.documents.firstOrNull()?.topLevelValue as? YAMLMapping ?: return@runReadAction false
+    val typeKeyValue = mapping.getKeyValueByKey("type") ?: return@runReadAction false
+    typeKeyValue.valueText == EduNames.FRAMEWORK
+  }
+}
+
