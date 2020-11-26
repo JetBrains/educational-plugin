@@ -76,4 +76,19 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
            CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile,
            taskFileExpected)
   }
+
+  fun `test add placeholder action is disabled in non templated based framework lesson`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("lesson1", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = TODO()")
+        }
+      }
+    }
+
+    val file = findFile("lesson1/task1/Task.kt")
+    myFixture.openFileInEditor(file)
+    val presentation = myFixture.testAction(CCTestAddAnswerPlaceholder())
+    checkActionEnabled(presentation, false)
+  }
 }

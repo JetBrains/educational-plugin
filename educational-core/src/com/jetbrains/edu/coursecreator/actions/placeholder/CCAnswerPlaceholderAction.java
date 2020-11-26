@@ -7,6 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +43,7 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
       return;
     }
 
-    if (!CCUtils.isCourseCreator(project)) {
-      return;
-    }
-
-    EduState state = OpenApiExtKt.getEduState(project);
+    EduState state = getEduState(project);
     if (state != null) {
       updatePresentation(state, presentation);
     }
@@ -56,7 +54,16 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
     if (!CCUtils.isCourseCreator(project)) {
       return null;
     }
-    return OpenApiExtKt.getEduState(project);
+    EduState state = OpenApiExtKt.getEduState(project);
+    if (state == null) {
+      return null;
+    }
+    Lesson lesson = state.getTaskFile().getTask().getLesson();
+    // Disable all placeholder actions in non template based framework lessons for now
+    if (lesson instanceof FrameworkLesson && !((FrameworkLesson)lesson).isTemplateBased()) {
+      return null;
+    }
+    return state;
   }
 
   protected abstract void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation);
