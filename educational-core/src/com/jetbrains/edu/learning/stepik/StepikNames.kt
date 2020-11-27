@@ -11,7 +11,6 @@ object StepikNames {
   const val STEPIK_HOST_ORDINAL_PROPERTY = "stepik.host.ordinal"
   const val STEPIK_DEFAULT_URL = "https://stepik.org"
   const val STEPIK_RELEASE_URL = "https://release.stepik.org"
-  const val STEPIK_DEV_URL = "https://dev.stepik.org"
 
   const val PYCHARM_PREFIX = "pycharm"
   const val EDU_STEPIK_SERVICE_NAME = "edu/stepik"

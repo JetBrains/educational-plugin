@@ -48,8 +48,8 @@ fun configureSecretProperties() {
     "educational-core/resources/stepik/stepik.properties",
     "stepikClientId",
     "stepikClientSecret",
-    "stepikTestClientId",
-    "stepikTestClientSecret"
+    "stepikNonProductionClientId",
+    "stepikNonProductionClientSecret"
   )
   secretProperties.extractAndStore(
     "educational-core/resources/hyperskill/hyperskill-oauth.properties",
