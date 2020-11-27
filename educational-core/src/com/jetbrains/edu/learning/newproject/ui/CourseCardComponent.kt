@@ -156,7 +156,12 @@ class CommunityCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayout(
     downloads.border = JBUI.Borders.emptyRight(H_GAP)
     downloads.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
-    val authors = course.authorFullNames.joinToString()
+    val authors: String = if (course.isMarketplace) {
+      course.vendor.name
+    }
+    else {
+      course.authorFullNames.joinToString()
+    }
     authorComponent.isVisible = authors.isNotEmpty()
     authorComponent.foreground = GRAY_COLOR
     authorComponent.font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)

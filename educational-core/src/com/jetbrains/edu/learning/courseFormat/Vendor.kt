@@ -8,6 +8,13 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.URL
 
 
 class Vendor {
+
+  constructor()
+
+  constructor(organization: String) {
+    name = organization
+  }
+
   @JsonProperty(NAME)
   var name: String = ""
 

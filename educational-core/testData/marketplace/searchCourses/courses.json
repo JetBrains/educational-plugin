@@ -9,6 +9,7 @@
           "description" : "Introduction course to Python",
           "downloads" : 2,
           "rating" : 5.0,
+          "organization" : "JetBrains s.r.o.",
           "fields" : {
             "programmingLanguage" : "PYTHON",
             "language" : "en"
@@ -20,6 +21,7 @@
           "description" : "Introduction course to Java",
           "downloads" : 5,
           "rating" : 5.0,
+          "organization" : "JetBrains s.r.o.",
           "fields" : {
             "programmingLanguage" : "JAVA",
             "language" : "ru"
