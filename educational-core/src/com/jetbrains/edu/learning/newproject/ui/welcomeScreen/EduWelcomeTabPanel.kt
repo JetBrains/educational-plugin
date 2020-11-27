@@ -21,7 +21,6 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -32,7 +31,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import java.awt.BorderLayout
 import java.awt.CardLayout
@@ -49,11 +47,7 @@ private const val MY_COURSES_PANEL = "my-courses"
 // BACKCOMPAT: 2020.1. Used since 2020.2
 @Suppress("unused")
 class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
-  private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(),
-                                                    ImportLocalCourseAction(),
-                                                    StartStepikCourseAction(),
-                                                    CCNewCourseAction(),
-                                                    NewHyperskillCourseAction(),
+  private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(), CCNewCourseAction(), NewHyperskillCourseAction(),
                                                     StartCodeforcesContestAction())
   private val cardLayout: CardLayout = CardLayout()
 
