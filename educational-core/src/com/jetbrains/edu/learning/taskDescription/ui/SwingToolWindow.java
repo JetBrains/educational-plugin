@@ -36,6 +36,7 @@ import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -67,7 +68,11 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   public JComponent createTaskInfoPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
 
-    myTaskTextPane = SwingTaskUtil.createTextPane();
+    // we are using HTMLEditorKit here because otherwise styles are not applied
+    HTMLEditorKit editorKit = new HTMLEditorKit();
+    editorKit.setStyleSheet(null);
+
+    myTaskTextPane = SwingTaskUtil.createTextPane(editorKit);
     JBScrollPane scrollPane = new JBScrollPane(myTaskTextPane);
     scrollPane.setBorder(null);
     panel.add(scrollPane, BorderLayout.CENTER);

@@ -80,8 +80,7 @@ fun createListener(task: ChoiceTask, index: Int): ItemListener? {
   }
 }
 
-fun createTextPane(): JTextPane {
-  val editorKit = UIUtil.JBWordWrapHtmlEditorKit()
+fun createTextPane(editorKit: HTMLEditorKit = UIUtil.JBWordWrapHtmlEditorKit()): JTextPane {
   prepareCss(editorKit)
 
   val textPane = object : JTextPane() {
@@ -102,6 +101,7 @@ fun createTextPane(): JTextPane {
 private fun prepareCss(editorKit: HTMLEditorKit) {
   // ul padding of JBHtmlEditorKit is too small, so copy-pasted the style from
   // com.intellij.codeInsight.documentation.DocumentationComponent.prepareCSS
-  editorKit.styleSheet.addRule("ul { padding: 5px 16px 0 7px; }")
-  editorKit.styleSheet.addRule("li { padding: 1px 0 2px 0; }")
+  editorKit.styleSheet.addRule("ul { padding: 3px 16px 0 0; }")
+  editorKit.styleSheet.addRule("li { padding: 3px 0 4px 5px; }")
+  editorKit.styleSheet.addRule(".hint { padding: 17px 0 16px 0; }")
 }
