@@ -86,7 +86,7 @@ object ProgressUtil {
       pane.updateCourseProgress(tasksTotal, tasksSolved)
     }
     val location = project.basePath
-    if (location != null && course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == false) {
+    if (location != null && course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true) {
       CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
     }
   }
