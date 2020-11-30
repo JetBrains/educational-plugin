@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.hub.auth.oauth2.token.AccessToken
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
@@ -16,10 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.CLIENT_ID
-import com.jetbrains.edu.learning.marketplace.CLIENT_SECRET
-import com.jetbrains.edu.learning.marketplace.HUB_AUTHORISATION_CODE_URL
-import com.jetbrains.edu.learning.marketplace.REDIRECT_URI
+import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -80,8 +76,7 @@ abstract class MarketplaceConnector {
                                                   REDIRECT_URI, code,
                                                   AUTHORIZATION_CODE).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
-    val accessToken = AccessToken.decode(tokenInfo.accessToken)
-    val userId = accessToken.user ?: return false
+    val userId = decodeHubToken(tokenInfo.accessToken) ?: return false
     val account = MarketplaceAccount()
     account.tokenInfo = tokenInfo
     val currentUser = getCurrentUser(userId) ?: return false

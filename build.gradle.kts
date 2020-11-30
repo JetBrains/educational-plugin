@@ -166,10 +166,6 @@ allprojects {
     implementation("org.jetbrains:markdown:0.1.41") {
       excludeKotlinDeps()
     }
-    implementation(group = "com.jetbrains.hub", name = "hub-client-all", version = "2020.1.12358") {
-      excludeKotlinDeps()
-      exclude(module = "slf4j-api")
-    }
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
       exclude(module = "snakeyaml")
     }
