@@ -1,0 +1,99 @@
+{
+  "data" : {
+    "plugins" : {
+      "total" : 12,
+      "plugins" : [
+        {
+          "name" : "Introduction to Python 1",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 2",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 3",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 4",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 5",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 6",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 7",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 8",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 9",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        },
+        {
+          "name" : "Introduction to Python 10",
+          "description" : "Introduction course to Python",
+          "organization" : "JetBrains s.r.o.",
+          "fields" : {
+            "programmingLanguage" : "PYTHON",
+            "language" : "en"
+          }
+        }
+      ]
+    }
+  }
+}

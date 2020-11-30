@@ -47,7 +47,10 @@ class QueryData(graphqlQuery: String) {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class PluginsList {
+class CoursesList {
+  @JsonProperty(TOTAL)
+  var total: Int = -1
+
   @JsonProperty(PLUGINS)
   var courses: List<EduCourse> = emptyList()
 }
@@ -60,11 +63,9 @@ class PluginData {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Plugins {
-  @JsonProperty(TOTAL)
-  var total: Int = 0
 
   @JsonProperty(PLUGINS)
-  lateinit var plugins: PluginsList
+  lateinit var coursesList: CoursesList
 }
 
 class Fields {

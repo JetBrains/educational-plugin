@@ -4,13 +4,9 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.QueryData
+import okhttp3.mockwebserver.RecordedRequest
 
 class MarketplaceSearchCoursesTest : EduTestCase() {
-  override fun setUp() {
-    super.setUp()
-    configureCoursesResponse()
-  }
 
   private val mockConnector: MockMarketplaceConnector get() = MarketplaceConnector.getInstance() as MockMarketplaceConnector
 
@@ -22,10 +18,12 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   fun `test courses loaded`() {
+    configureCoursesResponse()
     doTestCoursesLoaded()
   }
 
   fun `test python en course created`() {
+    configureCoursesResponse()
     val courses = doTestCoursesLoaded()
 
     val pythonCourse = courses.first()
@@ -41,6 +39,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   fun `test java ru course created`() {
+    configureCoursesResponse()
     val courses = doTestCoursesLoaded()
 
     val javaCourse = courses[1]
@@ -55,9 +54,25 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(true, javaCourse.isMarketplace)
   }
 
-  private fun doTestCoursesLoaded(): List<EduCourse> {
-    val courses = MarketplaceConnector.getInstance().searchCourses(QueryData("query"))
-    assertEquals(2, courses.size)
+  fun `test all courses loaded`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+      when (request.getOffset()) {
+        0 -> mockResponse("courses_10.json")
+        else -> mockResponse("courses.json")
+      }
+    }
+
+    doTestCoursesLoaded(12)
+  }
+
+  private fun RecordedRequest.getOffset(): Int {
+    return body.readUtf8().substringAfter("offset: ").substringBefore("\\n").toInt()
+  }
+
+  private fun doTestCoursesLoaded(coursesNumber: Int = 2): List<EduCourse> {
+    val courses = MarketplaceConnector.getInstance().searchCourses()
+    assertEquals(coursesNumber, courses.size)
     return courses
   }
 

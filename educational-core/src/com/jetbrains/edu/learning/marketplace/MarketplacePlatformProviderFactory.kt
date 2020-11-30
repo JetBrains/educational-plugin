@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.icons.AllIcons
-import com.jetbrains.edu.learning.marketplace.api.Graphql
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.QueryData
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
@@ -27,8 +25,7 @@ private class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
   override suspend fun loadCourses(): List<CoursesGroup> {
     val marketplaceConnector = MarketplaceConnector.getInstance()
-    val queryData = QueryData(Graphql().getSearchQuery())
-    val courses = marketplaceConnector.searchCourses(queryData)
+    val courses = marketplaceConnector.searchCourses()
     return CoursesGroup(courses).asList()
   }
 }

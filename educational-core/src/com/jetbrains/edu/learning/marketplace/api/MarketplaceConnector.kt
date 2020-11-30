@@ -16,6 +16,11 @@ import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.CLIENT_ID
+import com.jetbrains.edu.learning.marketplace.CLIENT_SECRET
+import com.jetbrains.edu.learning.marketplace.HUB_AUTHORISATION_CODE_URL
+import com.jetbrains.edu.learning.marketplace.REDIRECT_URI
+import com.jetbrains.edu.learning.marketplace.api.Graphql.Companion.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -116,9 +121,26 @@ abstract class MarketplaceConnector {
     return userInfo
   }
 
-  fun searchCourses(query: QueryData): List<EduCourse> {
+  fun searchCourses(): List<EduCourse> {
+    var offset = 0
+    val courses = mutableListOf<EduCourse>()
+
+    do {
+      val coursesList = getCourses(offset) ?: return courses
+      val loadedCourses = coursesList.courses
+      if (loadedCourses.isEmpty()) return courses
+      courses.addAll(loadedCourses)
+      offset += LOADING_STEP
+    }
+    while (courses.size < coursesList.total)
+
+    return courses.toList()
+  }
+
+  private fun getCourses(offset: Int): CoursesList? {
+    val query = QueryData(Graphql().getSearchQuery(offset))
     val response = repositoryService.search(query).executeHandlingExceptions()
-    return response?.body()?.data?.plugins?.courses ?: return emptyList()
+    return response?.body()?.data?.coursesList
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

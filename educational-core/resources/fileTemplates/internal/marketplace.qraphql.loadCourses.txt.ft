@@ -2,8 +2,8 @@ query {
   plugins(
     search: {
       filters: [{ field: "family", value: "edu" }]
-      max: 10
-      offset: 0
+      max: ${max}
+      offset: ${offset}
       sortBy: DOWNLOADS
     }
   ) {
