@@ -21,6 +21,7 @@ const val QUERY = "query"
 const val RATING = "rating"
 const val TOTAL = "total"
 const val TYPE = "type"
+const val UPDATES = "updates"
 
 class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo>()
 
@@ -57,13 +58,13 @@ class CoursesList {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class PluginData {
+class CoursesData {
   @JsonProperty(DATA)
-  lateinit var data: Plugins
+  lateinit var data: Courses
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Plugins {
+class Courses {
 
   @JsonProperty(PLUGINS)
   lateinit var coursesList: CoursesList
@@ -75,4 +76,31 @@ class Fields {
 
   @JsonProperty(LANGUAGE)
   var language: String = ""
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class UpdateData {
+  @JsonProperty(DATA)
+  lateinit var data: Updates
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Updates {
+  @JsonProperty(TOTAL)
+  var total: Int = 0
+
+  @JsonProperty(UPDATES)
+  lateinit var updates: UpdatesList
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class UpdatesList {
+  @JsonProperty(UPDATES)
+  lateinit var updateBean: List<UpdateBean>
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class UpdateBean {
+  @JsonProperty(ID)
+  var updateId: Int = -1
 }

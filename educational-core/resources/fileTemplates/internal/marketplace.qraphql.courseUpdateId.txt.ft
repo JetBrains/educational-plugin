@@ -1,0 +1,13 @@
+query {
+  updates(
+    search: {
+      filters: [{ field: "pluginId", value: ${courseId} }]
+      max: 1
+    }
+  ) {
+    total
+    updates {
+      id
+    }
+  }
+}

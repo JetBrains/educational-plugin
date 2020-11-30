@@ -6,22 +6,18 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.createRetrofitBuilder
-import com.jetbrains.edu.learning.executeHandlingExceptions
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
-import com.jetbrains.edu.learning.marketplace.CLIENT_ID
-import com.jetbrains.edu.learning.marketplace.CLIENT_SECRET
-import com.jetbrains.edu.learning.marketplace.HUB_AUTHORISATION_CODE_URL
-import com.jetbrains.edu.learning.marketplace.REDIRECT_URI
-import com.jetbrains.edu.learning.marketplace.api.Graphql.Companion.LOADING_STEP
+import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
 
@@ -138,9 +134,34 @@ abstract class MarketplaceConnector {
   }
 
   private fun getCourses(offset: Int): CoursesList? {
-    val query = QueryData(Graphql().getSearchQuery(offset))
+    val query = QueryData(GraphqlQuery.search(offset))
     val response = repositoryService.search(query).executeHandlingExceptions()
     return response?.body()?.data?.coursesList
+  }
+
+  fun getLatestCourseUpdateId(courseId: Int): Int {
+    val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(courseId))).executeHandlingExceptions()
+    val updateBeans = response?.body()?.data?.updates?.updateBean
+    if (updateBeans == null || updateBeans.size != 1) {
+      error("Update id for course $courseId is null")
+    }
+    else {
+      return updateBeans.first().updateId
+    }
+  }
+
+  fun loadCourseStructure(course: EduCourse) {
+    val courseId = course.id
+    val updateId = getLatestCourseUpdateId(courseId)
+    val link = "$repositoryUrl/plugin/$courseId/update/$updateId/download"
+    val tempFile = FileUtil.createTempFile("marketplace-${course.name}-zip", null, true)
+    DownloadUtil.downloadAtomically(null, link, tempFile)
+
+    val unpackedCourse = EduUtils.getLocalEncryptedCourse(tempFile.path) as? EduCourse ?: error(
+      EduCoreBundle.message("dialog.title.failed.to.unpack.course"))
+
+    course.items = unpackedCourse.items
+    course.additionalFiles = unpackedCourse.additionalFiles
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

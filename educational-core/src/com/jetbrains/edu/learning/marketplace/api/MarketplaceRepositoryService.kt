@@ -7,5 +7,9 @@ import retrofit2.http.POST
 interface MarketplaceRepositoryService {
 
   @POST("/api/search/graphql")
-  fun search(@Body query: QueryData): Call<PluginData>
+  fun search(@Body query: QueryData): Call<CoursesData>
+
+  @POST("/api/search/graphql")
+  fun getUpdateId(@Body query: QueryData): Call<UpdateData>
+
 }

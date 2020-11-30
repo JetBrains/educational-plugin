@@ -455,6 +455,16 @@ public class EduUtils {
 
   @Nullable
   public static Course getLocalCourse(@NotNull final String zipFilePath) {
+    return getLocalCourse(zipFilePath, false);
+  }
+
+  @Nullable
+  public static Course getLocalEncryptedCourse(@NotNull final String zipFilePath) {
+    return getLocalCourse(zipFilePath, true);
+  }
+
+  @Nullable
+  private static Course getLocalCourse(@NotNull final String zipFilePath, boolean isEncrypted) {
     try {
       final JBZipFile zipFile = new JBZipFile(zipFilePath);
       try {
@@ -465,7 +475,7 @@ public class EduUtils {
         }
         byte[] bytes = entry.getData();
         final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
-        return CourseArchiveReader.readCourseJson(jsonText);
+        return CourseArchiveReader.readCourseJson(jsonText, isEncrypted);
       }
       finally {
         zipFile.close();

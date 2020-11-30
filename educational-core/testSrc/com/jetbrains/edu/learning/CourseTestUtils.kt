@@ -10,8 +10,9 @@ import java.io.File
 import java.io.IOException
 
 @Throws(IOException::class)
-fun createCourseFromJson(pathToJson: String, courseMode: CourseMode): EduCourse {
+fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted: Boolean = false): EduCourse {
   val courseJson = File(pathToJson).readText()
+  val courseMapper = getCourseMapper(isEncrypted)
   var objectNode = courseMapper.readTree(courseJson) as ObjectNode
   objectNode = To10VersionLocalCourseConverter().convert(objectNode)
   return courseMapper.treeToValue(objectNode, EduCourse::class.java).apply {

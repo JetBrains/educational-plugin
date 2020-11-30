@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.encrypt.EncryptionBundle.message
+import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
@@ -23,8 +25,9 @@ import java.util.*
 
 private val LOG = Logger.getInstance(EduUtils::class.java.name)
 
-fun readCourseJson(jsonText: String): Course? {
+fun readCourseJson(jsonText: String, isEncrypted: Boolean): Course? {
   return try {
+    val courseMapper = getCourseMapper(isEncrypted)
     var courseNode = courseMapper.readTree(jsonText) as ObjectNode
     courseNode = migrate(courseNode)
     courseMapper.treeToValue(courseNode)
@@ -63,25 +66,27 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   return jsonObject
 }
 
-val courseMapper: ObjectMapper  // TODO: common mapper for archive creator and reader?
-  get() {
-    val factory = JsonFactory()
-    val mapper = ObjectMapper(factory)
-    val module = SimpleModule()
-    module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
-    module.addDeserializer(Course::class.java, CourseDeserializer())
-    mapper.registerModule(module)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
-    mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
-    mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
-    mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
-    mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
-    mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-    mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-    mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
+fun getCourseMapper(isEncrypted: Boolean): ObjectMapper { // TODO: common mapper for archive creator and reader?
+  val factory = JsonFactory()
+  val mapper = ObjectMapper(factory)
+  val module = SimpleModule()
+  module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
+  module.addDeserializer(Course::class.java, CourseDeserializer())
+  mapper.registerModule(module)
+  if (isEncrypted) {
+    mapper.registerModule(EncryptionModule(message("aesKey")))
+  }
+  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
+  mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
+  mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
+  mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
+  mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
+  mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
+  mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+  mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
+  mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
+  mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
     mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
