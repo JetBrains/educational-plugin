@@ -57,6 +57,7 @@ object JsonMixinNames {
   // marketplace
   const val PLUGIN_VERSION = "edu_plugin_version"
   const val VENDOR = "vendor"
+  const val COURSE_VERSION = "course_version"
   const val URL = "url"
   const val EMAIL = "email"
 

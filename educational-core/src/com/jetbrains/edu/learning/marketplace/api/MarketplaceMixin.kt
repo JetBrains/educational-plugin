@@ -38,6 +38,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(RATING) val rating: Double,
   @JsonProperty(ORGANIZATION) val organization: String,
   @JsonProperty(FIELDS) val fields: Fields,
+  @JsonProperty(COURSE_VERSION) val version: Int,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -54,6 +55,7 @@ private class MarketplaceCourseBuilder(
       language = fields.programmingLanguage.toLowerCase().capitalize()
       languageCode = fields.language
       vendor = Vendor(organization)
+      courseVersion = version
     }
 
     return course

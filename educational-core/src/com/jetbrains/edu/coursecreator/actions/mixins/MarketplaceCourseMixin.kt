@@ -26,6 +26,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VENDOR
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.marketplace.api.COURSE_VERSION
 import com.jetbrains.edu.learning.pluginVersion
 
 /**
@@ -37,7 +38,7 @@ import com.jetbrains.edu.learning.pluginVersion
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, PLUGIN_VERSION,  VENDOR,
+@JsonPropertyOrder(COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, PLUGIN_VERSION,  VENDOR,
                    SOLUTIONS_HIDDEN, ITEMS)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class),
                      JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
@@ -46,6 +47,10 @@ abstract class MarketplaceCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val myVendor: Vendor? = null
+
+  @JsonProperty(COURSE_VERSION)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private val myCourseVersion: Int = -1
 }
 
 private class PluginVersionPropertyWriter : VirtualBeanPropertyWriter {

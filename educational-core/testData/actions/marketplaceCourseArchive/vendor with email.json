@@ -1,4 +1,5 @@
 {
+  "course_version" : 1,
   "summary" : "Test Course Description",
   "title" : "Test Course",
   "programming_language" : "FakeGradleBasedLanguage",
