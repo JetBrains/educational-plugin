@@ -33,6 +33,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
@@ -68,6 +69,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWOR
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
+import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -162,6 +164,13 @@ abstract class LocalLessonMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+abstract class FrameworkLessonMixin : LocalLessonMixin() {
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
+  @JsonProperty(IS_TEMPLATE_BASED)
+  private var isTemplateBased: Boolean = true
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

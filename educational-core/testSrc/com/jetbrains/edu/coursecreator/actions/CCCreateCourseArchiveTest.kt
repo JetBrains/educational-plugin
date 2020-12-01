@@ -422,6 +422,30 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     TestCase.assertEquals("Files listed in the `.courseignore` are not found in the project:\n\ntmp.txt", errorMessage)
   }
 
+  fun `test non templated based framework lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("lesson1", isTemplateBased = false) {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
+  fun `test remote non templated based framework lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, id = 1) {
+      frameworkLesson("lesson1", isTemplateBased = false) {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/createCourseArchive"
   }

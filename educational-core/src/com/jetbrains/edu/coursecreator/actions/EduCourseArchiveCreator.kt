@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import java.text.SimpleDateFormat
@@ -36,6 +33,7 @@ class EduCourseArchiveCreator(project: Project, location: String, aesKey: String
       mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
       mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
       mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
+      mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
       mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
       commonMapperSetup(mapper, course)
       val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)

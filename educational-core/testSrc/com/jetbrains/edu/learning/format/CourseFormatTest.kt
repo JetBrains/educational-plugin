@@ -29,9 +29,18 @@ class CourseFormatTest : EduTestCase() {
 
   fun testFrameworkLesson() {
     val course = courseFromJson
-    val items = course.items
-    assertEquals(1, items.size)
-    assertTrue(items[0] is FrameworkLesson)
+    assertEquals(1, course.items.size)
+    val lesson = course.items[0]
+    check(lesson is FrameworkLesson)
+    assertTrue(lesson.isTemplateBased)
+  }
+
+  fun testNonTemplateBasedFrameworkLesson() {
+    val course = courseFromJson
+    assertEquals(1, course.items.size)
+    val lesson = course.items[0]
+    check(lesson is FrameworkLesson)
+    assertFalse(lesson.isTemplateBased)
   }
 
   fun testPycharmToEduTask() {
