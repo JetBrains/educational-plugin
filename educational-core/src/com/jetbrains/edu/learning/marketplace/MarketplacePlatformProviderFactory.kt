@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.icons.AllIcons
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -11,7 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 class MarketplacePlatformProviderFactory : CoursesPlatformProviderFactory {
-  override fun getProviders(): List<CoursesPlatformProvider> = listOf(MarketplacePlatformProvider())
+  override fun getProviders(): List<CoursesPlatformProvider> =
+    if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)) listOf (MarketplacePlatformProvider()) else emptyList()
 }
 
 private class MarketplacePlatformProvider : CoursesPlatformProvider() {
