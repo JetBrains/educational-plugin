@@ -177,8 +177,6 @@
 
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>
-      <reference id="Educational.ImportLocalCourse"/>
-      <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
