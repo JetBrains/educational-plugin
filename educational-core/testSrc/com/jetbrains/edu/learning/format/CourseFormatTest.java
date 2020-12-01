@@ -1,176 +1,164 @@
-package com.jetbrains.edu.learning.format;
+package com.jetbrains.edu.learning.format
 
-import com.intellij.openapi.util.Pair;
-import com.intellij.testFramework.LightPlatformTestCase;
-import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.Pair
+import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.containers.ContainerUtil
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-public class CourseFormatTest extends EduTestCase {
-
-  public void testAdditionalMaterialsLesson() throws IOException {
-    final Course course = getCourseFromJson();
-    assertNotNull(course.getAdditionalFiles());
-    assertFalse(course.getAdditionalFiles().isEmpty());
-    assertEquals("test_helper.py", course.getAdditionalFiles().get(0).getName());
+class CourseFormatTest : EduTestCase() {
+  fun testAdditionalMaterialsLesson() {
+    val course = courseFromJson
+    assertNotNull(course.additionalFiles)
+    assertFalse(course.additionalFiles.isEmpty())
+    assertEquals("test_helper.py", course.additionalFiles[0].name)
   }
 
-  public void testCourseWithSection() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<StudyItem> items = course.getItems();
-    assertEquals(2, items.size());
-    assertTrue(items.get(0) instanceof Section);
-    assertTrue(items.get(1) instanceof Lesson);
-    assertEquals(1, ((Section)items.get(0)).getLessons().size());
+  fun testCourseWithSection() {
+    val course = courseFromJson
+    val items = course.items
+    assertEquals(2, items.size)
+    assertTrue(items[0] is Section)
+    assertTrue(items[1] is Lesson)
+    assertEquals(1, (items[0] as Section).lessons.size)
   }
 
-  public void testFrameworkLesson() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<StudyItem> items = course.getItems();
-    assertEquals(1, items.size());
-    assertTrue(items.get(0) instanceof FrameworkLesson);
+  fun testFrameworkLesson() {
+    val course = courseFromJson
+    val items = course.items
+    assertEquals(1, items.size)
+    assertTrue(items[0] is FrameworkLesson)
   }
 
-  public void testPycharmToEduTask() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    assertTrue(taskList.get(0) instanceof EduTask);
+  fun testPycharmToEduTask() {
+    val course = courseFromJson
+    val lessons = course.lessons
+    assertFalse("No lessons found", lessons.isEmpty())
+    val lesson = lessons[0]
+    val taskList = lesson.taskList
+    assertFalse("No tasks found", taskList.isEmpty())
+    assertTrue(taskList[0] is EduTask)
   }
 
-  public void testDescription() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-    assertEquals("First task description", EduUtils.getTaskTextFromTask(getProject(), eduTask));
+  fun testDescription() {
+    val eduTask = firstEduTask
+    assertEquals("First task description", EduUtils.getTaskTextFromTask(project, eduTask))
   }
 
-  public void testFeedbackLinks() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-
-    FeedbackLink feedbackLink = eduTask.getFeedbackLink();
-    assertEquals(FeedbackLink.LinkType.CUSTOM, feedbackLink.getType());
-    assertEquals("https://www.jetbrains.com/", feedbackLink.getLink());
+  fun testFeedbackLinks() {
+    val eduTask = firstEduTask
+    val feedbackLink = eduTask.feedbackLink
+    assertEquals(FeedbackLink.LinkType.CUSTOM, feedbackLink.type)
+    assertEquals("https://www.jetbrains.com/", feedbackLink.link)
   }
 
-  @NotNull
-  private EduTask getFirstEduTask() throws IOException {
-    final Course course = getCourseFromJson();
-    course.init(null, null, false);
-    CourseBuilderKt.createCourseFiles(course, getProject(), getModule(), LightPlatformTestCase.getSourceRoot(), new Object());
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertTrue(task instanceof EduTask);
-    return (EduTask)task;
+  fun testPlaceholderText() {
+    val eduTask = firstEduTask
+    val taskFile = eduTask.getTaskFile("task.py")
+    check(taskFile != null)
+    val answerPlaceholders = taskFile.answerPlaceholders
+    assertEquals(1, answerPlaceholders.size)
+    assertEquals("write function body", answerPlaceholders[0].placeholderText)
   }
 
-  public void testPlaceholderText() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-    final TaskFile taskFile = eduTask.getTaskFile("task.py");
-    assertNotNull(taskFile);
-    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, answerPlaceholders.size());
-    assertEquals("write function body", answerPlaceholders.get(0).getPlaceholderText());
+  fun testPossibleAnswer() {
+    val eduTask = firstEduTask
+    val taskFile = eduTask.getTaskFile("task.py")
+    check(taskFile != null)
+    val answerPlaceholders = taskFile.answerPlaceholders
+    assertEquals(1, answerPlaceholders.size)
+    assertEquals("pass", answerPlaceholders[0].possibleAnswer)
   }
 
-  public void testPossibleAnswer() throws IOException {
-    EduTask eduTask = getFirstEduTask();
-    final TaskFile taskFile = eduTask.getTaskFile("task.py");
-    assertNotNull(taskFile);
-    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, answerPlaceholders.size());
-    assertEquals("pass", answerPlaceholders.get(0).getPossibleAnswer());
+  fun testCourseName() {
+    val course = courseFromJson
+    assertEquals("My Python Course", course.name)
   }
 
-  public void testCourseName() throws IOException {
-    final Course course = getCourseFromJson();
-    assertEquals("My Python Course", course.getName());
+  fun testCourseProgrammingLanguage() {
+    val course = courseFromJson
+    assertEquals(EduNames.PYTHON, course.languageID)
   }
 
-  public void testCourseProgrammingLanguage() throws IOException {
-    final Course course = getCourseFromJson();
-    assertEquals(EduNames.PYTHON, course.getLanguageID());
+  fun testCourseLanguage() {
+    val course = courseFromJson
+    assertEquals("Russian", course.humanLanguage)
   }
 
-  public void testCourseLanguage() throws IOException {
-    final Course course = getCourseFromJson();
-    assertEquals("Russian", course.getHumanLanguage());
+  fun testCourseDescription() {
+    val course = courseFromJson
+    assertEquals("Best course ever", course.description)
   }
 
-  public void testCourseDescription() throws IOException {
-    final Course course = getCourseFromJson();
-    assertEquals("Best course ever", course.getDescription());
+  fun testStudentTaskText() {
+    val course = courseFromJson
+    val lessons = course.lessons
+    assertFalse("No lessons found", lessons.isEmpty())
+    val lesson = lessons[0]
+    val taskList = lesson.taskList
+    assertFalse("No tasks found", taskList.isEmpty())
+    val task = taskList[0]
+    val taskFile = task.getTaskFile("my_task.py")
+    assertNotNull(taskFile)
+    assertEquals("def foo():\n    write function body\n", taskFile!!.text)
   }
 
-  public void testStudentTaskText() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    final TaskFile taskFile = task.getTaskFile("my_task.py");
-    assertNotNull(taskFile);
-    assertEquals("def foo():\n    write function body\n", taskFile.getText());
+  fun testChoiceTasks() {
+    val course = courseFromJson
+    val task = course.lessons[0].taskList[0]
+    check(task is ChoiceTask)
+    assertTrue(task.isMultipleChoice)
+    val choiceOptions = task.choiceOptions
+    val actualChoiceOptions = ContainerUtil.newHashMap(ContainerUtil.map(choiceOptions) { it.text },
+                                                       ContainerUtil.map(choiceOptions) { it.status })
+    assertEquals(ContainerUtil.newHashMap(Pair.create("1", ChoiceOptionStatus.CORRECT),
+                                          Pair.create("2", ChoiceOptionStatus.INCORRECT)),
+                 actualChoiceOptions)
   }
 
-  public void testChoiceTasks() throws IOException {
-    final Course course = getCourseFromJson();
-    Task task = course.getLessons().get(0).getTaskList().get(0);
-    assertTrue(task instanceof ChoiceTask);
-    ChoiceTask choiceTask = (ChoiceTask)task;
-    assertTrue(choiceTask.isMultipleChoice());
-    List<ChoiceOption> choiceOptions = choiceTask.getChoiceOptions();
-    Map<String, ChoiceOptionStatus> actualChoiceOptions =
-      ContainerUtil.newHashMap(ContainerUtil.map(choiceOptions, t -> t.getText()), ContainerUtil.map(choiceOptions, t -> t.getStatus()));
-    assertEquals(ContainerUtil.newHashMap(Pair.create("1", ChoiceOptionStatus.CORRECT), Pair.create("2", ChoiceOptionStatus.INCORRECT)), actualChoiceOptions);
-  }
-
-  public void testCourseWithAuthors() throws IOException {
-    final Course course = getCourseFromJson();
+  fun testCourseWithAuthors() {
+    val course = courseFromJson
     assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
-                 ContainerUtil.map(course.getAuthors(), info -> info.getName()));
+                 ContainerUtil.map(course.authors) { info: StepikUserInfo -> info.name })
   }
 
-  public void testSolutionsHiddenInCourse() throws IOException {
-    final Course course = getCourseFromJson();
-    assertTrue(course.getSolutionsHidden());
+  fun testSolutionsHiddenInCourse() {
+    val course = courseFromJson
+    assertTrue(course.solutionsHidden)
   }
 
-  public void testSolutionHiddenInTask() throws IOException {
-    final Course course = getCourseFromJson();
-    Task task = course.getLessons().get(0).getTaskList().get(0);
-    assertTrue(task.getSolutionHidden());
+  fun testSolutionHiddenInTask() {
+    val course = courseFromJson
+    val task = course.lessons[0].taskList[0]
+    assertTrue(task.solutionHidden!!)
   }
 
-  private Course getCourseFromJson() throws IOException {
-    final String fileName = getTestFile();
-    return CourseTestUtilsKt.createCourseFromJson(getTestDataPath() + fileName, CourseMode.STUDENT);
-  }
+  private val courseFromJson: Course
+    get() {
+      val fileName = testFile
+      return createCourseFromJson(testDataPath + fileName, CourseMode.STUDENT)
+    }
 
-  @NotNull
-  protected String getTestDataPath() {
-    return super.getTestDataPath() + "/format/";
-  }
+  override fun getTestDataPath(): String = "${super.getTestDataPath()}/format/"
 
-  @NotNull
-  private String getTestFile() {
-    return getTestName(true) + ".json";
-  }
+  private val testFile: String get() = "${getTestName(true)}.json"
+
+  private val firstEduTask: EduTask
+    get() {
+      val course = courseFromJson
+      course.init(null, null, false)
+      course.createCourseFiles(project, module, LightPlatformTestCase.getSourceRoot(), Any())
+      val lessons = course.lessons
+      assertFalse("No lessons found", lessons.isEmpty())
+      val lesson = lessons[0]
+      val taskList = lesson.taskList
+      assertFalse("No tasks found", taskList.isEmpty())
+      val task = taskList[0]
+      check(task is EduTask)
+      return task
+    }
 }
