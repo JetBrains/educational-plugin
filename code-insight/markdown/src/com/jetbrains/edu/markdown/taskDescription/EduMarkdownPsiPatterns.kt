@@ -10,9 +10,10 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl
 
 object EduMarkdownPsiPatterns {
 
-  val inMarkdownLinkDestination: PsiElementPattern.Capture<PsiElement>
-    get() = psiElement<PsiElement>()
+  val markdownLinkDestination: PsiElementPattern.Capture<out PsiElement> = psiElement<MarkdownLinkDestinationImpl>()
       .inCourse()
       .inFileWithName(EduNames.TASK_MD)
-      .withParent(psiElement<MarkdownLinkDestinationImpl>())
+
+  val inMarkdownLinkDestination: PsiElementPattern.Capture<PsiElement> = psiElement<PsiElement>()
+      .withParent(markdownLinkDestination)
 }
