@@ -6,13 +6,14 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import com.jetbrains.edu.codeInsight.EduPsiReferenceProvider
+import com.jetbrains.edu.codeInsight.EduReferenceContributorBase
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -28,20 +29,11 @@ import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequence
 import org.jetbrains.yaml.psi.YAMLSequenceItem
 
-class EduYamlReferenceContributor : PsiReferenceContributor() {
-
+class EduYamlReferenceContributor : EduReferenceContributorBase() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
     registrar.registerEduReferenceProvider(EduYamlTaskFilePathReferenceProvider())
     registrar.registerEduReferenceProvider(ItemContainerContentReferenceProvider())
   }
-
-  private fun PsiReferenceRegistrar.registerEduReferenceProvider(provider: EduPsiReferenceProvider) {
-    registerReferenceProvider(provider.pattern, provider)
-  }
-}
-
-abstract class EduPsiReferenceProvider : PsiReferenceProvider() {
-  abstract val pattern: ElementPattern<out PsiElement>
 }
 
 class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
