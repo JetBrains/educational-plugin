@@ -263,6 +263,7 @@ project(":") {
 
   dependencies {
     implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
     implementation(project(":code-insight:html"))
     implementation(project(":code-insight:markdown"))
     implementation(project(":code-insight:yaml"))
