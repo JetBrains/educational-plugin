@@ -5,5 +5,7 @@
     <completion.contributor language="Markdown"
                             id="EduMarkdownCompletionContributor"
                             implementationClass="com.jetbrains.edu.markdown.taskDescription.EduMarkdownCompletionContributor"/>
+    <psi.referenceContributor language="Markdown"
+                              implementation="com.jetbrains.edu.markdown.taskDescription.EduMarkdownReferenceContributor"/>
   </extensions>
 </idea-plugin>

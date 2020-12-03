@@ -1,13 +1,8 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.jetbrains.edu.codeInsight.EduCompletionTextFixture
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 
-abstract class EduUriSchemaCompletionProviderTestBase : EduTestCase() {
-
-  protected abstract val taskDescriptionFormat: DescriptionFormat
+abstract class EduUriSchemaCompletionProviderTestBase : EduTaskDescriptionTestBase() {
 
   private lateinit var completionFixture: EduCompletionTextFixture
 
@@ -33,12 +28,7 @@ abstract class EduUriSchemaCompletionProviderTestBase : EduTestCase() {
   }
 
   protected open fun doTest(before: String, after: String) {
-    val name = when (taskDescriptionFormat) {
-      DescriptionFormat.HTML -> EduNames.TASK_HTML
-      DescriptionFormat.MD -> EduNames.TASK_MD
-    }
-
-    val taskDescriptionFile = findFile("lesson1/task1/$name")
+    val taskDescriptionFile = findFile("lesson1/task1/${taskDescriptionFormat.descriptionFileName}")
     completionFixture.doSingleCompletion(taskDescriptionFile, before, after)
   }
 }
