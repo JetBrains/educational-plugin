@@ -69,6 +69,7 @@ val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val markdownPlugin = if (baseIDE == "studio") "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
+val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 
 val jvmPlugins = arrayOf(
   "java",
@@ -239,7 +240,10 @@ project(":") {
       rustPlugin,
       tomlPlugin,
       "yaml",
-      markdownPlugin
+      markdownPlugin,
+      // PsiViewer plugin is not a runtime dependency
+      // but it helps a lot while developing features related to PSI
+      psiViewerPlugin
     )
     pluginsList += listOfNotNull(pythonPlugin)
     if (isJvmCenteredIDE) {
