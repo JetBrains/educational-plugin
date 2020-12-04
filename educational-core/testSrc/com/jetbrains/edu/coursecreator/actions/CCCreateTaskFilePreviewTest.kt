@@ -71,7 +71,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
 
     withEduTestDialog(EduTestDialog()) {
       testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
-    }.checkWasShown(EduCoreBundle.message("exception.message.placeholder.info.single", 1000, 0))
+    }.checkWasShown(EduCoreBundle.message("exception.broken.placeholder.message", "lesson1/task1/fizz.kt", 1000, 0))
   }
 
   fun `test show error if we have no placeholders`() {

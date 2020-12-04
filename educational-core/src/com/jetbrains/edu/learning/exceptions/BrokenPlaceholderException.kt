@@ -11,16 +11,12 @@ class BrokenPlaceholderException(
   val placeholderInfo: String
     @Nls(capitalization = Nls.Capitalization.Sentence)
     get() {
-      val placeholdersCount = placeholder.taskFile.answerPlaceholders.size
-      return if (placeholdersCount == 1)
-        EduCoreBundle.message(
-          "exception.message.placeholder.info.single",
-          placeholder.offset, placeholder.length
-        )
-      else
-        EduCoreBundle.message(
-          "exception.message.placeholder.info.one.of",
-          placeholder.index + 1, placeholdersCount, placeholder.offset, placeholder.length
-        )
+      val taskFile = placeholder.taskFile
+      val task = taskFile.task
+      val lesson = task.lesson
+      val section = lesson.section
+      val path = listOfNotNull(section?.name, lesson.name, task.name, taskFile.name).joinToString(separator = "/")
+
+      return EduCoreBundle.message("exception.broken.placeholder.message", path, placeholder.offset, placeholder.length)
     }
 }

@@ -224,7 +224,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
           // We need to take it from original task, because taskCopy has issues with links (taskCopy.lesson is always null)
           val file = task.getTaskFile(taskFile.name)
           val answerPlaceholder = file?.answerPlaceholders?.get(placeholder.index)
-          throw BrokenPlaceholderException(FAILED_TO_CONVERT_TO_STUDENT_FILE, answerPlaceholder ?: placeholder)
+          throw BrokenPlaceholderException(EduCoreBundle.message("exception.broken.placeholder.title"), answerPlaceholder ?: placeholder)
         }
       }
       taskFile.setText(studentDocument.immutableCharSequence.toString())
@@ -232,7 +232,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     return taskFile
   }
   catch (e: IOException) {
-    LOG.error("$FAILED_TO_CONVERT_TO_STUDENT_FILE Path to broken file $path")
+    LOG.error("Failed to convert `${path}` to student file")
   }
   return null
 }
@@ -241,5 +241,4 @@ private fun isGitObject(name: String): Boolean {
   return (name.length == 38 || name.length == 40) && name.matches(Regex("[a-z0-9]+"))
 }
 
-const val FAILED_TO_CONVERT_TO_STUDENT_FILE = "Failed to convert answer file to student one because placeholder is broken."
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.VirtualFileExt")
