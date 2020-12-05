@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.DataInput
@@ -114,17 +115,23 @@ sealed class Change {
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       if (task.getTaskFile(path) == null) {
-        GeneratorUtils.createChildFile(taskDir, path, text)
+        createChildIfNeeded(task, taskDir)
       }
       else {
         try {
           EduDocumentListener.modifyWithoutListener(task, path) {
-            GeneratorUtils.createChildFile(taskDir, path, text)
+            createChildIfNeeded(task, taskDir)
           }
         }
         catch (e: IOException) {
           LOG.error("Failed to create file `${taskDir.path}/$path`", e)
         }
+      }
+    }
+
+    private fun createChildIfNeeded(task: Task, taskDir: VirtualFile) {
+      if (task.shouldHavePhysicalFile(path)) {
+        GeneratorUtils.createChildFile(taskDir, path, text)
       }
     }
 

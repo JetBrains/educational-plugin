@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
@@ -46,6 +44,89 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("task.html")
         }
         dir("task3") {
+          file("task.html")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test next no tests dir in marketplace course`() {
+    val course = courseWithFiles() {
+      frameworkLesson {
+        eduTask {
+          taskFile("task1.kt")
+          taskFile("tests/test1.kt")
+        }
+        eduTask {
+          taskFile("task2.kt")
+          taskFile("tests/test2.kt")
+        }
+      }
+    }
+
+    withFeature(EduExperimentalFeatures.MARKETPLACE, true) {
+      withVirtualFileListener(course) {
+        val task = course.findTask("lesson1", "task1")
+        task.openTaskFileInEditor("task1.kt")
+        myFixture.type("123")
+        task.status = CheckStatus.Solved
+        myFixture.testAction(NextTaskAction())
+      }
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("task2.kt")
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test next in non-marketplace course`() {
+    val course = courseWithFiles() {
+      frameworkLesson {
+        eduTask {
+          taskFile("task1.kt")
+          taskFile("tests/test1.kt")
+        }
+        eduTask {
+          taskFile("task2.kt")
+          taskFile("tests/test2.kt")
+        }
+      }
+    }
+
+    withFeature(EduExperimentalFeatures.MARKETPLACE, false) {
+      withVirtualFileListener(course) {
+        val task = course.findTask("lesson1", "task1")
+        task.openTaskFileInEditor("task1.kt")
+        myFixture.type("123")
+        task.status = CheckStatus.Solved
+        myFixture.testAction(NextTaskAction())
+      }
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("task2.kt")
+          dir("tests") {
+            file("test2.kt")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
           file("task.html")
         }
       }
