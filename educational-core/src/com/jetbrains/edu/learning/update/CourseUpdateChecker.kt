@@ -18,7 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger
 abstract class CourseUpdateChecker(protected val project: Project) : Disposable {
   private val checkRunnable = Runnable { (checkIsUpToDate()).doWhenDone { queueNextCheck() } }
   private val checkForAlarm by lazy { Alarm(Alarm.ThreadToUse.POOLED_THREAD, this) }
-  val course: Course? get() = project.course
+  var course: Course? = project.course
+    @TestOnly set
   private val invocationCounter: AtomicInteger = AtomicInteger()
   var invocationNumber: Int
     @TestOnly

@@ -64,6 +64,7 @@ class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
 
     StudyTaskManager.getInstance(project).course = course
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
+    CodeforcesCourseUpdateChecker.getInstance(project).course = course
     return course
   }
 }

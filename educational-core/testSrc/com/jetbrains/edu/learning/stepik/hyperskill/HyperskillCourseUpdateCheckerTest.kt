@@ -124,6 +124,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
+    HyperskillCourseUpdateChecker.getInstance(project).course = course
     return course
   }
 

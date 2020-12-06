@@ -61,6 +61,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
+    EduCourseUpdateChecker.getInstance(project).course = course
     return course
   }
 
