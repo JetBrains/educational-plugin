@@ -86,7 +86,7 @@ sealed class ErrorState(
           is JetBrainsAcademyCourse -> if (HyperskillSettings.INSTANCE.account == null) JetBrainsAcademyLoginNeeded else None
           is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           is EduCourse -> {
-            if (!isLoggedInToStepik()) {
+            if (!isMarketplace && !isLoggedInToStepik()) {
               if (isStepikLoginRequired(this)) StepikLoginRequired else NotLoggedIn
             }
             else {
