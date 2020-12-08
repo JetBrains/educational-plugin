@@ -1,30 +1,32 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import javax.swing.JComponent
 
 open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings) : OpenCourseDialogBase() {
-  private val panel: JoinCoursePanel
+  private val coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { _, _, panel ->
+    CoursesPlatformProvider.joinCourse(CourseInfo(course, { locationString }, { languageSettings }), CourseMode.STUDY, panel) {
+      panel.setError(it)
+    }
+  }
 
   init {
     title = course.name
-    panel = JoinCoursePanel(course, settings)
-    panel.setValidationListener(course, object : JoinCoursePanel.ValidationListener {
-      override fun onInputDataValidated(isInputDataComplete: Boolean) {
-        isOKActionEnabled = isInputDataComplete
-      }
-    })
+    coursePanel.bindCourse(course, settings)
   }
 
   override val courseInfo: CourseInfo
-    get() = CourseInfo(course, { panel.locationString }, { panel.languageSettings })
+    get() = CourseInfo(course, { coursePanel.locationString }, { coursePanel.languageSettings })
 
-  override fun createCenterPanel(): JComponent = panel
+  override fun createCenterPanel(): JComponent = coursePanel
 
-  override fun setError(error: ErrorState) {
-    val message = error.message ?: return
-    panel.updateErrorText(message)
-  }
+  // '!!' is safe here because `myCoursePanel` has location field
+  val locationString: String get() = coursePanel.locationString!!
+
+  val languageSettings: LanguageSettings<*>? get() = coursePanel.languageSettings
 }

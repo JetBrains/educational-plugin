@@ -162,6 +162,8 @@ class CoursePanel(
 
   fun hideErrorPanel() {
     errorComponent.isVisible = false
+    revalidate()
+    repaint()
   }
 
   fun setError(errorState: ErrorState) {
@@ -186,7 +188,13 @@ class CoursePanel(
         setError(message)
       }
     }
+    showErrorPanel()
+  }
+
+  private fun showErrorPanel() {
     errorComponent.isVisible = true
+    revalidate()
+    repaint()
   }
 
   private fun setError(message: ValidationMessage) {

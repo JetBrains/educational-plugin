@@ -10,8 +10,6 @@ import javax.swing.Action
 abstract class OpenCourseDialogBase : DialogWrapper(true) {
   abstract val courseInfo: CourseInfo
 
-  abstract fun setError(error: ErrorState)
-
   override fun createActions(): Array<out Action> {
     val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand("&Close")) {
       override fun actionPerformed(e: ActionEvent) {
