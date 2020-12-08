@@ -43,7 +43,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun areSubmissionsAvailable(course: Course): Boolean {
-    return course is EduCourse && course.isStudy && course.isRemote
+    return course is EduCourse && course.isStudy && course.isRemote && !course.isMarketplace
   }
 
   override fun getPlatformName(): String = StepikNames.STEPIK

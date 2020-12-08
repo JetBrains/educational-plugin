@@ -19,7 +19,7 @@ class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   override fun courseCanBeUpdated(): Boolean {
     val eduCourse = course as? EduCourse ?: return false
-    return eduCourse.isRemote || eduCourse.isStudy
+    return !eduCourse.isMarketplace && (eduCourse.isRemote || eduCourse.isStudy)
   }
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {

@@ -42,6 +42,11 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     testNoCheck(EduCourseUpdateChecker.getInstance(project))
   }
 
+  fun `test no check scheduled for marketplace course`() {
+    createCourse(Date(), isNewlyCreated = false, isMarketplaceCourse = true)
+    testNoCheck(EduCourseUpdateChecker.getInstance(project))
+  }
+
   private fun doTestCheckScheduled(expectedInvocationNumber: Int,
                                    updateDate: Date,
                                    isCourseUpToDate: Boolean,
@@ -52,12 +57,13 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
-  private fun createCourse(date: Date, isNewlyCreated: Boolean): EduCourse {
+  private fun createCourse(date: Date, isNewlyCreated: Boolean, isMarketplaceCourse: Boolean = false): EduCourse {
     val course = EduCourse().apply {
       name = "Test Course"
       id = 1
       updateDate = date
       isPublic = true
+      isMarketplace = isMarketplaceCourse
     }
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
