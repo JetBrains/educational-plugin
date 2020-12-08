@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ui.ColorUtil
-import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.errorBackgroundColor
@@ -17,17 +16,11 @@ import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
 
-class ErrorComponent(
-  hyperlinkListener: HyperlinkListener? = null,
-  errorPanelMargin: Int = 3
-) : JBScrollPane(VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_NEVER) {
-
+class ErrorComponent(hyperlinkListener: HyperlinkListener? = null, errorPanelMargin: Int = 3) : NonOpaquePanel() {
   private val errorPanel = ErrorPanel(hyperlinkListener, errorPanelMargin)
 
   init {
-    isVisible = false
-    isOpaque = false
-    setViewportView(errorPanel)
+    add(errorPanel)
   }
 
   fun setErrorMessage(validationMessage: ValidationMessage) {
