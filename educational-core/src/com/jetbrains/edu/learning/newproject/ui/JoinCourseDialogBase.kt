@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import javax.swing.JComponent
 
 open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings) : OpenCourseDialogBase() {
+  // '!!' is safe here because `myCoursePanel` has location field
+  private val locationString: String get() = coursePanel.locationString!!
+  private val languageSettings: LanguageSettings<*>? get() = coursePanel.languageSettings
   private val coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { _, _, panel ->
     CoursesPlatformProvider.joinCourse(CourseInfo(course, { locationString }, { languageSettings }), CourseMode.STUDY, panel) {
       panel.setError(it)
@@ -26,9 +29,4 @@ open class JoinCourseDialogBase(private val course: Course, settings: CourseDisp
     get() = CourseInfo(course, { coursePanel.locationString }, { coursePanel.languageSettings })
 
   override fun createCenterPanel(): JComponent = coursePanel
-
-  // '!!' is safe here because `myCoursePanel` has location field
-  val locationString: String get() = coursePanel.locationString!!
-
-  val languageSettings: LanguageSettings<*>? get() = coursePanel.languageSettings
 }
