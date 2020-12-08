@@ -2,22 +2,16 @@ package com.jetbrains.edu.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.BaseFixture
-import com.jetbrains.edu.learning.document
 
 class EduCompletionTextFixture(
   private val fixture: CodeInsightTestFixture
 ) : BaseFixture() {
 
   fun doSingleCompletion(file: VirtualFile, before: String, after: String, invocationCount: Int = 1) {
-    fixture.saveText(file, before.trimIndent())
-    fixture.openFileInEditor(file)
-    val caretsState = EditorTestUtil.extractCaretAndSelectionMarkers(file.document)
-    EditorTestUtil.setCaretsAndSelection(fixture.editor, caretsState)
-
+    configureExistingFile(file, before)
     doSingleCompletion(after, invocationCount)
   }
 
@@ -33,9 +27,19 @@ class EduCompletionTextFixture(
     fixture.checkResult(after.trimIndent())
   }
 
+  fun checkNoCompletion(file: VirtualFile, before: String) {
+    configureExistingFile(file, before)
+    checkNoCompletion()
+  }
+
   fun checkNoCompletion() {
     val variants = fixture.completeBasic()
     checkNotNull(variants) { "Expected zero completions, but one completion was auto inserted" }
     BasePlatformTestCase.assertEquals("Expected zero completions", 0, variants.size)
+  }
+
+  private fun configureExistingFile(file: VirtualFile, before: String) {
+    fixture.saveText(file, before.trimIndent())
+    fixture.configureFromExistingVirtualFile(file)
   }
 }
