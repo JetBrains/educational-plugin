@@ -75,12 +75,6 @@ abstract class CoursesPanel(
     background = MAIN_BG_COLOR
     coursesListPanel.setSelectionListener { processSelectionChanged() }
 
-    addCourseValidationListener(object : CourseValidationListener {
-      override fun validationStatusChanged(canStartCourse: Boolean) {
-        coursePanel.setButtonsEnabled(canStartCourse)
-      }
-    })
-
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
     this.add(this.createNoCoursesPanel(), NO_COURSES)
@@ -189,9 +183,7 @@ abstract class CoursesPanel(
   }
 
   fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
-    val errorState = getErrorState(course) { coursePanel.validateSettings(it) }
-    setError(errorState)
-    notifyListeners(errorState.courseCanBeStarted)
+    coursePanel.doValidation(course)
   }
 
   fun setError(errorState: ErrorState) {
@@ -215,10 +207,6 @@ abstract class CoursesPanel(
     else {
       coursesListPanel.updateModel(coursesGroups, courseToSelect)
     }
-  }
-
-  private fun addCourseValidationListener(listener: CourseValidationListener) {
-    coursePanel.addCourseValidationListener(listener)
   }
 
   fun notifyListeners(canStartCourse: Boolean) {

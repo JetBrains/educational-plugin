@@ -75,8 +75,4 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.languageSettings })
 
   override fun createCenterPanel(): JComponent = panel
-
-  override fun setError(error: ErrorState) {
-    panel.setError(error)
-  }
 }
