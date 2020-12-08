@@ -10,7 +10,7 @@
       "enum": ["lesson", "framework"]
     },
     "content": {
-      "description": "Folder names of tasks included in the section",
+      "description": "Folder names of tasks included in the lesson",
       "type": "array",
       "uniqueItems": true
     },
