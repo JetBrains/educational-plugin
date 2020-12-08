@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JsCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private static final String CLIENT_ID = JsCheckiOOAuthBundle.messageOrDefault("jsCheckioClientId", "");
-  private static final String CLIENT_SECRET = JsCheckiOOAuthBundle.messageOrDefault("jsCheckioClientSecret", "");
+  private static final String CLIENT_ID = JsCheckiOOAuthBundle.value("jsCheckioClientId");
+  private static final String CLIENT_SECRET = JsCheckiOOAuthBundle.value("jsCheckioClientSecret");
 
   protected JsCheckiOOAuthConnector() {
     super(CLIENT_ID, CLIENT_SECRET);

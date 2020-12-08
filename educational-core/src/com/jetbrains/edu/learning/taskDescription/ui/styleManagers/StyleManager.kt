@@ -31,9 +31,9 @@ class StyleManager {
   private fun bodyColor(): Color {
     return if (UIUtil.isUnderDarcula()) {
       if (StyleResourcesManager.isHighContrast()) {
-        Color(TaskDescriptionBundle.message("high.contrast.body.color"))
+        Color(TaskDescriptionBundle.value("high.contrast.body.color"))
       }
-      else Color((TaskDescriptionBundle.message("darcula.body.color")))
+      else Color((TaskDescriptionBundle.value("darcula.body.color")))
     }
     else {
       JBColor.foreground().asCssColor()
@@ -41,8 +41,8 @@ class StyleManager {
   }
 
   private fun codeBackground(): Color {
-    return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.code.background")))
-    else Color(TaskDescriptionBundle.message("code.background"))
+    return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.value("darcula.code.background")))
+    else Color(TaskDescriptionBundle.value("code.background"))
   }
 
   fun typographyAndColorStylesheet(): String {

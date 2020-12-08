@@ -31,13 +31,13 @@ class StepikChangeHostActionTest : EduTestCase() {
 
   fun `test default stepik host`() {
     PropertiesComponent.getInstance().setValue(STEPIK_HOST_ORDINAL_PROPERTY, StepikHost.RELEASE.ordinal, 2)
-    doTestStepikHostChanged(STEPIK_RELEASE_URL, StepikHost.PRODUCTION, StepikOAuthBundle.valueOrDefault("stepikClientId", ""),
-                            StepikOAuthBundle.valueOrDefault("stepikClientSecret", ""))
+    doTestStepikHostChanged(STEPIK_RELEASE_URL, StepikHost.PRODUCTION, StepikOAuthBundle.value("stepikClientId"),
+                            StepikOAuthBundle.value("stepikClientSecret"))
   }
 
   fun `test host changed to RELEASE`() {
-    doTestStepikHostChanged(STEPIK_DEFAULT_URL, StepikHost.RELEASE, StepikOAuthBundle.valueOrDefault("stepikNonProductionClientId", ""),
-                            StepikOAuthBundle.valueOrDefault("stepikNonProductionClientSecret", ""))
+    doTestStepikHostChanged(STEPIK_DEFAULT_URL, StepikHost.RELEASE, StepikOAuthBundle.value("stepikNonProductionClientId"),
+                            StepikOAuthBundle.value("stepikNonProductionClientSecret"))
   }
 
 

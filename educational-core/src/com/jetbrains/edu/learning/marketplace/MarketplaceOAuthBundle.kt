@@ -1,23 +1,14 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.CommonBundle
+import com.jetbrains.edu.learning.messages.EduPropertiesBundle
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
-import java.util.*
 
-object MarketplaceOAuthBundle {
+@NonNls
+private const val BUNDLE = "marketplace.marketplace-oauth"
 
-  private const val BUNDLE = "marketplace.marketplace-oauth"
-  private var ourBundle: ResourceBundle? = null
-
-  private val bundle: ResourceBundle?
-    get() {
-      if (ourBundle == null) {
-        ourBundle = ResourceBundle.getBundle(BUNDLE)
-      }
-      return ourBundle
-    }
-
-  fun valueOrDefault(@PropertyKey(resourceBundle = BUNDLE) key: String, defaultValue: String, vararg params: Any): String {
-    return CommonBundle.messageOrDefault(bundle, key, defaultValue, *params)
+object MarketplaceOAuthBundle : EduPropertiesBundle(BUNDLE) {
+  fun value(@PropertyKey(resourceBundle = BUNDLE) key: String): String {
+    return valueOrEmpty(key)
   }
 }

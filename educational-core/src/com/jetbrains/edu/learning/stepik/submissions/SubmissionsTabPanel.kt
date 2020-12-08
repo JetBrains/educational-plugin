@@ -126,7 +126,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun getCorrectLinkColor(): String {
     return if (StyleResourcesManager.isHighContrast()) {
-      TaskDescriptionBundle.message("correct.label.foreground.high.contrast")
+      TaskDescriptionBundle.value("correct.label.foreground.high.contrast")
     }
     else {
       "#${ColorUtil.toHex(EduColors.correctLabelForeground)}"
@@ -135,7 +135,7 @@ class SubmissionsTabPanel(project: Project,
 
   private fun getWrongLinkColor(): String {
     return if (StyleResourcesManager.isHighContrast()) {
-      TaskDescriptionBundle.message("wrong.label.foreground.high.contrast")
+      TaskDescriptionBundle.value("wrong.label.foreground.high.contrast")
     }
     else {
       "#${ColorUtil.toHex(EduColors.wrongLabelForeground)}"

@@ -12,8 +12,8 @@ const val HUB_AUTH_URL = "$HUB_URL/api/rest/"
 const val HUB_PROFILE_PATH = "$HUB_URL/users/"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 
-var CLIENT_ID = MarketplaceOAuthBundle.valueOrDefault("marketplaceClientId", "")
-var CLIENT_SECRET = MarketplaceOAuthBundle.valueOrDefault("marketplaceClientSecret", "")
+var CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceClientId")
+var CLIENT_SECRET = MarketplaceOAuthBundle.value("marketplaceClientSecret")
 val HUB_AUTHORISATION_CODE_URL: String
   get() = "${HUB_AUTH_URL}oauth2/auth?" +
           "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +

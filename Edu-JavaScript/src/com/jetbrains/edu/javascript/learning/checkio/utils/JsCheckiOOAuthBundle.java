@@ -1,33 +1,23 @@
 package com.jetbrains.edu.javascript.learning.checkio.utils;
 
-import com.intellij.CommonBundle;
-import com.intellij.reference.SoftReference;
+import com.jetbrains.edu.learning.messages.EduPropertiesBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.util.ResourceBundle;
+public class JsCheckiOOAuthBundle extends EduPropertiesBundle {
+  @NonNls
+  private static final String BUNDLE_NAME = "checkio.js-checkio-oauth";
 
-public class JsCheckiOOAuthBundle {
-  private JsCheckiOOAuthBundle() {}
-
-  public static String messageOrDefault(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull String defaultValue, @NotNull Object... params) {
-    return CommonBundle.messageOrDefault(getBundle(), key, defaultValue, params);
+  private JsCheckiOOAuthBundle() {
+    super(BUNDLE_NAME);
   }
 
-  private static Reference<ResourceBundle> ourBundle;
+  public static String value(@NotNull @PropertyKey(resourceBundle = BUNDLE_NAME) String key) {
+    return InstanceHolder.INSTANCE.valueOrEmpty(key);
+  }
 
-  @NonNls
-  private static final String BUNDLE = "checkio.js-checkio-oauth";
-
-  @NotNull
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = SoftReference.dereference(ourBundle);
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      ourBundle = new SoftReference<>(bundle);
-    }
-    return bundle;
+  private static class InstanceHolder {
+    private static final JsCheckiOOAuthBundle INSTANCE = new JsCheckiOOAuthBundle();
   }
 }

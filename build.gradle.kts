@@ -307,9 +307,12 @@ project(":") {
       // To enable dynamic reloading, change value to `true` and disable `EduDynamicPluginListener`
       jvmArgs("-Didea.auto.reload.plugins=false")
       jvmArgs("-Xmx2g")
+
+      // Uncomment to show localized messages
+      // jvmArgs("-Didea.l10n=true")
+
       // Uncomment to enable memory dump creation if plugin cannot be unloaded by the platform
       // jvmArgs("-Dide.plugins.snapshot.on.unload.fail=true")
-
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"

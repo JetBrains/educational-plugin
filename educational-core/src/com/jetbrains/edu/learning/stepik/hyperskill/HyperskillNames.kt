@@ -22,8 +22,8 @@ private val port = BuiltInServerManager.getInstance().port
 val REDIRECT_URI_DEFAULT = "http://localhost:$port/api/edu/hyperskill/oauth"
 val HYPERSKILL_FAILOVER_PORTS = listOf(61904, 50605, 55795, 54687, 58511)
 
-var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("hyperskillClientId", "")
-var CLIENT_SECRET = HyperskillOAuthBundle.valueOrDefault("hyperskillClientSecret", "")
+var CLIENT_ID = HyperskillOAuthBundle.value("hyperskillClientId")
+var CLIENT_SECRET = HyperskillOAuthBundle.value("hyperskillClientSecret")
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
 const val SELECT_PROJECT = "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}"

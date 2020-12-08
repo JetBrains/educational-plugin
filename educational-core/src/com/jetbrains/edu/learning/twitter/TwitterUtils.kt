@@ -42,8 +42,8 @@ object TwitterUtils {
   val twitter: Twitter
     get() {
       val configuration = ConfigurationBuilder()
-        .setOAuthConsumerKey(TwitterBundle.message("twitterConsumerKey"))
-        .setOAuthConsumerSecret(TwitterBundle.message("twitterConsumerSecret"))
+        .setOAuthConsumerKey(TwitterBundle.value("twitterConsumerKey"))
+        .setOAuthConsumerSecret(TwitterBundle.value("twitterConsumerSecret"))
         .build()
       return TwitterFactory(configuration).instance
     }

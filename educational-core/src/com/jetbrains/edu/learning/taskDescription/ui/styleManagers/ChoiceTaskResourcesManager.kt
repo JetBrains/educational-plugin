@@ -124,23 +124,23 @@ class ChoiceTaskResourcesManager {
   }
 
   private fun getBackgroundColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.message("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.message("choice.options.background.color"))
+    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+  else Color(TaskDescriptionBundle.value("choice.options.background.color"))
 
   private fun getBorderColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.message("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.message("choice.options.border.color"))
+    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+  else Color(TaskDescriptionBundle.value("choice.options.border.color"))
 
   private fun getRadioButtonCheckedBorderColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.message("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.message("choice.options.checked.border.color"))
+    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+  else Color(TaskDescriptionBundle.value("choice.options.checked.border.color"))
 
   private fun getRadioButtonCheckedBackgroundColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.message("choice.options.border.color"))
-  else Color(TaskDescriptionBundle.message("choice.options.background.color"))
+    TaskDescriptionBundle.value("choice.options.border.color"))
+  else Color(TaskDescriptionBundle.value("choice.options.background.color"))
 
-  private fun getFocusColor() = if (UIUtil.isUnderDarcula()) Color(TaskDescriptionBundle.message("darcula.choice.options.focus.color"))
-  else Color(TaskDescriptionBundle.message("choice.options.focus.color"))
+  private fun getFocusColor() = if (UIUtil.isUnderDarcula()) Color(TaskDescriptionBundle.value("darcula.choice.options.focus.color"))
+  else Color(TaskDescriptionBundle.value("choice.options.focus.color"))
 
   private fun getSystemSpecificCss(): String {
     if (SystemInfo.isWindows) {

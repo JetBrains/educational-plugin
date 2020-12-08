@@ -1,32 +1,23 @@
 package com.jetbrains.edu.learning.twitter;
 
-import com.intellij.CommonBundle;
+import com.jetbrains.edu.learning.messages.EduPropertiesBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
+public class TwitterBundle extends EduPropertiesBundle {
+  @NonNls
+  private static final String BUNDLE = "twitter.oauth_twitter";
 
-public class TwitterBundle {
-    public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
-        return CommonBundle.message(getBundle(), key, params);
-    }
+  private TwitterBundle() {
+    super(BUNDLE);
+  }
 
-    private static Reference<ResourceBundle> ourBundle;
-    @NonNls
-    public static final String BUNDLE = "twitter.oauth_twitter";
+  public static String value(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key) {
+    return InstanceHolder.INSTANCE.valueOrEmpty(key);
+  }
 
-    private TwitterBundle() {
-    }
-
-    private static ResourceBundle getBundle() {
-        ResourceBundle bundle = com.intellij.reference.SoftReference.dereference(ourBundle);
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(BUNDLE);
-            ourBundle = new SoftReference<>(bundle);
-        }
-        return bundle;
-    }
+  private static class InstanceHolder {
+    private static final TwitterBundle INSTANCE = new TwitterBundle();
+  }
 }
