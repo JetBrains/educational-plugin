@@ -184,6 +184,7 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
 
   open fun update(courseInfo: CourseInfo) {
     isVisible = isVisible(courseInfo.course)
+    isEnabled = canStartCourse(courseInfo)
     addListener(courseInfo)
   }
 
