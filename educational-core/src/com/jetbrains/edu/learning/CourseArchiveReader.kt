@@ -87,13 +87,13 @@ fun getCourseMapper(isEncrypted: Boolean): ObjectMapper { // TODO: common mapper
   mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
   mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
   mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
-    mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-    mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-    mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-    mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
-    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-    mapper.dateFormat = dateFormat
-    return mapper
-  }
+  mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+  mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
+  mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
+  mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+  mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
+  val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
+  dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+  mapper.dateFormat = dateFormat
+  return mapper
+}

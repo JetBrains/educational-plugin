@@ -11,7 +11,7 @@ class CreateMarketplaceCourseFromZipTest : EduTestCase() {
 
   fun `test create marketplace course from zip`() {
     val zipPath = "$testDataPath/marketplace course.zip"
-    val marketplaceCourse = EduUtils.getLocalCourseWithEncryption(zipPath) ?: error("Failed to load marketplace course from $zipPath")
+    val marketplaceCourse = EduUtils.getLocalEncryptedCourse(zipPath) ?: error("Failed to load marketplace course from $zipPath")
 
     UsefulTestCase.assertInstanceOf(marketplaceCourse, EduCourse::class.java)
     GeneratorUtils.initializeCourse(project, marketplaceCourse)
