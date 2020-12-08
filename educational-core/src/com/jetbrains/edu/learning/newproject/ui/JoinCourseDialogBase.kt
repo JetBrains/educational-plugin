@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
@@ -18,6 +19,7 @@ open class JoinCourseDialogBase(private val course: Course, settings: CourseDisp
   init {
     title = course.name
     coursePanel.bindCourse(course, settings)
+    coursePanel.preferredSize = JBUI.size(500, 530)
   }
 
   override val courseInfo: CourseInfo
