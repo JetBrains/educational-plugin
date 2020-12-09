@@ -3,13 +3,17 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -19,12 +23,12 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
+import java.awt.Component
 import java.util.function.Supplier
 
-open class ImportLocalCourseAction(
-  text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk"),
-) : DumbAwareAction(text) {
+open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk")) : DumbAwareAction(text) {
   override fun actionPerformed(e: AnActionEvent) {
+    val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
       var course = EduUtils.getLocalCourse(fileName)
@@ -49,12 +53,15 @@ open class ImportLocalCourseAction(
             if (result == Messages.CANCEL) {
               EduCounterUsageCollector.importCourseArchive()
               course.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
+              closeDialog(component)
               JoinCourseDialog(course).show()
             }
             else if (result == Messages.OK) {
+              closeDialog(component)
               val project = ProjectUtil.openProject(courseMetaInfo.location, null, true)
               ProjectUtil.focusProjectWindow(project, true)
             }
+
           }
           return@chooseFile
         }
@@ -62,6 +69,11 @@ open class ImportLocalCourseAction(
         JoinCourseDialog(course).show()
       }
     }
+  }
+
+  private fun closeDialog(component: Component?) {
+    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
+    dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
   }
 
   protected open fun initCourse(course: Course): Course {
