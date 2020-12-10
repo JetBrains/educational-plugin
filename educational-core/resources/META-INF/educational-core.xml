@@ -75,8 +75,7 @@
             text="Refresh Answer Placeholder">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
-    <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
-            text="Enable Course Creator Features">
+    <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
