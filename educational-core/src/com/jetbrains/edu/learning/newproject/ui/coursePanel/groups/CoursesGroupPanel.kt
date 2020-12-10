@@ -20,7 +20,7 @@ private const val TOP_BOTTOM = 4
 private const val LEFT_RIGHT = 10
 private const val COLLAPSIBLE_GROUP_SIZE = 5
 
-class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : JPanel(VerticalFlowLayout(0, 0)) {
+class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(0, 0)) {
   private val courseCardsPanel = NonOpaquePanel(VerticalFlowLayout(0, 0))
 
   init {
@@ -29,7 +29,7 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
     val isCollapsible = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
     add(createTitleLabel(name, isCollapsible))
 
-    fillCourseCardsPanel(coursesGroup, showOpenButton)
+    fillCourseCardsPanel(coursesGroup)
     add(courseCardsPanel)
   }
 
@@ -61,9 +61,9 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) : J
     return titleLabel
   }
 
-  private fun fillCourseCardsPanel(coursesGroup: CoursesGroup, showOpenButton: Boolean) {
+  private fun fillCourseCardsPanel(coursesGroup: CoursesGroup) {
     for (course in coursesGroup.courses) {
-      val courseCardComponent = CourseCardComponent(course, showOpenButton)
+      val courseCardComponent = CourseCardComponent(course)
       courseCardComponent.updateColors(false)
       courseCardsPanel.add(courseCardComponent)
     }

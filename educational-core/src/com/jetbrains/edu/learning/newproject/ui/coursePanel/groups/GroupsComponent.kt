@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.event.ActionListener
 
-class GroupsComponent(private val showCardButton: Boolean, resetFilters: () -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent(resetFilters: () -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
   private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
   val selectedValue: Course?
@@ -25,7 +25,7 @@ class GroupsComponent(private val showCardButton: Boolean, resetFilters: () -> U
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {
-    val groupPanel = CoursesGroupPanel(coursesGroup, showCardButton)
+    val groupPanel = CoursesGroupPanel(coursesGroup)
     groupPanel.courseCards.forEach { courseGroupModel.addCourseCard(it) }
     add(groupPanel)
   }

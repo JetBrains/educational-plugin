@@ -6,8 +6,8 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(showOpenButton: Boolean, resetFilters: () -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent(showOpenButton, resetFilters)
+class CoursesListPanel(resetFilters: () -> Unit) : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(resetFilters)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {

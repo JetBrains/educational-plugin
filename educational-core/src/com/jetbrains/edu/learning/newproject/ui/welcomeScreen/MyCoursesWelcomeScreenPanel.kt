@@ -38,7 +38,7 @@ import javax.swing.JPanel
 private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
-  private val coursesListPanel = CoursesListPanel(true) {
+  private val coursesListPanel = CoursesListPanel() {
     coursesFilterComponent.resetSearchField()
     updateModel(createCoursesGroup())
   }

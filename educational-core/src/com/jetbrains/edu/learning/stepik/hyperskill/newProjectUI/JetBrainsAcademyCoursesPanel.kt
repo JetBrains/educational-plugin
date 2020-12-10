@@ -15,7 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.awt.Color
 
-class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(
+  platformProvider, scope) {
 
   override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)

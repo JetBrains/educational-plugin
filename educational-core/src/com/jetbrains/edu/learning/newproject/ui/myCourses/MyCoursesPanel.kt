@@ -25,7 +25,7 @@ class MyCoursesPanel(
   myCoursesProvider: CoursesPlatformProvider,
   scope: CoroutineScope,
   disposable: Disposable
-) : CoursesPanel(myCoursesProvider, scope, true) {
+) : CoursesPanel(myCoursesProvider, scope) {
 
   init {
     val connection = ApplicationManager.getApplication().messageBus.connect(disposable)

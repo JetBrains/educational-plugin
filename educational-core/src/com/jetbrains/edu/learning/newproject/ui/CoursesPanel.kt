@@ -41,13 +41,12 @@ private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(
   private val coursesProvider: CoursesPlatformProvider,
-  private val scope: CoroutineScope,
-  showButtonOnCard: Boolean = false
+  private val scope: CoroutineScope
 ) : JPanel() {
 
   protected var coursePanel: CoursePanel = DialogCoursePanel()
 
-  private val coursesListPanel = CoursesListPanel(showButtonOnCard) {
+  private val coursesListPanel = CoursesListPanel() {
     coursesFilterComponent.resetSearchField()
     resetSelection()
     updateModel(coursesGroups, null, true)
