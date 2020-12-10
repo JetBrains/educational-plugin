@@ -39,14 +39,11 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(
-  private val coursesProvider: CoursesPlatformProvider,
-  private val scope: CoroutineScope
-) : JPanel() {
+abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
 
   protected var coursePanel: CoursePanel = DialogCoursePanel()
 
-  private val coursesListPanel = CoursesListPanel() {
+  private val coursesListPanel = CoursesListPanel {
     coursesFilterComponent.resetSearchField()
     resetSelection()
     updateModel(coursesGroups, null, true)
