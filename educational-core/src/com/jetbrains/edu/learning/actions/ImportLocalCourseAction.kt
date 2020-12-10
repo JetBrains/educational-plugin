@@ -66,6 +66,7 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
           return@chooseFile
         }
         EduCounterUsageCollector.importCourseArchive()
+        closeDialog(component)
         JoinCourseDialog(course).show()
       }
     }
