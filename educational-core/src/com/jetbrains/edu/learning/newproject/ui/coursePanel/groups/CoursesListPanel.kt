@@ -57,4 +57,8 @@ class CoursesListPanel(resetFilters: () -> Unit) : JPanel(BorderLayout()) {
     groupsComponent.setSelectionListener(processSelectionChanged)
   }
 
+  fun setClickListener(onClick: (Course) -> Boolean) {
+    groupsComponent.setClickListener(onClick)
+  }
+
 }

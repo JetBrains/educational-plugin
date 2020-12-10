@@ -73,7 +73,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   init {
     layout = cardLayout
     background = MAIN_BG_COLOR
-    coursesListPanel.setSelectionListener { processSelectionChanged() }
+    coursesListPanel.setSelectionListener { this.processSelectionChanged() }
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
@@ -176,6 +176,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       coursePanel.showEmptyState()
     }
     doValidation()
+  }
+
+  open fun onCardClick(course: Course) {
   }
 
   fun doValidation() {

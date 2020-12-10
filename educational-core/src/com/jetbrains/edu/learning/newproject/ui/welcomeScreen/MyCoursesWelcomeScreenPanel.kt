@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
@@ -38,7 +39,7 @@ import javax.swing.JPanel
 private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
-  private val coursesListPanel = CoursesListPanel() {
+  private val coursesListPanel = CoursesListPanel {
     coursesFilterComponent.resetSearchField()
     updateModel(createCoursesGroup())
   }
@@ -50,6 +51,10 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     background = MAIN_BG_COLOR
 
     coursesListPanel.border = JBUI.Borders.emptyTop(8)
+    coursesListPanel.setClickListener {
+      OpenCourseButton.openCourse(it, this)
+      true
+    }
     add(coursesListPanel, BorderLayout.CENTER)
 
     val searchComponent = createSearchComponent(disposable)

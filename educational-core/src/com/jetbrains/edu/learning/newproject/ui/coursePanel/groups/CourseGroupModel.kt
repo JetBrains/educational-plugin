@@ -20,13 +20,19 @@ class CourseGroupModel {
   private val keyListener: KeyListener
 
   private var selectionListener: () -> Unit = {}
+  private var clickListener: (Course) -> Boolean = { false }
 
   init {
     mouseHandler = object : MouseAdapter() {
       override fun mouseClicked(event: MouseEvent) {
         if (SwingUtilities.isLeftMouseButton(event)) {
-          val cardComponent = getCourseCard(event)
-          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown { IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true) }
+          val cardComponent = getCourseCard(event) ?: return
+          if (clickListener(cardComponent.course)) {
+            return
+          }
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown {
+            IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true)
+          }
           if (cardComponent == selectedCard) {
             return
           }
@@ -143,6 +149,10 @@ class CourseGroupModel {
 
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
     selectionListener = processSelectionChanged
+  }
+
+  fun setClickListener(onClick: (Course) -> Boolean) {
+    clickListener = onClick
   }
 
 }

@@ -49,4 +49,8 @@ class GroupsComponent(resetFilters: () -> Unit) : JBPanelWithEmptyText(VerticalF
     courseGroupModel.setSelectionListener(processSelectionChanged)
   }
 
+  fun setClickListener(onClick: (Course) -> Boolean) {
+    courseGroupModel.setClickListener(onClick)
+  }
+
 }
