@@ -16,6 +16,10 @@ class EduHtmlReferenceContributor : EduReferenceContributorBase() {
 private class HtmlInCourseLinkReferenceProvider : InCourseLinkReferenceProviderBase() {
   override val pattern: ElementPattern<out PsiElement>
     get() = EduHtmlPsiPatterns.hrefAttributeValue
-  override val PsiElement.value: String?
-    get() = (this as? XmlAttributeValue)?.value
+  override val PsiElement.textWithOffset: TextWithOffset?
+    get() {
+      val attributeValue = this as? XmlAttributeValue ?: return null
+      val offset = attributeValue.valueTextRange.startOffset - attributeValue.textRange.startOffset
+      return TextWithOffset(attributeValue.value, offset)
+    }
 }
