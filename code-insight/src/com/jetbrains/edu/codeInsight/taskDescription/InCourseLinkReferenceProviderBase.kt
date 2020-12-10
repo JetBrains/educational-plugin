@@ -1,10 +1,13 @@
 package com.jetbrains.edu.codeInsight.taskDescription
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet
 import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.codeInsight.EduPsiReferenceProvider
@@ -14,24 +17,32 @@ import com.jetbrains.edu.learning.taskDescription.ui.ToolWindowLinkHandler
 
 abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
 
-  protected abstract val PsiElement.value: String?
+  protected abstract val PsiElement.textWithOffset: TextWithOffset?
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<FileReference> {
-    val value = element.value ?: return emptyArray()
-    return if (value.startsWith(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)) {
-      val path = value.substringAfter(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)
-      CourseFileReferenceSet(path, element).allReferences
+    val (text, offset) = element.textWithOffset ?: return emptyArray()
+    return if (text.startsWith(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)) {
+      val path = text.substringAfter(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)
+      createFileReferenceSet(path, element, offset).allReferences
     }
     else {
       emptyArray()
     }
   }
 
-  private inner class CourseFileReferenceSet(str: String, element: PsiElement) :
-    FileReferenceSet(str, element, ToolWindowLinkHandler.IN_COURSE_PROTOCOL.length, this, true) {
+  protected open fun createFileReferenceSet(path: String, element: PsiElement, valueOffset: Int): CourseFileReferenceSet {
+    return CourseFileReferenceSet(path, element, valueOffset)
+  }
+
+  protected open inner class CourseFileReferenceSet(path: String, element: PsiElement, valueOffset: Int) :
+    FileReferenceSet(path, element, valueOffset + ToolWindowLinkHandler.IN_COURSE_PROTOCOL.length, this, true) {
 
     override fun createFileReference(range: TextRange?, index: Int, text: String?): FileReference? {
-      return super.createFileReference(range, index, text)?.let(::InCourseLinkReference)
+      return super.createFileReference(range, index, text)?.let(::createFileReference)
+    }
+
+    protected open fun createFileReference(baseFileReference: FileReference): InCourseLinkReference {
+      return InCourseLinkReference(baseFileReference)
     }
 
     override fun getReferenceCompletionFilter(): Condition<PsiFileSystemItem> = Condition { item ->
@@ -50,15 +61,14 @@ abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
       return listOfNotNull(PsiManager.getInstance(project).findDirectory(project.courseDir))
     }
   }
-}
 
-private class InCourseLinkReference(fileReference: FileReference) : FileReference(fileReference) {
+  protected open class InCourseLinkReference(fileReference: FileReference) : FileReference(fileReference) {
 
-  override fun createLookupItem(candidate: PsiElement): Any? {
-    if (candidate !is PsiDirectory) return super.createLookupItem(candidate)
-    val file = candidate.virtualFile
-    val project = candidate.project
-    // In-course link cannot refer to some directory inside task directory
+    override fun createLookupItem(candidate: PsiElement): Any? {
+      if (candidate !is PsiDirectory) return super.createLookupItem(candidate)
+      val file = candidate.virtualFile
+      val project = candidate.project
+      // In-course link cannot refer to some directory inside task directory
       // so it always makes sense to add `/` while completion of such items
       return if (!file.isTaskDirectory(project) && file.getContainingTask(project) != null) {
         LookupElementBuilder.createWithSmartPointer("${candidate.name}/", candidate)
@@ -66,7 +76,17 @@ private class InCourseLinkReference(fileReference: FileReference) : FileReferenc
       }
       else {
         super.createLookupItem(candidate)
+      }
+    }
 
+    override fun getContextsForBindToElement(
+      file: VirtualFile,
+      project: Project,
+      helper: FileReferenceHelper?
+    ): Collection<PsiFileSystemItem> {
+      return fileReferenceSet.defaultContexts
     }
   }
+
+  protected data class TextWithOffset(val text: String, val offset: Int)
 }
