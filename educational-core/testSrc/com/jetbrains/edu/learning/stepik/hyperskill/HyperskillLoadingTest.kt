@@ -283,28 +283,28 @@ class HyperskillLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test file visibility is loaded`() {
-    configureResponse("submission_stage2_failed_new_file_visibility.json")
+  fun `test solution loading with new files with different visibility`() {
+    configureResponse("submission_stage2_failed_new_files_with_different_visibility.json")
     val course = createHyperskillCourse()
 
     withVirtualFileListener(course) {
       HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
     }
     val task1 = course.findTask("lesson1", "task1")
+    // Additional visible file "src/additional1.txt" is added, but not visible file "src/additional2.txt" should not
     checkVisibility(task1.name, task1.taskFiles,
-                    mapOf("src/Task.kt" to true, "src/Baz.kt" to false, "test/Tests1.kt" to false, "src/additional1.txt" to true,
-                          "src/additional2.txt" to false))
-    val task2 = course.findTask("lesson1", "task2")
+                    mapOf("src/Task.kt" to true,
+                          "src/Baz.kt" to true,
+                          "test/Tests1.kt" to false,
+                          "src/additional1.txt" to true))
 
-    /**
-     * We should properly fill isVisible to submissions in non-current tasks
-     * @see com.jetbrains.edu.learning.stepik.SolutionLoaderBase.Companion.applySolutionToNonCurrentTask
-     * EDU-3480
-     * "src/additional3.txt" is set right because it is default value
-     * TODO add `"src/additional4.txt" to false`
-     */
+    val task2 = course.findTask("lesson1", "task2")
+    // Additional visible file "src/additional3.txt" is added, previous visible file "test/Tests2.kt" is still there
     checkVisibility(task2.name, task2.taskFiles,
-                    mapOf("src/Task.kt" to false, "src/Baz.kt" to true, "test/Tests2.kt" to false, "src/additional3.txt" to true))
+                    mapOf("src/Task.kt" to true,
+                          "src/Baz.kt" to true,
+                          "test/Tests2.kt" to false,
+                          "src/additional3.txt" to true))
   }
 
   fun `test solution loading with new file on the first stage`() {
@@ -523,17 +523,17 @@ class HyperskillLoadingTest : NavigationTestBase() {
         eduTask("task1", stepId = 1) {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests1.kt", "fun tests1() {}")
+          taskFile("test/Tests1.kt", "fun tests1() {}", visible = false)
         }
         eduTask("task2", stepId = 2) {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests2.kt", "fun tests2() {}")
+          taskFile("test/Tests2.kt", "fun tests2() {}", visible = false)
         }
         eduTask("task3", stepId = 3) {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
-          taskFile("test/Tests3.kt", "fun tests3() {}")
+          taskFile("test/Tests3.kt", "fun tests3() {}", visible = false)
         }
       }
     }

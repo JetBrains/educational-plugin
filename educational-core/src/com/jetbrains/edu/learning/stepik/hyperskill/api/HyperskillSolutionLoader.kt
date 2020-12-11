@@ -36,7 +36,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
         LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
         emptyMap()
       }
-    }
+    }.filter { (_, solution) -> solution.isVisible }
 
     return if (files.isEmpty()) TaskSolutions.EMPTY
     else TaskSolutions(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
