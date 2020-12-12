@@ -55,6 +55,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
     assertTrue(course is EduCourse)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+    assertFalse(course.isMarketplace)
   }
 
   fun `test course with no content`() {
@@ -113,6 +114,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertFalse(course.submitManually)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+    assertFalse(course.isMarketplace)
   }
 
   fun `test course with type`() {
@@ -138,6 +140,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+    assertFalse(course.isMarketplace)
   }
 
   fun `test course with language version`() {
@@ -517,6 +520,21 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals("Jetbrains", vendor.name)
     assertEquals("jetbrains.com", vendor.url)
     assertNull(vendor.email)
+  }
+
+  fun `test isMarketplace`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |is_marketplace: true
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    assertTrue(course.isMarketplace)
   }
 
   fun `test file visibility`() {

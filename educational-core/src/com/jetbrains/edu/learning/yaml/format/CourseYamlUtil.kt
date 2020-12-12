@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
@@ -57,7 +58,8 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN,
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_MARKETPLACE, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT,
+                   SOLUTIONS_HIDDEN,
                    CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
@@ -101,6 +103,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val myVendor: Vendor? = null
+
+  @JsonProperty(IS_MARKETPLACE)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var isMarketplace: Boolean = false
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -166,6 +172,7 @@ private class CourseBuilder(
   @JsonProperty(TYPE) val courseType: String?,
   @JsonProperty(TITLE) val title: String,
   @JsonProperty(SUMMARY) val summary: String,
+  @JsonProperty(IS_MARKETPLACE) val yamlIsMarketplace: Boolean,
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
@@ -201,6 +208,7 @@ private class CourseBuilder(
       description = summary
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       vendor = yamlVendor
+      isMarketplace = yamlIsMarketplace
       solutionsHidden = areSolutionsHidden ?: false
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
