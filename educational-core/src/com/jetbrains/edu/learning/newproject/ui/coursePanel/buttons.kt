@@ -76,7 +76,7 @@ class OpenCourseButton : CourseButtonBase() {
         if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
           coursesStorage.removeCourseByLocation(coursePath)
           when {
-            isFromMyCoursesPage ->{
+            isFromMyCoursesPage -> {
               return
             }
             course is HyperskillCourse -> {
