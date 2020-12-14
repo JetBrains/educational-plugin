@@ -43,7 +43,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   protected var coursePanel: CoursePanel = DialogCoursePanel()
 
-  private val coursesListPanel = CoursesListPanel {
+  private val coursesListPanel = CoursesListPanel({ createCourseCard(it) }) {
     coursesFilterComponent.resetSearchField()
     resetSelection()
     updateModel(coursesGroups, null, true)
@@ -161,6 +161,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     humanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
     programmingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
+
+  protected open fun createCourseCard(course: Course): CourseCardComponent = CourseCardComponent(course)
 
   private fun resetSelection() {
     humanLanguagesFilterDropdown.resetSelection()

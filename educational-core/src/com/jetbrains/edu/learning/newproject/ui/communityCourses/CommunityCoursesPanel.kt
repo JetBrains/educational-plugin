@@ -1,7 +1,9 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.communityCourses
 
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import kotlinx.coroutines.CoroutineScope
@@ -30,5 +32,9 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
     val privateCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.private.courses.group"), privateCourses)
     coursesGroups.add(0, privateCoursesGroup)
     super.updateCoursesAfterLogin(preserveSelection)
+  }
+
+  override fun createCourseCard(course: Course): CourseCardComponent {
+    return CommunityCourseCard(course)
   }
 }

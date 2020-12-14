@@ -1,13 +1,14 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(resetFilters: () -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent(resetFilters)
+class CoursesListPanel(createCourseCard: (Course) -> CourseCardComponent, resetFilters: () -> Unit) : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(createCourseCard, resetFilters)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {

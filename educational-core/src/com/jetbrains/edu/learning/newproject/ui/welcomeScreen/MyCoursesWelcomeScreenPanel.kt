@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
+import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel.Companion.IS_FROM_WELCOME_SCREEN
 import java.awt.BorderLayout
 import java.awt.Graphics
@@ -39,7 +40,7 @@ import javax.swing.JPanel
 private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
-  private val coursesListPanel = CoursesListPanel {
+  private val coursesListPanel = CoursesListPanel({ MyCourseCardComponent(it) }) {
     coursesFilterComponent.resetSearchField()
     updateModel(createCoursesGroup())
   }

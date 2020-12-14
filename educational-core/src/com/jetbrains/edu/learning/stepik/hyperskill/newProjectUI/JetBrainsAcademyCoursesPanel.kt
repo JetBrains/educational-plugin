@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.LinkInfo
-import com.jetbrains.edu.learning.newproject.ui.LoginPanel
-import com.jetbrains.edu.learning.newproject.ui.TabInfo
+import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -23,6 +21,10 @@ class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcadem
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, HYPERSKILL_DEFAULT_URL)
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
+  }
+
+  override fun createCourseCard(course: Course): CourseCardComponent {
+    return JetBrainsAcademyCourseCard(course)
   }
 
   private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),

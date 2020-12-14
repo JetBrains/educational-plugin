@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
@@ -61,5 +62,9 @@ class MyCoursesPanel(
   override fun updateFilters(coursesGroups: List<CoursesGroup>) {
     super.updateFilters(coursesGroups)
     humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
+  }
+
+  override fun createCourseCard(course: Course): CourseCardComponent {
+    return MyCourseCardComponent(course)
   }
 }

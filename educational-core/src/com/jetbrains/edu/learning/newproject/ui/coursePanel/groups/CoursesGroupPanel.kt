@@ -6,6 +6,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.Color
@@ -20,7 +21,7 @@ private const val TOP_BOTTOM = 4
 private const val LEFT_RIGHT = 10
 private const val COLLAPSIBLE_GROUP_SIZE = 5
 
-class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(0, 0)) {
+class CoursesGroupPanel(coursesGroup: CoursesGroup, createCourseCard: (Course) -> CourseCardComponent) : JPanel(VerticalFlowLayout(0, 0)) {
   private val courseCardsPanel = NonOpaquePanel(VerticalFlowLayout(0, 0))
 
   init {
@@ -29,7 +30,7 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(
     val isCollapsible = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
     add(createTitleLabel(name, isCollapsible))
 
-    fillCourseCardsPanel(coursesGroup)
+    fillCourseCardsPanel(coursesGroup, createCourseCard)
     add(courseCardsPanel)
   }
 
@@ -61,9 +62,9 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup) : JPanel(VerticalFlowLayout(
     return titleLabel
   }
 
-  private fun fillCourseCardsPanel(coursesGroup: CoursesGroup) {
+  private fun fillCourseCardsPanel(coursesGroup: CoursesGroup, createCourseCard: (Course) -> CourseCardComponent) {
     for (course in coursesGroup.courses) {
-      val courseCardComponent = CourseCardComponent(course)
+      val courseCardComponent = createCourseCard(course)
       courseCardComponent.updateColors(false)
       courseCardsPanel.add(courseCardComponent)
     }

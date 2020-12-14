@@ -5,10 +5,14 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import java.awt.event.ActionListener
 
-class GroupsComponent(resetFilters: () -> Unit) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
+class GroupsComponent(
+  private val createCourseCard: (Course) -> CourseCardComponent,
+  resetFilters: () -> Unit
+) : JBPanelWithEmptyText(VerticalFlowLayout(0, 0)) {
   private val courseGroupModel: CourseGroupModel = CourseGroupModel()
 
   val selectedValue: Course?
@@ -25,7 +29,7 @@ class GroupsComponent(resetFilters: () -> Unit) : JBPanelWithEmptyText(VerticalF
   }
 
   fun addGroup(coursesGroup: CoursesGroup) {
-    val groupPanel = CoursesGroupPanel(coursesGroup)
+    val groupPanel = CoursesGroupPanel(coursesGroup, createCourseCard)
     groupPanel.courseCards.forEach { courseGroupModel.addCourseCard(it) }
     add(groupPanel)
   }
