@@ -11,11 +11,11 @@ import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
 class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
-  override fun toolbarAction(): AnAction? {
+  override fun toolbarAction(): AnAction {
     return StartCodeforcesContestAction(EduCoreBundle.lazyMessage("codeforces.open.contest.by.link"), false)
   }
 
-  override fun tabInfo(): TabInfo? {
+  override fun tabInfo(): TabInfo {
     val linkInfo = LinkInfo(EduCoreBundle.message("course.dialog.go.to.website"), CodeforcesNames.CODEFORCES_URL)
     return TabInfo(EduCoreBundle.message("codeforces.courses.description", CodeforcesNames.CODEFORCES), linkInfo)
   }

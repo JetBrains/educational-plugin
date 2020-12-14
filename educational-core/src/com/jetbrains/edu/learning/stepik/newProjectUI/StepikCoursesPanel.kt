@@ -21,11 +21,11 @@ import kotlinx.coroutines.CoroutineScope
 
 class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   private var busConnection: MessageBusConnection? = null
-  override fun toolbarAction(): AnAction? {
+  override fun toolbarAction(): AnAction {
     return OpenStepikCourseByLink()
   }
 
-  override fun tabInfo(): TabInfo? {
+  override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("stepik.courses.explanation", StepikNames.STEPIK)
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, StepikNames.getStepikUrl())

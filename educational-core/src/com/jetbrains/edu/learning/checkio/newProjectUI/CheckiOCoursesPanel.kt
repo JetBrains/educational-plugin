@@ -26,7 +26,7 @@ class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Coro
     }
   }
 
-  override fun tabInfo(): TabInfo? {
+  override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.JAVASCRIPT)
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, CheckiONames.CHECKIO_OAUTH_HOST)

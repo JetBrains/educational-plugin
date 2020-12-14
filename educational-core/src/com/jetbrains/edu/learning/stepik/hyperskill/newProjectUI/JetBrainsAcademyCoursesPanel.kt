@@ -17,7 +17,7 @@ import java.awt.Color
 
 class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
 
-  override fun tabInfo(): TabInfo? {
+  override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, HYPERSKILL_DEFAULT_URL)
