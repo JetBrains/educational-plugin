@@ -24,7 +24,8 @@ abstract class LoginWidgetProvider : StatusBarWidgetProvider {
         val courseType = baseDir.getUserData(CourseProjectGenerator.COURSE_TYPE_TO_CREATE) ?: throw IllegalStateException(
           "Both CourseType and Course should not be null")
         val languageId = baseDir.getUserData(CourseProjectGenerator.COURSE_LANGUAGE_ID_TO_CREATE)
-        isWidgetAvailable(courseType, languageId)
+        val courseMode = baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE)
+        isWidgetAvailable(courseType, languageId, courseMode)
       }
       if (widgetAvailable) {
         return createLoginWidget(project)
@@ -35,7 +36,7 @@ abstract class LoginWidgetProvider : StatusBarWidgetProvider {
 
   override fun getAnchor(): String = StatusBar.Anchors.before(StatusBar.StandardWidgets.POSITION_PANEL)
 
-  abstract fun isWidgetAvailable(courseType: String, languageId: String?): Boolean
+  abstract fun isWidgetAvailable(courseType: String, languageId: String?, courseMode: String?): Boolean
 
   abstract fun isWidgetAvailable(course: Course): Boolean
 

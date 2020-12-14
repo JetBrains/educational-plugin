@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
-import com.intellij.openapi.extensions.Extensions
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 object EduConfiguratorManager {
@@ -17,6 +17,7 @@ object EduConfiguratorManager {
   fun findConfigurator(courseType: String, environment: String, language: Language): EduConfigurator<*>? =
     when (courseType) {
       CODEFORCES_COURSE_TYPE -> CodeforcesLanguageProvider.getConfigurator(language.id)
+      MARKETPLACE -> findExtension(EduNames.PYCHARM, environment, language)?.instance
       else -> findExtension(courseType, environment, language)?.instance
     }
 

@@ -10,8 +10,9 @@ class StepikWidgetProvider : LoginWidgetProvider() {
 
   override fun createLoginWidget(project: Project) = StepikWidget(project)
 
-  override fun isWidgetAvailable(courseType: String,
-                                 languageId: String?) = courseType == EduNames.PYCHARM || courseType == StepikNames.STEPIK_TYPE
+  override fun isWidgetAvailable(courseType: String, languageId: String?, courseMode: String?): Boolean {
+    return (courseType == EduNames.PYCHARM || courseType == StepikNames.STEPIK_TYPE) && EduNames.STUDY == courseMode
+  }
 
-  override fun isWidgetAvailable(course: Course) = course is EduCourse
+  override fun isWidgetAvailable(course: Course) = course is EduCourse && !course.isMarketplace && course.isStudy
 }

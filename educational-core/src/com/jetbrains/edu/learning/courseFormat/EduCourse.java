@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
+
 
 public class EduCourse extends Course {
   public static final String ENVIRONMENT_SEPARATOR = "#";
@@ -70,6 +72,13 @@ public class EduCourse extends Course {
       tags.add(new InProgressTag());
     }
     return tags;
+  }
+
+  @NotNull
+  @Override
+  public String getItemType() {
+    if (isMarketplace()) return MARKETPLACE;
+    return super.getItemType();
   }
 
   public Date getCreateDate() { return myCreateDate; }

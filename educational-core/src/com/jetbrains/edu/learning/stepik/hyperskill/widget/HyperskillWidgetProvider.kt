@@ -10,7 +10,7 @@ class HyperskillWidgetProvider : LoginWidgetProvider() {
 
   override fun createLoginWidget(project: Project) = HyperskillWidget(project)
 
-  override fun isWidgetAvailable(courseType: String, languageId: String?) = courseType == HYPERSKILL
+  override fun isWidgetAvailable(courseType: String, languageId: String?, courseMode: String?) = courseType == HYPERSKILL
 
   override fun isWidgetAvailable(course: Course) = course is HyperskillCourse
 }
