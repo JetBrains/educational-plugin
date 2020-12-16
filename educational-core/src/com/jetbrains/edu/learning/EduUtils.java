@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
@@ -48,7 +49,6 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
-import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWIndowUtilsKt;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
@@ -225,7 +225,7 @@ public class EduUtils {
   }
 
   public static boolean hasJCEF() {
-    return JCEFToolWIndowUtilsKt.isSupported();
+    return JBCefApp.isSupported();
   }
 
   // supposed to be called under progress
@@ -536,6 +536,6 @@ public class EduUtils {
 
   public static boolean isNewlyCreated(@NotNull Project project) {
     Boolean userData = project.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED);
-    return userData == null ? false : userData;
+    return userData != null && userData;
   }
 }

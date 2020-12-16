@@ -27,10 +27,7 @@ class CheckiOTaskChecker(
 ) : TaskChecker<EduTask>(task, project) {
 
   private val missionCheck: CheckiOMissionCheck = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-    JavaUILibrary.JCEF -> {
-      getJCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
-      ?: throw RuntimeException("Can't get JCEF CheckiO checker")
-    }
+    JavaUILibrary.JCEF -> JCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
     else -> JavaFxCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
   }
 

@@ -16,6 +16,7 @@ import org.jetbrains.io.addCommonHeaders
 import org.jetbrains.io.addKeepAliveIfNeeded
 import java.io.ByteArrayInputStream
 import java.util.*
+import com.intellij.util.io.getHostName as nettyGetHostName
 
 /**
  * Used for resolving local resources as remote ones in JCEF
@@ -23,7 +24,7 @@ import java.util.*
 class EduToolsResourcesRequestHandler : HttpRequestHandler() {
 
   override fun isAccessible(request: HttpRequest): Boolean {
-    val hostName = getHostName(request) ?: return false
+    val hostName = nettyGetHostName(request) ?: return false
     val uri = request.uri()
     return isLocalHost(hostName) && uri.contains(EDU_RESOURCES)
   }

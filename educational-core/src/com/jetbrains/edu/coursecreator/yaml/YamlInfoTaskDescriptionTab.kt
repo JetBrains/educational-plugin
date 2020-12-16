@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
+import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
@@ -44,7 +45,10 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
         browserWindow.panel
       }
       JavaUILibrary.JCEF -> {
-        getJCEFComponent(this, templateText) ?: defaultSwingPanel(templateText)
+        val browser = JBCefBrowser()
+        Disposer.register(this, browser)
+        browser.loadHTML(templateText)
+        browser.component
       }
       else -> {
         defaultSwingPanel(templateText)

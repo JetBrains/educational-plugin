@@ -2,6 +2,8 @@
   <depends>com.intellij.modules.lang</depends>
 
   <applicationListeners>
+    <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
     <listener class="com.jetbrains.edu.learning.RecentPreviewCourseListener"
@@ -287,6 +289,10 @@
     <registryKey key="edu.course.creator.solve.all"
                  description="Enables `Solve All Tasks Before` action"
                  defaultValue="false"/>
+
+    <welcomeTabFactory id="EducationalWelcomeTab"
+                       implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
+                       order="last"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

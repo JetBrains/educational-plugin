@@ -44,8 +44,6 @@ import javax.swing.SwingConstants
 private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
-// BACKCOMPAT: 2020.1. Used since 2020.2
-@Suppress("unused")
 class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
   private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(), CCNewCourseAction(), NewHyperskillCourseAction(),
                                                     StartCodeforcesContestAction())

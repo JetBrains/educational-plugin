@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.twitter
 
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.course
@@ -17,7 +16,7 @@ import kotlin.random.Random
 class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
 
   override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
-    if (ApplicationInfo.getInstance().build < BUILD_202 && !isUnitTestMode) return false
+    if (!isUnitTestMode) return false
     val course = project.course as? HyperskillCourse ?: return false
     if (!course.isStudy) return false
     if (statusBeforeCheck == CheckStatus.Solved) return false
@@ -44,9 +43,6 @@ class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
   }
 
   companion object {
-    // BACKCOMPAT: 2020.1
-    private val BUILD_202 = BuildNumber.fromString("202")!!
-
     private const val NUMBER_OF_IMAGES = 3
   }
 }
