@@ -1,6 +1,7 @@
 package com.jetbrains.edu.android
 
 import com.android.sdklib.SdkVersionInfo
+import com.android.tools.adtui.device.FormFactor
 import com.android.tools.idea.npw.model.NewProjectModel
 import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
