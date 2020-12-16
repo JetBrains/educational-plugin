@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.rust.messages.EduRustBundle.message
-import com.jetbrains.edu.rust.rawCargo
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.project.workspace.CargoWorkspace
@@ -24,6 +23,7 @@ import org.rust.cargo.runconfig.command.CargoCommandConfiguration
 import org.rust.cargo.runconfig.command.CargoCommandConfigurationType
 import org.rust.cargo.runconfig.mergeWithDefault
 import org.rust.cargo.toolchain.CargoCommandLine
+import org.rust.cargo.toolchain.tools.cargo
 import org.rust.openapiext.execute
 
 class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: EduTask) : EduTaskCheckerBase(task, envChecker, project) {
@@ -33,7 +33,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run"))
 
     val disposable = StudyTaskManager.getInstance(project)
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
+    val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
     val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(disposable)
     for (line in processOutput.stdoutLines) {
       if (line.trimStart().startsWith(COMPILATION_ERROR_MESSAGE, true)) {

@@ -17,9 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.rust.messages.EduRustBundle
-import com.jetbrains.edu.rust.rawCargo
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
+import org.rust.cargo.toolchain.tools.cargo
 import org.rust.lang.RsConstants.MAIN_RS_FILE
 import org.rust.lang.core.psi.ext.containingCargoTarget
 import org.rust.lang.core.psi.rustFile
@@ -32,7 +32,7 @@ class RsCodeExecutor : CodeExecutor {
     val mainVFile = task.findSourceDir(taskDir)?.findChild(MAIN_RS_FILE) ?: return resultUnchecked(EduRustBundle.message("error.failed.find.0", MAIN_RS_FILE))
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
                  ?: return resultUnchecked(EduRustBundle.message("error.failed.find.target.for.0", MAIN_RS_FILE))
-    val cargo = project.rustSettings.toolchain?.rawCargo() ?: return resultUnchecked(EduRustBundle.message("error.no.toolchain"))
+    val cargo = project.rustSettings.toolchain?.cargo() ?: return resultUnchecked(EduRustBundle.message("error.no.toolchain"))
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val disposable = StudyTaskManager.getInstance(project)
@@ -53,7 +53,7 @@ class RsCodeExecutor : CodeExecutor {
 
     for (line in lineSequence()) {
       if (programOutputStarted) {
-        outputBuffer.appendln(line)
+        outputBuffer.append(line)
       }
       else {
         if (line.trimStart().startsWith("Running")) {

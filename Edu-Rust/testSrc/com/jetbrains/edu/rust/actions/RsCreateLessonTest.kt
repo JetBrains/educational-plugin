@@ -16,14 +16,6 @@ import org.rust.lang.RsLanguage
 
 class RsCreateLessonTest : RsActionTestBase() {
 
-  // BACKCOMPAT: 2020.2. Inline property value into tests
-  private lateinit var indent: String
-
-  override fun setUp() {
-    super.setUp()
-    indent = if (ApplicationInfo.getInstance().build < BUILD_202) "" else "    "
-  }
-
   fun `test add lesson item no trailing comma`() = addLastLesson("""
     [workspace]
 
@@ -39,7 +31,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/",
-    $indent"lesson2/*/",
+        "lesson2/*/",
     ]
 
     exclude = [
@@ -62,7 +54,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/",
-    $indent"lesson2/*/",
+        "lesson2/*/",
     ]
     
     exclude = [
@@ -85,7 +77,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/", # very useful comment
-    $indent"lesson2/*/",
+        "lesson2/*/",
     ]
     
     exclude = [
@@ -108,7 +100,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     
     members = [
         "lesson1/*/" ,
-    $indent"lesson2/*/",
+        "lesson2/*/",
     ]
     
     exclude = [
@@ -147,7 +139,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       
       members = [
           "section1/lesson1/*/",
-      $indent"section1/lesson2/*/",
+          "section1/lesson2/*/",
       ]
       
       exclude = [
@@ -181,7 +173,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       [workspace]
       
       members = [
-      $indent"section1/lesson1/*/",
+          "section1/lesson1/*/",
       ]
       
       exclude = [
@@ -224,7 +216,7 @@ class RsCreateLessonTest : RsActionTestBase() {
       members = [
           "lesson1/*/",
           "lesson2/*/",
-      $indent"lesson3/*/"
+          "lesson3/*/"
       ]
 
       exclude = [
@@ -339,10 +331,5 @@ class RsCreateLessonTest : RsActionTestBase() {
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       testAction(dataContext(lessonDir), CCCreateTask())
     }
-  }
-
-  companion object {
-    // BACKCOMPAT: 2020.2
-    private val BUILD_202 = BuildNumber.fromString("202")!!
   }
 }

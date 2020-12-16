@@ -13,9 +13,6 @@ import org.rust.lang.RsLanguage
 
 class RsDeleteActionTest : RsActionTestBase() {
 
-  // BACKCOMPAT: 2020.1. Drop it
-  private val indent: String get() = if (ApplicationInfo.getInstance().build < BUILD_202) "    " else ""
-
   fun `test delete first lesson`() = doTest(createRustCourse(), "lesson1", """
       [workspace]
       
@@ -37,7 +34,7 @@ class RsDeleteActionTest : RsActionTestBase() {
           "lesson1/*/",
           "section1/lesson2/*/",
           "section1/lesson3/*/" ,
-      $indent]
+      ]
       
       exclude = [
           "**/*.yaml"
@@ -79,7 +76,7 @@ class RsDeleteActionTest : RsActionTestBase() {
         
         members = [
             "lesson1/*/",
-        $indent]
+        ]
         
         exclude = [
             "**/*.yaml"
@@ -200,10 +197,5 @@ class RsDeleteActionTest : RsActionTestBase() {
       }
     }
     checkCargoToml(expectedText)
-  }
-
-  companion object {
-    // BACKCOMPAT: 2020.1
-    private val BUILD_202 = BuildNumber.fromString("202")!!
   }
 }
