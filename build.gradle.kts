@@ -83,7 +83,6 @@ plugins {
   id("org.jetbrains.intellij") version "0.6.3"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
-  id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
 idea {
@@ -100,7 +99,6 @@ allprojects {
     plugin("java")
     plugin("kotlin")
     plugin("net.saliman.properties")
-    plugin("org.openjfx.javafxplugin")
   }
 
   repositories {
@@ -112,12 +110,6 @@ allprojects {
   configure<JavaPluginConvention> {
     sourceCompatibility = VERSION_1_8
     targetCompatibility = VERSION_1_8
-  }
-
-  javafx {
-    version = "11.0.2"
-    modules = listOf("javafx.web", "javafx.swing")
-    configuration = "compileOnly"
   }
 
   intellij {

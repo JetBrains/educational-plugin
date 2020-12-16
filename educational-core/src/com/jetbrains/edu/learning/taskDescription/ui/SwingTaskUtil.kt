@@ -24,7 +24,7 @@ fun Task?.createSpecificPanel(): JPanel? {
   return choiceTask.createSpecificPanel()
 }
 
-fun ChoiceTask.createSpecificPanel(): JPanel {
+private fun ChoiceTask.createSpecificPanel(): JPanel {
   val jPanel = NonOpaquePanel(VerticalFlowLayout())
   jPanel.border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
 
@@ -54,14 +54,14 @@ fun ChoiceTask.createSpecificPanel(): JPanel {
   return jPanel
 }
 
-fun createCheckBox(variant: String?, index: Int, task: ChoiceTask): JCheckBox {
+private fun createCheckBox(variant: String?, index: Int, task: ChoiceTask): JCheckBox {
   val checkBox = JCheckBox(variant).apply { isOpaque = false }
   checkBox.isSelected = task.selectedVariants.contains(index)
   checkBox.addItemListener(createListener(task, index))
   return checkBox
 }
 
-fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask): JRadioButton {
+private fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask): JRadioButton {
   val button = JRadioButton(variant).apply { isOpaque = false }
   button.isSelected = task.selectedVariants.contains(index)
   button.addItemListener(createListener(task, index))
@@ -69,7 +69,7 @@ fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: Cho
   return button
 }
 
-fun createListener(task: ChoiceTask, index: Int): ItemListener? {
+private fun createListener(task: ChoiceTask, index: Int): ItemListener {
   return ItemListener {
     if (it.stateChange == ItemEvent.SELECTED) {
       task.selectedVariants.add(index)

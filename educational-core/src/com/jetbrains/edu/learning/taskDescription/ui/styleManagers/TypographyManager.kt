@@ -3,17 +3,17 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.FontPreferences
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 
 internal class TypographyManager {
   private val uiSettingsFontSize = UISettings.instance.fontSize
-  
+
   val bodyFontSize = (uiSettingsFontSize * fontScaleFactor("body.font.size")).toInt()
   val codeFontSize = (uiSettingsFontSize * fontScaleFactor("code.font.size")).toInt()
   val bodyLineHeight = (bodyFontSize * lineHeightScaleFactor("body.line.height")).toInt()
   val codeLineHeight = (codeFontSize * lineHeightScaleFactor("code.line.height")).toInt()
 
-  val bodyFont = TaskDescriptionBundle.getOsDependentParameter(if (isJavaFxOrJCEF()) "body.font" else "swing.body.font")
+  val bodyFont = TaskDescriptionBundle.getOsDependentParameter(if (isJCEF()) "body.font" else "swing.body.font")
   val codeFont = TaskDescriptionBundle.getOsDependentParameter("code.font")
 
   private fun fontScaleFactor(parameterName: String): Float {

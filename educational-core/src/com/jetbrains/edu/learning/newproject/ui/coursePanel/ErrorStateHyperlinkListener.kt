@@ -58,7 +58,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
-      ErrorState.JavaFXorJCEFRequired -> invokeSwitchUILibrary(coursePanel)
+      ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
       ErrorState.IncompatibleVersion -> PluginsAdvertiser.installAndEnable(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {
         val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }

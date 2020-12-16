@@ -4,7 +4,7 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
@@ -48,7 +48,7 @@ sealed class ErrorState(
 
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(LANGUAGE_SETTINGS_ERROR, message, errorTextForeground, false)
 
-  object JavaFXorJCEFRequired : ErrorState(NO_JAVA_FX_JCEF, ValidationMessage("No JavaFX or JCEF found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
+  object JCEFRequired : ErrorState(NO_JCEF, ValidationMessage("No JCEF found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
 
   object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
   data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessage(pluginIds), errorTextForeground, false)
@@ -99,8 +99,8 @@ sealed class ErrorState(
 
     private val CheckiOCourse.checkiOError: ErrorState
       get() {
-        if (!isJavaFxOrJCEF()) {
-          return JavaFXorJCEFRequired
+        if (!isJCEF()) {
+          return JCEFRequired
         }
         return if (isCheckiOLoginRequired(this)) CheckiOLoginRequired(name) else None
       }
@@ -149,7 +149,7 @@ private enum class ErrorSeverity {
 
   LANGUAGE_SETTINGS_ERROR,
 
-  NO_JAVA_FX_JCEF,
+  NO_JCEF,
 
   PLUGIN_UPDATE_REQUIRED,
 

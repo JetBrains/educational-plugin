@@ -5,8 +5,7 @@ import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler
 import java.net.URL
 
@@ -17,11 +16,11 @@ object StyleResourcesManager {
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
-  private const val JAVAFX_BASE_CSS: String = "/style/hint/base.css"
-  private const val JAVAFX_DARCULA_CSS: String = "/style/hint/darcula.css"
-  private const val JAVAFX_HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
-  private const val JAVAFX_LIGHT_CSS: String = "/style/hint/light.css"
-  private const val JAVAFX_TOGGLE_HINT_JS: String = "/style/hint/toggleHint.js"
+  private const val BASE_CSS: String = "/style/hint/base.css"
+  private const val DARCULA_CSS: String = "/style/hint/darcula.css"
+  private const val HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
+  private const val LIGHT_CSS: String = "/style/hint/light.css"
+  private const val TOGGLE_HINT_JS: String = "/style/hint/toggleHint.js"
   private const val JQUERY_JS: String = "/style/hint/jquery-1.9.1.js"
   private const val SCROLL_BARS_BASE_CSS: String = "/style/scrollbars/base.css"
   private const val SCROLL_BARS_DARCULA_CSS: String = "/style/scrollbars/darcula.css"
@@ -46,11 +45,11 @@ object StyleResourcesManager {
     CODEFORCES_TASK_CSS,
     EXTERNAL_LINK_ARROW_PNG,
     EXTERNAL_LINK_ARROW_DARK_PNG,
-    JAVAFX_BASE_CSS,
-    JAVAFX_DARCULA_CSS,
-    JAVAFX_HIGH_CONTRAST_CSS,
-    JAVAFX_LIGHT_CSS,
-    JAVAFX_TOGGLE_HINT_JS,
+    BASE_CSS,
+    DARCULA_CSS,
+    HIGH_CONTRAST_CSS,
+    LIGHT_CSS,
+    TOGGLE_HINT_JS,
     JQUERY_JS,
     SCROLL_BARS_BASE_CSS,
     SCROLL_BARS_DARCULA_CSS,
@@ -85,12 +84,12 @@ object StyleResourcesManager {
     }
 
   private val panelSpecificHintResources: Map<String, String>
-    get() = if (isJavaFxOrJCEF()) {
+    get() = if (isJCEF()) {
       mapOf(
         "jquery" to resourceUrl(JQUERY_JS),
-        "hint_base" to resourceUrl(JAVAFX_BASE_CSS),
+        "hint_base" to resourceUrl(BASE_CSS),
         "hint_laf_specific" to resourceUrl(hintLafSpecificFileName),
-        "toggle_hint_script" to resourceUrl(JAVAFX_TOGGLE_HINT_JS)
+        "toggle_hint_script" to resourceUrl(TOGGLE_HINT_JS)
       )
     }
     else {
@@ -99,9 +98,9 @@ object StyleResourcesManager {
 
   private val hintLafSpecificFileName: String
     get() = when {
-      isHighContrast() -> JAVAFX_HIGH_CONTRAST_CSS
-      UIUtil.isUnderDarcula() -> JAVAFX_DARCULA_CSS
-      else -> JAVAFX_LIGHT_CSS
+      isHighContrast() -> HIGH_CONTRAST_CSS
+      UIUtil.isUnderDarcula() -> DARCULA_CSS
+      else -> LIGHT_CSS
     }
 
   // update style/template.html.ft in case of changing key names
@@ -120,11 +119,10 @@ object StyleResourcesManager {
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 
   /**
-   * JCEF doesn't load local resources
-   * Otherwise JavaFX does load only local resources, see [javafx.scene.web.WebEngine.userStyleSheetLocation]
+   * JCEF doesn't load local resources, otherwise let's load as local resources
    */
   fun resourceUrl(name: String): String = when {
-    JavaUILibrary.isJCEF() -> EduToolsResourcesRequestHandler.resourceWebUrl(name)
+    isJCEF() -> EduToolsResourcesRequestHandler.resourceWebUrl(name)
     else -> resourceFileUrl(name)
   }
 

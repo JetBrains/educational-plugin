@@ -4,6 +4,7 @@ enum class JavaUILibrary {
   SWING {
     override fun toString() = "Swing"
   },
+  @Deprecated("JavaFX is no longer supported")
   JAVAFX {
     override fun toString() = "JavaFX"
   },
@@ -14,8 +15,6 @@ enum class JavaUILibrary {
   @Suppress("unused", "MemberVisibilityCanBePrivate")
   companion object {
     fun isSwing(): Boolean = EduSettings.getInstance().javaUiLibraryWithCheck == SWING
-    fun isJavaFx(): Boolean = EduSettings.getInstance().javaUiLibraryWithCheck == JAVAFX
     fun isJCEF(): Boolean = EduSettings.getInstance().javaUiLibraryWithCheck == JCEF
-    fun isJavaFxOrJCEF(): Boolean = isJavaFx() || isJCEF()
   }
 }

@@ -119,11 +119,11 @@ public class EduSettings implements PersistentStateComponent<Element> {
   }
 
   private JavaUILibrary initialJavaUiLibrary() {
-    if (javaUiLibrary != null) return javaUiLibrary;
+    if (javaUiLibrary != JavaUILibrary.JAVAFX) {
+      return javaUiLibrary;
+    }
     if (EduUtils.hasJCEF()) {
       return JavaUILibrary.JCEF;
-    } else if (EduUtils.hasJavaFx()) {
-      return JavaUILibrary.JAVAFX;
     }
     return JavaUILibrary.SWING;
   }
@@ -135,14 +135,10 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   @NotNull
   public JavaUILibrary getJavaUiLibraryWithCheck() {
-    switch (javaUiLibrary) {
-      case JAVAFX:
-        if (EduUtils.hasJavaFx()) return JavaUILibrary.JAVAFX;
-      case JCEF:
-        if (EduUtils.hasJCEF()) return JavaUILibrary.JCEF;
-      default:
-        return JavaUILibrary.SWING;
+    if (javaUiLibrary == JavaUILibrary.JCEF && EduUtils.hasJCEF()) {
+      return JavaUILibrary.JCEF;
     }
+    return JavaUILibrary.SWING;
   }
 
   public void setJavaUiLibrary(@NotNull JavaUILibrary javaUiLibrary) {

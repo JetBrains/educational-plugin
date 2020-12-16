@@ -4,8 +4,7 @@ import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -26,10 +25,9 @@ class CheckiOTaskChecker(
   @NonNls testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
-  private val missionCheck: CheckiOMissionCheck = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-    JavaUILibrary.JCEF -> JCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
-    else -> JavaFxCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
-  }
+  private val missionCheck: JCEFCheckiOMissionCheck = if (EduUtils.hasJCEF()) {
+    JCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
+  } else error("CheckiOTaskChecker needs JCEF")
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     return try {
@@ -41,7 +39,7 @@ class CheckiOTaskChecker(
       val checkResult = ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().progressIndicator)
 
       if (checkResult.status != CheckStatus.Unchecked) {
-        getInstance(project).showResult(EduCoreBundle.message("tab.title.checkio.response"), missionCheck.getPanel())
+        getInstance(project).showResult(EduCoreBundle.message("tab.title.checkio.response"), missionCheck.panel)
       }
       checkResult
     }

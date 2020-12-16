@@ -38,11 +38,11 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
   class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
     private val myComboBox: ComboBox<JavaUILibrary> = ComboBox()
 
-    override fun createCenterPanel(): JComponent? = myComboBox
+    override fun createCenterPanel(): JComponent = myComboBox
 
-    override fun createNorthPanel(): JComponent? = JLabel(EduCoreBundle.message("ui.label.choose.panel"))
+    override fun createNorthPanel(): JComponent = JLabel(EduCoreBundle.message("ui.label.choose.panel"))
 
-    override fun getPreferredFocusedComponent(): JComponent? = myComboBox
+    override fun getPreferredFocusedComponent(): JComponent = myComboBox
 
     override fun doOKAction() {
       super.doOKAction()
@@ -53,9 +53,6 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     init {
       val comboBoxModel = DefaultComboBoxModel<JavaUILibrary>()
       comboBoxModel.addElement(SWING)
-      if (EduUtils.hasJavaFx()) {
-        comboBoxModel.addElement(JAVAFX)
-      }
       if (EduUtils.hasJCEF()) {
         comboBoxModel.addElement(JCEF)
       }

@@ -1,4 +1,4 @@
-@file:JvmName("JavaFxTaskUtil")
+@file:JvmName("TaskUtils")
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
@@ -24,7 +24,13 @@ fun htmlWithResources(project: Project, content: String): String {
 }
 
 fun loadText(filePath: String): String? {
-  val stream = object {}.javaClass.getResourceAsStream(filePath)
+  val stream = try {
+    object {}.javaClass.getResourceAsStream(filePath)
+  } catch (e: NullPointerException) {
+    return null
+  }
+
+  // BACKCOMPAT 2020.2
   stream.use {
     return StreamUtil.readText(stream, "utf-8")
   }

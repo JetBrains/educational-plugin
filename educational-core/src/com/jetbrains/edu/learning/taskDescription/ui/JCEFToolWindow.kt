@@ -20,6 +20,7 @@ import org.cef.handler.CefLifeSpanHandlerAdapter
 import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
+import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
@@ -159,5 +160,10 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   companion object {
     private const val JCEF_URL_PREFIX = "file:///jbcefbrowser/"
+
+    @TestOnly
+    fun processContent(content: String, project: Project): String {
+      return htmlWithResources(project, content)
+    }
   }
 }

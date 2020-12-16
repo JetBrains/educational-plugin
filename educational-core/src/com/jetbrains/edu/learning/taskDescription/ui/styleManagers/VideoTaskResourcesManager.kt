@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
 import com.google.gson.Gson
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -41,7 +41,7 @@ class VideoTaskResourcesManager {
     return CSSBuilder().apply {
       ".vjs-no-js" {
         fontFamily = styleManager.bodyFont
-        fontSize = if (isJavaFxOrJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
+        fontSize = if (isJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = styleManager.bodyLineHeight.px.lh
         color = styleManager.bodyColor
         backgroundColor = styleManager.bodyBackground

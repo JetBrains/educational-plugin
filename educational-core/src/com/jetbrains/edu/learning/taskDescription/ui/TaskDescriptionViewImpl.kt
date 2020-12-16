@@ -199,9 +199,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
     val taskTextTW = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-      SWING -> SwingToolWindow(project)
-      JAVAFX -> JavaFxToolWindow(project)
       JCEF -> JCEFToolWindow(project)
+      else -> SwingToolWindow(project)
     }
     Disposer.register(contentManager, taskTextTW)
 

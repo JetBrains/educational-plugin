@@ -39,11 +39,6 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
     }
 
     val panel = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-      JavaUILibrary.JAVAFX -> {
-        val browserWindow = BrowserWindow(project, false)
-        browserWindow.loadContent(templateText)
-        browserWindow.panel
-      }
       JavaUILibrary.JCEF -> {
         val browser = JBCefBrowser()
         Disposer.register(this, browser)

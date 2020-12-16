@@ -18,7 +18,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -67,7 +67,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
-        if (!(EduUtils.getCurrentTask(project) is VideoTask && isJavaFxOrJCEF())) {
+        if (!(EduUtils.getCurrentTask(project) is VideoTask && isJCEF())) {
           TaskDescriptionView.updateAllTabs(taskDescription)
         }
       })

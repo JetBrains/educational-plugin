@@ -101,7 +101,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   public void setText(@NotNull String text, @Nullable Task task) {
-    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(getProject(), wrapHints(text, task)));
+    myTaskTextPane.setText(TaskUtils.htmlWithResources(getProject(), wrapHints(text, task)));
   }
 
   @NotNull

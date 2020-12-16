@@ -24,8 +24,7 @@
                      });
   </script>
 
-  <!-- This css file is needed for JCEF.
-  JavaFX is using this file at com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow.updateLaf -->
+  <!-- This css file is needed for JCEF. -->
   <link rel="stylesheet" type="text/css" href="${base_css}"></link>
 
   <link rel="stylesheet" type="text/css" href="${hint_base}"></link>

@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.BrowserWindow
 import com.jetbrains.edu.learning.taskDescription.ui.EduFileEditorManagerListener
+import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
@@ -91,7 +91,7 @@ class TaskDescriptionTest : EduTestCase() {
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val initialDocument = Jsoup.parse(fileText)
 
-    val processedText = BrowserWindow.processContent(fileText, project)
+    val processedText = JCEFToolWindow.processContent(fileText, project)
     val processedDocument = Jsoup.parse(processedText)
 
     val initialImgElements = initialDocument.getElementsByTag(IMG_TAG)
@@ -105,7 +105,7 @@ class TaskDescriptionTest : EduTestCase() {
     myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
     val name = getTestName(true) + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
-    val processedText = BrowserWindow.processContent(fileText, project)
+    val processedText = JCEFToolWindow.processContent(fileText, project)
     val document = Jsoup.parse(processedText)
     val imageElements = document.getElementsByTag(IMG_TAG)
     imageElements
@@ -124,7 +124,7 @@ class TaskDescriptionTest : EduTestCase() {
     createCourseWithDescription(description)
     myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
 
-    val processedText = BrowserWindow.processContent(description, project)
+    val processedText = JCEFToolWindow.processContent(description, project)
     val document = Jsoup.parse(processedText)
     for (script in document.getElementsByTag(SCRIPT_TAG)) {
       val url = script.attr(SRC_ATTRIBUTE)

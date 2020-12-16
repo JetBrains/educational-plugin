@@ -214,16 +214,6 @@ public class EduUtils {
     return EduNames.STUDY.equals(getCourseModeForNewlyCreatedProject(project));
   }
 
-  public static boolean hasJavaFx() {
-    try {
-      Class.forName("javafx.application.Platform");
-      return true;
-    }
-    catch (ClassNotFoundException e) {
-      return false;
-    }
-  }
-
   public static boolean hasJCEF() {
     return JBCefApp.isSupported();
   }

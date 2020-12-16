@@ -4,7 +4,7 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJavaFxOrJCEF
+import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 
@@ -21,7 +21,7 @@ class StyleManager {
   val bodyColor = bodyColor()
   private val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
-  val codeBackground = if (isJavaFxOrJCEF()) codeBackground()
+  val codeBackground = if (isJCEF()) codeBackground()
   else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}pt"
@@ -49,7 +49,7 @@ class StyleManager {
     return CSSBuilder().apply {
       body {
         fontFamily = bodyFont
-        fontSize = if (isJavaFxOrJCEF()) bodyFontSize.px else bodyFontSize.pt
+        fontSize = if (isJCEF()) bodyFontSize.px else bodyFontSize.pt
         lineHeight = bodyLineHeight.px.lh
         color = bodyColor
         backgroundColor = bodyBackground
@@ -58,13 +58,13 @@ class StyleManager {
       ".code" {
         fontFamily = codeFont
         backgroundColor = codeBackground
-        fontSize = if (isJavaFxOrJCEF()) codeFontSize.px else codeFontSize.pt
+        fontSize = if (isJCEF()) codeFontSize.px else codeFontSize.pt
         padding = "4 4 4 4"
         borderRadius = 5.px
       }
 
       ".code-block" {
-        fontSize = if (isJavaFxOrJCEF()) bodyFontSize.px else bodyFontSize.pt
+        fontSize = if (isJCEF()) bodyFontSize.px else bodyFontSize.pt
         lineHeight = codeLineHeight.px.lh
       }
 
