@@ -11,14 +11,6 @@ class EduMarkdownUriSchemaCompletionProviderTest : EduUriSchemaCompletionProvide
 
   override val taskDescriptionFormat: DescriptionFormat get() = DescriptionFormat.MD
 
-  override fun runTestInternal(context: TestContext) {
-    // Markdown plugin for 201 tries to load JavaFX on editor opening and fails
-    // BACKCOMPAT: 2020.1
-    if (ApplicationInfo.getInstance().build >= BUILD_202) {
-      super.runTestInternal(context)
-    }
-  }
-
   fun `test course schema`() = doTest("""
     [link text](cou<caret>)
   """, """
@@ -35,10 +27,5 @@ class EduMarkdownUriSchemaCompletionProviderTest : EduUriSchemaCompletionProvide
   @Suppress("RedundantOverride")
   override fun doTest(@Language("Markdown") before: String, @Language("Markdown") after: String) {
     super.doTest(before, after)
-  }
-
-  companion object {
-    // BACKCOMPAT: 2020.1
-    private val BUILD_202: BuildNumber = BuildNumber.fromString("202")!!
   }
 }
