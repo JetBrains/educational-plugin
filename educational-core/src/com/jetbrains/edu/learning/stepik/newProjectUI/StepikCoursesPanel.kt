@@ -21,8 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 
 class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   private var busConnection: MessageBusConnection? = null
-  override fun toolbarAction(): AnAction {
-    return OpenStepikCourseByLink()
+
+  override fun toolbarAction(): ToolbarActionWrapper {
+    return ToolbarActionWrapper(EduCoreBundle.lazyMessage("stepik.courses.open.by.link", StepikNames.STEPIK), OpenStepikCourseByLink())
   }
 
   override fun tabInfo(): TabInfo {
@@ -71,10 +72,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     }
   }
 
-  private inner class OpenStepikCourseByLink : AnAction(EduCoreBundle.lazyMessage("stepik.courses.open.by.link", StepikNames.STEPIK),
-                                                        EduCoreBundle.lazyMessage("stepik.courses.open.by.link.description",
-                                                                                  StepikNames.STEPIK),
-                                                        null) {
+  private inner class OpenStepikCourseByLink : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
       if (EduSettings.isLoggedIn()) {
         importCourse()

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -15,8 +14,8 @@ class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
                             private val stepikCoursesProvider: StepikCoursesProvider,
                             scope: CoroutineScope) : CoursesPanel(coursesPlatformProvider, scope) {
 
-  override fun toolbarAction(): AnAction {
-    return CCNewCourseAction(EduCoreBundle.lazyMessage ("course.dialog.create.course"))
+  override fun toolbarAction(): ToolbarActionWrapper {
+    return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), CCNewCourseAction())
   }
 
   override fun tabInfo(): TabInfo {

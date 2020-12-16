@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.newui.HorizontalLayout
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
@@ -133,7 +132,7 @@ abstract class CoursesPanel(
     return splitPaneRoot
   }
 
-  protected open fun toolbarAction(): AnAction? = null
+  protected open fun toolbarAction(): ToolbarActionWrapper? = null
 
   protected open fun tabInfo(): TabInfo? = null
 

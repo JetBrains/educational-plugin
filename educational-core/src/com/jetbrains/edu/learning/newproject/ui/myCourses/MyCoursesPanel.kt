@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui.myCourses
 
 import com.intellij.ide.DataManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.SimpleTextAttributes
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListene
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
 import java.awt.event.ActionListener
@@ -38,8 +38,8 @@ class MyCoursesPanel(
     })
   }
 
-  override fun toolbarAction(): AnAction {
-    return ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"))
+  override fun toolbarAction(): ToolbarActionWrapper {
+    return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), ImportLocalCourseAction())
   }
 
   override fun createNoCoursesPanel(): JPanel {

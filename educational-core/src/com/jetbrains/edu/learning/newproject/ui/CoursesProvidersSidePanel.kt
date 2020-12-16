@@ -6,11 +6,8 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
+import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.createHyperlinkWithContextHelp
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
@@ -67,7 +64,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
   }
 
   private fun createCourseActionLink(): JPanel {
-    val courseAction = CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course"))
+    val courseAction = ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), CCNewCourseAction())
     return createHyperlinkWithContextHelp(courseAction).apply {
       border = JBUI.Borders.empty(12, 12)
     }

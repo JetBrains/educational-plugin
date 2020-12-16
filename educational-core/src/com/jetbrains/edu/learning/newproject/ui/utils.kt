@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
@@ -107,8 +106,9 @@ fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
   }
 }
 
-fun createHyperlinkWithContextHelp(action: AnAction): JPanel {
-  val hyperlinkLabel = HyperlinkLabel(action.templateText)
+fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel {
+  val action = actionWrapper.action
+  val hyperlinkLabel = HyperlinkLabel(actionWrapper.text.get())
   hyperlinkLabel.addHyperlinkListener {
     val actionEvent = AnActionEvent.createFromAnAction(action,
                                                        null,
