@@ -82,6 +82,10 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
     locationField?.component?.textField?.document?.addDocumentListener(listener)
   }
 
+  fun removeLocationFieldDocumentListener(listener: DocumentListener) {
+    locationField?.component?.textField?.document?.removeDocumentListener(listener)
+  }
+
   fun update(course: Course, showLanguageSettings: Boolean) {
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {

@@ -38,8 +38,9 @@ sealed class ErrorState(
 
   object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR, ValidationMessage("", linkText = "Log in", afterLink = " to ${EduNames.JBA} account to open a project"), errorTextForeground, false)
 
-  object EmptyLocation : ErrorState(LOCATION_ERROR, ValidationMessage("", "", "Enter course location", type = ERROR), errorTextForeground, false)
-  object InvalidLocation : ErrorState(LOCATION_ERROR, ValidationMessage("", "", "Can't create course at this location", type = ERROR), errorTextForeground, false)
+  abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR, ValidationMessage("", "", messageText, type = ERROR), errorTextForeground, false)
+  object EmptyLocation : LocationError("Enter course location")
+  object InvalidLocation : LocationError("Can't create course at this location")
 
   abstract class LoginRequired(platformName: String) : ErrorState(LOGIN_ERROR, ValidationMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)

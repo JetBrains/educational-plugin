@@ -37,7 +37,7 @@ class JetBrainsAcademyCoursesPanel(private val platformProvider: JetBrainsAcadem
   private fun handleLogin() {
     HyperskillConnector.getInstance().doAuthorize(
       Runnable { coursePanel.hideErrorPanel() },
-      Runnable { notifyListeners(true) },
+      Runnable { setButtonsEnabled(true) },
       Runnable { hideLoginPanel() },
       Runnable { scheduleUpdateAfterLogin() }
     )

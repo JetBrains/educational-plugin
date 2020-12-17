@@ -47,7 +47,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         addLoginListener(coursePanel, coursesPanel)
         HyperskillConnector.getInstance().doAuthorize(
           Runnable { coursePanel.hideErrorPanel() },
-          Runnable { coursesPanel.notifyListeners(true) },
+          Runnable { coursesPanel.setButtonsEnabled(true) },
           Runnable { coursesPanel.hideLoginPanel() },
           Runnable { coursesPanel.scheduleUpdateAfterLogin() }
         )
@@ -106,9 +106,11 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
       return
     }
     action.actionPerformed(
-      AnActionEvent.createFromAnAction(action, null,
-                                       ActionPlaces.UNKNOWN,
-                                       DataManager.getInstance().getDataContext(coursePanel))
+      AnActionEvent.createFromAnAction(
+        action, null,
+        ActionPlaces.UNKNOWN,
+        DataManager.getInstance().getDataContext(coursePanel)
+      )
     )
     doValidation(coursePanel)
   }
@@ -122,7 +124,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     }
     val errorState = ErrorState.forCourse(course).merge(languageError)
     coursePanel.setError(errorState)
-    coursePanel.notifyListeners(errorState.courseCanBeStarted)
+    coursePanel.setButtonsEnabled(errorState.courseCanBeStarted)
   }
 
 }

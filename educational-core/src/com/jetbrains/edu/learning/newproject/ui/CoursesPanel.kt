@@ -56,6 +56,7 @@ abstract class CoursesPanel(
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
+
   @Volatile
   private var loadingFinished = false
 
@@ -130,10 +131,6 @@ abstract class CoursesPanel(
 
   protected open fun tabInfo(): TabInfo? = null
 
-  interface CourseValidationListener {
-    fun validationStatusChanged(canStartCourse: Boolean)
-  }
-
   private fun createLoadingPanel() = JPanel(BorderLayout()).apply {
     add(CenteredIcon(), BorderLayout.CENTER)
   }
@@ -142,8 +139,10 @@ abstract class CoursesPanel(
     val panel = JBPanelWithEmptyText()
     val text = panel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
-    text.appendSecondaryText(EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
-                             SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+    text.appendSecondaryText(
+      EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
+      SimpleTextAttributes.GRAYED_ATTRIBUTES, null
+    )
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide2", EduNames.NO_COURSES_URL),
                              SimpleTextAttributes.LINK_ATTRIBUTES,
                              ActionListener { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) })
@@ -174,16 +173,16 @@ abstract class CoursesPanel(
   open fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
-      coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation(course) }
+      coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation() }
     }
     else {
       coursePanel.showEmptyState()
     }
-    doValidation(course)
+    doValidation()
   }
 
-  fun doValidation(course: Course? = coursesListPanel.selectedCourse) {
-    coursePanel.doValidation(course)
+  fun doValidation() {
+    coursePanel.doValidation()
   }
 
   fun setError(errorState: ErrorState) {
@@ -209,8 +208,8 @@ abstract class CoursesPanel(
     }
   }
 
-  fun notifyListeners(canStartCourse: Boolean) {
-    coursePanel.notifyListeners(canStartCourse)
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    coursePanel.setButtonsEnabled(canStartCourse)
   }
 
   private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()

@@ -42,7 +42,7 @@ class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Coro
                                                        checkiOOAuthConnector.doAuthorize(
                                                          Runnable { coursePanel.hideErrorPanel() },
                                                          Runnable { coursePanel.hideErrorPanel() },
-                                                         Runnable { doValidation(selectedCourse) }
+                                                         Runnable { doValidation() }
                                                        )
                                                      })
 }

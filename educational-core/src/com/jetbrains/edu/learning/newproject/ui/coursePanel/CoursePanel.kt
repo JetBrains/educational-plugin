@@ -12,16 +12,17 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
+import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import java.awt.CardLayout
 import java.io.File
-import java.util.*
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
 import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 
 const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
 
@@ -49,10 +50,20 @@ class CoursePanel(
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN + ERROR_LEFT_GAP, ERROR_BOTTOM_GAP, ERROR_RIGHT_GAP)
   }
   private var mySearchField: FilterComponent? = null
-  private val listeners: MutableList<CoursesPanel.CourseValidationListener> = ArrayList()
 
   private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
-    joinCourseAction(courseInfo, courseMode, this)
+    val currentLocation = courseInfo.location()
+    val locationErrorState = when {
+      currentLocation.isNullOrBlank() -> ErrorState.EmptyLocation
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
+      else -> ErrorState.None
+    }
+    if (locationErrorState != ErrorState.None) {
+      setError(locationErrorState)
+    }
+    else {
+      joinCourseAction(courseInfo, courseMode, this)
+    }
   }
 
   val locationString: String?
@@ -82,30 +93,20 @@ class CoursePanel(
       border = null
     }
     add(scrollPane, CONTENT)
-    setUpValidation()
+    setButtonsEnabled(canStartCourse())
   }
 
-  private fun setUpValidation() {
-    addCourseValidationListener(object : CoursesPanel.CourseValidationListener {
-      override fun validationStatusChanged(canStartCourse: Boolean) {
-        setButtonsEnabled(canStartCourse)
+  private fun addOneTimeLocationFieldValidation() {
+    advancedSettings.addLocationFieldDocumentListener(object : DocumentAdapter() {
+      override fun textChanged(e: DocumentEvent) {
+        doValidation()
+        advancedSettings.removeLocationFieldDocumentListener(this)
       }
     })
-
-    val validator = object : DocumentAdapter() {
-      override fun textChanged(e: DocumentEvent) {
-        doValidation(null)
-      }
-    }
-    addLocationFieldDocumentListener(validator)
   }
 
   fun setButtonsEnabled(isEnabled: Boolean) {
     header.setButtonsEnabled(isEnabled)
-  }
-
-  private fun addLocationFieldDocumentListener(listener: DocumentListener) {
-    advancedSettings.addLocationFieldDocumentListener(listener)
   }
 
   fun showEmptyState() {
@@ -132,26 +133,9 @@ class CoursePanel(
     return advancedSettings.languageSettings
   }
 
-  fun notifyListeners(canStartCourse: Boolean) {
-    for (listener in listeners) {
-      listener.validationStatusChanged(canStartCourse)
-    }
-  }
-
-  private fun addCourseValidationListener(listener: CoursesPanel.CourseValidationListener) {
-    listeners.add(listener)
-    listener.validationStatusChanged(canStartCourse())
-  }
-
-  fun doValidation(course: Course?) {
-    val currentLocation = locationString
-    val message = when {
-      currentLocation.isNullOrBlank() -> ErrorState.EmptyLocation
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
-      else -> getErrorState(course) { validateSettings(it) }
-    }
-    setError(message)
-    notifyListeners(errorState.courseCanBeStarted)
+  fun doValidation() {
+    setError(getErrorState(course) { validateSettings(it) })
+    setButtonsEnabled(errorState.courseCanBeStarted)
   }
 
   fun validateSettings(course: Course?) = advancedSettings.validateSettings(course)
@@ -167,6 +151,12 @@ class CoursePanel(
   }
 
   fun setError(errorState: ErrorState) {
+    setButtonsEnabled(errorState.courseCanBeStarted)
+
+    if (errorState is ErrorState.LocationError) {
+      addOneTimeLocationFieldValidation()
+    }
+
     this.errorState = errorState
     header.setButtonToolTip(null)
     hideErrorPanel()
