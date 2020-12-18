@@ -20,6 +20,7 @@ class ErrorComponent(hyperlinkListener: HyperlinkListener? = null, errorPanelMar
   private val errorPanel = ErrorPanel(hyperlinkListener, errorPanelMargin)
 
   init {
+    isVisible = false
     add(errorPanel)
   }
 
