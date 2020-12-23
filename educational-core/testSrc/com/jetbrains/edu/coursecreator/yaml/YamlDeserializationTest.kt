@@ -537,6 +537,37 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(course.isMarketplace)
   }
 
+  fun `test courseVersion`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |is_marketplace: true
+      |course_version: 5
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    assertEquals(5, course.courseVersion)
+  }
+
+  fun `test default courseVersion`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |is_marketplace: true
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    assertEquals(1, course.courseVersion)
+  }
+
   fun `test file visibility`() {
     val taskFileName = "Task.java"
     val testFileName = "Test.java"

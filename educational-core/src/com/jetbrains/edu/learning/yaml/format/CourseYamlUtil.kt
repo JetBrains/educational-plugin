@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.serialization.IntValueFilter
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
@@ -35,6 +36,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unknownFieldValueMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
@@ -58,7 +60,8 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_MARKETPLACE, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT,
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_MARKETPLACE, COURSE_VERSION, PROGRAMMING_LANGUAGE,
+                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT,
                    SOLUTIONS_HIDDEN,
                    CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
@@ -107,6 +110,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(IS_MARKETPLACE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var isMarketplace: Boolean = false
+
+  @JsonProperty(COURSE_VERSION)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
+  private var myCourseVersion: Int? = 1
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -174,6 +181,7 @@ private class CourseBuilder(
   @JsonProperty(SUMMARY) val summary: String,
   @JsonProperty(IS_MARKETPLACE) val yamlIsMarketplace: Boolean,
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
+  @JsonProperty(COURSE_VERSION) val yamlCourseVersion: Int?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) val language: String,
@@ -209,6 +217,7 @@ private class CourseBuilder(
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       vendor = yamlVendor
       isMarketplace = yamlIsMarketplace
+      courseVersion = yamlCourseVersion ?: 1
       solutionsHidden = areSolutionsHidden ?: false
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
