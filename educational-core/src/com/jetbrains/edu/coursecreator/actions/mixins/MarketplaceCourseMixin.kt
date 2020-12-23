@@ -69,7 +69,15 @@ private class PluginVersionPropertyWriter : VirtualBeanPropertyWriter {
     return PluginVersionPropertyWriter(propDef, declaringClass.annotations, type)
   }
 
+  /**
+   * our plugin version starts with year (e.g. 2021.1-2020.3-SNAPSHOT) which causes problems on marketplace side,
+   * according to their algorithms first number should be less than 999.
+   * As a temporary solution we are cutting first 2 digits if version starts with the number > 999,
+   * and get e.g. 21.1-2020.3-SNAPSHOT
+   */
   override fun value(bean: Any, gen: JsonGenerator, prov: SerializerProvider): Any {
-    return pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
+    val version = pluginVersion(EduNames.PLUGIN_ID) ?: return "unknown"
+    return if (version.matches(Regex("\\d{4}.*"))) return version.drop(2)
+    else version
   }
 }
