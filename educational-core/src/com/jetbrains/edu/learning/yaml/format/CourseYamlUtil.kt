@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.serialization.IntValueFilter
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
@@ -208,6 +209,7 @@ private class CourseBuilder(
         }
       }
       EDU -> EduCourse()
+      MARKETPLACE -> EduCourse()
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
     }

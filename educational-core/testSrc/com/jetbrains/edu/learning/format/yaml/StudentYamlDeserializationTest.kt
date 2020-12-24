@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
@@ -55,6 +56,20 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertNotNull(course)
     assertTrue(course is CodeforcesCourse)
     assertEquals(endDateTime.toEpochSecond(), (course as CodeforcesCourse).endDateTime?.toEpochSecond())
+  }
+
+  fun `test marketplace course type`() {
+    val yamlContent = """
+      |type: marketplace
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |""".trimMargin()
+    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    assertNotNull(course)
+    assertTrue(course is EduCourse)
   }
 
   fun `test checkio station`() {
