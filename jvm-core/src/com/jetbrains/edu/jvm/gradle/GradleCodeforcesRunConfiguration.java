@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.openapi.module.ModuleUtilCore.findModuleForFile;
 import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
 
 public class GradleCodeforcesRunConfiguration extends ApplicationConfiguration implements CodeforcesRunConfiguration {
@@ -25,7 +24,6 @@ public class GradleCodeforcesRunConfiguration extends ApplicationConfiguration i
 
   @Override
   public void setExecutableFile(@NotNull VirtualFile file) {
-    setModule(findModuleForFile(file, getProject()));
     Course course = OpenApiExtKt.getCourse(getProject());
     if (course == null) {
       LOG.error("Unable to find course");
@@ -37,7 +35,7 @@ public class GradleCodeforcesRunConfiguration extends ApplicationConfiguration i
       return;
     }
 
-    PsiClass mainClass = ((PsiClass)MainFileProvider.Companion.getMainClass(getProject(), file, language));
+    PsiClass mainClass = ((PsiClass)MainFileProvider.getMainClass(getProject(), file, language));
     if (mainClass == null) {
       LOG.error("Unable to find main class for file " + file.getPath());
       return;

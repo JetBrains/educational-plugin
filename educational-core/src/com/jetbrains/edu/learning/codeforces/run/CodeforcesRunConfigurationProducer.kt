@@ -13,7 +13,6 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isTestDataFolder
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getContainingTask
@@ -27,11 +26,11 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
     val testsFile = getInputFile(project, selectedFile) ?: return false
     val task = selectedFile.getContainingTask(project) as? CodeforcesTask ?: return false
     val codeFile = task.getCodeTaskFile(project)?.getVirtualFile(project) ?: return false
-    val codeExecutor = task.course.configurator?.taskCheckerProvider?.getCodeExecutor() ?: return false
 
     configuration.name = "${task.presentableName} (${testsFile.parent.name})"
     configuration.setExecutableFile(codeFile)
-    codeExecutor.setInputRedirectFile(testsFile, configuration)
+    configuration.inputRedirectOptions.isRedirectInput = true
+    configuration.inputRedirectOptions.redirectInputPath = testsFile.path
     return true
   }
 

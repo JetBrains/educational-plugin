@@ -1,11 +1,8 @@
 package com.jetbrains.edu.jvm.gradle.checker
 
-import com.intellij.execution.InputRedirectAware
 import com.intellij.execution.configurations.ConfigurationFactory
-import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.gradle.GradleCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -25,11 +22,5 @@ open class GradleCodeExecutor : CodeExecutor {
 
   override fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
     return GradleCodeforcesRunConfiguration(project, factory)
-  }
-
-  override fun setInputRedirectFile(inputFile: VirtualFile, configuration: RunConfiguration) {
-    val options = (configuration as InputRedirectAware).inputRedirectOptions
-    options.isRedirectInput = true
-    options.redirectInputPath = inputFile.path
   }
 }

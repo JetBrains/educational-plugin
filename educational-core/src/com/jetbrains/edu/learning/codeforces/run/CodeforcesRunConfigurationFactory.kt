@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.Companion.CONFIGURATION_ID
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -13,6 +14,10 @@ class CodeforcesRunConfigurationFactory(type: ConfigurationType) : Configuration
   override fun createTemplateConfiguration(project: Project): RunConfiguration {
     return project.course?.configurator?.taskCheckerProvider?.getCodeExecutor()?.createRedirectInputConfiguration(project, this)
            ?: error("Unable to create configuration for ${project.name}")
+  }
+
+  override fun isApplicable(project: Project): Boolean {
+    return project.course is CodeforcesCourse
   }
 
   @NonNls

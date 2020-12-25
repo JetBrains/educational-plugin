@@ -4,13 +4,13 @@ import com.intellij.execution.InputRedirectAware
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.text.nullize
 import java.nio.file.Path
 
-interface CodeforcesRunConfiguration : RunConfiguration {
+interface CodeforcesRunConfiguration : RunConfiguration, InputRedirectAware {
   @JvmDefault
   fun getRedirectInputFile(): VirtualFile? {
-    if (this !is InputRedirectAware) return null
-    val path: String = inputRedirectOptions.redirectInputPath ?: return null
+    val path: String = inputRedirectOptions.redirectInputPath.nullize() ?: return null
     return VfsUtil.findFile(Path.of(path), true)
   }
 
