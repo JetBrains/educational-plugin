@@ -2,11 +2,13 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 const val DATA = "data"
 const val DESCRIPTION = "description"
+const val DEVELOPERS = "developers"
 const val DOWNLOADS = "downloads"
 const val FIELDS = "fields"
 const val COURSE_VERSION = "course_version"
@@ -14,7 +16,6 @@ const val GUEST = "guest"
 const val ID = "id"
 const val LANGUAGE = "language"
 const val NAME = "name"
-const val ORGANIZATION = "organization"
 const val PLUGINS = "plugins"
 const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 const val QUERY = "query"
@@ -25,7 +26,7 @@ const val UPDATES = "updates"
 
 class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo>()
 
-class MarketplaceUserInfo {
+class MarketplaceUserInfo() : UserInfo {
   @JsonProperty(ID)
   var id: String = ""
 
@@ -37,6 +38,12 @@ class MarketplaceUserInfo {
 
   @JsonProperty(TYPE)
   var type: String = ""
+
+  constructor(userName: String) : this() {
+    name = userName
+  }
+
+  override fun getFullName(): String = name
 
   override fun toString(): String {
     return name

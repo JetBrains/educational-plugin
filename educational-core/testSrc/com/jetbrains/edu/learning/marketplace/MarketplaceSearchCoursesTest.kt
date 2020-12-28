@@ -32,10 +32,10 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals("Python", pythonCourse.language)
     assertEquals("English", pythonCourse.humanLanguage)
     assertEquals("Introduction course to Python", pythonCourse.description)
-    assertEquals("JetBrains s.r.o.", pythonCourse.vendor.name)
     assertEquals(2, pythonCourse.learnersCount)
     assertEquals(5.0, pythonCourse.reviewScore)
     assertEquals(true, pythonCourse.isMarketplace)
+    checkAuthors(listOf("FirstName LastName"), pythonCourse.authorFullNames)
   }
 
   fun `test java ru course created`() {
@@ -48,10 +48,10 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals("Java", javaCourse.language)
     assertEquals("Russian", javaCourse.humanLanguage)
     assertEquals("Introduction course to Java", javaCourse.description)
-    assertEquals("JetBrains s.r.o.", javaCourse.vendor.name)
     assertEquals(5, javaCourse.learnersCount)
     assertEquals(5.0, javaCourse.reviewScore)
     assertEquals(true, javaCourse.isMarketplace)
+    checkAuthors(listOf("user1 LastName1", "user2 LastName2"), javaCourse.authorFullNames)
   }
 
   fun `test all courses loaded`() {
@@ -64,6 +64,13 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     }
 
     doTestCoursesLoaded(12)
+  }
+
+  private fun checkAuthors(expected: List<String>, actual: MutableList<String>) {
+    assertEquals(expected.size, actual.size)
+    for (n in expected.indices) {
+      assertEquals(expected[n], actual[n])
+    }
   }
 
   private fun RecordedRequest.getOffset(): Int {

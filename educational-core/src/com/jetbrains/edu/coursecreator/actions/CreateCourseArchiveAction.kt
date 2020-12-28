@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.createCourseArchive
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
@@ -51,7 +52,7 @@ abstract class CreateCourseArchiveAction(text: Supplier<String>) : DumbAwareActi
 
     if (showAuthorField()) {
       val authorName = dlg.authorName
-      course.setAuthorsAsString(arrayOf(authorName))
+      course.authors = listOf(StepikUserInfo(authorName))
       PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
     }
 

@@ -67,9 +67,9 @@ import com.jetbrains.edu.learning.encrypt.Encrypt
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
+import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
-import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -126,7 +126,7 @@ abstract class CourseraCourseMixin : LocalEduCourseMixin() {
 }
 
 private class StepikUserInfoToString : StdConverter<StepikUserInfo, String?>() {
-  override fun convert(value: StepikUserInfo?): String? = value?.name
+  override fun convert(value: StepikUserInfo?): String? = value?.getFullName()
 }
 
 private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>() {

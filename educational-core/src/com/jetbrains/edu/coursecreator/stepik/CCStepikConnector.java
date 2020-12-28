@@ -75,10 +75,13 @@ public class CCStepikConnector {
     updateProgress("Uploading course to " + StepikNames.getStepikUrl());
     final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user);
     if (currentUser != null) {
-      final List<StepikUserInfo> courseAuthors = course.getAuthors();
-      for (final StepikUserInfo courseAuthor : courseAuthors) {
-        currentUser.setFirstName(courseAuthor.getFirstName());
-        currentUser.setLastName(courseAuthor.getLastName());
+      final List<UserInfo> courseAuthors = course.getAuthors();
+      for (final UserInfo courseAuthor : courseAuthors) {
+        if (courseAuthor instanceof StepikUserInfo) {
+          final StepikUserInfo stepikAuthor = (StepikUserInfo)courseAuthor;
+          currentUser.setFirstName(stepikAuthor.getFirstName());
+          currentUser.setLastName(stepikAuthor.getLastName());
+        }
       }
       course.setAuthors(Collections.singletonList(currentUser));
     }

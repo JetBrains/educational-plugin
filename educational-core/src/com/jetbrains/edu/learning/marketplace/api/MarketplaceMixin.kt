@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 
 @JsonDeserialize(builder = MarketplaceCourseBuilder::class)
 abstract class MarketplaceEduCourseMixin {
@@ -25,8 +25,8 @@ abstract class MarketplaceEduCourseMixin {
   @JsonProperty(RATING)
   var reviewScore: Double = 0.0
 
-  @JsonProperty(ORGANIZATION)
-  var organization: String = ""
+  @JsonProperty(DEVELOPERS)
+  var developers: List<String> = emptyList()
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -34,9 +34,9 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(ID) val courseId: Int,
   @JsonProperty(NAME) val courseName: String,
   @JsonProperty(DESCRIPTION) val courseDescription: String,
+  @JsonProperty(DEVELOPERS) val developers: List<String>,
   @JsonProperty(DOWNLOADS) val downloads: Int,
   @JsonProperty(RATING) val rating: Double,
-  @JsonProperty(ORGANIZATION) val organization: String,
   @JsonProperty(FIELDS) val fields: Fields,
   @JsonProperty(COURSE_VERSION) val version: Int,
 ) {
@@ -54,8 +54,8 @@ private class MarketplaceCourseBuilder(
       //marketplace returns programming language in upper case
       language = fields.programmingLanguage.toLowerCase().capitalize()
       languageCode = fields.language
-      vendor = Vendor(organization)
       courseVersion = version
+      setMarketplaceAuthorsAsString(developers)
     }
 
     return course

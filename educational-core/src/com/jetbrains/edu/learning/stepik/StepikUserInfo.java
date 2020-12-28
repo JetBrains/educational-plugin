@@ -2,12 +2,13 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.edu.learning.UserInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StepikUserInfo {
+public class StepikUserInfo implements UserInfo {
   @JsonProperty("id")
   private int id = -1;
 
@@ -60,7 +61,7 @@ public class StepikUserInfo {
   }
 
   @NotNull
-  public String getName() {
+  public String getFullName() {
     List<String> names = new ArrayList<>();
     names.add(myFirstName);
     if (!myLastName.isEmpty()) {

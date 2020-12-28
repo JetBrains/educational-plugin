@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.setStepikAuthorsAsString
 import com.jetbrains.edu.learning.yaml.configFileName
 import junit.framework.TestCase
 import java.text.SimpleDateFormat
@@ -87,7 +88,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.description = "my summary"
-    course.setAuthorsAsString(arrayOf("EduTools Dev", "EduTools QA", "EduTools"))
+    course.setStepikAuthorsAsString(arrayOf("EduTools Dev", "EduTools QA", "EduTools"))
     doTest()
   }
 

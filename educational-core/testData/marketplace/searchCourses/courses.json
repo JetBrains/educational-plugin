@@ -9,7 +9,9 @@
           "description" : "Introduction course to Python",
           "downloads" : 2,
           "rating" : 5.0,
-          "organization" : "JetBrains s.r.o.",
+          "developers" : [
+            "FirstName LastName"
+          ],
           "fields" : {
             "programmingLanguage" : "PYTHON",
             "language" : "en"
@@ -21,7 +23,10 @@
           "description" : "Introduction course to Java",
           "downloads" : 5,
           "rating" : 5.0,
-          "organization" : "JetBrains s.r.o.",
+          "developers" : [
+            "user1 LastName1",
+            "user2 LastName2"
+          ],
           "fields" : {
             "programmingLanguage" : "JAVA",
             "language" : "ru"

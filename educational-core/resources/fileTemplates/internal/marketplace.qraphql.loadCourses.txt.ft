@@ -14,7 +14,7 @@ query {
       description
       downloads
       rating
-      organization
+      developers
       fields
     }
   }

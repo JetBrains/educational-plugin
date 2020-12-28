@@ -4,11 +4,10 @@ import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
 class CourseFormatTest : EduTestCase() {
   fun testAdditionalMaterialsLesson() {
@@ -132,7 +131,7 @@ class CourseFormatTest : EduTestCase() {
   fun testCourseWithAuthors() {
     val course = courseFromJson
     assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
-                 ContainerUtil.map(course.authors) { info: StepikUserInfo -> info.name })
+                 ContainerUtil.map(course.authors) { info: UserInfo -> info.getFullName() })
   }
 
   fun testSolutionsHiddenInCourse() {

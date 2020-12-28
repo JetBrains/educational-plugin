@@ -2,16 +2,15 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -33,7 +31,7 @@ import java.util.stream.Collectors;
  * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
-  transient private List<StepikUserInfo> authors = new ArrayList<>();
+  transient private List<UserInfo> authors = new ArrayList<>();
   private String description;
 
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
@@ -112,7 +110,7 @@ public abstract class Course extends LessonContainer {
   }
 
   @NotNull
-  public List<StepikUserInfo> getAuthors() {
+  public List<UserInfo> getAuthors() {
     return authors;
   }
 
@@ -123,14 +121,6 @@ public abstract class Course extends LessonContainer {
 
   public void setEnvironment(@NotNull String environment) {
     myEnvironment = environment;
-  }
-
-  @Transient
-  public void setAuthorsAsString(String[] authors) {
-    this.authors = new ArrayList<>();
-    for (String name : authors) {
-      this.authors.add(new StepikUserInfo(name));
-    }
   }
 
   @Override
@@ -205,7 +195,7 @@ public abstract class Course extends LessonContainer {
     return myProgrammingLanguage.substring(languageVersionStartIndex + 1);
   }
 
-  public void setAuthors(List<StepikUserInfo> authors) {
+  public void setAuthors(List<UserInfo> authors) {
     this.authors = authors;
   }
 
@@ -258,7 +248,7 @@ public abstract class Course extends LessonContainer {
   @NotNull
   public List<String> getAuthorFullNames() {
     return authors.stream()
-      .map(user -> StringUtil.join(Arrays.asList(user.getFirstName(), user.getLastName()), " "))
+      .map(user -> user.getFullName())
       .collect(Collectors.toList());
   }
 
