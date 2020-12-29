@@ -45,7 +45,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val javaCourse = courses[1]
     assertEquals("Introduction to Java", javaCourse.name)
     assertEquals(2, javaCourse.id)
-    assertEquals("Java", javaCourse.language)
+    assertEquals("JAVA", javaCourse.language)
     assertEquals("Russian", javaCourse.humanLanguage)
     assertEquals("Introduction course to Java", javaCourse.description)
     assertEquals(5, javaCourse.learnersCount)

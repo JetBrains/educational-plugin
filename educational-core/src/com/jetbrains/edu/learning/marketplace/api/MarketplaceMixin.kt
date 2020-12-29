@@ -51,8 +51,7 @@ private class MarketplaceCourseBuilder(
       description = courseDescription
       learnersCount = downloads
       reviewScore = rating
-      //marketplace returns programming language in upper case
-      language = fields.programmingLanguage.toLowerCase().capitalize()
+      language = fields.programmingLanguage
       languageCode = fields.language
       courseVersion = version
       setMarketplaceAuthorsAsString(developers)

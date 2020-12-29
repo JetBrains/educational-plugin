@@ -13,7 +13,7 @@
             "FirstName LastName"
           ],
           "fields" : {
-            "programmingLanguage" : "PYTHON",
+            "programmingLanguage" : "Python",
             "language" : "en"
           }
         },
