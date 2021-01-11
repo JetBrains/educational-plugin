@@ -17,7 +17,8 @@ const val GTEST_BUILD_DIR_KEY: String = "GTEST_BUILD_DIR"
 const val GTEST_BUILD_DIR_VALUE: String = "googletest-build"
 
 const val CATCH_HEADER_URL_KEY: String = "CATCH_URL"
-const val CATCH_HEADER_URL_VALUE: String = "https://raw.githubusercontent.com/catchorg/Catch2/master/single_include/catch2/catch.hpp"
+const val CATCH_HEADER_URL_VALUE: String =
+  "https://raw.githubusercontent.com/catchorg/Catch2/de6fe184a9ac1a06895cdd1c9b437f0a0bdf14ad/single_include/catch2/catch.hpp"
 
 const val TEST_FRAMEWORKS_BASE_DIR_KEY: String = "TEST_FRAMEWORK_DIR"
 const val TEST_FRAMEWORKS_BASE_DIR_VALUE: String = "test-framework"
