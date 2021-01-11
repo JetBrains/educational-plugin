@@ -35,7 +35,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(2, pythonCourse.learnersCount)
     assertEquals(5.0, pythonCourse.reviewScore)
     assertEquals(true, pythonCourse.isMarketplace)
-    checkAuthors(listOf("FirstName LastName"), pythonCourse.authorFullNames)
+    assertEquals("JetBrains s.r.o.", pythonCourse.organization)
+    checkAuthors(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
   }
 
   fun `test java ru course created`() {
@@ -51,6 +52,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(5, javaCourse.learnersCount)
     assertEquals(5.0, javaCourse.reviewScore)
     assertEquals(true, javaCourse.isMarketplace)
+    assertNull(javaCourse.organization)
     checkAuthors(listOf("user1 LastName1", "user2 LastName2"), javaCourse.authorFullNames)
   }
 

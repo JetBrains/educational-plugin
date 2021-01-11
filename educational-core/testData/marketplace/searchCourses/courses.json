@@ -15,6 +15,9 @@
           "fields" : {
             "programmingLanguage" : "Python",
             "language" : "en"
+          },
+          "organization" : {
+            "name" : "JetBrains s.r.o."
           }
         },
         {

@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public abstract class Course extends LessonContainer {
   private boolean isMarketplace = false;
   private Vendor myVendor;
   private int myCourseVersion = 1;   // TODO: this field should be updated uploading course to the marketplace
+  @Nullable private String organization;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
@@ -247,6 +249,7 @@ public abstract class Course extends LessonContainer {
 
   @NotNull
   public List<String> getAuthorFullNames() {
+    if (organization != null) return Collections.singletonList(organization);
     return authors.stream()
       .map(user -> user.getFullName())
       .collect(Collectors.toList());
@@ -328,5 +331,14 @@ public abstract class Course extends LessonContainer {
 
   public void setCourseVersion(int courseVersion) {
     myCourseVersion = courseVersion;
+  }
+
+  @Nullable
+  public String getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(@Nullable String organization) {
+    this.organization = organization;
   }
 }

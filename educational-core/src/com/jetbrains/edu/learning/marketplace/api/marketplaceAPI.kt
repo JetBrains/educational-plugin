@@ -16,6 +16,7 @@ const val GUEST = "guest"
 const val ID = "id"
 const val LANGUAGE = "language"
 const val NAME = "name"
+const val ORGANIZATION = "organization"
 const val PLUGINS = "plugins"
 const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 const val QUERY = "query"
@@ -83,6 +84,11 @@ class Fields {
 
   @JsonProperty(LANGUAGE)
   var language: String = ""
+}
+
+class Organization {
+  @JsonProperty(NAME)
+  var name: String? = ""
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

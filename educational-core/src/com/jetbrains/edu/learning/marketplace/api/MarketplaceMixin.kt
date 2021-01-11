@@ -38,6 +38,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(DOWNLOADS) val downloads: Int,
   @JsonProperty(RATING) val rating: Double,
   @JsonProperty(FIELDS) val fields: Fields,
+  @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
   @JsonProperty(COURSE_VERSION) val version: Int,
 ) {
   @Suppress("unused") // used for deserialization
@@ -54,6 +55,7 @@ private class MarketplaceCourseBuilder(
       language = fields.programmingLanguage
       languageCode = fields.language
       courseVersion = version
+      organization = courseOrganization?.name
       setMarketplaceAuthorsAsString(developers)
     }
 
