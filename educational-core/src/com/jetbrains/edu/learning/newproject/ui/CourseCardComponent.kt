@@ -120,7 +120,7 @@ class CourseNameComponent(course: Course, showOpenButton: Boolean) : JPanel(Bord
   private val nameLabel: JLabel = JLabel()
 
   init {
-    nameLabel.text = course.course.name
+    nameLabel.text = course.name
     nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
     add(nameLabel, BorderLayout.CENTER)
 
