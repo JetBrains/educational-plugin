@@ -64,7 +64,6 @@ val pythonPlugin = when (baseIDE) {
   "studio" -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
-val cPlugin = "c-plugin"
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
@@ -392,17 +391,6 @@ project(":code-insight") {
 }
 
 project(":code-insight:html") {
-  intellij {
-    if (baseIDE == "clion" && isAtLeast203) {
-      /**
-       * TODO: Remove it after CLion plugin will be fixed
-       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
-       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
-       */
-      setPlugins(cPlugin)
-    }
-  }
-
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":code-insight"))
@@ -415,16 +403,7 @@ project(":code-insight:html") {
 project(":code-insight:markdown") {
 
   intellij {
-    val plugins = mutableListOf(markdownPlugin)
-    if (baseIDE == "clion" && isAtLeast203) {
-      /**
-       * TODO: Remove it after CLion plugin will be fixed
-       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
-       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
-       */
-      plugins += cPlugin
-    }
-    setPlugins(*plugins.toTypedArray())
+    setPlugins(markdownPlugin)
   }
 
   dependencies {
@@ -438,16 +417,7 @@ project(":code-insight:markdown") {
 
 project(":code-insight:yaml") {
   intellij {
-    val pluginsList = mutableListOf("yaml")
-    if (baseIDE == "clion" && isAtLeast203) {
-      /**
-       * TODO: Remove it after CLion plugin will be fixed
-       * id from ProductivityFeaturesRegistry.xml automatically looking at FeatureStatisticsBundle,
-       * and seems like ProductivityFeaturesRegistry can't exist in a plugin, only in product
-       */
-      pluginsList += cPlugin
-    }
-    setPlugins(*pluginsList.toTypedArray())
+    setPlugins("yaml")
   }
 
   dependencies {
@@ -648,7 +618,7 @@ project(":Edu-Cpp") {
     version = clionVersion
     val pluginsList = mutableListOf("clion-test-google", "clion-test-catch")
     if (isAtLeast203) {
-      pluginsList += listOf("clion", cPlugin)
+      pluginsList += listOf("clion", "c-plugin")
     }
     setPlugins(*pluginsList.toTypedArray())
   }
