@@ -59,7 +59,7 @@ class DefaultTwitterDialogPanel(
     }
   }
 
-  fun createImageComponent(path: Path, disposable: Disposable): JComponent {
+  private fun createImageComponent(path: Path, disposable: Disposable): JComponent {
     val browser = TwitterJBCefBrowser(path)
     Disposer.register(disposable, browser)
     val component = browser.component

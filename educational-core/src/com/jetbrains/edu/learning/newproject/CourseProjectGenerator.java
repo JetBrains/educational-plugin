@@ -17,7 +17,6 @@ package com.jetbrains.edu.learning.newproject;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.RecentProjectsManager;
-import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.application.WriteAction;
@@ -26,7 +25,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -56,7 +54,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * If you add any new public methods here, please do not forget to add it also to

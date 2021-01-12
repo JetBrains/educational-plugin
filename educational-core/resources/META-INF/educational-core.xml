@@ -356,7 +356,6 @@
     <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
   </extensions>
 
-  <xi:include href="/META-INF/platform-educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
