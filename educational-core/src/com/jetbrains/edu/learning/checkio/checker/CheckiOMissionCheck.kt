@@ -32,11 +32,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import javax.swing.JComponent
 
-class JCEFCheckiOMissionCheck(private val project: Project,
-                              private val task: Task,
-                              private val oAuthConnector: CheckiOOAuthConnector,
-                              @NonNls private val interpreterName: String,
-                              @NonNls private val testFormTargetUrl: String
+class CheckiOMissionCheck(private val project: Project,
+                          private val task: Task,
+                          private val oAuthConnector: CheckiOOAuthConnector,
+                          @NonNls private val interpreterName: String,
+                          @NonNls private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
   private val jbCefBrowser = JBCefBrowser()
   private val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser)

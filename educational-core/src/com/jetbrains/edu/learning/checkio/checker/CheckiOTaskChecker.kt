@@ -25,8 +25,8 @@ class CheckiOTaskChecker(
   @NonNls testFormTargetUrl: String
 ) : TaskChecker<EduTask>(task, project) {
 
-  private val missionCheck: JCEFCheckiOMissionCheck = if (EduUtils.hasJCEF()) {
-    JCEFCheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
+  private val missionCheck = if (EduUtils.hasJCEF()) {
+    CheckiOMissionCheck(project, task, oAuthConnector, interpreterName, testFormTargetUrl)
   } else error("CheckiOTaskChecker needs JCEF")
 
   override fun check(indicator: ProgressIndicator): CheckResult {

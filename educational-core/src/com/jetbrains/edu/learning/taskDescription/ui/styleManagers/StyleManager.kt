@@ -21,8 +21,7 @@ class StyleManager {
   val bodyColor = bodyColor()
   private val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
-  val codeBackground = if (isJCEF()) codeBackground()
-  else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
+  val codeBackground = if (isJCEF()) codeBackground() else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}pt"
 

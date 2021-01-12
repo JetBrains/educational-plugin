@@ -198,10 +198,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
-    val taskTextTW = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-      JCEF -> JCEFToolWindow(project)
-      else -> SwingToolWindow(project)
-    }
+    val taskTextTW = if (EduSettings.getInstance().javaUiLibraryWithCheck == JCEF) JCEFToolWindow(project) else SwingToolWindow(project)
     Disposer.register(contentManager, taskTextTW)
 
     val taskTextPanel = taskTextTW.createTaskInfoPanel()

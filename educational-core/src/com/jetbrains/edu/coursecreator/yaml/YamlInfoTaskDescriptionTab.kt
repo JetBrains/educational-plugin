@@ -38,16 +38,14 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
       scrollPane
     }
 
-    val panel = when (EduSettings.getInstance().javaUiLibraryWithCheck) {
-      JavaUILibrary.JCEF -> {
-        val browser = JBCefBrowser()
-        Disposer.register(this, browser)
-        browser.loadHTML(templateText)
-        browser.component
-      }
-      else -> {
-        defaultSwingPanel(templateText)
-      }
+    val panel = if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
+      val browser = JBCefBrowser()
+      Disposer.register(this, browser)
+      browser.loadHTML(templateText)
+      browser.component
+    }
+    else {
+      defaultSwingPanel(templateText)
     }
 
     layout = BorderLayout()
