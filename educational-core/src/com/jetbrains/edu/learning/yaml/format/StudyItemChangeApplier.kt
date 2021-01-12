@@ -32,6 +32,9 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
     }
     @Suppress("DEPRECATION")
     existingItem.customPresentableName = deserializedItem.customPresentableName
+    if (existingItem is FrameworkLesson && deserializedItem is FrameworkLesson) {
+      existingItem.isTemplateBased = deserializedItem.isTemplateBased
+    }
     updateChildren(deserializedItem, existingItem)
   }
 

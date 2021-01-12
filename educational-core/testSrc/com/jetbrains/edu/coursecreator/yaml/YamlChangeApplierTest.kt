@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -222,5 +223,22 @@ class YamlChangeApplierTest : YamlTestCase() {
 
     loadItemFromConfig(task, yamlContent)
     assertNull(task.solutionHidden)
+  }
+
+  fun `test change is_template_based flag in framework lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("lesson1") {
+        eduTask("task1")
+      }
+    }
+    val lesson = course.lessons.single() as FrameworkLesson
+    val yamlContent = """
+      |type: framework
+      |content:
+      |- task1
+      |is_template_based: false
+    """.trimMargin("|")
+    loadItemFromConfig(lesson, yamlContent)
+    assertFalse(lesson.isTemplateBased)
   }
 }
