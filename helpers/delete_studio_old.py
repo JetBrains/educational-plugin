@@ -6,7 +6,7 @@ from typing import Pattern
 
 import requests
 
-AS_VERSION_PATTERN: Pattern[str] = re.compile(r"^\d{4}\.\d(\.\d+)*$")
+AS_VERSION_PATTERN: Pattern[str] = re.compile(r"^\d{3}(\.\d+)?$")
 
 
 def main():
@@ -14,8 +14,7 @@ def main():
     parser.add_argument("--apiKey", type=str, required=True, help="API key to authenticate at https://repo.labs.intellij.net. Can be "
                                                                   "created and found https://repo.labs.intellij.net/webapp/#/profile")
     parser.add_argument("--version", type=str, required=True, help="Version of Android Studio that should be deleted."
-                                                                   "It may be a major version like 2020.3 "
-                                                                   "or concrete version like 2020.3.1.4")
+                                                                   "It may be a major version like 193 or concrete version like 193.6085562")
     args = parser.parse_args()
 
     if not re.match(AS_VERSION_PATTERN, args.version):
@@ -26,7 +25,7 @@ def main():
     for child in children:
         folder: bool = child["folder"]
         uri: str = child["uri"]
-        if not folder and uri.startswith(f"/android-studio-{args.version}"):
+        if not folder and uri.startswith(f"/android-studio-ide-{args.version}"):
             print(f"Delete {uri}")
             delete_response = requests.delete(f"https://repo.labs.intellij.net/edu-tools{uri}", headers={"X-JFrog-Art-Api": args.apiKey})
             if delete_response.status_code != 204:
