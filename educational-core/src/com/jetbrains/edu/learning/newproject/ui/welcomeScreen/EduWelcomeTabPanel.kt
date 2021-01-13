@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -44,17 +45,18 @@ import javax.swing.SwingConstants
 private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
-class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
+class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(), CCNewCourseAction(), NewHyperskillCourseAction(),
                                                     StartCodeforcesContestAction())
   private val cardLayout: CardLayout = CardLayout()
+  private val mainPanel = JPanel(cardLayout)
 
   init {
-    layout = cardLayout
-
     val welcomeScreenPanel = MyCoursesWelcomeScreenPanel(parentDisposable)
-    add(welcomeScreenPanel, MY_COURSES_PANEL)
-    add(createEmptyPanel(), EMPTY)
+    mainPanel.add(welcomeScreenPanel, MY_COURSES_PANEL)
+    mainPanel.add(createEmptyPanel(), EMPTY)
+    setViewportView(mainPanel)
+
     showPanel()
     subscribeToCoursesStorageEvents(parentDisposable) { welcomeScreenPanel.updateModel() }
   }
@@ -77,10 +79,9 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
 
   private fun showPanel() {
     if (CoursesStorage.getInstance().isNotEmpty()) {
-      cardLayout.show(this, MY_COURSES_PANEL)
-    }
-    else {
-      cardLayout.show(this, EMPTY)
+      cardLayout.show(mainPanel, MY_COURSES_PANEL)
+    } else {
+      cardLayout.show(mainPanel, EMPTY)
     }
   }
 
@@ -113,11 +114,13 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : NonOpaquePanel() {
 
   private fun createLinkListener(): LinkListener<String> {
     return LinkListener { source, _ ->
-      val popup = JBPopupFactory.getInstance().createActionGroupPopup(null,
-                                                                      moreActionsGroup,
-                                                                      DataManager.getInstance().getDataContext(source),
-                                                                      JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                                                                      true)
+      val popup = JBPopupFactory.getInstance().createActionGroupPopup(
+        null,
+        moreActionsGroup,
+        DataManager.getInstance().getDataContext(source),
+        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+        true
+      )
       popup.showUnderneathOf(source)
     }
   }
