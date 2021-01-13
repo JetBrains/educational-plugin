@@ -125,6 +125,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     if (checkResult.diff != null) {
       val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
       answerHintsPanel.value.add(compareOutputs)
+      if (task is CodeforcesTask) {
+        answerHintsPanel.value.add(createCodeforcesMarkAsCompletedLink())
+      }
     }
 
     if (task is CodeforcesTask && checkResult == CheckResult.UNCHECKED) {
@@ -137,11 +140,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     val panel = JPanel(HorizontalLayout())
     val message = JLabel(EduCoreBundle.message("codeforces.local.tests.passed"))
     message.border = JBUI.Borders.empty(16, 0, 0, 16)
-    val markAsCompleted = LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
-                                                 ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
     panel.add(message)
-    panel.add(markAsCompleted)
+    panel.add(createCodeforcesMarkAsCompletedLink())
     return panel
+  }
+
+  private fun createCodeforcesMarkAsCompletedLink(): ActionLink {
+    return LightColoredActionLink(EduCoreBundle.message("codeforces.label.mark.as.completed"),
+                                  ActionManager.getInstance().getAction(CodeforcesMarkAsCompletedAction.ACTION_ID))
   }
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
