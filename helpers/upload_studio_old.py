@@ -17,7 +17,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--apiKey", type=str, required=True, help="API key to authenticate at https://repo.labs.intellij.net. Can be "
                                                                   "created and found https://repo.labs.intellij.net/webapp/#/profile")
-    parser.add_argument("--version", type=str, required=True, help="Android Studio version (e.g. 2020.3.1.4)")
+    parser.add_argument("--version", type=str, required=True, help="Android Studio version (e.g. 3.4.0.18)")
+    parser.add_argument("--buildVersion", type=str, required=True, help="Android Studio build version (e.g. 183.5452501)")
     args = parser.parse_args()
 
     for o in ["mac", "linux", "windows"]:
@@ -26,7 +27,7 @@ def main():
         else:
             archive_type = "zip"
 
-        filename = f"android-studio-{args.version}-{o}.{archive_type}"
+        filename = f"android-studio-ide-{args.buildVersion}-{o}.{archive_type}"
         print(f"Download {filename}")
         with requests.get(f"https://dl.google.com/dl/android/studio/ide-zips/{args.version}/{filename}", stream=True) as r:
             if r.status_code == 200:
