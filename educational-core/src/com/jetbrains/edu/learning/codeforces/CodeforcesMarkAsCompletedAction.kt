@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
 class CodeforcesMarkAsCompletedAction : DumbAwareAction(
@@ -29,6 +30,7 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(
 
     ProjectView.getInstance(project).refresh()
     TaskDescriptionView.getInstance(project).updateCheckPanel(task)
+    YamlFormatSynchronizer.saveItem(task)
     showSuccessNotification(project)
   }
 
