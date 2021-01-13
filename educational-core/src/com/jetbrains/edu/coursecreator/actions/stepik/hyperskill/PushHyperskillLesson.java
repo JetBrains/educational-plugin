@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -23,9 +22,10 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
+import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
-import static com.jetbrains.edu.learning.EduUtils.showNotification;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt.HYPERSKILL;
 
@@ -87,11 +87,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
-    if (!EduSettings.isLoggedIn()) {
-      // TODO i18n rewrite call when [showStepikNotification] will be localize
-      showStepikNotification(project, "post lesson");
-      return;
-    }
+    if (!checkIfAuthorizedToStepik(project, "post lesson")) return;
 
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (!(course instanceof HyperskillCourse)) {

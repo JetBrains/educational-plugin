@@ -11,11 +11,11 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.*
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils.pushAvailable
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -147,7 +147,7 @@ class CCPushLesson : DumbAwareAction(
         val sectionId = if (lesson.section != null) lesson.section!!.id else course.sectionIds[0]
         val success = CCStepikConnector.updateLesson(project, lesson, true, sectionId)
         if (success) {
-          EduUtils.showNotification(
+          showNotification(
             project,
             EduCoreBundle.message("action.push.lesson.updated", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)
@@ -159,7 +159,7 @@ class CCPushLesson : DumbAwareAction(
         if (!pushAvailable(lesson.container, lesson, project)) return
         val success = CCStepikConnector.postLesson(project, lesson, lesson.index, sectionId)
         if (success) {
-          EduUtils.showNotification(
+          showNotification(
             project,
             EduCoreBundle.message("action.push.lesson.uploaded", lesson.name),
             CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id)

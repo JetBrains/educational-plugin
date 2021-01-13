@@ -24,6 +24,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -31,8 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
-
-const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 

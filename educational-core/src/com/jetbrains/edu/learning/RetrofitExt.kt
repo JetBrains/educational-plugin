@@ -18,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.io.File
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.HttpURLConnection
@@ -177,3 +178,10 @@ fun <T> Response<T>.checkStatusCode(): Response<T>? {
   LOG.error("Response is returned with ${this.code()} status code")
   return null
 }
+
+fun File.toMultipartBody(): MultipartBody.Part {
+  val body = RequestBody.create(MediaType.parse("application/octet-stream"), this)
+  return MultipartBody.Part.createFormData("file", this.name, body)
+}
+
+fun String.toRequestBody(): RequestBody = RequestBody.create(MediaType.parse("text/plain"), this)

@@ -1,51 +1,44 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.StepSource;
+import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikUser;
+import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.jetbrains.edu.coursecreator.CCUtils.collectAdditionalLessonInfo;
-import static com.jetbrains.edu.learning.EduUtils.showNotification;
-import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.*;
+import static com.jetbrains.edu.coursecreator.CCUtils.*;
 import static com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getHasSections;
 
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
-  public static final String FAILED_TITLE = "Failed to publish ";
   public static final String PUBLISHING_COURSE_TITLE = "Publishing additional course data";
-  public static final String PUSH_COURSE_GROUP_ID = "Push.course";
   private static final String JETBRAINS_USER_ID = "17813950";
   private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
 
@@ -58,7 +51,7 @@ public class CCStepikConnector {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
-        if (checkIfAuthorized(project, "post course")) {
+        if (checkIfAuthorizedToStepik(project, "post course")) {
           postCourse(project, course);
         }
       }
@@ -94,7 +87,7 @@ public class CCStepikConnector {
     final List<StudyItem> items = course.getItems();
     courseOnRemote.setItems(Lists.newArrayList(items));
     courseOnRemote.setAuthors(course.getAuthors());
-    courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
+    courseOnRemote.setCourseMode(COURSE_MODE);
     courseOnRemote.setEnvironment(course.getEnvironment());
     courseOnRemote.setLanguage(course.getLanguage());
 
@@ -112,15 +105,15 @@ public class CCStepikConnector {
   }
 
   public static boolean postCourseAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
-    if (!checkIfAuthorized(project, "post course additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, "post course additional information")) return false;
 
     updateProgress(PUBLISHING_COURSE_TITLE);
-    String errors = CCUtils.checkIgnoredFiles(project);
+    String errors = checkIgnoredFiles(project);
     if (errors != null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to post additional files." + errors);
       return false;
     }
-    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(course, project);
+    final List<TaskFile> additionalFiles = collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
     if (code != HttpStatus.SC_CREATED) {
@@ -172,7 +165,7 @@ public class CCStepikConnector {
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
-    if (!checkIfAuthorized(project, "post section")) return -1;
+    if (!checkIfAuthorizedToStepik(project, "post section")) return -1;
 
     section.setCourseId(courseId);
     final Section postedSection = StepikConnector.getInstance().postSection(section);
@@ -214,7 +207,7 @@ public class CCStepikConnector {
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
-    if (!checkIfAuthorized(project, "postLesson")) return null;
+    if (!checkIfAuthorizedToStepik(project, "postLesson")) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
@@ -233,7 +226,7 @@ public class CCStepikConnector {
   }
 
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorized(project, "postUnit")) return lessonId;
+    if (!checkIfAuthorizedToStepik(project, "postUnit")) return lessonId;
 
     final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
     if (unit == null || unit.getId() == null) {
@@ -244,7 +237,7 @@ public class CCStepikConnector {
   }
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
-    if (!checkIfAuthorized(project, "postTask")) return false;
+    if (!checkIfAuthorizedToStepik(project, "postTask")) return false;
     // TODO: add meaningful comment to final Success notification that Code tasks were not pushed
     if (task instanceof CodeTask) return true;
 
@@ -261,7 +254,7 @@ public class CCStepikConnector {
   // UPDATE methods:
 
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
-    if (!checkIfAuthorized(project, "update course")) return false;
+    if (!checkIfAuthorizedToStepik(project, "update course")) return false;
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -275,7 +268,7 @@ public class CCStepikConnector {
     int responseCode = StepikConnector.getInstance().updateCourse(course);
 
     if (responseCode == HttpStatus.SC_FORBIDDEN) {
-      showNoRightsToUpdateNotification(project, course);
+      showNoRightsToUpdateOnStepikNotification(project, course);
       return false;
     }
     if (responseCode != HttpStatus.SC_OK) {
@@ -286,17 +279,17 @@ public class CCStepikConnector {
   }
 
   public static boolean updateCourseAdditionalInfo(@NotNull Project project, @NotNull Course course) {
-    if (!checkIfAuthorized(project, "update course additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, "update course additional information")) return false;
 
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress(PUBLISHING_COURSE_TITLE);
-    String errors = CCUtils.checkIgnoredFiles(project);
+    String errors = checkIgnoredFiles(project);
     if (errors != null) {
       showErrorNotification(project, FAILED_TITLE, "Failed to update additional files." + errors);
       return false;
     }
-    final List<TaskFile> additionalFiles = CCUtils.collectAdditionalFiles(courseInfo, project);
+    final List<TaskFile> additionalFiles = collectAdditionalFiles(courseInfo, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     return StepikConnector.getInstance().updateCourseAttachment(courseAdditionalInfo, courseInfo) == HttpStatus.SC_CREATED;
   }
@@ -347,7 +340,7 @@ public class CCStepikConnector {
   public static Lesson updateLessonInfo(@NotNull final Project project,
                                         @NotNull final Lesson lesson,
                                         boolean showNotification, int sectionId) {
-    if (!checkIfAuthorized(project, "update lesson")) return null;
+    if (!checkIfAuthorizedToStepik(project, "update lesson")) return null;
     // TODO: support case when lesson was removed from Stepik
 
     final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
@@ -363,7 +356,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
-    if (!checkIfAuthorized(project, "update lesson additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, "update lesson additional information")) return false;
 
     LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
@@ -375,7 +368,7 @@ public class CCStepikConnector {
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorized(project, "updateUnit")) return;
+    if (!checkIfAuthorizedToStepik(project, "updateUnit")) return;
 
     final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
@@ -408,7 +401,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
-    if (!checkIfAuthorized(project, "update task")) return false;
+    if (!checkIfAuthorizedToStepik(project, "update task")) return false;
     VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();
@@ -429,7 +422,7 @@ public class CCStepikConnector {
         // TODO: support case when lesson was removed from Stepik too
         return postTask(project, task, task.getLesson().getId());
       case HttpStatus.SC_FORBIDDEN:
-        showNoRightsToUpdateNotification(project, (EduCourse)course);
+        showNoRightsToUpdateOnStepikNotification(project, (EduCourse)course);
         return false;
       default:
         showErrorNotification(project, FAILED_TITLE, getErrorMessage(task, task.getLesson(), false));
@@ -457,50 +450,12 @@ public class CCStepikConnector {
     }
   }
 
-  // TODO function is needed to be refactored after refactoring [showStepikNotification]
-  public static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
-    checkCanceled();
-    if (!EduSettings.isLoggedIn()) {
-      showStepikNotification(project, failedActionName);
-      return false;
-    }
-    return true;
-  }
-
   private static void updateProgress(@NotNull String text) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
       indicator.checkCanceled();
       indicator.setText2(text);
     }
-  }
-
-  public static void showErrorNotification(@NotNull Project project,
-                                           @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-                                           @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String message) {
-    LOG.info(message);
-    final Notification notification = new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
-    notification.notify(project);
-  }
-
-  private static void showNoRightsToUpdateNotification(@NotNull final Project project, @NotNull final EduCourse course) {
-    String message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
-    Notification notification = new Notification(PUSH_COURSE_GROUP_ID, FAILED_TITLE, message, NotificationType.ERROR,
-                                                 createPostCourseNotificationListener(project, course));
-    notification.notify(project);
-  }
-
-  @NotNull
-  public static NotificationListener.Adapter createPostCourseNotificationListener(@NotNull Project project,
-                                                                                  @NotNull EduCourse course) {
-    return new NotificationListener.Adapter() {
-      @Override
-      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-        notification.expire();
-        course.convertToLocal();
-        postCourseWithProgress(project, course);
-      }
-    };
   }
 
   public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
@@ -512,48 +467,10 @@ public class CCStepikConnector {
     };
   }
 
-  // TODO function is needed to be refactored for localization
-  public static void showStepikNotification(@NotNull Project project, @NotNull String failedActionName) {
-    String text = "Log in to Stepik to " + failedActionName;
-    Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, NotificationType.ERROR);
-    notification.addAction(new DumbAwareAction("Log in") {
-
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        StepikAuthorizer.doAuthorize(() -> showOAuthDialog());
-        notification.expire();
-      }
-    });
-
-    notification.notify(project);
-  }
-
   private static void checkCanceled() {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
       indicator.checkCanceled();
     }
-  }
-
-  private static String getPrintableType(StudyItem item) {
-    if (item instanceof Course) return EduNames.COURSE;
-    if (item instanceof Section) return EduNames.SECTION;
-    if (item instanceof FrameworkLesson) return EduNames.FRAMEWORK_LESSON;
-    if (item instanceof Lesson) return EduNames.LESSON;
-    if (item instanceof Task) return EduNames.TASK;
-    return "item";
-  }
-
-  private static String getItemInfo(StudyItem item, boolean isNew) {
-    String id = isNew ? "" : " (id = " + item.getId() + ")";
-    return getPrintableType(item) + " `" + item.getName() + "`" + id;
-  }
-
-  private static String getErrorMessage(StudyItem item, boolean isNew) {
-    return "Failed to " + (isNew ? "post " : "update ") + getItemInfo(item, isNew);
-  }
-
-  private static String getErrorMessage(StudyItem item, StudyItem parent, boolean isNew) {
-    return getErrorMessage(item, isNew) + " in " + getItemInfo(parent, false);
   }
 }

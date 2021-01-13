@@ -21,7 +21,7 @@ import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.EduUtils.showNotification;
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class SyncStepikCourseAction extends SyncCourseAction {

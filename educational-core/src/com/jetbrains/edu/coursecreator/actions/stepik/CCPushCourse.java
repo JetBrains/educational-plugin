@@ -32,11 +32,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID;
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.createPostStepikCourseNotificationListener;
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
+import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
-import static com.jetbrains.edu.learning.stepik.StepikUtils.UPDATE_NOTIFICATION_GROUP_ID;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
@@ -96,7 +98,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
 
     // TODO i18n rewrite call when [checkIfAuthorized] will be localize
-    if (!checkIfAuthorized(project, ((EduCourse)course).isRemote() ? "update course" : "post course")) {
+    if (!checkIfAuthorizedToStepik(project, ((EduCourse)course).isRemote() ? "update course" : "post course")) {
       return;
     }
 
@@ -117,8 +119,8 @@ public class CCPushCourse extends DumbAwareAction {
       if (courseInfo == null) {
         Notification notification =
           new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
-                           EduCoreBundle.message("error.failed.to.update.no.course.on.stepik", StepikNames.STEPIK, getUploadTitleText()),
-                           NotificationType.ERROR, createPostCourseNotificationListener(project, course));
+                           EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
+                           NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
         notification.notify(project);
         return;
       }

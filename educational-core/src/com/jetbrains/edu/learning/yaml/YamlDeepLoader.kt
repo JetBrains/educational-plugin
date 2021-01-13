@@ -129,7 +129,7 @@ object YamlDeepLoader {
     val itemDir = getConfigDir(project)
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
-      if (id > 0) {
+      if (id > 0 || this.isMarketplaceRemoteCourse()) {
         loadingError(
           notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
       }
@@ -141,7 +141,7 @@ object YamlDeepLoader {
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
     val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
-    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse) {
+    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse || courseWithRemoteInfo.isMarketplaceRemoteCourse()) {
       getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
     }
   }
@@ -166,4 +166,6 @@ object YamlDeepLoader {
     return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
       "Invalid description format")
   }
+
+  fun StudyItem.isMarketplaceRemoteCourse(): Boolean = this is EduCourse && marketplaceId > 0
 }

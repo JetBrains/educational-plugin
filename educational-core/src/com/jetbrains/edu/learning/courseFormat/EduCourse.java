@@ -156,6 +156,10 @@ public class EduCourse extends Course {
     return getId() != 0;
   }
 
+  public boolean isMarketplaceRemote() {
+    return getMarketplaceId() != 0;
+  }
+
   public void convertToLocal() {
     isPublic = false;
     isCompatible = true;

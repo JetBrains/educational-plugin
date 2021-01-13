@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
@@ -21,7 +21,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     val changedItems = changeRetriever.getChangedItems()
 
     if (changedItems.isEmpty()) {
-      EduUtils.showNotification(project, "Nothing to update", null)
+      showNotification(project, "Nothing to update", null)
       return
     }
 
@@ -32,11 +32,11 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     success = processTasks(changedItems) && success
 
     if (!success) {
-      EduUtils.showNotification(project, "Failed to update the course", null)
+      showNotification(project, "Failed to update the course", null)
     }
     else {
       course.updateDate = remoteCourse.updateDate
-      EduUtils.showNotification(project, "Course is updated", openOnStepikAction("/course/${course.id}"))
+      showNotification(project, "Course is updated", openOnStepikAction("/course/${course.id}"))
     }
   }
 

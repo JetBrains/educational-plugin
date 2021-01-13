@@ -25,6 +25,23 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |default_section: 1
+    |marketplace_id: 0
+    |""".trimMargin())
+  }
+
+  fun `test marketplace remote course`() {
+    val course = course {
+      lesson()
+    } as EduCourse
+
+    course.marketplaceId = 1
+    course.sectionIds = listOf(1)
+    course.updateDate = Date(0)
+    doTest(course, """
+    |id: 0
+    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |default_section: 1
+    |marketplace_id: 1
     |""".trimMargin())
   }
 
@@ -81,6 +98,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(course, """
     |id: 1
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |marketplace_id: 0
     |""".trimMargin())
   }
 

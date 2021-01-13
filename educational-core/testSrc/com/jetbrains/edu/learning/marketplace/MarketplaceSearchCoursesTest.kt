@@ -28,7 +28,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
 
     val pythonCourse = courses.first()
     assertEquals("Introduction to Python", pythonCourse.name)
-    assertEquals(1, pythonCourse.id)
+    assertEquals(1, pythonCourse.marketplaceId)
     assertEquals("Python", pythonCourse.language)
     assertEquals("English", pythonCourse.humanLanguage)
     assertEquals("Introduction course to Python", pythonCourse.description)
@@ -45,7 +45,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
 
     val javaCourse = courses[1]
     assertEquals("Introduction to Java", javaCourse.name)
-    assertEquals(2, javaCourse.id)
+    assertEquals(2, javaCourse.marketplaceId)
     assertEquals("JAVA", javaCourse.language)
     assertEquals("Russian", javaCourse.humanLanguage)
     assertEquals("Introduction course to Java", javaCourse.description)
@@ -68,12 +68,24 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     doTestCoursesLoaded(12)
   }
 
+  fun `test course found by id`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+      mockResponse("course_by_id.json")
+    }
+    val courseId = 1
+    val course = MarketplaceConnector.getInstance().searchCourse(courseId)
+    checkNotNull(course)
+    assertEquals(courseId, course.marketplaceId)
+  }
+
   private fun checkAuthors(expected: List<String>, actual: MutableList<String>) {
     assertEquals(expected.size, actual.size)
     for (n in expected.indices) {
       assertEquals(expected[n], actual[n])
     }
   }
+
 
   private fun RecordedRequest.getOffset(): Int {
     return body.readUtf8().substringAfter("offset: ").substringBefore("\\n").toInt()

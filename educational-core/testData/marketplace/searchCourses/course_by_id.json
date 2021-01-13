@@ -9,9 +9,11 @@
           "description" : "Introduction course to Python",
           "downloads" : 2,
           "rating" : 5.0,
-          "organization" : "JetBrains s.r.o.",
+          "developers" : [
+            "FirstName LastName"
+          ],
           "fields" : {
-            "programmingLanguage" : "PYTHON",
+            "programmingLanguage" : "Python",
             "language" : "en"
           }
         }

@@ -49,6 +49,7 @@ public abstract class Course extends LessonContainer {
   private boolean isMarketplace = false;
   private Vendor myVendor;
   private int myCourseVersion = 1;   // TODO: this field should be updated uploading course to the marketplace
+  private int myMarketplaceId = 0;
   @Nullable private String organization;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
@@ -341,4 +342,12 @@ public abstract class Course extends LessonContainer {
   public void setOrganization(@Nullable String organization) {
     this.organization = organization;
   }
+
+  public void incrementCourseVersion() {
+    myCourseVersion += 1;
+  }
+
+  public int getMarketplaceId() { return myMarketplaceId; }
+
+  public void setMarketplaceId(int marketplaceId) { myMarketplaceId = marketplaceId; }
 }

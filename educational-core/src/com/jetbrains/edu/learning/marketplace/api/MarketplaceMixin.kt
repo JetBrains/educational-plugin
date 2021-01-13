@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 abstract class MarketplaceEduCourseMixin {
 
   @JsonProperty(ID)
-  var myId: Int = 0
+  var marketplaceId: Int = 0
 
   @JsonProperty(NAME)
   var myName: String = ""
@@ -23,7 +23,7 @@ abstract class MarketplaceEduCourseMixin {
   var learnersCount: Int = 0
 
   @JsonProperty(RATING)
-  var reviewScore: Double = 0.0
+  var reviewScore: Double? = 0.0
 
   @JsonProperty(DEVELOPERS)
   var developers: List<String> = emptyList()
@@ -36,25 +36,25 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(DESCRIPTION) val courseDescription: String,
   @JsonProperty(DEVELOPERS) val developers: List<String>,
   @JsonProperty(DOWNLOADS) val downloads: Int,
-  @JsonProperty(RATING) val rating: Double,
+  @JsonProperty(RATING) val rating: Double?,
   @JsonProperty(FIELDS) val fields: Fields,
   @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
-  @JsonProperty(COURSE_VERSION) val version: Int,
+  @JsonProperty(COURSE_VERSION) val version: Int?,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
     val course = EduCourse()
 
     course.apply {
-      id = courseId
+      marketplaceId = courseId
       name = courseName
       isMarketplace = true
       description = courseDescription
       learnersCount = downloads
-      reviewScore = rating
+      reviewScore = rating ?: 0.0
       language = fields.programmingLanguage
       languageCode = fields.language
-      courseVersion = version
+      courseVersion = version ?: 1
       organization = courseOrganization?.name
       setMarketplaceAuthorsAsString(developers)
     }

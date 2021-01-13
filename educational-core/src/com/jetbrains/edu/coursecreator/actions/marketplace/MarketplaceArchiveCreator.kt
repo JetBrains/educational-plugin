@@ -1,8 +1,9 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.mixins.MarketplaceCourseMixin
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse

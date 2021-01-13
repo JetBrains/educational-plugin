@@ -5,9 +5,9 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
-import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle

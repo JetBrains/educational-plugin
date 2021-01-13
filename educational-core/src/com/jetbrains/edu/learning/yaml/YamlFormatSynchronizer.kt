@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
@@ -225,7 +226,7 @@ object YamlFormatSynchronizer {
   @JvmStatic
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
-    if (item.id > 0 || item is HyperskillCourse) {
+    if (item.id > 0 || item is HyperskillCourse || item.isMarketplaceRemoteCourse()) {
       saveItem(item, REMOTE_MAPPER, item.remoteConfigFileName)
     }
   }

@@ -11,9 +11,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduUtils.showNotification
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseDir

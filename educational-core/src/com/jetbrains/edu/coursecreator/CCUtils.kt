@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -12,6 +14,8 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -23,12 +27,14 @@ import com.intellij.openapi.vfs.*
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikAuthorizer
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
@@ -189,7 +195,8 @@ object CCUtils {
           taskFile = TaskFile(path, loadText(file))
           try {
             additionalTaskFiles.add(taskFile)
-          } catch (e: IOException) {
+          }
+          catch (e: IOException) {
             LOG.error(e)
           }
         }
@@ -318,7 +325,7 @@ object CCUtils {
 
     val delta = -lessonsToWrap.size + 1
 
-    updateHigherElements(project.courseDir.children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
+    updateHigherElements(project.courseDir.children, Function { file -> course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section, section.index - 1)
     synchronizeChanges(project, course, section)
     return section
@@ -412,4 +419,40 @@ object CCUtils {
     return true
   }
 
+
+  // TODO function is needed to be refactored for localization
+  @JvmStatic
+  fun showLoginNeededNotification(project: Project, platformName: String, failedActionName: String, authAction: () -> Unit) {
+    val text = "Log in to $platformName to $failedActionName"
+    val notification = Notification(platformName, "Failed to $failedActionName", text, NotificationType.ERROR)
+    notification.addAction(object : DumbAwareAction("Log in") {
+      override fun actionPerformed(e: AnActionEvent) {
+        authAction()
+        notification.expire()
+      }
+    })
+    notification.notify(project)
+  }
+
+  // TODO function is needed to be refactored after refactoring [showLoginNeededNotification]
+  fun checkIfAuthorized(project: Project,
+                        platformName: String,
+                        failedActionName: String,
+                        isLoggedIn: Boolean,
+                        authAction: () -> Unit): Boolean {
+    val indicator = ProgressManager.getInstance().progressIndicator
+    indicator?.checkCanceled()
+
+    if (!isLoggedIn) {
+      showLoginNeededNotification(project, platformName, failedActionName) { authAction() }
+      return false
+    }
+    return true
+  }
+
+  @JvmStatic
+  fun checkIfAuthorizedToStepik(project: Project, failedActionName: String): Boolean {
+    return checkIfAuthorized(project, StepikNames.STEPIK, failedActionName,
+                             EduSettings.isLoggedIn()) { StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() } }
+  }
 }

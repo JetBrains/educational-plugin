@@ -20,10 +20,12 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification;
+import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
 import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
-import static com.jetbrains.edu.learning.EduUtils.showNotification;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.getTaskPosition;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.openOnStepikAction;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {

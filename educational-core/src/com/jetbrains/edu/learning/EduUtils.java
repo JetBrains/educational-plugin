@@ -2,9 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.lightEdit.LightEdit;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -38,7 +35,6 @@ import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -475,16 +471,6 @@ public class EduUtils {
       LOG.error("Failed to unzip course archive", e);
     }
     return null;
-  }
-
-  public static void showNotification(@NotNull Project project,
-                                      @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-                                      @Nullable AnAction action) {
-    final Notification notification = new Notification(CCStepikConnector.PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION);
-    if (action != null) {
-      notification.addAction(action);
-    }
-    notification.notify(project);
   }
 
   public static String addMnemonic(String text) {

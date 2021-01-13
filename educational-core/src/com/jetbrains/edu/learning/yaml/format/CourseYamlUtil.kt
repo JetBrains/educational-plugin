@@ -26,8 +26,8 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.serialization.IntValueFilter
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.serialization.IntValueFilter
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
@@ -145,13 +146,16 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
  * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION)
+@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_ID)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
   @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
   @JsonProperty(TOP_LEVEL_LESSONS_SECTION)
   private lateinit var sectionIds: List<Int>
+
+  @JsonProperty(MARKETPLACE_ID)
+  private var myMarketplaceId: Int = 0
 }
 
 /**
@@ -293,6 +297,7 @@ class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
   override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
+    existingItem.marketplaceId = deserializedItem.marketplaceId
   }
 }
 

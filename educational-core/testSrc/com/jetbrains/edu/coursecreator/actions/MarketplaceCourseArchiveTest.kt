@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
+import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplaceArchiveCreator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.encrypt.getAesKey

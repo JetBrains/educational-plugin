@@ -1,0 +1,16 @@
+query {
+  plugins(
+    search: {
+      filters: [{ field: "id", value: ${courseId} }]
+    }
+  ) {
+    total
+    plugins {
+      name
+      description
+      downloads
+      rating
+      fields
+    }
+  }
+}
