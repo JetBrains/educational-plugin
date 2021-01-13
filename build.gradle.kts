@@ -648,11 +648,17 @@ project(":Edu-Go") {
 
 fun downloadStudioIfNeededAndGetPath(): String {
   if (!rootProject.hasProperty("studioVersion")) error("studioVersion is unspecified")
-  if (!rootProject.hasProperty("studioBuildVersion")) error("studioBuildVersion is unspecified")
+  // BACKCOMPAT: 2020.2
+  if (!isAtLeast203 && !rootProject.hasProperty("studioBuildVersion")) error("studioBuildVersion is unspecified")
 
   val osFamily = osFamily
   val (archiveType, fileTreeMethod) = if (osFamily == "linux") "tar.gz" to this::tarTree else "zip" to this::zipTree
-  val studioArchive = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.$archiveType")
+  val studioArchive = if (isAtLeast203) {
+    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${osFamily}.$archiveType")
+  } else {
+    // BACKCOMPAT: 2020.2
+    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.$archiveType")
+  }
   if (!studioArchive.exists()) {
     download {
       src(studioArtifactDownloadPath(archiveType))
@@ -662,7 +668,12 @@ fun downloadStudioIfNeededAndGetPath(): String {
     }
   }
 
-  val studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+  val studioFolder = if (isAtLeast203) {
+    file("${rootProject.projectDir}/dependencies/studio-$studioVersion")
+  } else {
+    // BACKCOMPAT: 2020.2
+    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+  }
   if (!studioFolder.exists()) {
     copy {
       from(fileTreeMethod(studioArchive))
@@ -676,10 +687,20 @@ fun downloadStudioIfNeededAndGetPath(): String {
 fun studioArtifactDownloadPath(archiveType: String): String {
   return if (inJetBrainsNetwork()) {
     println("Downloading studio from JB repo...")
-    "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
+    if (isAtLeast203) {
+      "https://repo.labs.intellij.net/edu-tools/android-studio-${studioVersion}-${osFamily}.$archiveType"
+    } else {
+      // BACKCOMPAT: 2020.2
+      "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
+    }
   } else {
     println("Downloading studio from google's website...")
-    "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
+    if (isAtLeast203) {
+      "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-${studioVersion}-${osFamily}.$archiveType"
+    } else {
+      // BACKCOMPAT: 2020.2
+      "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
+    }
   }
 }
 
