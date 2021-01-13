@@ -13,10 +13,9 @@ const val HUB_PROFILE_PATH = "$HUB_URL/users/"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 const val LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
 
-//TODO: move to secret.properties
-var MARKETPLACE_CLIENT_ID = "6ee795af-5472-40b9-b586-e882ffbff43d"
-var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceClientId")
-var EDU_CLIENT_SECRET = MarketplaceOAuthBundle.value("marketplaceClientSecret")
+var MARKETPLACE_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceHubClientId")
+var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("eduHubClientId")
+var EDU_CLIENT_SECRET = MarketplaceOAuthBundle.value("eduHubClientSecret")
 val HUB_AUTHORISATION_CODE_URL: String
   get() = "${HUB_AUTH_URL}oauth2/auth?" +
           "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +
