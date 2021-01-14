@@ -5,12 +5,15 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.intellij.util.xmlb.annotations.XCollection;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -32,7 +35,11 @@ import java.util.stream.Collectors;
  * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
-  transient private List<UserInfo> authors = new ArrayList<>();
+  @XCollection(elementTypes = {
+    MarketplaceUserInfo.class,
+    StepikUserInfo.class
+  })
+  @Transient private List<UserInfo> authors = new ArrayList<>();
   private String description;
 
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
