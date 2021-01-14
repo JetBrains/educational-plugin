@@ -4,6 +4,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -16,6 +17,8 @@ class HyperskillStatisticsService {
 
   fun viewEvent(task: Task?) {
     val hyperskillCourse = task?.course as? HyperskillCourse ?: return
+    if (!hyperskillCourse.isStudy || isUnitTestMode) return
+
     val event = HyperskillFrontendEvent().apply {
       route = if (hyperskillCourse.isTaskInProject(task)) stagePath(task) else stepPath(task)
       action = HyperskillFrontendEventType.VIEW
