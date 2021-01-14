@@ -21,6 +21,8 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
   override fun setupConfigurationFromContext(configuration: CodeforcesRunConfiguration,
                                              context: ConfigurationContext,
                                              sourceElement: Ref<PsiElement>): Boolean {
+    if (configuration is InvalidCodeforcesRunConfiguration) return false
+
     val project = context.project
     val selectedFile = context.location?.virtualFile ?: return false
     val testsFile = getInputFile(project, selectedFile) ?: return false

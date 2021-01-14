@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.codeforces.run
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.UnknownRunConfiguration
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.Companion.CONFIGURATION_ID
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NonNls
 class CodeforcesRunConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type) {
   override fun createTemplateConfiguration(project: Project): RunConfiguration {
     return project.course?.configurator?.taskCheckerProvider?.getCodeExecutor()?.createCodeforcesConfiguration(project, this)
-           ?: UnknownRunConfiguration(this, project)
+           ?: InvalidCodeforcesRunConfiguration(project, this)
   }
 
   override fun isApplicable(project: Project): Boolean {
