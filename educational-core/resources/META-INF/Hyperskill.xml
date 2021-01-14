@@ -16,12 +16,14 @@
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStartupActivity"/>
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
-    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetProvider" />
+    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetProvider"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader"/>
 
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables action to push Hyperskill lesson to Stepik</description>
     </experimentalFeature>
+    <registryKey defaultValue="10" description="Hyperskill statistics sending interval in minutes" key="edu.hyperskill.statistics"
+                 restartRequired="true"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

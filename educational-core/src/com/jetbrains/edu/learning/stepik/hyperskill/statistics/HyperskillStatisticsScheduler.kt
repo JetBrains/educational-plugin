@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.onError
@@ -40,7 +41,7 @@ class HyperskillStatisticsScheduler : ProjectManagerListener {
           pendingEvents.clear()
           log("${sentEvents.events.size} events successfully sent")
 
-        }, 0, 10, TimeUnit.MINUTES)
+        }, 0, Registry.intValue(HYPERSKILL_STATISTICS_INTERVAL_REGISTRY).toLong(), TimeUnit.MINUTES)
 
       Disposer.register(StudyTaskManager.getInstance(project), Disposable {
         future.cancel(false)
@@ -49,6 +50,8 @@ class HyperskillStatisticsScheduler : ProjectManagerListener {
   }
 
   companion object {
+    private const val HYPERSKILL_STATISTICS_INTERVAL_REGISTRY: String = "edu.hyperskill.statistics"
+
     private val LOG: Logger = logger<HyperskillStatisticsService>()
 
     private fun log(message: String) {
