@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
@@ -34,9 +35,10 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals("Introduction course to Python", pythonCourse.description)
     assertEquals(2, pythonCourse.learnersCount)
     assertEquals(5.0, pythonCourse.reviewScore)
-    assertEquals(true, pythonCourse.isMarketplace)
+    assertTrue(pythonCourse.isMarketplace)
     assertEquals("JetBrains s.r.o.", pythonCourse.organization)
-    checkAuthors(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
+    checkAuthorFullNames(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
+    checkAuthors(listOf("FirstName LastName"), pythonCourse.authors)
   }
 
   fun `test java ru course created`() {
@@ -51,9 +53,11 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals("Introduction course to Java", javaCourse.description)
     assertEquals(5, javaCourse.learnersCount)
     assertEquals(5.0, javaCourse.reviewScore)
-    assertEquals(true, javaCourse.isMarketplace)
+    assertTrue(javaCourse.isMarketplace)
     assertNull(javaCourse.organization)
-    checkAuthors(listOf("user1 LastName1", "user2 LastName2"), javaCourse.authorFullNames)
+    val expectedAuthors = listOf("user1 LastName1", "user2 LastName2")
+    checkAuthorFullNames(expectedAuthors, javaCourse.authorFullNames)
+    checkAuthors(expectedAuthors, javaCourse.authors)
   }
 
   fun `test all courses loaded`() {
@@ -77,15 +81,31 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val course = MarketplaceConnector.getInstance().searchCourse(courseId)
     checkNotNull(course)
     assertEquals(courseId, course.marketplaceId)
+    assertEquals("Introduction to Python", course.name)
+    assertEquals("Python", course.language)
+    assertEquals("English", course.humanLanguage)
+    assertEquals("Introduction course to Python", course.description)
+    assertEquals(2, course.learnersCount)
+    assertEquals(5.0, course.reviewScore)
+    assertTrue(course.isMarketplace)
+    assertNull(course.organization)
+    checkAuthorFullNames(listOf("FirstName LastName"), course.authorFullNames)
+    checkAuthors(listOf("FirstName LastName"), course.authors)
   }
 
-  private fun checkAuthors(expected: List<String>, actual: MutableList<String>) {
+  private fun checkAuthorFullNames(expected: List<String>, actual: MutableList<String>) {
     assertEquals(expected.size, actual.size)
     for (n in expected.indices) {
       assertEquals(expected[n], actual[n])
     }
   }
 
+  private fun checkAuthors(expected: List<String>, actual: MutableList<UserInfo>) {
+    assertEquals(expected.size, actual.size)
+    for (n in expected.indices) {
+      assertEquals(expected[n], actual[n].getFullName())
+    }
+  }
 
   private fun RecordedRequest.getOffset(): Int {
     return body.readUtf8().substringAfter("offset: ").substringBefore("\\n").toInt()

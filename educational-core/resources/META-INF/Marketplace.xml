@@ -22,6 +22,7 @@
     <action id="Educational.Educator.MarketplacePushCourse"
             class="com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse">
       <add-to-group group-id="Educational.Educator.File" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
     </action>
   </actions>
 </idea-plugin>
