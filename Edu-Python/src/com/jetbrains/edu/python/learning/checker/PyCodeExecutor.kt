@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.python.learning.codeforces.PyCodeforcesRunConfiguration
 
 class PyCodeExecutor : DefaultCodeExecutor() {
-  override fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
+  override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
     return PyCodeforcesRunConfiguration(project, factory)
   }
 }

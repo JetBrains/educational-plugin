@@ -8,7 +8,7 @@ import com.jetbrains.edu.kotlin.codeforces.KtCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 
 class KtCodeExecutor : GradleCodeExecutor() {
-  override fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
+  override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
     return KtCodeforcesRunConfiguration(JavaRunConfigurationModule(project, true), factory)
   }
 }

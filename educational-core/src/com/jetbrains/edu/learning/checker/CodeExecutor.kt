@@ -33,7 +33,7 @@ interface CodeExecutor {
     task: Task
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project, task)
 
-  fun createRedirectInputConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration? = null
+  fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration? = null
 
   companion object {
     fun resultUnchecked(msg: String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
