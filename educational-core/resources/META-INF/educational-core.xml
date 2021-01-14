@@ -215,7 +215,7 @@
     <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                              id="Educational" displayName="Education"/>
 
-    <toolWindow id="Task" anchor="right"
+    <toolWindow id="Task" anchor="right" order="first"
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.taskDescription.ui.EduCondition"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
