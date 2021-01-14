@@ -1,0 +1,7 @@
+<idea-plugin>
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <useScopeEnlarger implementation="com.jetbrains.edu.codeInsight.EduUseScopeEnlarger"/>
+  </extensions>
+</idea-plugin>
