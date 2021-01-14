@@ -147,6 +147,16 @@ fun VirtualFile.belongToTask(project: Project): Boolean {
   return task.getTaskFile(relativePath) != null
 }
 
+fun VirtualFile.canBelongToCourse(project: Project): Boolean {
+  if (isSectionDirectory(project) || isLessonDirectory(project) || isTaskDirectory(project)) return true
+  return if (isDirectory) {
+    getContainingTask(project) != null
+  }
+  else {
+    belongToTask(project)
+  }
+}
+
 fun VirtualFile.pathRelativeToTask(project: Project): String {
   val taskDir = getTaskDir(project) ?: return name
   return FileUtil.getRelativePath(taskDir.path, path, VfsUtilCore.VFS_SEPARATOR_CHAR) ?: return name
