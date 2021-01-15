@@ -41,6 +41,7 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
   }
 
   override fun isConfigurationFromContext(configuration: CodeforcesRunConfiguration, context: ConfigurationContext): Boolean {
+    if (configuration is InvalidCodeforcesRunConfiguration) return false
     val selectedFiles = context.dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
     if (selectedFiles.size != 1) return false
     val selectedFile = selectedFiles.firstOrNull() ?: return false

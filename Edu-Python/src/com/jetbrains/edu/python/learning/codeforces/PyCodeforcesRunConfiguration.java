@@ -26,6 +26,7 @@ public class PyCodeforcesRunConfiguration extends PythonRunConfiguration impleme
     setScriptName(file.getPath());
   }
 
+  // TODO get rid of it when 203 branch will not be supported, it is implemented on pycharm side
   @Override
   public @NotNull InputRedirectOptions getInputRedirectOptions() {
     return new InputRedirectOptions() {
