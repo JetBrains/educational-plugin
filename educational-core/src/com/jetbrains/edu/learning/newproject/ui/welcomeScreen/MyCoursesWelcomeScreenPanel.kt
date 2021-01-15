@@ -40,7 +40,7 @@ private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = CoursesListPanel(true) {
-    updateModel(CoursesGroup(CoursesStorage.getInstance().state.courses).asList())
+    updateModel(createCoursesGroup())
   }
 
   init {
