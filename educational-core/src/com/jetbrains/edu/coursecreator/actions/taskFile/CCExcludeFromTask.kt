@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.PlaceholderPainter
-import com.jetbrains.edu.learning.belongToTask
+import com.jetbrains.edu.learning.belongsToTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
@@ -14,10 +14,10 @@ class CCExcludeFromTask
   : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.task.title")) {
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
-    file.belongToTask(project)
+    file.belongsToTask(project)
 
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
-    if (!file.belongToTask(project)) return null
+    if (!file.belongsToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
     return RemoveFileFromTask(info)
   }

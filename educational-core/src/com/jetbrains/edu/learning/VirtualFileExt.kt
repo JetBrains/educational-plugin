@@ -134,14 +134,14 @@ fun VirtualFile.getStudyItem(project: Project): StudyItem? {
 fun VirtualFile.canBeAddedToTask(project: Project): Boolean {
   if (isDirectory) return false
   val configurator = getContainingTask(project)?.course?.configurator ?: return false
-  return if (configurator.excludeFromArchive(project, this)) false else !belongToTask(project)
+  return if (configurator.excludeFromArchive(project, this)) false else !belongsToTask(project)
 }
 
 /**
  * @return true, if some task contains given `file` as task, test or additional file.
  * Otherwise, returns false
  */
-fun VirtualFile.belongToTask(project: Project): Boolean {
+fun VirtualFile.belongsToTask(project: Project): Boolean {
   val task = getContainingTask(project) ?: return false
   val relativePath = pathRelativeToTask(project)
   return task.getTaskFile(relativePath) != null
@@ -153,7 +153,7 @@ fun VirtualFile.canBelongToCourse(project: Project): Boolean {
     getContainingTask(project) != null
   }
   else {
-    belongToTask(project)
+    belongsToTask(project)
   }
 }
 
