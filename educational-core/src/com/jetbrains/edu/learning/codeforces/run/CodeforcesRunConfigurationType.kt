@@ -27,7 +27,7 @@ class CodeforcesRunConfigurationType : ConfigurationType {
 
   companion object {
     @NonNls
-    const val CONFIGURATION_ID = "Codeforces Configuration"
+    const val CONFIGURATION_ID = "Codeforces"
 
     fun getInstance(): CodeforcesRunConfigurationType {
       return runConfigurationType()
