@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel.Companion.IS_FROM_WELCOME_SCREEN
 import java.awt.BorderLayout
@@ -65,7 +64,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
   private fun createSearchComponent(disposable: Disposable): JPanel {
     val panel = NonOpaquePanel()
-    val searchField = CoursesFilterComponent({ CoursesGroup(CoursesStorage.getInstance().state.courses).asList() },
+    val searchField = CoursesFilterComponent({ createCoursesGroup() },
                                              { group -> updateModel(group) })
     UIUtil.setBackgroundRecursively(searchField, MAIN_BG_COLOR)
 
