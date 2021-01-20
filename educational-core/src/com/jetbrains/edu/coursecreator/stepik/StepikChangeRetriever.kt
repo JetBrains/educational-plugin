@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.courseFormat.*
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.getInEdt
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
@@ -110,7 +110,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     for (task in localLesson.taskList) {
       val localTask = task.copy()
       localTask.lesson = localLesson
-      runInEdtAndWait {
+      getInEdt {
         runReadAction {
           try {
             CourseArchiveCreator.loadActualTexts(project, localTask)
