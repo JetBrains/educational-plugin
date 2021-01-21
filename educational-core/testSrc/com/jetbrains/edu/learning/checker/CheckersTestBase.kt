@@ -33,13 +33,13 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
         createCheckerFixture()
     }
 
-    override fun shouldRunTest(): Boolean {
+    override fun runTestInternal(context: TestContext) {
         val skipTestReason = checkerFixture.getSkipTestReason()
-        return if (skipTestReason != null) {
+        if (skipTestReason != null) {
             System.err.println("SKIP `$name`: $skipTestReason")
-            false
-        } else {
-            super.shouldRunTest()
+        }
+        else {
+            super.runTestInternal(context)
         }
     }
 
@@ -137,23 +137,26 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
 
     override fun setUpProject() {
         checkerFixture.setUp()
+        if (checkerFixture.getSkipTestReason() == null) {
+            myCourse = createCourse()
+            val settings = checkerFixture.projectSettings
 
-        myCourse = createCourse()
-        val settings = checkerFixture.projectSettings
-
-        withTestDialog(TestDialog.NO) {
-            val rootDir = createVirtualDir()
-            val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
-                            ?: error("Failed to get `CourseProjectGenerator`")
-            myProject = generator.doCreateCourseProject(rootDir.path, settings as Any)
-                        ?: error("Cannot create project with name ${projectName()}")
+            withTestDialog(TestDialog.NO) {
+                val rootDir = createVirtualDir()
+                val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
+                                ?: error("Failed to get `CourseProjectGenerator`")
+                myProject = generator.doCreateCourseProject(rootDir.path, settings as Any)
+                            ?: error("Cannot create project with name ${projectName()}")
+            }
         }
     }
 
     override fun setUp() {
         super.setUp()
 
-        EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
+        if (myProject != null) {
+            EduDocumentListener.setGlobalListener(myProject, testRootDisposable)
+        }
 
         CheckActionListener.registerListener(testRootDisposable)
         CheckActionListener.reset()

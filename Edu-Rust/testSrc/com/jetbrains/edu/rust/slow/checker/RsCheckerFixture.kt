@@ -6,9 +6,14 @@ import org.rust.cargo.toolchain.RustToolchain
 
 class RsCheckerFixture : EduCheckerFixture<RsProjectSettings>() {
 
-  private val toolchain = RustToolchain.suggest()
+  private var toolchain: RustToolchain? = null
 
   override val projectSettings: RsProjectSettings get() = RsProjectSettings(toolchain)
 
   override fun getSkipTestReason(): String? = if (toolchain == null) "no Rust toolchain found" else super.getSkipTestReason()
+
+  override fun setUp() {
+    super.setUp()
+    toolchain = RustToolchain.suggest()
+  }
 }
