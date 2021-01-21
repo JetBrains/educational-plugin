@@ -8,11 +8,12 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class PyTaskCheckerProvider : TaskCheckerProvider {
+  override val codeExecutor: CodeExecutor
+    get() = PyCodeExecutor()
+
   override val envChecker: EnvironmentChecker
     get() = PyEnvironmentChecker()
 
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
     PyTaskChecker(task, envChecker, project)
-
-  override fun getCodeExecutor(): CodeExecutor = PyCodeExecutor()
 }

@@ -7,9 +7,10 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
+  override val codeExecutor: CodeExecutor
+    get() = KtCodeExecutor()
+
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     return KtNewGradleTaskChecker(task, envChecker, project)
   }
-
-  override fun getCodeExecutor(): CodeExecutor = KtCodeExecutor()
 }

@@ -32,10 +32,11 @@ class GoConfigurator : EduConfigurator<GoProjectSettings> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = object : TaskCheckerProvider {
+      override val codeExecutor: CodeExecutor
+        get() = GoCodeExecutor()
       override val envChecker: EnvironmentChecker
         get() = GoEnvironmentChecker()
       override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> = GoEduTaskChecker(project, envChecker, task)
-      override fun getCodeExecutor(): CodeExecutor = GoCodeExecutor()
     }
 
   override val defaultPlaceholderText: String

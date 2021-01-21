@@ -6,6 +6,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 open class GradleTaskCheckerProvider : TaskCheckerProvider {
+  override val codeExecutor: CodeExecutor
+    get() = GradleCodeExecutor()
+
   override val envChecker: EnvironmentChecker
     get() = GradleEnvironmentChecker()
 
@@ -14,6 +17,4 @@ open class GradleTaskCheckerProvider : TaskCheckerProvider {
 
   override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
     GradleTheoryTaskChecker(task, project)
-
-  override fun getCodeExecutor(): CodeExecutor = GradleCodeExecutor()
 }

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NonNls
 
 class CodeforcesRunConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type) {
   override fun createTemplateConfiguration(project: Project): RunConfiguration {
-    return project.course?.configurator?.taskCheckerProvider?.getCodeExecutor()?.createCodeforcesConfiguration(project, this)
+    return project.course?.configurator?.taskCheckerProvider?.codeExecutor?.createCodeforcesConfiguration(project, this)
            ?: InvalidCodeforcesRunConfiguration(project, this)
   }
 

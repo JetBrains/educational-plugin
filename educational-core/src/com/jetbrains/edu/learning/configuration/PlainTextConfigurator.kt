@@ -50,6 +50,18 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
    */
   override val taskCheckerProvider
     get() = object : TaskCheckerProvider {
+      override val codeExecutor: CodeExecutor
+        get() {
+          return object : CodeExecutor {
+            override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
+              val taskDir = task.getDir(project.courseDir) ?: return Err(CheckResult(CheckStatus.Unchecked, "No taskDir in tests"))
+              val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
+                                    ?: return Err(CheckResult(CheckStatus.Unchecked, "No $CHECK_RESULT_FILE file"))
+              return Ok(VfsUtil.loadText(checkResultFile))
+            }
+          }
+        }
+
       override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
         return object : TaskChecker<EduTask>(task, project) {
           override fun check(indicator: ProgressIndicator): CheckResult {
@@ -59,16 +71,6 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
               return CheckResult.SOLVED
             }
             return checkResultFile.checkResult
-          }
-        }
-      }
-
-      override fun getCodeExecutor(): CodeExecutor {
-        return object : CodeExecutor {
-          override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> {
-            val taskDir = task.getDir(project.courseDir) ?: return Err(CheckResult(CheckStatus.Unchecked, "No taskDir in tests"))
-            val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE) ?: return Err(CheckResult(CheckStatus.Unchecked, "No $CHECK_RESULT_FILE file"))
-            return Ok(VfsUtil.loadText(checkResultFile))
           }
         }
       }
