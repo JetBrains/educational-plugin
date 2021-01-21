@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import org.hamcrest.CoreMatchers.containsString
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 import org.rust.lang.RsLanguage
@@ -111,7 +111,7 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {
         "EduOk" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
-        "EduErr" -> equalTo(CheckStatus.Failed) to containsString("assertion failed")
+        "EduErr" -> equalTo(CheckStatus.Failed) to equalTo(EduCoreBundle.message("check.incorrect"))
         "EduCompilationErr" -> equalTo(CheckStatus.Failed) to equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE)
         "Output" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
         else -> error("Unexpected task name: ${task.name}")
@@ -119,5 +119,6 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
       Assert.assertThat("Checker status for ${task.name} doesn't match", checkResult.status, statusMatcher)
       Assert.assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
     }
+    doTest()
   }
 }
