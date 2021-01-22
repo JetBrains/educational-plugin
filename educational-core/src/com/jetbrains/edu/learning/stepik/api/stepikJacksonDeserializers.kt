@@ -245,7 +245,7 @@ fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
       "choice" -> objectMapper.treeToValue(node, ChoiceTask::class.java)
       "theory" -> objectMapper.treeToValue(node, TheoryTask::class.java)
       "video" -> objectMapper.treeToValue(node, VideoTask::class.java)
-      "code" -> objectMapper.treeToValue(node, CodeTask::class.java)
+      CodeTask.CODE -> objectMapper.treeToValue(node, CodeTask::class.java)
       "edu" -> objectMapper.treeToValue(node, EduTask::class.java)
       "output" -> objectMapper.treeToValue(node, OutputTask::class.java)
       "pycharm" -> objectMapper.treeToValue(node, EduTask::class.java)     // deprecated: old courses have pycharm tasks

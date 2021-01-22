@@ -42,6 +42,7 @@ const val STEP_ID = "step"
 const val THEORY_ID = "theory"
 const val TITLE = "title"
 const val TOKEN = "token"
+const val TOPIC = "topic"
 const val TOPICS = "topics"
 const val TOPIC_THEORY = "topic_theory"
 const val UPDATED_AT = "updated_at"
@@ -138,6 +139,9 @@ class HyperskillTopic {
 class HyperskillStepSource : StepSource() {
   @JsonProperty(TITLE)
   var title: String? = null
+
+  @JsonProperty(TOPIC)
+  var topic: Int? = null
 
   @JsonProperty(TOPIC_THEORY)
   var topicTheory: Int? = null

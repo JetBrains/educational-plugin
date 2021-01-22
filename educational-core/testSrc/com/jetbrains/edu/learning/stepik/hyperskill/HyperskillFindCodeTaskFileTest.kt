@@ -10,13 +10,13 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     val answerFileName = "src/Task.kt"
     val taskName = "task1"
     val course = hyperskillCourse {
-      lesson(HYPERSKILL_PROBLEMS) {
+      lesson(LESSON_NAME) {
         codeTask(taskName) {
           taskFile(answerFileName)
         }
       }
     }
-    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val task = course.findTask(LESSON_NAME, taskName) as CodeTask
     val answerFile = task.taskFiles[answerFileName]
 
     doTest(task, answerFile)
@@ -26,14 +26,14 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     val answerFileName = "src/Main.kt"
     val taskName = "task1"
     val course = hyperskillCourse {
-      lesson(HYPERSKILL_PROBLEMS) {
+      lesson(LESSON_NAME) {
         codeTask(taskName) {
           taskFile("src/Task.kt")
           taskFile(answerFileName)
         }
       }
     }
-    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val task = course.findTask(LESSON_NAME, taskName) as CodeTask
     val answerFile = task.taskFiles[answerFileName]
 
     doTest(task, answerFile)
@@ -43,7 +43,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     val answerFileName = "src/Task.kt"
     val taskName = "task1"
     val course = hyperskillCourse {
-      lesson(HYPERSKILL_PROBLEMS) {
+      lesson(LESSON_NAME) {
         codeTask(taskName) {
           taskFile("src/Foo.kt", visible = true) {
             taskFile.isLearnerCreated = true
@@ -54,7 +54,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
         }
       }
     }
-    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val task = course.findTask(LESSON_NAME, taskName) as CodeTask
     val answerFile = task.taskFiles[answerFileName]
 
     doTest(task, answerFile)
@@ -63,7 +63,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
   fun `test unable to find file`() {
     val taskName = "task1"
     val course = hyperskillCourse {
-      lesson(HYPERSKILL_PROBLEMS) {
+      lesson(LESSON_NAME) {
         codeTask(taskName) {
           taskFile("src/Foo.kt", visible = false)
           taskFile("src/Bar.kt") {
@@ -72,7 +72,7 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
         }
       }
     }
-    val task = course.findTask(HYPERSKILL_PROBLEMS, taskName) as CodeTask
+    val task = course.findTask(LESSON_NAME, taskName) as CodeTask
     doTest(task, null)
   }
 
@@ -80,5 +80,9 @@ class HyperskillFindCodeTaskFileTest : EduTestCase() {
     val configurator = FakeGradleHyperskillConfigurator()
     val codeTaskFile = configurator.getCodeTaskFile(project, task)
     assertEquals(answerFile, codeTaskFile)
+  }
+
+  companion object {
+    private const val LESSON_NAME = "lesson"
   }
 }

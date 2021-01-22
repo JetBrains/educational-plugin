@@ -42,6 +42,9 @@ interface HyperskillService {
   @GET("api/steps")
   fun steps(@Query("ids", encoded = true) ids: String): Call<HyperskillStepsList>
 
+  @GET("api/steps")
+  fun steps(@Query("topic") topic: Int, @Query("is_recommended") is_recommended: Boolean = true): Call<HyperskillStepsList>
+
   @GET("api/submissions")
   fun submission(@Query("user") user: Int, @Query("step", encoded = true) step: String, @Query("page") page: Int): Call<SubmissionsList>
 

@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Date;
 
 public class CodeTask extends Task {
+  public static final String CODE = "code";
+
   @SuppressWarnings("unused") //used for deserialization
   public CodeTask() {}
 
@@ -19,7 +21,7 @@ public class CodeTask extends Task {
 
   @Override
   public String getItemType() {
-    return "code";
+    return CODE;
   }
 
   @Override

@@ -43,7 +43,7 @@ open class StepikTaskBuilder(
   private val updateDate = stepSource.updateDate ?: Date(0)
 
   private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
-    "code" to this::codeTask,
+    Step.CODE to this::codeTask,
     "choice" to this::choiceTask,
     "text" to this::theoryTask,
     "string" to this::unsupportedTask,
@@ -287,7 +287,7 @@ open class StepikTaskBuilder(
     private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
 
     private val DEFAULT_NAMES: Map<String, String> = mapOf(
-      "code" to "Programming",
+      Step.CODE to "Programming",
       "choice" to "Quiz",
       "text" to "Theory",
       "pycharm" to "Programming",

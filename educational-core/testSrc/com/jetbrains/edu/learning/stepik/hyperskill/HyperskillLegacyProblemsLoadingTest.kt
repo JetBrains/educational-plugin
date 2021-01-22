@@ -1,17 +1,27 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener.addProblemTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener.addProblem
+import com.jetbrains.edu.learning.withFeature
 
-class HyperskillCodeChallengeLoadingTest : EduTestCase() {
+
+class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+
+  override fun runTestInternal(context: TestContext) {
+    withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
+      super.runTestInternal(context)
+    }
+  }
 
   override fun setUp() {
     super.setUp()
@@ -27,8 +37,10 @@ class HyperskillCodeChallengeLoadingTest : EduTestCase() {
     configureResponse(responseFileName)
     val course = createHyperskillCourse()
     val problem = course.findTask(HYPERSKILL_PROBLEMS, "Violator")
-    assertEquals(shouldContainWarning,
-                 EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in problem.descriptionText)
+    assertEquals(
+      shouldContainWarning,
+      EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in problem.descriptionText
+    )
   }
 
   private fun createHyperskillCourse(): HyperskillCourse {
@@ -43,7 +55,7 @@ class HyperskillCodeChallengeLoadingTest : EduTestCase() {
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
     course.stages = listOf(HyperskillStage(1, "", 1))
-    course.addProblemTask(4894)
+    course.addProblem(4894)
     return course
   }
 

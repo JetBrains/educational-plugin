@@ -81,8 +81,8 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createLesson(lesson: Lesson, courseDir: VirtualFile): VirtualFile {
-    val lessonDir = createUniqueDir(courseDir, lesson)
+  fun createLesson(lesson: Lesson, parentDir: VirtualFile): VirtualFile {
+    val lessonDir = createUniqueDir(parentDir, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {
       createTask(task, lessonDir)

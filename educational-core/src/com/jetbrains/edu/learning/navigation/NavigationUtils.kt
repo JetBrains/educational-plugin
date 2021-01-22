@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import javax.swing.tree.TreePath
 
@@ -29,7 +28,7 @@ object NavigationUtils {
 
   @JvmStatic
   fun nextTask(task: Task): Task? {
-    if (isUnsolvedHyperskillStage(task) || isLastHyperskillStage(task)) return null
+    if (isUnsolvedHyperskillStage(task) || isLastHyperskillStage(task) || isLastHyperskillProblem(task)) return null
 
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList
@@ -64,21 +63,25 @@ object NavigationUtils {
 
   private fun isUnsolvedHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
-    if (task.lesson.name == HYPERSKILL_PROBLEMS || task.status == CheckStatus.Solved) return false
+    if (task.lesson != course.getProjectLesson() || task.status == CheckStatus.Solved) return false
     val stage = course.stages.getOrNull(task.index - 1) ?: return false
     return !stage.isCompleted
   }
 
   private fun isLastHyperskillStage(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
-    return task.lesson == course.getProjectLesson() &&
-           task.index == course.stages.size
+    return task.lesson == course.getProjectLesson() && task.index == course.stages.size
   }
 
   private fun isFirstHyperskillProblem(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
-    return task.lesson == course.getProblemsLesson() &&
-           task.index == 1
+    return task.lesson != course.getProjectLesson() && task.index == 1
+  }
+
+  private fun isLastHyperskillProblem(task: Task): Boolean {
+    val course = task.course as? HyperskillCourse ?: return false
+    val lesson = task.lesson
+    return lesson != course.getProjectLesson() && task.index == lesson.items.size
   }
 
   @JvmStatic

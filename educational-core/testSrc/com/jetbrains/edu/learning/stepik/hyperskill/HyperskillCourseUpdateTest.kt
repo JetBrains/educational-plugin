@@ -386,20 +386,23 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test code challenge project updated`() {
+  fun `test project with problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
     val newText = "new text"
+    val topic = "topic"
 
     course = hyperskillCourseWithFiles(projectId = null) {
-      lesson(HYPERSKILL_PROBLEMS) {
-        codeTask(taskDescription = oldText) {
-          taskFile(taskFileName, oldText)
+      section(HYPERSKILL_TOPICS) {
+        lesson(topic) {
+          codeTask(taskDescription = oldText) {
+            taskFile(taskFileName, oldText)
+          }
         }
       }
     }
 
-    updateCourse(findLesson(0).taskList.map {
+    updateCourse(course.getTopicsSection()!!.getLesson(topic)!!.taskList.map {
       it.toTaskUpdate {
         descriptionText = newText
         updateDate = Date(100)
@@ -408,10 +411,12 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     })
 
     fileTree {
-      dir("Problems") {
-        dir("task1") {
-          file(taskFileName, newText)
-          file("task.html", newText)
+      dir(HYPERSKILL_TOPICS) {
+        dir("topic") {
+          dir("task1") {
+            file(taskFileName, newText)
+            file("task.html", newText)
+          }
         }
       }
       file("build.gradle")
@@ -426,10 +431,10 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
   }
 
-  private fun updateCourse(codeChallengesUpdates: List<HyperskillCourseUpdater.TaskUpdate> = emptyList(),
+  private fun updateCourse(problemsUpdates: List<HyperskillCourseUpdater.TaskUpdate> = emptyList(),
                            changeCourse: (HyperskillCourse.() -> Unit)? = null) {
     val remoteCourse = changeCourse?.let { toRemoteCourse(changeCourse) }
-    HyperskillCourseUpdater(project, course).doUpdate(remoteCourse, codeChallengesUpdates)
+    HyperskillCourseUpdater(project, course).doUpdate(remoteCourse, problemsUpdates)
     val isProjectUpToDate = remoteCourse == null || course.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false
     assertTrue("Project is not up-to-date after update", isProjectUpToDate)
   }
@@ -437,7 +442,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val element = XmlSerializer.serialize(course)
     val remoteCourse = XmlSerializer.deserialize(element, HyperskillCourse::class.java)
-    remoteCourse.getProblemsLesson()?.let { remoteCourse.removeLesson(it) }
+    remoteCourse.getTopicsSection()?.let { remoteCourse.removeSection(it) }
     remoteCourse.init(null, null, false)
     remoteCourse.changeCourse()
     return remoteCourse

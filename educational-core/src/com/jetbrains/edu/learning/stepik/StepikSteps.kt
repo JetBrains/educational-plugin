@@ -113,6 +113,10 @@ class Step {
       else -> PyCharmStepOptions(project, task)
     }
   }
+
+  companion object {
+    const val CODE = "code"
+  }
 }
 
 class TaskDescriptionConverter : StdConverter<String, String>() {

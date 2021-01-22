@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
@@ -12,20 +13,24 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.pluginCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
+import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillProjectOpener {
+  private val LOG = Logger.getInstance(HyperskillProjectOpener::class.java)
 
   fun open(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
     runInEdt {
@@ -45,7 +50,7 @@ object HyperskillProjectOpener {
     when (request) {
       is HyperskillOpenStepRequest -> {
         val stepId = request.stepId
-        hyperskillCourse.addProblemTaskWithFiles(project, stepId)
+        hyperskillCourse.addProblemWithFiles(project, stepId)
         hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         runInEdt {
           requestFocus()
@@ -84,10 +89,14 @@ object HyperskillProjectOpener {
         val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage] ?: return null
 
         findProject { it.matchesById(projectId) && it.language == eduLanguage }
-        ?: findProject { it is HyperskillCourse && it.name == getCodeChallengesProjectName(hyperskillLanguage) }
+        ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
       }
     }
   }
+
+  private fun Course.isHyperskillProblemsCourse(hyperskillLanguage: String) =
+    this is HyperskillCourse && name in listOf(getProblemsProjectName(hyperskillLanguage),
+                                               getLegacyProblemsProjectName(hyperskillLanguage))
 
   private fun Course.matchesById(projectId: Int) = this is HyperskillCourse && hyperskillProject?.id == projectId
 
@@ -149,7 +158,7 @@ object HyperskillProjectOpener {
   }
 
   private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
-    return computeUnderProgress(title = "Loading ${EduNames.JBA} Project") { indicator ->
+    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.project")) { indicator ->
       val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
         return@computeUnderProgress Err(it)
       }
@@ -164,7 +173,7 @@ object HyperskillProjectOpener {
 
       when (request) {
         is HyperskillOpenStepRequest -> {
-          hyperskillCourse.addProblemTask(request.stepId)
+          hyperskillCourse.addProblem(request.stepId)
           hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         }
         is HyperskillOpenStageRequest -> {
@@ -177,8 +186,16 @@ object HyperskillProjectOpener {
     }
   }
 
+  /**
+   * TODO
+   * Replace with [addProblemsWithTopicWithFiles] after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature becomes enabled by default
+   * */
   @VisibleForTesting
-  fun HyperskillCourse.addProblemTask(stepId: Int) {
+  fun HyperskillCourse.addProblem(stepId: Int) {
+    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
+      return addProblemsWithTopic(stepId).onError { error(it) }
+    }
+
     var lesson = getProblemsLesson()
     if (lesson == null) {
       lesson = createProblemsLesson()
@@ -186,7 +203,7 @@ object HyperskillProjectOpener {
 
     val task = lesson.getTask(stepId)
     if (task == null) {
-      lesson.createProblemTask(stepId)
+      lesson.createProblem(stepId)
     }
   }
 
@@ -199,15 +216,98 @@ object HyperskillProjectOpener {
     return lesson
   }
 
-  private fun Lesson.createProblemTask(stepId: Int): Task {
-    val task = computeUnderProgress(title = "Loading ${EduNames.JBA} Code Challenge") {
-      HyperskillConnector.getInstance().getCodeChallenges(course, this, listOf(stepId))
-    }.firstOrNull() ?: error("Failed to load problem: id = $stepId")
+  private fun Lesson.createProblem(stepId: Int): Task {
+    val task = computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
+      HyperskillConnector.getInstance().getProblems(course, this, listOf(stepId)).firstOrNull()
+    } ?: error("Failed to load problem: id = $stepId")
     addTask(task)
     return task
   }
 
-  private fun HyperskillCourse.addProblemTaskWithFiles(project: Project, stepId: Int) {
+  /**
+   * See [com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.getTopicsSection]
+   */
+  @VisibleForTesting
+  fun HyperskillCourse.addProblemsWithTopic(stepId: Int): Result<Unit, String> {
+    if (getProblem(stepId) != null) {
+      LOG.info("Task with $stepId already exists in the course")
+      return Ok(Unit)
+    }
+
+    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.problems.loading.code.problems")) {
+      var topicsSection = getTopicsSection()
+      if (topicsSection == null) {
+        topicsSection = createTopicsSection()
+      }
+
+      val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
+        return@computeUnderProgress Err(it)
+      }
+      val topicName = stepSource.getTopicNameForProblem().onError {
+        return@computeUnderProgress Err(it)
+      }
+
+      var topicLesson = topicsSection.getLesson(topicName)
+      if (topicLesson == null) {
+        topicLesson = topicsSection.createTopicLesson(topicName)
+      }
+
+      addProblemsFromTopic(stepSource, topicLesson).onError {
+        return@computeUnderProgress Err(it)
+      }
+      Ok(Unit)
+    }
+  }
+
+  private fun HyperskillCourse.addProblemsFromTopic(stepSource: HyperskillStepSource, topicLesson: Lesson): Result<List<Task>, String> {
+    val topicId = stepSource.topic ?: return Err("Can't get topic in step source with ${stepSource.id} id")
+    val connector = HyperskillConnector.getInstance()
+    val stepSources = connector.getRecommendedStepsForTopic(topicId).onError {
+      return Err(it)
+    }
+    val existingTasksIds = topicLesson.items.map { it.id }
+
+    val tasks = connector
+      .getTasks(this, topicLesson, stepSources.filter { it.block!!.name == Step.CODE && it.id !in existingTasksIds })
+    tasks.forEach(topicLesson::addTask)
+    return Ok(tasks)
+  }
+
+  private fun HyperskillCourse.createTopicsSection(): Section {
+    val section = Section()
+    section.name = HYPERSKILL_TOPICS
+    section.index = items.size + 1
+    section.course = this
+    addSection(section)
+    return section
+  }
+
+  private fun Section.createTopicLesson(name: String): Lesson {
+    val lesson = Lesson()
+    lesson.name = name
+    lesson.index = this.items.size + 1
+    lesson.section = this
+    lesson.course = course
+    addLesson(lesson)
+    return lesson
+  }
+
+  private fun HyperskillStepSource.getTopicNameForProblem(): Result<String, String> {
+    val theoryId = topicTheory ?: return Err("Can't get theory step id for ${id} step")
+    val theorySource = HyperskillConnector.getInstance().getStepSource(theoryId).onError {
+      return Err(it)
+    }
+    val topicName = theorySource.title
+    return if (topicName == null) Err("Can't get topic name of ${id} step id") else Ok(topicName)
+  }
+
+  /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]
+   * after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
+  private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
+    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
+      return addProblemsWithTopicWithFiles(project, stepId).onError { error(it) }
+    }
+
     var problemsLesson = getProblemsLesson()
     var createLessonDir = false
     if (problemsLesson == null) {
@@ -218,7 +318,7 @@ object HyperskillProjectOpener {
     var task = problemsLesson.getTask(stepId)
     var createTaskDir = false
     if (task == null) {
-      task = problemsLesson.createProblemTask(stepId)
+      task = problemsLesson.createProblem(stepId)
       createTaskDir = true
     }
 
@@ -235,8 +335,77 @@ object HyperskillProjectOpener {
       YamlFormatSynchronizer.saveRemoteInfo(task)
     }
 
-    if (createLessonDir || createTaskDir) {
+    if (createTaskDir) {
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    }
+  }
+
+  private fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project, stepId: Int): Result<Unit, String> {
+    if (getProblem(stepId) != null) {
+      LOG.info("Task with $stepId already exists in the course")
+      return Ok(Unit)
+    }
+
+    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.problems.loading.code.problems")) {
+      var topicsSection = getTopicsSection()
+      var createSectionDir = false
+      if (topicsSection == null) {
+        topicsSection = createTopicsSection()
+        createSectionDir = true
+      }
+
+      val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
+        return@computeUnderProgress Err(it)
+      }
+      val topicName = stepSource.getTopicNameForProblem().onError {
+        return@computeUnderProgress Err(it)
+      }
+
+      var topicLesson = topicsSection.getLesson(topicName)
+      var createLessonDir = false
+      if (topicLesson == null) {
+        topicLesson = topicsSection.createTopicLesson(topicName)
+        createLessonDir = true
+      }
+
+      val tasks = addProblemsFromTopic(stepSource, topicLesson).onError {
+        return@computeUnderProgress Err(it)
+      }
+
+      topicsSection.init(course, null, false)
+
+      when {
+        createSectionDir -> {
+          GeneratorUtils.createSection(topicsSection, course.getDir(project.courseDir))
+          tasks.forEach { task ->
+            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+          }
+          YamlFormatSynchronizer.saveItem(topicLesson)
+          YamlFormatSynchronizer.saveItem(topicsSection)
+          YamlFormatSynchronizer.saveItem(course)
+        }
+        createLessonDir -> {
+          val parentDir = topicsSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
+          GeneratorUtils.createLesson(topicLesson, parentDir)
+          tasks.forEach { task ->
+            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+          }
+          YamlFormatSynchronizer.saveItem(topicLesson)
+          YamlFormatSynchronizer.saveItem(topicsSection)
+        }
+        else -> {
+          tasks.forEach { task ->
+            GeneratorUtils.createTask(task, topicLesson.getDir(project.courseDir)!!)
+            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+          }
+          YamlFormatSynchronizer.saveItem(topicLesson)
+        }
+      }
+
+      if (tasks.isNotEmpty()) {
+        course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+      }
+      Ok(Unit)
     }
   }
 
@@ -254,7 +423,8 @@ object HyperskillProjectOpener {
     if (isUnitTestMode) {
       return
     }
-    val task = course.getProblemsLesson()?.getTask(stepId) ?: return
+
+    val task = course.getProblem(stepId) ?: return
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
   }
 

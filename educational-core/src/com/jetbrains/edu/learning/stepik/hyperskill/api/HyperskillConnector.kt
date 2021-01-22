@@ -131,15 +131,17 @@ abstract class HyperskillConnector {
     }
   }
 
-  private fun getStepSources(stepIds: List<Int>): List<HyperskillStepSource>? {
-    val response = service.steps(stepIds.joinToString(separator = ",")).executeHandlingExceptions()
-    return response?.body()?.steps
-  }
+  private fun getStepSources(stepIds: List<Int>): Result<List<HyperskillStepSource>, String> =
+    service.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
-  fun getStepSource(stepId: Int): HyperskillStepSource? {
-    val response = service.steps(stepId.toString()).executeHandlingExceptions()
-    return response?.body()?.steps?.firstOrNull()
-  }
+  fun getRecommendedStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
+    service.steps(topic).executeAndExtractFromBody().flatMap { Ok(it.steps) }
+
+  fun getStepSource(stepId: Int): Result<HyperskillStepSource, String> =
+    service.steps(stepId.toString()).executeAndExtractFromBody().flatMap {
+      val result = it.steps.firstOrNull()
+      if (result == null) Err("Can't get step source with $stepId id") else Ok(result)
+    }
 
   fun fillTopics(course: HyperskillCourse, project: Project) {
     for ((taskIndex, stage) in course.stages.withIndex()) {
@@ -173,7 +175,7 @@ abstract class HyperskillConnector {
     lesson.index = 1
     lesson.course = course
     progressIndicator?.checkCanceled()
-    val stepSources = getStepSources(course.stages.map { it.stepId }) ?: emptyList()
+    val stepSources = getStepSources(course.stages.map { it.stepId }).onError { emptyList() }
 
     progressIndicator?.checkCanceled()
     val tasks = getTasks(course, lesson, stepSources)
@@ -199,8 +201,8 @@ abstract class HyperskillConnector {
     return tasks
   }
 
-  fun getCodeChallenges(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {
-    val stepSources = getStepSources(steps) ?: return emptyList()
+  fun getProblems(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {
+    val stepSources = getStepSources(steps).onError { emptyList() }
     return getTasks(course, lesson, stepSources)
   }
 
@@ -287,7 +289,7 @@ abstract class HyperskillConnector {
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
     return executeParsingErrors(true).flatMap {
       val result = it.body()
-      if (result == null) Err(failedToPostToJBA) else Ok(result)
+      if (result == null) Err(it.message()) else Ok(result)
     }
   }
 

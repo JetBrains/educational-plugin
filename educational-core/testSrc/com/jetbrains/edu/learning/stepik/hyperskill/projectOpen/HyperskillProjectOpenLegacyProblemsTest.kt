@@ -1,102 +1,25 @@
-package com.jetbrains.edu.learning.stepik.hyperskill
+package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
+import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 
-class HyperskillProjectOpenerTest : EduTestCase() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
-  private val mockProjectManager: MockHyperskillProjectManager get() = HyperskillProjectManager.getInstance() as MockHyperskillProjectManager
 
-  override fun setUp() {
-    super.setUp()
-    mockProjectManager.project = project
+/** TODO Remove this test after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
+class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase() {
+  override fun runTestInternal(context: TestContext) {
+    withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
+      super.runTestInternal(context)
+    }
   }
 
-  fun `test open stage in new project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
-    HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
-
-    val fileTree = fileTree {
-      dir("Test Hyperskill Project") {
-        dir("task") {
-          dir("src") {
-            file("Task.kt", "stage 1")
-          }
-          dir("test") {
-            file("Tests1.kt", "stage 1 test")
-          }
-        }
-        dir(testStageName(1)) {
-          file("task.html")
-        }
-        dir(testStageName(2)) {
-          file("task.html")
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
-  }
-
-  fun `test open stage in opened project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
-    // set up existing project
-    hyperskillCourseWithFiles {
-      lesson("Problems") {
-        codeTask("task1", stepId = 4) {
-          taskFile("src/Task.kt", "fun foo() {}")
-        }
-      }
-    }
-
-    HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
-
-    val fileTree = fileTree {
-      dir("Problems") {
-        dir("task1") {
-          dir("src") {
-            file("Task.kt", "fun foo() {}")
-          }
-          file("task.html")
-        }
-      }
-      dir(TEST_HYPERSKILL_PROJECT_NAME) {
-        dir("task") {
-          dir("src") {
-            file("Task.kt", "stage 1")
-          }
-          dir("test") {
-            file("Tests1.kt", "stage 1 test")
-          }
-        }
-        dir(testStageName(1)) {
-          file("task.html")
-        }
-        dir(testStageName(2)) {
-          file("task.html")
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
-  }
-
-  fun `test open step in new code challenges project`() {
+  fun `test open problem in new legacy code problems project`() {
     loginFakeUser()
     configureMockResponsesForStages()
 
@@ -121,7 +44,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test open step in existing code challenges project`() {
+  fun `test open problem in existing legacy code problems project`() {
     loginFakeUser()
     configureMockResponsesForStages()
 
@@ -134,7 +57,7 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     })
 
     // set up existing project
-    hyperskillCourseWithFiles(name = getCodeChallengesProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
+    hyperskillCourseWithFiles(name = getLegacyProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask("code task", stepId = 4) {
           taskFile("task.txt", "file text")
@@ -159,10 +82,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test open step in new project`() {
+  fun `test open problem in new project`() {
     loginFakeUser()
-
     configureMockResponsesForStages()
+
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(stepId = 4) {
@@ -185,10 +108,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test open step in existing project with stages`() {
+  fun `test open problem in existing project with stages`() {
     loginFakeUser()
-
     configureMockResponsesForStages()
+
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(stepId = 4) {
@@ -258,8 +181,10 @@ class HyperskillProjectOpenerTest : EduTestCase() {
   fun `test language not supported in IDE`() {
     val unsupportedLanguage = "Unsupported"
     doLanguageValidationTest(unsupportedLanguage) {
-      val expectedMessage = EduCoreBundle.message("hyperskill.language.not.supported", ApplicationNamesInfo.getInstance().productName,
-                                                  unsupportedLanguage)
+      val expectedMessage = EduCoreBundle.message(
+        "hyperskill.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+        unsupportedLanguage
+      )
       assertEquals(expectedMessage, it)
     }
   }
@@ -282,25 +207,5 @@ class HyperskillProjectOpenerTest : EduTestCase() {
     }
 
     error("Error is expected: project shouldn't open")
-  }
-
-  private fun configureMockResponsesForStages() {
-    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse {
-      frameworkLesson("lesson1") {
-        eduTask("task1", stepId = 1) {
-          taskFile("src/Task.kt", "stage 1")
-          taskFile("test/Tests1.kt", "stage 1 test")
-        }
-        eduTask("task2", stepId = 2) {
-          taskFile("src/Task.kt", "stage 2")
-          taskFile("test/Tests2.kt", "stage 2 test")
-        }
-      }
-    })
-  }
-
-  override fun tearDown() {
-    mockProjectManager.project = null
-    super.tearDown()
   }
 }

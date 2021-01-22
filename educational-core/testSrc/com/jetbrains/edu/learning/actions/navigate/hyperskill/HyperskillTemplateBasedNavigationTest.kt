@@ -1,7 +1,8 @@
-package com.jetbrains.edu.learning.actions.navigate
+package com.jetbrains.edu.learning.actions.navigate.hyperskill
 
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.fileTree

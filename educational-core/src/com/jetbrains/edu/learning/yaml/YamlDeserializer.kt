@@ -134,7 +134,7 @@ object YamlDeserializer {
       "choice" -> ChoiceTask::class.java
       "ide" -> IdeTask::class.java
       // for student mode
-      "code" -> CodeTask::class.java
+      CodeTask.CODE -> CodeTask::class.java
       "checkiO" -> CheckiOMission::class.java
       CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
       CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java

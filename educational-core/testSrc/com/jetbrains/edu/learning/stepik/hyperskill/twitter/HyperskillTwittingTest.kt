@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.twitter.TwitterSettings
@@ -30,60 +30,60 @@ class HyperskillTwittingTest : EduActionTestCase() {
     super.tearDown()
   }
 
-  fun `test show dialog after last project task solution`() = doTest("Project", "Task2", true) { course, task ->
-    (course as HyperskillCourse).getProjectLesson()?.visitTasks {
-      if (it != task) {
-        it.status = CheckStatus.Solved
+  fun `test show dialog after last project task solution`() =
+    doTest(lessonName = "Project", taskName = "Task2", shouldDialogBeShown = true) { course, task ->
+      (course as HyperskillCourse).getProjectLesson()?.visitTasks {
+        if (it != task) {
+          it.status = CheckStatus.Solved
+        }
       }
+    }
+
+  fun `test do not show dialog in course creator mode`() =
+    doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CCUtils.COURSE_MODE) }) { course, task ->
+      (course as HyperskillCourse).getProjectLesson()?.visitTasks {
+        if (it != task) {
+          it.status = CheckStatus.Solved
+        }
+      }
+    }
+
+  fun `test do not show dialog if not all tasks is solved`() = doTest(lessonName = "Project", taskName = "Task1")
+
+  fun `test do not show dialog if not project task solved`() = doTest(HYPERSKILL_TOPICS, TOPIC_NAME, "CodeTask") { course, _ ->
+    course.getLesson(HYPERSKILL_TOPICS, TOPIC_NAME)?.visitTasks {
+      it.status = CheckStatus.Solved
     }
   }
 
-  fun `test do not show dialog in course creator mode`() = doTest(
-    "Project",
-    "Task2",
-    false,
-    { createHyperskillCourse(CCUtils.COURSE_MODE) }
-  ) { course, task ->
-    (course as HyperskillCourse).getProjectLesson()?.visitTasks {
-      if (it != task) {
-        it.status = CheckStatus.Solved
-      }
-    }
-  }
-
-  fun `test do not show dialog if not all tasks is solved`() = doTest("Project", "Task1", false)
-
-  fun `test do not show dialog if not project task solved`() = doTest(HYPERSKILL_PROBLEMS, "CodeTask", false) { course, _ ->
+  fun `test do not show dialog if task solved again`() = doTest(lessonName = "Project", taskName = "Task2") { course, _ ->
     (course as HyperskillCourse).getProjectLesson()?.visitTasks {
       it.status = CheckStatus.Solved
     }
   }
 
-  fun `test do not show dialog if task solved again`() = doTest("Project", "Task2", false) { course, _ ->
-    (course as HyperskillCourse).getProjectLesson()?.visitTasks {
-      it.status = CheckStatus.Solved
-    }
-  }
-
-  fun `test do not show dialog for edu course`() = doTest("Project", "Task2", false, ::createEduCourse) { course, task ->
-    course.visitTasks {
-      if (it != task) {
-        it.status = CheckStatus.Solved
+  fun `test do not show dialog for edu course`() =
+    doTest(lessonName = "Project", taskName = "Task2", createCourse = ::createEduCourse) { course, task ->
+      course.visitTasks {
+        if (it != task) {
+          it.status = CheckStatus.Solved
+        }
       }
     }
-  }
 
   private fun doTest(
+    sectionName: String? = null,
     lessonName: String,
     taskName: String,
-    shouldDialogBeShown: Boolean,
+    shouldDialogBeShown: Boolean = false,
     createCourse: () -> Course = { createHyperskillCourse() },
     preparationAction: (Course, Task) -> Unit = { _, _ -> }
   ) {
     val course = createCourse()
     val firstTask = course.lessons.first().taskList.first()
 
-    val task = course.findTask(lessonName, taskName)
+    val task = course.getLesson(sectionName, lessonName)?.getTask(taskName)
+               ?: error("Can't find `$taskName` in `$lessonName`" + if (sectionName != null) ", section: $sectionName" else "")
     NavigationUtils.navigateToTask(project, task, firstTask, false)
 
     preparationAction(course, task)
@@ -103,9 +103,11 @@ class HyperskillTwittingTest : EduActionTestCase() {
         }
       }
 
-      lesson(HYPERSKILL_PROBLEMS) {
-        eduTask("CodeTask") {
-          taskFile("task.txt")
+      section(HYPERSKILL_TOPICS) {
+        lesson(TOPIC_NAME) {
+          codeTask("CodeTask") {
+            taskFile("task.txt")
+          }
         }
       }
     }
@@ -143,5 +145,9 @@ class HyperskillTwittingTest : EduActionTestCase() {
       testAction(dataContext(virtualFile), CheckAction())
     }
     return isDialogShown
+  }
+
+  companion object {
+    private const val TOPIC_NAME = "topicName"
   }
 }

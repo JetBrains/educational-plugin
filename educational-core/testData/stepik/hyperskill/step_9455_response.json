@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "text",
+        "text": "<p>Earlier, when we were discussing type bounds, we’ve mentioned <em>Wildcards</em> as a feature that does the same trick and has wide application.<br>\nWildcards are a specific Java tool that allows the implementation of some compatibility between different generic objects. The wildcard is basically “?” sign used to indicate that a class, a method, or a field is compatible with different type parameters.</p>\n\n<h2>Why Wildcards?</h2>\n\n<p>Since Java is an object-oriented language, the concept of inheritance is essential. However, since generics are type-safe structures it is impossible to introduce inheritance for Generic objects.<br>\nTo illustrate the problem, let’s consider two classes:</p>\n\n<pre><code class=\"language-java\">class Book{}\nclass Album extends Book {}</code></pre>\n\n<p>Logically we assume that a list of albums can be treated as a list of books, because <code class=\"language-java\">Album</code> is a subclass of <code class=\"language-java\">Book</code>. However, the compiler thinks in a different way:</p>\n\n<pre><code class=\"language-java\">List&lt;Album&gt; albums = new ArrayList&lt;&gt;();\nList&lt;Book&gt; books = albums; // compile-time error</code></pre>\n\n<p>The root cause of the problem lies In the fact that <code class=\"language-java\">List&lt;Album&gt;</code> is not a subclass of <code class=\"language-java\">List&lt;Book&gt;</code>: a usual inheritance rule of Java does not work this way with generic classes. Such behavior is known as <strong>invariance</strong>. It doesn't matter that <code class=\"language-java\">Album</code> extends <code class=\"language-java\">Book</code>, their containers like a <code class=\"language-java\">List&lt;T&gt;</code>, <code class=\"language-java\">Set&lt;T&gt;</code> and others are treated like independent classes. It is extremely important to mind this fact every time you use generic classes.</p>\n\n<p>The example above is exactly where wildcards could help. A generic class or a method declared with wildcards can take any type parameter and there won't be any collisions with inheritance. To implement wildcards, use “?” inside angle brackets (<code class=\"language-java\">&lt;?&gt;</code>). Let's use it to make the compiler error go away in the example above:</p>\n\n<pre><code class=\"language-java\">List&lt;Album&gt; albums = new ArrayList&lt;&gt;();\nList&lt;? extends Book&gt; albumsAndBooks = albums; // it is ok</code></pre>\n\n<p>or</p>\n\n<pre><code class=\"language-java\">List&lt;Album&gt; albums = new ArrayList&lt;&gt;();\nList&lt;? super Album&gt; albumsAndBooks = albums; // it is ok as well</code></pre>\n\n<p>Wildcards are commonly used with some limitations that we called type bounds before: there we used only an <code class=\"language-java\">extends</code> keyword. Now we will take a look at another keyword <code class=\"language-java\">super</code>. Since wildcards are used for type bounding, they can be divided into three groups: unbounded wildcards, upper bounded wildcards, and lower bounded ones.</p>\n\n<h2>Upper Bounded Wildcards</h2>\n\n<p>Upper Bounded Wildcards are used when we want to set an upper bound. It is done with the <code class=\"language-java\">extends</code> keyword, like this:</p>\n\n<pre><code class=\"language-java\">? extends ReferenceType</code></pre>\n\n<p>It can be read as “any type that is a subtype of <code class=\"language-java\">ReferenceType</code>”. In other words, if <code class=\"language-java\">S</code> is a subtype of <code class=\"language-java\">T</code> then type <code class=\"language-java\">List&lt;S&gt;</code> is considered to be a subtype of <code class=\"language-java\">List&lt;? extends T&gt;</code>. That feature is known as <strong>covariance</strong>.</p>\n\n<p>Now imagine again that we are dealing with a library, where we have books of different types (normal books, booklets, albums and so on). We also may have some other media files like audio recordings. Let's introduce two classes:</p>\n\n<pre><code class=\"language-java\">public class Booklet extends Book {}\npublic class AudioFile {}</code></pre>\n\n<p>Now say we want to create storage for all types of books:</p>\n\n<pre><code class=\"language-java\">List&lt;? extends Book&gt; storage = new ArrayList&lt;&gt;();\n\nList&lt;Album&gt; albums = new ArrayList&lt;&gt;();\nstorage = albums; // it works, Album is a subtype of Book\n\nList&lt;Booklet&gt; booklets = new ArrayList&lt;&gt;();\nstorage = booklets; // it works, Booklet is a subtype of Book\n\nList&lt;AudioFile&gt; recordings = new ArrayList&lt;&gt;();\nstorage = recordings; // compile-time error, AudioFile is not a subtype of Book</code></pre>\n\n<p>This way we made sure that only subtypes of the <code class=\"language-java\">Book</code> can be put to the storage.</p>\n\n<p>Now let’s consider another limitation of upper bounding.</p>\n\n<pre><code class=\"language-java\">/**\n* Hierarchy: Book -&gt; Album\n*                 -&gt; Booklet\n* Allowed types: List&lt;Book&gt;, List&lt;Album&gt;, List&lt;Booklet&gt;\n*/\npublic void upperBoundedMethod(List&lt;? extends Book&gt; books) {\n    Book book = books.get(0); // It is fine\n\n    books.add(new Album()); // compile-time error\n    books.add(new Book());  // compile-time error\n    books.add(null); // also fine, because of null is a special type-independent value\n}</code></pre>\n\n<p>It may be surprising, but some lines of <code class=\"language-java\">upperBoundedMethod</code> won't compile. Upper bounded wildcards are completely fine with reading content as <code class=\"language-java\">Book</code> type, but writing is prohibited except a <code class=\"language-java\">null</code> value.</p>\n\n<p>Let's explain the logic. The compiler doesn't know which type of argument will be passed to the method in runtime. As we already learned, the method accepts list parameterized by <code class=\"language-java\">Book</code> or any of its subtypes: <code class=\"language-java\">List&lt;Books&gt;</code>, <code class=\"language-java\">List&lt;Album&gt;</code> or <code class=\"language-java\">List&lt;Booklet&gt;</code>. This is a reason why any object from <code class=\"language-java\">books</code> argument can be read as <code class=\"language-java\">Book</code>. However, writing is prohibited to avoid future runtime errors. Imagine the case when <code class=\"language-java\">List&lt;Album&gt;</code> was passed, but then we try to add an instance of <code class=\"language-java\">Book</code>. It can potentially lead to a runtime error because an added object will be treated as <code class=\"language-java\">Album</code> in the future.</p>\n\n<h2>Lower Bounded Wildcards</h2>\n\n<p>Lower Bounded Wildcards are introduced with the <code class=\"language-java\">super</code> keyword followed by the lower bound:</p>\n\n<pre><code class=\"language-java\">? super ReferenceType\n</code></pre>\n\n<p>It means \"any type that is a supertype of <code class=\"language-java\">ReferenceType</code>\" and that if <code class=\"language-java\">S</code> is a supertype of <code class=\"language-java\">T</code> then <code class=\"language-java\">List&lt;S&gt;</code> is considered to be a supertype of <code class=\"language-java\">List&lt;? super T&gt;</code>. The feature is called <strong>contravariance</strong>.</p>\n\n<p>Let’s think of books again. Now we would like to write a code that will enable <code class=\"language-java\">List</code> of <code class=\"language-java\">Albums</code> and its superclasses to be added to a general library.</p>\n\n<p>Take a look at the following code:</p>\n\n<pre><code class=\"language-java\">List&lt;? super Album&gt; storage = new ArrayList&lt;&gt;();\n\nList&lt;Album&gt; albums = new ArrayList&lt;&gt;();\nstorage = albums; // it works\n\nList&lt;Book&gt; books = new ArrayList&lt;&gt;();\nstorage = books; // it works, Book is a supertype for Album\n\nList&lt;Booklet&gt; booklets = new ArrayList&lt;&gt;();\nstorage = booklets; // compile-time error, Booklet is not a supertype for Album</code></pre>\n\n<p>Here we made sure that only supertypes of the <code class=\"language-java\">Album</code> class can be put to the storage.</p>\n\n<p>Now let’s consider another limitation of lower bounding.</p>\n\n<pre><code class=\"language-java\">/**\n* Hierarchy: Album &lt;- Book &lt;- Object  \n* Allowed types: List&lt;Album&gt;, List&lt;Book&gt;, List&lt;Object&gt;\n*/\npublic void lowerBoundedMethod(List&lt;? super Album&gt; albums) {\n    Object object = albums.get(0); // it is ok. Object is upper bound of Album\n    Book book = albums.get(0);     // compile-time error\n    Album album = albums.get(0);   // compile-time error\n\n    albums.add(new Object()); // compile-time error\n    albums.add(new Book());   // compile-time error\n    albums.add(new Album());  // OK\n    albums.add(null);         // OK, null is type-independent\n}</code></pre>\n\n<p>There are also some compile-time errors as well as for upper bounded wildcards. Let's explain why the compiler suspects these lines as potential danger.</p>\n\n<p>Since any of <code class=\"language-java\">List&lt;Album&gt;</code>, <code class=\"language-java\">List&lt;Book&gt;</code>, <code class=\"language-java\">List&lt;Object&gt;</code> can be passed to the <code class=\"language-java\">lowerBoundedMethod</code>, we can't assert that read object has a certain type <code class=\"language-java\">Album</code> or <code class=\"language-java\">Book</code>. We can only assume its type as <code class=\"language-java\">Object</code> for sure. </p>\n\n<p>On the other hand, only an instance of <code class=\"language-java\">Album</code> can be treated as <code class=\"language-java\">Book</code> and <code class=\"language-java\">Object</code> simultaneously, that is why we are allowed to add only <code class=\"language-java\">Album</code>. Otherwise, if we pass <code class=\"language-java\">List&lt;Album&gt;</code> to the method and add an instance of <code class=\"language-java\">Book</code>, it will lead to the instance of <code class=\"language-java\">Book</code> being treated as <code class=\"language-java\">Album</code> in the future. Such errors are prevented by the compiler.</p>\n\n<h2>Get and Put Principle</h2>\n\n<p>To detect and memorize whether <code class=\"language-java\">extends</code> or <code class=\"language-java\">super</code> should be used it is worth remembering the <em>Get and Put principle</em>:</p>\n\n<p>Use Upper Bounded Wildcards (i.e., <strong>&lt;? extends Number&gt;</strong>) when you only get values out of a structure (when you use only getters or similar methods), use Lower Bounded Wildcards (i.e., <strong>&lt;? super Integer&gt;</strong>) when you only put values into a structure (when you use only setters or similar methods) and do use Unbounded Wildcards (simple <strong>&lt;?&gt;</strong>) when you both get and put (when it is essential for you to use all kind of methods).</p>\n\n<p>To memorize this principle, you can also use PECS: Producer Extends, Consumer Super. This means that if you get a value from a generic class, method or any other object (it can <em>produce</em> for you what you need), you use <code class=\"language-java\">extends</code>. And vice versa, if you put or set a value into a generic class, method or any other object (it can <em>consume</em> what you put in it), you use <code class=\"language-java\">super</code>.</p>\n\n<p>Remember, that it is not possible to put anything into a type declared with an <code class=\"language-java\">extends</code> wildcard except for the <code class=\"language-java\">null</code> value since it can represent any reference type. Similarly, it is not possible to get anything from a type declared with <code class=\"language-java\">super</code> wildcard except for a value of an <code class=\"language-java\">Object</code> type: a super type for every reference type.</p>\n\n<p><div class=\"alert alert-warning\"> You cannot use a lower and an upper bound simultaneously in wildcards in particular and in type bounds in Java in general. </div> <strong>Note,</strong> that a class or an interface that is used after an “extends” or a “super” keyword itself is included in the inheritance. For example, <code class=\"language-java\">Box&lt;T&gt;</code> is absolutely compatible and covariant with <code class=\"language-java\">Box&lt;? extends T&gt;</code> or <code class=\"language-java\">Box&lt;? super T&gt;</code>.</p>\n\n<p>In the end, it is important to note that a frequently used unbounded wildcard  <code class=\"language-java\">?</code> is equivalent to: <code class=\"language-java\">? extends Object</code>.</p>\n\n<p><div class=\"alert alert-primary\"> It is interesting that an inheritance prohibition in generics is made specifically to prevent run-time errors: otherwise, generics would lose their type safety feature. </div></p>\n\n<h2>Wildcard Capture</h2>\n\n<p>Let's consider the example:</p>\n\n<pre><code class=\"language-java\">public static void reverse(List&lt;?&gt; list) {\n  List&lt;Object&gt; tmp = new ArrayList&lt;Object&gt;(list);\n  for (int i = 0; i &lt; list.size(); i++) {\n    list.set(i, tmp.get(list.size() - i - 1)); // compile-time error\n  }\n}</code></pre>\n\n<p>On the first look, this example may seem ok to you, but compile-error hints us it is not. As you know <code class=\"language-java\">&lt;?&gt;</code> equivalent to <code class=\"language-java\">&lt;? extends Object&gt;</code>, so by PECS principle, we cannot mutate the content of <code class=\"language-java\">list</code>, just read it. The scenario is known as <strong>wildcard capture</strong> problem and can be solved by the trick:</p>\n\n<pre><code class=\"language-java\">public static void reverse(List&lt;?&gt; list) { \n  reverseCaptured(list); \n}\n\nprivate static &lt;T&gt; void reverseCaptured(List&lt;T&gt; list) {\n  List&lt;T&gt; tmp = new ArrayList&lt;T&gt;(list);\n  for (int i = 0; i &lt; list.size(); i++) {\n    list.set(i, tmp.get(list.size() - i - 1));\n  }\n}</code></pre>\n\n<p>Here we introduced a helper method <code class=\"language-java\">reverseCaptured</code> which has a parameter of a certain type <code class=\"language-java\">T</code> for all elements of list. The method is completely fine from the compiler point of view because it is a merely <strong>generic method</strong>.</p>\n\n<h2>Conclusion</h2>\n\n<p>Wildcards are a very convenient and safe way of implementing an equivalent of inheritance in Generics. They are declared as a “?” in angle brackets and are widely used with upper or lower bounds to restrict type parameters.<br>\nWildcards are mainly used inside different libraries and frameworks, as well as generics themselves.</p>",
+        "video": null,
+        "options": {
+          "language": ""
+        }
+      },
+      "bloom_level": 0,
+      "can_abandon": false,
+      "can_skip": false,
+      "check_profile": "",
+      "comments_statistics": [
+        {
+          "thread": "comment",
+          "total_count": 11
+        },
+        {
+          "thread": "hint",
+          "total_count": 0
+        },
+        {
+          "thread": "useful link",
+          "total_count": 1
+        },
+        {
+          "thread": "solutions",
+          "total_count": 0
+        }
+      ],
+      "content_created_at": "2020-04-19T18:14:24Z",
+      "id": 9455,
+      "is_abandoned": false,
+      "is_completed": false,
+      "is_cribbed": false,
+      "is_recommended": false,
+      "is_next": false,
+      "is_skipped": false,
+      "last_completed_at": null,
+      "likes_statistics": [
+        {
+          "subject": "",
+          "value": -2,
+          "total_count": 2
+        },
+        {
+          "subject": "",
+          "value": 0,
+          "total_count": 4
+        },
+        {
+          "subject": "",
+          "value": 1,
+          "total_count": 5
+        },
+        {
+          "subject": "",
+          "value": 2,
+          "total_count": 70
+        },
+        {
+          "subject": "cheatsheet",
+          "value": -1,
+          "total_count": 2
+        },
+        {
+          "subject": "cheatsheet",
+          "value": 0,
+          "total_count": 1
+        },
+        {
+          "subject": "cheatsheet",
+          "value": 1,
+          "total_count": 2
+        }
+      ],
+      "lesson_stepik_id": 343945,
+      "position": 1,
+      "seconds_to_complete": 1676.6227299999603,
+      "solved_by": 854,
+      "stage": null,
+      "stepik_id": 1249400,
+      "success_rate": null,
+      "title": "Wildcards",
+      "topic": 85,
+      "topic_theory": 9455,
+      "type": "theory",
+      "updated_at": "2020-10-25T15:21:25.451885Z",
+      "content_updated_at": "2020-10-25T15:21:11Z",
+      "progress_updated_at": "2021-02-04T23:06:03.250911Z",
+      "popular_ide": "idea",
+      "project": null,
+      "is_beta": false,
+      "is_deprecated": false,
+      "error_issues_count": 0,
+      "warning_issues_count": 21
+    }
+  ]
+}

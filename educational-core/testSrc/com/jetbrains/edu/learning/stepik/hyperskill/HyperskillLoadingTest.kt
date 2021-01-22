@@ -188,25 +188,30 @@ class HyperskillLoadingTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test solution loaded code challenges project`() {
+  fun `test solution loaded project with problems`() {
     configureResponse("submission_code_task.json")
 
+    val topicName = "topicName"
     hyperskillCourseWithFiles(projectId = null) {
-      lesson(HYPERSKILL_PROBLEMS) {
-        codeTask(stepId = 4) {
-          taskFile("src/Task.kt", "fun foo() {}")
+      section(HYPERSKILL_TOPICS) {
+        lesson(topicName) {
+          codeTask(stepId = 4) {
+            taskFile("src/Task.kt", "fun foo() {}")
+          }
         }
       }
     }
 
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(getCourse())
     val fileTree = fileTree {
-      dir(HYPERSKILL_PROBLEMS) {
-        dir("task1") {
-          dir("src") {
-            file("Task.kt", "user code")
+      dir(HYPERSKILL_TOPICS) {
+        dir(topicName) {
+          dir("task1") {
+            dir("src") {
+              file("Task.kt", "user code")
+            }
+            file("task.html")
           }
-          file("task.html")
         }
       }
       file("build.gradle")

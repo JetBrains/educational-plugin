@@ -1,0 +1,137 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "<p>You are provided with the backbone of <code class=\"language-java\">ListMultiplicator</code> class that has a method that takes a list and repeats its content a specified number of times. The method should change the original list content.</p>\n\n<p>Your task is to add implementation to the method without changing its signature.</p>\n\n<p>It is guaranteed that:</p>\n\n<ul>\n\t<li>the list is not null</li>\n\t<li><em>n</em> equals or is greater than zero</li>\n</ul>\n\n<p><em>n</em> stands for the number of times the original list is repeated in the result. In case <em>n </em>equals zero, the resulting list should be empty.</p>\n\n<p>For example, if <em>n </em>equals 2 and the original list is:</p>\n\n<pre><code class=\"language-java\">[1, 2, 3] </code></pre>\n\n<p>the result should be:</p>\n\n<pre><code class=\"language-java\">[1, 2, 3, 1, 2, 3]</code></pre>",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "java11" : {
+              "time" : 8,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "java11" : "import java.util.List;\n\n/**\n    Class to modify\n*/\nclass ListMultiplicator {\n\n    /**\n        Repeats original list content provided number of times   \n        @param list list to repeat\n        @param n times to repeat, should be zero or greater\n    */\n\tpublic static void multiply(List<?> list, int n) {\n\t\t// Add implementation here\n\t}\n}"
+          },
+          "code_templates_header_lines_count" : {
+            "java11" : 9
+          },
+          "code_templates_footer_lines_count" : {
+            "java11" : 106
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        }
+      },
+      "bloom_level" : 2,
+      "can_abandon" : true,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 26
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 18
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 2
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 55
+        }
+      ],
+      "content_created_at" : "2017-10-18T16:40:27Z",
+      "id" : 2641,
+      "is_abandoned" : false,
+      "is_completed" : false,
+      "is_cribbed" : false,
+      "is_recommended" : false,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-02-03T11:17:48.611115Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 22
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 6
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 5
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 11
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 49
+        },
+        {
+          "subject" : "skip",
+          "value" : 0,
+          "total_count" : 4
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 103
+        },
+        {
+          "subject" : "skip",
+          "value" : 101,
+          "total_count" : 3
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 32
+        }
+      ],
+      "lesson_stepik_id" : 59010,
+      "position" : 1,
+      "seconds_to_complete" : 930.7739999999999,
+      "solved_by" : 741,
+      "stage" : null,
+      "stepik_id" : 232866,
+      "success_rate" : 0.206,
+      "title" : "List multiplicator",
+      "topic" : 85,
+      "topic_theory" : 9455,
+      "type" : "practice",
+      "updated_at" : "2021-02-01T16:37:12.247230Z",
+      "content_updated_at" : "2021-02-01T16:36:49Z",
+      "progress_updated_at" : "2021-02-04T23:09:25.448595Z",
+      "popular_ide" : "idea",
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0
+    }
+  ]
+}

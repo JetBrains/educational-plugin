@@ -1,16 +1,15 @@
-package com.jetbrains.edu.learning.actions.navigate
+package com.jetbrains.edu.learning.actions.navigate.hyperskill
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.withEduTestDialog
@@ -433,24 +432,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
     assertTrue(presentation.isEnabledAndVisible)
   }
 
-  fun `test navigate to next unavailable on last stage`() {
-    val course = createHyperskillCourseWithProblemsLesson()
-    val task = course.findTask("lesson1", "task1")
-
-    task.openTaskFileInEditor("src/Task.kt")
-    val presentation = myFixture.testAction(NextTaskAction())
-    assertFalse(presentation.isEnabledAndVisible)
-  }
-
-  fun `test navigate from problems to stages unavailable`() {
-    val course = createHyperskillCourseWithProblemsLesson()
-    val task = course.findTask(HYPERSKILL_PROBLEMS, "problem1")
-
-    task.openTaskFileInEditor("src/Task.kt")
-    val presentation = myFixture.testAction(PreviousTaskAction())
-    assertFalse(presentation.isEnabledAndVisible)
-  }
-
   private fun createHyperskillCourse(completeStages: Boolean = true): HyperskillCourse {
     return hyperskillCourseWithFiles(completeStages = completeStages) {
       frameworkLesson("lesson1") {
@@ -468,21 +449,6 @@ class HyperskillNavigationTest : NavigationTestBase() {
           taskFile("src/Task.kt", "fun foo() {}")
           taskFile("src/Baz.kt", "fun baz() {}")
           taskFile("test/Tests3.kt", "fun tests3() {}")
-        }
-      }
-    }
-  }
-
-  private fun createHyperskillCourseWithProblemsLesson(completeStages: Boolean = true): Course {
-    return hyperskillCourseWithFiles(completeStages = completeStages) {
-      frameworkLesson("lesson1") {
-        eduTask("task1") {
-          taskFile("src/Task.kt", "fun foo() {}")
-        }
-      }
-      lesson(HYPERSKILL_PROBLEMS) {
-        eduTask("problem1") {
-          taskFile("src/Task.kt", "fun foo() {}")
         }
       }
     }
