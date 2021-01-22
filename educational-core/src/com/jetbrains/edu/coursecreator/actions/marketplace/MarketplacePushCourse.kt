@@ -85,7 +85,14 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
         notification.notify(project)
         return
       }
-      //TODO: check that course version on marketplace < course.courseVersion
+
+      val remoteCourseVersion = connector.getLatestCourseUpdateInfo(course.marketplaceId).version
+      val courseVersion = course.courseVersion
+      if (courseVersion < remoteCourseVersion) {
+        CCNotificationUtils.showErrorNotification(project, message("marketplace.push.version.mismatch.title"),
+                                                  message("marketplace.push.version.mismatch.details", courseVersion, remoteCourseVersion))
+        return
+      }
       connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.updateCourse()
     }

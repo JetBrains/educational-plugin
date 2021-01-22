@@ -4,20 +4,21 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 
-class MarketplaceLoadUpdateIdTest : EduTestCase() {
+class MarketplaceLoadUpdateInfoTest : EduTestCase() {
   private val mockConnector: MockMarketplaceConnector get() = MarketplaceConnector.getInstance() as MockMarketplaceConnector
 
   private fun configureResponse() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       UPDATE_ID_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      mockResponse("updateId.json")
+      mockResponse("updateInfo.json")
     }
   }
 
-  fun `test course updateId loaded`() {
+  fun `test course updateInfo loaded`() {
     configureResponse()
-    val updateId = MarketplaceConnector.getInstance().getLatestCourseUpdateId(1)
-    assertEquals(102996, updateId)
+    val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(1)
+    assertEquals(102996, updateInfo.updateId)
+    assertEquals(3, updateInfo.version)
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/marketplace/loadCourses/"

@@ -155,21 +155,22 @@ abstract class MarketplaceConnector {
     return response?.body()?.data?.coursesList?.courses?.firstOrNull()
   }
 
-  fun getLatestCourseUpdateId(marketplaceId: Int): Int {
+  fun getLatestCourseUpdateInfo(marketplaceId: Int): UpdateInfo {
     val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(marketplaceId))).executeHandlingExceptions()
-    val updateBeans = response?.body()?.data?.updates?.updateBean
-    if (updateBeans == null || updateBeans.size != 1) {
-      error("Update id for course $marketplaceId is null")
+    val updateInfoList = response?.body()?.data?.updates?.updateInfoList
+    if (updateInfoList == null || updateInfoList.size != 1) {
+      error("Update info for course $marketplaceId is null")
     }
     else {
-      return updateBeans.first().updateId
+      return updateInfoList.first()
     }
   }
 
   fun loadCourseStructure(course: EduCourse) {
     val marketplaceId = course.marketplaceId
-    val updateId = getLatestCourseUpdateId(marketplaceId)
-    val link = "$repositoryUrl/plugin/$marketplaceId/update/$updateId/download"
+    val updateInfo = getLatestCourseUpdateInfo(marketplaceId)
+    course.courseVersion = updateInfo.version
+    val link = "$repositoryUrl/plugin/$marketplaceId/update/${updateInfo.updateId}/download"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 

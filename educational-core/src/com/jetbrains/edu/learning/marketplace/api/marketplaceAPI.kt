@@ -24,6 +24,7 @@ const val RATING = "rating"
 const val TOTAL = "total"
 const val TYPE = "type"
 const val UPDATES = "updates"
+const val VERSION = "version"
 
 class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo>()
 
@@ -109,13 +110,16 @@ class Updates {
 @JsonIgnoreProperties(ignoreUnknown = true)
 class UpdatesList {
   @JsonProperty(UPDATES)
-  lateinit var updateBean: List<UpdateBean>
+  lateinit var updateInfoList: List<UpdateInfo>
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class UpdateBean {
+class UpdateInfo {
   @JsonProperty(ID)
   var updateId: Int = -1
+
+  @JsonProperty(VERSION)
+  var version: Int = -1
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
