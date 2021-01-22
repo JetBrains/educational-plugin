@@ -25,3 +25,9 @@ fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
 fun TaskFile.course() = task?.lesson?.course
 
 fun TaskFile.getText(project: Project): String? = getDocument(project)?.text
+
+val TaskFile.isTestFile: Boolean
+  get() {
+    val configurator = task.course.configurator ?: return false
+    return configurator.isTestFile(task, name)
+  }
