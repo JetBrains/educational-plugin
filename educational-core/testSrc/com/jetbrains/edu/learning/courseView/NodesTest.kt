@@ -33,10 +33,15 @@ class NodesTest : CourseViewTestBase() {
     | -CourseNode Test Course  0/2
     |  -LessonNode lesson1
     |   -TaskNode task1
-    |    file.txt
+    |    -DirectoryNode src
+    |     file.txt
+    |    -DirectoryNode test
+    |     file.txt
     |   -TaskNode task2
     |    file1.txt
     |    -DirectoryNode src
+    |     file.txt
+    |    -DirectoryNode test
     |     file.txt
     """.trimMargin("|"))
   }

@@ -64,12 +64,21 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
           file("file1.py")
           file("file2.py")
           file("task.html")
+          dir("tests") {
+            file("__init__.py")
+            file("tests.py")
+          }
         }
         dir("task2") {
           file("__init__.py")
           file("file3.py")
           file("file4.py")
           file("task.html")
+          dir("tests") {
+            file("__init__.py")
+            file("tests1.py")
+            file("tests2.py")
+          }
         }
       }
       dir("lesson2") {
@@ -78,6 +87,10 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
           file("file5.py")
           file("file6.py")
           file("task.html")
+          dir("tests") {
+            file("__init__.py")
+            file("tests.py")
+          }
         }
       }
     }.assertEquals(rootDir)

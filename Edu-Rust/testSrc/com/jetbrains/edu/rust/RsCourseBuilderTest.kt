@@ -86,6 +86,9 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         dir("src") {
           file("main.rs")
         }
+        dir("tests") {
+          file("tests.rs")
+        }
         file("task.html")
         file("Cargo.toml")
       }

@@ -43,10 +43,14 @@ class JNodesTests : CourseViewTestBase() {
       |      Task2.java
       |     Task1.java
       |    Task3.java
+      |    -DirectoryNode test
+      |     Tests.java
       |   -TaskNode task2
       |    -DirectoryNode src
       |     Task1.java
       |    Task2.java
+      |    -DirectoryNode test
+      |     Tests.java
     """.trimMargin())
   }
 }

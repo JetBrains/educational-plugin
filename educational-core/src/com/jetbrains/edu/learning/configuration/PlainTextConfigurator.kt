@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.configuration
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -67,6 +69,17 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
           override fun check(indicator: ProgressIndicator): CheckResult {
             val taskDir = task.getDir(project.courseDir) ?: error("No taskDir in tests")
             val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
+
+            val testFiles = task.taskFiles.values.filter { task.shouldBeEmpty(it.name) }
+            for (testFile in testFiles) {
+              val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("No virtual test file found")
+              invokeAndWaitIfNeeded {
+                if (testFile.text != vTestFile.document.text) {
+                  error("Saved text for the test file doesn't match actual text")
+                }
+              }
+            }
+
             if (checkResultFile == null) {
               return CheckResult.SOLVED
             }

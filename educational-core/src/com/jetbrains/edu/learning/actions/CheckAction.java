@@ -9,7 +9,9 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -21,8 +23,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
@@ -42,11 +44,11 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -58,7 +60,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -243,47 +244,45 @@ public class CheckAction extends DumbAwareAction {
       VirtualFile taskDir = myTask.getDir(OpenApiExtKt.getCourseDir(myProject));
       if (taskDir == null) return CheckResult.NO_LOCAL_CHECK;
       List<TaskFile> testFiles = getTestFiles();
-      createTests(taskDir, testFiles);
+      if (myTask.getCourse().isStudy()) {
+        createTests(testFiles);
+      }
       try {
         return myChecker.check(indicator);
       }
       finally {
         if (TaskExt.shouldGenerateTestsOnTheFly(myTask)) {
-          deleteTests(taskDir, testFiles);
+          deleteTests(testFiles);
         }
       }
     }
 
-    private void deleteTests(@NotNull VirtualFile taskDir, List<TaskFile> testFiles) {
-      List<VirtualFile> testDirs = TaskExt.findTestDirs(myTask, myProject);
-      ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-        for (VirtualFile dir : testDirs) {
-          EduUtils.deleteFile(dir);
-        }
+    private void deleteTests(List<TaskFile> testFiles) {
+      ApplicationManager.getApplication().invokeAndWait(() -> {
         for (TaskFile file : testFiles) {
-          VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, file.getName());
-          EduUtils.deleteFile(testFile);
+          replaceFileText(file, "");
         }
-      }));
+      });
     }
 
-    private void createTests(@NotNull VirtualFile taskDir, List<TaskFile> testFiles) {
-      boolean refreshNeeded = false;
-      for (TaskFile file : testFiles) {
-        try {
-          if (taskDir.findFileByRelativePath(file.getName()) == null) {
-            GeneratorUtils.createChildFile(taskDir, file.getName(), file.getText());
-            refreshNeeded = true;
-          }
+    private void createTests(List<TaskFile> testFiles) {
+      ApplicationManager.getApplication().invokeAndWait(() -> {
+        for (TaskFile file : testFiles) {
+          replaceFileText(file, file.getText());
         }
-        catch (IOException e) {
-          LOG.warn("Failed to create tests" + e.getMessage());
-        }
-      }
-      if (refreshNeeded) {
-        ApplicationManager.getApplication().invokeAndWait(
-            () -> VfsUtil.markDirtyAndRefresh(false, true, true, taskDir));
-      }
+      });
+    }
+
+    private void replaceFileText(@NotNull final TaskFile file, @NotNull final String newText) {
+      CommandProcessor.getInstance().runUndoTransparentAction(
+        () -> ApplicationManager.getApplication().runWriteAction(() -> {
+          Document document = TaskFileExt.getDocument(file, myProject);
+          if (document == null) return;
+          CommandProcessor.getInstance().executeCommand(myProject,
+                                                        () -> document.setText(newText), "Change Test Text", "Edu Actions");
+          PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+        })
+      );
     }
 
     @NotNull

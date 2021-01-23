@@ -89,6 +89,9 @@ class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
         dir("main") {
           file("main.go")
         }
+        dir("test") {
+          file("task_test.go")
+        }
         file("task.go")
         file("task.html")
       }

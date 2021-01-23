@@ -19,11 +19,17 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("Task.java")
           }
+          dir("test") {
+            file("Tests.java")
+          }
           file("task.html")
         }
         dir("task2") {
           dir("src") {
             file("Task.java")
+          }
+          dir("test") {
+            file("Tests.java")
           }
           file("task.html")
         }
@@ -32,6 +38,9 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
+          }
+          dir("test") {
+            file("Tests.java")
           }
           file("task.html")
         }

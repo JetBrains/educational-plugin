@@ -165,8 +165,8 @@ fun Task.revertTaskParameters(project: Project) {
   }
 }
 
-fun Task.shouldHavePhysicalFile(path: String): Boolean {
-  return !(shouldGenerateTestsOnTheFly() && EduUtils.isTestsFile(this, path))
+fun Task.shouldBeEmpty(path: String): Boolean {
+  return shouldGenerateTestsOnTheFly() && EduUtils.isTestsFile(this, path)
 }
 
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {

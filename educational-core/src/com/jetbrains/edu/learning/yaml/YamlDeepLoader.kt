@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
@@ -81,7 +81,7 @@ object YamlDeepLoader {
       task.lesson = this
       val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
-        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && task.shouldHavePhysicalFile(name)}.map { it.key }
+        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name)}.map { it.key }
       invalidTaskFilesNames.forEach { task.taskFiles.remove(it) }
     }
   }

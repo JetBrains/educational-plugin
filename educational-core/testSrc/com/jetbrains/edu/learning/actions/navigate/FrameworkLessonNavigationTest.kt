@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -79,6 +80,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("task2.kt")
+          dir("tests") {
+            file("test2.kt")
+          }
         }
         dir("task1") {
           file("task.html")
@@ -88,6 +92,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
         }
       }
     }
+    val task = course.findTask("lesson1", "task2")
+    val taskFile = task.getTaskFile("tests/test2.kt")
+    val file = taskFile?.getVirtualFile(project)
+    assertEmpty(file?.document?.text)
     fileTree.assertEquals(rootDir, myFixture)
   }
 

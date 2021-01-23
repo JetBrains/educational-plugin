@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 fun VirtualFile.fileInfo(project: Project): FileInfo? {
@@ -37,7 +37,7 @@ private fun shouldIgnore(file: VirtualFile, project: Project, task: Task): Boole
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
   if (course.configurator?.excludeFromArchive(project, file) == true) return true
-  if (!task.shouldHavePhysicalFile(file.path)) return true
+  if (task.shouldBeEmpty(file.path)) return true
   return false
 }
 

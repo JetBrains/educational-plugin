@@ -27,7 +27,7 @@ import org.junit.Assert
 import org.junit.ComparisonFailure
 
 abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
-    private lateinit var myCourse: Course
+    protected lateinit var myCourse: Course
 
     private val checkerFixture: EduCheckerFixture<Settings> by lazy {
         createCheckerFixture()

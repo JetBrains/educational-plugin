@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
+import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -119,10 +119,14 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   fun createTaskContent(task: Task, taskDir: VirtualFile) {
-    val taskFiles = task.taskFiles.filter { task.shouldHavePhysicalFile(it.key) }
+    val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
 
-    for ((path, file) in taskFiles) {
-      createChildFile(taskDir, path, file.text)
+    for (file in taskFiles) {
+      createChildFile(taskDir, file.name, file.text)
+    }
+
+    for (file in testFiles) {
+      createChildFile(taskDir, file.name, "")
     }
   }
 
