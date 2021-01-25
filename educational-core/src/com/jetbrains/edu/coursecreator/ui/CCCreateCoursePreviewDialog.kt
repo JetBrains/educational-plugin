@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.encrypt.EncryptionBundle
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -75,6 +76,8 @@ class CCCreateCoursePreviewDialog(
     override val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit = { _, _, _ -> createCoursePreview() }
 
     private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
+
+    override fun showError(errorState: ErrorState) { }
 
     private fun createCoursePreview() {
       val folder = CCUtils.getGeneratedFilesFolder(myProject)

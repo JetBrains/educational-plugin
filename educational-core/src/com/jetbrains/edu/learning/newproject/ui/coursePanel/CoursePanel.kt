@@ -150,15 +150,19 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
   }
 
   fun setError(errorState: ErrorState) {
+    this.errorState = errorState
     setButtonsEnabled(errorState.courseCanBeStarted)
+    header.setButtonToolTip(null)
+    hideErrorPanel()
 
+    showError(errorState)
+  }
+
+  protected open fun showError(errorState: ErrorState) {
     if (errorState is ErrorState.LocationError) {
       addOneTimeLocationFieldValidation()
     }
 
-    this.errorState = errorState
-    header.setButtonToolTip(null)
-    hideErrorPanel()
     val message = errorState.message ?: return
     when (errorState) {
       is ErrorState.JetBrainsAcademyLoginNeeded -> {
