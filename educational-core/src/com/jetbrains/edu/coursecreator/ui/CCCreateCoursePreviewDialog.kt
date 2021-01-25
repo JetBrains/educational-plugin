@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.awt.event.ActionEvent
 import java.io.IOException
@@ -48,7 +47,6 @@ class CCCreateCoursePreviewDialog(
     }
     myPanel.bindCourse(courseCopy)
     init()
-    UIUtil.setBackgroundRecursively(rootPane, MAIN_BG_COLOR)
   }
 
   override fun createCenterPanel(): JComponent = myPanel
