@@ -30,9 +30,9 @@ import javax.swing.Action
 import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
-  private val myProject: Project,
-  private val myCourse: Course,
-  private val myConfigurator: EduConfigurator<*>
+  private val project: Project,
+  course: Course,
+  private val configurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
   private val myPanel: CoursePanel = CourseArchivePanel()
@@ -42,7 +42,7 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText("Create")
     myPanel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
-    val courseCopy = myCourse.copy().apply {
+    val courseCopy = course.copy().apply {
       putUserData(IS_COURSE_PREVIEW_KEY, true)
     }
     myPanel.bindCourse(courseCopy)
@@ -78,18 +78,18 @@ class CCCreateCoursePreviewDialog(
     override fun showError(errorState: ErrorState) { }
 
     private fun createCoursePreview() {
-      val folder = CCUtils.getGeneratedFilesFolder(myProject)
+      val folder = CCUtils.getGeneratedFilesFolder(project)
       if (folder == null) {
         LOG.info(TMP_DIR_ERROR)
-        showErrorDialog(myProject, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
+        showErrorDialog(project, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
         return
       }
-      val courseName = myCourse.name
+      val courseName = course?.name
       val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
       val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-        EduCourseArchiveCreator(myProject, archiveLocation, EncryptionBundle.message("aesKey")))
+        EduCourseArchiveCreator(project, archiveLocation, EncryptionBundle.message("aesKey")))
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
@@ -99,11 +99,11 @@ class CCCreateCoursePreviewDialog(
           try {
             val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
             val settings = myPanel.projectSettings ?: error("Project settings shouldn't be null")
-            val previewProject = myConfigurator.courseBuilder.getCourseProjectGenerator(course)
+            val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
               ?.doCreateCourseProject(location.absolutePath, settings)
             if (previewProject == null) {
               LOG.info(PREVIEW_PROJECT_ERROR)
-              showErrorDialog(myProject, "$PREVIEW_PROJECT_ERROR Please try again.", PREVIEW_CREATION_ERROR_TITLE)
+              showErrorDialog(project, "$PREVIEW_PROJECT_ERROR Please try again.", PREVIEW_CREATION_ERROR_TITLE)
               return
             }
             PropertiesComponent.getInstance(previewProject).setValue(IS_COURSE_PREVIEW, true)
@@ -112,7 +112,7 @@ class CCCreateCoursePreviewDialog(
           }
           catch (e: IOException) {
             LOG.info(TMP_DIR_ERROR, e)
-            showErrorDialog(myProject, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
+            showErrorDialog(project, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
           }
           finally {
             RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
@@ -121,7 +121,7 @@ class CCCreateCoursePreviewDialog(
       }
       else {
         LOG.info(errorMessage)
-        showErrorDialog(myProject, errorMessage, PREVIEW_CREATION_ERROR_TITLE)
+        showErrorDialog(project, errorMessage, PREVIEW_CREATION_ERROR_TITLE)
       }
     }
   }
