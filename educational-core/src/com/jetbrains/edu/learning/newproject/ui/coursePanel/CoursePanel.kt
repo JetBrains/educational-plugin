@@ -53,7 +53,9 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
   private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
     val currentLocation = courseInfo.location()
     val locationErrorState = when {
-      currentLocation.isNullOrBlank() -> ErrorState.EmptyLocation
+      // if it's null it means there's no location field and it's ok
+      currentLocation == null -> ErrorState.None
+      currentLocation.isEmpty() -> ErrorState.EmptyLocation
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
       else -> ErrorState.None
     }
@@ -79,7 +81,8 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
-    this.add(emptyStatePanel, EMPTY)
+    @Suppress("LeakingThis")
+    add(emptyStatePanel, EMPTY)
 
     val content = JPanel(VerticalFlowLayout(0, 0))
     content.add(header)
@@ -91,7 +94,8 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     val scrollPane = JBScrollPane(content, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER).apply {
       border = null
     }
-    this.add(scrollPane, CONTENT)
+    @Suppress("LeakingThis")
+    add(scrollPane, CONTENT)
     setButtonsEnabled(canStartCourse())
   }
 
@@ -129,6 +133,7 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     updateCourseDescriptionPanel(course, settings)
     revalidate()
     repaint()
+    doValidation()
     return advancedSettings.languageSettings
   }
 
