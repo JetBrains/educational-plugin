@@ -43,7 +43,11 @@ fun checkIsBackgroundThread() {
 
 val Project.courseDir: VirtualFile
   get() {
-    return guessProjectDir() ?: error("Failed to find course dir for $this")
+    val projectDir = guessProjectDir() ?: error("Failed to find course dir for $this")
+    if (projectDir.name == Project.DIRECTORY_STORE_FOLDER) {
+      return projectDir.parent
+    }
+    return projectDir
   }
 
 val Project.selectedEditor: Editor? get() = selectedVirtualFile?.getEditor(this)
