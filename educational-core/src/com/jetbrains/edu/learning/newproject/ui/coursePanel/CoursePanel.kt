@@ -36,10 +36,9 @@ private const val ERROR_PANEL_MARGIN = 10
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
-class CoursePanel(
-  private val isLocationFieldNeeded: Boolean,
-  private val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit
-) : JPanel() {
+abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel() {
+  abstract val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit
+
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
@@ -80,7 +79,7 @@ class CoursePanel(
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
-    add(emptyStatePanel, EMPTY)
+    this.add(emptyStatePanel, EMPTY)
 
     val content = JPanel(VerticalFlowLayout(0, 0))
     content.add(header)
@@ -92,7 +91,7 @@ class CoursePanel(
     val scrollPane = JBScrollPane(content, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER).apply {
       border = null
     }
-    add(scrollPane, CONTENT)
+    this.add(scrollPane, CONTENT)
     setButtonsEnabled(canStartCourse())
   }
 

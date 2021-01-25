@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.supportedTechnologies
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -43,9 +45,7 @@ abstract class CoursesPanel(
   showButtonOnCard: Boolean = false
 ) : JPanel() {
 
-  protected var coursePanel: CoursePanel = CoursePanel(isLocationFieldNeeded = true) { courseInfo, courseMode, panel ->
-    coursesProvider.joinAction(courseInfo, courseMode, panel)
-  }
+  protected var coursePanel: CoursePanel = DialogCoursePanel()
 
   private val coursesListPanel = CoursesListPanel(showButtonOnCard) {
     coursesFilterComponent.resetSearchField()
@@ -262,6 +262,13 @@ abstract class CoursesPanel(
   }
 
   protected open fun isLoginNeeded() = false
+
+  private inner class DialogCoursePanel() : CoursePanel(true) {
+    override val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit = { courseInfo, courseMode, panel ->
+      coursesProvider.joinAction(courseInfo, courseMode, panel)
+    }
+
+  }
 }
 
 private class CenteredIcon : AsyncProcessIcon.Big("Loading") {
