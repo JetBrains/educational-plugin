@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler
@@ -68,20 +67,6 @@ object StyleResourcesManager {
     INTELLIJ_ICON_FONT_DARCULA_TTF,
     INTELLIJ_ICON_FONT_DARCULA_WOFF
   )
-
-  val scrollBarStylesheetResources: List<String>
-    get() = listOf(
-      resourceUrl(SCROLL_BARS_BASE_CSS),
-      if (SystemInfo.isWindows) resourceUrl(SCROLL_BARS_WIN_SHAPE_CSS) else resourceUrl(SCROLL_BARS_MAC_LINUX_SHAPE_CSS),
-      resourceUrl(scrollBarsCssFileName)
-    )
-
-  private val scrollBarsCssFileName: String
-    get() = when {
-      isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
-      UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
-      else -> SCROLL_BARS_LIGHT_CSS
-    }
 
   private val panelSpecificHintResources: Map<String, String>
     get() = if (isJCEF()) {
