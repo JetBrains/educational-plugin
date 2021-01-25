@@ -11,7 +11,7 @@ import java.net.URL
 object StyleResourcesManager {
   private val LOG: Logger = Logger.getInstance(this::class.java)
 
-  const val BROWSER_CSS: String = "/style/browser.css"
+  private const val BROWSER_CSS: String = "/style/browser.css"
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
