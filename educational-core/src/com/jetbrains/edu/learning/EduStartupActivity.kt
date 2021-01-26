@@ -40,7 +40,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(CourseIgnoreDocumentListener(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)
-      selectProjectView(project, true)
+      // In all IDEs except Android Studio, default project pane is selected via
+      // `com.intellij.ide.projectView.impl.AbstractProjectViewPane.isDefaultPane`.
+      if (EduUtils.isAndroidStudio()) {
+        selectProjectView(project, true)
+      }
     }
 
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {

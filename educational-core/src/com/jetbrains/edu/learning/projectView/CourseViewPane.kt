@@ -199,6 +199,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     return super.getData(dataId)
   }
 
+  override fun isDefaultPane(project: Project): Boolean = EduUtils.isEduProject(project)
+
   companion object {
     @NonNls
     const val ID = "Course"
