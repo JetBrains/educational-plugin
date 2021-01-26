@@ -39,8 +39,12 @@ private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = CoursesListPanel(true) {
+    coursesFilterComponent.resetSearchField()
     updateModel(createCoursesGroup())
   }
+
+  private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ createCoursesGroup() },
+                                                                                      { group -> updateModel(group) })
 
   init {
     background = MAIN_BG_COLOR
@@ -62,10 +66,10 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     return coursesGroups
   }
 
+
   private fun createSearchComponent(disposable: Disposable): JPanel {
     val panel = NonOpaquePanel()
-    val searchField = CoursesFilterComponent({ createCoursesGroup() },
-                                             { group -> updateModel(group) })
+    val searchField = coursesFilterComponent
     UIUtil.setBackgroundRecursively(searchField, MAIN_BG_COLOR)
 
     panel.add(searchField, BorderLayout.CENTER)

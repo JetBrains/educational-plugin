@@ -48,12 +48,15 @@ abstract class CoursesPanel(
   }
 
   private val coursesListPanel = CoursesListPanel(showButtonOnCard) {
+    coursesFilterComponent.resetSearchField()
     resetSelection()
     updateModel(coursesGroups, null, true)
   }
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
+  private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
+                                                                                      { groups -> updateModel(groups, null) })
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
 
@@ -218,9 +221,8 @@ abstract class CoursesPanel(
 
   private fun createAndBindSearchComponent(): JPanel {
     val searchPanel = JPanel(BorderLayout())
-    val searchField = CoursesFilterComponent({ coursesGroups }, { groups -> updateModel(groups, null) })
-    coursePanel.bindSearchField(searchField)
-    searchPanel.add(searchField, BorderLayout.CENTER)
+    coursePanel.bindSearchField(coursesFilterComponent)
+    searchPanel.add(coursesFilterComponent, BorderLayout.CENTER)
 
     programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
       updateModel(coursesGroups, selectedCourse)
