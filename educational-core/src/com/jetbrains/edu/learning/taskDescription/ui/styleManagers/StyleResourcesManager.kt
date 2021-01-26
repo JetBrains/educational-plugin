@@ -15,20 +15,20 @@ object StyleResourcesManager {
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
-  private const val BASE_CSS: String = "/style/hint/base.css"
-  private const val DARCULA_CSS: String = "/style/hint/darcula.css"
-  private const val HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
-  private const val LIGHT_CSS: String = "/style/hint/light.css"
+
+  private const val HINT_BASE_CSS: String = "/style/hint/base.css"
+  private const val HINT_SWING_BASE_CSS: String = "/style/hint/swing/base.css"
+  private const val HINT_DARCULA_CSS: String = "/style/hint/darcula.css"
+  private const val HINT_HIGH_CONTRAST_CSS: String = "/style/hint/highcontrast.css"
+  private const val HINT_LIGHT_CSS: String = "/style/hint/light.css"
   private const val TOGGLE_HINT_JS: String = "/style/hint/toggleHint.js"
   private const val JQUERY_JS: String = "/style/hint/jquery-1.9.1.js"
-  private const val SCROLL_BARS_BASE_CSS: String = "/style/scrollbars/base.css"
+
   private const val SCROLL_BARS_DARCULA_CSS: String = "/style/scrollbars/darcula.css"
   private const val SCROLL_BARS_HIGH_CONTRAST_CSS: String = "/style/scrollbars/highcontrast.css"
   private const val SCROLL_BARS_LIGHT_CSS: String = "/style/scrollbars/light.css"
-  private const val SCROLL_BARS_MAC_LINUX_SHAPE_CSS: String = "/style/scrollbars/macLinuxShape.css"
-  private const val SCROLL_BARS_WIN_SHAPE_CSS: String = "/style/scrollbars/winShape.css"
+
   private const val STEPIK_LINK_CSS: String = "/style/stepikLink.css"
-  private const val SWING_BASE_CSS: String = "/style/hint/swing/base.css"
 
   private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/fonts/intellij-icon-font.eot"
   private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/fonts/intellij-icon-font.svg"
@@ -44,20 +44,17 @@ object StyleResourcesManager {
     CODEFORCES_TASK_CSS,
     EXTERNAL_LINK_ARROW_PNG,
     EXTERNAL_LINK_ARROW_DARK_PNG,
-    BASE_CSS,
-    DARCULA_CSS,
-    HIGH_CONTRAST_CSS,
-    LIGHT_CSS,
+    HINT_BASE_CSS,
+    HINT_SWING_BASE_CSS,
+    HINT_DARCULA_CSS,
+    HINT_HIGH_CONTRAST_CSS,
+    HINT_LIGHT_CSS,
     TOGGLE_HINT_JS,
     JQUERY_JS,
-    SCROLL_BARS_BASE_CSS,
     SCROLL_BARS_DARCULA_CSS,
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
-    SCROLL_BARS_MAC_LINUX_SHAPE_CSS,
-    SCROLL_BARS_WIN_SHAPE_CSS,
     STEPIK_LINK_CSS,
-    SWING_BASE_CSS,
     INTELLIJ_ICON_FONT_EOT,
     INTELLIJ_ICON_FONT_SVG,
     INTELLIJ_ICON_FONT_TTF,
@@ -72,20 +69,20 @@ object StyleResourcesManager {
     get() = if (isJCEF()) {
       mapOf(
         "jquery" to resourceUrl(JQUERY_JS),
-        "hint_base" to resourceUrl(BASE_CSS),
+        "hint_base" to resourceUrl(HINT_BASE_CSS),
         "hint_laf_specific" to resourceUrl(hintLafSpecificFileName),
         "toggle_hint_script" to resourceUrl(TOGGLE_HINT_JS)
       )
     }
     else {
-      mapOf("hint_base" to SWING_BASE_CSS)
+      mapOf("hint_base" to HINT_SWING_BASE_CSS)
     }
 
   private val hintLafSpecificFileName: String
     get() = when {
-      isHighContrast() -> HIGH_CONTRAST_CSS
-      UIUtil.isUnderDarcula() -> DARCULA_CSS
-      else -> LIGHT_CSS
+      isHighContrast() -> HINT_HIGH_CONTRAST_CSS
+      UIUtil.isUnderDarcula() -> HINT_DARCULA_CSS
+      else -> HINT_LIGHT_CSS
     }
 
   // update style/template.html.ft in case of changing key names
