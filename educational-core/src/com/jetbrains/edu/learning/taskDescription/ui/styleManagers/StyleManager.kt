@@ -71,10 +71,6 @@ class StyleManager {
         color = linkColor
       }
 
-      "::-webkit-scrollbar-corner" {
-        backgroundColor = bodyBackground
-      }
-
       codeforcesCssAdjustment()
     }.toString()
   }

@@ -1,13 +1,3 @@
-.scroll-bar,
-.scroll-bar-corner,
-.scroll-bar:horizontal .track,
-.scroll-bar:vertical .track,
-.scroll-bar:vertical .track-background,
-.scroll-bar:horizontal .track-background {
-    -fx-background-color: #000;
-}
-
-.scroll-bar:horizontal .thumb,
-.scroll-bar:vertical .thumb {
-    -fx-background-color: #bbbbbb;
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.7450980392156863);
 }

@@ -24,6 +24,7 @@ object StyleResourcesManager {
   private const val TOGGLE_HINT_JS: String = "/style/hint/toggleHint.js"
   private const val JQUERY_JS: String = "/style/hint/jquery-1.9.1.js"
 
+  private const val SCROLL_BARS_BASE: String = "/style/scrollbars/base.css"
   private const val SCROLL_BARS_DARCULA_CSS: String = "/style/scrollbars/darcula.css"
   private const val SCROLL_BARS_HIGH_CONTRAST_CSS: String = "/style/scrollbars/highcontrast.css"
   private const val SCROLL_BARS_LIGHT_CSS: String = "/style/scrollbars/light.css"
@@ -51,6 +52,7 @@ object StyleResourcesManager {
     HINT_LIGHT_CSS,
     TOGGLE_HINT_JS,
     JQUERY_JS,
+    SCROLL_BARS_BASE,
     SCROLL_BARS_DARCULA_CSS,
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
@@ -85,6 +87,13 @@ object StyleResourcesManager {
       else -> HINT_LIGHT_CSS
     }
 
+  private val scrollbarLafSpecific: String
+    get() = when {
+      isHighContrast() -> SCROLL_BARS_HIGH_CONTRAST_CSS
+      UIUtil.isUnderDarcula() -> SCROLL_BARS_DARCULA_CSS
+      else -> SCROLL_BARS_LIGHT_CSS
+    }
+
   // update style/template.html.ft in case of changing key names
   fun getResources(taskText: String = "") = mapOf(
     resourcePair("base_css", BROWSER_CSS),
@@ -92,7 +101,9 @@ object StyleResourcesManager {
     "content" to taskText,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", STEPIK_LINK_CSS),
-    resourcePair("codeforces_task", CODEFORCES_TASK_CSS)
+    resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
+    resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
+    resourcePair("scrollbar_style_base", SCROLL_BARS_BASE)
   )
     .plus(panelSpecificHintResources)
     .plus(VideoTaskResourcesManager().videoResources)

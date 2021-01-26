@@ -1,18 +1,18 @@
-.scroll-bar:horizontal .track,
-.scroll-bar:vertical .track {
-    -fx-border-color: transparent;
-    -fx-background-radius: 2em;
+::-webkit-scrollbar {
+    width: 1.2em;
+    height: 1.2em;
 }
 
-.scroll-bar:vertical:corner-present,
-.scroll-bar:horizontal:corner-present {
-    -fx-shape: " ";
-    -fx-width: 0;
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    -webkit-box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.05), inset 1px 1px 0 rgba(0, 0, 0, 0.05);
 }
 
-.scroll-bar:horizontal .increment-arrow,
-.scroll-bar:vertical .increment-arrow,
-.scroll-bar:horizontal .decrement-arrow,
-.scroll-bar:vertical .decrement-arrow {
-    -fx-shape: " "
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
 }

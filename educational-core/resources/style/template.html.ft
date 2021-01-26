@@ -33,6 +33,8 @@
   <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
   <link rel="stylesheet" href="${video-js.css}"></link>
   <link rel="stylesheet" type="text/css" href="${codeforces_task}"></link>
+  <link rel="stylesheet" type="text/css" href="${scrollbar_style_base}"></link>
+  <link rel="stylesheet" type="text/css" href="${scrollbar_style_laf}"></link>
 
   <style>
     ${typography_color_style}
