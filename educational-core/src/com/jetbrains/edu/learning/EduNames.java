@@ -98,8 +98,7 @@ public class EduNames {
 
   // Help links
   public static final String HELP_URL = "https://www.jetbrains.com/help";
-  public static final String EDUCATOR_START_GUIDE_URL = HELP_URL + "/education/educator-start-guide.html";
-  public static final String COURSE_DISTRIBUTION_HELP = EDUCATOR_START_GUIDE_URL + "#course_distribution";
+  public static final String LEARNER_START_GUIDE = HELP_URL + "/education/learner-start-guide.html";
 
   private EduNames() {
   }
