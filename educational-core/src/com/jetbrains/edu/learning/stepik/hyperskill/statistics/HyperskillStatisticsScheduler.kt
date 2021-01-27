@@ -28,18 +28,22 @@ class HyperskillStatisticsScheduler : ProjectManagerListener {
           val newEvents = HyperskillStatisticsService.getInstance(project).allEvents()
           val events = pendingEvents + newEvents
           if (events.isEmpty()) {
-            log("no data to send");
+            LOG.info("No data to send")
             return@scheduleWithFixedDelay
           }
 
           val sentEvents = HyperskillConnector.getInstance().sendEvents(events).onError {
-            log("failed to send with error `$it`")
+            LOG.info("Failed to send with error `$it`")
             pendingEvents.addAll(newEvents)
             return@scheduleWithFixedDelay
           }
 
           pendingEvents.clear()
-          log("${sentEvents.events.size} events successfully sent")
+
+          LOG.info("Successfully sent ${sentEvents.events.size} events")
+          if (LOG.isDebugEnabled) { // check debug level so as not to serialize events if not needed
+            LOG.debug("Events=${HyperskillConnector.getInstance().objectMapper.writeValueAsString(sentEvents)}")
+          }
 
         }, 0, Registry.intValue(HYPERSKILL_STATISTICS_INTERVAL_REGISTRY).toLong(), TimeUnit.MINUTES)
 
@@ -51,11 +55,6 @@ class HyperskillStatisticsScheduler : ProjectManagerListener {
 
   companion object {
     private const val HYPERSKILL_STATISTICS_INTERVAL_REGISTRY: String = "edu.hyperskill.statistics"
-
-    private val LOG: Logger = logger<HyperskillStatisticsService>()
-
-    private fun log(message: String) {
-      LOG.info("Hyperskill statistics: $message")
-    }
+    private val LOG: Logger = logger<HyperskillStatisticsScheduler>()
   }
 }
