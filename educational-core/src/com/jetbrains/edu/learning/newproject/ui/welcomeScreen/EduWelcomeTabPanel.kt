@@ -22,6 +22,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -80,7 +81,8 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private fun showPanel() {
     if (CoursesStorage.getInstance().isNotEmpty()) {
       cardLayout.show(mainPanel, MY_COURSES_PANEL)
-    } else {
+    }
+    else {
       cardLayout.show(mainPanel, EMPTY)
     }
   }
@@ -126,8 +128,9 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   }
 
   private fun createDescriptionPanel(): JComponent {
-    val panel = GrayTextHtmlPanel(EduCoreBundle.message("course.dialog.welcome.tab.description"))
-    panel.preferredSize = JBUI.size(373, 40)
+    val linkText = "<a href=${EduNames.LEARNER_START_GUIDE}>${EduCoreBundle.message("course.dialog.learn.more")}</a>"
+    val panel = GrayTextHtmlPanel(EduCoreBundle.message("course.dialog.welcome.tab.description"), linkText, "text-align:center")
+    panel.preferredSize = JBUI.size(330, 50)
 
     return panel
   }
