@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
 import java.awt.BorderLayout
 import java.awt.CardLayout
 import java.awt.Font
@@ -47,8 +46,7 @@ private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
 class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
-  private val moreActionsGroup = DefaultActionGroup(HyperskillProjectAction(), CCNewCourseAction(), NewHyperskillCourseAction(),
-                                                    StartCodeforcesContestAction())
+  private val moreActionsGroup = DefaultActionGroup(CCNewCourseAction(), NewHyperskillCourseAction(), StartCodeforcesContestAction())
   private val cardLayout: CardLayout = CardLayout()
   private val mainPanel = JPanel(cardLayout)
 
