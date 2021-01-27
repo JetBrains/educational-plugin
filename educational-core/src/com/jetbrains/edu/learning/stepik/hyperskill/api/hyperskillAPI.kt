@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
@@ -23,6 +24,7 @@ const val ENVIRONMENT = "environment"
 const val FRONTEND_EVENTS = "frontend-events"
 const val FULL_NAME = "fullname"
 const val ID = "id"
+const val IDE_EDITION = "ide_edition"
 const val IDE_FILES = "ide_files"
 const val IDE_VERSION = "ide_version"
 const val IS_COMPLETED = "is_completed"
@@ -242,6 +244,9 @@ class HyperskillFrontendEventContext {
 
   @JsonProperty(IDE_VERSION)
   var ideVersion: String = with(ApplicationInfoImpl.getShadowInstance()) { "$versionName $fullVersion" }
+
+  @JsonProperty(IDE_EDITION)
+  var ideEdition: String = ApplicationNamesInfo.getInstance().editionName ?: ""
 
   @JsonProperty(EDUTOOLS_VERSION)
   var eduToolsVersion: String? = pluginVersion(EduNames.PLUGIN_ID)
