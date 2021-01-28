@@ -11,18 +11,23 @@ import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import java.nio.file.Paths
 
 class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
   override val projectSettings: PyNewProjectSettings = PyNewProjectSettings()
 
+  private val sdkLocation: String? by lazy {
+    val location = System.getenv(PYTHON_SDK) ?: return@lazy null
+    Paths.get(location).toRealPath().toString()
+  }
+
   override fun setUp() {
-    if (DEFAULT_SDK_LOCATION != null) {
-      EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
-        val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(DEFAULT_SDK_LOCATION)
-        projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, DEFAULT_SDK_LOCATION, versionString)
-        VfsRootAccess.allowRootAccess(testRootDisposable, DEFAULT_SDK_LOCATION)
-      })
-    }
+    val sdkLocation = sdkLocation ?: return
+    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+      val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkLocation)
+      projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkLocation, versionString)
+      VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
+    })
   }
 
   override fun tearDown() {
@@ -32,7 +37,7 @@ class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
   }
 
   override fun getSkipTestReason(): String? {
-    return if (DEFAULT_SDK_LOCATION == null) {
+    return if (sdkLocation == null) {
       "No Python SDK location defined. Use `$PYTHON_SDK` environment variable to provide sdk location"
     } else {
       super.getSkipTestReason()
@@ -41,6 +46,5 @@ class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
 
   companion object {
     private const val PYTHON_SDK = "PYTHON_SDK"
-    private val DEFAULT_SDK_LOCATION = System.getenv(PYTHON_SDK)
   }
 }
