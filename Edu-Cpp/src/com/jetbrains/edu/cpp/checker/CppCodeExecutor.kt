@@ -2,6 +2,7 @@ package com.jetbrains.edu.cpp.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -10,8 +11,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
+import com.jetbrains.edu.cpp.codeforces.CppCodeforcesRunConfiguration
 import com.jetbrains.edu.cpp.isInEntryPointBody
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -40,6 +43,10 @@ class CppCodeExecutor : DefaultCodeExecutor() {
       return null
     }
     return configuration.configurationSettings
+  }
+
+  override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
+    return CppCodeforcesRunConfiguration(project, factory)
   }
 
   private fun findMainFunction(virtualFile: VirtualFile, project: Project): PsiElement? {
