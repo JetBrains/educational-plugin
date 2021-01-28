@@ -16,11 +16,13 @@ class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
   override val projectSettings: PyNewProjectSettings = PyNewProjectSettings()
 
   override fun setUp() {
-    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
-      val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(DEFAULT_SDK_LOCATION)
-      projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, DEFAULT_SDK_LOCATION, versionString)
-      VfsRootAccess.allowRootAccess(testRootDisposable, DEFAULT_SDK_LOCATION)
-    })
+    if (DEFAULT_SDK_LOCATION != null) {
+      EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+        val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(DEFAULT_SDK_LOCATION)
+        projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, DEFAULT_SDK_LOCATION, versionString)
+        VfsRootAccess.allowRootAccess(testRootDisposable, DEFAULT_SDK_LOCATION)
+      })
+    }
   }
 
   override fun tearDown() {
