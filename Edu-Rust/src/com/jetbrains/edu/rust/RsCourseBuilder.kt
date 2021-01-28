@@ -35,6 +35,7 @@ import org.toml.lang.psi.*
 import org.toml.lang.psi.ext.TomlLiteralKind
 import org.toml.lang.psi.ext.elementType
 import org.toml.lang.psi.ext.kind
+import org.toml.lang.psi.ext.name
 import java.nio.file.Path
 
 class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
@@ -257,8 +258,8 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
   private val TomlFile.membersArray: TomlArray?
     get() {
       val workspaceTable = PsiTreeUtil.getChildrenOfTypeAsList(this, TomlTable::class.java)
-                             .find { it.header.names.singleOrNull()?.text == "workspace" } ?: return null
-      return workspaceTable.entries.find { it.key.text == "members" }?.value as? TomlArray
+                             .find { it.header.key?.name == "workspace" } ?: return null
+      return workspaceTable.entries.find { it.key.name == "members" }?.value as? TomlArray
     }
 
   private fun Lesson.courseRelativePath(project: Project): String? {

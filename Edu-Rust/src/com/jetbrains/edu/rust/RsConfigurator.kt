@@ -41,9 +41,11 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val isEnabled: Boolean
     get() {
       val rustPluginVersion = pluginVersion("org.rust.lang") ?: return false
-      // Rust plugin has incompatibility in API that we use before 0.3.133
-      // so disable Rust support for all versions below 0.3.133
-      return VersionComparatorUtil.compare(rustPluginVersion, "0.3.133") >= 0
+      val tomlPluginVersion = pluginVersion("org.toml.lang") ?: return false
+      // TOML plugin has incompatibility in API that we use before 0.2.140
+      // so disable Rust support for all versions below 0.2.140
+      return VersionComparatorUtil.compare(rustPluginVersion, "0.3.140") >= 0 &&
+             VersionComparatorUtil.compare(tomlPluginVersion, "0.2.140") >= 0
     }
 
   override val defaultPlaceholderText: String
