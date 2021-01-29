@@ -19,8 +19,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
   override fun isSilentlyChooseSingleOption() = true
 
   override fun fillActions(group: DefaultActionGroup) {
-    group.addAll(BrowseCoursesAction(), HyperskillProjectAction(), CCNewCourseAction(), NewHyperskillCourseAction(),
-                 StartCodeforcesContestAction())
+    group.addAll(BrowseCoursesAction(), CCNewCourseAction(), NewHyperskillCourseAction(), StartCodeforcesContestAction())
   }
 
   override fun getTextForEmpty(): String {
