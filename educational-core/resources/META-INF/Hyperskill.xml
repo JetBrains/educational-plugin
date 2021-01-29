@@ -1,7 +1,9 @@
 <idea-plugin>
   <applicationListeners>
-    <listener class="com.jetbrains.edu.learning.stepik.hyperskill.statistics.HyperskillStatisticsScheduler"
-              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    <listener class="com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsScheduler"
+              topic="com.intellij.ide.AppLifecycleListener"/>
+    <listener class="com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsScheduler"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
   </applicationListeners>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -12,7 +14,6 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.MockHyperskillProjectManager"/>
-
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStartupActivity"/>
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
@@ -22,7 +23,7 @@
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables action to push Hyperskill lesson to Stepik</description>
     </experimentalFeature>
-    <registryKey defaultValue="10" description="Hyperskill statistics sending interval in minutes" key="edu.hyperskill.statistics"
+    <registryKey defaultValue="10" description="Hyperskill metrics sending interval in minutes" key="edu.hyperskill.metrics"
                  restartRequired="true"/>
   </extensions>
 
