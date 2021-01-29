@@ -77,6 +77,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     processNewLessons(courseFromServer)
     processDeletedLessons(courseFromServer)
     processModifiedLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
+    copyItemsCustomNamesRecursively(courseFromServer.lessons, course.lessons.associateBy { it.id })
   }
 
   private fun processNewLessons(courseFromServer: Course) {
@@ -152,6 +153,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     processNewSections(courseFromServer, sectionIds)
     processDeletedSections(courseFromServer)
     processModifiedSections(courseFromServer, sectionIds)
+    copyItemsCustomNames(courseFromServer.sections, course.sections)
   }
 
   private fun processNewSections(courseFromServer: Course,
@@ -209,6 +211,9 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
       }
 
       val lessonsToUpdate = sectionFromServer.lessons.filter { it.id in currentLessons }
+      // lessons custom names should be copied before processModifiedLessons, otherwise lesson can be considered modified
+      // because of difference in names
+      copyItemsCustomNamesRecursively(sectionFromServer.lessons, currentSection.lessons.associateBy { it.id })
       processModifiedLessons(lessonsToUpdate, currentSection)
       sectionFromServer.init(course, course, false)
     }
@@ -219,6 +224,37 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
     val baseDir = project.courseDir
     for (file in filesToCreate) {
       GeneratorUtils.createChildFile(baseDir, file.name, file.text)
+    }
+  }
+
+  private fun copyItemsCustomNamesRecursively(lessonsFromServer: List<Lesson>, courseLessonsById: Map<Int, Lesson>) {
+    for (lessonFromServer in lessonsFromServer) {
+      val courseLesson = courseLessonsById[lessonFromServer.id]
+      if (courseLesson != null) {
+        copyItemCustomName(lessonFromServer, courseLesson)
+        copyItemsCustomNames(lessonFromServer.taskList, courseLesson.taskList)
+      }
+    }
+  }
+
+  private fun copyItemsCustomNames(itemsFromServer: List<StudyItem>, items: List<StudyItem>) {
+    val itemsById = items.associateBy { it.id }
+    for (itemFromServer in itemsFromServer) {
+      val item = itemsById[itemFromServer.id]
+      if (item != null) {
+        copyItemCustomName(itemFromServer, item)
+      }
+    }
+  }
+
+  @Suppress("DEPRECATION")
+  private fun copyItemCustomName(itemFromServer: StudyItem, item: StudyItem) {
+    if (item.customPresentableName == null) return
+    // if itemFromServer.customPresentableName is not null, that means that it was already set together with correct item name
+    // with itemFromServer.name == item.presentableName we are checking that item was not renamed on remote
+    if (itemFromServer.customPresentableName == null && itemFromServer.name == item.presentableName) {
+      itemFromServer.customPresentableName = item.customPresentableName
+      itemFromServer.name = item.name
     }
   }
 
