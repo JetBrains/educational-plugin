@@ -31,7 +31,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Nullable
   private StepikUser myUser;
   private long myLastTimeChecked;
-  @NotNull @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
+  @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
 
   private Set<Integer> myShownCourseIds;
 
@@ -119,7 +119,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   }
 
   private JavaUILibrary initialJavaUiLibrary() {
-    if (javaUiLibrary != JavaUILibrary.JAVAFX) {
+    if (javaUiLibrary != null && javaUiLibrary != JavaUILibrary.JAVAFX) {
       return javaUiLibrary;
     }
     if (EduUtils.hasJCEF()) {
