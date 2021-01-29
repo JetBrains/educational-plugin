@@ -21,6 +21,11 @@ Hints should be added to an empty line in the task text.
 In hints you can use HTML only.
 <div class="hint">Text of your hint</div></li>
 
+<li>You may need to refer your learners to a particular lesson,
+task, or file. To achieve this, you can use the in-course links.
+Specify the path using the <code>&lt;a href="course://lesson1/task1/file1"&gt;
+link_text&lt;/a&gt;</code> format.</li><br>
+
 <li>You can insert shortcuts in the task description.
 While <strong>task.html/task.md</strong> is open,
 right-click anywhere on the <strong>Editor</strong> tab
