@@ -33,7 +33,7 @@ object YamlMixinNames {
   // marketplace course
   const val VENDOR = "vendor"
   const val IS_MARKETPLACE = "is_marketplace"
-  const val COURSE_VERSION = "course_version"
+  const val MARKETPLACE_COURSE_VERSION = "course_version"
   const val MARKETPLACE_ID = "marketplace_id"
 
   // lesson

@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction
-import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered") // Marketplace.xml
@@ -21,6 +20,6 @@ class CreateMarketplaceArchive
   }
 
   override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator =
-    MarketplaceArchiveCreator(project, location, EncryptionBundle.message("aesKey"))
+    MarketplaceArchiveCreator(project, location)
 
 }

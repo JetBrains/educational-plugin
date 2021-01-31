@@ -2,21 +2,24 @@ package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.mixins.*
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
 import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: String?)
+class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: String = getAesKey())
   : CourseArchiveCreator(project, location, aesKey) {
 
   override fun getMapper(course: Course): ObjectMapper = course.localMapper
@@ -33,11 +36,10 @@ class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: 
     }
 
   override fun compute(): String? {
-    val course = StudyTaskManager.getInstance(project).course ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     if (!course.isMarketplaceRemoteCourse() && !isUnitTestMode) {
       course.generateCourseItemsIds()
     }
-
     return super.compute()
   }
 
@@ -48,6 +50,16 @@ class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: 
       return "Course vendor is empty. Please, add vendor to the course.yaml"
     }
     return null
+  }
+
+  fun createArchiveWithRemoteCourseVersion(): String? {
+    if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(course.marketplaceId)
+    if (updateInfo != null) {
+      course.incrementMarketplaceCourseVersion(updateInfo.version)
+    }
+    FileDocumentManager.getInstance().saveAllDocuments()
+    return ApplicationManager.getApplication().runWriteAction<String>(this)
   }
 
   override fun addStudyItemMixins(mapper: ObjectMapper) {

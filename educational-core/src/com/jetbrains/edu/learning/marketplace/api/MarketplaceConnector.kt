@@ -155,21 +155,24 @@ abstract class MarketplaceConnector {
     return response?.body()?.data?.coursesList?.courses?.firstOrNull()
   }
 
-  fun getLatestCourseUpdateInfo(marketplaceId: Int): UpdateInfo {
+  fun getLatestCourseUpdateInfo(marketplaceId: Int): UpdateInfo? {
     val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(marketplaceId))).executeHandlingExceptions()
     val updateInfoList = response?.body()?.data?.updates?.updateInfoList
-    if (updateInfoList == null || updateInfoList.size != 1) {
-      error("Update info for course $marketplaceId is null")
+    if (updateInfoList == null) {
+      error("Update info list for course $marketplaceId is null")
     }
     else {
-      return updateInfoList.first()
+      return updateInfoList.firstOrNull()
     }
   }
 
   fun loadCourseStructure(course: EduCourse) {
     val marketplaceId = course.marketplaceId
     val updateInfo = getLatestCourseUpdateInfo(marketplaceId)
-    course.courseVersion = updateInfo.version
+    if (updateInfo == null) {
+      error("Update info for course $marketplaceId is null")
+    }
+    course.marketplaceCourseVersion = updateInfo.version
     val link = "$repositoryUrl/plugin/$marketplaceId/update/${updateInfo.updateId}/download"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
@@ -206,7 +209,6 @@ abstract class MarketplaceConnector {
       return
     }
     course.marketplaceId = courseBean.marketplaceId
-    course.incrementCourseVersion()
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
     val message = EduCoreBundle.message("marketplace.push.course.successfully.uploaded", courseBean.name)
@@ -231,10 +233,9 @@ abstract class MarketplaceConnector {
       showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, false))
       return
     }
-    val message = EduCoreBundle.message("marketplace.push.course.successfully.updated", course.name, course.courseVersion)
+    val message = EduCoreBundle.message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
     showNotification(project, message, null)
     LOG.info(message)
-    course.incrementCourseVersion()
     YamlFormatSynchronizer.saveItem(course)
   }
 

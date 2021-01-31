@@ -42,10 +42,11 @@ abstract class CourseArchiveCreator(
   protected val aesKey: String?
 ) : Computable<String?> {
 
+  protected val course: Course? = StudyTaskManager.getInstance(project).course
+
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun compute(): String? {
-    val course = StudyTaskManager.getInstance(project).course?.copy()
-                     ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    val course = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 

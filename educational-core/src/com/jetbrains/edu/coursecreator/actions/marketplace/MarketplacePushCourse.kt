@@ -59,8 +59,8 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       return
     }
 
-    val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.courseVersion}", ".zip", true)
-    val errorMessage = CreateMarketplaceArchive().createCourseArchive(project, tempFile.absolutePath)
+    val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
+    val errorMessage = MarketplaceArchiveCreator(project, tempFile.absolutePath).createArchiveWithRemoteCourseVersion()
     if (errorMessage != null) {
       Messages.showErrorDialog(project, errorMessage, message("error.failed.to.create.course.archive"))
       return
@@ -86,13 +86,6 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
         return
       }
 
-      val remoteCourseVersion = connector.getLatestCourseUpdateInfo(course.marketplaceId).version
-      val courseVersion = course.courseVersion
-      if (courseVersion < remoteCourseVersion) {
-        CCNotificationUtils.showErrorNotification(project, message("marketplace.push.version.mismatch.title"),
-                                                  message("marketplace.push.version.mismatch.details", courseVersion, remoteCourseVersion))
-        return
-      }
       connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.updateCourse()
     }

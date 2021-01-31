@@ -550,7 +550,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
-    assertEquals(5, course.courseVersion)
+    assertEquals(5, course.marketplaceCourseVersion)
   }
 
   fun `test default courseVersion`() {
@@ -565,7 +565,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
-    assertEquals(1, course.courseVersion)
+    assertEquals(1, course.marketplaceCourseVersion)
   }
 
   fun `test file visibility`() {

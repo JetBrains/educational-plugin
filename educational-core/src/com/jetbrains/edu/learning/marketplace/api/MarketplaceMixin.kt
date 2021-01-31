@@ -39,7 +39,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(RATING) val rating: Double?,
   @JsonProperty(FIELDS) val fields: Fields,
   @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
-  @JsonProperty(COURSE_VERSION) val version: Int?,
+  @JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -54,7 +54,7 @@ private class MarketplaceCourseBuilder(
       reviewScore = rating ?: 0.0
       language = fields.programmingLanguage
       languageCode = fields.language
-      courseVersion = version ?: 1
+      marketplaceCourseVersion = version ?: 1
       organization = courseOrganization?.name
       setMarketplaceAuthorsAsString(developers)
     }

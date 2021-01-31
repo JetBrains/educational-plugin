@@ -55,7 +55,7 @@ public abstract class Course extends LessonContainer {
   // Marketplace:
   private boolean isMarketplace = false;
   private Vendor myVendor;
-  private int myCourseVersion = 1;   // TODO: this field should be updated uploading course to the marketplace
+  private int myMarketplaceCourseVersion = 1;
   private int myMarketplaceId = 0;
   @Nullable private String organization;
 
@@ -333,12 +333,12 @@ public abstract class Course extends LessonContainer {
     this.isMarketplace = isMarketplace;
   }
 
-  public int getCourseVersion() {
-    return myCourseVersion;
+  public int getMarketplaceCourseVersion() {
+    return myMarketplaceCourseVersion;
   }
 
-  public void setCourseVersion(int courseVersion) {
-    myCourseVersion = courseVersion;
+  public void setMarketplaceCourseVersion(int marketplaceCourseVersion) {
+    myMarketplaceCourseVersion = marketplaceCourseVersion;
   }
 
   @Nullable
@@ -350,8 +350,8 @@ public abstract class Course extends LessonContainer {
     this.organization = organization;
   }
 
-  public void incrementCourseVersion() {
-    myCourseVersion += 1;
+  public void incrementMarketplaceCourseVersion(int remoteCourseVersion) {
+    myMarketplaceCourseVersion = ++remoteCourseVersion;
   }
 
   public int getMarketplaceId() { return myMarketplaceId; }

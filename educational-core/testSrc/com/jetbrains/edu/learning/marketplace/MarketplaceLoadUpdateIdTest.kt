@@ -17,6 +17,7 @@ class MarketplaceLoadUpdateInfoTest : EduTestCase() {
   fun `test course updateInfo loaded`() {
     configureResponse()
     val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(1)
+    checkNotNull(updateInfo)
     assertEquals(102996, updateInfo.updateId)
     assertEquals(3, updateInfo.version)
   }
