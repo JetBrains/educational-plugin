@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.shouldHavePhysicalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -166,6 +167,4 @@ object YamlDeepLoader {
     return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
       "Invalid description format")
   }
-
-  fun StudyItem.isMarketplaceRemoteCourse(): Boolean = this is EduCourse && marketplaceId > 0
 }

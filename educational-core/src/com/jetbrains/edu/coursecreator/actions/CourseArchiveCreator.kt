@@ -107,6 +107,15 @@ abstract class CourseArchiveCreator(
 
   abstract fun getMapper(course: Course): ObjectMapper
 
+  open fun addStudyItemMixins(mapper: ObjectMapper) {
+    mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
+    mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
+    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonMixin::class.java)
+    mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
+    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+    mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
+  }
+
   companion object {
     private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
 
@@ -116,15 +125,6 @@ abstract class CourseArchiveCreator(
         prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
         return prettyPrinter
       }
-
-    fun addStudyItemMixins(mapper: ObjectMapper) {
-      mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
-      mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
-      mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonMixin::class.java)
-      mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
-      mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-      mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
-    }
 
     fun commonMapperSetup(mapper: ObjectMapper, course: Course) {
       if (course is CourseraCourse) {

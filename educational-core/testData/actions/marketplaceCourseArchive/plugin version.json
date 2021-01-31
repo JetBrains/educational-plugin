@@ -11,10 +11,12 @@
   },
   "items" : [
     {
+      "id" : 0,
       "title" : "lesson1",
       "task_list" : [
         {
           "name" : "task1",
+          "id" : 0,
           "files" : { },
           "description_text" : "solve task",
           "description_format" : "HTML",
