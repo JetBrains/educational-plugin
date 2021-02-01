@@ -278,6 +278,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
+    existingItem.vendor = deserializedItem.vendor
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
     }
