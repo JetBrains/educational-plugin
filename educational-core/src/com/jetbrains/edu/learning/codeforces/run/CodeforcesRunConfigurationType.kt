@@ -7,13 +7,8 @@ import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
-/**
- * id has to be one of these values
- * @see com.intellij.execution.InputRedirectAware.TYPES_WITH_REDIRECT_AWARE_UI
- * in other cases, Java configuration will not work
- */
 class CodeforcesRunConfigurationType : ConfigurationType {
-  override fun getId(): String = "Application"
+  override fun getId(): String = CONFIGURATION_ID
 
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
 
