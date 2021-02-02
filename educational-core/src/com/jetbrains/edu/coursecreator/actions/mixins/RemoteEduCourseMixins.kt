@@ -64,19 +64,21 @@ abstract class RemoteTaskMixin : LocalTaskMixin() {
 
 }
 
+@JsonPropertyOrder(ID)
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteMarketplaceLessonMixin : LocalLessonMixin() {
   @JsonProperty(ID)
   private var myId: Int = 0
 }
 
-
+@JsonPropertyOrder(ID)
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteMarketplaceTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
   private var myId: Int = 0
 }
 
+@JsonPropertyOrder(ID)
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteMarketplaceSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)

@@ -11,8 +11,8 @@
       "title" : "lesson1",
       "task_list" : [
         {
-          "name" : "task1",
           "id" : 0,
+          "name" : "task1",
           "files" : {
             "Task.kt" : {
               "name" : "Task.kt",
