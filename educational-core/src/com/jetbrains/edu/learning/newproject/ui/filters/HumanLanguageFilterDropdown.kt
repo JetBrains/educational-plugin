@@ -11,8 +11,10 @@ class HumanLanguageFilterDropdown(humanLanguages: Set<String>, filterCourses: ()
   override var selectedItems: Set<String> = languagesFromLocale()
 
   init {
-    text = languagesFromLocale().joinToString(limit = 2)
+    text = title()
   }
+
+  private fun title() = languagesFromLocale().joinToString(limit = 2)
 
   override fun defaultTitle(): String = EduCoreBundle.message("course.dialog.filter.languages")
 
@@ -20,6 +22,7 @@ class HumanLanguageFilterDropdown(humanLanguages: Set<String>, filterCourses: ()
 
   override fun resetSelection() {
     selectedItems = languagesFromLocale()
+    text = title()
   }
 
   private fun languagesFromLocale() = setOf(Locale.ENGLISH.displayLanguage, Locale.getDefault().displayLanguage)

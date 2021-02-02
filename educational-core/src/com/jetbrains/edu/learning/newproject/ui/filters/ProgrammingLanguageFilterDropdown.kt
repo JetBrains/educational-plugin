@@ -27,6 +27,7 @@ class ProgrammingLanguageFilterDropdown(
 
   override fun resetSelection() {
     selectedItems = allItems
+    text = defaultTitle()
   }
 
   override fun defaultTitle() = EduCoreBundle.message("course.dialog.filter.programming.languages")
