@@ -26,7 +26,6 @@ private const val PROVIDER_LEFT_OFFSET = 5
 private const val ICON_TEXT_GAP = 8
 private const val SCROLL_PANE_WIDTH = 233
 private const val SCROLL_PANE_HEIGHT = 800
-private const val FONT_SIZE = 13.0f
 
 class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider) : JBScrollPane() {
   private val tree = createCourseProvidersTree()
