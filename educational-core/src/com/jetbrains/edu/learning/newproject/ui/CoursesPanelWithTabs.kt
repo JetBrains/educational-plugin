@@ -31,7 +31,7 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: Dispos
   init {
     layout = BorderLayout()
     coursesTab = CoursesTab()
-    sidePanel = CoursesProvidersSidePanel(myCoursesProvider).apply {
+    sidePanel = CoursesProvidersSidePanel(myCoursesProvider, disposable).apply {
       addTreeSelectionListener(CoursesProviderSelectionListener())
     }
 

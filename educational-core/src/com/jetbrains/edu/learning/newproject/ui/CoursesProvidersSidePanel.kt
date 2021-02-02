@@ -1,3 +1,5 @@
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
@@ -5,7 +7,10 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
@@ -27,7 +32,7 @@ private const val ICON_TEXT_GAP = 8
 private const val SCROLL_PANE_WIDTH = 233
 private const val SCROLL_PANE_HEIGHT = 800
 
-class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider) : JBScrollPane() {
+class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider, disposable: Disposable) : JBScrollPane() {
   private val tree = createCourseProvidersTree()
 
   init {
@@ -40,6 +45,12 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
     verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
     preferredSize = JBUI.size(SCROLL_PANE_WIDTH, SCROLL_PANE_HEIGHT)
     border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 0, 1)
+    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
+    connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
+      override fun courseDeleted(course: Course) {
+        tree.repaint()
+      }
+    })
   }
 
   private fun createCourseProvidersTree(): Tree {
