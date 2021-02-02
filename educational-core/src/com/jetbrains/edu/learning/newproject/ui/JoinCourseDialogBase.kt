@@ -23,10 +23,10 @@ open class JoinCourseDialogBase(private val course: Course, settings: CourseDisp
   override fun createCenterPanel(): JComponent = coursePanel
 
   private inner class JoinCoursePanel : CoursePanel(true) {
-    override val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit = { _, _, panel ->
+    override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialogBase.course, { locationString }, { languageSettings }),
-                                         CourseMode.STUDY, panel) {
-        panel.setError(it)
+                                         CourseMode.STUDY, this) {
+        setError(it)
       }
     }
   }

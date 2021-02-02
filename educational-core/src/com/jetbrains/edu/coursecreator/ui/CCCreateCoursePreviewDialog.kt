@@ -4,6 +4,7 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages.showErrorDialog
@@ -71,11 +72,12 @@ class CCCreateCoursePreviewDialog(
 
 
   private inner class CourseArchivePanel : CoursePanel(false) {
-    override val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit = { _, _, _ -> createCoursePreview() }
-
-    private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
 
     override fun showError(errorState: ErrorState) { }
+
+    override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+      createCoursePreview()
+    }
 
     private fun createCoursePreview() {
       val folder = CCUtils.getGeneratedFilesFolder(project)
@@ -127,6 +129,8 @@ class CCCreateCoursePreviewDialog(
   }
 
   companion object {
+    private val LOG: Logger = logger<CCCreateCoursePreviewDialog>()
+
     private const val WIDTH: Int = 450
     private const val HEIGHT: Int = 330
     private const val PREVIEW_CREATION_ERROR_TITLE = "Failed to Create Course Preview"

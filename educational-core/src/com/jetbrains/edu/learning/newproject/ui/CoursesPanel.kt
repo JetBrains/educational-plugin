@@ -263,11 +263,10 @@ abstract class CoursesPanel(
 
   protected open fun isLoginNeeded() = false
 
-  private inner class DialogCoursePanel() : CoursePanel(true) {
-    override val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit = { courseInfo, courseMode, panel ->
-      coursesProvider.joinAction(courseInfo, courseMode, panel)
+  private inner class DialogCoursePanel : CoursePanel(true) {
+    override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+      coursesProvider.joinAction(info, mode, this)
     }
-
   }
 }
 

@@ -37,7 +37,6 @@ private const val EMPTY = "empty"
 private const val CONTENT = "content"
 
 abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel() {
-  abstract val joinCourseAction: (CourseInfo, CourseMode, CoursePanel) -> Unit
 
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
@@ -49,23 +48,6 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN + ERROR_LEFT_GAP, ERROR_BOTTOM_GAP, ERROR_RIGHT_GAP)
   }
   private var mySearchField: FilterComponent? = null
-
-  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
-    val currentLocation = courseInfo.location()
-    val locationErrorState = when {
-      // if it's null it means there's no location field and it's ok
-      currentLocation == null -> ErrorState.None
-      currentLocation.isEmpty() -> ErrorState.EmptyLocation
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
-      else -> ErrorState.None
-    }
-    if (locationErrorState != ErrorState.None) {
-      setError(locationErrorState)
-    }
-    else {
-      joinCourseAction(courseInfo, courseMode, this)
-    }
-  }
 
   val locationString: String?
     get() = advancedSettings.locationString
@@ -98,6 +80,25 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     add(scrollPane, CONTENT)
     setButtonsEnabled(canStartCourse())
   }
+
+  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
+    val currentLocation = courseInfo.location()
+    val locationErrorState = when {
+      // if it's null it means there's no location field and it's ok
+      currentLocation == null -> ErrorState.None
+      currentLocation.isEmpty() -> ErrorState.EmptyLocation
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
+      else -> ErrorState.None
+    }
+    if (locationErrorState != ErrorState.None) {
+      setError(locationErrorState)
+    }
+    else {
+      joinCourseAction(courseInfo, courseMode)
+    }
+  }
+
+  protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
 
   private fun addOneTimeLocationFieldValidation() {
     advancedSettings.addLocationFieldDocumentListener(object : DocumentAdapter() {
