@@ -107,6 +107,8 @@ public abstract class StudyItem extends UserDataHolderBase {
   public abstract String getItemType();
 
   public void generateId() {
-    myId = System.identityHashCode(this);
+    if (myId == 0) {
+      myId = System.identityHashCode(this);
+    }
   }
 }

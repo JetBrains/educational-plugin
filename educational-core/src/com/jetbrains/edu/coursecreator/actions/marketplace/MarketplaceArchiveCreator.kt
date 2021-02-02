@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
-import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: String = getAesKey())
@@ -37,7 +36,7 @@ class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: 
 
   override fun compute(): String? {
     if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
-    if (!course.isMarketplaceRemoteCourse() && !isUnitTestMode) {
+    if (!isUnitTestMode) {
       course.generateCourseItemsIds()
     }
     return super.compute()
