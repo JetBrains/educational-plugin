@@ -88,10 +88,7 @@ abstract class FilterDropdown(
     }
   }
 
-  private inner class ApplyFiltersAdapter(
-    private val optionsTree: CheckboxTree,
-    private val root: CheckedTreeNode
-  ) : TreeModelAdapter() {
+  private inner class ApplyFiltersAdapter(private val optionsTree: CheckboxTree, private val root: CheckedTreeNode) : TreeModelAdapter() {
     override fun treeNodesChanged(e: TreeModelEvent) {
       val node = if (e.children.isNullOrEmpty()) e.path.last() else e.children.first()
       if (node !is CheckedTreeNode) {
