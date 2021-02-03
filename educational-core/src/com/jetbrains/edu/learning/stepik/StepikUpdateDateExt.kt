@@ -14,6 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 import java.util.*
 
 fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
@@ -32,8 +34,18 @@ fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
     return isUpToDate
   }
 
-  val courseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return isUpToDate
-  courseInfo.language = language
+  val eduCourseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return isUpToDate
+  eduCourseInfo.language = language
+
+  // we should create courseInfo instance of a specific class here because otherwise if we are creating all courseInfo's
+  // as EduCourses, getItemType() will return EduNames.PYCHARM, which won't let us get a correct configurator
+  // for C++ courses and we will get `Throwable: Could not find configurator for course` in fillItems
+  val courseInfo = if (this is StepikCourse) {
+    stepikCourseFromRemote(eduCourseInfo) ?: return isUpToDate
+  }
+  else {
+    eduCourseInfo
+  }
 
   return CourseUpdateInfo(courseInfo, isUpToDate(courseInfo))
 }
