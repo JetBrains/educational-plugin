@@ -11,8 +11,8 @@ class Vendor {
 
   constructor()
 
-  constructor(organization: String) {
-    name = organization
+  constructor(vendorName: String) {
+    name = vendorName
   }
 
   @JsonProperty(NAME)

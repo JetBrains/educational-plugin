@@ -37,7 +37,7 @@ import java.io.IOException
 import java.util.*
 
 abstract class CourseArchiveCreator(
-  private val project: Project,
+  protected val project: Project,
   @NonNls private val location: String,
   protected val aesKey: String?
 ) : Computable<String?> {

@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -16,9 +17,10 @@ import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: String = getAesKey())
+class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String = getAesKey())
   : CourseArchiveCreator(project, location, aesKey) {
 
   override fun getMapper(course: Course): ObjectMapper = course.localMapper
@@ -39,16 +41,19 @@ class MarketplaceArchiveCreator(val project: Project, location: String, aesKey: 
     if (!isUnitTestMode) {
       course.generateCourseItemsIds()
     }
+
+    if (course.vendor == null) {
+      if (!addVendor(course)) return EduCoreBundle.message("marketplace.vendor.empty")
+    }
+
     return super.compute()
   }
 
-  override fun validateCourse(course: Course): String? {
-    val errors = super.validateCourse(course)
-    if (errors != null) return errors
-    if (course.vendor == null) {
-      return "Course vendor is empty. Please, add vendor to the course.yaml"
-    }
-    return null
+  @VisibleForTesting
+  fun addVendor(course: Course): Boolean {
+    val currentUser = MarketplaceSettings.INSTANCE.account ?: return false
+    course.vendor = Vendor(currentUser.userInfo.name)
+    return true
   }
 
   fun createArchiveWithRemoteCourseVersion(): String? {

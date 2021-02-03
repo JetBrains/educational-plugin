@@ -5,21 +5,29 @@ import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplaceArchiveCreator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
-import junit.framework.TestCase
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
-  fun `test no vendor`() {
+  fun `test user name as vendor`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "some text")
     }
+    val account = MarketplaceAccount()
+    account.userInfo = MarketplaceUserInfo("User Name")
+    MarketplaceSettings.INSTANCE.account = account
+
     val creator = getArchiveCreator()
-    val validationError = creator.validateCourse(course)
-    TestCase.assertNotNull(validationError)
-    TestCase.assertEquals("Course vendor is empty. Please, add vendor to the course.yaml", validationError)
+    creator.addVendor(course)
+
+    doTest()
+
+    MarketplaceSettings.INSTANCE.account = null
   }
 
   fun `test vendor with email`() {
