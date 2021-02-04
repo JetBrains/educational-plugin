@@ -1,7 +1,10 @@
 package com.jetbrains.edu.go.slow.checker
 
 import com.goide.sdk.GoSdk
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.go.GoProjectSettings
+import com.jetbrains.edu.go.checker.GoEduTaskChecker
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import java.nio.file.Paths
 
@@ -24,6 +27,15 @@ class GoCheckerFixture : EduCheckerFixture<GoProjectSettings>() {
     } else {
       super.getSkipTestReason()
     }
+  }
+
+  override fun setUp() {
+    super.setUp()
+    // Prevent leaking of javax.swing.Timer from TerminalPanel
+    val registryValue = Registry.get(GoEduTaskChecker.GO_RUN_WITH_PTY)
+    val oldValue = registryValue.asBoolean()
+    registryValue.setValue(false)
+    Disposer.register(testRootDisposable) { registryValue.setValue(oldValue) }
   }
 
   companion object {
