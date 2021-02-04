@@ -243,7 +243,7 @@ fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
     return when (taskType) {
       "ide" -> objectMapper.treeToValue(node, IdeTask::class.java)
       "choice" -> objectMapper.treeToValue(node, ChoiceTask::class.java)
-      "theory" -> objectMapper.treeToValue(node, TheoryTask::class.java)
+      TheoryTask.THEORY -> objectMapper.treeToValue(node, TheoryTask::class.java)
       "video" -> objectMapper.treeToValue(node, VideoTask::class.java)
       CodeTask.CODE -> objectMapper.treeToValue(node, CodeTask::class.java)
       "edu" -> objectMapper.treeToValue(node, EduTask::class.java)

@@ -129,7 +129,7 @@ object YamlDeserializer {
     val clazz = when (type) {
       "edu" -> EduTask::class.java
       "output" -> OutputTask::class.java
-      "theory" -> TheoryTask::class.java
+      TheoryTask.THEORY -> TheoryTask::class.java
       "video" -> VideoTask::class.java
       "choice" -> ChoiceTask::class.java
       "ide" -> IdeTask::class.java

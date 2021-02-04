@@ -45,7 +45,7 @@ open class StepikTaskBuilder(
   private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
     Step.CODE to this::codeTask,
     "choice" to this::choiceTask,
-    "text" to this::theoryTask,
+    Step.TEXT to this::theoryTask,
     "string" to this::unsupportedTask,
     "pycharm" to { _: String -> pycharmTask() },
     "video" to this::videoTask,
@@ -64,7 +64,7 @@ open class StepikTaskBuilder(
     "edu" to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     "output" to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     "ide" to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    "theory" to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
+    TheoryTask.THEORY to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
   open fun createTask(type: String): Task? {
@@ -289,7 +289,7 @@ open class StepikTaskBuilder(
     private val DEFAULT_NAMES: Map<String, String> = mapOf(
       Step.CODE to "Programming",
       "choice" to "Quiz",
-      "text" to "Theory",
+      Step.TEXT to "Theory",
       "pycharm" to "Programming",
       "video" to "Video",
       "number" to "Number",

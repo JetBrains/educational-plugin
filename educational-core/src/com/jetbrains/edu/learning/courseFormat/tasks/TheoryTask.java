@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Date;
 
 public class TheoryTask extends Task {
+  public static final String THEORY = "theory";
+
   @SuppressWarnings("unused") //used for deserialization
   public TheoryTask() {}
 
@@ -26,6 +28,6 @@ public class TheoryTask extends Task {
 
   @Override
   public String getItemType() {
-    return "theory";
+    return THEORY;
   }
 }

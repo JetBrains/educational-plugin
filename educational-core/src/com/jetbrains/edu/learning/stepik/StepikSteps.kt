@@ -116,6 +116,7 @@ class Step {
 
   companion object {
     const val CODE = "code"
+    const val TEXT = "text"
   }
 }
 
