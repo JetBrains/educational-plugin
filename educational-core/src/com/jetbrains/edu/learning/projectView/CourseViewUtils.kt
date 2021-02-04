@@ -131,6 +131,6 @@ object CourseViewUtils {
 
   private fun Lesson.isSolved() = taskList.all {
     val project = it.project ?: return false
-    return it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
+    it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
   }
 }
