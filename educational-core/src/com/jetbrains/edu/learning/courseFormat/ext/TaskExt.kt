@@ -13,10 +13,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -133,7 +130,9 @@ private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
 fun Task.canShowSolution(): Boolean {
-  if (course is HyperskillCourse) return status == CheckStatus.Solved
+  if (course is HyperskillCourse) {
+    return this !is TheoryTask && status == CheckStatus.Solved
+  }
   val hiddenByEducator = solutionHidden ?: course.solutionsHidden
   val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
   return shouldShow && taskFiles.values.any { it.canShowSolution() }

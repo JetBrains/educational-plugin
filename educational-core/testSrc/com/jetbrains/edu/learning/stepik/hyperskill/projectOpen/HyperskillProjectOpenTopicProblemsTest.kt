@@ -31,6 +31,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2640.title) {
             file("Task.txt")
             file("task.html")
@@ -54,6 +58,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     hyperskillCourseWithFiles(name = getProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
         lesson(step9455.title) {
+          theoryTask(THEORY, stepId = step9455.id) {
+            taskFile("Task.txt", "file text")
+            taskFile("task.html", "file text")
+          }
           codeTask(step2640.title, stepId = step2640.id) {
             taskFile("Task.txt", "file text")
             taskFile("task.html", "file text")
@@ -66,6 +74,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2640.title) {
             file("Task.txt")
             file("task.html")
@@ -106,6 +118,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
           }
         }
         dir(step9455.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2640.title) {
             file("Task.txt")
             file("task.html")
@@ -159,6 +175,12 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -198,6 +220,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
       section(HYPERSKILL_TOPICS) {
         lesson(step9455.title) {
+          theoryTask(THEORY, stepId = step9455.id) {
+            taskFile("src/Task.kt", "file text")
+            taskFile("task.html", "file text")
+          }
           codeTask(step2641.title, stepId = step2641.id) {
             taskFile("src/Task.kt", "file text")
             taskFile("task.html", "file text")
@@ -226,6 +252,12 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -305,6 +337,12 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
           }
         }
         dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -349,6 +387,12 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -419,6 +463,12 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
       }
       dir(HYPERSKILL_TOPICS) {
         dir(step9455.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -510,6 +560,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private const val STEPS_OF_85_TOPIC_RECOMMENDED_REQUEST_SUFFIX = "/api/steps?topic=85&is_recommended=true"
     private const val STEPS_OF_85_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=85"
     private const val TOPIC_NAME = "topicName"
+    private const val THEORY = "Theory"
     private val step2640 = StepInfo(2640, "Packing bakeries")
     private val step2641 = StepInfo(2641, "List multiplicator")
     private val step9455 = StepInfo(9455, "Wildcards")

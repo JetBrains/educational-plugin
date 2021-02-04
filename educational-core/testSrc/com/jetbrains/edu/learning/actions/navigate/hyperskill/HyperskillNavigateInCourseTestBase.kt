@@ -18,18 +18,19 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
   protected val problem2Name = "problem2"
   protected val topic1LessonName = "topic1"
   protected val topic2LessonName = "topic2"
+  protected val theoryTaskName = "Theory"
 
   abstract val course: HyperskillCourse
 
-  abstract fun getFirstProblem(): Task
+  abstract fun getFirstProblemsTask(): Task
 
   fun `test navigate to next unavailable on last stage`() {
     val task = course.findTask(stagesLessonName, stage1Name)
     return checkNavigationAction(task, ::NextTaskAction, false)
   }
 
-  fun `test navigate to previous unavailable on first problem`() =
-    checkNavigationAction(getFirstProblem(), ::PreviousTaskAction, false)
+  fun `test navigate to previous unavailable on first problems task`() =
+    checkNavigationAction(getFirstProblemsTask(), ::PreviousTaskAction, false)
 
   protected fun findTopicProblem(lessonName: String, problemName: String): Task {
     return course.getTopicsSection()?.getLesson(lessonName)?.getTask(problemName)
@@ -58,6 +59,10 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
       if (withTopicProblems) {
         section(HYPERSKILL_TOPICS) {
           lesson(topic1LessonName) {
+            theoryTask(theoryTaskName) {
+              taskFile("src/Task.kt", "file text")
+              taskFile("task.html", "file text")
+            }
             eduTask(problem1Name) {
               taskFile("src/Task.kt", "fun foo() {}")
             }
@@ -66,6 +71,10 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
             }
           }
           lesson(topic2LessonName) {
+            theoryTask(theoryTaskName) {
+              taskFile("src/Task.kt", "file text")
+              taskFile("task.html", "file text")
+            }
             eduTask(problem1Name) {
               taskFile("src/Task.kt", "fun foo() {}")
             }

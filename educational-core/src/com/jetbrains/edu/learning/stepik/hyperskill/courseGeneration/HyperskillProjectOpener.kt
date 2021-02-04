@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
-import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -27,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillProjectOpener {
@@ -268,7 +268,7 @@ object HyperskillProjectOpener {
     val existingTasksIds = topicLesson.items.map { it.id }
 
     val tasks = connector
-      .getTasks(this, topicLesson, stepSources.filter { it.block!!.name == Step.CODE && it.id !in existingTasksIds })
+      .getTasks(this, topicLesson, stepSources.filter { it.block!!.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds })
     tasks.forEach(topicLesson::addTask)
     return Ok(tasks)
   }
