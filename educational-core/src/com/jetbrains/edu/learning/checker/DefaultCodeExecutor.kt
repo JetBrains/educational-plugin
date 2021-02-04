@@ -68,14 +68,7 @@ open class DefaultCodeExecutor : CodeExecutor {
       }
     }
 
-    val output = ArrayList<String>()
-    val processListener = object : ProcessAdapter() {
-      override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        if (outputType == ProcessOutputTypes.STDOUT) {
-          output.add(event.text)
-        }
-      }
-    }
+    val processListener = StdoutProcessListener()
 
     if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, executionListener, processListener))
       return logAndQuit(EduCoreBundle.message("error.execution.failed"))
@@ -83,7 +76,7 @@ open class DefaultCodeExecutor : CodeExecutor {
     if (indicator.isCanceled) return logAndQuit(EduCoreBundle.message("error.execution.canceled"))
     if (processNotStarted) return logAndQuit(EduCoreBundle.message("error.execution.failed"))
 
-    var outputString = output.joinToString("")
+    var outputString = processListener.output.joinToString("")
     if (outputString.isEmpty()) {
       outputString = "<no output>"
     }
