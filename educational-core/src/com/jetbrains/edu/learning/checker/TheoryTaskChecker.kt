@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfigurati
 import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.isUnitTestMode
 
 open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
 
@@ -18,12 +19,19 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
       return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
-    if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator)) {
+    val processListener = if (isUnitTestMode) StdoutProcessListener() else null
+
+    if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, processListener = processListener)) {
       LOG.warn("Execution failed")
       return CheckResult.failedToCheck
     }
 
-    return CheckResult.SOLVED
+    return if (isUnitTestMode) {
+      CheckResult(CheckStatus.Solved, processListener?.output.orEmpty().joinToString(""))
+    }
+    else {
+      CheckResult.SOLVED
+    }
   }
 
   protected open fun getRunConfiguration(): RunnerAndConfigurationSettings? {
