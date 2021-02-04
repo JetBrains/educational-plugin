@@ -12,6 +12,11 @@
               topic="com.intellij.ide.AppLifecycleListener"/>
   </applicationListeners>
 
+  <projectListeners>
+    <listener class="com.jetbrains.edu.learning.checker.EduRunManagerListener"
+              topic="com.intellij.execution.RunManagerListener"/>
+  </projectListeners>
+
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.configurator"
                     beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint"
