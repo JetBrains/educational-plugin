@@ -122,6 +122,6 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
         EduUtils.execCancelable {
           StepikCourseConnector.getSupportedLanguages(course)
         }
-      }, "Getting Available Languages", true, null)
+      }, EduCoreBundle.message("stepik.getting.languages"), true, null)
   }
 }
