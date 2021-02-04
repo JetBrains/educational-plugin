@@ -10,6 +10,7 @@ import org.junit.Assert.assertFalse
 class CheckActionListener : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    println("Task ${task.name} has been checked")
     checkResultVerifier(task, result)
     checkFeedbackEqualsWithCheckResult(task, result)
     val messageProducer = expectedMessageProducer ?: return
