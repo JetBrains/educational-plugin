@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
+import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
@@ -86,6 +87,16 @@ object CheckUtils {
     return runReadAction {
       val psiFile = taskFile.getDocument(project)?.toPsiFile(project) ?: return@runReadAction null
       ConfigurationContext(psiFile).configuration
+    }
+  }
+
+  fun getCustomRunConfiguration(project: Project, task: Task): RunnerAndConfigurationSettings? {
+    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
+    val runConfigurationDir = taskDir.findChild(EduNames.RUN_CONFIGURATION_DIR) ?: return null
+    val runConfigurationFile = runConfigurationDir.children.firstOrNull { it.name.endsWith(".run.xml") } ?: return null
+    val path = runConfigurationFile.path
+    return RunManager.getInstance(project).allSettings.find {
+      it.pathIfStoredInArbitraryFileInProject == path
     }
   }
 
