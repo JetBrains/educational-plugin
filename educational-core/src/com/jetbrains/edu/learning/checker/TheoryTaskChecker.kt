@@ -26,7 +26,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     return CheckResult.SOLVED
   }
 
-  private fun getRunConfiguration(): RunnerAndConfigurationSettings? {
+  protected open fun getRunConfiguration(): RunnerAndConfigurationSettings? {
     return getCustomRunConfiguration(project, task) ?: createDefaultRunConfiguration()
   }
 
