@@ -46,20 +46,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
   public void init() {
     myLastTimeChecked = System.currentTimeMillis();
     myShownCourseIds = Collections.emptySet();
-    resetJavaUiLibrary();
-  }
-
-  /**
-   * EDU-4061: get rid of this after 2020.1.4 release
-   */
-  private void resetJavaUiLibrary() {
-    if (isUnitTestMode) return;
-    PropertiesComponent propertyComponent = PropertiesComponent.getInstance();
-    if (!propertyComponent.getBoolean(RESET_JAVA_UI_LIBRARY)) {
-      javaUiLibrary = null;
-      javaUiLibrary = initialJavaUiLibrary();
-      propertyComponent.setValue(RESET_JAVA_UI_LIBRARY, true);
-    }
   }
 
   public long getLastTimeChecked() {
@@ -105,6 +91,8 @@ public class EduSettings implements PersistentStateComponent<Element> {
     }
     catch (StudyUnrecognizedFormatException ignored) {
     }
+
+    resetJavaUiLibrary();
   }
 
   private void deserialize(@NotNull Element state) throws StudyUnrecognizedFormatException {
@@ -160,6 +148,19 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   public void setJavaUiLibrary(@NotNull JavaUILibrary javaUiLibrary) {
     this.javaUiLibrary = javaUiLibrary;
+  }
+
+  /**
+   * EDU-4061: get rid of this after 2020.1.4 release
+   */
+  private void resetJavaUiLibrary() {
+    if (isUnitTestMode) return;
+    PropertiesComponent propertyComponent = PropertiesComponent.getInstance();
+    if (!propertyComponent.getBoolean(RESET_JAVA_UI_LIBRARY)) {
+      javaUiLibrary = null;
+      javaUiLibrary = initialJavaUiLibrary();
+      propertyComponent.setValue(RESET_JAVA_UI_LIBRARY, true);
+    }
   }
 
   public static boolean isLoggedIn() {
