@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -30,8 +31,20 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     MarketplaceSettings.INSTANCE.account = null
   }
 
+  fun `test course with author`() {
+    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "some text")
+    }
+    course.setMarketplaceAuthorsAsString(listOf("EduTools Dev", "EduTools QA", "EduTools"))
+    doTest()
+  }
+
   fun `test vendor with email`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}
+    val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com" }
     courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}

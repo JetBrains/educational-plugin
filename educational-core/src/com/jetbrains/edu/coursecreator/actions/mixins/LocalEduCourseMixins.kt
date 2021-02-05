@@ -58,6 +58,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -83,9 +84,9 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(AUTHORS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  @JsonSerialize(contentConverter = StepikUserInfoToString::class)
+  @JsonSerialize(contentConverter = UserInfoToString::class)
   @JsonDeserialize(contentConverter = StepikUserInfoFromString::class)
-  private var authors: MutableList<StepikUserInfo> = ArrayList()
+  private var authors: MutableList<UserInfo> = ArrayList()
 
   @JsonProperty(SUMMARY)
   private lateinit var description: String
@@ -125,8 +126,8 @@ abstract class CourseraCourseMixin : LocalEduCourseMixin() {
   var submitManually = false
 }
 
-private class StepikUserInfoToString : StdConverter<StepikUserInfo, String?>() {
-  override fun convert(value: StepikUserInfo?): String? = value?.getFullName()
+private class UserInfoToString : StdConverter<UserInfo, String?>() {
+  override fun convert(value: UserInfo?): String? = value?.getFullName()
 }
 
 private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>() {
