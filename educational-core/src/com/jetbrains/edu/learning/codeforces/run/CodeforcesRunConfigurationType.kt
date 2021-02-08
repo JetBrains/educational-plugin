@@ -24,6 +24,7 @@ class CodeforcesRunConfigurationType : ConfigurationType {
     @NonNls
     const val CONFIGURATION_ID = "Codeforces"
 
+    @JvmStatic
     fun getInstance(): CodeforcesRunConfigurationType {
       return runConfigurationType()
     }
