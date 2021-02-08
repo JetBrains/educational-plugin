@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PermanentInstallationID
@@ -29,7 +29,7 @@ object EduLaunchesReporter {
       return
     }
     val properties = PropertiesComponent.getInstance()
-    val lastUpdate = properties.getOrInitLong(LAST_UPDATE, 0L)
+    val lastUpdate = properties.getLong(LAST_UPDATE, 0L)
     val shouldUpdate = lastUpdate == 0L || System.currentTimeMillis() - lastUpdate > TimeUnit.DAYS.toMillis(1)
     if (shouldUpdate) {
       properties.setValue(LAST_UPDATE, System.currentTimeMillis().toString())
@@ -59,7 +59,7 @@ object EduLaunchesReporter {
   private fun getUpdateUrl(course: Course): String {
     val applicationInfo = ApplicationInfoEx.getInstanceEx()
     val buildNumber = applicationInfo.build.asString()
-    val plugin = PluginManager.getPlugin(PluginId.getId(PLUGIN_ID))!!
+    val plugin = PluginManagerCore.getPlugin(PluginId.getId(PLUGIN_ID))!!
     val pluginId = plugin.pluginId.idString
     val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8.name())
     val uid = PermanentInstallationID.get()
