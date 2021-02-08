@@ -155,7 +155,7 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myMarketplaceCourseVersion: Int? = 1
+  private var myMarketplaceCourseVersion: Int? = 0
 }
 
 /**
@@ -299,6 +299,9 @@ class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
     existingItem.marketplaceId = deserializedItem.marketplaceId
+    if (existingItem.courseMode == EduNames.STUDY) {
+      existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
+    }
   }
 }
 

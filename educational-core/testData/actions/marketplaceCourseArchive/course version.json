@@ -1,5 +1,5 @@
 {
-  "course_version" : 0,
+  "course_version" : 5,
   "summary" : "Test Course Description",
   "title" : "Test Course",
   "programming_language" : "FakeGradleBasedLanguage",
@@ -28,17 +28,12 @@
       "type" : "lesson"
     }
   ],
-  "authors" : [
-    "EduTools Dev",
-    "EduTools QA",
-    "EduTools"
-  ],
   "additional_files" : [
     {
       "name" : "test.txt",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : "HIBToLT0q9Ae/3l5tay/+g=="
+      "text" : "AEHDfG7ecSAGGEP1w6a75g=="
     },
     {
       "name" : "build.gradle",

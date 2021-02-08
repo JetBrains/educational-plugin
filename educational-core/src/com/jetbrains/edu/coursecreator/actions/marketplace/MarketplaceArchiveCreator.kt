@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String = getAesKey())
@@ -41,6 +41,9 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
     if (!isUnitTestMode) {
       course.generateCourseItemsIds()
     }
+    if (course.marketplaceCourseVersion == 0) {
+      course.marketplaceCourseVersion = 1
+    }
 
     if (course.vendor == null) {
       if (!addVendor(course)) return EduCoreBundle.message("marketplace.vendor.empty")
@@ -58,10 +61,7 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
 
   fun createArchiveWithRemoteCourseVersion(): String? {
     if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
-    val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(course.marketplaceId)
-    if (updateInfo != null) {
-      course.incrementMarketplaceCourseVersion(updateInfo.version)
-    }
+    course.setRemoteMarketplaceCourseVersion()
     FileDocumentManager.getInstance().saveAllDocuments()
     return ApplicationManager.getApplication().runWriteAction<String>(this)
   }

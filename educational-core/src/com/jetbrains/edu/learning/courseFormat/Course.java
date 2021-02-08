@@ -55,7 +55,7 @@ public abstract class Course extends LessonContainer {
   // Marketplace:
   private boolean isMarketplace = false;
   private Vendor myVendor;
-  private int myMarketplaceCourseVersion = 1;
+  private int myMarketplaceCourseVersion = 0;
   private int myMarketplaceId = 0;
   @Nullable private String organization;
 
