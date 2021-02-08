@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.withRegistryKeyOff
 
 class CodeforcesTaskChecker(
@@ -60,9 +61,12 @@ class CodeforcesTaskChecker(
     /**
      * Message will be added in
      * @see com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel.createCodeforcesSuccessMessagePanel
-     * It's better not to reuse hyperlinkListener mechanism
+     * It's better not to reuse hyperlinkListener mechanism.
+     *
+     * We need to check the status of Codeforces task in checker tests, e.g.
+     * @see com.jetbrains.edu.python.slow.checker.PyCodeforcesCheckerTest and similar
      */
-    return CheckResult.UNCHECKED
+    return if (isUnitTestMode) CheckResult.SOLVED else CheckResult.UNCHECKED
   }
 
   companion object {
