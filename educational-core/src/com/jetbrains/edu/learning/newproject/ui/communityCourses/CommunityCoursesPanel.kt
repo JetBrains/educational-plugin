@@ -36,7 +36,12 @@ class CommunityCoursesPanel(
     super.updateCoursesAfterLogin(preserveSelection)
   }
 
-  override fun createCourseCard(course: Course): CourseCardComponent {
-    return CommunityCourseCard(course)
+  override fun createCoursesListPanel() = CommunityCoursesListPanel()
+
+  inner class CommunityCoursesListPanel : CoursesListWithResetFilters() {
+
+    override fun createCardForNewCourse(course: Course): CourseCardComponent {
+      return EduCourseCard(course)
+    }
   }
 }

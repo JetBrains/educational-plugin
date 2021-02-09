@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.labels.LinkLabel
@@ -173,9 +172,5 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
       border = JBUI.Borders.emptyBottom(20)
       add(label)
     }
-  }
-
-  companion object {
-    val IS_FROM_WELCOME_SCREEN = KeyWithDefaultValue.create("IS_FROM_MY_WELCOME_SCREEN", false)
   }
 }

@@ -2,11 +2,14 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import CoursesProvidersSidePanel
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.JBCardLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -19,9 +22,9 @@ import javax.swing.tree.DefaultMutableTreeNode
 private const val PANEL_WIDTH = 1050
 private const val PANEL_HEIGHT = 750
 
-class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: Disposable) : JPanel() {
+class CoursesPanelWithTabs(private val scope: CoroutineScope, private val disposable: Disposable) : JPanel() {
   private val coursesTab: CoursesTab
-  private val myCoursesProvider: MyCoursesProvider = MyCoursesProvider(disposable)
+  private val myCoursesProvider: MyCoursesProvider = MyCoursesProvider()
   private val sidePanel: CoursesProvidersSidePanel
 
   val languageSettings: LanguageSettings<*>? get() = coursesTab.languageSettings()
@@ -78,6 +81,14 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, disposable: Dispos
 
       addPanel(myCoursesProvider)
       showPanel(providers.first().name)
+      val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
+      connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
+        override fun courseDeleted(course: Course) {
+          panels.forEach {
+            it.updateModelAfterCourseDeletedFromStorage()
+          }
+        }
+      })
     }
 
     private fun addPanel(coursesPlatformProvider: CoursesPlatformProvider) {

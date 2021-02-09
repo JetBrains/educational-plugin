@@ -24,14 +24,18 @@ class JetBrainsAcademyCoursesPanel(
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
   }
 
-  override fun createCourseCard(course: Course): CourseCardComponent {
-    return JetBrainsAcademyCourseCard(course)
+  override fun createCoursesListPanel() = JetBrainsAcademyCoursesListPanel()
+
+  inner class JetBrainsAcademyCoursesListPanel : CoursesListWithResetFilters() {
+    override fun createCardForNewCourse(course: Course): CourseCardComponent {
+      return JetBrainsAcademyCourseCard(course)
+    }
   }
 
   private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),
                                                               EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
                                                               EduCoreBundle.message("course.dialog.log.in.to", EduNames.JBA),
-                                                              { handleLogin() })  {
+                                                              { handleLogin() }) {
     override val beforeLinkForeground: Color
       get() = EduColors.warningTextForeground
   }

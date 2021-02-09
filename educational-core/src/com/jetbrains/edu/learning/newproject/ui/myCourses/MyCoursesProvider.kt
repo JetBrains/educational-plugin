@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
@@ -16,12 +15,12 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
-class MyCoursesProvider(private val disposable: Disposable) : CoursesPlatformProvider() {
+class MyCoursesProvider : CoursesPlatformProvider() {
   override val name: String get() = EduCoreBundle.message("course.dialog.my.courses")
 
   override val icon: Icon? = null
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = MyCoursesPanel(this, scope, disposable)
+  override fun createPanel(scope: CoroutineScope): CoursesPanel = MyCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<CoursesGroup> {
     return CoursesStorage.getInstance().coursesInGroups()

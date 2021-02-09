@@ -45,16 +45,20 @@ class GroupsComponent(
     courseGroupModel.setSelection(newCourseToSelect)
   }
 
+  fun removeSelection() {
+    courseGroupModel.removeSelection()
+  }
+
   fun initialSelection() {
     courseGroupModel.initialSelection()
   }
 
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
-    courseGroupModel.setSelectionListener(processSelectionChanged)
+    courseGroupModel.onSelection = processSelectionChanged
   }
 
   fun setClickListener(onClick: (Course) -> Boolean) {
-    courseGroupModel.setClickListener(onClick)
+    courseGroupModel.onClick = onClick
   }
 
 }

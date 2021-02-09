@@ -11,7 +11,9 @@ import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
 import com.intellij.openapi.actionSystem.impl.Win10ActionButtonLook
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.OnePixelDivider
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
@@ -19,16 +21,19 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.OpenCourseButton
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.openCourse
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.showNoCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel.Companion.IS_FROM_WELCOME_SCREEN
 import java.awt.BorderLayout
 import java.awt.Graphics
 import java.awt.event.ActionListener
@@ -40,20 +45,24 @@ import javax.swing.JPanel
 private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
-  private val coursesListPanel = CoursesListPanel({ MyCourseCardComponent(it) }) {
-    coursesFilterComponent.resetSearchField()
-    updateModel(createCoursesGroup())
-  }
-
+  private val coursesListPanel = MyCoursesOnWelcomeScreenList()
   private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ createCoursesGroup() },
                                                                                       { group -> updateModel(group) })
 
   init {
     background = MAIN_BG_COLOR
-
+    val coursesStorage = CoursesStorage.getInstance()
     coursesListPanel.border = JBUI.Borders.emptyTop(8)
-    coursesListPanel.setClickListener {
-      OpenCourseButton.openCourse(it, this)
+    coursesListPanel.setClickListener { course ->
+      val coursePath = coursesStorage.getCoursePath(course) ?: return@setClickListener true
+      if (!FileUtil.exists(coursePath)) {
+        if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.my.courses.remove.course")) == Messages.CANCEL) {
+          coursesStorage.removeCourseByLocation(coursePath)
+        }
+      }
+      else {
+        course.openCourse()
+      }
       true
     }
     add(coursesListPanel, BorderLayout.CENTER)
@@ -62,14 +71,11 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     add(searchComponent, BorderLayout.NORTH)
 
     updateModel(createCoursesGroup())
+    coursesListPanel.setSelectedValue(null)
   }
 
   private fun createCoursesGroup(): List<CoursesGroup> {
-    val coursesGroups = CoursesStorage.getInstance().coursesInGroups()
-    coursesGroups.flatMap { it.courses }.forEach {
-      it.dataHolder.putUserData(IS_FROM_WELCOME_SCREEN, true)
-    }
-    return coursesGroups
+    return CoursesStorage.getInstance().coursesInGroups()
   }
 
 
@@ -116,6 +122,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
   private fun updateModel(coursesGroup: List<CoursesGroup>) {
     coursesListPanel.updateModel(coursesGroup, null)
+    coursesListPanel.removeSelection()
   }
 
   private fun createMoreActionsButton(): JComponent {
@@ -138,6 +145,17 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
     override fun paintBackground(g: Graphics?, component: JComponent?, state: Int) {
       delegate.paintBackground(g, component, state)
+    }
+  }
+
+  inner class MyCoursesOnWelcomeScreenList : CoursesListPanel() {
+    override fun resetFilters() {
+      coursesFilterComponent.resetSearchField()
+      updateModel(createCoursesGroup())
+    }
+
+    override fun createCourseCard(course: Course): CourseCardComponent {
+      return MyCourseCardComponent(course as CourseMetaInfo)
     }
   }
 }

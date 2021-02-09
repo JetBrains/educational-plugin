@@ -1,20 +1,36 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
 
-class CoursesListPanel(createCourseCard: (Course) -> CourseCardComponent, resetFilters: () -> Unit) : JPanel(BorderLayout()) {
-  private val groupsComponent: GroupsComponent = GroupsComponent(createCourseCard, resetFilters)
+abstract class CoursesListPanel : JPanel(BorderLayout()) {
+  private val groupsComponent: GroupsComponent = GroupsComponent(::createCourseCard, ::resetFilters)
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {
     background = MAIN_BG_COLOR
-    add(groupsComponent, BorderLayout.CENTER)
+    this.add(groupsComponent, BorderLayout.CENTER)
   }
+
+  protected open fun createCourseCard(course: Course): CourseCardComponent {
+    val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
+    return if (courseMetaInfo != null) {
+      MyCourseCardComponent(courseMetaInfo)
+    }
+    else {
+      createCardForNewCourse(course)
+    }
+  }
+
+  protected open fun createCardForNewCourse(course: Course): CourseCardComponent = CourseCardComponent(course)
+
+  protected abstract fun resetFilters()
 
   fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?) {
     clear()
@@ -60,6 +76,10 @@ class CoursesListPanel(createCourseCard: (Course) -> CourseCardComponent, resetF
 
   fun setClickListener(onClick: (Course) -> Boolean) {
     groupsComponent.setClickListener(onClick)
+  }
+
+  fun removeSelection() {
+    groupsComponent.removeSelection()
   }
 
 }

@@ -10,8 +10,10 @@ import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.communityCourses.EduCourseCard
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -69,6 +71,14 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
         busConnection!!.disconnect()
         busConnection = null
       }
+    }
+  }
+
+  override fun createCoursesListPanel() = StepikCoursesListPanel()
+
+  inner class StepikCoursesListPanel : CoursesListWithResetFilters() {
+    override fun createCardForNewCourse(course: Course): CourseCardComponent {
+      return EduCourseCard(course)
     }
   }
 

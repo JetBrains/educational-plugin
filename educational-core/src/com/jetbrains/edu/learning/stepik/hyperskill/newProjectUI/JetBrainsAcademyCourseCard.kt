@@ -16,7 +16,7 @@ private const val INFO_VGAP = 5
 
 class JetBrainsAcademyCourseCard(course: Course) : CourseCardComponent(course) {
 
-  override fun createCourseInfoComponent(): JPanel {
+  override fun createBottomComponent(): JPanel {
     return AcademyCourseInfoComponent()
   }
 }

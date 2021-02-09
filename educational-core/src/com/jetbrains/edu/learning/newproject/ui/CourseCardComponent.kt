@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.Component
 import java.awt.Font
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -26,31 +27,54 @@ val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground", JBCol
 
 open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
+  private val courseNameInfoComponent: JPanel
+  lateinit var actionComponent: JComponent
+  protected lateinit var baseComponent: JComponent
 
   init {
     border = JBUI.Borders.empty(CARD_GAP)
+    preferredSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
+
     logoComponent.isOpaque = false
     logoComponent.icon = course.getScaledLogo(JBUI.scale(LOGO_SIZE), this)
     logoComponent.border = JBUI.Borders.emptyRight(CARD_GAP)
-
     this.add(logoComponent, BorderLayout.LINE_START)
-    this.add(createCourseNameInfoComponent(), BorderLayout.CENTER)
 
-    preferredSize = JBUI.size(CARD_WIDTH, CARD_HEIGHT)
+    courseNameInfoComponent = this.createMainComponent()
+    this.add(courseNameInfoComponent, BorderLayout.CENTER)
 
     updateColors(false)
   }
 
-  fun createCourseNameInfoComponent(): JPanel {
+  open fun getClickComponent(): Component {
+    return courseNameInfoComponent
+  }
+
+  private fun createMainComponent(): JPanel {
+    baseComponent = NonOpaquePanel()
+    baseComponent.add(CourseNameComponent(course), BorderLayout.NORTH)
+    baseComponent.add(this.createBottomComponent(), BorderLayout.SOUTH)
+
     val panel = NonOpaquePanel()
-    panel.add(CourseNameComponent(course), BorderLayout.NORTH)
-    panel.add(this.createCourseInfoComponent(), BorderLayout.SOUTH)
+    panel.add(baseComponent, BorderLayout.CENTER)
+
+    actionComponent = createSideActionComponent()
+    panel.add(actionComponent, BorderLayout.LINE_END)
 
     return panel
   }
 
-  open fun createCourseInfoComponent(): JPanel {
+  protected open fun createSideActionComponent(): JComponent {
     return JPanel()
+  }
+
+  protected open fun createBottomComponent(): JComponent {
+    return JPanel()
+  }
+
+  protected fun setActionComponentVisible(visible: Boolean) {
+    actionComponent.isVisible = visible
+    actionComponent.isEnabled = visible
   }
 
   fun updateColors(isSelected: Boolean) {
@@ -69,9 +93,13 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
     repaint()
   }
 
-  fun setHover() {
-    updateColors(HOVER_COLOR)
+  open fun onHover(isSelected: Boolean) {
+    if (!isSelected) {
+      updateColors(HOVER_COLOR)
+    }
   }
+
+  open fun onHoverEnded() {}
 
   private fun scrollToVisible() {
     val parent = parent as JComponent
@@ -84,11 +112,13 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
 }
 
 private class CourseNameComponent(course: Course) : JPanel(BorderLayout()) {
-  private val nameLabel: JLabel = JLabel()
 
   init {
-    nameLabel.text = course.name
-    nameLabel.font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
+    val nameLabel = JLabel().apply {
+      text = course.name
+      font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.fontSize)
+    }
+
     add(nameLabel, BorderLayout.CENTER)
   }
 }

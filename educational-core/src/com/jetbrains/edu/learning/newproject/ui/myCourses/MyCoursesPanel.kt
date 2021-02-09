@@ -1,16 +1,13 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
 import com.intellij.ide.DataManager
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -22,22 +19,7 @@ import javax.swing.JPanel
 
 private const val ACTION_PLACE = "MyCoursesPanel"
 
-class MyCoursesPanel(
-  myCoursesProvider: CoursesPlatformProvider,
-  scope: CoroutineScope,
-  disposable: Disposable
-) : CoursesPanel(myCoursesProvider, scope) {
-
-  init {
-    val connection = ApplicationManager.getApplication().messageBus.connect(disposable)
-    connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
-      override fun courseDeleted(course: Course) {
-        coursesGroups.clear()
-        coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
-        onTabSelection()
-      }
-    })
-  }
+class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(myCoursesProvider, scope) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), ImportLocalCourseAction())
@@ -64,7 +46,11 @@ class MyCoursesPanel(
     humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
   }
 
-  override fun createCourseCard(course: Course): CourseCardComponent {
-    return MyCourseCardComponent(course)
+  override fun createCoursesListPanel() = MyCoursesList()
+
+  inner class MyCoursesList : CoursesListWithResetFilters() {
+    override fun createCourseCard(course: Course): CourseCardComponent {
+      return MyCourseCardComponent(course as CourseMetaInfo)
+    }
   }
 }

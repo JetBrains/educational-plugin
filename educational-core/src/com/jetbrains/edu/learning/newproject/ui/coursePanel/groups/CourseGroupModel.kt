@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import java.awt.Component
 import java.awt.event.*
+import javax.swing.JComponent
 import javax.swing.SwingUtilities
 import kotlin.math.max
 import kotlin.math.min
@@ -16,75 +17,18 @@ class CourseGroupModel {
   private var hoveredCard: CourseCardComponent? = null
   var selectedCard: CourseCardComponent? = null
 
-  private val mouseHandler: MouseAdapter
-  private val keyListener: KeyListener
+  private val mouseListener: MouseAdapter = HoverMouseHandler()
+  private val clickHandler: MouseAdapter = ClickMouseHandler()
+  private val keyListener: KeyListener = SelectionKeyListener()
 
-  private var selectionListener: () -> Unit = {}
-  private var clickListener: (Course) -> Boolean = { false }
-
-  init {
-    mouseHandler = object : MouseAdapter() {
-      override fun mouseClicked(event: MouseEvent) {
-        if (SwingUtilities.isLeftMouseButton(event)) {
-          val cardComponent = getCourseCard(event) ?: return
-          if (clickListener(cardComponent.course)) {
-            return
-          }
-          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown {
-            IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true)
-          }
-          if (cardComponent == selectedCard) {
-            return
-          }
-          setSelection(cardComponent)
-        }
-      }
-
-      override fun mouseExited(event: MouseEvent) {
-        hoveredCard?.setSelection(false)
-        hoveredCard = null
-      }
-
-      override fun mouseMoved(event: MouseEvent) {
-        val cardComponent = getCourseCard(event)
-        if (cardComponent != selectedCard) {
-          hoveredCard = cardComponent
-          cardComponent?.setHover()
-        }
-      }
-    }
-
-    keyListener = object : KeyAdapter() {
-      override fun keyPressed(event: KeyEvent) {
-        when (event.keyCode) {
-          KeyEvent.VK_HOME, KeyEvent.VK_END -> {
-            if (courseCards.isEmpty()) {
-              return
-            }
-            event.consume()
-            val index = if (event.keyCode == KeyEvent.VK_HOME) 0 else courseCards.size - 1
-            setSelection(courseCards[index])
-          }
-          KeyEvent.VK_UP -> {
-            event.consume()
-            val selectionIndex = getIndex(selectedCard)
-            val index = max(selectionIndex - 1, 0)
-            setSelection(courseCards[index])
-          }
-          KeyEvent.VK_DOWN -> {
-            event.consume()
-            val selectionIndex = getIndex(selectedCard)
-            val index = min(selectionIndex + 1, courseCards.size - 1)
-            setSelection(courseCards[index])
-          }
-        }
-      }
-    }
-  }
+  var onSelection: () -> Unit = {}
+  var onClick: (Course) -> Boolean = { false }
 
   fun addCourseCard(cardComponent: CourseCardComponent) {
     courseCards.add(cardComponent)
-    addListenersRecursively(cardComponent)
+    cardComponent.getClickComponent().addMouseListener(mouseListener)
+    addNavigationListenersRecursively(cardComponent)
+    addClickListenerRecursively(cardComponent, cardComponent.actionComponent)
   }
 
   fun initialSelection() {
@@ -97,7 +41,7 @@ class CourseGroupModel {
     courseCards.clear()
     hoveredCard = null
     selectedCard = null
-    selectionListener()
+    onSelection()
   }
 
   fun setSelection(courseToSelect: Course?) {
@@ -116,7 +60,7 @@ class CourseGroupModel {
       selectedCard = cardComponent
       cardComponent.setSelection(isSelectedOrHover = true, scroll = true)
     }
-    selectionListener()
+    onSelection()
   }
 
   private fun clearSelection() {
@@ -130,16 +74,25 @@ class CourseGroupModel {
     return index
   }
 
-  private fun addListeners(component: Component) {
-    component.addMouseListener(mouseHandler)
-    component.addMouseMotionListener(mouseHandler)
+  private fun addNavigationListeners(component: Component) {
+    component.addMouseListener(mouseListener)
+    component.addMouseMotionListener(mouseListener)
     component.addKeyListener(keyListener)
   }
 
-  private fun addListenersRecursively(component: Component) {
-    addListeners(component)
+  private fun addNavigationListenersRecursively(component: Component) {
+    addNavigationListeners(component)
     for (child in UIUtil.uiChildren(component)) {
-      addListenersRecursively(child)
+      addNavigationListenersRecursively(child)
+    }
+  }
+
+  private fun addClickListenerRecursively(component: Component, nonClickableComponent: JComponent) {
+    component.addMouseListener(clickHandler)
+    for (child in UIUtil.uiChildren(component)) {
+      if (child != nonClickableComponent) {
+        addClickListenerRecursively(child, nonClickableComponent)
+      }
     }
   }
 
@@ -147,12 +100,76 @@ class CourseGroupModel {
     return ComponentUtil.getParentOfType(CourseCardComponent::class.java, event.component)
   }
 
-  fun setSelectionListener(processSelectionChanged: () -> Unit) {
-    selectionListener = processSelectionChanged
+  fun removeSelection() {
+    selectedCard?.setSelection(false)
+    selectedCard = null
   }
 
-  fun setClickListener(onClick: (Course) -> Boolean) {
-    clickListener = onClick
+
+  private inner class ClickMouseHandler : MouseAdapter() {
+    override fun mouseClicked(event: MouseEvent) {
+      if (SwingUtilities.isLeftMouseButton(event)) {
+        val cardComponent = getCourseCard(event) ?: return
+        if (onClick(cardComponent.course)) {
+          return
+        }
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown {
+          IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true)
+        }
+        if (cardComponent == selectedCard) {
+          return
+        }
+        setSelection(cardComponent)
+      }
+    }
   }
 
+  private inner class HoverMouseHandler : MouseAdapter() {
+
+    override fun mouseExited(event: MouseEvent) {
+      hoveredCard?.setSelection(false)
+      hoveredCard?.onHoverEnded()
+
+      if (hoveredCard == null) {
+        selectedCard?.onHoverEnded()
+      }
+      hoveredCard = null
+    }
+
+    override fun mouseMoved(event: MouseEvent) {
+      val cardComponent = getCourseCard(event)
+      if (cardComponent != selectedCard) {
+        hoveredCard = cardComponent
+      }
+
+      cardComponent?.onHover(cardComponent == selectedCard)
+    }
+  }
+
+  private inner class SelectionKeyListener : KeyAdapter() {
+    override fun keyPressed(event: KeyEvent) {
+      when (event.keyCode) {
+        KeyEvent.VK_HOME, KeyEvent.VK_END -> {
+          if (courseCards.isEmpty()) {
+            return
+          }
+          event.consume()
+          val index = if (event.keyCode == KeyEvent.VK_HOME) 0 else courseCards.size - 1
+          setSelection(courseCards[index])
+        }
+        KeyEvent.VK_UP -> {
+          event.consume()
+          val selectionIndex = getIndex(selectedCard)
+          val index = max(selectionIndex - 1, 0)
+          setSelection(courseCards[index])
+        }
+        KeyEvent.VK_DOWN -> {
+          event.consume()
+          val selectionIndex = getIndex(selectedCard)
+          val index = min(selectionIndex + 1, courseCards.size - 1)
+          setSelection(courseCards[index])
+        }
+      }
+    }
+  }
 }

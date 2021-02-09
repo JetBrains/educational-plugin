@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.plugins.newui.ColorButton
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
@@ -21,19 +20,20 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
-import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabPanel
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
-import java.awt.Component
 import java.awt.event.ActionListener
 
 val MAIN_BG_COLOR: Color
-  get() = JBColor.namedColor("BrowseCourses.background", JBColor(
-    (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })))
+  get() = JBColor.namedColor(
+    "BrowseCourses.background", JBColor(
+      (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })
+    )
+  )
 private val WhiteForeground: Color = JBColor(Color.white, Color(0xBBBBBB))
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("BrowseCourses.Button.installFillForeground", WhiteForeground)
@@ -51,71 +51,56 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
-    ApplicationManager.getApplication().invokeAndWait {
-      openCourse(courseInfo.course, this)
+    invokeLater {
+      val course = courseInfo.course
+      val coursesStorage = CoursesStorage.getInstance()
+      val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeLater
+      if (!FileUtil.exists(coursePath)) {
+        processMissingCourseOpening(course, coursePath)
+        return@invokeLater
+      }
+
+      closeDialog()
+      course.openCourse()
     }
   }
 
-  override fun isVisible(course: Course): Boolean = course.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
-                                                    && course.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
-                                                    && CoursesStorage.getInstance().hasCourse(course)
+  private fun processMissingCourseOpening(course: Course, coursePath: String) {
+    val isFromMyCoursesPage = MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
+    val message = if (isFromMyCoursesPage) {
+      EduCoreBundle.message("course.dialog.my.courses.remove.course")
+    } else {
+      EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
+    }
 
-  companion object {
-    fun openCourse(course: Course, component: Component) {
-      val coursesStorage = CoursesStorage.getInstance()
-      val coursePath = coursesStorage.getCoursePath(course) ?: return
-      if (!FileUtil.exists(coursePath)) {
-        val isFromMyCoursesPage = MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
-        val message = if (isFromMyCoursesPage) {
-          EduCoreBundle.message("course.dialog.my.courses.remove.course")
+    if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
+      CoursesStorage.getInstance().removeCourseByLocation(coursePath)
+      when {
+        isFromMyCoursesPage -> {
+          return
         }
-        else {
-          EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
-        }
-
-        if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
-          coursesStorage.removeCourseByLocation(coursePath)
-          when {
-            isFromMyCoursesPage -> {
-              return
-            }
-            course is HyperskillCourse -> {
-              closeDialog(component)
-              HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
-                Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
-              }
-            }
-            else -> {
-              closeDialog(component)
-              JoinCourseDialog(course).show()
-            }
+        course is HyperskillCourse -> {
+          closeDialog()
+          HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
+            Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
           }
         }
-        return
+        else -> {
+          closeDialog()
+          JoinCourseDialog(course).show()
+        }
       }
-
-      if (!EduWelcomeTabPanel.IS_FROM_WELCOME_SCREEN.getRequired(course.dataHolder)) {
-        closeDialog(component)
-      }
-      val project = ProjectUtil.openProject(coursePath, null, true)
-      ProjectUtil.focusProjectWindow(project, true)
-    }
-
-    private fun closeDialog(component: Component) {
-      val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component) ?: error("Dialog is null")
-      dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
-    }
-
-    private fun showNoCourseDialog(coursePath: String, cancelButtonText: String): Int {
-      return Messages.showOkCancelDialog(null,
-                                         EduCoreBundle.message("course.dialog.course.not.found.text",
-                                                               FileUtil.toSystemDependentName(coursePath)),
-                                         EduCoreBundle.message("course.dialog.course.not.found.title"),
-                                         Messages.getOkButton(),
-                                         cancelButtonText,
-                                         Messages.getErrorIcon())
     }
   }
+
+  private fun closeDialog() {
+    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this) ?: error("Dialog is null")
+    dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
+  }
+
+  override fun isVisible(course: Course): Boolean = course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
+                                                    && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
+                                                    && CoursesStorage.getInstance().hasCourse(course)
 }
 
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
@@ -152,9 +137,9 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(
-    course.dataHolder) &&
-                                           course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
+  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
+                                           && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
+                                           && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
 }
 
 /**

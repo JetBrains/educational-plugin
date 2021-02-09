@@ -43,11 +43,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   protected var coursePanel: CoursePanel = DialogCoursePanel()
 
-  private val coursesListPanel = CoursesListPanel({ createCourseCard(it) }) {
-    coursesFilterComponent.resetSearchField()
-    resetSelection()
-    updateModel(coursesGroups, null, true)
-  }
+  private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
@@ -79,6 +75,10 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
     this.add(this.createNoCoursesPanel(), NO_COURSES)
     showProgressState()
+  }
+
+  fun updateModelAfterCourseDeletedFromStorage() {
+    updateModel(coursesGroups, null, true)
   }
 
   fun hideLoginPanel() = coursesListDecorator.hideLoginPanel()
@@ -162,12 +162,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     programmingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
   }
 
-  protected open fun createCourseCard(course: Course): CourseCardComponent = CourseCardComponent(course)
-
-  private fun resetSelection() {
-    humanLanguagesFilterDropdown.resetSelection()
-    programmingLanguagesFilterDropdown.resetSelection()
-  }
+  protected open fun createCoursesListPanel(): CoursesListPanel = CoursesListWithResetFilters()
 
   open fun processSelectionChanged() {
     val course = selectedCourse
@@ -261,6 +256,20 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   protected open fun isLoginNeeded() = false
+
+  open inner class CoursesListWithResetFilters : CoursesListPanel() {
+
+    override fun resetFilters() {
+      coursesFilterComponent.resetSearchField()
+      resetSelection()
+      updateModel(coursesGroups, null, true)
+    }
+
+    private fun resetSelection() {
+      humanLanguagesFilterDropdown.resetSelection()
+      programmingLanguagesFilterDropdown.resetSelection()
+    }
+  }
 
   private inner class DialogCoursePanel : CoursePanel(true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
