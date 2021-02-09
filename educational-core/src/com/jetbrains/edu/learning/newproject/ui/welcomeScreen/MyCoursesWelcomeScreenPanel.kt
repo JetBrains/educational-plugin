@@ -90,7 +90,6 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
     ApplicationManager.getApplication().messageBus.connect(disposable)
       .subscribe(LafManagerListener.TOPIC, LafManagerListener {
-        UIUtil.setBackgroundRecursively(panel, MAIN_BG_COLOR)
         searchField.removeBorder()
       })
 
