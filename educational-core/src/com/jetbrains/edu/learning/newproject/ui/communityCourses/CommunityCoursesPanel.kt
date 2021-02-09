@@ -12,9 +12,11 @@ import kotlinx.coroutines.withContext
 
 private const val LEARN_COMMUNITY_COURSES = "https://www.jetbrains.com/help/education/learner-start-guide.html"  // TODO: update link
 
-class CommunityCoursesPanel(coursesPlatformProvider: CoursesPlatformProvider,
-                            private val stepikCoursesProvider: StepikCoursesProvider,
-                            scope: CoroutineScope) : CoursesPanel(coursesPlatformProvider, scope) {
+class CommunityCoursesPanel(
+  coursesPlatformProvider: CoursesPlatformProvider,
+  private val stepikCoursesProvider: StepikCoursesProvider,
+  scope: CoroutineScope
+) : CoursesPanel(coursesPlatformProvider, scope) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), CCNewCourseAction())
