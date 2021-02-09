@@ -130,6 +130,15 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     doAddFileTest(fileName) { task -> listOf(fileName `in` task) }
   }
 
+  fun `test add custom run configuration file`() {
+    val filePath = "runConfigurations/CustomRun.run.xml"
+    doAddFileTest(filePath) { task ->
+      listOf((filePath `in` task).withAdditionalCheck {
+        check(!it.isVisible) { "Custom run configuration file should be invisible by default" }
+      })
+    }
+  }
+
   fun `test remove task file`() {
     val filePath = "src/TaskFile.kt"
     doRemoveFileTest("lesson1/task1/$filePath") { course ->

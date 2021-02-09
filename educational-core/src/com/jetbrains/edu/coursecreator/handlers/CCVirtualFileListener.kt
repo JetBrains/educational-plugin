@@ -15,7 +15,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
   override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
     super.taskFileCreated(taskFile, file)
-    if (file.isTestsFile(project)) {
+    if (file.isTestsFile(project) || file.isTaskRunConfigurationFile(project)) {
       taskFile.isVisible = false
     }
   }

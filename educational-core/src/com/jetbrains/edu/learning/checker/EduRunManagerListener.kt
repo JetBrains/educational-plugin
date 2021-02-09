@@ -6,9 +6,8 @@ import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.getTask
+import com.jetbrains.edu.learning.isTaskRunConfigurationFile
 
 /**
  * Sets up correct module for custom task run configuration if needed.
@@ -26,8 +25,7 @@ class EduRunManagerListener(private val project: Project) : RunManagerListener {
     if (configuration.configurationModule.module != null) return
 
     val file = LocalFileSystem.getInstance().findFileByPath(path) ?: return
-    val parent = file.parent ?: return
-    if (parent.name == EduNames.RUN_CONFIGURATION_DIR && parent.parent?.getTask(project) != null) {
+    if (file.isTaskRunConfigurationFile(project)) {
       configuration.setModule(ModuleUtilCore.findModuleForFile(file, project))
     }
   }

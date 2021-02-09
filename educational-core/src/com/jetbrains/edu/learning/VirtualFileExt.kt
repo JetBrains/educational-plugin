@@ -185,6 +185,12 @@ fun VirtualFile.isTestsFile(project: Project): Boolean {
   return configurator.isTestFile(task, path)
 }
 
+fun VirtualFile.isTaskRunConfigurationFile(project: Project): Boolean {
+  if (isDirectory) return false
+  val parent = parent ?: return false
+  return parent.name == EduNames.RUN_CONFIGURATION_DIR && parent.parent?.getTask(project) != null
+}
+
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {
   val task = getContainingTask(project)
   return task?.getTaskFile(pathRelativeToTask(project))
