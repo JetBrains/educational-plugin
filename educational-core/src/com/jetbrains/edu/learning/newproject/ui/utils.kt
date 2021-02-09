@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.HyperlinkLabel
+import com.intellij.ui.JBColor
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduBrowser
@@ -22,10 +23,12 @@ import kotlinx.css.properties.lh
 import kotlinx.css.pt
 import kotlinx.css.px
 import org.jetbrains.annotations.NonNls
+import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
 import javax.swing.Icon
 import javax.swing.JPanel
+import javax.swing.UIManager
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
 @NonNls
@@ -128,3 +131,5 @@ fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel 
 
   return hyperlinkPanel
 }
+
+fun getColorFromScheme(colorId: String, default: Color) = JBColor { UIManager.getColor(colorId) ?: default }
