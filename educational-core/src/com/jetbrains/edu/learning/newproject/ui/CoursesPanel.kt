@@ -142,11 +142,9 @@ abstract class CoursesPanel(
     val panel = JBPanelWithEmptyText()
     val text = panel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
-    text.appendSecondaryText(
-      EduCoreBundle.message("help.use.guide1", EduNames.NO_COURSES_URL) + " ",
-      SimpleTextAttributes.GRAYED_ATTRIBUTES, null
-    )
-    text.appendSecondaryText(EduCoreBundle.message("help.use.guide2", EduNames.NO_COURSES_URL),
+    text.appendSecondaryText(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+    @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
+    text.appendSecondaryText(EduCoreBundle.message("help.use.guide2"),
                              SimpleTextAttributes.LINK_ATTRIBUTES,
                              ActionListener { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) })
     return panel

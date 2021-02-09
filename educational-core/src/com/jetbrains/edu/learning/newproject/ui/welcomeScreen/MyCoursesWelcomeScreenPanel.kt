@@ -114,7 +114,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
   private fun createMoreActionsButton(): JComponent {
     val moreActionGroup = DefaultActionGroup("", true)
-    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course").capitalize()),
+    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")),
                            ImportLocalCourseAction(),
                            StartCodeforcesContestAction())
 

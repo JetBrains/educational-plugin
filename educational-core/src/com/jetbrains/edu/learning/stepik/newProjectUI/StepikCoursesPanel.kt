@@ -85,7 +85,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     private fun showLogInDialog() {
       val result = Messages.showOkCancelDialog(
         EduCoreBundle.message("stepik.auth.required.message", StepikNames.STEPIK),
-        EduCoreBundle.message("course.dialog.log.in.to", StepikNames.STEPIK),
+        EduCoreBundle.message("course.dialog.log.in.to.title", StepikNames.STEPIK),
         EduCoreBundle.message("stepik.log.in.dialog.ok"),
         EduCoreBundle.message("stepik.log.in.dialog.cancel"),
         null

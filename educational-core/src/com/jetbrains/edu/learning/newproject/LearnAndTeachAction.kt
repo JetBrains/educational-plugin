@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.isLearnAndTeachVisible
 import icons.EducationalCoreIcons
 
@@ -22,7 +23,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
   }
 
   override fun getTextForEmpty(): String {
-    return "no actions available"
+    return EduCoreBundle.message("course.dialog.no.actions.available")
   }
 
   override fun update(e: AnActionEvent) {
