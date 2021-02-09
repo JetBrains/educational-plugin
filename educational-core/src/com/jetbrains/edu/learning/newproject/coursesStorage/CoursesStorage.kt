@@ -86,7 +86,7 @@ class CourseMetaInfo : Course {
   var programmingLanguageVersion: String? = null
 
   constructor() : super() {
-    putUserData(IS_FROM_MY_COURSES, true)
+    dataHolder.putUserData(IS_FROM_MY_COURSES, true)
   }
 
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {

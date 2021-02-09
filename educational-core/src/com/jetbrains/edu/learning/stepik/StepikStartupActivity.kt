@@ -96,7 +96,7 @@ class StepikStartupActivity : StartupActivity {
   }
 
   private fun selectStep(project: Project, course: Course) {
-    val stepId = course.getUserData(STEP_ID)
+    val stepId = course.dataHolder.getUserData(STEP_ID)
     if (stepId != null) {
       EduUtils.navigateToStep(project, course, stepId)
     }

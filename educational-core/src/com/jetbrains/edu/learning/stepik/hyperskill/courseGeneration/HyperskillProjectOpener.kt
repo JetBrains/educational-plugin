@@ -46,7 +46,7 @@ object HyperskillProjectOpener {
       is HyperskillOpenStepRequest -> {
         val stepId = request.stepId
         hyperskillCourse.addProblemTaskWithFiles(project, stepId)
-        hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
+        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         runInEdt {
           requestFocus()
           EduUtils.navigateToStep(project, hyperskillCourse, stepId)
@@ -67,7 +67,7 @@ object HyperskillProjectOpener {
           course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
           synchronizeProjectOnStageOpening(project, hyperskillCourse, projectLesson.taskList)
         }
-        hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
+        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         runInEdt { openSelectedStage(hyperskillCourse, project) }
       }
     }
@@ -165,12 +165,12 @@ object HyperskillProjectOpener {
       when (request) {
         is HyperskillOpenStepRequest -> {
           hyperskillCourse.addProblemTask(request.stepId)
-          hyperskillCourse.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
+          hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
         }
         is HyperskillOpenStageRequest -> {
           indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
           HyperskillConnector.getInstance().loadStages(hyperskillCourse)
-          hyperskillCourse.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
+          hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
         }
       }
       Ok(hyperskillCourse)

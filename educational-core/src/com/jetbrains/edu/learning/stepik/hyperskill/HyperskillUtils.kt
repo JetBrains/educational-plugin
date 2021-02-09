@@ -9,8 +9,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -59,15 +57,15 @@ fun openSelectedStage(course: Course, project: Project) {
 }
 
 private fun computeSelectedStage(course: HyperskillCourse): Int? {
-  val stageId = course.getUserData(HYPERSKILL_SELECTED_STAGE)
+  val stageId = course.dataHolder.getUserData(HYPERSKILL_SELECTED_STAGE)
   if (stageId != null) {
-    course.putUserData(HYPERSKILL_SELECTED_STAGE, null) // we may want to select something other in the same project
+    course.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, null) // we may want to select something other in the same project
     return stageId
   }
   // do not switch selected stage if a user opened only a single problem
-  val stepId = course.getUserData(HYPERSKILL_SELECTED_PROBLEM)
+  val stepId = course.dataHolder.getUserData(HYPERSKILL_SELECTED_PROBLEM)
   if (stepId != null) {
-    course.putUserData(HYPERSKILL_SELECTED_PROBLEM, null) // we may want to select something other in the same project
+    course.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, null) // we may want to select something other in the same project
     return null
   }
   val projectLesson = course.getProjectLesson() ?: return null

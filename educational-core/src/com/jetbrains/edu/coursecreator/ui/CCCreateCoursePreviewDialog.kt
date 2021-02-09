@@ -44,7 +44,7 @@ class CCCreateCoursePreviewDialog(
     myPanel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     val courseCopy = course.copy().apply {
-      putUserData(IS_COURSE_PREVIEW_KEY, true)
+      dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
     }
     myPanel.bindCourse(courseCopy)
     init()

@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +22,18 @@ import java.util.Date;
  * @see com.jetbrains.edu.learning.courseFormat.tasks.Task
  * @see StudyItemType
  */
-public abstract class StudyItem extends UserDataHolderBase {
+public abstract class StudyItem {
   // from 1 to number of items
   private int myIndex = -1;
   private String myName;
   protected int myId;
   private Date myUpdateDate = new Date(0);
+  private final UserDataHolder myDataHolder = new UserDataHolderBase();
+
+  @Transient
+  public UserDataHolder getDataHolder() {
+    return myDataHolder;
+  }
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
   // but original non unique name is displayed

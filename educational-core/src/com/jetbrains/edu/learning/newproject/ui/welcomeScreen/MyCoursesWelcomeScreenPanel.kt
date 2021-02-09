@@ -61,7 +61,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
   private fun createCoursesGroup(): List<CoursesGroup> {
     val coursesGroups = CoursesStorage.getInstance().coursesInGroups()
     coursesGroups.flatMap { it.courses }.forEach {
-      it.putUserData(IS_FROM_WELCOME_SCREEN, true)
+      it.dataHolder.putUserData(IS_FROM_WELCOME_SCREEN, true)
     }
     return coursesGroups
   }

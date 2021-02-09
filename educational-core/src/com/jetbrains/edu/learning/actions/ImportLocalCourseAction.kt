@@ -52,7 +52,7 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
             )
             if (result == Messages.CANCEL) {
               EduCounterUsageCollector.importCourseArchive()
-              course.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
+              course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
               closeDialog(component)
               JoinCourseDialog(course).show()
             }

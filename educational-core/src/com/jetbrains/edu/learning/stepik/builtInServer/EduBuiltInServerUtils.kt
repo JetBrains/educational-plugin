@@ -102,7 +102,7 @@ object EduBuiltInServerUtils {
   @JvmStatic
   fun openRecentEduCourse(courseId: Int, stepId: Int): Boolean {
     val course = openRecentProject { it is EduCourse && it.isRemote && it.getId() == courseId }?.second ?: return false
-    course.putUserData(STEP_ID, stepId)
+    course.dataHolder.putUserData(STEP_ID, stepId)
     return true
   }
 
@@ -155,7 +155,7 @@ object EduBuiltInServerUtils {
   private fun showDialog(course: Course?, stepId: Int) {
     ApplicationManager.getApplication().invokeLater {
       if (course != null) {
-        course.putUserData(STEP_ID, stepId)
+        course.dataHolder.putUserData(STEP_ID, stepId)
         JoinCourseDialog(course).show()
       }
       else {

@@ -106,7 +106,7 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
     if (settingsComponents.isNotEmpty()
         && course !is JetBrainsAcademyCourse
         && (!CoursesStorage.getInstance().hasCourse(course))
-        || course.getUserData(IS_LOCAL_COURSE_KEY) == true) {
+        || course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) == true) {
       isVisible = true
       setSettingsComponents(settingsComponents)
     }
