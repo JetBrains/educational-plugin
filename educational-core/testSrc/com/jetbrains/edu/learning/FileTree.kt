@@ -4,6 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.jetbrains.edu.coursecreator.CCUtils
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 
@@ -38,11 +39,12 @@ class FileTree(private val rootDirectory: Entry.Directory) {
           is Entry.File -> {
             check(!child.isDirectory)
             if (entry.text != null) {
-              if (fixture != null) {
+              if (fixture != null && !child.isToEncodeContent()) {
                 fixture.openFileInEditor(child)
                 fixture.checkResult(entry.text)
-              } else {
-                val actualText = VfsUtil.loadText(child)
+              }
+              else {
+                val actualText = CCUtils.loadText(child)
                 Assert.assertEquals(entry.text, actualText)
               }
             }

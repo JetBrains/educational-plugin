@@ -11,12 +11,9 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.fileTypes.UnknownFileType
-import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
@@ -30,8 +27,6 @@ import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 
 fun VirtualFile.getEditor(project: Project): Editor? {
   val selectedEditor = getInEdt { FileEditorManager.getInstance(project).getSelectedEditor(this) }
@@ -196,28 +191,9 @@ fun VirtualFile.getTaskFile(project: Project): TaskFile? {
   return task?.getTaskFile(pathRelativeToTask(project))
 }
 
-fun VirtualFile.isToEncodeContent(): Boolean {
-  val extension = FileUtilRt.getExtension(name)
-  val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
-  if (fileType !is UnknownFileType) {
-    return fileType.isBinary
-  }
-  val contentType = mimeType() ?: return isGitObject(name)
-  return contentType.startsWith("image") ||
-         contentType.startsWith("audio") ||
-         contentType.startsWith("video") ||
-         contentType.startsWith("application")
-}
+fun VirtualFile.isToEncodeContent(): Boolean = toEncodeFileContent(path)
 
-fun VirtualFile.mimeType(): String? {
-  return try {
-    Files.probeContentType(Paths.get(path))
-  }
-  catch (e: IOException) {
-    LOG.error(e)
-    null
-  }
-}
+fun VirtualFile.mimeType(): String? = mimeFileType(path)
 
 fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
@@ -251,10 +227,6 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     LOG.error("Failed to convert `${path}` to student file")
   }
   return null
-}
-
-private fun isGitObject(name: String): Boolean {
-  return (name.length == 38 || name.length == 40) && name.matches(Regex("[a-z0-9]+"))
 }
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.VirtualFileExt")

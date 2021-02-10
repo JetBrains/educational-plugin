@@ -31,7 +31,7 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
   override fun getMockFileName(text: String): String = "Task.txt"
 
   override val testDirs: List<String>
-    get() = listOf("tests")
+    get() = listOf(TEST_DIR_NAME)
 
   override val logo: Icon
     get() = AllIcons.FileTypes.Text
@@ -108,6 +108,7 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
 
   companion object {
     const val CHECK_RESULT_FILE = "checkResult.txt"
+    const val TEST_DIR_NAME = "tests"
   }
 }
 

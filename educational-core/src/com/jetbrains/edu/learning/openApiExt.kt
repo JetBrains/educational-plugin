@@ -8,6 +8,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileTypes.UnknownFileType
+import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -16,15 +18,20 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.ConcurrencyUtil
+import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import kotlinx.coroutines.runBlocking
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -39,6 +46,34 @@ fun checkIsBackgroundThread() {
   check(!ApplicationManager.getApplication().isDispatchThread) {
     "Long running operation invoked on UI thread"
   }
+}
+
+fun toEncodeFileContent(path: String): Boolean {
+  val name = PathUtil.getFileName(path)
+  val extension = FileUtilRt.getExtension(name)
+  val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
+  if (fileType !is UnknownFileType) {
+    return fileType.isBinary
+  }
+  val contentType = mimeFileType(path) ?: return isGitObject(name)
+  return contentType.startsWith("image") ||
+         contentType.startsWith("audio") ||
+         contentType.startsWith("video") ||
+         contentType.startsWith("application")
+}
+
+fun mimeFileType(path: String): String? {
+  return try {
+    Files.probeContentType(Paths.get(path))
+  }
+  catch (e: IOException) {
+    LOG.error(e)
+    null
+  }
+}
+
+private fun isGitObject(name: String): Boolean {
+  return (name.length == 38 || name.length == 40) && name.matches(Regex("[a-z0-9]+"))
 }
 
 val Project.courseDir: VirtualFile

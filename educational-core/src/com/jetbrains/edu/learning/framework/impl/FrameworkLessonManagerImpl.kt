@@ -18,8 +18,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -271,7 +273,16 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val currentState = HashMap<String, String>()
     for ((path, _) in initialFiles) {
       val file = taskDir.findFileByRelativePath(path) ?: continue
-      currentState[path] = runReadAction { documentManager.getDocument(file)?.text } ?: continue
+
+      val text = if (file.isToEncodeContent())
+        Base64.encodeBase64String(file.contentsToByteArray())
+      else runReadAction { documentManager.getDocument(file)?.text }
+
+      if (text == null) {
+        continue
+      }
+
+      currentState[path] = text
     }
     val userChanges = calculateChanges(initialFiles, currentState)
     return updateUserChanges(record, userChanges)

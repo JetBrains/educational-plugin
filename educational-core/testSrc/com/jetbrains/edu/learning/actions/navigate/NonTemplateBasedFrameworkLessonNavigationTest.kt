@@ -8,6 +8,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -419,6 +420,77 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
 
     assertThat(task2.taskFiles.keys, not(hasItem("src/Baz.kt")))
+  }
+
+  fun `test course with git object files`() {
+    class GitObjectFile(val name: String, val text: String)
+
+    val gitObjectFiles = listOf(
+      GitObjectFile("2731ee243bb1111dd93916bb3296ee7f7e23ef", "eAErKUpNVTA2YTA0MDAzMVEoLNQrqShhaD4jyTnZfZLvoo4JzV1Xn8241cqyGAAhHRBB"),
+      GitObjectFile("3a818dc87b9940935b24a5aa93fac00f086bf9", "eAFLyslPUjA0YfBIzcnJVyjPL8pJUVTgAgBQEgas"),
+      GitObjectFile("28add5fd4be3bdd2cdb776dfa035cc69956859", "eAFLyslPUjA2ZUjLLCouUcjJzEvlKk5Nzs9LgbBLMjKLIEwFLgBApg59")
+    )
+
+    val tests = PlainTextConfigurator.TEST_DIR_NAME
+    val taskFileName = "task.txt"
+
+    val course = courseWithFiles {
+      frameworkLesson(isTemplateBased = false) {
+        eduTask {
+          taskFile(taskFileName)
+          taskFile(gitObjectFiles[2].name, gitObjectFiles[2].text)
+          taskFile("${tests}/${gitObjectFiles[0].name}", gitObjectFiles[0].text)
+          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[1].text)
+        }
+        eduTask {
+          taskFile(taskFileName)
+
+          // remove task file gitObjectFiles[0]
+          // change text of gitObjectFiles[1]
+          // add new task file gitObjectFiles[2]
+          taskFile("${tests}/${gitObjectFiles[1].name}", gitObjectFiles[0].text)
+          taskFile("${tests}/${gitObjectFiles[2].name}", gitObjectFiles[2].text)
+        }
+      }
+    }
+
+    withVirtualFileListener(course) {
+      withEduTestDialog(EduTestDialog(Messages.NO)) {
+        course.findTask("lesson1", "task1").openTaskFileInEditor("task.txt")
+
+        //create file to test that file created by learner is propagated
+        GeneratorUtils.createChildFile(rootDir, "lesson1/task/${gitObjectFiles[0].name}", gitObjectFiles[0].text)
+
+        //remove file to test that it is not propagated
+        runWriteAction {
+          findFile("lesson1/task/${gitObjectFiles[2].name}").delete(NonTemplateBasedFrameworkLessonNavigationTest::class.java)
+        }
+
+        myFixture.testAction(NextTaskAction())
+      }
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file(taskFileName)
+          file(gitObjectFiles[0].name, gitObjectFiles[0].text)
+          dir(tests) {
+            // file text should be changed
+            file(gitObjectFiles[1].name, gitObjectFiles[0].text)
+            file(gitObjectFiles[2].name, gitObjectFiles[2].text)
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+
+    fileTree.assertEquals(rootDir, myFixture)
   }
 
   private fun createFrameworkCourse(): Course = courseWithFiles(

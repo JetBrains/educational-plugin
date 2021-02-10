@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.framework.impl
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runUndoTransparentWriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -11,6 +12,8 @@ import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isToEncodeContent
+import org.apache.commons.codec.binary.Base64
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.IOException
@@ -167,13 +170,20 @@ sealed class Change {
         return
       }
 
-      EduDocumentListener.modifyWithoutListener(task, path) {
-        val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
-        if (document == null) {
-          LOG.warn("Can't get document for `$file`")
+      if (file.isToEncodeContent()) {
+        runWriteAction {
+          file.setBinaryContent(Base64.decodeBase64(text))
         }
-        else {
-          runUndoTransparentWriteAction { document.setText(text) }
+      }
+      else {
+        EduDocumentListener.modifyWithoutListener(task, path) {
+          val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
+          if (document != null) {
+            runUndoTransparentWriteAction { document.setText(text) }
+          }
+          else {
+            LOG.warn("Can't get document for `$file`")
+          }
         }
       }
     }

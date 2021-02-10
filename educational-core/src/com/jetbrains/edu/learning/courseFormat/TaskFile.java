@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
+import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -153,6 +154,10 @@ public class TaskFile {
   @SuppressWarnings("unused") // used for yaml serialization
   @Nullable
   public String getTextToSerialize() {
+    if (myTask.getLesson() instanceof FrameworkLesson && OpenApiExtKt.toEncodeFileContent(myName)) {
+      return myText;
+    }
+
     String extension = FileUtilRt.getExtension(myName);
     FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension);
     if (fileType.isBinary()) {
