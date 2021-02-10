@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.rust.codeforces.RsCodeforcesRunConfiguration
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
@@ -51,7 +50,7 @@ class RsCodeExecutor : CodeExecutor {
   }
 
   override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
-    return RsCodeforcesRunConfiguration(project, factory)
+    return createRsCodeforcesConfiguration(project, factory)
   }
 
   private fun String.prepareToCheck(): String {
