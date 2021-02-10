@@ -31,8 +31,8 @@ import java.awt.event.ActionListener
 val MAIN_BG_COLOR: Color
   get() = JBColor.namedColor(
     "BrowseCourses.background", JBColor(
-      (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })
-    )
+    (NotNullProducer { if (JBColor.isBright()) TaskDescriptionView.getTaskDescriptionBackgroundColor() else Color(0x313335) })
+  )
   )
 private val WhiteForeground: Color = JBColor(Color.white, Color(0xBBBBBB))
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
@@ -69,7 +69,8 @@ class OpenCourseButton : CourseButtonBase() {
     val isFromMyCoursesPage = MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
     val message = if (isFromMyCoursesPage) {
       EduCoreBundle.message("course.dialog.my.courses.remove.course")
-    } else {
+    }
+    else {
       EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
     }
 
@@ -99,7 +100,8 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   override fun isVisible(course: Course): Boolean = course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
-                                                    && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
+                                                    && course.dataHolder.getUserData(
+    CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
                                                     && CoursesStorage.getInstance().hasCourse(course)
 }
 
@@ -111,10 +113,10 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course): Boolean = course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
-                                                    || course.dataHolder.getUserData(
-    CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
-                                                    || !CoursesStorage.getInstance().hasCourse(course)
+  override fun isVisible(course: Course): Boolean =
+    course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+    || course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
+    || !CoursesStorage.getInstance().hasCourse(course)
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
