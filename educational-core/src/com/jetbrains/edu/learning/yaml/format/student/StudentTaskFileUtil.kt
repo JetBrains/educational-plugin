@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
 
   @JsonProperty(TEXT)
-  @Encrypt
   open fun getTextToSerialize(): String {
     throw NotImplementedError()
   }
