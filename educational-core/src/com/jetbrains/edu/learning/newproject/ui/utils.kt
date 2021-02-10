@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.DataManager
+import com.intellij.ide.ui.LafManager
+import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
@@ -132,4 +134,10 @@ fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel 
   return hyperlinkPanel
 }
 
-fun getColorFromScheme(colorId: String, default: Color) = JBColor { UIManager.getColor(colorId) ?: default }
+fun getColorFromScheme(colorId: String, default: Color): JBColor {
+  val lookAndFeel = LafManager.getInstance().currentLookAndFeel
+  if (lookAndFeel is UIThemeBasedLookAndFeelInfo && UIManager.getColor(colorId) == null) {
+    LOG.warn("Cannot find $colorId for ${lookAndFeel.name}")
+  }
+  return JBColor { UIManager.getColor(colorId) ?: default }
+}

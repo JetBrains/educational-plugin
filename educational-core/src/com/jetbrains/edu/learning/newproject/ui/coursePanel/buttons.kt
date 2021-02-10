@@ -44,10 +44,8 @@ private val FillBackgroundColor: Color = JBColor.namedColor("BrowseCourses.Butto
                                                             getColorFromScheme("Plugins.Button.installFillBackground", GreenColor))
 private val ForegroundColor: Color = JBColor.namedColor("BrowseCourses.Button.startForeground",
                                                         getColorFromScheme("Plugins.Button.installForeground", GreenColor))
-private val BackgroundColor: Color = JBColor.namedColor("BrowseCourses.Button.startBackground",
-                                                        getColorFromScheme("Plugins.Button.installBackground", MAIN_BG_COLOR))
-private val FocusedBackground: Color = JBColor.namedColor("BrowseCourses.Button.startFocusedBackground",
-                                                          getColorFromScheme("Plugins.Button.installFocusedBackground", Color(0xE1F6DA)))
+private val BackgroundColor: Color = JBColor.namedColor("BrowseCourses.Button.startBackground", MAIN_BG_COLOR)
+private val FocusedBackground: Color = JBColor.namedColor("BrowseCourses.Button.startFocusedBackground", Color(0xE1F6DA))
 private val BorderColor: Color = JBColor.namedColor("BrowseCourses.Button.border",
                                                     getColorFromScheme("Plugins.Button.installBorderColor", GreenColor))
 
