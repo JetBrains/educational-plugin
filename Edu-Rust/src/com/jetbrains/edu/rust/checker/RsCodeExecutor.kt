@@ -1,5 +1,6 @@
 package com.jetbrains.edu.rust.checker
 
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -12,10 +13,12 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
+import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.rust.codeforces.RsCodeforcesRunConfiguration
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.CargoCommandLine
@@ -45,6 +48,10 @@ class RsCodeExecutor : CodeExecutor {
         Err(CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, output))
       else -> Err(CheckResult.failedToCheck)
     }
+  }
+
+  override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
+    return RsCodeforcesRunConfiguration(project, factory)
   }
 
   private fun String.prepareToCheck(): String {
