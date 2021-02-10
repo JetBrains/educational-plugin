@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.jetbrains.edu.go.checker.GoCodeforcesConfigurationUtilsKt.getGoInputRedirectOptions;
 import static com.jetbrains.edu.learning.OpenApiExtKt.getCourseDir;
 import static com.jetbrains.edu.learning.VirtualFileExt.getTaskFile;
 import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
@@ -43,6 +44,6 @@ public class GoCodeforcesRunConfiguration extends GoApplicationConfiguration imp
 
   @Override
   public @NotNull InputRedirectOptions getInputRedirectOptions() {
-    return this;
+    return getGoInputRedirectOptions(this);
   }
 }

@@ -8,7 +8,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.go.checker.GoEduTaskChecker.Companion.GO_RUN_WITH_PTY
-import com.jetbrains.edu.go.codeforces.GoCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
@@ -29,7 +28,7 @@ class GoCodeExecutor : DefaultCodeExecutor() {
   }
 
   override fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration {
-    return GoCodeforcesRunConfiguration(project)
+    return createGoCodeforcesConfiguration(project, factory)
   }
 
   private fun getMainFile(project: Project, task: Task): PsiFile? {
