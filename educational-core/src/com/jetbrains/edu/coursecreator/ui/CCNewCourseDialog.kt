@@ -9,7 +9,7 @@ import javax.swing.JComponent
 
 class CCNewCourseDialog(
   @Nls(capitalization = Nls.Capitalization.Title) title: String,
-  @Nls(capitalization = Nls.Capitalization.Title)  okButtonText: String,
+  @Nls(capitalization = Nls.Capitalization.Title) okButtonText: String,
   course: Course? = null,
   courseProducer: () -> Course = ::EduCourse
 ) : DialogWrapper(true) {
