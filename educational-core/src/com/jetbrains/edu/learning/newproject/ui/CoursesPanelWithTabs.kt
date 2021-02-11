@@ -112,8 +112,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
       cardLayout.show(this, activeTabName)
     }
 
-    fun findPanel(name: String) = cardLayout.findComponentById(name) as? CoursesPanel
-
     fun doValidation() {
       (cardLayout.findComponentById(activeTabName) as CoursesPanel).doValidation()
     }
