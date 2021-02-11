@@ -53,6 +53,7 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
 val isAtLeast203 = environmentName.toInt() >= 203
+val isAtLeast211 = environmentName.toInt() >= 211
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -593,10 +594,14 @@ project(":Edu-JavaScript") {
   intellij {
     localPath = null
     version = ideaVersion
-    val plugins = listOf(
+    val plugins = mutableListOf(
       "NodeJS",
       "JavaScriptLanguage"
     )
+    if (isAtLeast211) {
+      plugins += listOf("com.intellij.css")
+    }
+
     setPlugins(*plugins.toTypedArray())
   }
   dependencies {
