@@ -38,7 +38,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     panel.loadCourses()
   }
 
-  override fun getPreferredFocusedComponent(): JComponent? {
+  override fun getPreferredFocusedComponent(): JComponent {
     return panel
   }
 
