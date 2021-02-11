@@ -35,6 +35,9 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.TestRunner
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
+// TODO: consider to use init scripts (https://docs.gradle.org/current/userguide/init_scripts.html) for customization
+// Should be passed to gradle command to add `#educational_plugin` prefix for `run` task output
+const val EDUCATIONAL_RUN_PROPERTY = "-PeducationalRun=true"
 
 const val ASSEMBLE_TASK_NAME = "assemble"
 const val TEST_TASK_NAME = "test"
@@ -150,7 +153,12 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
                       ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("error.no.main", task.name))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
 
-  val gradleOutput = GradleCommandLine.create(project, taskName, "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName")
+  val gradleOutput = GradleCommandLine.create(
+    project,
+    taskName,
+    "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName",
+    EDUCATIONAL_RUN_PROPERTY
+  )
     ?.launch(indicator)
     ?: return Err(GradleEnvironmentChecker.getFailedToLaunchCheckingResult(project))
 

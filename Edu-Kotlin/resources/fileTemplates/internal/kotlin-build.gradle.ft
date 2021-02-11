@@ -75,9 +75,11 @@ subprojects {
         }
     }
 
-    def runOutput = new ByteArrayOutputStream()
-    tasks.run.setStandardOutput(runOutput)
-    tasks.run.doLast { printOutput(runOutput) }
+    if (project.hasProperty("educationalRun") && "true".equalsIgnoreCase(project.getProperty("educationalRun"))) {
+        def runOutput = new ByteArrayOutputStream()
+        tasks.run.setStandardOutput(runOutput)
+        tasks.run.doLast { printOutput(runOutput) }
+    }
 }
 
 project(':util') {
