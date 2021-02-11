@@ -46,14 +46,6 @@ class KtCheckersTest : JdkCheckerTestBase() {
           }
         """)
       }
-      theoryTask("TheoryTask") {
-        kotlinTaskFile("src/Task.kt", """
-          fun main(args: Array<String>) {
-              val a = 1
-              println(a)
-          }
-        """)
-      }
       outputTask("OutputTask") {
         kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {

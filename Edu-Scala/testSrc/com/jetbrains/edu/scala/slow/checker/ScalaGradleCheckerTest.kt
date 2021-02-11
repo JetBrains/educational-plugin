@@ -17,19 +17,19 @@ class ScalaGradleCheckerTest : JdkCheckerTestBase() {
         lesson {
           eduTask("EduTask in section") {
             scalaTaskFile("src/Task.scala", """
-            class Task {
-              def foo(): Int = 42
-            }
-          """)
-            scalaTaskFile("test/TestSpec.scala", """
-            import org.scalatest.FunSuite
-
-            class TestSpec extends FunSuite {
-              test("Test") {
-                assertResult(42) { new Task().foo() }
+              class Task {
+                def foo(): Int = 42
               }
-            }
-          """)
+            """)
+            scalaTaskFile("test/TestSpec.scala", """
+              import org.scalatest.FunSuite
+  
+              class TestSpec extends FunSuite {
+                test("Test") {
+                  assertResult(42) { new Task().foo() }
+                }
+              }
+            """)
           }
         }
       }

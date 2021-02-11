@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 class JCheckersTest : JdkCheckerTestBase() {
 
@@ -29,15 +28,6 @@ class JCheckersTest : JdkCheckerTestBase() {
             @org.junit.Test
             public void test() {
               Assert.assertTrue("Task.foo() should return 42", Task.foo() == 42);
-            }
-          }
-        """)
-      }
-      theoryTask("TheoryTask") {
-        javaTaskFile("src/Task.java", """
-          public class Task {
-            public static void main(String[] args) {
-              System.out.println("OK");
             }
           }
         """)
@@ -92,7 +82,6 @@ class JCheckersTest : JdkCheckerTestBase() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
         is OutputTask, is EduTask -> CheckUtils.CONGRATULATIONS
-        is TheoryTask -> ""
         else -> null
       }
     }
