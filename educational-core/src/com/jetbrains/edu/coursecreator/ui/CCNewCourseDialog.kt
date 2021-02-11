@@ -11,7 +11,8 @@ class CCNewCourseDialog(
   @Nls(capitalization = Nls.Capitalization.Title) title: String,
   @Nls(capitalization = Nls.Capitalization.Title) okButtonText: String,
   course: Course? = null,
-  courseProducer: () -> Course = ::EduCourse
+  courseProducer: () -> Course = ::EduCourse,
+  private val onOKAction: () -> Unit = {}
 ) : DialogWrapper(true) {
 
   private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course, courseProducer)
@@ -31,6 +32,7 @@ class CCNewCourseDialog(
 
   override fun doOKAction() {
     close(OK_EXIT_CODE)
+    onOKAction()
     val course = myPanel.course
     val projectSettings = myPanel.projectSettings
     val location = myPanel.locationString

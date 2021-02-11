@@ -8,13 +8,15 @@ import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
 import org.jetbrains.annotations.Nls
 import java.util.function.Supplier
 
-class CCNewCourseAction(title: Supplier<String> = EduCoreBundle.lazyMessage("action.new.course.default.text"))
-  : AnAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
+class CCNewCourseAction(
+  title: Supplier<String> = EduCoreBundle.lazyMessage("action.new.course.default.text"),
+  private val onOKAction: () -> Unit = {}
+) : AnAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
 
   constructor(@Nls(capitalization = Nls.Capitalization.Title) title: String) : this(Supplier { title })
 
   override fun actionPerformed(e: AnActionEvent) {
-    CCNewCourseDialog(EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create")).show()
+    CCNewCourseDialog(EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create"), onOKAction = onOKAction).show()
   }
 
   override fun getHelpRelativePath(): String = "education/educator-start-guide.html"

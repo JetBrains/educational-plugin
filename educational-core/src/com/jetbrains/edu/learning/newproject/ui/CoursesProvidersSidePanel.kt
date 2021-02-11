@@ -1,5 +1,10 @@
+
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
@@ -74,7 +79,17 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
   }
 
   private fun createCourseActionLink(): JPanel {
-    val courseAction = ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), CCNewCourseAction())
+    val courseAction = ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.create.course"), object : AnAction() {
+      override fun actionPerformed(e: AnActionEvent) {
+        CCNewCourseAction(onOKAction = ::closeDialog).actionPerformed(e)
+      }
+
+      private fun closeDialog() {
+        val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, this@CoursesProvidersSidePanel)
+        dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+      }
+
+    })
     return createHyperlinkWithContextHelp(courseAction).apply {
       border = JBUI.Borders.empty(12, 12)
     }
