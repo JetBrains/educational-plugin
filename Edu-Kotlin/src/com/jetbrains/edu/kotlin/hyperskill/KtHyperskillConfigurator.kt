@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.stepik.hyperskill
+package com.jetbrains.edu.kotlin.hyperskill
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.kotlin.KtConfigurator
