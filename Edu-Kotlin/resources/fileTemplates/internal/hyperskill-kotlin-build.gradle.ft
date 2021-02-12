@@ -1,0 +1,79 @@
+buildscript {
+    ext.kotlin_version = '${KOTLIN_VERSION}'
+
+    repositories {
+        mavenCentral()
+        #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
+
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+
+    sourceCompatibility = 11
+
+    repositories {
+        mavenCentral()
+        #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
+
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+        testCompile 'com.github.hyperskill:hs-test:release-SNAPSHOT'
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+        destinationDir = compileJava.destinationDir
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    sourceSets {
+        main {
+            kotlin.srcDir 'src'
+            java.srcDir 'src'
+        }
+        test {
+            kotlin.srcDir 'test'
+            java.srcDir 'test'
+        }
+    }
+
+    test {
+        systemProperty "file.encoding", "utf-8"
+    }
+
+    compileJava.options.encoding = 'utf-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'utf-8'
+    }
+}
+
+project(':util') {
+    dependencies {
+        implementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'
+    }
+}
+
+configure(subprojects.findAll { it.name != 'util' }) {
+    dependencies {
+        testImplementation project(':util').sourceSets.main.output
+        testImplementation project(':util').sourceSets.test.output
+    }
+}
