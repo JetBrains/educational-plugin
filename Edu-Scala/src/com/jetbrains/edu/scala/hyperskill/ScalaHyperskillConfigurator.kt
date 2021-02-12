@@ -1,4 +1,4 @@
-package com.jetbrains.edu.scala.stepik.hyperskill
+package com.jetbrains.edu.scala.hyperskill
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleHyperskillConfigurator
