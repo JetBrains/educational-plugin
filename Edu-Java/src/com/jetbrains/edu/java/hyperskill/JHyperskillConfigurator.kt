@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.stepik.hyperskill
+package com.jetbrains.edu.java.hyperskill
 
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.java.JConfigurator
