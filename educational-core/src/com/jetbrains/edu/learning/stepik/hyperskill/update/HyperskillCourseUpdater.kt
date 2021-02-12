@@ -5,7 +5,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -234,7 +233,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
             if (project.isDisposed) return@runWriteAction false
             val file = courseDir.findFileByRelativePath(remoteFile.name) ?: return@runWriteAction true
             val text = try {
-              CCUtils.loadText(file)
+              file.loadEncodedContent()
             }
             catch (e: IOException) {
               LOG.warn("Failed to load text of `${remoteFile.name}` additional file", e)

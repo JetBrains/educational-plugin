@@ -195,6 +195,15 @@ fun VirtualFile.isToEncodeContent(): Boolean = toEncodeFileContent(path)
 
 fun VirtualFile.mimeType(): String? = mimeFileType(path)
 
+fun VirtualFile.loadEncodedContent(): String {
+  return if (isToEncodeContent()) {
+    Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(this))
+  }
+  else {
+    VfsUtilCore.loadText(this)
+  }
+}
+
 fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
     val taskCopy = task.copy()

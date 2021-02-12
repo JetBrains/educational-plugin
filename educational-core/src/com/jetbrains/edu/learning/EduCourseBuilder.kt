@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.CCUtils.loadText
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
@@ -179,7 +178,7 @@ interface EduCourseBuilder<Settings> {
         LOG.warn("Can't find a file by path relative to this file for `${taskFile.name}` file")
         return null
       }
-      return loadText(file)
+      return file.loadEncodedContent()
     }
     catch (e: IOException) {
       LOG.error("Can't load text for `${taskFile.name}` task file", e)

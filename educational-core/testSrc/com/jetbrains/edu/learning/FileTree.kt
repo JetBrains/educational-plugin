@@ -4,7 +4,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.jetbrains.edu.coursecreator.CCUtils
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 
@@ -44,7 +43,7 @@ class FileTree(private val rootDirectory: Entry.Directory) {
                 fixture.checkResult(entry.text)
               }
               else {
-                val actualText = CCUtils.loadText(child)
+                val actualText = child.loadEncodedContent()
                 Assert.assertEquals(entry.text, actualText)
               }
             }

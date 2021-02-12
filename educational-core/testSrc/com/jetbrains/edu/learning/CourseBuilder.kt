@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
@@ -391,7 +390,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     val ioFile = File(path)
     VfsRootAccess.allowRootAccess(disposable, ioFile.absolutePath)
     val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
-    val text = CCUtils.loadText(file)
+    val text = file.loadEncodedContent()
     taskFile(name, text, visible, buildTaskFile)
   }
 

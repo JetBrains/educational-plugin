@@ -40,7 +40,6 @@ import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.apache.commons.codec.binary.Base64
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
@@ -192,7 +191,7 @@ object CCUtils {
         var taskFile = file.getTaskFile(project)
         if (taskFile == null) {
           val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
-          taskFile = TaskFile(path, loadText(file))
+          taskFile = TaskFile(path, file.loadEncodedContent())
           try {
             additionalTaskFiles.add(taskFile)
           }
@@ -215,17 +214,6 @@ object CCUtils {
     }
     val courseFiles: List<TaskFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
     return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
-  }
-
-  @JvmStatic
-  @Throws(IOException::class)
-  fun loadText(file: VirtualFile): String {
-    return if (file.isToEncodeContent()) {
-      Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
-    }
-    else {
-      VfsUtilCore.loadText(file)
-    }
   }
 
   /**
