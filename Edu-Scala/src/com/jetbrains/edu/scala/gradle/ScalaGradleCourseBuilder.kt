@@ -2,7 +2,7 @@ package com.jetbrains.edu.scala.gradle
 
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 
-class ScalaGradleCourseBuilder : GradleCourseBuilderBase() {
+open class ScalaGradleCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = SCALA_BUILD_GRADLE_TEMPLATE_NAME
   override val taskTemplateName: String = ScalaGradleConfigurator.TASK_SCALA
