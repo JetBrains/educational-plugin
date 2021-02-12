@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
@@ -54,7 +55,7 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
               EduCounterUsageCollector.importCourseArchive()
               course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
               closeDialog(component)
-              JoinCourseDialog(course).show()
+              ImportCourseDialog(course).show()
             }
             else if (result == Messages.OK) {
               closeDialog(component)
@@ -67,9 +68,13 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
         }
         EduCounterUsageCollector.importCourseArchive()
         closeDialog(component)
-        JoinCourseDialog(course).show()
+        ImportCourseDialog(course).show()
       }
     }
+  }
+
+  private class ImportCourseDialog(course: Course) : JoinCourseDialog(course) {
+    override fun isToShowError(errorState: ErrorState): Boolean = errorState !is ErrorState.NotLoggedIn
   }
 
   private fun closeDialog(component: Component?) {

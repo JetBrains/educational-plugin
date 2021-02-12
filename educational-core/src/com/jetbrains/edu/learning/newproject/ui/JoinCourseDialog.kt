@@ -26,11 +26,19 @@ open class JoinCourseDialog(
 
   override fun createCenterPanel(): JComponent = coursePanel
 
+  protected open fun isToShowError(errorState: ErrorState): Boolean = true
+
   private inner class JoinCoursePanel : CoursePanel(true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialog.course, { locationString }, { languageSettings }),
                                          CourseMode.STUDY, this) {
         setError(it)
+      }
+    }
+
+    override fun showError(errorState: ErrorState) {
+      if (isToShowError(errorState)) {
+        super.showError(errorState)
       }
     }
   }
