@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.ide.DataManager
-import com.intellij.ide.impl.DataManagerImpl
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -24,7 +23,7 @@ class CheckPanelButtonComponent(private val action: AnAction,
     button.addActionListener { e ->
       val event = AnActionEvent(
         null,
-        (DataManager.getInstance() as DataManagerImpl).getDataContextTest(this),
+        DataManager.getInstance().getDataContext(this),
         CheckPanel.ACTION_PLACE,
         PresentationFactory().getPresentation(action),
         ActionManager.getInstance(),

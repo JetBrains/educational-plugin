@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui.welcomeScreen
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
-import com.intellij.ide.impl.DataManagerImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -147,7 +146,7 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
       val action = BrowseCoursesAction()
       val event = AnActionEvent(
         null,
-        (DataManager.getInstance() as DataManagerImpl).getDataContextTest(this),
+        DataManager.getInstance().getDataContext(this),
         ActionPlaces.WELCOME_SCREEN,
         PresentationFactory().getPresentation(action),
         ActionManager.getInstance(),
