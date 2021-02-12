@@ -8,7 +8,10 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import javax.swing.JComponent
 
-open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) : OpenCourseDialogBase() {
+open class JoinCourseDialog(
+  private val course: Course,
+  settings: CourseDisplaySettings = CourseDisplaySettings()
+) : OpenCourseDialogBase() {
   private val coursePanel: CoursePanel = JoinCoursePanel()
 
   init {
@@ -24,7 +27,7 @@ open class JoinCourseDialogBase(private val course: Course, settings: CourseDisp
 
   private inner class JoinCoursePanel : CoursePanel(true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
-      CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialogBase.course, { locationString }, { languageSettings }),
+      CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialog.course, { locationString }, { languageSettings }),
                                          CourseMode.STUDY, this) {
         setError(it)
       }

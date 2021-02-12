@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.util.function.Supplier
@@ -41,9 +41,9 @@ class StartCodeforcesContestAction(
     // Decided to do it well by adding toolchain select field
     val showLanguageSettings = course.languageID != EduNames.CPP
 
-    object : JoinCourseDialogBase(course, CourseDisplaySettings(showTagsPanel = false,
-                                                                showInstructorField = false,
-                                                                showLanguageSettings = showLanguageSettings)) {
+    object : JoinCourseDialog(course, CourseDisplaySettings(showTagsPanel = false,
+                                                            showInstructorField = false,
+                                                            showLanguageSettings = showLanguageSettings)) {
       init {
         init()
         UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())

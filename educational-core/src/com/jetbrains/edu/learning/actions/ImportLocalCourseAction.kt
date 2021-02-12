@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 import java.awt.Component
@@ -54,7 +54,7 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
               EduCounterUsageCollector.importCourseArchive()
               course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
               closeDialog(component)
-              JoinCourseDialogBase(course).show()
+              JoinCourseDialog(course).show()
             }
             else if (result == Messages.OK) {
               closeDialog(component)
@@ -67,7 +67,7 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
         }
         EduCounterUsageCollector.importCourseArchive()
         closeDialog(component)
-        JoinCourseDialogBase(course).show()
+        JoinCourseDialog(course).show()
       }
     }
   }

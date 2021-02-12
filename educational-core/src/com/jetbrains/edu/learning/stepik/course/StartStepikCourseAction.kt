@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Incompatible
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_DEFAULT_URL
@@ -25,7 +25,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
   private fun doImport() {
     val course = importStepikCourse() ?: return
-    JoinCourseDialogBase(course).show()
+    JoinCourseDialog(course).show()
   }
 
   fun importStepikCourse(): Course? {

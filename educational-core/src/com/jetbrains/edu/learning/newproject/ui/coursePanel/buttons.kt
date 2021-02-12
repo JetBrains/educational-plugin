@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
@@ -94,7 +94,7 @@ class OpenCourseButton : CourseButtonBase() {
         }
         else -> {
           closeDialog()
-          JoinCourseDialogBase(course).show()
+          JoinCourseDialog(course).show()
         }
       }
     }
