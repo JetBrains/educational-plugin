@@ -1,5 +1,6 @@
 package com.jetbrains.edu.java.hyperskill
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.java.JConfigurator
 import com.jetbrains.edu.java.JCourseBuilder
@@ -18,10 +19,14 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillC
 
 class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>(JConfigurator()) {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
-    get() = JHyperskillCourseBuilder(JCourseBuilder())
+    get() = JHyperskillCourseBuilder(JHyperskillGradleCourseBuilder())
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST, "${EduNames.TEST}/stageTest")
+
+  private class JHyperskillGradleCourseBuilder : JCourseBuilder() {
+    override val buildGradleTemplateName: String = JAVA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
+  }
 
   private class JHyperskillCourseBuilder(private val gradleCourseBuilder: GradleCourseBuilderBase) :
     HyperskillCourseBuilder<JdkProjectSettings>(gradleCourseBuilder) {
@@ -39,5 +44,10 @@ class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>
     override fun getJdk(settings: JdkProjectSettings): Sdk? {
       return super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(myCourse, settings.model)
     }
+  }
+
+  companion object {
+    @VisibleForTesting
+    const val JAVA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME = "hyperskill-java-build.gradle"
   }
 }
