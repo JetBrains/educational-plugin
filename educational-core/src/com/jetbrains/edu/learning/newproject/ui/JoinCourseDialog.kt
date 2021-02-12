@@ -15,6 +15,7 @@ open class JoinCourseDialog(
   private val coursePanel: CoursePanel = JoinCoursePanel()
 
   init {
+    super.init()
     title = course.name
     coursePanel.bindCourse(course, settings)
     coursePanel.preferredSize = JBUI.size(500, 530)
