@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialogBase
 import com.jetbrains.edu.learning.stepik.StepikStartupActivity.Companion.STEP_ID
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
@@ -156,7 +156,7 @@ object EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater {
       if (course != null) {
         course.dataHolder.putUserData(STEP_ID, stepId)
-        JoinCourseDialog(course).show()
+        JoinCourseDialogBase(course).show()
       }
       else {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course")

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import javax.swing.JComponent
 
-open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings) : OpenCourseDialogBase() {
+open class JoinCourseDialogBase(private val course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) : OpenCourseDialogBase() {
   private val coursePanel: CoursePanel = JoinCoursePanel()
 
   init {
