@@ -1,9 +1,24 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
+import org.jsoup.select.Elements
+import java.time.*
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 object CodeforcesContestConnector {
+  private const val TD_TAG = "td"
+  private const val TR_TAG = "tr"
+  private const val DATA_CONTEST_ID_ATTR = "data-contestId"
+  private const val FORMAT_DATE_CLASS = "format-date"
+  private const val FORMAT_TIME_CLASS = "format-time"
+  private const val DATATABLE_CLASS = "datatable"
+  private const val CONTEST_LIST_CLASS = "contestList"
+
   fun getContestIdFromLink(link: String): Int {
     val match = Regex("codeforces.com/contest/(\\d*)").find(link) ?: return -1
     return match.destructured.component1().also { if (it == "") return -1 }.toInt()
@@ -27,5 +42,60 @@ object CodeforcesContestConnector {
       ?.filter { language ->
         language in supportedLanguages
       }
+  }
+
+  fun getUpcomingContests(document: Document): List<ContestInformation> {
+    val upcomingContests = getTables(document)[0]
+
+    val contestElements = getContestsElements(upcomingContests)
+
+    return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
+      parseContestInformation(it, FORMAT_TIME_CLASS)
+    }
+  }
+
+  fun getRecentContests(document: Document): List<ContestInformation> {
+    val recentContests = getTables(document)[1]
+
+    val contestElements = getContestsElements(recentContests)
+
+    return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
+      parseContestInformation(it, FORMAT_DATE_CLASS)
+    }
+  }
+
+  private fun parseContestInformation(element: Element, dateClass: String): ContestInformation? {
+    return try {
+      val contestId = element.attr(DATA_CONTEST_ID_ATTR).toInt()
+      val tableRow = element.getElementsByTag(TD_TAG)
+
+      val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
+      val startDate = parseDate(tableRow, dateClass)
+      val contestLength = tableRow[3].text().split(":").map { it.toLong() }
+      val isRegistrationOpen = tableRow[5].getElementsByClass("countdown").isNotEmpty()
+      val duration = Duration.ofHours(contestLength[0]).plus(Duration.ofMinutes(contestLength[1]))
+      ContestInformation(contestId, contestName, startDate + duration, startDate, duration, isRegistrationOpen)
+    }
+    catch (e: Exception) {
+      Logger.getInstance(this::class.java).warn(e.message)
+      null
+    }
+  }
+
+  private fun parseDate(tableRow: Elements, dateClass: String): ZonedDateTime {
+    val dateElement = tableRow[2].getElementsByClass(dateClass).first()
+    val dateLocaleString = tableRow[2].getElementsByClass(dateClass).attr("data-locale")
+    val dateLocale = Locale.Builder().setLanguage(dateLocaleString).build()
+    val startDateString = dateElement.text()
+    val formatter = DateTimeFormatter.ofPattern("MMM/dd/yyyy HH:mm", dateLocale)
+    val startDateLocal = LocalDateTime.parse(startDateString, formatter)
+    return ZonedDateTime.ofInstant(startDateLocal, OffsetDateTime.now().offset, ZoneId.systemDefault())
+  }
+
+  private fun getContestsElements(recentContests: Element) = recentContests.getElementsByTag(TR_TAG)
+
+  private fun getTables(document: Document): Elements {
+    val upcomingContestList = document.body().getElementsByClass(CONTEST_LIST_CLASS).first() ?: error("Cannot parse 'contestList'")
+    return upcomingContestList.getElementsByClass(DATATABLE_CLASS)
   }
 }

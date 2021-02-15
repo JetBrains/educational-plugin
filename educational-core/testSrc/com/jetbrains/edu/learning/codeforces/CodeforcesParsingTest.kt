@@ -72,4 +72,37 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink.link)
   }
+
+  fun testUpcomingContests() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+    assertTrue(upcomingContests.size == 4)
+
+    val firstContest = upcomingContests.first()
+    assertEquals(1492, firstContest.id)
+    assertEquals("Codeforces Round #704 (Div. 2)", firstContest.name)
+    assertEquals("2021-02-23T12:05+03:00[Europe/Moscow]", firstContest.startDate.toString())
+    assertEquals(120, firstContest.length.toMinutes())
+    assertEquals(true, firstContest.isRegistrationOpen)
+  }
+
+  fun testRecentContests() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val recentContests = CodeforcesContestConnector.getRecentContests(document)
+    assertTrue(recentContests.size == 100)
+
+    val firstContest = recentContests.first()
+    assertEquals(1486, firstContest.id)
+    assertEquals("Codeforces Round #703 (Div. 2)", firstContest.name)
+    assertEquals("2021-02-18T17:35+03:00[Europe/Moscow]", firstContest.startDate.toString())
+    assertEquals(135, firstContest.length.toMinutes())
+    assertEquals(false, firstContest.isRegistrationOpen)
+  }
+
+  private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
+
+  private val testFile: String get() = "${getTestName(true)}.html"
+
 }

@@ -27,4 +27,7 @@ interface CodeforcesService {
   fun problem(@Path("id") contestId: Int,
               @Path("position") position: Int,
               @Query("locale") locale: String = "en"): Call<ResponseBody>
+
+  @GET("contests")
+  fun contestsPage(@Query("locale") locale: String = "en"): Call<ResponseBody>
 }
