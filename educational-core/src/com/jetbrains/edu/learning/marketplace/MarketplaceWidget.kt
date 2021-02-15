@@ -1,18 +1,17 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import icons.EducationalCoreIcons
 
-// TODO: replace icon with icon from designers
 class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(project,
                                                                             EduCoreBundle.message("marketplace.widget.title"),
                                                                             EduCoreBundle.message("marketplace.widget.tooltip"),
-                                                                            AllIcons.Actions.Stub) {
+                                                                            EducationalCoreIcons.MARKETPLACE) {
 
   override val account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
