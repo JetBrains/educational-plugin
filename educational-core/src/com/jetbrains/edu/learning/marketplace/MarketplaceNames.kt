@@ -12,6 +12,7 @@ const val HUB_AUTH_URL = "$HUB_URL/api/rest/"
 const val HUB_PROFILE_PATH = "$HUB_URL/users/"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 const val LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
+const val COURSE_URL = "$PLUGINS_REPOSITORY_URL/plugin/"
 
 var MARKETPLACE_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceHubClientId")
 var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("eduHubClientId")

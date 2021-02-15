@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -24,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
@@ -178,7 +180,7 @@ abstract class MarketplaceConnector {
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
     val unpackedCourse = EduUtils.getLocalEncryptedCourse(tempFile.path) as? EduCourse ?: error(
-      EduCoreBundle.message("dialog.title.failed.to.unpack.course"))
+      message("dialog.title.failed.to.unpack.course"))
 
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
@@ -194,7 +196,7 @@ abstract class MarketplaceConnector {
       }, message, true, null)
 
   fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File) {
-    uploadUnderProgress(EduCoreBundle.message("action.push.course")) {
+    uploadUnderProgress(message("action.push.course")) {
       uploadNewCourse(project, course, file)
     }
   }
@@ -211,13 +213,21 @@ abstract class MarketplaceConnector {
     course.marketplaceId = courseBean.marketplaceId
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
-    val message = EduCoreBundle.message("marketplace.push.course.successfully.uploaded", courseBean.name)
-    showNotification(project, message, null)
+    val message = message("marketplace.push.course.successfully.uploaded", courseBean.name)
+    showNotification(project, message, openOnMarketplaceAction(course.marketplaceId))
     LOG.info("$message with id ${courseBean.marketplaceId}")
   }
 
+  open fun openOnMarketplaceAction(courseId: Int): AnAction? {
+    return object : AnAction(message("action.open.on.text", MARKETPLACE)) {
+      override fun actionPerformed(e: AnActionEvent) {
+        EduBrowser.getInstance().browse(COURSE_URL + courseId)
+      }
+    }
+  }
+
   fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File) {
-    uploadUnderProgress(EduCoreBundle.message("action.push.course.updating")) { uploadCourseUpdate(project, course, file) }
+    uploadUnderProgress(message("action.push.course.updating")) { uploadCourseUpdate(project, course, file) }
   }
 
   private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
@@ -233,8 +243,8 @@ abstract class MarketplaceConnector {
       showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, false))
       return
     }
-    val message = EduCoreBundle.message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showNotification(project, message, null)
+    val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
+    showNotification(project, message, openOnMarketplaceAction(course.marketplaceId))
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
   }
