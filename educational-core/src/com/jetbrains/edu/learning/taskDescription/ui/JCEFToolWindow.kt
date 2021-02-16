@@ -4,10 +4,13 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
 import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.update.MergingUpdateQueue
+import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -35,6 +38,13 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jcefLinkInToolWindowHandler by lazy {
     JCefToolWindowLinkHandler()
   }
+
+  //default value of merging time span is 300 milliseconds, can be set in educational-core.xml
+  private val updateQueue = MergingUpdateQueue(JCEF_UPDATE_QUEUE_NAME,
+                                               Registry.intValue(JCEF_LOADING_INTERVAL_REGISTRY_KEY),
+                                               true,
+                                               null,
+                                               this)
 
   init {
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(), taskInfoJBCefBrowser.cefBrowser)
@@ -80,8 +90,10 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   override fun setText(text: String, task: Task?) {
-    val html = htmlWithResources(project, wrapHints(text, task))
-    taskInfoJBCefBrowser.loadHTML(html)
+    updateQueue.queue(Update.create(JCEF_UPDATE_QUEUE_NAME) {
+      val html = htmlWithResources(project, wrapHints(text, task))
+      taskInfoJBCefBrowser.loadHTML(html)
+    })
   }
 
   override fun updateTaskSpecificPanel(task: Task?) {
@@ -159,6 +171,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   companion object {
+    private const val JCEF_LOADING_INTERVAL_REGISTRY_KEY = "edu.jcef.browser.load.interval"
+    private const val JCEF_UPDATE_QUEUE_NAME = "JCEF Browser Update"
     private const val JCEF_URL_PREFIX = "file:///jbcefbrowser/"
 
     @TestOnly
