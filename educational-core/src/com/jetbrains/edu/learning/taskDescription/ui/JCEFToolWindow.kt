@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
-import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
+import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
@@ -28,8 +28,8 @@ import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
-  private val taskInfoJBCefBrowser = JBCefBrowser()
-  private val taskSpecificJBCefBrowser = JBCefBrowser()
+  private val taskInfoJBCefBrowser = JCEFHtmlPanel(null)
+  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(null)
   private var currentTask: ChoiceTask? = null
 
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser)

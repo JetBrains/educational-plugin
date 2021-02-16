@@ -6,8 +6,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
-import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.ui.jcef.JBCefJSQuery
+import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -38,7 +38,7 @@ class CheckiOMissionCheck(private val project: Project,
                           @NonNls private val interpreterName: String,
                           @NonNls private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
-  private val jbCefBrowser = JBCefBrowser()
+  private val jbCefBrowser = JCEFHtmlPanel(null)
   private val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser)
   private lateinit var checkResult: CheckResult
   private val latch = CountDownLatch(1)
