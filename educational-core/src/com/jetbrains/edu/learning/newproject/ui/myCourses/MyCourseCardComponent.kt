@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
+import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBLabel
@@ -57,16 +58,15 @@ class MyCourseCardComponent(course: CourseMetaInfo) : CourseCardComponent(course
         val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Course info not found for ${course.name}")
         val location = courseMetaInfo.location
 
-        val result = Messages.showOkCancelDialog(
-          null,
-          EduCoreBundle.message("course.dialog.my.courses.remove.course.text", courseMetaInfo.name),
-          EduCoreBundle.message("course.dialog.my.courses.remove.course.title"),
-          Messages.getCancelButton(),
-          EduCoreBundle.message("course.dialog.my.courses.remove.course"),
-          Messages.getErrorIcon()
-        )
+        // We want to set default option to make dialog work correctly on windows
+        val result = Messages.showDialog(this@MyCourseCardComponent,
+                                         EduCoreBundle.message("course.dialog.my.courses.remove.course.text", courseMetaInfo.name),
+                                         EduCoreBundle.message("course.dialog.my.courses.remove.course.title"),
+                                         arrayOf(CommonBundle.getOkButtonText(), EduCoreBundle.message("course.dialog.my.courses.remove.course")),
+                                         Messages.OK,
+                                         Messages.getErrorIcon())
 
-        if (result == Messages.CANCEL) {
+        if (result == Messages.NO) {
           CoursesStorage.getInstance().removeCourseByLocation(location)
         }
       }
