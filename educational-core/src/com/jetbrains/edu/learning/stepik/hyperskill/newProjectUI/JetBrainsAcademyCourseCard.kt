@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
@@ -17,17 +18,19 @@ private const val INFO_VGAP = 5
 class JetBrainsAcademyCourseCard(course: Course) : CourseCardComponent(course) {
 
   override fun createBottomComponent(): JPanel {
-    return AcademyCourseInfoComponent()
+    return AcademyCourseInfoComponent(course is JetBrainsAcademyCourse)
   }
 }
 
-private class AcademyCourseInfoComponent : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
+private class AcademyCourseInfoComponent(isAdvertisingCourse: Boolean) : JPanel(FlowLayout(FlowLayout.LEFT, INFO_HGAP, INFO_VGAP)) {
 
   init {
     val commentLabel = JLabel().apply {
       foreground = GRAY_COLOR
       font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
-      text = EduCoreBundle.message("course.dialog.jba.default.card.info")
+      if (isAdvertisingCourse) {
+        text = EduCoreBundle.message("course.dialog.jba.default.card.info")
+      }
     }
 
     add(commentLabel)
