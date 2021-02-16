@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -44,6 +45,10 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: Coroutin
   override fun updateFilters(coursesGroups: List<CoursesGroup>) {
     super.updateFilters(coursesGroups)
     humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
+  }
+
+  override fun updateModelAfterCourseDeletedFromStorage() {
+    updateModel(CoursesStorage.getInstance().coursesInGroups(), selectedCourse)
   }
 
   override fun createCoursesListPanel() = MyCoursesList()
