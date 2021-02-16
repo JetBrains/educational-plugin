@@ -67,9 +67,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
-    val state = RecentProjectsManagerBase.instanceEx.state
-
-    val recentPaths = state.recentPaths
+    val recentPaths = RecentProjectsManagerBase.instanceEx.getRecentPaths()
     val parser = SAXBuilder()
 
     for (projectPath in recentPaths) {
