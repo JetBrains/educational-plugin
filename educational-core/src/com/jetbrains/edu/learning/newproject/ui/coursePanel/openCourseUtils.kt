@@ -15,10 +15,10 @@ fun Course.openCourse() {
 }
 
 fun showNoCourseDialog(coursePath: String, cancelButtonText: String): Int {
-  return Messages.showOkCancelDialog(null,
-                                     EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
-                                     EduCoreBundle.message("course.dialog.course.not.found.title"),
-                                     Messages.getOkButton(),
-                                     cancelButtonText,
-                                     Messages.getErrorIcon())
+  return Messages.showDialog(null,
+                             EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
+                             EduCoreBundle.message("course.dialog.course.not.found.title"),
+                             arrayOf(Messages.getOkButton(), cancelButtonText),
+                             Messages.OK,
+                             Messages.getErrorIcon())
 }
