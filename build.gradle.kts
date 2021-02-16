@@ -29,11 +29,16 @@ val studioBuildVersion: String by project
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
 
-val baseVersion = when (baseIDE) {
-  "idea" -> ideaVersion
-  "clion" -> clionVersion
-  "pycharm" -> pycharmVersion
-  "studio" -> studioVersion
+val isIdeaIDE = baseIDE == "idea"
+val isClionIDE = baseIDE == "clion"
+val isPycharmIDE = baseIDE == "pycharm"
+val isStudioIDE = baseIDE == "studio"
+
+val baseVersion = when {
+  isIdeaIDE -> ideaVersion
+  isClionIDE -> clionVersion
+  isPycharmIDE -> pycharmVersion
+  isStudioIDE -> studioVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
@@ -58,18 +63,18 @@ val isAtLeast211 = environmentName.toInt() >= 211
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
-val pythonPlugin = when (baseIDE) {
-  "idea" -> pythonProPlugin
-  "clion" -> "python-ce"
-  "pycharm" -> "python-ce"
-  "studio" -> pythonCommunityPlugin
+val pythonPlugin = when {
+  isIdeaIDE -> pythonProPlugin
+  isClionIDE -> "python-ce"
+  isPycharmIDE -> "python-ce"
+  isStudioIDE -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
-val markdownPlugin = if (baseIDE == "studio") "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
+val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 
 val jvmPlugins = arrayOf(
@@ -114,7 +119,7 @@ allprojects {
   }
 
   intellij {
-    if (baseIDE == "studio") {
+    if (isStudioIDE) {
       localPath = studioPath
     } else {
       version = baseVersion
@@ -250,7 +255,7 @@ project(":") {
     if (isJvmCenteredIDE) {
       pluginsList += listOf("java", "junit", "Kotlin", scalaPlugin)
     }
-    if (baseIDE == "idea") {
+    if (isIdeaIDE) {
       pluginsList += listOf("NodeJS", "JavaScriptLanguage", goPlugin)
     }
 
@@ -555,7 +560,7 @@ project(":Edu-Python") {
 
 project(":Edu-Python:Idea") {
   intellij {
-    if (!isJvmCenteredIDE || baseIDE == "studio") {
+    if (!isJvmCenteredIDE || isStudioIDE) {
       localPath = null
       version = ideaVersion
     }
@@ -576,7 +581,7 @@ project(":Edu-Python:Idea") {
 
 project(":Edu-Python:PyCharm") {
   intellij {
-    if (baseIDE == "studio") {
+    if (isStudioIDE) {
       localPath = null
       version = ideaVersion
     }
