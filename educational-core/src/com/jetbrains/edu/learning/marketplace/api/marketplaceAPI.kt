@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -10,6 +11,7 @@ const val DATA = "data"
 const val DESCRIPTION = "description"
 const val DEVELOPERS = "developers"
 const val DOWNLOADS = "downloads"
+const val ENVIRONMENT = "environment"
 const val FIELDS = "fields"
 const val MARKETPLACE_COURSE_VERSION = "course_version"
 const val GUEST = "guest"
@@ -85,6 +87,9 @@ class Fields {
 
   @JsonProperty(LANGUAGE)
   var language: String = ""
+
+  @JsonProperty(ENVIRONMENT)
+  var environment: String? = DEFAULT_ENVIRONMENT
 }
 
 class Organization {

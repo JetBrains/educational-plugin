@@ -48,4 +48,3 @@ private class MarketplacePlatformProvider : CoursesPlatformProvider() {
     return CoursesGroup(courses).asList()
   }
 }
-

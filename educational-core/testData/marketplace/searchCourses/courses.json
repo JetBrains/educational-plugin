@@ -13,6 +13,7 @@
             "FirstName LastName"
           ],
           "fields" : {
+            "environment": null,
             "programmingLanguage" : "Python",
             "language" : "en"
           },
@@ -31,8 +32,25 @@
             "user2 LastName2"
           ],
           "fields" : {
+            "environment": null,
             "programmingLanguage" : "JAVA",
             "language" : "ru"
+          }
+        },
+        {
+          "id": "3",
+          "name": "Scala course",
+          "organization": null,
+          "description" : "Introduction course to Scala",
+          "downloads" : 5,
+          "rating" : 4.75,
+          "developers": [
+            "FirstName LastName"
+          ],
+          "fields": {
+            "environment": "sbt",
+            "programmingLanguage": "Scala",
+            "language": "en"
           }
         }
       ]

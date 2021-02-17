@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
+import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
@@ -54,6 +55,7 @@ private class MarketplaceCourseBuilder(
       reviewScore = rating ?: 0.0
       language = fields.programmingLanguage
       languageCode = fields.language
+      environment = fields.environment ?: DEFAULT_ENVIRONMENT
       marketplaceCourseVersion = version ?: 1
       organization = courseOrganization?.name
       setMarketplaceAuthorsAsString(developers)
@@ -62,4 +64,3 @@ private class MarketplaceCourseBuilder(
     return course
   }
 }
-
