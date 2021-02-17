@@ -56,7 +56,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     coursesListPanel.setClickListener { course ->
       val coursePath = coursesStorage.getCoursePath(course) ?: return@setClickListener true
       if (!FileUtil.exists(coursePath)) {
-        if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.my.courses.remove.course")) == Messages.CANCEL) {
+        if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.my.courses.remove.course")) == Messages.NO) {
           coursesStorage.removeCourseByLocation(coursePath)
         }
       }
