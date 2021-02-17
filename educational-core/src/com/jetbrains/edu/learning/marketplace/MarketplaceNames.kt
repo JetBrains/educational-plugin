@@ -7,10 +7,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import org.jetbrains.ide.BuiltInServerManager
 
 const val MARKETPLACE = "Marketplace"
-const val HUB_URL = "https://hub.jetbrains.com"
-const val HUB_AUTH_URL = "$HUB_URL/api/rest/"
-const val HUB_PROFILE_PATH = "$HUB_URL/users/"
+const val HUB_AUTH_URL = "https://hub.jetbrains.com/api/rest/"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
+const val MARKETPLACE_PROFILE_PATH = "$PLUGINS_REPOSITORY_URL/author/me"
 const val LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
 const val COURSE_URL = "$PLUGINS_REPOSITORY_URL/plugin/"
 

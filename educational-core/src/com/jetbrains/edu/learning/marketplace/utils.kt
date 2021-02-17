@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.marketplace
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -21,8 +20,6 @@ fun decodeHubToken(token: String): String? {
   }
   return if (userData[2].isEmpty()) null else userData[2]
 }
-
-val MarketplaceAccount.profileUrl: String get() = "$HUB_PROFILE_PATH${userInfo.id}"
 
 fun Course.generateCourseItemsIds() {
   visitSections { section -> section.generateId() }

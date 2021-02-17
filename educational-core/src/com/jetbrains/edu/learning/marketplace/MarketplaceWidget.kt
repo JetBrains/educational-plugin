@@ -19,7 +19,7 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(proj
   override val platformName: String
     get() = MARKETPLACE
 
-  override fun profileUrl(account: MarketplaceAccount): String = account.profileUrl
+  override fun profileUrl(account: MarketplaceAccount): String = MARKETPLACE_PROFILE_PATH
 
   override fun ID() = ID
 

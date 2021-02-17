@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.marketplace.settings
 
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.profileUrl
 import com.jetbrains.edu.learning.settings.OauthOptions
 import javax.swing.event.HyperlinkEvent
 
@@ -22,7 +22,7 @@ class MarketplaceOptions : OauthOptions<MarketplaceAccount>() {
     }
   }
 
-  override fun profileUrl(account: MarketplaceAccount): String = account.profileUrl
+  override fun profileUrl(account: MarketplaceAccount): String = MARKETPLACE_PROFILE_PATH
 
   override fun createAuthorizeListener(): LoginListener {
     return object : LoginListener() {
