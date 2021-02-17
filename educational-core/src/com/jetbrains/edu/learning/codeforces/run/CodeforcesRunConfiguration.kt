@@ -14,5 +14,6 @@ interface CodeforcesRunConfiguration : RunConfiguration, InputRedirectAware {
     return VfsUtil.findFile(Path.of(path), true)
   }
 
-  fun setExecutableFile(file: VirtualFile)
+  @JvmDefault
+  fun setExecutableFile(file: VirtualFile) {}
 }

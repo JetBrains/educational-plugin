@@ -71,8 +71,7 @@ class RsCodeforcesCheckerTest : RsCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val matcher = when (task.name) {
         "CodeforcesTask" -> CheckStatus.Solved to nullValue()
-        "WrongAnswerCodeforcesTask" -> CheckStatus.Failed to CheckResultDiffMatcher.diff(
-          CheckResultDiff(expected = "3", actual = "2"))
+        "WrongAnswerCodeforcesTask" -> CheckStatus.Failed to CheckResultDiffMatcher.diff(CheckResultDiff(expected = "3", actual = "2"))
         else -> error("Unexpected task name: ${task.name}")
       }
       assertEquals("Status for ${task.name} doesn't match", matcher.first, checkResult.status)
