@@ -80,7 +80,7 @@ class OpenCourseButton : CourseButtonBase() {
       EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
     }
 
-    if (showNoCourseDialog(coursePath, message) == Messages.CANCEL) {
+    if (showNoCourseDialog(coursePath, message) == Messages.NO) {
       CoursesStorage.getInstance().removeCourseByLocation(coursePath)
       when {
         isFromMyCoursesPage -> {
