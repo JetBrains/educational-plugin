@@ -191,13 +191,14 @@ fun VirtualFile.getTaskFile(project: Project): TaskFile? {
   return task?.getTaskFile(pathRelativeToTask(project))
 }
 
-fun VirtualFile.isToEncodeContent(): Boolean = toEncodeFileContent(path)
+val VirtualFile.isToEncodeContent: Boolean
+  get(): Boolean = toEncodeFileContent(path)
 
 fun VirtualFile.mimeType(): String? = mimeFileType(path)
 
-fun VirtualFile.loadEncodedContent(): String {
-  return if (isToEncodeContent()) {
-    Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(this))
+fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeContent): String {
+  return if (isToEncodeContent) {
+    Base64.encodeBase64String(contentsToByteArray())
   }
   else {
     VfsUtilCore.loadText(this)
@@ -208,8 +209,8 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
-    if (isToEncodeContent()) {
-      taskFile.setText(Base64.encodeBase64String(contentsToByteArray()))
+    if (isToEncodeContent) {
+      taskFile.setText(loadEncodedContent(isToEncodeContent = true))
       return taskFile
     }
     FileDocumentManager.getInstance().saveDocument(document)

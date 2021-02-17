@@ -38,7 +38,7 @@ class FileTree(private val rootDirectory: Entry.Directory) {
           is Entry.File -> {
             check(!child.isDirectory)
             if (entry.text != null) {
-              if (fixture != null && !child.isToEncodeContent()) {
+              if (fixture != null && !child.isToEncodeContent) {
                 fixture.openFileInEditor(child)
                 fixture.checkResult(entry.text)
               }

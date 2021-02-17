@@ -8,7 +8,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
@@ -23,8 +22,8 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.loadEncodedContent
 import okhttp3.*
-import org.apache.commons.codec.binary.Base64
 import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
 import java.time.Duration
@@ -96,7 +95,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     val output = task.taskFiles.filterValues { it.name != PART_ID && it.name != ASSIGNMENT_KEY }.mapValues {
       val file = it.value.getVirtualFile(project) ?: error("VirtualFile for ${it.key} not found")
-      Base64.encodeBase64String(VfsUtilCore.loadBytes(file))
+      file.loadEncodedContent(isToEncodeContent = true)
     }
     val submission = Submission(assignmentKey, courseraSettings.email, courseraSettings.token,
                                 mapOf(Pair(partId, Part(ObjectMapper().writeValueAsString(output)))))

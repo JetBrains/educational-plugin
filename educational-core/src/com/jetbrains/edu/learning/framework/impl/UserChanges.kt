@@ -170,7 +170,7 @@ sealed class Change {
         return
       }
 
-      if (file.isToEncodeContent()) {
+      if (file.isToEncodeContent) {
         runWriteAction {
           file.setBinaryContent(Base64.decodeBase64(text))
         }
