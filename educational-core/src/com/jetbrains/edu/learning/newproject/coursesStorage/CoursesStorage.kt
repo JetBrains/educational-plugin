@@ -104,6 +104,11 @@ class CourseMetaInfo : Course {
   }
 
   @Transient
+  override fun getItemType(): String {
+    return type
+  }
+
+  @Transient
   override fun getIndex(): Int {
     return super.getIndex()
   }

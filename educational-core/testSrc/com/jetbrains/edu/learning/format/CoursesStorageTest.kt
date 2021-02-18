@@ -1,21 +1,39 @@
 package com.jetbrains.edu.learning.format
 
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.coursesStorage.UserCoursesState
+import com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator
+import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
 
 class CoursesStorageTest : EduTestCase() {
+
+  fun `test correct configurator found for courses in storage`() {
+    val coursesStorage = CoursesStorage.getInstance()
+
+    val hyperskillCourse = hyperskillCourse(language = PlainTextLanguage.INSTANCE) {}
+    val eduCourse = course {}
+
+    for ((course, configuratorClass) in listOf(hyperskillCourse to PlainTextHyperskillConfigurator::class.java,
+                                               eduCourse to PlainTextConfigurator::class.java)) {
+      coursesStorage.addCourse(course, "location", 0, 0)
+      assertInstanceOf(coursesStorage.getCourseMetaInfo(course)!!.configurator, configuratorClass)
+    }
+  }
 
   fun testCourseModeRespected() {
     val coursesStorage = CoursesStorage.getInstance()
