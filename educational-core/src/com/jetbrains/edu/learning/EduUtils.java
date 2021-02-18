@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -55,6 +56,7 @@ import org.jetbrains.annotations.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -513,5 +515,13 @@ public class EduUtils {
   public static boolean isNewlyCreated(@NotNull Project project) {
     Boolean userData = project.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED);
     return userData != null && userData;
+  }
+
+  public static boolean exceedsBase64ContentLimit(String base64text) {
+    return base64text.getBytes(StandardCharsets.UTF_16).length > getBinaryFileLimit();
+  }
+
+  public static int getBinaryFileLimit() {
+    return OpenApiExtKt.isUnitTestMode() ? 100 * 1024 : FileUtilRt.MEGABYTE;
   }
 }

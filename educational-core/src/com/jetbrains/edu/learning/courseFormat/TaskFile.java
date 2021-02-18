@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,8 @@ public class TaskFile {
   private String myText = "";
 
   @Transient private Task myTask;
+
+  private static final Logger LOG = Logger.getInstance(TaskFile.class);
 
   public TaskFile() {
   }
@@ -155,6 +159,11 @@ public class TaskFile {
   @Nullable
   public String getTextToSerialize() {
     if (myTask.getLesson() instanceof FrameworkLesson && OpenApiExtKt.toEncodeFileContent(myName)) {
+      if (EduUtils.exceedsBase64ContentLimit(myText)) {
+        LOG.warn(String.format("Base64 encoding of `%s` file exceeds limit (%s), its content isn't serialized",
+                               myName, StringUtil.formatFileSize(EduUtils.getBinaryFileLimit())));
+        return null;
+      }
       return myText;
     }
 

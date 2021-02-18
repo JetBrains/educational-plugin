@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -457,6 +458,39 @@ class StudentYamlSerializationTest : EduTestCase() {
     |- name: $gitObjectFilePath
     |  visible: false
     |  text: $base64Text
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
+  fun `test huge binary file text is not saved in framework lesson`() {
+    var base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
+
+    //create huge fileText
+    while (!EduUtils.exceedsBase64ContentLimit(base64Text)) {
+      base64Text += base64Text
+    }
+
+    val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"
+    val task = courseWithFiles {
+      frameworkLesson {
+        eduTask {
+          taskFile("task.txt", "task text")
+          taskFile(gitObjectFilePath, base64Text, false)
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: task.txt
+    |  visible: true
+    |  text: task text
+    |  learner_created: false
+    |- name: $gitObjectFilePath
+    |  visible: false
     |  learner_created: false
     |status: Unchecked
     |record: -1
