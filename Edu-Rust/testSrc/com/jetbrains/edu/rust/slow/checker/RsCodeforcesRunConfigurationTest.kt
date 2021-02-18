@@ -29,16 +29,16 @@ class RsCodeforcesRunConfigurationTest : RsCheckersTestBase() {
             name = "task"
             version = "0.1.0"
             edition = "2018"
-          """)
+        """)
         rustTaskFile("src/main.rs", """
-              use std::io::{self, Read};
-
-              fn main() {
-                  let mut buffer = String::new();
-                  std::io::stdin().read_line(&mut buffer);
-                  print!("{}", buffer);
-              }
-          """)
+            use std::io::{Read, stdin};
+            
+            fn main() {
+                let mut buffer = String::new();
+                stdin().read_line(&mut buffer);
+                print!("{}", buffer);
+            }
+        """)
         taskFile("${CodeforcesNames.TEST_DATA_FOLDER}/1/input.txt", "123456")
         taskFile("${CodeforcesNames.TEST_DATA_FOLDER}/1/output.txt", "4")
       }
