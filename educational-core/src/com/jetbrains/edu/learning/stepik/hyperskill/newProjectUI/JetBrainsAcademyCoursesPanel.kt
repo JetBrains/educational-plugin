@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -22,6 +24,20 @@ class JetBrainsAcademyCoursesPanel(
     val linkText = EduCoreBundle.message("course.dialog.go.to.website")
     val linkInfo = LinkInfo(linkText, HYPERSKILL_DEFAULT_URL)
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
+  }
+
+  override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
+    if (deletedCourse is CourseMetaInfo) {
+      val coursesGroup = coursesGroups.first()
+
+      coursesGroup.courses = coursesGroup.courses.filter { it != deletedCourse }
+
+      if (coursesGroup.courses.isEmpty()) {
+        coursesGroup.courses = listOf(JetBrainsAcademyCourse())
+      }
+    }
+
+    super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 
   override fun createCoursesListPanel() = JetBrainsAcademyCoursesListPanel()

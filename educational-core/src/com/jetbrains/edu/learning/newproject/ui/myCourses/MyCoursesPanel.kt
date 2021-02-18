@@ -46,7 +46,7 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: Coroutin
     humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
   }
 
-  override fun updateModelAfterCourseDeletedFromStorage() {
+  override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
     updateModel(CoursesStorage.getInstance().coursesInGroups(), selectedCourse)
   }
 

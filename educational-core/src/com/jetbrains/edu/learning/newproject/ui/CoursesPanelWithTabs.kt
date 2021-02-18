@@ -88,7 +88,7 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
       connection.subscribe(CoursesStorage.COURSE_DELETED, object : CourseDeletedListener {
         override fun courseDeleted(course: Course) {
           panels.forEach {
-            it.updateModelAfterCourseDeletedFromStorage()
+            it.updateModelAfterCourseDeletedFromStorage(course)
           }
         }
       })

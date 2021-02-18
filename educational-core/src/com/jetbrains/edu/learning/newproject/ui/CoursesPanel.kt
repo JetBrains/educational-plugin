@@ -77,7 +77,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     showProgressState()
   }
 
-  open fun updateModelAfterCourseDeletedFromStorage() {
+  open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
     updateModel(coursesGroups, null, true)
   }
 
