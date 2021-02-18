@@ -58,6 +58,6 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
 
   companion object {
     // BACKCOMPAT: 2020.2
-    private val BUILD_203: BuildNumber = BuildNumber.fromString("203")!!
+    val BUILD_203: BuildNumber = BuildNumber.fromString("203")!!
   }
 }
