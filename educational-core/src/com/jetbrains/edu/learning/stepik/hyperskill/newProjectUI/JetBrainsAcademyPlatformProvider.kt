@@ -6,16 +6,18 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -59,13 +61,25 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun loadCourses(): List<CoursesGroup> {
-    val hyperskillProject = getSelectedProject() ?: return CoursesGroup(listOf(JetBrainsAcademyCourse())).asList()
-    val hyperskillCourse = HyperskillProjectOpener.createHyperskillCourse(HyperskillOpenStageRequest(hyperskillProject.id, null),
-                                                                          hyperskillProject.language,
-                                                                          hyperskillProject).onError { return emptyList() }
+    val courses = mutableListOf<Course>()
 
-    return CoursesGroup(listOf(hyperskillCourse)).asList()
+    val selectedProject = getSelectedProject()
+
+    selectedProject?.course?.let { courses.add(it) }
+
+    val coursesFromStorage = CoursesStorage.getInstance().state.courses.filter { it.type == HYPERSKILL && it.id != selectedProject?.id }
+    courses.addAll(coursesFromStorage)
+
+    if (courses.isEmpty()) {
+      // if no JB Academy content to offer, advertise it
+      courses.add(JetBrainsAcademyCourse())
+    }
+
+    return listOf(CoursesGroup(courses))
   }
+
+  private val HyperskillProject.course: HyperskillCourse?
+    get() = HyperskillProjectOpener.createHyperskillCourse(HyperskillOpenStageRequest(id, null), language, this).onError { null }
 
   private fun getSelectedProject(): HyperskillProject? {
     val account = HyperskillSettings.INSTANCE.account ?: return null
