@@ -1,14 +1,12 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
-import com.intellij.featureStatistics.FeatureStatisticsBundleEP
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
@@ -49,7 +47,6 @@ import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 
 abstract class EduTestCase : EduTestCaseBase() {
@@ -75,7 +72,6 @@ abstract class EduTestCase : EduTestCaseBase() {
                          CodeforcesNames.CODEFORCES_COURSE_TYPE)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
     registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
-    registerAdditionalResourceBundleProviders(testRootDisposable)
 
     CheckActionListener.reset()
     val connection = project.messageBus.connect(testRootDisposable)
@@ -376,29 +372,4 @@ abstract class EduTestCase : EduTestCaseBase() {
       }
     }
   }
-}
-
-// AS relies on a feature statistic bundle provided by CIDR, but it is not registered in tests for some reason.
-// And it leads to fail of some tests.
-// This hack register this bundle manually.
-//
-// Inspired by kotlin plugin
-private fun registerAdditionalResourceBundleProviders(disposable: Disposable) {
-  val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
-  if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
-    try {
-      ResourceBundle.getBundle(TestOCBundleProvider.qualifiedName, Locale.getDefault(), TestOCBundleProvider.classLoader)
-      extensionPoint.registerExtension(TestOCBundleProvider, disposable)
-    }
-    catch (ignore: MissingResourceException) {}
-  }
-}
-
-private object TestOCBundleProvider : FeatureStatisticsBundleEP() {
-  init {
-    qualifiedName = "messages.OCBundle"
-  }
-
-  val classLoader: ClassLoader
-    get() = pluginDescriptor?.pluginClassLoader ?: javaClass.classLoader
 }

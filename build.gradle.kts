@@ -411,9 +411,12 @@ project(":code-insight:html") {
 }
 
 project(":code-insight:markdown") {
-
+  val plugins = mutableListOf(markdownPlugin)
+  if (isStudioIDE && isAtLeast203) {
+    plugins.add("platform-images")
+  }
   intellij {
-    setPlugins(markdownPlugin)
+    setPlugins(*plugins.toTypedArray())
   }
 
   dependencies {
