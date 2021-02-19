@@ -11,19 +11,27 @@ import java.util.*
 
 abstract class CourseUpdateTestBase<Settings> : CourseGenerationTestBase<Settings>() {
 
-  protected fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit = {}) {
+  open fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit = {}) {
     val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
     val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
     modifyCourse(course)
     doTest(course, courseFromServer, expectedFileTree)
   }
 
-  protected fun doTest(course: EduCourse, courseFromServer: EduCourse, expectedFileTree: FileTree) {
+  protected fun loadCourseStructure(course: EduCourse, courseFromServer: EduCourse) {
     setTopLevelSection(course)
     createCourseStructure(course)
     setTopLevelSection(courseFromServer)
+  }
 
-    StepikCourseUpdater(course, project).doUpdate(courseFromServer)
+  open fun doTest(course: EduCourse, courseFromServer: EduCourse, expectedFileTree: FileTree) {
+    loadCourseStructure(course, courseFromServer)
+
+    StepikCourseUpdater(project, course).doUpdate(courseFromServer)
+    checkCourseStructure(course, courseFromServer, expectedFileTree)
+  }
+
+  protected fun checkCourseStructure(course: EduCourse, courseFromServer: EduCourse, expectedFileTree: FileTree) {
     assertEquals("Lessons number mismatch. Expected: ${courseFromServer.lessons.size}. Actual: ${course.lessons.size}",
                  courseFromServer.lessons.size, course.lessons.size)
 

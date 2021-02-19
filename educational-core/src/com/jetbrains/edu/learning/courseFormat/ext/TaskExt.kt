@@ -34,6 +34,10 @@ val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
 val Task.dirName: String get() = if (isFrameworkTask && course.isStudy) EduNames.TASK else name
 
+fun Task.findDir(lessonDir: VirtualFile?): VirtualFile? {
+  return lessonDir?.findChild(dirName)
+}
+
 fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   val sourceDir = sourceDir ?: return null
   return taskDir.findFileByRelativePath(sourceDir)

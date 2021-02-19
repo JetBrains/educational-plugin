@@ -290,7 +290,7 @@ public abstract class Task extends StudyItem {
       return null;
     }
     final VirtualFile lessonDir = myLesson.getDir(courseDir);
-    return lessonDir == null ? null : lessonDir.findChild(TaskExt.getDirName(this));
+    return TaskExt.findDir(this, lessonDir);
   }
 
   @NotNull

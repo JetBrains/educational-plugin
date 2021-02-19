@@ -64,7 +64,7 @@ class SyncStepikCourseTest : EduTestCase() {
     connection.subscribe(Notifications.TOPIC, object : Notifications {
       override fun notify(notification: Notification) {
         notificationShown = true
-        assertEquals(EduCoreBundle.message("stepik.course.up.to.date"), notification.title)
+        assertEquals(EduCoreBundle.message("notification.course.up.to.date"), notification.title)
       }
     })
 

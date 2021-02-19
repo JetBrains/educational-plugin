@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.fileTree
 
-class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
+open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test lesson added`() {

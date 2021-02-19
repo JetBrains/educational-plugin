@@ -66,7 +66,7 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
  * after retrieving of remote course object. It may lead to outdated course info even after update
  */
 fun updateCourse(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
-  StepikCourseUpdater(course, project).updateCourse(courseFromStepik)
+  StepikCourseUpdater(project, course).updateCourse(courseFromStepik)
   SubmissionsManager.getInstance(project).getSubmissions(course.allTasks.map { it.id }.toSet())
   StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }

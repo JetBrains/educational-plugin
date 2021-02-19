@@ -154,7 +154,9 @@ abstract class MarketplaceConnector {
   fun searchCourse(marketplaceId: Int): EduCourse? {
     val query = QueryData(GraphqlQuery.searchById(marketplaceId))
     val response = repositoryService.search(query).executeHandlingExceptions()
-    return response?.body()?.data?.coursesList?.courses?.firstOrNull()
+    val course = response?.body()?.data?.coursesList?.courses?.firstOrNull()
+    course?.marketplaceId = marketplaceId
+    return course
   }
 
   fun getLatestCourseUpdateInfo(marketplaceId: Int): UpdateInfo? {

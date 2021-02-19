@@ -17,7 +17,7 @@
           "task_type": "edu",
           "files": {
             "src/Task.java": {
-              "name": "public src/Task.java",
+              "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
             },

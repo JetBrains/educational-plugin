@@ -60,10 +60,10 @@ public class SyncStepikCourseAction extends SyncCourseAction {
     CourseUpdateInfo info = StepikUpdateDateExt.checkIsUpToDate(course);
     boolean isUpToDate = info.isUpToDate();
     if (!isUpToDate) {
-      new StepikCourseUpdater(course, project).updateCourse(info.getRemoteCourseInfo());
+      new StepikCourseUpdater(project, course).updateCourse(info.getRemoteCourseInfo());
     }
     else {
-      showNotification(project, EduCoreBundle.message("stepik.course.up.to.date"), null);
+      showNotification(project, EduCoreBundle.message("notification.course.up.to.date"), null);
     }
   }
 
