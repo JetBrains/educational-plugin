@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
-import com.intellij.CommonBundle
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBLabel
@@ -62,7 +61,8 @@ class MyCourseCardComponent(course: CourseMetaInfo) : CourseCardComponent(course
         val result = Messages.showDialog(this@MyCourseCardComponent,
                                          EduCoreBundle.message("course.dialog.my.courses.remove.course.text", courseMetaInfo.name),
                                          EduCoreBundle.message("course.dialog.my.courses.remove.course.title"),
-                                         arrayOf(CommonBundle.getOkButtonText(), EduCoreBundle.message("course.dialog.my.courses.remove.course")),
+                                         arrayOf(Messages.getCancelButton(),
+                                                 EduCoreBundle.message("course.dialog.my.courses.remove.course")),
                                          Messages.OK,
                                          Messages.getErrorIcon())
 

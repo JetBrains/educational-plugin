@@ -18,7 +18,7 @@ fun showNoCourseDialog(coursePath: String, cancelButtonText: String): Int {
   return Messages.showDialog(null,
                              EduCoreBundle.message("course.dialog.course.not.found.text", FileUtil.toSystemDependentName(coursePath)),
                              EduCoreBundle.message("course.dialog.course.not.found.title"),
-                             arrayOf(Messages.getOkButton(), cancelButtonText),
+                             arrayOf(Messages.getCancelButton(), cancelButtonText),
                              Messages.OK,
                              Messages.getErrorIcon())
 }
