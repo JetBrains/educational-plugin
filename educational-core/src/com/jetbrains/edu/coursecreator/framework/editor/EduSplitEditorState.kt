@@ -12,11 +12,14 @@ class EduSplitEditorState(
   val secondaryEditorState: FileEditorState? = null
 ) : FileEditorState {
 
-  override fun canBeMergedWith(otherState: FileEditorState?, level: FileEditorStateLevel): Boolean {
-    return otherState is EduSplitEditorState &&
-           mainEditorState?.canBeMergedWith(otherState.mainEditorState, level) != false &&
-           secondaryEditorState?.canBeMergedWith(otherState.secondaryEditorState, level) != false
-  }
+  override fun canBeMergedWith(otherState: FileEditorState, level: FileEditorStateLevel): Boolean =
+    when {
+      otherState !is EduSplitEditorState -> false
+      otherState.mainEditorState == null -> false
+      otherState.secondaryEditorState == null -> false
+      else -> mainEditorState?.canBeMergedWith(otherState.mainEditorState, level) != false &&
+              secondaryEditorState?.canBeMergedWith(otherState.secondaryEditorState, level) != false
+    }
 
   fun write(project: Project, targetElement: Element) {
     val editorProvider = TextEditorProvider.getInstance()
