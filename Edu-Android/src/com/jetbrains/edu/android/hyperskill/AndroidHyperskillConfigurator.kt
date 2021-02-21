@@ -1,4 +1,4 @@
-package com.jetbrains.edu.android.stepik.hyperskill
+package com.jetbrains.edu.android.hyperskill
 
 import com.jetbrains.edu.android.AndroidConfigurator
 import com.jetbrains.edu.jvm.JdkProjectSettings
