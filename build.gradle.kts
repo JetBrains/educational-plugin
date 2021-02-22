@@ -49,6 +49,7 @@ val studioPath: String
   }
 
 val jacksonVersion = "2.10.0"
+val okhttpVersion = "3.14.0"
 
 val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
 val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
@@ -81,6 +82,14 @@ val jvmPlugins = arrayOf(
   "java",
   "junit",
   "gradle-java"
+)
+
+val librariesToExclude = setOf(
+  "jackson-core.2.12.0.jar",
+  "jackson-databind.jar",
+  "jackson-dataformat-yaml-2.12.1.jar",
+  "jackson-module-kotlin-2.12.0.jar",
+  "okhttp.jar"
 )
 
 plugins {
@@ -144,6 +153,15 @@ allprojects {
       filter {
         isFailOnNoMatchingTests = false
       }
+
+      if (isAtLeast211) {
+        doFirst {
+          // Since 2021.1 the platform contains several libraries as a dependencies
+          // that conflicts with the corresponding project dependency
+          // TODO: find out a better way to avoid wrong dependency during test execution
+          classpath = classpath.filter { it.name !in librariesToExclude }
+        }
+      }
     }
 
     withType<JavaCompile> { options.encoding = "UTF-8" }
@@ -153,6 +171,15 @@ allprojects {
         languageVersion = "1.4"
         apiVersion = "1.3"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
+      }
+
+      if (isAtLeast211) {
+        doFirst {
+          // Since 2021.1 the platform contains several libraries as a dependencies
+          // that conflicts with the corresponding project dependency
+          // TODO: find out a better way to avoid wrong dependency during compilation
+          classpath = classpath.filter { it.name !in librariesToExclude }
+        }
       }
     }
   }
@@ -182,12 +209,12 @@ allprojects {
     implementation("com.squareup.retrofit2:retrofit:2.4.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.3.0")
     implementation("com.squareup.retrofit2:converter-gson:2.4.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:3.14.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
       excludeKotlinDeps()
     }
 
-    testImplementation("com.squareup.okhttp3:mockwebserver:3.14.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
   }
 }
 
