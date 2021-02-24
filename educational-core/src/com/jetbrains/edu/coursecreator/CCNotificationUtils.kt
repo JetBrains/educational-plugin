@@ -84,7 +84,14 @@ object CCNotificationUtils {
   fun showNotification(project: Project,
                        @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
                        action: AnAction?) {
-    val notification = Notification(PUSH_COURSE_GROUP_ID, title, "", NotificationType.INFORMATION)
+  showNotification(project, action, title, "")
+  }
+
+  fun showNotification(project: Project,
+                       action: AnAction?,
+                       @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
+                       @Nls(capitalization = Nls.Capitalization.Sentence) message: String,) {
+    val notification = Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.INFORMATION)
     if (action != null) {
       notification.addAction(action)
     }
