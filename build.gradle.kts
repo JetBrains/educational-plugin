@@ -95,7 +95,7 @@ val librariesToExclude = setOf(
 plugins {
   idea
   kotlin("jvm") version "1.4.10"
-  id("org.jetbrains.intellij") version "0.6.3"
+  id("org.jetbrains.intellij") version "0.7.2"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
 }
