@@ -48,6 +48,10 @@ fun checkIsBackgroundThread() {
   }
 }
 
+/**
+ * Note: there are some unsupported cases in this method.
+ * For example, some files have known file type but no extension
+ */
 fun toEncodeFileContent(path: String): Boolean {
   val name = PathUtil.getFileName(path)
   val extension = FileUtilRt.getExtension(name)
@@ -62,6 +66,10 @@ fun toEncodeFileContent(path: String): Boolean {
          contentType.startsWith("application")
 }
 
+/**
+ * Note: this method works as expected only for paths on local file system as it uses Path under the hood
+ * So it doesn't work properly in tests where in-memory file system is used
+ */
 fun mimeFileType(path: String): String? {
   return try {
     Files.probeContentType(Paths.get(path))
