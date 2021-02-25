@@ -1,14 +1,13 @@
 package com.jetbrains.edu.coursecreator.actions.marketplace
 
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -74,15 +73,11 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       val courseOnRemote = connector.searchCourse(course.marketplaceId)
       // courseOnRemote can be null if it was not validated yet
       if (courseOnRemote == null) {
-        val notification = Notification(UPDATE_NOTIFICATION_GROUP_ID,
-                                        message("error.failed.to.update"),
-                                        message("error.failed.to.update.no.course",
-                                                MARKETPLACE,
-                                                message("item.upload.to.0.course.title", MARKETPLACE)),
-                                        NotificationType.ERROR,
-                                        CCNotificationUtils.createPostCourseNotificationListener(course)
-                                        { connector.uploadNewCourseUnderProgress(project, course, tempFile) })
-        notification.notify(project)
+        CCNotificationUtils.showNotification(project,
+                                             uploadNewCourseAction(project, course, connector, tempFile),
+                                             message("error.failed.to.update"),
+                                             message("marketplace.failed.to.update.no.course"),
+                                             NotificationType.ERROR)
         return
       }
 
@@ -92,6 +87,14 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     else {
       connector.uploadNewCourseUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.uploadCourse()
+    }
+  }
+
+  private fun uploadNewCourseAction(project: Project, course: EduCourse, connector: MarketplaceConnector, tempFile: File): AnAction {
+    return object : AnAction(message("item.upload.to.0.course.title", MARKETPLACE)) {
+      override fun actionPerformed(e: AnActionEvent) {
+        connector.uploadNewCourseUnderProgress(project, course, tempFile)
+      }
     }
   }
 }

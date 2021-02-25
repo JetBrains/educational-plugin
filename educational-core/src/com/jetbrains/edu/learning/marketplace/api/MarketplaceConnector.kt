@@ -224,7 +224,7 @@ abstract class MarketplaceConnector {
     LOG.info("$message with id ${courseBean.marketplaceId}")
   }
 
-  open fun openOnMarketplaceAction(courseId: Int): AnAction? {
+  private fun openOnMarketplaceAction(courseId: Int): AnAction {
     return object : AnAction(message("action.open.on.text", MARKETPLACE)) {
       override fun actionPerformed(e: AnActionEvent) {
         EduBrowser.getInstance().browse(COURSE_URL + courseId)
