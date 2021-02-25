@@ -55,7 +55,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   }
 
   fun `test synchronization`() {
-    EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project, testRootDisposable), testRootDisposable)
+    EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), testRootDisposable)
 
     val taskDescriptionFile = findTaskDescriptionFile()
 

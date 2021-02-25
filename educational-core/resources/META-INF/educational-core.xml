@@ -217,8 +217,8 @@
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>
 
-    <registryKey key="edu.jcef.browser.load.interval"
-                 description="The delay in ms before loading page by Task Description view. Requires project reopening"
+    <registryKey key="edu.task.description.update.delay"
+                 description="The delay in ms before loading page by Task Description view. \nRequires project reopening"
                  defaultValue="300"/>
 
     <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"

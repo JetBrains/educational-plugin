@@ -36,7 +36,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       connection.subscribe(VirtualFileManager.VFS_CHANGES, vfsListener)
 
       if (CCUtils.isCourseCreator(project)) {
-        EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project, manager), manager)
+        EditorFactory.getInstance().eventMulticaster.addDocumentListener(SynchronizeTaskDescription(project), manager)
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(CourseIgnoreDocumentListener(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)

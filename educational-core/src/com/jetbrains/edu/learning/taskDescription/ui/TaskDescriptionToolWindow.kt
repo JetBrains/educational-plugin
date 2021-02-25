@@ -19,6 +19,9 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.ui.update.MergingUpdateQueue
+import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -40,6 +43,14 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
                                              "  <div class='hint_content'>" +
                                              " %s" +
                                              "  </div>"
+
+  //default value of merging time span is 300 milliseconds, can be set in educational-core.xml
+  @Suppress("LeakingThis")
+  private val updateQueue = MergingUpdateQueue(TASK_DESCRIPTION_UPDATE,
+                                               Registry.intValue(TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY),
+                                               true,
+                                               null,
+                                               this)
 
   abstract fun createTaskInfoPanel(): JComponent
 
@@ -82,16 +93,20 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
   }
 
   fun setTaskText(project: Project, task: Task?) {
-    setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
+    updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
+      setText(getTaskDescriptionWithCodeHighlighting(project, task), task)
+    })
   }
 
-  abstract fun setText(text: String, task: Task?)
+  protected abstract fun setText(text: String, task: Task?)
 
   override fun dispose() {}
 
   companion object {
     const val HINT_HEADER: String = "hint_header"
     const val HINT_HEADER_EXPANDED: String = "${HINT_HEADER} checked"
+    private const val TASK_DESCRIPTION_UPDATE = "Task Description Update"
+    private const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY = "edu.task.description.update.delay"
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
