@@ -196,6 +196,7 @@ val VirtualFile.isToEncodeContent: Boolean
 
 fun VirtualFile.mimeType(): String? = mimeFileType(path)
 
+@Throws(IOException::class)
 fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeContent): String {
   return if (isToEncodeContent) {
     Base64.encodeBase64String(contentsToByteArray())
