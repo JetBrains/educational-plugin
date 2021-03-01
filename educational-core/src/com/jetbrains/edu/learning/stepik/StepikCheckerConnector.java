@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class StepikCheckerConnector {
-  public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
   private static final Logger LOG = Logger.getInstance(StepikCheckerConnector.class);
   // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
@@ -127,8 +125,7 @@ public class StepikCheckerConnector {
       Language courseLanguage = course.getLanguageById();
       final Editor editor = OpenApiExtKt.getSelectedEditor(project);
       if (editor != null) {
-        String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
-        final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
+        final String answer = editor.getDocument().getText();
         String defaultLanguage = StepikLanguage.langOfId(courseLanguage.getID(), course.getLanguageVersion()).getLangName();
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
 

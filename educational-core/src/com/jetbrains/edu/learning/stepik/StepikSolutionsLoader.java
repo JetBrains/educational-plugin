@@ -52,8 +52,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
-
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
   public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
@@ -62,6 +60,7 @@ public class StepikSolutionsLoader implements Disposable {
   private static final String NOTIFICATION_TITLE = "Outdated EduTools Plugin";
   private static final String NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" +
                                                      "<a href=\"\">Update plugin</a> to avoid compatibility problems.\n";
+  private static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
 
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
   private final HashMap<Integer, Future<Boolean>> myFutures = new HashMap<>();
