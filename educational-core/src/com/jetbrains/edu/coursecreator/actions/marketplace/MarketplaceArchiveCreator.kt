@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String = getAesKey())
@@ -44,6 +44,7 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
     if (course.marketplaceCourseVersion == 0) {
       course.marketplaceCourseVersion = 1
     }
+    course.isMarketplace = true
 
     if (course.vendor == null) {
       if (!addVendor(course)) return EduCoreBundle.message("marketplace.vendor.empty")

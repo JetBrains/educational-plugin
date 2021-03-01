@@ -18,7 +18,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "some text")
-    }
+    }.apply { isMarketplace = true }
     val account = MarketplaceAccount()
     account.userInfo = MarketplaceUserInfo("User Name")
     MarketplaceSettings.INSTANCE.account = account
@@ -38,7 +38,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "some text")
-    }
+    }.apply { isMarketplace = true }
     course.setMarketplaceAuthorsAsString(listOf("EduTools Dev", "EduTools QA", "EduTools"))
     doTest()
   }
@@ -50,7 +50,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "some text")
-    }
+    }.apply { isMarketplace = true }
 
     doTest()
   }
@@ -62,7 +62,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "another text")
-    }
+    }.apply { isMarketplace = true }
 
     doTest()
   }
@@ -74,7 +74,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "new text")
-    }
+    }.apply { isMarketplace = true }
 
     doTest()
   }
@@ -88,8 +88,10 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
           }
         }
       }
+    }.apply {
+      isMarketplace = true
+      description = "my summary"
     }
-    course.description = "my summary"
     doTest()
   }
 
@@ -100,8 +102,10 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
         eduTask("task1") {}
       }
       additionalFile("test.txt", "another text")
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 5
     }
-    course.marketplaceCourseVersion = 5
 
     doTest()
   }
