@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
@@ -26,20 +27,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
-abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
+abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     protected lateinit var myCourse: Course
 
     private val checkerFixture: EduCheckerFixture<Settings> by lazy {
         createCheckerFixture()
     }
 
-    override fun runTestInternal(context: TestContext) {
+    override fun runTestRunnable(context: TestContext) {
         val skipTestReason = checkerFixture.getSkipTestReason()
         if (skipTestReason != null) {
             System.err.println("SKIP `$name`: $skipTestReason")
         }
         else {
-            super.runTestInternal(context)
+            super.runTestRunnable(context)
         }
     }
 
@@ -112,7 +113,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
             }
         }
 
-        override val message: String?
+        override val message: String
             get() = "\n" + causes.joinToString("\n") { it.message ?: "" }
     }
 
@@ -142,7 +143,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCaseBase() {
             val settings = checkerFixture.projectSettings
 
             withTestDialog(TestDialog.NO) {
-                val rootDir = createVirtualDir()
+                val rootDir = tempDir.createVirtualDir()
                 val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                                 ?: error("Failed to get `CourseProjectGenerator`")
                 myProject = generator.doCreateCourseProject(rootDir.path, settings as Any)

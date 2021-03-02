@@ -6,17 +6,18 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
-abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCaseBase() {
+abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
 
   abstract val defaultSettings: Settings
 
-  protected val rootDir: VirtualFile by lazy { createVirtualDir() }
+  protected val rootDir: VirtualFile by lazy { tempDir.createVirtualDir() }
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
   protected fun createCourseStructure(course: Course) {
     val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
-    val generator = configurator.courseBuilder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
+    val generator = configurator.courseBuilder.getCourseProjectGenerator(course)
+                    ?: error("given builder returns null as course project generator")
     val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
 
     runInEdtAndWait {

@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillP
 
 /** TODO Remove this test after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
 class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase() {
-  override fun runTestInternal(context: TestContext) {
+  override fun runTestRunnable(context: TestContext) {
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
-      super.runTestInternal(context)
+      super.runTestRunnable(context)
     }
   }
 

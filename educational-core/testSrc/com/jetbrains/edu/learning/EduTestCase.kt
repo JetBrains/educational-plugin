@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -49,7 +50,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 
-abstract class EduTestCase : EduTestCaseBase() {
+abstract class EduTestCase : BasePlatformTestCase() {
 
   @Throws(Exception::class)
   override fun setUp() {

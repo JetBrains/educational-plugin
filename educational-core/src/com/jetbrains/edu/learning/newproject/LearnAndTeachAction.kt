@@ -9,10 +9,8 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.isLearnAndTeachVisible
 import icons.EducationalCoreIcons
 
-// BACKCOMPAT: 2020.1, 2020.2
 class LearnAndTeachAction : WelcomePopupAction() {
   override fun getCaption() = null
 
@@ -27,7 +25,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = isLearnAndTeachVisible()
+    e.presentation.isEnabledAndVisible = false
     e.presentation.icon = EducationalCoreIcons.CourseAction
     updatePresentationText(e.presentation)
   }

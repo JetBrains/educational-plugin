@@ -17,9 +17,9 @@ import com.jetbrains.edu.learning.withFeature
 class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun runTestInternal(context: TestContext) {
+  override fun runTestRunnable(context: TestContext) {
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
-      super.runTestInternal(context)
+      super.runTestRunnable(context)
     }
   }
 

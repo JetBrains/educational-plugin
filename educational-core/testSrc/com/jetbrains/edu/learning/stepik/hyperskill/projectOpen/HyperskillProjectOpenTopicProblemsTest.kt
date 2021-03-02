@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillP
 
 
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
-  override fun runTestInternal(context: TestContext) {
+  override fun runTestRunnable(context: TestContext) {
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
-      super.runTestInternal(context)
+      super.runTestRunnable(context)
     }
   }
 

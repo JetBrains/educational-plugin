@@ -39,7 +39,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
     if (course is HyperskillCourse) {
       e.presentation.text = EduCoreBundle.message("action.show.discussions.text")
       e.presentation.description = EduCoreBundle.message("action.show.discussions.description")
-      addSynonym(EduCoreBundle.message("action.show.discussions.text"))
+      addSynonym(EduCoreBundle.lazyMessage("action.show.discussions.text"))
     }
 
     val feedbackLink = task.feedbackLink
