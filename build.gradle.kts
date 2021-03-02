@@ -84,6 +84,9 @@ val jvmPlugins = arrayOf(
   "gradle-java"
 )
 
+/**
+ * Since 2021.1 the platform contains several libraries that conflict with project dependencies
+ */
 val librariesToExclude = setOf(
   "jackson-core.2.12.0.jar",
   "jackson-databind.jar",
@@ -153,14 +156,9 @@ allprojects {
       filter {
         isFailOnNoMatchingTests = false
       }
-
-      if (isAtLeast211) {
-        doFirst {
-          // Since 2021.1 the platform contains several libraries as a dependencies
-          // that conflicts with the corresponding project dependency
-          // TODO: find out a better way to avoid wrong dependency during test execution
-          classpath = classpath.filter { it.name !in librariesToExclude }
-        }
+      doFirst {
+        // TODO: find out a better way to avoid wrong dependency during compilation
+        classpath = classpath.filter { it.name !in librariesToExclude }
       }
     }
 
@@ -172,14 +170,9 @@ allprojects {
         apiVersion = "1.3"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
       }
-
-      if (isAtLeast211) {
-        doFirst {
-          // Since 2021.1 the platform contains several libraries as a dependencies
-          // that conflicts with the corresponding project dependency
-          // TODO: find out a better way to avoid wrong dependency during compilation
-          classpath = classpath.filter { it.name !in librariesToExclude }
-        }
+      doFirst {
+        // TODO: find out a better way to avoid wrong dependency during compilation
+        classpath = classpath.filter { it.name !in librariesToExclude }
       }
     }
   }
@@ -653,6 +646,24 @@ project(":Edu-Rust") {
   dependencies {
     implementation(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
+  }
+
+  tasks {
+    withType<KotlinCompile> {
+      doFirst {
+        // Since 142 version of Rust & toml plugins contain conflicted markdown library with 0.2.0 version
+        // TODO: find out a better way to avoid wrong dependency during compilation
+        classpath = classpath.filter { it.name != "markdown-jvm-0.2.0.jar" }
+      }
+    }
+
+    withType<Test> {
+      doFirst {
+        // Since 142 version of Rust & toml plugins contain conflicted markdown library with 0.2.0 version
+        // TODO: find out a better way to avoid wrong dependency during compilation
+        classpath = classpath.filter { it.name != "markdown-jvm-0.2.0.jar" }
+      }
+    }
   }
 }
 
