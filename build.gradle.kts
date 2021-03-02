@@ -58,7 +58,6 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
-val isAtLeast203 = environmentName.toInt() >= 203
 val isAtLeast211 = environmentName.toInt() >= 211
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
@@ -432,7 +431,7 @@ project(":code-insight:html") {
 
 project(":code-insight:markdown") {
   val plugins = mutableListOf(markdownPlugin)
-  if (isStudioIDE && isAtLeast203) {
+  if (isStudioIDE) {
     plugins.add("platform-images")
   }
   intellij {
@@ -671,11 +670,7 @@ project(":Edu-Cpp") {
   intellij {
     localPath = null
     version = clionVersion
-    val pluginsList = mutableListOf("clion-test-google", "clion-test-catch")
-    if (isAtLeast203) {
-      pluginsList += listOf("clion", "c-plugin")
-    }
-    setPlugins(*pluginsList.toTypedArray())
+    setPlugins("clion-test-google", "clion-test-catch", "clion", "c-plugin")
   }
 
   dependencies {
@@ -699,17 +694,10 @@ project(":Edu-Go") {
 
 fun downloadStudioIfNeededAndGetPath(): String {
   if (!rootProject.hasProperty("studioVersion")) error("studioVersion is unspecified")
-  // BACKCOMPAT: 2020.2
-  if (!isAtLeast203 && !rootProject.hasProperty("studioBuildVersion")) error("studioBuildVersion is unspecified")
 
   val osFamily = osFamily
   val (archiveType, fileTreeMethod) = if (osFamily == "linux") "tar.gz" to this::tarTree else "zip" to this::zipTree
-  val studioArchive = if (isAtLeast203) {
-    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${osFamily}.$archiveType")
-  } else {
-    // BACKCOMPAT: 2020.2
-    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.$archiveType")
-  }
+  val studioArchive = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${osFamily}.$archiveType")
   if (!studioArchive.exists()) {
     download {
       src(studioArtifactDownloadPath(archiveType))
@@ -719,12 +707,7 @@ fun downloadStudioIfNeededAndGetPath(): String {
     }
   }
 
-  val studioFolder = if (isAtLeast203) {
-    file("${rootProject.projectDir}/dependencies/studio-$studioVersion")
-  } else {
-    // BACKCOMPAT: 2020.2
-    file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
-  }
+  val studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion")
   if (!studioFolder.exists()) {
     copy {
       from(fileTreeMethod(studioArchive))
@@ -738,20 +721,9 @@ fun downloadStudioIfNeededAndGetPath(): String {
 fun studioArtifactDownloadPath(archiveType: String): String {
   return if (inJetBrainsNetwork()) {
     println("Downloading studio from JB repo...")
-    if (isAtLeast203) {
-      "https://repo.labs.intellij.net/edu-tools/android-studio-${studioVersion}-${osFamily}.$archiveType"
-    } else {
-      // BACKCOMPAT: 2020.2
-      "https://repo.labs.intellij.net/edu-tools/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
-    }
+    "https://repo.labs.intellij.net/edu-tools/android-studio-${studioVersion}-${osFamily}.$archiveType"
   } else {
-    println("Downloading studio from google's website...")
-    if (isAtLeast203) {
-      "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-${studioVersion}-${osFamily}.$archiveType"
-    } else {
-      // BACKCOMPAT: 2020.2
-      "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-ide-${studioBuildVersion}-${osFamily}.$archiveType"
-    }
+    "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-${studioVersion}-${osFamily}.$archiveType"
   }
 }
 
