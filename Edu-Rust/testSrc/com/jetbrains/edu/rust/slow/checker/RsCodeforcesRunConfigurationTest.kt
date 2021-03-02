@@ -1,21 +1,12 @@
 package com.jetbrains.edu.rust.slow.checker
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.rust.RsConfigurator
 import org.rust.lang.RsLanguage
 
 class RsCodeforcesRunConfigurationTest : RsCheckersTestBase() {
-
-  override fun runTestInternal(context: TestContext) {
-    if (ApplicationInfo.getInstance().build >= RsConfigurator.BUILD_203) {
-      super.runTestInternal(context)
-    }
-  }
 
   fun `test application configuration`() {
     doCodeforcesTest("123456")
