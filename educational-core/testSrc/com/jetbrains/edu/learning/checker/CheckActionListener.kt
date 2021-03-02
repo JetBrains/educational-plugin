@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.junit.Assert.assertEquals
@@ -19,8 +20,9 @@ class CheckActionListener : CheckListener {
   }
 
   private fun checkFeedbackEqualsWithCheckResult(task: Task, checkResult: CheckResult) {
+    if (task.course.courseMode == CCUtils.COURSE_MODE) return
     val errorMessage = "Check result and saved feedback doesn't match for ${task.name}"
-    val feedback = task.feedback ?: error("CheckFeedback should be filled out for ${task.name}")
+    val feedback = task.feedback ?: error("CheckFeedback should be filled out for ${task.lesson.name}/${task.name}")
     assertEquals(errorMessage, feedback.message, checkResult.message)
     assertEquals(errorMessage, feedback.expected, checkResult.diff?.expected)
     assertEquals(errorMessage, feedback.actual, checkResult.diff?.actual)
@@ -29,14 +31,14 @@ class CheckActionListener : CheckListener {
   companion object {
     private val SHOULD_FAIL: (Task, CheckResult) -> Unit = { task, result ->
       val taskName = getTaskName(task)
-      assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
+      assertFalse("Check Task Action skipped for $taskName with type: ${task.itemType}", result.status == CheckStatus.Unchecked)
       assertFalse("Check Task Action passed for $taskName", result.status == CheckStatus.Solved)
       println("Checking status for $taskName: fails as expected")
     }
 
     private val SHOULD_PASS: (Task, CheckResult) -> Unit = { task, result ->
       val taskName = getTaskName(task)
-      assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
+      assertFalse("Check Task Action skipped for $taskName with type: ${task.itemType}", result.status == CheckStatus.Unchecked)
       assertFalse("Check Task Action failed for $taskName", result.status == CheckStatus.Failed)
       println("Checking status for $taskName: passes as expected")
     }
