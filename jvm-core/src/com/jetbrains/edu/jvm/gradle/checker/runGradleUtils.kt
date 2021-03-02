@@ -6,7 +6,6 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -200,12 +199,7 @@ fun Task.hasSeparateModule(project: Project): Boolean {
   if (taskModule == courseModule) {
     return false
   }
-  return !taskModule.isRootTestModule(courseModule)
-}
-
-private fun Module.isRootTestModule(courseModule: Module): Boolean {
-  // BACKCOMPAT: 2020.2 replace with name == "${courseModule.name}.test"
-  return name.matches("${courseModule.name}[._]test".toRegex())
+  return taskModule.name != "${courseModule.name}.test"
 }
 
 inline fun <T> withGradleTestRunner(project: Project, task: Task, action: () -> T): T? {
