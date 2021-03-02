@@ -10,9 +10,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
 import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
+import com.jetbrains.cidr.execution.OCTargetConfigurationHelper.isInEntryPointBody
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
 import com.jetbrains.edu.cpp.codeforces.CppCodeforcesRunConfiguration
-import com.jetbrains.edu.cpp.isInEntryPointBody
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile

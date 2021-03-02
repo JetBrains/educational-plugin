@@ -1,6 +1,7 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin>
   <depends>com.intellij.modules.lang</depends>
-  <xi:include href="/META-INF/platform-edu-cpp.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <depends>com.intellij.clion</depends>
+  <depends>com.intellij.cidr.lang</depends>
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
