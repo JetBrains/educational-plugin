@@ -14,7 +14,9 @@ buildscript {
 
 def printOutput(def output) {
     return tasks.create("printOutput") {
-        for (line in output.toString().readLines()) {
+        println "#educational_plugin_checker_version 1"
+        def lines = output.toString().split("(?<=\n)|(?=\n)")
+        for (line in lines) {
             println "#educational_plugin" + line
         }
     }

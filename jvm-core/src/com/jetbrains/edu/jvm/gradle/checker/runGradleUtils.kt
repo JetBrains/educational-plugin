@@ -17,6 +17,7 @@ import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils.CHECKER_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
@@ -36,7 +37,6 @@ import org.jetbrains.plugins.gradle.settings.TestRunner
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
-const val ASSEMBLE_TASK_NAME = "assemble"
 const val TEST_TASK_NAME = "test"
 
 const val TESTS_ARG = "--tests"
@@ -88,31 +88,44 @@ class GradleCommandLine private constructor(
   }
 
   private fun collectMessages(output: ProcessOutput): List<String> {
-    var currentMessage: StringBuilder? = null
+    val currentMessage = mutableListOf<String>()
     val allMessages = mutableListOf<String>()
 
+    var checkerVersion = 0
+
     fun addCurrentMessageIfNeeded() {
-      if (currentMessage != null) {
-        allMessages += currentMessage.toString()
+      if (currentMessage.isNotEmpty()) {
+        allMessages += currentMessage.joinToString("")
       }
     }
 
     for (line in output.stdoutLines) {
+      if (line.startsWith(CHECKER_VERSION)) {
+        checkerVersion = line.removePrefix(CHECKER_VERSION).toInt()
+        continue
+      }
       if (line.startsWith(STUDY_PREFIX)) {
         val messageLine = line.removePrefix(STUDY_PREFIX)
-        if (currentMessage != null) {
-          currentMessage.appendln(messageLine)
-        } else {
-          currentMessage = StringBuilder(messageLine).append("\n")
-        }
+        currentMessage.add(computeCurrentMessage(messageLine, checkerVersion))
       } else {
         addCurrentMessageIfNeeded()
-        currentMessage = null
+        currentMessage.clear()
       }
     }
 
     addCurrentMessageIfNeeded()
     return allMessages
+  }
+
+  private fun computeCurrentMessage(messageLine: String, checkerVersion: Int): String {
+    if (checkerVersion == 0) return messageLine + "\n"
+
+    return if (messageLine.isEmpty()) {
+      "\n"
+    }
+    else {
+      messageLine
+    }
   }
 
   companion object {
