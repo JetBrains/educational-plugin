@@ -13,10 +13,10 @@ import com.jetbrains.python.PythonLanguage
 
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
 
-  override fun runTestInternal(context: TestContext) {
+  override fun runTestRunnable(context: TestContext) {
     // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
-      super.runTestInternal(context)
+      super.runTestRunnable(context)
     }
   }
 
