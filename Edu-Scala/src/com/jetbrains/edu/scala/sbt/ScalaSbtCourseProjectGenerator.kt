@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import org.jetbrains.plugins.scala.project.Version
 import org.jetbrains.sbt.Sbt
+import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
 class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
@@ -49,15 +50,15 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
 
   private fun setupSbtSettings(project: Project) {
     val location = project.basePath!!
-    val systemSettings = ExternalSystemApiUtil.getSettings(project, sbtProjectSystemId)
+    val systemSettings = ExternalSystemApiUtil.getSettings(project, SbtProjectSystem.Id)
 
     val projectSettings = SbtProjectSettings()
     projectSettings.externalProjectPath = location
 
-    val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
+    val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.linkedProjectsSettings)
     projects.add(projectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
-    ExternalSystemUtil.ensureToolWindowInitialized(project, sbtProjectSystemId)
+    ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id)
   }
 
   companion object {
