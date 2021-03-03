@@ -1,0 +1,14 @@
+<component name="HyperskillMetrics">
+  <events>
+    <HyperskillFrontendEvent>
+      <option name="clientTime" value="111"/>
+      <option name="action" value="view"/>
+      <option name="route" value="/projects/41/stages/214/implement"/>
+    </HyperskillFrontendEvent>
+    <HyperskillFrontendEvent>
+      <option name="clientTime" value="222"/>
+      <option name="action" value="view"/>
+      <option name="route" value="/learn/step/123"/>
+    </HyperskillFrontendEvent>
+  </events>
+</component>

@@ -1,16 +1,16 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.metrics
 
+import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.api.FRONTEND_EVENTS
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import java.nio.file.Paths
+import java.util.*
 
 class HyperskillMetricsTest : EduTestCase() {
   private val metricsService: HyperskillMetricsService get() = HyperskillMetricsService.getInstance()
@@ -25,7 +25,7 @@ class HyperskillMetricsTest : EduTestCase() {
     }
   }
 
-  fun `test serialization format`() {
+  fun `test current serialization format`() {
     val hyperskillCourse = createHyperskillCourse()
 
     val addedEvents = addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
@@ -34,6 +34,20 @@ class HyperskillMetricsTest : EduTestCase() {
 
     val deserializedEvents = metricsService.allEvents(emptyQueue = false)
     compareEvents(addedEvents, deserializedEvents)
+  }
+
+  /**
+   * This test is needed to make sure that original xml format can be deserialized properly
+   * If xml format changes, please add a new test, do not simply modify this one
+   * [HyperskillMetricsTest.test serialization format] checks if current format can be deserialized
+   */
+  fun `test events deserialization from xml`() {
+    val stateFromFile = deserializeFromFile("hyperskill_events.xml")
+
+    val expectedEvents = listOf(createHyperskillEvent("/projects/41/stages/214/implement", Date(111)),
+                                createHyperskillEvent("/learn/step/123", Date(222)))
+
+    compareEvents(expectedEvents, stateFromFile.events)
   }
 
   fun `test serialization limit respected`() {
@@ -158,4 +172,21 @@ class HyperskillMetricsTest : EduTestCase() {
     tasks.forEach { metricsService.doAddViewEvent(hyperskillCourse, it) }
     return metricsService.allEvents(emptyQueue = false)
   }
+
+  private fun createHyperskillEvent(eventRoute: String,
+                                    eventTime: Date,
+                                    eventAction: HyperskillFrontendEventType = HyperskillFrontendEventType.VIEW): HyperskillFrontendEvent {
+    return HyperskillFrontendEvent().apply {
+      route = eventRoute
+      action = eventAction
+      clientTime = eventTime
+    }
+  }
+
+  private fun deserializeFromFile(name: String): HyperskillMetricsService.State {
+    val filePath = Paths.get(testDataPath).resolve(name)
+    return XmlSerializer.deserialize(JDOMUtil.load(filePath), HyperskillMetricsService.State::class.java)
+  }
+
+  override fun getTestDataPath(): String = "testData/stepik/hyperskill/metrics"
 }
