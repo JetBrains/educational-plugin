@@ -8,22 +8,50 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTimeSpentEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.DoubleAdder
 import kotlin.math.min
 
 @State(name = "HyperskillMetrics", storages = [Storage("hyperskill.xml", roamingType = RoamingType.DISABLED)])
-@Service
-class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable {
+open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable {
   private val events: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
+
+  private val timeSpentEvents: MutableMap<Int, DoubleAdder> = mutableMapOf()
+  private var taskInProgress: Pair<Int, Long>? = null
+
+  private val lock = Object()
 
   fun viewEvent(task: Task?) {
     val hyperskillCourse = task?.course as? HyperskillCourse ?: return
     if (!hyperskillCourse.isStudy || isUnitTestMode) return
 
     doAddViewEvent(hyperskillCourse, task)
+    taskStarted(task.id)
   }
+
+  fun taskStarted(id: Int) {
+    synchronized(lock) {
+      taskStopped()
+      taskInProgress = id to System.currentTimeMillis()
+    }
+  }
+
+  fun taskStopped() {
+    synchronized(lock) {
+      val curTask = taskInProgress ?: return
+
+      val (id, start) = curTask
+      val duration = toDuration(start)
+      timeSpentEvents.computeIfAbsent(id) { DoubleAdder() }.add(duration)
+
+      taskInProgress = null
+    }
+  }
+
+  protected open fun toDuration(start: Long): Double = (System.currentTimeMillis() - start).toDouble() / 1000
 
   @VisibleForTesting
   fun doAddViewEvent(course: HyperskillCourse, task: Task) {
@@ -73,15 +101,44 @@ class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsServi
     return snapshot
   }
 
+  @VisibleForTesting
+  fun allTimeSpentEvents(reset: Boolean): List<HyperskillTimeSpentEvent> {
+    return pendingTimeSpentEvents(reset).map {
+      HyperskillTimeSpentEvent().apply {
+        step = it.key
+        duration = it.value
+      }
+    }
+  }
+
+  fun addAll(pendingTimeSpentEvents: Map<Int, Double>) {
+    for (event in pendingTimeSpentEvents) {
+      val id = event.key
+      val duration = event.value
+      timeSpentEvents.computeIfAbsent(id) { DoubleAdder() }.add(duration)
+    }
+  }
+
+  private fun pendingTimeSpentEvents(reset: Boolean = true): Map<Int, Double> {
+    return timeSpentEvents.mapValues {
+      val value = it.value
+      if (reset) value.sumThenReset() else value.sum()
+    }.filterValues { it != 0.0 }
+  }
+
   override fun getState(): State {
+    val pendingTimeSpentEvents = pendingTimeSpentEvents(reset = false)
+    val pendingEvents = allEvents(false)
+
     return State().apply {
-      val pendingEvents = allEvents(false)
       events = pendingEvents.subList(0, min(pendingEvents.size, EVENTS_LIMIT)).toMutableList()
+      timeSpentEvents = pendingTimeSpentEvents.toMutableMap()
     }
   }
 
   override fun loadState(state: State) {
     events.addAll(state.events)
+    addAll(state.timeSpentEvents)
   }
 
 
@@ -92,13 +149,17 @@ class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsServi
   class State : BaseState() {
     @get:XCollection(style = XCollection.Style.v2)
     var events by list<HyperskillFrontendEvent>()
+
+    @get:XCollection(style = XCollection.Style.v2)
+    var timeSpentEvents by map<Int, Double>()
   }
 
   companion object {
     @JvmStatic
     fun getInstance(): HyperskillMetricsService = service()
 
-    // it is approximately 300 bytes per event, lets keep hyperskill.xml file less than 2 MB
+    // it is approximately 300 bytes per event, lets keep hyperskill.xml file less than 2 MB (except time spent events)
+    // time spent events are limited by the number of steps
     @VisibleForTesting
     const val EVENTS_LIMIT: Int = 10000
   }

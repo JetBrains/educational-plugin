@@ -285,8 +285,12 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
   }
 
-  fun sendEvents(events: List<HyperskillFrontendEvent>): Result<HyperskillFrontendEventList, String> {
-    return withTokenRefreshIfNeeded { service.sendStatistics(events).executeAndExtractFromBody() }
+  fun sendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
+    return withTokenRefreshIfNeeded { service.sendStatistics(events).executeAndExtractFromBody() }.map { it.events }
+  }
+
+  fun sendTimeSpentEvents(events: List<HyperskillTimeSpentEvent>): Result<List<HyperskillTimeSpentEvent>, String> {
+    return withTokenRefreshIfNeeded { service.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {

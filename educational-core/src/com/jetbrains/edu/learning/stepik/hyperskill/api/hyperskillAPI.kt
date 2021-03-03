@@ -17,6 +17,7 @@ const val CONTEXT = "context"
 const val CLIENT = "client"
 const val CLIENT_TIME = "client_time"
 const val DESCRIPTION = "description"
+const val DURATION = "duration"
 const val EDUTOOLS = "edutools"
 const val EDUTOOLS_VERSION = "edutools_version"
 const val EMAIL = "email"
@@ -40,6 +41,7 @@ const val SOLUTIONS = "solutions"
 const val STAGES = "stages"
 const val STEP_ID = "step"
 const val THEORY_ID = "theory"
+const val TIME_SPENT_EVENTS = "time-spent-events"
 const val TITLE = "title"
 const val TOKEN = "token"
 const val TOPIC = "topic"
@@ -245,6 +247,14 @@ enum class HyperskillFrontendEventType {
   }
 }
 
+class HyperskillTimeSpentEvent {
+  @JsonProperty(STEP_ID)
+  var step: Int = -1
+
+  @JsonProperty(DURATION)
+  var duration: Double = 0.0
+}
+
 class HyperskillFrontendEventContext {
   @JsonProperty(CLIENT)
   var client: String = EDUTOOLS
@@ -262,4 +272,9 @@ class HyperskillFrontendEventContext {
 class HyperskillFrontendEventList {
   @JsonProperty(FRONTEND_EVENTS)
   lateinit var events: List<HyperskillFrontendEvent>
+}
+
+class HyperskillTimeSpentEventList {
+  @JsonProperty(TIME_SPENT_EVENTS)
+  lateinit var events: List<HyperskillTimeSpentEvent>
 }

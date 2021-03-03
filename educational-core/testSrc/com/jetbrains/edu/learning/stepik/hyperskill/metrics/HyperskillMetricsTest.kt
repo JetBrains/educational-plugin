@@ -1,6 +1,12 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.metrics
 
+import com.intellij.openapi.application.ApplicationActivationListener
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
+import com.intellij.openapi.wm.IdeFrame
+import com.intellij.openapi.wm.StatusBar
+import com.intellij.ui.BalloonLayout
 import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
@@ -9,8 +15,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import java.awt.Rectangle
 import java.nio.file.Paths
 import java.util.*
+import javax.swing.JComponent
 
 class HyperskillMetricsTest : EduTestCase() {
   private val metricsService: HyperskillMetricsService get() = HyperskillMetricsService.getInstance()
@@ -19,6 +27,7 @@ class HyperskillMetricsTest : EduTestCase() {
   override fun tearDown() {
     try {
       metricsService.allEvents(emptyQueue = true)
+      metricsService.allTimeSpentEvents(reset = true)
     }
     finally {
       super.tearDown()
@@ -30,16 +39,26 @@ class HyperskillMetricsTest : EduTestCase() {
 
     val addedEvents = addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
 
+    val firstStepId = 123
+    metricsService.taskStarted(firstStepId)
+
+    val secondStepId = 124
+    metricsService.taskStarted(secondStepId)
+    metricsService.taskStopped()
+
     serializeAndDeserializeBack()
 
     val deserializedEvents = metricsService.allEvents(emptyQueue = false)
     compareEvents(addedEvents, deserializedEvents)
+
+    assertEquals(listOf(firstStepId, secondStepId), metricsService.allTimeSpentEvents(reset = false).map { it.step })
   }
 
   /**
    * This test is needed to make sure that original xml format can be deserialized properly
    * If xml format changes, please add a new test, do not simply modify this one
-   * [HyperskillMetricsTest.test serialization format] checks if current format can be deserialized
+   *
+   * [test current serialization format] checks if current format can be deserialized
    */
   fun `test events deserialization from xml`() {
     val stateFromFile = deserializeFromFile("hyperskill_events.xml")
@@ -48,6 +67,45 @@ class HyperskillMetricsTest : EduTestCase() {
                                 createHyperskillEvent("/learn/step/123", Date(222)))
 
     compareEvents(expectedEvents, stateFromFile.events)
+  }
+
+  fun `test time spent events deserialization from xml`() {
+    val stateFromFile = deserializeFromFile("hyperskill_time_spent_events.xml")
+    assertEquals(mapOf(123 to 40.0, 124 to 20.5), stateFromFile.timeSpentEvents)
+  }
+
+  fun `test time spent events switching between tasks`() {
+    createHyperskillCourse()
+    val id1 = findTask(0, 0).id
+    val id2 = findTask(0, 1).id
+
+    metricsService.taskStarted(id1)
+    metricsService.taskStarted(id2)
+
+    metricsService.allTimeSpentEvents(reset = false).find { it.step == id1 } ?: error("No time spent event for $id1")
+  }
+
+  fun `test time spent events with frame activation`() {
+    createHyperskillCourse()
+    val id = findTask(0, 0).id
+
+    // start solving a task
+    val file = findFileInTask(0, 0, "src/Task.kt")
+    myFixture.openFileInEditor(file)
+    metricsService.taskStarted(id)
+
+    // mock leaving the IDE -> stopping work on the task, time spent event must have appeared
+    ApplicationManager.getApplication().messageBus.syncPublisher(ApplicationActivationListener.TOPIC).applicationDeactivated(MockIdeFrame())
+    val timeSpentEvent = metricsService.allTimeSpentEvents(reset = false).find { it.step == id } ?: error("No time spent event for $id")
+    val oldDuration = timeSpentEvent.duration
+
+    // mock return to the IDE -> wait for some time -> stop working on the task
+    ApplicationManager.getApplication().messageBus.syncPublisher(ApplicationActivationListener.TOPIC).applicationActivated(MockIdeFrame())
+    metricsService.taskStopped()
+
+    // since we worked on the task more, time spent duration must have been increased
+    val newTimeSpentEvent = metricsService.allTimeSpentEvents(reset = false).find { it.step == id } ?: error("No time spent event for $id")
+    assertTrue(newTimeSpentEvent.duration > oldDuration)
   }
 
   fun `test serialization limit respected`() {
@@ -82,6 +140,27 @@ class HyperskillMetricsTest : EduTestCase() {
     assertEmpty(pendingEvents)
   }
 
+  fun `test all time spent events sent`() {
+    createHyperskillCourse()
+
+    metricsService.taskStarted(1)
+    metricsService.taskStopped()
+
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      MockResponseFactory.fromString(
+        when (request.path) {
+          "/api/time-spent-events" -> """{"${TIME_SPENT_EVENTS}":[]}"""
+          else -> return@withResponseHandler null
+        }
+      )
+    }
+
+    HyperskillMetricsScheduler.sendTimeSpentEvents()
+
+    val pendingEvents = metricsService.allTimeSpentEvents(reset = false)
+    assertEmpty(pendingEvents)
+  }
+
   fun `test no events sent`() {
     val hyperskillCourse = createHyperskillCourse()
 
@@ -90,6 +169,17 @@ class HyperskillMetricsTest : EduTestCase() {
 
     val pendingEvents = metricsService.allEvents(false)
     compareEvents(viewEvents, pendingEvents)
+  }
+
+  fun `test no time spent events sent`() {
+    createHyperskillCourse()
+    metricsService.taskStarted(1)
+    metricsService.taskStopped()
+
+    HyperskillMetricsScheduler.sendEvents()
+
+    val pendingEvents = metricsService.allTimeSpentEvents(reset = false)
+    assertNotNull(pendingEvents.find { it.step == 1 })
   }
 
   fun `test events sent in chunks`() {
@@ -186,6 +276,22 @@ class HyperskillMetricsTest : EduTestCase() {
   private fun deserializeFromFile(name: String): HyperskillMetricsService.State {
     val filePath = Paths.get(testDataPath).resolve(name)
     return XmlSerializer.deserialize(JDOMUtil.load(filePath), HyperskillMetricsService.State::class.java)
+  }
+
+  private inner class MockIdeFrame : IdeFrame {
+    private fun notImplemented(): Nothing = error("Not Implemented")
+
+    override fun getStatusBar(): StatusBar? = null
+
+    override fun suggestChildFrameBounds(): Rectangle = notImplemented()
+
+    override fun getProject(): Project? = myFixture.project
+
+    override fun setFrameTitle(title: String?): Unit = notImplemented()
+
+    override fun getComponent(): JComponent = notImplemented()
+
+    override fun getBalloonLayout(): BalloonLayout = notImplemented()
   }
 
   override fun getTestDataPath(): String = "testData/stepik/hyperskill/metrics"

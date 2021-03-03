@@ -1,0 +1,8 @@
+<component name="HyperskillMetrics">
+  <timeSpentEvents>
+    <map>
+      <entry key="123" value="40.0"/>
+      <entry key="124" value="20.5"/>
+    </map>
+  </timeSpentEvents>
+</component>
