@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -59,6 +60,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       setupProject(project, course)
+      val coursesStorage = CoursesStorage.getInstance()
+      val location = project.basePath
+      if (!coursesStorage.hasCourse(course) && location != null) {
+        coursesStorage.addCourse(course, location)
+      }
       ApplicationManager.getApplication().invokeLater {
         runWriteAction { EduCounterUsageCollector.eduProjectOpened(course) }
       }
