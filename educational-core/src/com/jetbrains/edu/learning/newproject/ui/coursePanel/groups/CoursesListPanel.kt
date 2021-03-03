@@ -21,7 +21,7 @@ abstract class CoursesListPanel : JPanel(BorderLayout()) {
   protected open fun createCourseCard(course: Course): CourseCardComponent {
     val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
     return if (courseMetaInfo != null) {
-      MyCourseCardComponent(courseMetaInfo)
+      MyCourseCardComponent(course)
     }
     else {
       createCardForNewCourse(course)

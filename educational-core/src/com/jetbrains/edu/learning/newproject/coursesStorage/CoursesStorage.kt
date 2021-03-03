@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider.Companion.IS_FROM_MY_COURSES
 import org.apache.commons.lang.LocaleUtils
 import java.util.*
 
@@ -76,24 +75,17 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 }
 
 @Tag(EduNames.COURSE)
-class CourseMetaInfo : Course {
-  var location: String = ""
+class CourseMetaInfo(): Course() {
   var type: String = ""
+  var location: String = ""
   var tasksTotal: Int = 0
   var tasksSolved: Int = 0
 
   // to be compatible with previous version
   var programmingLanguageVersion: String? = null
 
-  constructor() : super() {
-    dataHolder.putUserData(IS_FROM_MY_COURSES, true)
-  }
-
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
-    this.location = location
     this.type = course.itemType
-    this.tasksTotal = tasksTotal
-    this.tasksSolved = tasksSolved
     id = course.id
     name = course.name
     description = course.description
@@ -101,6 +93,9 @@ class CourseMetaInfo : Course {
     environment = course.environment
     language = course.language
     languageCode = course.languageCode
+    this.location = location
+    this.tasksTotal = tasksTotal
+    this.tasksSolved = tasksSolved
   }
 
   @Transient

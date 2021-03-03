@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -25,7 +26,7 @@ private const val H_GAP = 10
 private const val INFO_HGAP = 0
 private const val INFO_VGAP = 5
 
-class MyCourseCardComponent(course: CourseMetaInfo) : CourseCardComponent(course) {
+class MyCourseCardComponent(course: Course) : CourseCardComponent(course) {
 
   override fun createSideActionComponent(): JComponent {
     return createRemoveCourseComponent()
@@ -45,7 +46,7 @@ class MyCourseCardComponent(course: CourseMetaInfo) : CourseCardComponent(course
   }
 
   override fun createBottomComponent(): JPanel {
-    val courseMetaInfo = course as CourseMetaInfo
+    val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Cannot find ${course.name} in storage")
     return MyCourseInfoComponent(courseMetaInfo)
   }
 
@@ -54,7 +55,7 @@ class MyCourseCardComponent(course: CourseMetaInfo) : CourseCardComponent(course
 
     removeLabel.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent?) {
-        val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Course info not found for ${course.name}")
+        val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course) ?: error("Cannot find ${course.name} in storage")
         val location = courseMetaInfo.location
 
         // We want to set default option to make dialog work correctly on windows

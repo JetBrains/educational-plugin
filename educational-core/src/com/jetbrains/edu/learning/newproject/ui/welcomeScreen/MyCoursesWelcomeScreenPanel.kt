@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
@@ -154,7 +153,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     }
 
     override fun createCourseCard(course: Course): CourseCardComponent {
-      return MyCourseCardComponent(course as CourseMetaInfo)
+      return MyCourseCardComponent(course)
     }
   }
 }

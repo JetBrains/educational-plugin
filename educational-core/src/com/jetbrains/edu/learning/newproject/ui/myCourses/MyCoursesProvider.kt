@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
-import com.intellij.openapi.util.KeyWithDefaultValue
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
@@ -42,9 +41,5 @@ class MyCoursesProvider : CoursesPlatformProvider() {
     val color = ColorUtil.toHex(if (isSelected) UIUtil.getTreeSelectionForeground(true) else GRAY_COLOR)
     val style = "font-size: $additionalTextFontSize; color: #$color; margin-top: ${JBUIScale.scale(4)}px"
     return """<div style="$style">$additionalText</div>"""
-  }
-
-  companion object {
-    val IS_FROM_MY_COURSES = KeyWithDefaultValue.create("IS_FROM_MY_COURSES", false)
   }
 }

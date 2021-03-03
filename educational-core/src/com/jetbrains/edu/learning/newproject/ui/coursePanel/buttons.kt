@@ -15,12 +15,12 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
-import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
@@ -72,7 +72,7 @@ class OpenCourseButton : CourseButtonBase() {
   }
 
   private fun processMissingCourseOpening(course: Course, coursePath: String) {
-    val isFromMyCoursesPage = MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
+    val isFromMyCoursesPage = course is CourseMetaInfo
     val message = if (isFromMyCoursesPage) {
       EduCoreBundle.message("course.dialog.my.courses.remove.course")
     }
@@ -146,7 +146,7 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
   }
 
   override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
-                                           && !MyCoursesProvider.IS_FROM_MY_COURSES.getRequired(course.dataHolder)
+                                           && CoursesStorage.getInstance().getCourseMetaInfo(course) == null
                                            && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
 }
 

@@ -7,7 +7,6 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -55,7 +54,7 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: Coroutin
 
   inner class MyCoursesList : CoursesListWithResetFilters() {
     override fun createCourseCard(course: Course): CourseCardComponent {
-      return MyCourseCardComponent(course as CourseMetaInfo)
+      return MyCourseCardComponent(course)
     }
   }
 }
