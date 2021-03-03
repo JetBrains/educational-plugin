@@ -95,7 +95,7 @@ val Project.courseDir: VirtualFile
 
 val Project.selectedEditor: Editor? get() = selectedVirtualFile?.getEditor(this)
 
-val Project.selectedVirtualFile: VirtualFile? get() = FileEditorManager.getInstance(this).selectedFiles.firstOrNull()
+val Project.selectedVirtualFile: VirtualFile? get() = FileEditorManager.getInstance(this)?.selectedFiles?.firstOrNull()
 
 val Project.selectedTaskFile: TaskFile? get() = selectedVirtualFile?.getTaskFile(this)
 
