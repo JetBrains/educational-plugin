@@ -73,7 +73,6 @@ class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsServi
     return snapshot
   }
 
-
   override fun getState(): State {
     return State().apply {
       val pendingEvents = allEvents(false)
