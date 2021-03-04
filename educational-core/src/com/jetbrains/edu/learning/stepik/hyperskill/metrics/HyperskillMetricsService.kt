@@ -141,7 +141,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     addAll(state.timeSpentEvents)
   }
 
-
   override fun dispose() {
     // do nothing
   }
