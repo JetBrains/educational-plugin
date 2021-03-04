@@ -37,14 +37,14 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
       <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
-            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">)</span><span style="...">;</span>
+            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
-            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">)</span><span style="...">;</span>
+            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
@@ -80,14 +80,14 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
       <p>Code block with default language:</p>
       <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
-            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">)</span><span style="...">;</span>
+            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
       <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
-            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">)</span><span style="...">;</span>
+            <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
