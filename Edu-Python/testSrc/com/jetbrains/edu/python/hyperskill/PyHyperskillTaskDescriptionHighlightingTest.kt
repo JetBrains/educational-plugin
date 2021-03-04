@@ -1,15 +1,15 @@
 package com.jetbrains.edu.python.hyperskill
 
 import com.intellij.lang.Language
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskDescriptionHighlightingTest
 import com.jetbrains.python.PythonLanguage
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHighlightingTest() {
 
-  override fun runTestRunnable(context: TestContext) {
+  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
       super.runTestRunnable(context)

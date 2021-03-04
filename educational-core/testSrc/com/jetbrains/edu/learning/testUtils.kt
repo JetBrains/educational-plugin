@@ -5,12 +5,9 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
-import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
-
-typealias TestContext = ThrowableRunnable<Throwable>
 
 inline fun <reified T> nullValue(): Matcher<T> = CoreMatchers.nullValue(T::class.java)
 

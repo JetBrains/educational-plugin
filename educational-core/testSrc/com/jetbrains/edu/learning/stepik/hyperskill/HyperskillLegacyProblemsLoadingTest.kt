@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.withFeature
 class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun runTestRunnable(context: TestContext) {
+  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
       super.runTestRunnable(context)
     }

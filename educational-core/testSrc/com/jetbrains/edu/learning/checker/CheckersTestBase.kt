@@ -13,17 +13,21 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.withTestDialog
 import org.junit.Assert
 import org.junit.ComparisonFailure
 
@@ -34,7 +38,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
         createCheckerFixture()
     }
 
-    override fun runTestRunnable(context: TestContext) {
+    override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
         val skipTestReason = checkerFixture.getSkipTestReason()
         if (skipTestReason != null) {
             System.err.println("SKIP `$name`: $skipTestReason")

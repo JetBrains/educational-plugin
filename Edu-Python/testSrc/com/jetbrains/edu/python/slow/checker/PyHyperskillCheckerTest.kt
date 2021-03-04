@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.slow.checker
 
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.TestContext
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
@@ -13,7 +13,7 @@ import com.jetbrains.python.PythonLanguage
 
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
 
-  override fun runTestRunnable(context: TestContext) {
+  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
       super.runTestRunnable(context)
