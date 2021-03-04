@@ -30,7 +30,7 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
       return
     }
 
-    scheduleEventsSendingJob { sendEvents() }
+    scheduleEventsSendingJob { sendFrontendEvents() }
     scheduleEventsSendingJob { sendTimeSpentEvents() }
   }
 
@@ -74,15 +74,15 @@ class HyperskillMetricsScheduler : AppLifecycleListener, DynamicPluginListener {
       }
     }
 
-    private fun scheduleEventsSendingJob(command: Runnable) {
-      val job = JobScheduler.getScheduler().scheduleWithFixedDelay(command, 0,
+    private fun scheduleEventsSendingJob(sendEvents: Runnable) {
+      val job = JobScheduler.getScheduler().scheduleWithFixedDelay(sendEvents, 0,
                                                                    Registry.intValue(HYPERSKILL_STATISTICS_INTERVAL_REGISTRY).toLong(),
                                                                    TimeUnit.MINUTES)
       Disposer.register(HyperskillMetricsService.getInstance(), Disposable { job.cancel(false) })
     }
 
     @VisibleForTesting
-    fun sendEvents() = sendEvents(HyperskillFrontendEventsHandler)
+    fun sendFrontendEvents() = sendEvents(HyperskillFrontendEventsHandler)
 
     @VisibleForTesting
     fun sendTimeSpentEvents() = sendEvents(HyperskillTimeSpentEventsHandler)

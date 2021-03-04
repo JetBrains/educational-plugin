@@ -17,7 +17,7 @@ import kotlin.math.min
 
 @State(name = "HyperskillMetrics", storages = [Storage("hyperskill.xml", roamingType = RoamingType.DISABLED)])
 open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable {
-  private val events: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
+  private val frontendEvents: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
 
   private val timeSpentEvents: MutableMap<Int, DoubleAdder> = mutableMapOf()
   private var taskInProgress: Pair<Int, Long>? = null
@@ -60,11 +60,11 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
       action = HyperskillFrontendEventType.VIEW
     }
 
-    events.add(event)
+    frontendEvents.add(event)
   }
 
-  fun addAll(pendingEvents: List<HyperskillFrontendEvent>) {
-    pendingEvents.subList(0, min(EVENTS_LIMIT, pendingEvents.size)).asReversed().forEach { events.addFirst(it) }
+  fun addAllFrontendEvents(pendingEvents: List<HyperskillFrontendEvent>) {
+    pendingEvents.subList(0, min(FRONTEND_EVENTS_LIMIT, pendingEvents.size)).asReversed().forEach { frontendEvents.addFirst(it) }
   }
 
   private fun stagePath(task: Task): String {
@@ -78,14 +78,14 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     return "/learn/step/${task.id}"
   }
 
-  fun allEvents(emptyQueue: Boolean = true): List<HyperskillFrontendEvent> {
+  fun allFrontendEvents(emptyQueue: Boolean = true): List<HyperskillFrontendEvent> {
     val snapshot = mutableListOf<HyperskillFrontendEvent>()
 
     // non-blocking way to get snapshot of current events in queue
     val deathPill = HyperskillFrontendEvent()
-    events.add(deathPill)
+    frontendEvents.add(deathPill)
 
-    val iterator = events.iterator()
+    val iterator = frontendEvents.iterator()
     while (iterator.hasNext()) {
       val nextEvent = iterator.next()
       if (nextEvent === deathPill) {
@@ -111,7 +111,7 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     }
   }
 
-  fun addAll(pendingTimeSpentEvents: Map<Int, Double>) {
+  fun addAllTimeSpentEvents(pendingTimeSpentEvents: Map<Int, Double>) {
     for (event in pendingTimeSpentEvents) {
       val id = event.key
       val duration = event.value
@@ -128,17 +128,17 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   override fun getState(): State {
     val pendingTimeSpentEvents = pendingTimeSpentEvents(reset = false)
-    val pendingEvents = allEvents(false)
+    val pendingFrontendEvents = allFrontendEvents(false)
 
     return State().apply {
-      events = pendingEvents.subList(0, min(pendingEvents.size, EVENTS_LIMIT)).toMutableList()
+      events = pendingFrontendEvents.subList(0, min(pendingFrontendEvents.size, FRONTEND_EVENTS_LIMIT)).toMutableList()
       timeSpentEvents = pendingTimeSpentEvents.toMutableMap()
     }
   }
 
   override fun loadState(state: State) {
-    events.addAll(state.events)
-    addAll(state.timeSpentEvents)
+    frontendEvents.addAll(state.events)
+    addAllTimeSpentEvents(state.timeSpentEvents)
   }
 
   override fun dispose() {
@@ -160,6 +160,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     // it is approximately 300 bytes per event, lets keep hyperskill.xml file less than 2 MB (except time spent events)
     // time spent events are limited by the number of steps
     @VisibleForTesting
-    const val EVENTS_LIMIT: Int = 10000
+    const val FRONTEND_EVENTS_LIMIT: Int = 10000
   }
 }

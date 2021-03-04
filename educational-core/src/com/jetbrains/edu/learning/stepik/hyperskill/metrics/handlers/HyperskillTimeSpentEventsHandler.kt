@@ -13,6 +13,6 @@ object HyperskillTimeSpentEventsHandler : HyperskillEventsHandler<HyperskillTime
     HyperskillConnector.getInstance().sendTimeSpentEvents(events)
 
   override fun addPendingEvents(events: List<HyperskillTimeSpentEvent>) {
-    HyperskillMetricsService.getInstance().addAll(events.associateBy({ it.step }, { it.duration }))
+    HyperskillMetricsService.getInstance().addAllTimeSpentEvents(events.associateBy({ it.step }, { it.duration }))
   }
 }

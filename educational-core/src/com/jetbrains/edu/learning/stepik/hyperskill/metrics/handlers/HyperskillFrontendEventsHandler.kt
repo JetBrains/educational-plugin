@@ -7,13 +7,13 @@ import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsSer
 
 object HyperskillFrontendEventsHandler : HyperskillEventsHandler<HyperskillFrontendEvent> {
   override val pendingEvents: List<HyperskillFrontendEvent>
-    get() = HyperskillMetricsService.getInstance().allEvents(true)
+    get() = HyperskillMetricsService.getInstance().allFrontendEvents(true)
 
   override fun sendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
-    return HyperskillConnector.getInstance().sendEvents(events)
+    return HyperskillConnector.getInstance().sendFrontendEvents(events)
   }
 
   override fun addPendingEvents(events: List<HyperskillFrontendEvent>) {
-    HyperskillMetricsService.getInstance().addAll(events)
+    HyperskillMetricsService.getInstance().addAllFrontendEvents(events)
   }
 }

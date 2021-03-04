@@ -26,7 +26,7 @@ class HyperskillMetricsTest : EduTestCase() {
 
   override fun tearDown() {
     try {
-      metricsService.allEvents(emptyQueue = true)
+      metricsService.allFrontendEvents(emptyQueue = true)
       metricsService.allTimeSpentEvents(reset = true)
     }
     finally {
@@ -48,8 +48,8 @@ class HyperskillMetricsTest : EduTestCase() {
 
     serializeAndDeserializeBack()
 
-    val deserializedEvents = metricsService.allEvents(emptyQueue = false)
-    compareEvents(addedEvents, deserializedEvents)
+    val deserializedEvents = metricsService.allFrontendEvents(emptyQueue = false)
+    compareFrontendEvents(addedEvents, deserializedEvents)
 
     assertEquals(listOf(firstStepId, secondStepId), metricsService.allTimeSpentEvents(reset = false).map { it.step })
   }
@@ -60,13 +60,13 @@ class HyperskillMetricsTest : EduTestCase() {
    *
    * [test current serialization format] checks if current format can be deserialized
    */
-  fun `test events deserialization from xml`() {
+  fun `test frontend events deserialization from xml`() {
     val stateFromFile = deserializeFromFile("hyperskill_events.xml")
 
-    val expectedEvents = listOf(createHyperskillEvent("/projects/41/stages/214/implement", Date(111)),
-                                createHyperskillEvent("/learn/step/123", Date(222)))
+    val expectedFrontendEvents = listOf(createHyperskillFrontendEvent("/projects/41/stages/214/implement", Date(111)),
+                                        createHyperskillFrontendEvent("/learn/step/123", Date(222)))
 
-    compareEvents(expectedEvents, stateFromFile.events)
+    compareFrontendEvents(expectedFrontendEvents, stateFromFile.events)
   }
 
   fun `test time spent events deserialization from xml`() {
@@ -108,19 +108,19 @@ class HyperskillMetricsTest : EduTestCase() {
     assertTrue(newTimeSpentEvent.duration > oldDuration)
   }
 
-  fun `test serialization limit respected`() {
+  fun `test frontend events serialization limit respected`() {
     val hyperskillCourse = createHyperskillCourse()
 
-    val addedEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.EVENTS_LIMIT + 1) { findTask(0, 0) })
-    assertEquals(HyperskillMetricsService.EVENTS_LIMIT + 1, addedEvents.size)
+    val addedFrontendEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
+    assertEquals(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1, addedFrontendEvents.size)
 
     serializeAndDeserializeBack()
 
-    val deserializedEvents = metricsService.allEvents(emptyQueue = false)
-    compareEvents(addedEvents.subList(0, HyperskillMetricsService.EVENTS_LIMIT), deserializedEvents)
+    val deserializedFrontendEvents = metricsService.allFrontendEvents(emptyQueue = false)
+    compareFrontendEvents(addedFrontendEvents.subList(0, HyperskillMetricsService.FRONTEND_EVENTS_LIMIT), deserializedFrontendEvents)
   }
 
-  fun `test all events sent`() {
+  fun `test all frontend events sent`() {
     val hyperskillCourse = createHyperskillCourse()
 
     addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
@@ -134,10 +134,10 @@ class HyperskillMetricsTest : EduTestCase() {
       )
     }
 
-    HyperskillMetricsScheduler.sendEvents()
+    HyperskillMetricsScheduler.sendFrontendEvents()
 
-    val pendingEvents = metricsService.allEvents(false)
-    assertEmpty(pendingEvents)
+    val pendingFrontendEvents = metricsService.allFrontendEvents(false)
+    assertEmpty(pendingFrontendEvents)
   }
 
   fun `test all time spent events sent`() {
@@ -161,14 +161,14 @@ class HyperskillMetricsTest : EduTestCase() {
     assertEmpty(pendingEvents)
   }
 
-  fun `test no events sent`() {
+  fun `test no frontend events sent`() {
     val hyperskillCourse = createHyperskillCourse()
 
     val viewEvents = addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
-    HyperskillMetricsScheduler.sendEvents()
+    HyperskillMetricsScheduler.sendFrontendEvents()
 
-    val pendingEvents = metricsService.allEvents(false)
-    compareEvents(viewEvents, pendingEvents)
+    val pendingFrontendEvents = metricsService.allFrontendEvents(false)
+    compareFrontendEvents(viewEvents, pendingFrontendEvents)
   }
 
   fun `test no time spent events sent`() {
@@ -176,13 +176,13 @@ class HyperskillMetricsTest : EduTestCase() {
     metricsService.taskStarted(1)
     metricsService.taskStopped()
 
-    HyperskillMetricsScheduler.sendEvents()
+    HyperskillMetricsScheduler.sendFrontendEvents()
 
     val pendingEvents = metricsService.allTimeSpentEvents(reset = false)
     assertNotNull(pendingEvents.find { it.step == 1 })
   }
 
-  fun `test events sent in chunks`() {
+  fun `test frontend events sent in chunks`() {
     val hyperskillCourse = createHyperskillCourse()
 
     val eventsCount = 5000
@@ -205,21 +205,21 @@ class HyperskillMetricsTest : EduTestCase() {
       )
     }
 
-    HyperskillMetricsScheduler.sendEvents()
+    HyperskillMetricsScheduler.sendFrontendEvents()
     assertEquals(expectedChunks, chunksCount)
 
-    val pendingEvents = metricsService.allEvents(false)
-    assertEmpty(pendingEvents)
+    val pendingFrontendEvents = metricsService.allFrontendEvents(false)
+    assertEmpty(pendingFrontendEvents)
   }
 
-  fun `test pending events limit respected`() {
+  fun `test pending frontend events limit respected`() {
     val hyperskillCourse = createHyperskillCourse()
 
-    val addedEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.EVENTS_LIMIT + 1) { findTask(0, 0) })
-    HyperskillMetricsScheduler.sendEvents()
+    val addedFrontendEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
+    HyperskillMetricsScheduler.sendFrontendEvents()
 
-    val pendingEvents = metricsService.allEvents(false)
-    compareEvents(addedEvents.subList(0, HyperskillMetricsService.EVENTS_LIMIT), pendingEvents)
+    val pendingFrontendEvents = metricsService.allFrontendEvents(false)
+    compareFrontendEvents(addedFrontendEvents.subList(0, HyperskillMetricsService.FRONTEND_EVENTS_LIMIT), pendingFrontendEvents)
   }
 
   private fun createHyperskillCourse() = hyperskillCourseWithFiles {
@@ -241,7 +241,7 @@ class HyperskillMetricsTest : EduTestCase() {
     }
   }
 
-  private fun compareEvents(expectedEvents: List<HyperskillFrontendEvent>, actualEvents: List<HyperskillFrontendEvent>) {
+  private fun compareFrontendEvents(expectedEvents: List<HyperskillFrontendEvent>, actualEvents: List<HyperskillFrontendEvent>) {
     assertEquals(expectedEvents.size, actualEvents.size)
     actualEvents.forEachIndexed { index, actualEvent ->
       val expectedEvent = expectedEvents[index]
@@ -254,18 +254,18 @@ class HyperskillMetricsTest : EduTestCase() {
 
   private fun serializeAndDeserializeBack() {
     val serialized = XmlSerializer.serialize(metricsService.state)
-    metricsService.allEvents(emptyQueue = true)
+    metricsService.allFrontendEvents(emptyQueue = true)
     metricsService.loadState(XmlSerializer.deserialize(serialized, HyperskillMetricsService.State::class.java))
   }
 
   private fun addViewEvents(hyperskillCourse: HyperskillCourse, tasks: List<Task>): List<HyperskillFrontendEvent> {
     tasks.forEach { metricsService.doAddViewEvent(hyperskillCourse, it) }
-    return metricsService.allEvents(emptyQueue = false)
+    return metricsService.allFrontendEvents(emptyQueue = false)
   }
 
-  private fun createHyperskillEvent(eventRoute: String,
-                                    eventTime: Date,
-                                    eventAction: HyperskillFrontendEventType = HyperskillFrontendEventType.VIEW): HyperskillFrontendEvent {
+  private fun createHyperskillFrontendEvent(eventRoute: String,
+                                            eventTime: Date,
+                                            eventAction: HyperskillFrontendEventType = HyperskillFrontendEventType.VIEW): HyperskillFrontendEvent {
     return HyperskillFrontendEvent().apply {
       route = eventRoute
       action = eventAction
