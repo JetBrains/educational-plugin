@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 import junit.framework.ComparisonFailure
 import org.jdom.Element
 import java.nio.file.Paths
+import java.util.*
 
 class CoursesStorageTest : EduTestCase() {
 
@@ -97,6 +98,28 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals("3.7", course.languageVersion)
   }
 
+  fun testDeserializeHumanLanguageInRussianLocale() {
+    val default = Locale.getDefault()
+    Locale.setDefault(Locale("ru", "RU"))
+    val deserialized = deserializeState()
+    assertEquals(1, deserialized.courses.size)
+    val course = deserialized.courses.first()
+    course.humanLanguage
+    Locale.setDefault(default)
+    assertEquals("en", course.languageCode)
+  }
+
+  fun testDeserializeHumanLanguageInEnglishLocale() {
+    val default = Locale.getDefault()
+    Locale.setDefault(Locale("en", ""))
+    val deserialized = deserializeState()
+    assertEquals(1, deserialized.courses.size)
+    val course = deserialized.courses.first()
+    course.humanLanguage
+    Locale.setDefault(default)
+    assertEquals("en", course.languageCode)
+  }
+
   fun testSerializeCourseWithDefaultParameters() {
     val course = course(
       "AtomicKotlin",
@@ -116,6 +139,21 @@ class CoursesStorageTest : EduTestCase() {
       language = "${EduNames.PYTHON} 3.7"
     }
 
+    doSerializationTest(course)
+  }
+
+  fun testSerializeHumanLanguage() {
+    val default = Locale.getDefault()
+    Locale.setDefault(Locale("ru", "RU"))
+    val course = course(
+      "AtomicKotlin",
+      description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
+      id = 20403
+      language = "${EduNames.PYTHON} 3.7"
+      languageCode = "ru"
+    }
+
+    Locale.setDefault(default)
     doSerializationTest(course)
   }
 

@@ -138,7 +138,7 @@ class CourseMetaInfo : Course {
   }
 
   private fun convertLanguageCode() {
-    val languageCode = Locale.getAvailableLocales().find { it.displayName == languageCode }?.toLanguageTag()
+    val languageCode = Locale.getAvailableLocales().find { it.displayName == this.languageCode }?.toLanguageTag()
     if (languageCode != null) {
       setLanguageCode(languageCode)
     }
@@ -148,8 +148,13 @@ class CourseMetaInfo : Course {
   }
 
   override fun getHumanLanguage(): String {
-    val locale = Locale.Builder().setLanguageTag(languageCode).build()
-    if (languageCode.length > 3 && !LocaleUtils.isAvailableLocale(locale)) {
+    try {
+      val locale = Locale.Builder().setLanguageTag(languageCode).build()
+      if (languageCode.length > 3 && !LocaleUtils.isAvailableLocale(locale)) {
+        convertLanguageCode()
+      }
+    }
+    catch (e: IllformedLocaleException) {
       convertLanguageCode()
     }
     return super.getHumanLanguage()
