@@ -90,8 +90,6 @@
 
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
-    <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction"/>
-
     <action id="Educational.ToggleRestServices"
             class="com.jetbrains.edu.learning.actions.ToggleRestServicesAction"
             internal="true"/>
@@ -365,7 +363,6 @@
     <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
   </extensions>
 
-  <xi:include href="/META-INF/ide-specific-actions.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
