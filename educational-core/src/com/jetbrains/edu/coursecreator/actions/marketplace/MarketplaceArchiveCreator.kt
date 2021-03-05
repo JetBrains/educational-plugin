@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String = getAesKey())
   : CourseArchiveCreator(project, location, aesKey) {
@@ -50,6 +51,7 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
       if (!addVendor(course)) return EduCoreBundle.message("marketplace.vendor.empty")
     }
 
+    YamlFormatSynchronizer.saveItem(course)
     return super.compute()
   }
 

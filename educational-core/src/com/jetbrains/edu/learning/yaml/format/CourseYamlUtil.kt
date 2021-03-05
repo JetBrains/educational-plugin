@@ -62,10 +62,8 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_MARKETPLACE, PROGRAMMING_LANGUAGE,
-                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT,
-                   SOLUTIONS_HIDDEN,
-                   CONTENT)
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, PROGRAMMING_LANGUAGE,
+                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -108,10 +106,6 @@ abstract class CourseYamlMixin {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val myVendor: Vendor? = null
-
-  @JsonProperty(IS_MARKETPLACE)
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  private var isMarketplace: Boolean = false
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -213,7 +207,11 @@ private class CourseBuilder(
         }
       }
       EDU -> EduCourse()
-      MARKETPLACE -> EduCourse()
+      MARKETPLACE -> {
+        EduCourse().apply {
+          isMarketplace = true
+        }
+      }
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduNames.COURSE))
     }
@@ -222,7 +220,6 @@ private class CourseBuilder(
       description = summary
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       vendor = yamlVendor
-      isMarketplace = yamlIsMarketplace
       marketplaceCourseVersion = yamlCourseVersion ?: 1
       solutionsHidden = areSolutionsHidden ?: false
 

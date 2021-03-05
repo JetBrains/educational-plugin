@@ -524,12 +524,12 @@ class YamlDeserializationTest : YamlTestCase() {
 
   fun `test isMarketplace`() {
     val yamlContent = """
+      |type: marketplace
       |title: Test Course
       |language: Russian
       |summary: |-
       |  This is a course about string theory.
       |  Why not?"
-      |is_marketplace: true
       |programming_language: Plain text
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
@@ -539,12 +539,12 @@ class YamlDeserializationTest : YamlTestCase() {
 
   fun `test courseVersion`() {
     val yamlContent = """
+      |type: marketplace
       |title: Test Course
       |language: Russian
       |summary: |-
       |  This is a course about string theory.
       |  Why not?"
-      |is_marketplace: true
       |course_version: 5
       |programming_language: Plain text
       |""".trimMargin()
@@ -555,12 +555,12 @@ class YamlDeserializationTest : YamlTestCase() {
 
   fun `test default courseVersion`() {
     val yamlContent = """
+      |type: marketplace
       |title: Test Course
       |language: Russian
       |summary: |-
       |  This is a course about string theory.
       |  Why not?"
-      |is_marketplace: true
       |programming_language: Plain text
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
