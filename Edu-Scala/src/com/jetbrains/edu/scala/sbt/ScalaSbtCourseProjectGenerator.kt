@@ -43,6 +43,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
+    projectSettings.setUpProjectJdk(project)
     setupSbtSettings(project)
   }
 

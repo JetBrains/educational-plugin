@@ -1,17 +1,10 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.SdkModificator
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.ui.configuration.JdkComboBox
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
@@ -32,7 +25,7 @@ open class GradleCourseProjectGenerator(
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
-    val jdk = setJdk(project, projectSettings)
+    val jdk = projectSettings.setUpProjectJdk(project, ::getJdk)
     setupGradleSettings(project, jdk)
     super.afterProjectGenerated(project, projectSettings)
   }
@@ -45,30 +38,6 @@ open class GradleCourseProjectGenerator(
     val gradleCourseBuilder = myCourseBuilder as GradleCourseBuilderBase
     EduGradleUtils.createProjectGradleFiles(baseDir, gradleCourseBuilder.templates,
                                             gradleCourseBuilder.templateVariables(project))
-  }
-
-  private fun setJdk(project: Project, settings: JdkProjectSettings): Sdk? {
-    val jdk = getJdk(settings)
-
-    // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
-    try {
-      settings.model.apply()
-    } catch (e: ConfigurationException) {
-      LOG.error(e)
-    }
-
-    runWriteAction {
-      ProjectRootManager.getInstance(project).projectSdk = jdk
-      addAnnotations(ProjectRootManager.getInstance(project).projectSdk?.sdkModificator)
-    }
-    return jdk
-  }
-
-  private fun addAnnotations(sdkModificator: SdkModificator?) {
-    sdkModificator?.apply {
-      JavaSdkImpl.attachJdkAnnotations(this)
-      this.commitChanges()
-    }
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
