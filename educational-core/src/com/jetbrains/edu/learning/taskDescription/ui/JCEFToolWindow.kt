@@ -37,6 +37,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   init {
+    // BACKCOMPAT: 2020.3: error page is disable by default in 211 branch
+    taskInfoJBCefBrowser.disableErrorPage()
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(TaskInfoRequestHandler(), taskInfoJBCefBrowser.cefBrowser)
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(TaskInfoLifeSpanHandler(), taskInfoJBCefBrowser.cefBrowser)
     taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
@@ -99,6 +101,11 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   private inner class TaskInfoRequestHandler : CefRequestHandlerAdapter() {
+    /**
+     * Called before browser navigation. If the navigation is canceled LoadError will be called with an ErrorCode value of Aborted.
+     *
+     * @return true to cancel the navigation or false to allow the navigation to proceed.
+     */
     override fun onBeforeBrowse(browser: CefBrowser?,
                                 frame: CefFrame?,
                                 request: CefRequest?,
