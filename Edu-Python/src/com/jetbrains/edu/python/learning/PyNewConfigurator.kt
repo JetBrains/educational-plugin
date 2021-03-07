@@ -10,7 +10,7 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 import icons.PythonIcons
 import javax.swing.Icon
 
-open class PyNewConfigurator : EduConfigurator<PyNewProjectSettings> {
+class PyNewConfigurator : EduConfigurator<PyNewProjectSettings> {
   override val courseBuilder: PyNewCourseBuilder
     get() = PyNewCourseBuilder()
 
