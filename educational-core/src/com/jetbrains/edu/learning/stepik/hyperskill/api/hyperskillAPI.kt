@@ -137,6 +137,9 @@ class HyperskillTopic {
 }
 
 class HyperskillStepSource : StepSource() {
+  @JsonProperty(IS_COMPLETED)
+  var isCompleted: Boolean = false
+
   @JsonProperty(TITLE)
   var title: String? = null
 

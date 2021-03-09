@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -44,6 +45,12 @@ class HyperskillTaskBuilder(
 
   override fun createTask(type: String): Task? {
     val task = super.createTask(type)
+    task?.apply {
+      if (stepSource.isCompleted) {
+        status = CheckStatus.Solved
+      }
+    }
+
     if (task is CodeTask) {
       task.apply {
         name = stepSource.title
