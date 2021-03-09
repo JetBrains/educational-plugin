@@ -100,8 +100,6 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     return result
   }
 
-  private fun Section.getProblemsUpdates(): List<TaskUpdate> = lessons.flatMap { lesson -> lesson.getProblemsUpdates() }
-
   class TaskUpdate(val localTask: Task, val taskFromServer: Task)
 
   @VisibleForTesting
