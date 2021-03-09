@@ -28,12 +28,15 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+
+import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt.markTheoryTaskAsCompleted;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
 
@@ -84,13 +87,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         showTaskDescriptionToolWindow(project, taskFile, true);
 
         Task task = taskFile.getTask();
-        if (course.isStudy() && isToPostTheory(task) && task.getStatus() != CheckStatus.Solved) {
-          task.setStatus(CheckStatus.Solved);
-          ProjectView.getInstance(project).refresh();
-          if (EduSettings.isLoggedIn()) {
-            StepikConnectorUtils.postTheory(task, project);
-          }
-        }
+        markViewed(project, task);
 
         boolean isStudyProject = course.isStudy();
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
@@ -130,7 +127,21 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
   }
 
-  private static boolean isToPostTheory(Task task) {
-    return task instanceof TheoryTask && ((TheoryTask)task).postSubmissionOnOpen;
+  private static void markViewed(@NotNull Project project, @NotNull Task task) {
+    if (!(task instanceof TheoryTask)) return;
+    TheoryTask theoryTask = (TheoryTask) task;
+    Course course = theoryTask.getCourse();
+    if (course.isStudy() && theoryTask.postSubmissionOnOpen && theoryTask.getStatus() != CheckStatus.Solved) {
+      if (course instanceof HyperskillCourse) {
+        markTheoryTaskAsCompleted(project, theoryTask);
+      }
+      else if (EduSettings.isLoggedIn()) {
+        StepikConnectorUtils.postTheory(theoryTask, project);
+      }
+
+      theoryTask.setStatus(CheckStatus.Solved);
+      YamlFormatSynchronizer.saveItem(theoryTask);
+      ProjectView.getInstance(project).refresh();
+    }
   }
 }

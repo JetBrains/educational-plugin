@@ -278,6 +278,9 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
+  fun markTheoryCompleted(step: Int): Result<Any, String> =
+    withTokenRefreshIfNeeded { service.completeStep(step).executeParsingErrors(true) }
+
   fun getWebSocketConfiguration(): Result<WebSocketConfiguration, String> {
     return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
   }

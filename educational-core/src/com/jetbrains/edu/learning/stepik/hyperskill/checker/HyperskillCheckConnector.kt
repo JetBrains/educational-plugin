@@ -129,7 +129,6 @@ object HyperskillCheckConnector {
     return connector.postSubmission(codeSubmission)
   }
 
-
   private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<CheckResult, SubmissionError> {
     val connector = HyperskillConnector.getInstance()
     val webSocketConfiguration = connector.getWebSocketConfiguration().onError { error ->

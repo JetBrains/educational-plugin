@@ -15,8 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -177,3 +179,9 @@ val HyperskillProject.eduEnvironment: String?
   }
 
 val HyperskillAccount.profileUrl: String get() = "$HYPERSKILL_PROFILE_PATH${userInfo.id}"
+
+fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
+  runInBackground(project, EduCoreBundle.message("hyperskill.posting.theory"), false) {
+    HyperskillConnector.getInstance().markTheoryCompleted(task.id)
+  }
+}
