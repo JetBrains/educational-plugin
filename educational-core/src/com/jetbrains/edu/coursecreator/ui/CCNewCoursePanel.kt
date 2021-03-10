@@ -53,7 +53,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val myTitleField: CourseTitleField = CourseTitleField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
 
-  private val myAdvancedSettings: CourseSettings = CourseSettings()
+  private val settings: CourseSettings = CourseSettings()
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 
@@ -94,7 +94,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     myErrorComponent.preferredSize = myErrorComponent.minimumSize
     myErrorComponent.border = JBUI.Borders.empty(5, 6, 2, 2)
     bottomPanel.add(myErrorComponent, BorderLayout.SOUTH)
-    bottomPanel.add(myAdvancedSettings, BorderLayout.NORTH)
+    bottomPanel.add(settings, BorderLayout.NORTH)
 
     add(myPanel, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
@@ -179,7 +179,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
         val validationMessage = myLanguageSettings.validate(null, locationString)
-        if (validationMessage != null) myAdvancedSettings.setOn(true)
+        if (validationMessage != null) settings.setOn(true)
         validationMessage
       }
     }
@@ -220,7 +220,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
     val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
     settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse, context))
-    myAdvancedSettings.setSettingsComponents(settings)
+    this.settings.setSettingsComponents(settings)
 
     myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
     myDescriptionTextArea.text = myCourse.description.nullize() ?: """

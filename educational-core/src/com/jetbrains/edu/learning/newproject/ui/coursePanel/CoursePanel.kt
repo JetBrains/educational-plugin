@@ -43,20 +43,20 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
 
   private val header: HeaderPanel = HeaderPanel(HORIZONTAL_MARGIN) { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
   private val description = CourseDescriptionPanel(HORIZONTAL_MARGIN)
-  private val advancedSettings = CourseSettings(isLocationFieldNeeded, HORIZONTAL_MARGIN).apply { background = MAIN_BG_COLOR }
+  private val settings = CourseSettings(isLocationFieldNeeded, HORIZONTAL_MARGIN).apply { background = MAIN_BG_COLOR }
   private val errorComponent: ErrorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN).apply {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN + ERROR_LEFT_GAP, ERROR_BOTTOM_GAP, ERROR_RIGHT_GAP)
   }
   private var mySearchField: FilterComponent? = null
 
   val locationString: String?
-    get() = advancedSettings.locationString
+    get() = settings.locationString
 
   val projectSettings: Any?
-    get() = advancedSettings.getProjectSettings()
+    get() = settings.getProjectSettings()
 
   val languageSettings: LanguageSettings<*>?
-    get() = advancedSettings.languageSettings
+    get() = settings.languageSettings
 
   init {
     layout = CardLayout()
@@ -70,7 +70,7 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     content.add(header)
     content.add(errorComponent)
     content.add(description)
-    content.add(advancedSettings)
+    content.add(settings)
     content.background = MAIN_BG_COLOR
 
     val scrollPane = JBScrollPane(content, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER).apply {
@@ -101,10 +101,10 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
   protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
 
   private fun addOneTimeLocationFieldValidation() {
-    advancedSettings.addLocationFieldDocumentListener(object : DocumentAdapter() {
+    settings.addLocationFieldDocumentListener(object : DocumentAdapter() {
       override fun textChanged(e: DocumentEvent) {
         doValidation()
-        advancedSettings.removeLocationFieldDocumentListener(this)
+        settings.removeLocationFieldDocumentListener(this)
       }
     })
   }
@@ -123,19 +123,19 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
       // TODO: set error
       return
     }
-    header.update(CourseInfo(course, { locationString }, { advancedSettings.languageSettings }), settings)
+    header.update(CourseInfo(course, { locationString }, { this.settings.languageSettings }), settings)
     description.bind(course)
   }
 
   fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
     (layout as CardLayout).show(this, CONTENT)
     this.course = course
-    advancedSettings.update(course, settings.showLanguageSettings)
+    this.settings.update(course, settings.showLanguageSettings)
     updateCourseDescriptionPanel(course, settings)
     revalidate()
     repaint()
     doValidation()
-    return advancedSettings.languageSettings
+    return this.settings.languageSettings
   }
 
   fun doValidation() {
@@ -143,7 +143,7 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     setButtonsEnabled(errorState.courseCanBeStarted)
   }
 
-  fun validateSettings(course: Course?) = advancedSettings.validateSettings(course)
+  fun validateSettings(course: Course?) = settings.validateSettings(course)
 
   fun bindSearchField(searchField: FilterComponent) {
     mySearchField = searchField
