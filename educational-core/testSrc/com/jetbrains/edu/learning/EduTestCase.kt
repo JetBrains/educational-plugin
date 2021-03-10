@@ -314,13 +314,11 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun getTestFile(fileName: String) = testDataPath + fileName
 
-  protected fun mockResponse(fileName: String, responseCode: Int = HttpStatus.SC_OK): MockResponse = MockResponseFactory.fromFile(
-    getTestFile(fileName), responseCode)
+  protected fun mockResponse(fileName: String, responseCode: Int = HttpStatus.SC_OK): MockResponse =
+    MockResponseFactory.fromFile(getTestFile(fileName), responseCode)
 
   @Throws(IOException::class)
-  protected fun loadText(fileName: String): String {
-    return FileUtil.loadFile(File(testDataPath, fileName))
-  }
+  protected fun loadText(fileName: String): String = FileUtil.loadFile(File(testDataPath, fileName))
 
   companion object {
 

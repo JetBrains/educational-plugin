@@ -5,11 +5,18 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
-import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.MockResponseFactory
+import okhttp3.mockwebserver.MockResponse
+import org.apache.http.HttpStatus
+import java.io.File
+import java.io.IOException
 
-abstract class CourseUpdateCheckerTestBase : EduTestCase() {
+abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<Unit>() {
+  override val defaultSettings: Unit get() = Unit
 
   protected fun doTest(updateChecker: CourseUpdateChecker,
                        isCourseUpToDate: Boolean,
@@ -57,7 +64,15 @@ abstract class CourseUpdateCheckerTestBase : EduTestCase() {
     check(expectedInvocationNumber <= updateChecker.invocationNumber)
   }
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/"
+  open fun getTestDataPath(): String = "testData/"
+
+  protected fun mockResponse(fileName: String, responseCode: Int = HttpStatus.SC_OK): MockResponse =
+    MockResponseFactory.fromFile(getTestFile(fileName), responseCode)
+
+  @Throws(IOException::class)
+  protected fun loadText(fileName: String): String = FileUtil.loadFile(File(getTestDataPath(), fileName))
+
+  protected fun getTestFile(fileName: String) = getTestDataPath() + fileName
 
   @Suppress("DEPRECATION")
   class NotificationListener(project: Project, disposable: Disposable) {

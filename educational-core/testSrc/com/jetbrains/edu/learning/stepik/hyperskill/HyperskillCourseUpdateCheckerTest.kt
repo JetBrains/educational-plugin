@@ -4,7 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -58,16 +58,15 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   fun `test check scheduled for not upToDate course with notification`() {
     configureResponse("stages_response.json")
-    val course = courseWithFiles(
-      language = FakeGradleBasedLanguage,
-      courseProducer = ::HyperskillCourse
-    ) {
+    val course = course(courseProducer = ::HyperskillCourse) {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 111) {
           taskFile("src/Task.kt", "fun foo() {}")
         }
       }
     } as HyperskillCourse
+
+    createCourseStructure(course)
     course.hyperskillProject = HyperskillProject()
     course.updateDate = Date(0)
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
@@ -91,7 +90,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       }
     })
 
-    myFixture.testAction(SyncHyperskillCourseAction())
+    SyncHyperskillCourseAction().synchronizeCourse(project)
     assertTrue(notificationShown)
     assertEquals("Phone Book", course.hyperskillProject!!.title)
     assertNotEquals(Date(0), course.updateDate)
@@ -110,18 +109,21 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       }
     })
 
-    myFixture.testAction(SyncHyperskillCourseAction())
+    SyncHyperskillCourseAction().synchronizeCourse(project)
     assertTrue(notificationShown)
   }
 
   private fun createHyperskillCourse(isNewlyCreated: Boolean = false): HyperskillCourse {
-    val course = HyperskillCourse().apply {
+    val course = course(courseProducer = ::HyperskillCourse) { } as HyperskillCourse
+    course.apply {
       id = 1
       hyperskillProject = HyperskillProject().apply {
         id = 1
         title = "Phone Book"
       }
     }
+
+    createCourseStructure(course)
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
     HyperskillCourseUpdateChecker.getInstance(project).course = course
@@ -142,7 +144,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "hyperskill/"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "stepik/hyperskill/"
 
   override fun tearDown() {
     try {

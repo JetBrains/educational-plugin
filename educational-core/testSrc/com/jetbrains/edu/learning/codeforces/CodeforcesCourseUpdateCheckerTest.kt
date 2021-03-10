@@ -3,10 +3,7 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contest1211
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -89,7 +86,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   private fun createCodeforcesCourse(isNewlyCreated: Boolean = false, isCourseUpToDate: Boolean = false): CodeforcesCourse {
-    val course = courseWithFiles(
+    val course = course(
       courseProducer = ::CodeforcesCourse
     ) {
       lesson(CODEFORCES_PROBLEMS) {
@@ -102,6 +99,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       updateDate = Date()
     }
 
+    createCourseStructure(course)
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
     CodeforcesCourseUpdateChecker.getInstance(project).course = course
@@ -119,5 +117,5 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
-  override fun getTestDataPath(): String = "testData/codeforces/"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "codeforces/"
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.update
 
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
@@ -58,13 +59,16 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   private fun createCourse(date: Date, isNewlyCreated: Boolean, isMarketplaceCourse: Boolean = false): EduCourse {
-    val course = EduCourse().apply {
+    val course = course { } as EduCourse
+    course.apply {
       name = "Test Course"
       id = 1
       updateDate = date
       isPublic = true
       isMarketplace = isMarketplaceCourse
     }
+
+    createCourseStructure(course)
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
     StudyTaskManager.getInstance(project).course = course
     EduCourseUpdateChecker.getInstance(project).course = course
@@ -78,7 +82,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
   }
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/updateCourse/update_checker/"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "stepik/updateCourse/update_checker/"
 
   override fun tearDown() {
     try {
