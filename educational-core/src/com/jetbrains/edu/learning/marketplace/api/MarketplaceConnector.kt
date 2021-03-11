@@ -27,13 +27,16 @@ import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import okhttp3.ConnectionPool
 import org.apache.http.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
 
-abstract class MarketplaceConnector {
+abstract class MarketplaceConnector : CourseConnector {
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
   private val connectionPool: ConnectionPool = ConnectionPool()
@@ -43,6 +46,8 @@ abstract class MarketplaceConnector {
   protected abstract val authUrl: String
 
   protected abstract val repositoryUrl: String
+
+  private val XML_ID = "\\d{5,}-.*".toRegex()
 
   init {
     val module = SimpleModule()
@@ -291,6 +296,51 @@ abstract class MarketplaceConnector {
     objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
     objectMapper.registerModule(module)
     return objectMapper
+  }
+
+  /**
+   * the following link formats are supported:
+   * https://plugins.jetbrains.com/plugin/12345 link with numeric id
+   * https://plugins.jetbrains.com/plugin/12345-plugin-name link with xmlId
+   * 12345-plugin-name just a plugin xmlId
+   */
+  override fun getCourseIdFromLink(link: String): Int {
+    if (link.matches(XML_ID)) {
+      return parseXmlId(link)
+    }
+    try {
+      val url = URL(link)
+      val pathParts = url.path.split("/").dropLastWhile { it.isEmpty() }
+      for (i in pathParts.indices) {
+        val part = pathParts[i]
+        if (part == "plugin" && i + 1 < pathParts.size) {
+          val xmlId = pathParts[i + 1]
+          return parseXmlId(xmlId)
+        }
+      }
+    }
+    catch (e: MalformedURLException) {
+      LOG.warn(e.message)
+    }
+
+    return -1
+  }
+
+  override fun getCourseInfoByLink(link: String): EduCourse? {
+    val courseId = link.toIntOrNull() ?: getCourseIdFromLink(link)
+    if (courseId != -1) {
+      return searchCourse(courseId)
+    }
+    return null
+  }
+
+  private fun parseXmlId(xmlId: String): Int {
+    return try {
+      Integer.parseInt(xmlId.split("-")[0])
+    }
+    catch (e: NumberFormatException) {
+      -1
+    }
   }
 
   companion object {

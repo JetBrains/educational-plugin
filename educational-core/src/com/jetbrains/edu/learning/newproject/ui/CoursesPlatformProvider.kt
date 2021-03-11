@@ -64,6 +64,5 @@ abstract class CoursesPlatformProvider {
         }
       }
     }
-
   }
 }

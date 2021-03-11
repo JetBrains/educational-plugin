@@ -10,8 +10,11 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
@@ -146,6 +149,11 @@ interface EduConfigurator<Settings> {
    * @throws CourseCantBeStartedException if impossible to start course
    */
   fun beforeCourseStarted(course: Course) {
+    if (course is EduCourse && course.isMarketplace) {
+      computeUnderProgress(title = EduCoreBundle.message("marketplace.loading.course")) {
+        MarketplaceConnector.getInstance().loadCourseStructure(course)
+      }
+    }
   }
 
   /**

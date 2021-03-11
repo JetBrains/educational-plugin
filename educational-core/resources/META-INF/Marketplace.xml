@@ -25,5 +25,6 @@
       <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
     </action>
     <action id="Educational.Marketplace.UpdateCourse" class="com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction"/>
+    <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
   </actions>
 </idea-plugin>

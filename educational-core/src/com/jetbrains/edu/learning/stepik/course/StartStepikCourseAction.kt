@@ -1,40 +1,26 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.StartCourseAction
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_DEFAULT_URL
 
-class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
+class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
+  override val dialog: ImportCourseDialog
+    get() = ImportStepikCourseDialog(courseConnector)
+  override val courseConnector: CourseConnector = StepikCourseConnector
 
-  override fun actionPerformed(e: AnActionEvent) {
-    doImport()
-  }
-
-  private fun doImport() {
-    val course = importStepikCourse() ?: return
-    JoinCourseDialog(course).show()
-  }
-
-  fun importStepikCourse(): Course? {
-    val courseLink = showDialogAndGetCourseLink() ?: return null
-    val course = StepikCourseConnector.getCourseInfoByLink(courseLink)
-    if (course == null) {
-      showFailedToAddCourseNotification(courseLink)
-      return null
-    }
+  override fun importCourse(): EduCourse? {
+    val course = super.importCourse() ?: return null
     if (course.isAdaptive) {
       showAdaptiveCoursesAreNotSupportedNotification(course.name)
       return null
@@ -59,37 +45,27 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     val languages = getLanguagesUnderProgress(course)
 
     if (languages.isEmpty()) {
-      Messages.showErrorDialog("No supported languages available for '${course.name}'", "Failed to Import Course")
+      Messages.showErrorDialog(message("error.no.supported.languages", course.name), message("error.failed.to.import.course"))
       return null
     }
 
     return chooseLanguageIfNeeded(languages, course)
   }
 
-  private fun showDialogAndGetCourseLink(): String? {
-    val dialog = ImportStepikCourseDialog()
-    if (!dialog.showAndGet()) {
-      return null
-    }
-    return dialog.courseLink()
-  }
-
   private fun isCompatibleEduCourse(course: EduCourse): Boolean {
     return when (course.compatibility) {
       Compatible -> true
       IncompatibleVersion -> {
-        showFailedImportCourseMessage("'${course.name}' is supported in the latest plugin version only. Please, update the plugin.")
+        showFailedImportCourseMessage(message("error.update.plugin", course.name))
         false
       }
       // TODO: allow to install/enable plugins here
       else -> {
-        showFailedImportCourseMessage("Looks like the programming language of '${course.name}' is not supported yet.")
+        showFailedImportCourseMessage(message("error.programming.language.not.supported", course.name))
         false
       }
     }
   }
-
-  private fun showFailedImportCourseMessage(message: String) = Messages.showErrorDialog(message, "Failed to Import Course")
 
   private fun chooseLanguageIfNeeded(languages: List<StepikLanguage>, course: StepikCourse): StepikLanguage? {
     return if (languages.size == 1) {
@@ -107,12 +83,8 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun showAdaptiveCoursesAreNotSupportedNotification(courseName: String) {
-    Messages.showErrorDialog(EduCoreBundle.message("error.adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
-                             EduCoreBundle.message("error.adaptive.courses.not.supported.title"))
-  }
-
-  private fun showFailedToAddCourseNotification(courseLink: String) {
-    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct: $courseLink", "Failed to Load Stepik Course")
+    Messages.showErrorDialog(message("error.adaptive.courses.not.supported.message", courseName, JBA_DEFAULT_URL, EduNames.JBA),
+                             message("error.adaptive.courses.not.supported.title"))
   }
 
   private fun getLanguagesUnderProgress(course: StepikCourse): List<StepikLanguage> {
@@ -122,6 +94,6 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
         EduUtils.execCancelable {
           StepikCourseConnector.getSupportedLanguages(course)
         }
-      }, EduCoreBundle.message("stepik.getting.languages"), true, null)
+      }, message("stepik.getting.languages"), true, null)
   }
 }

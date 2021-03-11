@@ -108,7 +108,7 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     }
 
     private fun importCourse() {
-      val course = StartStepikCourseAction().importStepikCourse() ?: return
+      val course = StartStepikCourseAction().importCourse() ?: return
       val coursesGroup = coursesGroups.first()
       val alreadyAddedCourse = coursesGroup.courses.find { it.id == course.id && it.languageID == course.languageID }
       if (alreadyAddedCourse != null) {

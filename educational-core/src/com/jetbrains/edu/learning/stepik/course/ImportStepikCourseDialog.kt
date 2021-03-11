@@ -1,34 +1,18 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.ValidationInfo
-import javax.swing.JComponent
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 
-class ImportStepikCourseDialog : DialogWrapper(false) {
-  private var coursePanel: ImportStepikCoursePanel = ImportStepikCoursePanel(myDisposable)
-
-  override fun createCenterPanel(): JComponent? = coursePanel.panel
-
-  public override fun doValidate(): ValidationInfo? {
-    val isValid = coursePanel.validate()
-    if (!isValid) {
-      return ValidationInfo("Course link is invalid")
-    }
-
-    return null
-  }
-
-  override fun getPreferredFocusedComponent(): JComponent? = coursePanel.preferredFocusedComponent
+class ImportStepikCourseDialog(courseConnector: CourseConnector) : ImportCourseDialog() {
+  override val coursePanel: ImportCoursePanel = ImportStepikCoursePanel(courseConnector, myDisposable)
 
   init {
-    title = "Import Stepik Course"
+    title = EduCoreBundle.message("dialog.title.start.course", StepikNames.STEPIK)
     init()
-    coursePanel.setValidationListener(object : ImportStepikCoursePanel.ValidationListener {
+    coursePanel.setValidationListener(object : ImportCoursePanel.ValidationListener {
       override fun onLoggedIn(isLoggedIn: Boolean) {
         isOKActionEnabled = isLoggedIn
       }
     })
   }
-
-  fun courseLink(): String = coursePanel.courseLink
 }

@@ -14,11 +14,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-object StepikCourseConnector {
+object StepikCourseConnector : CourseConnector {
   private val LOG = Logger.getInstance(StepikCourseConnector::class.java.name)
 
-  @JvmStatic
-  fun getCourseIdFromLink(link: String): Int {
+  override fun getCourseIdFromLink(link: String): Int {
     try {
       val url = URL(link)
       val pathParts = url.path.split("/").dropLastWhile { it.isEmpty() }
@@ -36,7 +35,7 @@ object StepikCourseConnector {
     return -1
   }
 
-  fun getCourseInfoByLink(link: String): EduCourse? {
+  override fun getCourseInfoByLink(link: String): EduCourse? {
     val courseId: Int = try {
       Integer.parseInt(link)
     }
