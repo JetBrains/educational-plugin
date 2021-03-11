@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
 import com.jetbrains.edu.learning.marketplace.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -194,6 +195,11 @@ object EduCounterUsageCollector {
 
   fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
     reportEvent("course.selection.view.tab.selected", mapOf(EDU_TAB to CourseSelectionViewTab.fromProvider(provider).toLower()))
+  }
+
+  fun viewEvent(task: Task?) {
+    val course = task?.course ?: return
+    reportEvent("task.opened", mapOf(MODE to course.courseMode, TYPE to course.itemType))
   }
 
   @Suppress("UnstableApiUsage")

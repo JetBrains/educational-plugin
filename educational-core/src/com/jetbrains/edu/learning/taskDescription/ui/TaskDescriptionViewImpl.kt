@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
@@ -50,6 +51,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
         ui.taskTextTW.updateTaskSpecificPanel(value)
         updateAdditionalTaskTabs(value)
         HyperskillMetricsService.getInstance().viewEvent(value)
+        EduCounterUsageCollector.viewEvent(value)
       }
       field = value
     }
