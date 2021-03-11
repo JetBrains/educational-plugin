@@ -67,7 +67,7 @@ subprojects {
                 def lines = message.readLines()
                 println "#educational_plugin FAILED + " + lines[0]
                 lines.subList(1, lines.size()).forEach { line ->
-                  println "#educational_plugin" + line
+                    println "#educational_plugin" + line
                 }
                 // we need this to separate output of different tests
                 println()
@@ -88,7 +88,7 @@ project(':util') {
     }
 }
 
-configure(subprojects.findAll {it.name != 'util'}) {
+configure(subprojects.findAll { it.name != 'util' }) {
     dependencies {
         compile project(':util').sourceSets.main.output
         testCompile project(':util').sourceSets.test.output
