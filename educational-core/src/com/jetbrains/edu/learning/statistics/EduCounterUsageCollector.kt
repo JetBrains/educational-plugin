@@ -161,7 +161,7 @@ object EduCounterUsageCollector {
   }
 
   fun courseSelectionViewOpened(actionPlace: String) {
-    reportEvent("course.selection.view.opened", mapOf(SOURCE to CourseSelectionViewSource.fromActionPlace(actionPlace).toLower()))
+    reportEvent("open.course.selection.view", mapOf(SOURCE to CourseSelectionViewSource.fromActionPlace(actionPlace).toLower()))
   }
 
   @Suppress("unused")
@@ -194,12 +194,12 @@ object EduCounterUsageCollector {
   }
 
   fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
-    reportEvent("course.selection.view.tab.selected", mapOf(EDU_TAB to CourseSelectionViewTab.fromProvider(provider).toLower()))
+    reportEvent("select.tab.course.selection.view", mapOf(EDU_TAB to CourseSelectionViewTab.fromProvider(provider).toLower()))
   }
 
   fun viewEvent(task: Task?) {
     val course = task?.course ?: return
-    reportEvent("task.opened", mapOf(MODE to course.courseMode, TYPE to course.itemType))
+    reportEvent("open.task", mapOf(MODE to course.courseMode, TYPE to course.itemType))
   }
 
   @Suppress("UnstableApiUsage")
