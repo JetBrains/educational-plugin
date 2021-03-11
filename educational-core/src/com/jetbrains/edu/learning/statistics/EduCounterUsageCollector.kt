@@ -3,9 +3,18 @@ package com.jetbrains.edu.learning.statistics
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
+import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
+import com.jetbrains.edu.learning.marketplace.MarketplacePlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.communityCourses.CommunityPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
+import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
+import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
 
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
@@ -154,6 +163,39 @@ object EduCounterUsageCollector {
     reportEvent("course.selection.view.opened", mapOf(SOURCE to CourseSelectionViewSource.fromActionPlace(actionPlace).toLower()))
   }
 
+  @Suppress("unused")
+  private enum class CourseSelectionViewTab {
+    MARKETPLACE,
+    JBA,
+    CHECKIO,
+    CODEFORCES,
+    COURSERA,
+    COMMUNITY,
+    STEPIK,
+    MY_COURSES,
+    UNKNOWN;
+
+    companion object {
+      fun fromProvider(provider: CoursesPlatformProvider): CourseSelectionViewTab {
+        return when (provider) {
+          is MarketplacePlatformProvider -> MARKETPLACE
+          is JetBrainsAcademyPlatformProvider -> JBA
+          is CheckiOPlatformProvider -> CHECKIO
+          is CodeforcesPlatformProvider -> CODEFORCES
+          is CourseraPlatformProvider -> COURSERA
+          is StepikPlatformProvider -> STEPIK
+          is CommunityPlatformProvider -> COMMUNITY
+          is MyCoursesProvider -> MY_COURSES
+          else -> UNKNOWN
+        }
+      }
+    }
+  }
+
+  fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
+    reportEvent("course.selection.view.tab.selected", mapOf(EDU_TAB to CourseSelectionViewTab.fromProvider(provider).toLower()))
+  }
+
   @Suppress("UnstableApiUsage")
   private fun reportEvent(eventId: String, additionalData: Map<String, String> = emptyMap()) {
     val data = FeatureUsageData()
@@ -171,4 +213,5 @@ object EduCounterUsageCollector {
   private const val EVENT = "event"
   private const val TYPE = "type"
   private const val LANGUAGE = "language"
+  private const val EDU_TAB = "tab"
 }

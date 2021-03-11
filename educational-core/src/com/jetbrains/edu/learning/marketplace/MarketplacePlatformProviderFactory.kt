@@ -17,7 +17,7 @@ class MarketplacePlatformProviderFactory : CoursesPlatformProviderFactory {
     if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)) listOf (MarketplacePlatformProvider()) else emptyList()
 }
 
-private class MarketplacePlatformProvider : CoursesPlatformProvider() {
+class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
   override val name: String = MARKETPLACE
 

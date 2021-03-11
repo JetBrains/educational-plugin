@@ -17,7 +17,7 @@ class CodeforcesPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(CodeforcesPlatformProvider())
 }
 
-private class CodeforcesPlatformProvider : CoursesPlatformProvider() {
+class CodeforcesPlatformProvider : CoursesPlatformProvider() {
   override val name: String = CodeforcesNames.CODEFORCES.capitalize()
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces

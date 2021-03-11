@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.awt.BorderLayout
@@ -62,8 +63,10 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
   private inner class CoursesProviderSelectionListener : TreeSelectionListener {
     override fun valueChanged(e: TreeSelectionEvent?) {
       val node = e?.path?.lastPathComponent as DefaultMutableTreeNode
-      val coursesProviderName = node.userObject as? CoursesPlatformProvider ?: return
-      coursesTab.showPanel(coursesProviderName.name)
+      val provider = node.userObject as? CoursesPlatformProvider ?: return
+      val coursesProviderName = provider.name
+      coursesTab.showPanel(coursesProviderName)
+      EduCounterUsageCollector.courseSelectionTabSelected(provider)
     }
   }
 

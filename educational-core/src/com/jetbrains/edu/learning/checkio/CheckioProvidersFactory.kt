@@ -22,7 +22,7 @@ class CheckiOPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(CheckiOPlatformProvider())
 }
 
-private class CheckiOPlatformProvider : CoursesPlatformProvider() {
+class CheckiOPlatformProvider : CoursesPlatformProvider() {
   override val name: String = CheckiONames.CHECKIO
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
