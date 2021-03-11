@@ -40,7 +40,4 @@ class ScalaSbtEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
   }
 
   override fun getErrorMessage(node: SMTestProxy): String = super.getErrorMessage(node).xmlEscaped
-
-  override fun getComparisonErrorMessage(node: SMTestProxy): String = super.getComparisonErrorMessage(node).xmlEscaped
 }
-
