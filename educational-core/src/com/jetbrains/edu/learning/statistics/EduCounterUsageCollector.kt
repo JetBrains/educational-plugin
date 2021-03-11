@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.statistics
 
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
+import com.intellij.openapi.actionSystem.ActionPlaces
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -137,6 +138,21 @@ object EduCounterUsageCollector {
     "twitter.achievement.posted",
     mapOf(TYPE to course.itemType, LANGUAGE to course.languageID)
   )
+
+  @Suppress("unused") //enum values are not mentioned explicitly
+  private enum class CourseSelectionViewSource(private val actionPlace: String? = null) {
+    WELCOME_SCREEN(ActionPlaces.WELCOME_SCREEN), MAIN_MENU(ActionPlaces.MAIN_MENU), FIND_ACTION(ActionPlaces.ACTION_SEARCH), UNKNOWN;
+
+    companion object {
+      fun fromActionPlace(actionPlace: String): CourseSelectionViewSource {
+        return values().firstOrNull { it.actionPlace == actionPlace } ?: UNKNOWN
+      }
+    }
+  }
+
+  fun courseSelectionViewOpened(actionPlace: String) {
+    reportEvent("course.selection.view.opened", mapOf(SOURCE to CourseSelectionViewSource.fromActionPlace(actionPlace).toLower()))
+  }
 
   @Suppress("UnstableApiUsage")
   private fun reportEvent(eventId: String, additionalData: Map<String, String> = emptyMap()) {

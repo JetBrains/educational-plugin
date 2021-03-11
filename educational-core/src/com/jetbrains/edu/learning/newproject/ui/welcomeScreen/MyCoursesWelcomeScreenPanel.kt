@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
@@ -41,8 +42,6 @@ import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-
-private const val ACTION_PLACE = "MyCoursesWelcomeTab"
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = MyCoursesOnWelcomeScreenList()
@@ -105,7 +104,8 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
       isOpaque = false
       addActionListener(ActionListener {
         val dataContext = DataManager.getInstance().getDataContext(parent)
-        browseCoursesAction.actionPerformed(AnActionEvent.createFromAnAction(browseCoursesAction, null, ACTION_PLACE, dataContext))
+        browseCoursesAction.actionPerformed(
+          AnActionEvent.createFromAnAction(browseCoursesAction, null, ActionPlaces.WELCOME_SCREEN, dataContext))
       })
     }
 
@@ -134,7 +134,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     moreActionPresentation.icon = AllIcons.Actions.More
     moreActionPresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
 
-    return ActionButton(moreActionGroup, moreActionPresentation, ACTION_PLACE, JBUI.size(12, 12)).apply {
+    return ActionButton(moreActionGroup, moreActionPresentation, ActionPlaces.WELCOME_SCREEN, JBUI.size(12, 12)).apply {
       setLook(ActionButtonLookWithHover())
     }
   }
