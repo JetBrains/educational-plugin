@@ -97,6 +97,7 @@ class CCCreateCoursePreviewDialog(
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
         val course = EduUtils.getLocalCourse(archivePath)
         if (course != null) {
+          course.dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
           val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
           try {
             val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)

@@ -35,6 +35,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
@@ -256,6 +257,7 @@ public abstract class CourseProjectGenerator<S> {
     if (isNewCourseCreatorCourse) return true;
     if (!(course instanceof EduCourse)) return true;
     if (course.getVisibility() instanceof CourseVisibility.FeaturedVisibility) return true;
+    if (course.getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == Boolean.TRUE) return true;
     return false;
   }
 
