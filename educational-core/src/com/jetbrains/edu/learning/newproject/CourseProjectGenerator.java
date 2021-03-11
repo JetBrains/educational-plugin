@@ -17,6 +17,7 @@ package com.jetbrains.edu.learning.newproject;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.RecentProjectsManager;
+import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.application.WriteAction;
@@ -38,6 +39,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -182,8 +184,13 @@ public abstract class CourseProjectGenerator<S> {
                                     @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
-    boolean isNewCourse = CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty();
-    if (isNewCourse) {
+    boolean isNewCourseCreatorCourse = CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty();
+
+    if (isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+      markTrusted(project);
+    }
+
+    if (isNewCourseCreatorCourse) {
       final Lesson lesson = myCourseBuilder.createInitialLesson(project, myCourse);
       if (lesson != null) {
         myCourse.addLesson(lesson);
@@ -200,7 +207,7 @@ public abstract class CourseProjectGenerator<S> {
         if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && CCUtils.isCourseCreator(project)) {
           checkIfAvailableOnRemote();
         }
-        createAdditionalFiles(project, baseDir, isNewCourse);
+        createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse);
         EduCounterUsageCollector.eduProjectCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
@@ -242,4 +249,28 @@ public abstract class CourseProjectGenerator<S> {
   public void createAdditionalFiles(@NotNull Project project,
                                     @NotNull VirtualFile baseDir,
                                     boolean isNewCourse) throws IOException {}
+
+  // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
+  // See https://youtrack.jetbrains.com/issue/EDU-4182
+  private static boolean isCourseTrusted(@NotNull Course course, boolean isNewCourseCreatorCourse) {
+    if (isNewCourseCreatorCourse) return true;
+    if (!(course instanceof EduCourse)) return true;
+    if (course.getVisibility() instanceof CourseVisibility.FeaturedVisibility) return true;
+    return false;
+  }
+
+  private static void markTrusted(@NotNull Project project) {
+    // BACKCOMPAT: 2020.3. Just drop this try and inline the method.
+    // Try to load `TrustedProjects` class to ensure that IDE already has the corresponding API
+    // and do nothing if API doesn't exist.
+    // The API is available only since 2020.3.3
+    try {
+      //noinspection ResultOfMethodCallIgnored
+      TrustedProjects.class.getName();
+    } catch (LinkageError e) {
+      return;
+    }
+
+    TrustedProjects.setTrusted(project, true);
+  }
 }
