@@ -333,6 +333,9 @@ project(":") {
 
       // Uncomment to enable memory dump creation if plugin cannot be unloaded by the platform
       // jvmArgs("-Dide.plugins.snapshot.on.unload.fail=true")
+
+      // Uncomment to enable FUS testing mode
+      // jvmArgs("-Dfus.internal.test.mode=true")
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
