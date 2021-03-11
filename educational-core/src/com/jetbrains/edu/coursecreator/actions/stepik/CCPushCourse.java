@@ -38,6 +38,9 @@ import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
+import static com.jetbrains.edu.learning.EduExperimentalFeatures.MARKETPLACE;
+import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
@@ -52,7 +55,9 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public CCPushCourse() {
-    super(getUpdateTitleText(), getUpdateOnStepikMessage(COURSE_TYPE), null);
+    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
+          EduCoreBundle.lazyMessage("gluing.slash", getUploadToStepikMessage(COURSE_TYPE), getUpdateOnStepikMessage(COURSE_TYPE)),
+          null);
   }
 
   @Override
@@ -64,10 +69,18 @@ public class CCPushCourse extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof EduCourse) || !((EduCourse)course).isRemote()) {
+    if (!(course instanceof EduCourse) || course.isMarketplace()) {
       return;
     }
-    presentation.setEnabledAndVisible(true);
+
+    if (((EduCourse)course).isRemote()) {
+      presentation.setText(() -> getUpdateOnStepikTitleMessage(COURSE_TYPE));
+      presentation.setEnabledAndVisible(true);
+    }
+    else {
+      presentation.setText(() -> getUploadToStepikTitleMessage(COURSE_TYPE));
+      presentation.setEnabledAndVisible(!isFeatureEnabled(MARKETPLACE));
+    }
   }
 
   @Override
@@ -105,28 +118,31 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static void doPush(Project project, @NotNull EduCourse course) {
-    if (!course.isRemote()) {
-      return;
+    if (course.isRemote()) {
+      EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
+      if (courseInfo == null) {
+        Notification notification =
+          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
+                           EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
+                           NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
+        notification.notify(project);
+        return;
+      }
+      if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
+        Notification notification =
+          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
+                           EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
+                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
+                           NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
+        notification.notify(project);
+        return;
+      }
+      updateCourse(project, course);
     }
-    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
-    if (courseInfo == null) {
-      Notification notification =
-        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
-                         EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
-                         NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
-      notification.notify(project);
-      return;
+    else {
+      postCourseWithProgress(project, course);
+      EduCounterUsageCollector.uploadCourse();
     }
-    if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
-      Notification notification =
-        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
-                         EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
-                                               PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
-                         NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
-      notification.notify(project);
-      return;
-    }
-    updateCourse(project, course);
   }
 
   @NotNull
