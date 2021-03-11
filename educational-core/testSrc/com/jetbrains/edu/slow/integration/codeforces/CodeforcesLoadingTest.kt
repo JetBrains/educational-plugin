@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
@@ -21,6 +22,14 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
 
   private val contestKotlinHeroesEpisode1: CodeforcesCourse by lazy {
     val contestInfo = ContestParameters(1170, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
+    when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
+      is Err -> error(contest.error)
+      is Ok -> contest.value
+    }
+  }
+
+  private val contestKotlinHeroesPractice6: CodeforcesCourse by lazy {
+    val contestInfo = ContestParameters(1489, EduNames.KOTLIN, codeforcesLanguageRepresentation = "Kotlin")
     when (val contest = StartCodeforcesContestAction.getContestUnderProgress(contestInfo)) {
       is Err -> error(contest.error)
       is Ok -> contest.value
@@ -146,5 +155,73 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("B. Snow Walking Robot", task.name)
     assertEquals("https://codeforces.com/contest/1272/problem/B?locale=en", task.feedbackLink.link)
     task.checkTaskDescription(1272, 'B')
+  }
+
+  fun `test parsing several test samples for contest Kotlin Heroes Practice 6 task A`() {
+    val contest = contestKotlinHeroesPractice6
+
+    assertEquals(1489, contest.id)
+    assertEquals("en", contest.languageCode)
+    assertEquals("Kotlin Heroes: Practice 6", contest.name)
+
+    val taskA = contest.lessons.first().taskList.first() as CodeforcesTask
+
+    val expectedTests = listOf(
+      TestSample("6\n1 5 5 1 6 1", "3\n5 6 1"),
+      TestSample("5\n2 4 2 4 4", "2\n2 4"),
+      TestSample("5\n6 6 6 6 6", "1\n6")
+    )
+
+    for ((index, expectedTest) in expectedTests.withIndex()) {
+      val testIndex = index + 1
+      val input = taskA.taskFiles["${TEST_DATA_FOLDER}/$testIndex/${taskA.inputFileName}"]?.text
+                  ?: error("Can't find input file for test №$testIndex")
+      val output = taskA.taskFiles["${TEST_DATA_FOLDER}/$testIndex/${taskA.outputFileName}"]?.text
+                   ?: error("Can't find output file for test №$testIndex")
+
+      assertEquals(expectedTest.input, input)
+      assertEquals(expectedTest.output, output)
+    }
+  }
+
+  fun `test parsing single test sample for contest Kotlin Heroes Practice 6 task B`() {
+    val contest = contestKotlinHeroesPractice6
+
+    assertEquals(1489, contest.id)
+    assertEquals("en", contest.languageCode)
+    assertEquals("Kotlin Heroes: Practice 6", contest.name)
+
+    val taskB = contest.lessons.first().taskList[1] as CodeforcesTask
+
+    val expectedTest = TestSample(
+      """
+          4
+          10 1 3
+          7 3 2
+          1 1000 1
+          1000000000000 42 88""".trimIndent(),
+      """
+          10
+          9
+          1000
+          42000000000000""".trimIndent()
+    )
+    // Only 2 files should be here: input and output for 1 test
+    assertEquals(2, taskB.taskFiles.size)
+
+    val input = taskB.taskFiles["${TEST_DATA_FOLDER}/1/${taskB.inputFileName}"]?.text
+                ?: error("Can't find input file for test")
+    val output = taskB.taskFiles["${TEST_DATA_FOLDER}/1/${taskB.outputFileName}"]?.text
+                 ?: error("Can't find output file for test")
+
+    assertEquals(expectedTest.input, input)
+    assertEquals(expectedTest.output, output)
+  }
+
+  companion object {
+    private data class TestSample(
+      val input: String,
+      val output: String
+    )
   }
 }

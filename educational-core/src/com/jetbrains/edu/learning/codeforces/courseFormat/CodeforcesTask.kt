@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
@@ -15,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
 
 open class CodeforcesTask : Task() {
   open val inputFileName: String = "input.txt"
@@ -42,12 +44,24 @@ open class CodeforcesTask : Task() {
     if (innerElement.isEmpty()) {
       error("Can't find HTML element with test data in ${htmlElement.text()}")
     }
+    val text = innerElement.first().childNodes().joinToString("") { node ->
+      when {
+        node is TextNode -> node.wholeText
+        node is Element && node.tagName() == "br" -> "\n"
+        else -> {
+          LOG.info("Unexpected element: $node")
+          ""
+        }
+      }
+    }.trimEnd()
 
     val path = join(listOf(TEST_DATA_FOLDER, testFolderName, fileName), VFS_SEPARATOR_CHAR.toString())
-    addTaskFile(TaskFile(path, innerElement.first().text()))
+    addTaskFile(TaskFile(path, text))
   }
 
   companion object {
+    private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)
+
     fun create(htmlElement: Element, lesson: Lesson, index: Int): CodeforcesTask {
       val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(it) }
 
