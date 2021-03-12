@@ -119,13 +119,7 @@ class GradleCommandLine private constructor(
 
   private fun computeCurrentMessage(messageLine: String, checkerVersion: Int): String {
     if (checkerVersion == 0) return messageLine + "\n"
-
-    return if (messageLine.isEmpty()) {
-      "\n"
-    }
-    else {
-      messageLine
-    }
+    return messageLine.ifEmpty { "\n" }
   }
 
   companion object {
