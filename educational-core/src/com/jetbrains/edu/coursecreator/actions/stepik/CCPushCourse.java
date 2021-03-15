@@ -15,10 +15,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.PluginUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -39,7 +36,6 @@ import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
-import static com.jetbrains.edu.learning.EduExperimentalFeatures.MARKETPLACE;
 import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
@@ -79,7 +75,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
     else {
       presentation.setText(() -> getUploadToStepikTitleMessage(COURSE_TYPE));
-      presentation.setEnabledAndVisible(!isFeatureEnabled(MARKETPLACE));
+      presentation.setEnabledAndVisible(!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE));
     }
   }
 
