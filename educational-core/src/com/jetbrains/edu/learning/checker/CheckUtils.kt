@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit
 
 object CheckUtils {
   const val STUDY_PREFIX = "#educational_plugin"
+  const val CHECKER_VERSION = "#educational_plugin_checker_version "
   const val CONGRATULATIONS = "Congratulations!"
   const val TEST_OK = "test OK"
   const val TEST_FAILED = "FAILED + "

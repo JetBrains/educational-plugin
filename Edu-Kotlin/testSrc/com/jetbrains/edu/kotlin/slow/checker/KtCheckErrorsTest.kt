@@ -178,6 +178,16 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           withText("OK!\n")
         }
       }
+      outputTask("outputTaskWithNewLineFail") {
+        kotlinTaskFile("src/Task.kt", """
+          fun main() {
+              print("Line")
+          }
+        """)
+        taskFile("test/output.txt") {
+          withText("Line\n")
+        }
+      }
       outputTask("multilineOutputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
           fun main() {
@@ -218,6 +228,9 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
         "outputTaskFail" ->
           equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))
+        "outputTaskWithNewLineFail" ->
+          equalTo(EduCoreBundle.message("check.incorrect")) to
+            diff(CheckResultDiff(expected = "Line\n", actual = "Line"))
         "multilineOutputTaskFail" ->
           equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "Hello,\nWorld!\n", actual = "Hello\nWorld\n"))
