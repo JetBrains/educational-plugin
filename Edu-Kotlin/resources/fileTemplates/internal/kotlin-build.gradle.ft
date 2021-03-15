@@ -16,7 +16,7 @@ def printOutput(def output) {
     return tasks.create("printOutput") {
         println "#educational_plugin_checker_version 1"
         def separator = System.lineSeparator()
-        def lines = string.split("(?<=${separator})|(?=${separator})")
+        def lines = output.toString().split("(?<=${separator})|(?=${separator})")
         for (line in lines) {
             println "#educational_plugin" + line
         }
