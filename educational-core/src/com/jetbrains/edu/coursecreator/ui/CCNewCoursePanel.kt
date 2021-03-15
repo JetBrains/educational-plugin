@@ -47,26 +47,32 @@ import javax.swing.text.AttributeSet
 import javax.swing.text.PlainDocument
 
 class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::EduCourse) : JPanel() {
-
-  private val myPanel: JPanel
-  private val myCourseDataComboBox: ComboBox<CourseData> = ComboBox()
-  private val myTitleField: CourseTitleField = CourseTitleField()
-  private val myDescriptionTextArea: JTextArea = JTextArea()
+  private val courseDataComboBox: ComboBox<CourseData> = ComboBox()
+  private val titleField: CourseTitleField = CourseTitleField()
+  private val descriptionTextArea: JTextArea = JTextArea()
 
   private val settings: CourseSettings = CourseSettings()
-  private val myPathField: PathField = PathField()
-  private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
+  private val pathField: PathField = PathField()
+  private val locationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
+  private lateinit var languageSettings: LanguageSettings<*>
+  private var requiredAndDisabledPlugins: List<String> = emptyList()
+  private var validationListener: ValidationListener? = null
 
-  private val myErrorComponent = ErrorComponent(getHyperlinkListener())
-
-  private val myCourse: Course = (course ?: courseProducer()).apply { courseMode = CCUtils.COURSE_MODE }
-  private lateinit var myLanguageSettings: LanguageSettings<*>
-
-  private var myRequiredAndDisabledPlugins: List<String> = emptyList()
-
-  private var myValidationListener: ValidationListener? = null
+  private val errorComponent = ErrorComponent(getHyperlinkListener())
 
   private val context: UserDataHolder = UserDataHolderBase()
+
+  private val _course: Course
+  val course: Course
+    get() {
+      _course.name = titleField.text
+      _course.description = descriptionTextArea.text
+      return _course
+    }
+
+
+  val projectSettings: Any get() = languageSettings.settings
+  val locationString: String get() = locationField.component.text
 
   init {
     layout = BorderLayout()
@@ -74,32 +80,33 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     preferredSize = JBUI.size(700, 372)
     minimumSize = JBUI.size(700, 372)
 
-    myDescriptionTextArea.rows = 10
-    myDescriptionTextArea.lineWrap = true
-    myDescriptionTextArea.wrapStyleWord = true
+    _course = (course ?: courseProducer()).apply { courseMode = CCUtils.COURSE_MODE }
 
-    val scrollPane = JBScrollPane(myDescriptionTextArea)
-    myPanel = panel {
-      row("Title:") { myTitleField(CCFlags.pushX) }
-      row("Type:") { myCourseDataComboBox(CCFlags.growX) }
-      row("Description:") { scrollPane(CCFlags.growX) }
-    }
+    descriptionTextArea.rows = 10
+    descriptionTextArea.lineWrap = true
+    descriptionTextArea.wrapStyleWord = true
 
-    myTitleField.document = CourseTitleDocument()
-    myTitleField.complementaryTextField = myPathField
-    myPathField.complementaryTextField = myTitleField
+    val scrollPane = JBScrollPane(descriptionTextArea)
+
+    titleField.document = CourseTitleDocument()
+    titleField.complementaryTextField = pathField
+    pathField.complementaryTextField = titleField
 
     val bottomPanel = JPanel(BorderLayout())
-    myErrorComponent.minimumSize = JBUI.size(700, 34)
-    myErrorComponent.preferredSize = myErrorComponent.minimumSize
-    myErrorComponent.border = JBUI.Borders.empty(5, 6, 2, 2)
-    bottomPanel.add(myErrorComponent, BorderLayout.SOUTH)
+    errorComponent.minimumSize = JBUI.size(700, 34)
+    errorComponent.preferredSize = errorComponent.minimumSize
+    errorComponent.border = JBUI.Borders.empty(5, 6, 2, 2)
+    bottomPanel.add(errorComponent, BorderLayout.SOUTH)
     bottomPanel.add(settings, BorderLayout.NORTH)
 
-    add(myPanel, BorderLayout.NORTH)
+    add(panel {
+      row("Title:") { titleField(CCFlags.pushX) }
+      row("Type:") { courseDataComboBox(CCFlags.growX) }
+      row("Description:") { scrollPane(CCFlags.growX) }
+    }, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
 
-    myCourseDataComboBox.renderer = object : DefaultListCellRenderer() {
+    courseDataComboBox.renderer = object : DefaultListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>,
                                                 value: Any?,
                                                 index: Int,
@@ -115,15 +122,15 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     }
 
     val courseData = collectCoursesData(course)
-    courseData.forEach { myCourseDataComboBox.addItem(it) }
+    courseData.forEach { courseDataComboBox.addItem(it) }
 
     val defaultCourseType = getDefaultCourseType(courseData)
     if (defaultCourseType != null) {
-      myCourseDataComboBox.selectedItem = defaultCourseType
+      courseDataComboBox.selectedItem = defaultCourseType
       onCourseDataSelected(defaultCourseType)
     }
 
-    myCourseDataComboBox.addItemListener {
+    courseDataComboBox.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
         onCourseDataSelected(it.item as CourseData)
       }
@@ -131,23 +138,15 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     setupValidation()
 
     if (course != null) {
-      myDescriptionTextArea.text = course.description
-      myTitleField.setTextManually(course.name)
-      myCourseDataComboBox.isEnabled = false
+      descriptionTextArea.text = course.description
+      titleField.setTextManually(course.name)
+      courseDataComboBox.isEnabled = false
     }
   }
 
-  val course: Course
-    get() {
-      myCourse.name = myTitleField.text
-      myCourse.description = myDescriptionTextArea.text
-      return myCourse
-    }
-  val projectSettings: Any get() = myLanguageSettings.settings
-  val locationString: String get() = myLocationField.component.text
 
   fun setValidationListener(listener: ValidationListener?) {
-    myValidationListener = listener
+    validationListener = listener
     doValidation()
   }
 
@@ -158,44 +157,44 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
       }
     }
 
-    myTitleField.document.addDocumentListener(validator)
-    myDescriptionTextArea.document.addDocumentListener(validator)
-    myLocationField.component.textField.document.addDocumentListener(validator)
+    titleField.document.addDocumentListener(validator)
+    descriptionTextArea.document.addDocumentListener(validator)
+    locationField.component.textField.document.addDocumentListener(validator)
   }
 
   private fun getHyperlinkListener(): HyperlinkListener = HyperlinkListener { e ->
     if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-      enablePlugins(myRequiredAndDisabledPlugins)
+      enablePlugins(requiredAndDisabledPlugins)
     }
   }
 
   private fun doValidation() {
     val validationMessage = when {
-      myTitleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
-      myDescriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
+      titleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
+      descriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
       locationString.isBlank() -> ValidationMessage("Enter course location")
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
         "Can't create course at this location")
-      myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins.map { PluginId.getId(it) })
+      requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
-        val validationMessage = myLanguageSettings.validate(null, locationString)
+        val validationMessage = languageSettings.validate(null, locationString)
         if (validationMessage != null) settings.setOn(true)
         validationMessage
       }
     }
     if (validationMessage != null) {
-      myErrorComponent.setErrorMessage(validationMessage)
-      myErrorComponent.isVisible = true
+      errorComponent.setErrorMessage(validationMessage)
+      errorComponent.isVisible = true
       revalidate()
     }
     else {
-      myErrorComponent.isVisible = false
+      errorComponent.isVisible = false
     }
-    myValidationListener?.onInputDataValidated(validationMessage == null)
+    validationListener?.onInputDataValidated(validationMessage == null)
   }
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
-    val field = TextFieldWithBrowseButton(myPathField)
+    val field = TextFieldWithBrowseButton(pathField)
     field.addBrowseFolderListener("Select Course Location", "Select course location", null,
                                   FileChooserDescriptorFactory.createSingleFolderDescriptor())
     return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
@@ -204,26 +203,26 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private fun onCourseDataSelected(courseData: CourseData) {
     val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} Course"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
-    if (!myTitleField.isChangedByUser) {
-      myTitleField.setTextManually(file.name)
-      if (!myPathField.isChangedByUser) {
-        myPathField.setTextManually(file.absolutePath)
+    if (!titleField.isChangedByUser) {
+      titleField.setTextManually(file.name)
+      if (!pathField.isChangedByUser) {
+        pathField.setTextManually(file.absolutePath)
       }
     }
 
     val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
                                                                courseData.language) ?: return
-    myCourse.language = courseData.language.id
-    myCourse.environment = courseData.environment
-    myLanguageSettings = configurator.courseBuilder.getLanguageSettings()
-    myLanguageSettings.addSettingsChangeListener { doValidation() }
+    _course.language = courseData.language.id
+    _course.environment = courseData.environment
+    languageSettings = configurator.courseBuilder.getLanguageSettings()
+    languageSettings.addSettingsChangeListener { doValidation() }
 
-    val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
-    settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse, context))
+    val settings = arrayListOf<LabeledComponent<*>>(locationField)
+    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, context))
     this.settings.setSettingsComponents(settings)
 
-    myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
-    myDescriptionTextArea.text = myCourse.description.nullize() ?: """
+    requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
+    descriptionTextArea.text = _course.description.nullize() ?: """
       ${courseData.displayName} course.
       Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))}.
     """.trimIndent()
@@ -237,7 +236,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     else {
       EduConfiguratorManager.allExtensions()
         .filter { it.instance.isCourseCreatorEnabled }
-        .filter { it.courseType == myCourse.itemType }.mapNotNull { extension -> obtainCourseData(extension) }
+        .filter { it.courseType == _course.itemType }.mapNotNull { extension -> obtainCourseData(extension) }
     }
     return courseData.sortedBy { it.displayName }
   }

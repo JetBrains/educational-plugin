@@ -15,27 +15,27 @@ class CCNewCourseDialog(
   private val onOKAction: () -> Unit = {}
 ) : DialogWrapper(true) {
 
-  private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course, courseProducer)
+  private val panel: CCNewCoursePanel = CCNewCoursePanel(course, courseProducer)
 
   init {
     setTitle(title)
     setOKButtonText(okButtonText)
     init()
-    myPanel.setValidationListener(object : CCNewCoursePanel.ValidationListener {
+    panel.setValidationListener(object : CCNewCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         isOKActionEnabled = isInputDataComplete
       }
     })
   }
 
-  override fun createCenterPanel(): JComponent = myPanel
+  override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
     close(OK_EXIT_CODE)
     onOKAction()
-    val course = myPanel.course
-    val projectSettings = myPanel.projectSettings
-    val location = myPanel.locationString
+    val course = panel.course
+    val projectSettings = panel.projectSettings
+    val location = panel.locationString
     course.configurator
       ?.courseBuilder
       ?.getCourseProjectGenerator(course)
