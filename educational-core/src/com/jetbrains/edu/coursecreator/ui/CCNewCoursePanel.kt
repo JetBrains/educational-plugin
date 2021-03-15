@@ -168,13 +168,20 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     }
   }
 
+  fun validateLocation() {
+    val validationMessage = when {
+      locationString.isBlank() -> ValidationMessage("Enter course location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
+        "Can't create course at this location")
+      else -> null
+    }
+    processError(validationMessage)
+  }
+
   private fun doValidation() {
     val validationMessage = when {
       titleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
       descriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
-      locationString.isBlank() -> ValidationMessage("Enter course location")
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
-        "Can't create course at this location")
       requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
         val validationMessage = languageSettings.validate(null, locationString)
@@ -182,6 +189,10 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
         validationMessage
       }
     }
+    processError(validationMessage)
+  }
+
+  private fun processError(validationMessage: ValidationMessage?) {
     if (validationMessage != null) {
       errorComponent.setErrorMessage(validationMessage)
       errorComponent.isVisible = true

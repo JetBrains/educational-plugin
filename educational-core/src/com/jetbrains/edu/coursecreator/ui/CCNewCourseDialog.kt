@@ -31,6 +31,10 @@ class CCNewCourseDialog(
   override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
+    panel.validateLocation()
+    if (!isOKActionEnabled) {
+      return
+    }
     close(OK_EXIT_CODE)
     onOKAction()
     val course = panel.course
