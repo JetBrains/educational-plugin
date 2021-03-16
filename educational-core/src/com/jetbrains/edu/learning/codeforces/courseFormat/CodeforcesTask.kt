@@ -5,8 +5,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduNames.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
@@ -105,15 +107,52 @@ open class CodeforcesTask : Task() {
       return task
     }
 
+    fun codeforcesSubmitLink(task: Task): String {
+      val course = task.course as CodeforcesCourse
+      return "${course.getContestUrl()}/${CODEFORCES_SUBMIT}?locale=${course.languageCode}" +
+             (codeforcesProgramTypeId(course)?.let { "&programTypeId=$it" } ?: "") +
+             "&submittedProblemIndex=${task.name.substringBefore(".")}"
+    }
+
     fun codeforcesTaskLink(task: Task): String {
       val course = task.course as CodeforcesCourse
       return "${course.getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${course.languageCode}"
+    }
+
+    private fun codeforcesProgramTypeId(course: CodeforcesCourse): Int? {
+      val languageID = course.languageID
+      val languageVersion = course.languageVersion
+      return when {
+        GO == languageID -> GO_TYPE_ID
+        JAVA == languageID && "8" == languageVersion-> JAVA_8_TYPE_ID
+        JAVA == languageID && "11" == languageVersion -> JAVA_11_TYPE_ID
+        JAVASCRIPT == languageID -> JAVASCRIPT_TYPE_ID
+        KOTLIN == languageID -> KOTLIN_TYPE_ID
+        PYTHON == languageID && PYTHON_2_VERSION == languageVersion -> PYTHON_2_TYPE_ID
+        PYTHON == languageID && PYTHON_3_VERSION == languageVersion -> PYTHON_3_TYPE_ID
+        RUST == languageID -> RUST_TYPE_ID
+        SCALA == languageID -> SCALA_TYPE_ID
+        else -> {
+          LOG.info("Programming language was not detected: $languageID $languageVersion")
+          null
+        }
+      }
     }
 
     private fun isStandardIOType(element: Element): Boolean {
       val text = element.ownText()
       return text.contains(STANDARD_INPUT_REGEX)
     }
+
+    private const val GO_TYPE_ID = 32
+    private const val JAVA_8_TYPE_ID = 36
+    private const val JAVA_11_TYPE_ID = 60
+    private const val JAVASCRIPT_TYPE_ID = 34
+    private const val KOTLIN_TYPE_ID = 48
+    private const val PYTHON_2_TYPE_ID = 7
+    private const val PYTHON_3_TYPE_ID = 31
+    private const val RUST_TYPE_ID = 49
+    private const val SCALA_TYPE_ID = 20
 
     private const val ESPRESSO_CODEFORCES_COM = "//espresso.codeforces.com/"
     private val TRAILING_SLASH = "^/".toRegex()

@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -39,7 +38,6 @@ class CodeforcesCourse : Course {
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   fun getContestUrl(): String = getContestURLFromID(id)
-  fun getSubmissionUrl(): String = "${getContestUrl()}/${CODEFORCES_SUBMIT}?locale=$languageCode"
   fun isOngoing(): Boolean = if (endDateTime == null) false else (endDateTime!! > ZonedDateTime.now())
 
   private fun parseResponseToAddContent(doc: Document) {

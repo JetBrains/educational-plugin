@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
 
 class CodeforcesLoadingTest : CodeforcesTestCase() {
   override fun setUp() {
@@ -51,7 +52,6 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("en", contest.languageCode)
     assertEquals("Kotlin Heroes: Episode 1", contest.name)
     assertEquals("https://codeforces.com/contest/1170", contest.getContestUrl())
-    assertEquals("https://codeforces.com/contest/1170/submit?locale=en", contest.getSubmissionUrl())
     assertEquals("""
       A. Three Integers Again
       B. Bad Days
@@ -79,6 +79,8 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("I. Good Subsets", tasks[8].name)
 
     assertEquals("https://codeforces.com/contest/1170/problem/H?locale=en", tasks[7].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1170/submit?locale=en&programTypeId=48&submittedProblemIndex=H",
+                 codeforcesSubmitLink(tasks[7]))
   }
 
   fun `test codeforces contest Kotlin Heroes Episode 1 task A`() {
@@ -115,7 +117,6 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("en", contest.languageCode)
     assertEquals("Codeforces Round #605 (Div. 3)", contest.name)
     assertEquals("https://codeforces.com/contest/1272", contest.getContestUrl())
-    assertEquals("https://codeforces.com/contest/1272/submit?locale=en", contest.getSubmissionUrl())
     assertEquals("""
       A. Three Friends
       B. Snow Walking Robot
@@ -137,6 +138,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("F. Two Bracket Sequences", tasks[5].name)
 
     assertEquals("https://codeforces.com/contest/1272/problem/D?locale=en", tasks[3].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1272/submit?locale=en&submittedProblemIndex=D", codeforcesSubmitLink(tasks[3]))
   }
 
   fun `test codeforces contest Codeforces Round 605 (Div 3) task A`() {
