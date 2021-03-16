@@ -47,7 +47,7 @@ private class MarketplaceCourseBuilder(
     val course = EduCourse()
 
     course.apply {
-      marketplaceId = courseId
+      id = courseId
       name = courseName
       isMarketplace = true
       description = courseDescription

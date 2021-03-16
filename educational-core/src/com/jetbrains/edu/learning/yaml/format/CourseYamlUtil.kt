@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_COURSE_VERSION
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
@@ -136,16 +135,13 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
  * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_ID, MARKETPLACE_COURSE_VERSION)
+@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
   @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
   @JsonProperty(TOP_LEVEL_LESSONS_SECTION)
   private lateinit var sectionIds: List<Int>
-
-  @JsonProperty(MARKETPLACE_ID)
-  private var myMarketplaceId: Int = 0
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -295,7 +291,6 @@ class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
   override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
-    existingItem.marketplaceId = deserializedItem.marketplaceId
     if (existingItem.courseMode == EduNames.STUDY) {
       existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
     }

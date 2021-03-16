@@ -23,7 +23,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
   override fun sectionShouldBeSkipped(sectionId: Int): Boolean = false
 
   override fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse? {
-    val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.marketplaceId)
+    val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.id)
     if (courseFromServer != null) {
       MarketplaceConnector.getInstance().loadCourseStructure(courseFromServer)
     }

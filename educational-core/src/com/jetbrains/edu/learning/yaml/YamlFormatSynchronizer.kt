@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
-import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -226,7 +225,7 @@ object YamlFormatSynchronizer {
   @JvmStatic
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
-    if (item.id > 0 || item is HyperskillCourse || item.isMarketplaceRemoteCourse()) {
+    if (item.id > 0 || item is HyperskillCourse) {
       saveItem(item, REMOTE_MAPPER, item.remoteConfigFileName)
     }
   }

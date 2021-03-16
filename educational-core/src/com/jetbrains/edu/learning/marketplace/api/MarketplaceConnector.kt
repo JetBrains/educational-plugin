@@ -156,11 +156,11 @@ abstract class MarketplaceConnector : CourseConnector {
     return response?.body()?.data?.coursesList
   }
 
-  fun searchCourse(marketplaceId: Int): EduCourse? {
-    val query = QueryData(GraphqlQuery.searchById(marketplaceId))
+  fun searchCourse(courseId: Int): EduCourse? {
+    val query = QueryData(GraphqlQuery.searchById(courseId))
     val response = repositoryService.search(query).executeHandlingExceptions()
     val course = response?.body()?.data?.coursesList?.courses?.firstOrNull()
-    course?.marketplaceId = marketplaceId
+    course?.id = courseId
     return course
   }
 
@@ -176,13 +176,13 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   fun loadCourseStructure(course: EduCourse) {
-    val marketplaceId = course.marketplaceId
-    val updateInfo = getLatestCourseUpdateInfo(marketplaceId)
+    val courseId = course.id
+    val updateInfo = getLatestCourseUpdateInfo(courseId)
     if (updateInfo == null) {
-      error("Update info for course $marketplaceId is null")
+      error("Update info for course $courseId is null")
     }
     course.marketplaceCourseVersion = updateInfo.version
-    val link = "$repositoryUrl/plugin/$marketplaceId/update/${updateInfo.updateId}/download"
+    val link = "$repositoryUrl/plugin/$courseId/update/${updateInfo.updateId}/download"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
@@ -217,16 +217,16 @@ abstract class MarketplaceConnector : CourseConnector {
       showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, true))
       return
     }
-    course.marketplaceId = courseBean.marketplaceId
+    course.id = courseBean.id
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
 
     val message = message("marketplace.push.course.successfully.uploaded", courseBean.name)
     showNotification(project,
-                     openOnMarketplaceAction(course.marketplaceId),
+                     openOnMarketplaceAction(course.id),
                      message,
                      message("marketplace.push.course.successfully.uploaded.message"))
-    LOG.info("$message with id ${courseBean.marketplaceId}")
+    LOG.info("$message with id ${courseBean.id}")
   }
 
   private fun openOnMarketplaceAction(courseId: Int): AnAction {
@@ -244,7 +244,7 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
     if (!isUserAuthorized()) return
     LOG.info("Uploading course update from ${file.absolutePath}")
-    val response = repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.marketplaceId).executeHandlingExceptions()
+    val response = repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id).executeHandlingExceptions()
     val responseCode = response?.code()
     if (responseCode == null || responseCode == HttpStatus.SC_FORBIDDEN) {
       showNoRightsToUpdateNotification(project, course, MARKETPLACE) { uploadNewCourseUnderProgress(project, course, file) }
@@ -255,7 +255,7 @@ abstract class MarketplaceConnector : CourseConnector {
       return
     }
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showNotification(project, message, openOnMarketplaceAction(course.marketplaceId))
+    showNotification(project, message, openOnMarketplaceAction(course.id))
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
   }

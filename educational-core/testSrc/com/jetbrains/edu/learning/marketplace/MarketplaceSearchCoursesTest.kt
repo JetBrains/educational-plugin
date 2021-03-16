@@ -98,7 +98,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
                      expectedLearnersCount: Int,
                      expectedReviewScore: Double,
                      expectedEnvironment: String = DEFAULT_ENVIRONMENT) {
-    assertEquals(expectedId, course.marketplaceId)
+    assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
     assertEquals(expectedLanguage, course.language)

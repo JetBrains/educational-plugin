@@ -20,7 +20,7 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
   override fun synchronizeCourse(project: Project) {
     val course = project.course as EduCourse
     runInBackground(title = message("marketplace.loading.course")) {
-      val remoteCourseVersion = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(course.marketplaceId)?.version
+      val remoteCourseVersion = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(course.id)?.version
       if (remoteCourseVersion != null && remoteCourseVersion > course.marketplaceCourseVersion) {
         MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourse()
       }
@@ -37,6 +37,6 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
       return false
     }
     val course = StudyTaskManager.getInstance(project).course
-    return course is EduCourse && course.isStudy && course.isMarketplaceRemote
+    return course is EduCourse && course.isMarketplace && course.isStudy && course.isRemote
   }
 }

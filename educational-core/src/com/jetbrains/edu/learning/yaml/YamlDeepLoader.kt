@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.isMarketplaceRemoteCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -130,7 +129,7 @@ object YamlDeepLoader {
     val itemDir = getConfigDir(project)
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
-      if (id > 0 || this.isMarketplaceRemoteCourse()) {
+      if (id > 0) {
         loadingError(
           notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
       }
@@ -142,7 +141,7 @@ object YamlDeepLoader {
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
     val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
-    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse || courseWithRemoteInfo.isMarketplaceRemoteCourse()) {
+    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse) {
       getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
     }
   }

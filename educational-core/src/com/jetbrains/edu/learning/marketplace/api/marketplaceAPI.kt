@@ -130,7 +130,7 @@ class UpdateInfo {
 @JsonIgnoreProperties(ignoreUnknown = true)
 class CourseBean {
   @JsonProperty(ID)
-  var marketplaceId: Int = -1
+  var id: Int = -1
 
   @JsonProperty(NAME)
   var name: String = ""

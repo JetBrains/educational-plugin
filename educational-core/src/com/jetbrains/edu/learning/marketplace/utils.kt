@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -33,10 +31,15 @@ fun Course.generateCourseItemsIds() {
 }
 
 fun Course.setRemoteMarketplaceCourseVersion() {
-  val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(marketplaceId)
+  val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(id)
   if (updateInfo != null) {
     incrementMarketplaceCourseVersion(updateInfo.version)
   }
 }
 
-fun StudyItem.isMarketplaceRemoteCourse(): Boolean = this is EduCourse && marketplaceId > 0
+fun Course.convertToMarketplace() {
+  isMarketplace = true
+  if (marketplaceCourseVersion == 0) {
+    marketplaceCourseVersion = 1
+  }
+}

@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
@@ -57,6 +58,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+
+import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -219,9 +222,16 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   private void checkIfAvailableOnRemote() {
-    EduCourse courseFromStepik = StepikConnector.getInstance().getCourseInfo(myCourse.getId(), null, true);
-    if (courseFromStepik == null) {
-      LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
+    EduCourse remoteCourse;
+    if (myCourse.isMarketplace()) {
+      remoteCourse = MarketplaceConnector.getInstance().searchCourse(myCourse.getId());
+    }
+    else {
+      remoteCourse = StepikConnector.getInstance().getCourseInfo(myCourse.getId(), null, true);
+    }
+    if (remoteCourse == null) {
+      String platformName = myCourse.isMarketplace() ? MARKETPLACE: StepikNames.STEPIK;
+      LOG.warn("Failed to get "+ platformName + " course for imported from zip course with id: " + myCourse.getId());
       LOG.info("Converting course to local. Course id: " + myCourse.getId());
       ((EduCourse)myCourse).convertToLocal();
     }

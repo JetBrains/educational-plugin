@@ -37,7 +37,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     presentation.isEnabledAndVisible = true
 
-    if (course.isMarketplaceRemote) {
+    if (course.isRemote && course.isMarketplace) {
       presentation.setText { updateTitle }
     }
     else {
@@ -53,7 +53,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val connector = MarketplaceConnector.getInstance()
 
-    if (!checkIfAuthorized(project, MARKETPLACE, if (course.isMarketplaceRemote) "update course" else "post course",
+    if (!checkIfAuthorized(project, MARKETPLACE, if (course.isRemote) "update course" else "post course",
                            MarketplaceSettings.INSTANCE.account != null) { connector.doAuthorize() }) {
       return
     }
@@ -69,8 +69,8 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
   }
 
   private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
-    if (course.isMarketplaceRemote) {
-      val courseOnRemote = connector.searchCourse(course.marketplaceId)
+    if (course.isRemote) {
+      val courseOnRemote = connector.searchCourse(course.id)
       // courseOnRemote can be null if it was not validated yet
       if (courseOnRemote == null) {
         CCNotificationUtils.showNotification(project,

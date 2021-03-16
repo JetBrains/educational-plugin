@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -15,10 +16,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.marketplace.convertToMarketplace
 import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class MarketplaceArchiveCreator(project: Project, location: String, aesKey: String = getAesKey())
@@ -38,17 +40,22 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
     }
 
   override fun compute(): String? {
-    if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    if (course == null) return message("error.unable.to.obtain.course.for.project")
+
+    if (!course.isMarketplace && course.id != 0) {
+      // if course.isMarketplace == false && course.id != 0, that means that the course was opened
+      // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
+      course.id = 0
+      showNotification(project, null, message("marketplace.course.converted"),
+                       message("marketplace.not.possible.to.post.updates.to.stepik"))
+    }
+
+    course.convertToMarketplace()
     if (!isUnitTestMode) {
       course.generateCourseItemsIds()
     }
-    if (course.marketplaceCourseVersion == 0) {
-      course.marketplaceCourseVersion = 1
-    }
-    course.isMarketplace = true
-
     if (course.vendor == null) {
-      if (!addVendor(course)) return EduCoreBundle.message("marketplace.vendor.empty")
+      if (!addVendor(course)) return message("marketplace.vendor.empty")
     }
 
     YamlFormatSynchronizer.saveItem(course)
@@ -63,8 +70,10 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
   }
 
   fun createArchiveWithRemoteCourseVersion(): String? {
-    if (course == null) return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
-    course.setRemoteMarketplaceCourseVersion()
+    if (course == null) return message("error.unable.to.obtain.course.for.project")
+    if (course.isMarketplace) {
+      course.setRemoteMarketplaceCourseVersion()
+    }
     FileDocumentManager.getInstance().saveAllDocuments()
     return ApplicationManager.getApplication().runWriteAction<String>(this)
   }
