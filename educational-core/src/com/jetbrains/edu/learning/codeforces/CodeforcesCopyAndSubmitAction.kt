@@ -5,8 +5,8 @@ import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -19,12 +19,11 @@ class CodeforcesCopyAndSubmitAction : DumbAwareAction(EduCoreBundle.message("cod
     if (project.isDisposed) return
 
     val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
-    val course = task.course as? CodeforcesCourse ?: return
-
     val taskFile = task.getCodeTaskFile(project) ?: return
     val solution = taskFile.getDocument(project)?.text ?: return
+
     CopyPasteManager.getInstance().setContents(StringSelection(solution))
-    EduBrowser.getInstance().browse(course.getSubmissionUrl())
+    EduBrowser.getInstance().browse(codeforcesSubmitLink(task))
   }
 
   override fun update(e: AnActionEvent) {
