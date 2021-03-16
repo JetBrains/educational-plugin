@@ -27,7 +27,9 @@ import org.jetbrains.annotations.NonNls
 import java.awt.Component
 import java.util.function.Supplier
 
-open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.title")) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
+open class ImportLocalCourseAction(
+  text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.title")
+) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
@@ -43,15 +45,14 @@ open class ImportLocalCourseAction(text: Supplier<String> = EduCoreBundle.lazyMe
         val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
         if (courseMetaInfo != null) {
           invokeLater {
-            val result = Messages.showOkCancelDialog(
-              null,
-              EduCoreBundle.message("action.import.local.course.dialog.text"),
-              EduCoreBundle.message("action.import.local.course.dialog"),
-              EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
-              EduCoreBundle.message("action.import.local.course.dialog.ok.text"),
-              Messages.getErrorIcon()
-            )
-            if (result == Messages.CANCEL) {
+            val result = Messages.showDialog(null,
+                                             EduCoreBundle.message("action.import.local.course.dialog.text"),
+                                             EduCoreBundle.message("action.import.local.course.dialog"),
+                                             arrayOf(EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
+                                                     EduCoreBundle.message("action.import.local.course.dialog.ok.text")),
+                                             Messages.OK,
+                                             Messages.getErrorIcon())
+            if (result == Messages.NO) {
               EduCounterUsageCollector.importCourseArchive()
               course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
               closeDialog(component)
