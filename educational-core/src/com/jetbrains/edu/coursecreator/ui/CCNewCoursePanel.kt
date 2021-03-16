@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -100,9 +101,9 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     bottomPanel.add(settings, BorderLayout.NORTH)
 
     add(panel {
-      row("Title:") { titleField(CCFlags.pushX) }
-      row("Type:") { courseDataComboBox(CCFlags.growX) }
-      row("Description:") { scrollPane(CCFlags.growX) }
+      row(EduCoreBundle.message("cc.new.course.error.enter.title")) { titleField(CCFlags.pushX) }
+      row(EduCoreBundle.message("cc.new.course.type")) { courseDataComboBox(CCFlags.growX) }
+      row(EduCoreBundle.message("cc.new.course.description")) { scrollPane(CCFlags.growX) }
     }, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
 
@@ -170,9 +171,9 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
   fun validateLocation() {
     val validationMessage = when {
-      locationString.isBlank() -> ValidationMessage("Enter course location")
+      locationString.isBlank() -> ValidationMessage(EduCoreBundle.message("error.enter.location"))
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ValidationMessage(
-        "Can't create course at this location")
+        EduCoreBundle.message("error.wrong.location"))
       else -> null
     }
     processError(validationMessage)
@@ -180,8 +181,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
   private fun doValidation() {
     val validationMessage = when {
-      titleField.text.isNullOrBlank() -> ValidationMessage("Enter course title")
-      descriptionTextArea.text.isNullOrBlank() -> ValidationMessage("Enter course description")
+      titleField.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title"))
+      descriptionTextArea.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description"))
       requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins.map { PluginId.getId(it) })
       else -> {
         val validationMessage = languageSettings.validate(null, locationString)
@@ -206,13 +207,16 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton(pathField)
-    field.addBrowseFolderListener("Select Course Location", "Select course location", null,
+    field.addBrowseFolderListener(EduCoreBundle.message("cc.new.course.select.location.title"),
+                                  EduCoreBundle.message("cc.new.course.select.location.description"), null,
                                   FileChooserDescriptorFactory.createSingleFolderDescriptor())
     return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
   }
 
   private fun onCourseDataSelected(courseData: CourseData) {
-    val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} Course"
+    val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} ${
+      EduCoreBundle.message("item.course.title")
+    }"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!titleField.isChangedByUser) {
       titleField.setTextManually(file.name)
@@ -234,8 +238,10 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
     descriptionTextArea.text = _course.description.nullize() ?: """
-      ${courseData.displayName} course.
-      Created: ${LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))}.
+      ${courseData.displayName} ${EduCoreBundle.message("item.course")}.
+      ${EduCoreBundle.message("cc.new.course.select.created.date.title")} ${
+      LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))
+    }.
     """.trimIndent()
     doValidation()
   }
