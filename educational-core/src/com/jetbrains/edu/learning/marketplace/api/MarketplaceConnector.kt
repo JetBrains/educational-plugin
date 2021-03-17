@@ -164,11 +164,11 @@ abstract class MarketplaceConnector : CourseConnector {
     return course
   }
 
-  fun getLatestCourseUpdateInfo(marketplaceId: Int): UpdateInfo? {
-    val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(marketplaceId))).executeHandlingExceptions()
+  fun getLatestCourseUpdateInfo(courseId: Int): UpdateInfo? {
+    val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(courseId))).executeHandlingExceptions()
     val updateInfoList = response?.body()?.data?.updates?.updateInfoList
     if (updateInfoList == null) {
-      error("Update info list for course $marketplaceId is null")
+      error("Update info list for course $courseId is null")
     }
     else {
       return updateInfoList.firstOrNull()

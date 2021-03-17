@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 abstract class MarketplaceEduCourseMixin {
 
   @JsonProperty(ID)
-  var marketplaceId: Int = 0
+  var id: Int = 0
 
   @JsonProperty(NAME)
   var myName: String = ""
