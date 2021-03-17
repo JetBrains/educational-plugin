@@ -98,7 +98,7 @@ private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(Flo
     val infoLabel = JLabel().apply {
       foreground = GRAY_COLOR
       text = when (tasksSolved) {
-        0 -> EduCoreBundle.message("course.dialog.my.courses.card.no.tasks")
+        0 -> if (tasksTotal != 0) EduCoreBundle.message("course.dialog.my.courses.card.no.tasks") else ""
         tasksTotal -> EduCoreBundle.message("course.dialog.my.courses.card.completed")
         else -> "${tasksSolved}/${tasksTotal}"
       }
