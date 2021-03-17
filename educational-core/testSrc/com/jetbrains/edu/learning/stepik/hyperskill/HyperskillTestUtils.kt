@@ -56,6 +56,22 @@ fun EduTestCase.hyperskillCourse(
   return course
 }
 
+@Suppress("unused") // want this method to be available only in EduTestCase
+fun EduTestCase.defaultHyperskillCourse(): HyperskillCourse {
+  return hyperskillCourse {
+    frameworkLesson {
+      eduTask("task1", stepId = 1) {
+        taskFile("src/Task.kt", "stage 1")
+        taskFile("test/Tests1.kt", "stage 1 test")
+      }
+      eduTask("task2", stepId = 2) {
+        taskFile("src/Task.kt", "stage 2")
+        taskFile("test/Tests2.kt", "stage 2 test")
+      }
+    }
+  }
+}
+
 private fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
   if (projectId == null) {
     return
