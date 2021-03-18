@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckDetailsPanel
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JPanel
@@ -19,12 +17,10 @@ open class AdditionalTabPanel(val project: Project, tabName: String) : JPanel(Bo
     name = tabName
     val scrollPane = JBScrollPane(textPane)
     scrollPane.border = JBUI.Borders.empty()
-    val backLinkPanel = getBackLinkPanel(project)
 
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     border = JBUI.Borders.empty(0, 15, 0, 0)
 
-    addComponent(backLinkPanel, BorderLayout.BEFORE_FIRST_LINE)
     addComponent(scrollPane, BorderLayout.CENTER)
   }
 
@@ -38,10 +34,5 @@ open class AdditionalTabPanel(val project: Project, tabName: String) : JPanel(Bo
 
   private fun addComponent(comp: Component, constraints: String) {
     add(comp, constraints)
-  }
-
-  companion object {
-    fun getBackLinkPanel(project: Project): JPanel = TopPanel(EduCoreBundle.message("label.back.to.description"),
-                                                              CheckDetailsPanel.SwitchTaskTabAction(project, 0))
   }
 }

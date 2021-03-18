@@ -12,7 +12,10 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.taskDescription.ui.*
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import com.jetbrains.edu.learning.taskDescription.ui.loadText
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.resourceUrl
 import org.apache.commons.lang.text.StrSubstitutor
@@ -49,7 +52,6 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
     }
 
     layout = BorderLayout()
-    add(AdditionalTabPanel.getBackLinkPanel(project), BorderLayout.NORTH)
     add(panel, BorderLayout.CENTER)
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     border = JBUI.Borders.empty(0, 15, 0, 0)
