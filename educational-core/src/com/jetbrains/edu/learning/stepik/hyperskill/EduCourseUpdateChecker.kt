@@ -28,6 +28,7 @@ class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
     ApplicationManager.getApplication().executeOnPooledThread {
       val (courseFromStepik, isUpToDate) = eduCourse.checkIsUpToDate()
       runInEdt {
+        if (project.isDisposed) return@runInEdt
         eduCourse.isUpToDate = isUpToDate
         if (!isUpToDate) {
           showUpdateAvailableNotification(project) {

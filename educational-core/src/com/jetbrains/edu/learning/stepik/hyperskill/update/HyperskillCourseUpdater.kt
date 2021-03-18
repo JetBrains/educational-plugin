@@ -75,9 +75,13 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
           }
         }
       }
-      course.updateDate = Date()
-      YamlFormatSynchronizer.saveRemoteInfo(course)
-      onFinish(isUpdated)
+      invokeAndWaitIfNeeded {
+        if (project.isDisposed) return@invokeAndWaitIfNeeded
+
+        course.updateDate = Date()
+        YamlFormatSynchronizer.saveRemoteInfo(course)
+        onFinish(isUpdated)
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -32,7 +33,11 @@ class HyperskillCourseUpdateChecker(project: Project) : CourseUpdateChecker(proj
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
     val hyperskillCourse = course as HyperskillCourse
     if (timeSinceUpdate < super.checkInterval) {
-      onFinish()
+      invokeAndWaitIfNeeded {
+        if (project.isDisposed) return@invokeAndWaitIfNeeded
+        onFinish()
+      }
+
       return
     }
     HyperskillCourseUpdater(project, hyperskillCourse).updateCourse { onFinish() }
