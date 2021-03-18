@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ActionCallback
@@ -61,6 +62,7 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
   private fun checkIsUpToDate(): ActionCallback {
     val actionCallback = ActionCallback()
     doCheckIsUpToDate {
+      ApplicationManager.getApplication().assertIsDispatchThread()
       if (isUnitTestMode) {
         invocationCounter.incrementAndGet()
       }
@@ -69,6 +71,9 @@ abstract class CourseUpdateChecker(protected val project: Project) : Disposable 
     return actionCallback
   }
 
+  /**
+   * [onFinish] callback is supposed to be called from EDT
+   */
   protected abstract fun doCheckIsUpToDate(onFinish: () -> Unit)
 
   protected abstract fun courseCanBeUpdated(): Boolean
