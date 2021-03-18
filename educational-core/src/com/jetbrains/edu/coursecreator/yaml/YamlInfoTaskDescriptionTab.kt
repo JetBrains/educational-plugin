@@ -37,7 +37,7 @@ class YamlInfoTaskDescriptionTab(val project: Project) : JPanel(), Disposable {
       val textPane = createTextPane()
       textPane.text = templateText
       val scrollPane = JBScrollPane(textPane)
-      scrollPane.border = JBUI.Borders.empty(20, 0, 0, 10)
+      scrollPane.border = JBUI.Borders.empty(15, 0, 0, 10)
       scrollPane
     }
 

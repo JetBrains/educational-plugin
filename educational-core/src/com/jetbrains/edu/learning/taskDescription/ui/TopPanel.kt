@@ -14,7 +14,7 @@ class TopPanel(linkText: String, action: DumbAwareAction) : JPanel(BorderLayout(
   init {
     actionLink.border = JBUI.Borders.emptyBottom(8)
     background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    border = JBUI.Borders.empty(8, 0, 8, 15)
+    border = JBUI.Borders.empty(15, 0, 8, 15)
     add(actionLink, BorderLayout.NORTH)
     add(JSeparator(), BorderLayout.SOUTH)
     maximumSize = JBUI.size(Int.MAX_VALUE, 30)
