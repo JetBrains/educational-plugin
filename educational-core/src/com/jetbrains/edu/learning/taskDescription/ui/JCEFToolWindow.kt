@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
+import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
@@ -25,8 +26,8 @@ import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
-  private val taskInfoJBCefBrowser = JCEFHtmlPanel(null)
-  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(null)
+  private val taskInfoJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
+  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
   private var currentTask: ChoiceTask? = null
 
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser)
