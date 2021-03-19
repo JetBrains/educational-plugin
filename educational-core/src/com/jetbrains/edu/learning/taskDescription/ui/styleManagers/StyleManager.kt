@@ -104,7 +104,7 @@ class StyleManager {
     }
 
   companion object {
-    const val FONT_FACTOR_PROPERTY: String = "edu.task.description.font.factor"
+    const val FONT_SIZE_PROPERTY: String = "edu.task.description.font.factor"
 
     fun resources(content: String = ""): Map<String, String> = StyleResourcesManager.getResources(content)
   }

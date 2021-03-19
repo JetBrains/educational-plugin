@@ -66,7 +66,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       UIUtil.setSliderIsFilled(fontSizeSlider, true)
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
-        PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
+        PropertiesComponent.getInstance().setValue(StyleManager.FONT_SIZE_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         if (!(EduUtils.getCurrentTask(project) is VideoTask && isJCEF())) {
           TaskDescriptionView.updateAllTabs(project)
         }
@@ -78,7 +78,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     }
 
     private fun getInitialIndex(): Int {
-      val value = PropertiesComponent.getInstance().getInt(StyleManager.FONT_FACTOR_PROPERTY, FontPreferences.DEFAULT_FONT_SIZE)
+      val value = PropertiesComponent.getInstance().getInt(StyleManager.FONT_SIZE_PROPERTY, FontPreferences.DEFAULT_FONT_SIZE)
       for ((i, fontSize) in FontSize.values().withIndex()) {
         if (fontSize.size == value) {
           return i.toReverseIndex()
