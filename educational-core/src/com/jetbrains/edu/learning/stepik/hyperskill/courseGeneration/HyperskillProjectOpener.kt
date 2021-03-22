@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -27,6 +28,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener.addProblemsWithTopicWithFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillProjectOpener {
@@ -425,7 +427,13 @@ object HyperskillProjectOpener {
     }
 
     val task = course.getProblem(stepId) ?: return
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
+    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
+      val tasks = task.lesson.taskList.filterIsInstance<CodeTask>()
+      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
+    }
+    else {
+      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
+    }
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
