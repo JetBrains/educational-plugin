@@ -28,7 +28,7 @@
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">
       <description>Enables action to push Hyperskill lesson to Stepik</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.hyperskill.problems.by.topic" percentOfUsers="100" internalFeature="true">
+    <experimentalFeature id="edu.course.hyperskill.problems.by.topic" percentOfUsers="100">
       <description>Enables grouping JetBrains Academy code challenges by topic</description>
     </experimentalFeature>
 
