@@ -6,8 +6,10 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentManager
 import com.jetbrains.edu.coursecreator.ui.YamlHelpTab
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.BUNDLE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.TheoryTab
 import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
@@ -50,6 +52,15 @@ class TabManager(private val project: Project, private val contentManager: Conte
     }
   }
 
+  private fun createTheoryTab(task: Task): TheoryTab {
+    val theoryTask = task.lesson.taskList.find { it is TheoryTask }
+    if (theoryTask !is TheoryTask) {
+      error("Selected task is not Theory task")
+    }
+    task.course as? HyperskillCourse ?: error("Theory tab is designed for Hyperskill course, but task is located in different course")
+    return TheoryTab(project, theoryTask)
+  }
+
   private fun createTopicsTab(task: Task): TopicsTab {
     val course = task.course as? HyperskillCourse
                  ?: error("Topics tab is designed for Hyperskill course, but task is located in different course")
@@ -67,6 +78,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
   }
 
   private fun createTab(tabType: TabType, task: Task): AdditionalTab = when (tabType) {
+    THEORY_TAB -> createTheoryTab(task)
     TOPICS_TAB -> createTopicsTab(task)
     SUBMISSIONS_TAB -> createSubmissionsTab(task)
     YAML_HELP_TAB -> createYamlHelpTab()
@@ -105,6 +117,13 @@ class TabManager(private val project: Project, private val contentManager: Conte
       if (supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
         result.add(SUBMISSIONS_TAB)
       }
+      if (course is HyperskillCourse && !course.isTaskInProject(this) && this !is TheoryTask) {
+        /**
+         * Then this is a task in Topics section and Theory tab should be shown
+         * Except for Theory task itself
+         */
+        result.add(THEORY_TAB)
+      }
     }
     else {
       result.add(YAML_HELP_TAB)
@@ -132,6 +151,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
   }
 
   enum class TabType(@PropertyKey(resourceBundle = BUNDLE) private val nameId: String) {
+    THEORY_TAB("hyperskill.theory.tab.name"),
     TOPICS_TAB("hyperskill.topics.tab.name"),
     SUBMISSIONS_TAB("submissions.tab.name"),
     YAML_HELP_TAB("yaml.help.tab.name");
