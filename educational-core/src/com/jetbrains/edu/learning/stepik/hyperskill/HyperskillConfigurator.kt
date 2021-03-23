@@ -10,9 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import javax.swing.Icon
 
 /**
@@ -28,16 +26,6 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
 
   override val courseBuilder: EduCourseBuilder<T>
     get() = HyperskillCourseBuilder(baseConfigurator.courseBuilder)
-
-  override fun additionalTaskTab(currentTask: Task?, project: Project): AdditionalTabPanel? {
-    if (currentTask == null) return null
-    val course = currentTask.lesson.course
-    if (course is HyperskillCourse && course.isStudy) {
-      if (!course.isTaskInProject(currentTask)) return null
-      return TopicsTabPanel(project, course, currentTask)
-    }
-    return null
-  }
 
   /**
    * We have to do this stuff because implementation by delegation still works unstable

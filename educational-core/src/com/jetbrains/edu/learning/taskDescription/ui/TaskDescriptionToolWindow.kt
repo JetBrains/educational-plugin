@@ -23,7 +23,6 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -35,15 +34,6 @@ import javax.swing.JComponent
 
 
 abstract class TaskDescriptionToolWindow(protected val project: Project) : Disposable {
-  private val HINT_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
-                                    "  <div class='hint_content'>" +
-                                    " %s" +
-                                    "  </div>"
-  private val HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='" + HINT_HEADER_EXPANDED + "'>Hint %s</div>" +
-                                             "  <div class='hint_content'>" +
-                                             " %s" +
-                                             "  </div>"
-
   //default value of merging time span is 300 milliseconds, can be set in educational-core.xml
   @Suppress("LeakingThis")
   private val updateQueue = MergingUpdateQueue(TASK_DESCRIPTION_UPDATE,
@@ -58,6 +48,10 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
+  /**
+   * Copy-paste [com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel.wrapHints]
+   * To be removed a bit later
+   */
   protected fun wrapHints(text: String, task: Task?): String {
     if (task is VideoTask) return text
     val document = Jsoup.parse(text)
@@ -76,21 +70,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
     return document.html()
   }
 
-  protected open fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
-    val course = StudyTaskManager.getInstance(project).course
-    val hintText: String = hintElement.html()
-    if (course == null) {
-      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-    }
-
-    val study = course.isStudy
-    return if (study) {
-      String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-    }
-    else {
-      String.format(HINT_EXPANDED_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-    }
-  }
+  protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String): String
 
   fun setTaskText(project: Project, task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
@@ -103,10 +83,8 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
   override fun dispose() {}
 
   companion object {
-    const val HINT_HEADER: String = "hint_header"
-    const val HINT_HEADER_EXPANDED: String = "${HINT_HEADER} checked"
-    private const val TASK_DESCRIPTION_UPDATE = "Task Description Update"
-    private const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY = "edu.task.description.update.delay"
+    private const val TASK_DESCRIPTION_UPDATE: String = "Task Description Update"
+    const val TASK_DESCRIPTION_UPDATE_DELAY_REGISTRY_KEY: String = "edu.task.description.update.delay"
 
     @VisibleForTesting
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {

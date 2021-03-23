@@ -9,9 +9,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.AsyncProcessIcon
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -23,29 +21,25 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
+import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel
 import com.jetbrains.edu.learning.ui.EduColors
 import icons.EducationalCoreIcons
-import java.awt.BorderLayout
-import java.awt.FlowLayout
 import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.stream.Collectors
-import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import kotlin.math.roundToInt
 
-class SubmissionsTabPanel(project: Project,
-                          val course: Course,
-                          val task: Task
-) : AdditionalTabPanel(project, EduCoreBundle.message("submissions.tab.name")) {
+class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, SUBMISSIONS_TAB) {
 
   init {
     val submissionsManager = SubmissionsManager.getInstance(project)
@@ -55,12 +49,12 @@ class SubmissionsTabPanel(project: Project,
     if (submissionsManager.isLoggedIn()) {
       if (submissionsList != null) {
         when {
-          task is ChoiceTask -> addViewOnStepikLink(descriptionText, task, this)
+          task is ChoiceTask -> addViewOnStepikLink(descriptionText, task)
           submissionsList.isEmpty() -> descriptionText.append(
             "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
           else -> {
             addSubmissionsToText(submissionsList, descriptionText)
-            this.addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
+            addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
           }
         }
       }
@@ -71,15 +65,19 @@ class SubmissionsTabPanel(project: Project,
     else {
       addLoginLink(descriptionText, submissionsManager)
     }
-    setText(descriptionText.toString())
+    setText(descriptionText.toString(), plain = true)
   }
 
-  private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask, submissionsPanel: AdditionalTabPanel) {
+  override fun createTabPanel(): TabPanel {
+    return SwingTabPanel(project, SUBMISSIONS_TAB)
+  }
+
+  private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask) {
     descriptionText.append(
       "<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
       "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
       EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${StyleManager().textStyleHeader}>"))
-    submissionsPanel.addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
+    addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 
   private fun addLoginLink(descriptionText: StringBuilder,
@@ -87,7 +85,7 @@ class SubmissionsTabPanel(project: Project,
     descriptionText.append("<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
                            " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
                            "</a><a ${StyleManager().textStyleHeader}>")
-    this.addHyperlinkListener(HyperlinkListener { e ->
+    addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         submissionsManager.doAuthorize()
       }
@@ -198,17 +196,5 @@ class SubmissionsTabPanel(project: Project,
     val text = formatDate(time)
     return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
            "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a></li>"
-  }
-
-  fun addLoadingPanel(platformName: String) {
-    removeAll()
-    val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
-    val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
-    iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    iconPanel.add(asyncProcessIcon)
-    setText("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}")
-    iconPanel.add(textPane)
-    add(iconPanel, BorderLayout.CENTER)
-    revalidate()
   }
 }

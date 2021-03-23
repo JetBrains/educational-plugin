@@ -5,7 +5,7 @@ import org.jetbrains.annotations.PropertyKey
 import java.util.function.Supplier
 
 @NonNls
-private const val BUNDLE = "messages.EduCoreBundle"
+const val BUNDLE = "messages.EduCoreBundle"
 
 object EduCoreBundle : EduBundle(BUNDLE) {
   const val FAILED_TO_CONVERT_TO_STUDENT_FILE = "Failed to convert answer file to student one because placeholder is broken."

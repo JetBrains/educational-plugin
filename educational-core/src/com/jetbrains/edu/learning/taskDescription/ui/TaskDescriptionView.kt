@@ -8,6 +8,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import java.awt.Color
 
 abstract class TaskDescriptionView {
@@ -16,14 +17,14 @@ abstract class TaskDescriptionView {
 
   abstract fun init(toolWindow: ToolWindow)
 
+  abstract fun showTab(tabType: TabType)
   abstract fun updateCheckPanel(task: Task?)
   abstract fun updateTaskSpecificPanel()
   abstract fun updateTopPanel(task: Task?)
   abstract fun updateTaskDescription(task: Task?)
   abstract fun updateTaskDescription()
-  abstract fun updateAdditionalTaskTabs()
-  abstract fun updateSubmissionsTab()
-  abstract fun updateAdditionalTab()
+  abstract fun updateAdditionalTaskTabs(task: Task? = null)
+  abstract fun updateTab(tabType: TabType)
   abstract fun addLoadingPanel(platformName: String)
 
   abstract fun readyToCheck()

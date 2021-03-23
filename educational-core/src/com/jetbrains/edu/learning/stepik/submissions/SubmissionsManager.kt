@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
@@ -45,7 +46,7 @@ class SubmissionsManager(private val project: Project) {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(stepIds)
       submissions.putAll(submissionsById)
-      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
       submissionsById.values.stream()
         .flatMap(List<Submission>::stream)
         .collect(Collectors.toList())
@@ -69,7 +70,7 @@ class SubmissionsManager(private val project: Project) {
     else {
       val loadedSubmissions = submissionsProvider.loadSubmissions(setOf(stepId))
       submissions.putAll(loadedSubmissions)
-      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
       return loadedSubmissions[stepId] ?: emptyList()
     }
   }
@@ -81,7 +82,7 @@ class SubmissionsManager(private val project: Project) {
       submissionsList.sortByDescending { it.time }
       //potential race when loading submissions and checking task at one time
     }
-    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateSubmissionsTab() }
+    ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
   }
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
@@ -132,7 +133,7 @@ class SubmissionsManager(private val project: Project) {
                                      loadSolutions: () -> Unit) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
     loadSolutions()
-    ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateSubmissionsTab() }
+    ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateTab(SUBMISSIONS_TAB) }
   }
 
   private fun Course.getSubmissionsProvider(): SubmissionsProvider? {

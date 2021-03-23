@@ -6,15 +6,18 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
+import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.TOPICS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel
 import com.jetbrains.edu.learning.ui.EduColors
 
-class TopicsTabPanel(project: Project,
-                     course: HyperskillCourse,
-                     task: Task
-) : AdditionalTabPanel(project, EduCoreBundle.message("hyperskill.topics.tab.name")) {
+class TopicsTab(project: Project,
+                course: HyperskillCourse,
+                task: Task
+) : AdditionalTab(project, TOPICS_TAB) {
 
   init {
     addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
@@ -34,7 +37,11 @@ class TopicsTabPanel(project: Project,
         appendln("<a $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.not.found")}")
       }
     }
-    setText(descriptionText)
+    setText(descriptionText, plain = false)
+  }
+
+  override fun createTabPanel(): TabPanel {
+    return SwingTabPanel(project, TOPICS_TAB)
   }
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {

@@ -107,13 +107,20 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   @NotNull
   @Override
   protected String wrapHint(@NotNull org.jsoup.nodes.Element hintElement, @NotNull String displayedHintNumber) {
+    return wrapHint(getProject(), hintElement, displayedHintNumber);
+  }
+
+  @NotNull
+  public static String wrapHint(@NotNull Project project,
+                                @NotNull org.jsoup.nodes.Element hintElement,
+                                @NotNull String displayedHintNumber) {
     String bulbIcon = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "/style/hint/swing/swing_icons/bulb.png");
     String hintText = hintElement.html();
     if (displayedHintNumber.isEmpty() || displayedHintNumber.equals("1")) {
       hintElement.wrap("<div class='top'></div>");
     }
 
-    Course course = StudyTaskManager.getInstance(getProject()).getCourse();
+    Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null && !course.isStudy()) {
       String downIcon = getIconFullPath("/style/hint/swing/swing_icons/retina_down.png", "/style/hint/swing/swing_icons/down.png");
       return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, bulbIcon, displayedHintNumber, hintText, displayedHintNumber, downIcon, hintText);
@@ -124,9 +131,9 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     }
   }
 
-  private String getIconFullPath(String retinaPath, String path) {
+  private static String getIconFullPath(String retinaPath, String path) {
     String bulbPath = UIUtil.isRetina() ? retinaPath : path;
-    URL bulbIconUrl = getClass().getClassLoader().getResource(bulbPath);
+    URL bulbIconUrl = SwingToolWindow.class.getClassLoader().getResource(bulbPath);
     if (bulbIconUrl == null) {
       LOG.warn("Cannot find bulb icon");
     }

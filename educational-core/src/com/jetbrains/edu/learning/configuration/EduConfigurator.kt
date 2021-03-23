@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
-import com.jetbrains.edu.learning.taskDescription.ui.AdditionalTabPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
 import javax.swing.Icon
@@ -161,13 +160,6 @@ interface EduConfigurator<Settings> {
    */
   val logo: Icon
     get() = EmptyIcon.ICON_16
-
-  /**
-   * Tab located next to the task description.
-   *
-   * @see com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-   */
-  fun additionalTaskTab(currentTask: Task?, project: Project): AdditionalTabPanel? = null
 
   val defaultPlaceholderText: String
     get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
