@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.CourseUpdateInfo;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
-import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker;
+import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker;
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
@@ -48,7 +48,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
 
   private void doSynchronizeCourse(@NotNull Project project, @NotNull EduCourse course, @NotNull ProgressIndicator indicator) {
     updateCourseStructure(project, course);
-    EduCourseUpdateChecker.getInstance(project).queueNextCheck();
+    StepikUpdateChecker.getInstance(project).queueNextCheck();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     if (submissionsManager.submissionsSupported()) {
       submissionsManager.getSubmissions(StreamEx.of(CourseExt.getAllTasks(course)).map(task -> task.getId()).toSet());
@@ -57,7 +57,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   }
 
   public void updateCourseStructure(@NotNull Project project, @NotNull EduCourse course) {
-    CourseUpdateInfo info = StepikUpdateDateExt.checkIsUpToDate(course);
+    CourseUpdateInfo info = StepikUpdateDateExt.checkIsStepikUpToDate(course);
     boolean isUpToDate = info.isUpToDate();
     if (!isUpToDate) {
       new StepikCourseUpdater(project, course).updateCourse(info.getRemoteCourseInfo());

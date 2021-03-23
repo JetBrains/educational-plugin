@@ -8,14 +8,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.stepik.checkIsUpToDate
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.stepik.checkIsStepikUpToDate
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.stepik.updateCourse
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 
 @Service
-class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
+class StepikUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   override fun courseCanBeUpdated(): Boolean {
     val eduCourse = course as? EduCourse ?: return false
@@ -26,13 +28,15 @@ class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
     val eduCourse = course as? EduCourse ?: return
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      val (courseFromStepik, isUpToDate) = eduCourse.checkIsUpToDate()
+      val (courseFromStepik, isUpToDate) = eduCourse.checkIsStepikUpToDate()
       runInEdt {
         if (project.isDisposed) return@runInEdt
         eduCourse.isUpToDate = isUpToDate
         if (!isUpToDate) {
           showUpdateAvailableNotification(project) {
-            updateCourse(project, eduCourse)
+            runInBackground(title = message("progress.loading.course")) {
+              updateCourse(project, eduCourse)
+            }
           }
           eduCourse.markTasksUpToDate(courseFromStepik)
           EditorNotifications.getInstance(project).updateAllNotifications()
@@ -56,7 +60,7 @@ class EduCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   companion object {
     @JvmStatic
-    fun getInstance(project: Project): EduCourseUpdateChecker {
+    fun getInstance(project: Project): StepikUpdateChecker {
       return project.service()
     }
   }

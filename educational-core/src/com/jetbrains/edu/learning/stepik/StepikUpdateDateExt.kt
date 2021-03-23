@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 import java.util.*
 
-fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
+fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
   // disable update for courses with framework lessons as now it's unsupported
 
   val isUpToDate = CourseUpdateInfo(isUpToDate = true)
@@ -26,7 +26,7 @@ fun EduCourse.checkIsUpToDate(): CourseUpdateInfo {
     return isUpToDate
   }
 
-  if (updateDate == null || id == 0) {
+  if (updateDate == null || id == 0 || course.isMarketplace) {
     return isUpToDate
   }
 

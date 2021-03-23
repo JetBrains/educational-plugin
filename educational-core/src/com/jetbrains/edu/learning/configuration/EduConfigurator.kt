@@ -150,7 +150,7 @@ interface EduConfigurator<Settings> {
    */
   fun beforeCourseStarted(course: Course) {
     if (course is EduCourse && course.isMarketplace) {
-      computeUnderProgress(title = EduCoreBundle.message("marketplace.loading.course")) {
+      computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
         MarketplaceConnector.getInstance().loadCourseStructure(course)
       }
     }

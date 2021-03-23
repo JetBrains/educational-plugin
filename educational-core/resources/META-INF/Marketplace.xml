@@ -10,6 +10,7 @@
     <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
     <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetProvider"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.marketplace.MarketplaceStartupActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

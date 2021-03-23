@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -125,13 +124,12 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
     createCourseStructure(course)
     project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, isNewlyCreated)
-    StudyTaskManager.getInstance(project).course = course
-    HyperskillCourseUpdateChecker.getInstance(project).course = course
     return course
   }
 
   override fun checkNotification(notificationListener: NotificationListener,
-                                 isCourseUpToDate: Boolean) {
+                                 isCourseUpToDate: Boolean,
+                                 notificationText: String) {
     if (isCourseUpToDate) {
       if (notificationListener.notificationShown) {
         assertEquals(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
@@ -140,7 +138,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     }
     else {
       assertTrue("Notification wasn't shown", notificationListener.notificationShown)
-      assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
+      assertEquals(notificationText, notificationListener.notificationText)
     }
   }
 
@@ -148,9 +146,6 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   override fun tearDown() {
     try {
-      val updateChecker = HyperskillCourseUpdateChecker.getInstance(project)
-      updateChecker.invocationNumber = 0
-      updateChecker.cancelCheckRequests()
       HyperskillSettings.INSTANCE.updateAutomatically = true
     }
     finally {

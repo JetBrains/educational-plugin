@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_PROBLEMS
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase.Companion.contest1211
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -11,6 +13,7 @@ import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker.Companion.ONGOING_COURSE_CHECK_INTERVAL
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
@@ -34,11 +37,8 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     configureResponse()
   }
 
-  override fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean) {
-    assertEquals(!isCourseUpToDate, notificationListener.notificationShown)
-    if (!isCourseUpToDate) {
-      assertEquals(EduCoreBundle.message("codeforces.task.description.was.updated.notification", taskName), notificationListener.notificationText)
-    }
+  override fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean, notificationText: String) {
+    super.checkNotification(notificationListener, isCourseUpToDate, EduCoreBundle.message("codeforces.task.description.was.updated.notification", taskName))
   }
 
   private fun configureResponse() {
@@ -101,20 +101,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
     createCourseStructure(course)
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
-    StudyTaskManager.getInstance(project).course = course
-    CodeforcesCourseUpdateChecker.getInstance(project).course = course
     return course
-  }
-
-  override fun tearDown() {
-    try {
-      val updateChecker = CodeforcesCourseUpdateChecker.getInstance(project)
-      updateChecker.invocationNumber = 0
-      updateChecker.cancelCheckRequests()
-    }
-    finally {
-      super.tearDown()
-    }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "codeforces/"

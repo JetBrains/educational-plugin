@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker
+import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
@@ -30,7 +30,7 @@ class StepikStartupActivity : StartupActivity {
 
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (submissionsManager.submissionsSupported()) {
-      val updateChecker = EduCourseUpdateChecker.getInstance(project)
+      val updateChecker = StepikUpdateChecker.getInstance(project)
       if (EduSettings.getInstance().user != null) {
         submissionsManager.prepareSubmissionsContent {
           loadSolutionsFromStepik(project, course)

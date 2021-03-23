@@ -10,6 +10,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
@@ -35,7 +36,14 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<Unit>() {
     }
   }
 
-  protected abstract fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean)
+  open fun checkNotification(notificationListener: NotificationListener,
+                             isCourseUpToDate: Boolean,
+                             notificationText: String = EduCoreBundle.message("update.content.request")) {
+    assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
+    if (!isCourseUpToDate) {
+      assertEquals(notificationText, notificationListener.notificationText)
+    }
+  }
 
   protected fun testNoCheck(updateChecker: CourseUpdateChecker) {
     withCustomCheckInterval(2) {

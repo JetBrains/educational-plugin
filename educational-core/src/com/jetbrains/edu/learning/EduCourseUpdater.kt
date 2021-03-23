@@ -41,6 +41,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   abstract fun sectionShouldBeSkipped(sectionId: Int): Boolean
 
   fun updateCourse(courseInfo: EduCourse? = null) {
+    checkIsBackgroundThread()
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
 

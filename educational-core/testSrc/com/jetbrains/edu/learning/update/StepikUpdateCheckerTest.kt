@@ -1,16 +1,14 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.EduCourseUpdateChecker
+import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
 import java.util.*
 
-class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
+class StepikUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
 
@@ -40,12 +38,12 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
   fun `test no isUpToDate check for newly created course at project opening`() {
     createCourse(Date(), isNewlyCreated = true)
-    testNoCheck(EduCourseUpdateChecker.getInstance(project))
+    testNoCheck(StepikUpdateChecker.getInstance(project))
   }
 
   fun `test no check scheduled for marketplace course`() {
     createCourse(Date(), isNewlyCreated = false, isMarketplaceCourse = true)
-    testNoCheck(EduCourseUpdateChecker.getInstance(project))
+    testNoCheck(StepikUpdateChecker.getInstance(project))
   }
 
   private fun doTestCheckScheduled(expectedInvocationNumber: Int,
@@ -53,7 +51,7 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
                                    isCourseUpToDate: Boolean,
                                    isNewlyCreated: Boolean = false) {
     val course = createCourse(updateDate, isNewlyCreated)
-    doTest(EduCourseUpdateChecker.getInstance(project), isCourseUpToDate, 0, expectedInvocationNumber, checkInterval = 1) {
+    doTest(StepikUpdateChecker.getInstance(project), isCourseUpToDate, 0, expectedInvocationNumber, checkInterval = 1) {
       assertEquals(isCourseUpToDate, course.isUpToDate)
     }
   }
@@ -70,30 +68,10 @@ class EduCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 
     createCourseStructure(course)
     project.putUserData(EDU_PROJECT_CREATED, isNewlyCreated)
-    StudyTaskManager.getInstance(project).course = course
-    EduCourseUpdateChecker.getInstance(project).course = course
     return course
   }
 
-  override fun checkNotification(notificationListener: NotificationListener, isCourseUpToDate: Boolean) {
-    assertEquals(notificationListener.notificationShown, !isCourseUpToDate)
-    if (!isCourseUpToDate) {
-      assertEquals(EduCoreBundle.message("update.content.request"), notificationListener.notificationText)
-    }
-  }
-
   override fun getTestDataPath(): String = super.getTestDataPath() + "stepik/updateCourse/update_checker/"
-
-  override fun tearDown() {
-    try {
-      val updateChecker = EduCourseUpdateChecker.getInstance(project)
-      updateChecker.invocationNumber = 0
-      updateChecker.cancelCheckRequests()
-    }
-    finally {
-      super.tearDown()
-    }
-  }
 
   companion object {
     private val COURSES_REQUEST_RE = """/api/courses?.*""".toRegex()
