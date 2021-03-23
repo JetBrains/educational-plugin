@@ -32,7 +32,6 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
     super(project, value, viewSettings);
     VirtualFile file = value.getVirtualFile();
     boolean isExcluded = file != null && (VirtualFileExt.canBeAddedToTask(file, project) || CCUtils.isExcluded(file, project));
-    // TODO: come up with better way to show user that this file doesn't belong to task
     myName = isExcluded ? name + " (excluded)" : name;
   }
 
