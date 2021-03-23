@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
-import java.util.*
 
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
@@ -38,15 +37,13 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
       val handler = EditorActionManager.getInstance().getReadonlyFragmentModificationHandler(document)
       assertInstanceOf(handler, AnswerPlaceholderDeleteHandler::class.java)
     }
-    //TODO: CCEditAnswerPlaceholder is not an UndoableAction
-    if (action !is CCEditAnswerPlaceholder) {
-      UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
-      assertEquals(taskFileUnchanged.name, taskFile.name)
-      assertEquals(taskFileUnchanged.text, taskFile.text)
-      assertEquals(taskFileUnchanged.answerPlaceholders.size, taskFile.answerPlaceholders.size)
-      assertEquals(taskFileUnchanged.task, taskFile.task)
-      checkPlaceholders(taskFileUnchanged, taskFile)
-    }
+
+    UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
+    assertEquals(taskFileUnchanged.name, taskFile.name)
+    assertEquals(taskFileUnchanged.text, taskFile.text)
+    assertEquals(taskFileUnchanged.answerPlaceholders.size, taskFile.answerPlaceholders.size)
+    assertEquals(taskFileUnchanged.task, taskFile.task)
+    checkPlaceholders(taskFileUnchanged, taskFile)
   }
 
   private fun checkPlaceholders(taskFileExpected: TaskFile, taskFileActual: TaskFile) {

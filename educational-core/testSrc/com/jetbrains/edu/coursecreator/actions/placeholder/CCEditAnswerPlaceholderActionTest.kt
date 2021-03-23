@@ -1,13 +1,13 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
+import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.yaml.configFileName
 
-class CCEditAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
-  fun `test add placeholder with dependency`() {
+class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
+  fun `test navigate to yaml`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -18,23 +18,12 @@ class CCEditAnswerPlaceholderActionTest : CCAnswerPlaceholderTestBase() {
         }
       }
     }
-
-    val taskFile = course.lessons[0].taskList[1].taskFiles["Task.kt"]!!
-    val taskFileExpected = copy(taskFile)
-    val placeholderExpected = taskFileExpected.answerPlaceholders[0]
-    placeholderExpected.placeholderText = DEFAULT_PLACEHOLDER_TEXT
-    placeholderExpected.placeholderDependency = AnswerPlaceholderDependency.create(placeholderExpected, "lesson1#task1#Task.kt#1", true)
-    placeholderExpected.taskFile = taskFileExpected
-    doTest("lesson1/task2/Task.kt", CCTestEditAnswerPlaceholder(), taskFile, taskFileExpected)
-  }
-
-  private class CCTestEditAnswerPlaceholder : CCEditAnswerPlaceholder() {
-    override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
-      return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
-        override fun showAndGet(): Boolean = true
-        override fun getPlaceholderText(): String = DEFAULT_PLACEHOLDER_TEXT
-        override fun getDependencyInfo(): DependencyInfo? = DependencyInfo("lesson1#task1#Task.kt#1", true)
-      }
-    }
+    createConfigFiles(project)
+    val task = course.findTask("lesson1", "task2")
+    val virtualFile = findFile("lesson1/task2/Task.kt")
+    myFixture.openFileInEditor(virtualFile)
+    myFixture.testAction(CCEditAnswerPlaceholder())
+    val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
+    assertEquals(task.configFileName, navigatedFile.name)
   }
 }
