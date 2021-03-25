@@ -117,12 +117,12 @@ sealed class Change {
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       if (task.getTaskFile(path) == null) {
-        GeneratorUtils.createChildFile(taskDir, path, text)
+        GeneratorUtils.createChildFile(project, taskDir, path, text)
       }
       else {
         try {
           EduDocumentListener.modifyWithoutListener(task, path) {
-            GeneratorUtils.createChildFile(taskDir, path, text)
+            GeneratorUtils.createChildFile(project, taskDir, path, text)
           }
         }
         catch (e: IOException) {

@@ -69,7 +69,7 @@ class JRenameTest : EduActionTestCase() {
     }
     val taskDirectory = findFile("lesson1/task1")
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(taskDirectory, "Foo.java", """
+      GeneratorUtils.createChildFile(project, taskDirectory, "Foo.java", """
         public class Foo {}
       """.trimIndent())
     }

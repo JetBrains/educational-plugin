@@ -1,6 +1,7 @@
 package com.jetbrains.edu.slow.integration.stepik
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -108,7 +109,7 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
 
-    val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse, project.courseDir)
+    val newLesson = addNewLesson(project, "lesson3", 3, localCourse, localCourse, project.courseDir)
     CCPushLesson.doPush(newLesson, project, localCourse)
 
     checkTopLevelLessons(localCourse)
@@ -200,7 +201,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     val section = localCourse.getSection("section1")
-    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
+    val newLesson = addNewLesson(project, "lesson3", 3, localCourse, section!!, project.courseDir)
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course as EduCourse)
 
     checkSections(localCourse)
@@ -223,7 +224,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     val section = localCourse.getSection("section1")
-    val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, project.courseDir)
+    val newLesson = addNewLesson(project, "lesson3", 3, localCourse, section!!, project.courseDir)
 
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course as EduCourse)
 
@@ -259,7 +260,7 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
 
-    val newSection = addNewSection("section2", 2, localCourse, project.courseDir)
+    val newSection = addNewSection(project, "section2", 2, localCourse, project.courseDir)
     CCPushSection.doPush(project, newSection, localCourse)
 
     checkSections(localCourse)
@@ -501,11 +502,14 @@ open class StepikIntegrationTest : StepikTestCase() {
       "Uploaded course `$courseId` not found among courses available to instructor")
 }
 
-internal fun addNewLesson(name: String,
-                          index: Int,
-                          courseToInit: Course,
-                          parent: LessonContainer,
-                          virtualFile: VirtualFile): Lesson {
+internal fun addNewLesson(
+  project: Project,
+  name: String,
+  index: Int,
+  courseToInit: Course,
+  parent: LessonContainer,
+  virtualFile: VirtualFile
+): Lesson {
   val course = course {
     lesson(name) {
       eduTask {
@@ -519,20 +523,23 @@ internal fun addNewLesson(name: String,
   newLesson.init(courseToInit, parent, false)
   parent.addLesson(newLesson)
   if (parent is Course) {
-    GeneratorUtils.createLesson(newLesson, virtualFile)
+    GeneratorUtils.createLesson(project, newLesson, virtualFile)
   }
   else {
     val sectionDir = virtualFile.findChild(parent.name)
-    GeneratorUtils.createLesson(newLesson, sectionDir!!)
+    GeneratorUtils.createLesson(project, newLesson, sectionDir!!)
   }
 
   return newLesson
 }
 
-internal fun addNewSection(name: String,
-                           index: Int,
-                           courseToInit: Course,
-                           virtualFile: VirtualFile): Section {
+internal fun addNewSection(
+  project: Project,
+  name: String,
+  index: Int,
+  courseToInit: Course,
+  virtualFile: VirtualFile
+): Section {
   val course = course {
     section(name) {
       lesson("lesson1") {
@@ -547,6 +554,6 @@ internal fun addNewSection(name: String,
   newSection.index = index
   courseToInit.addSection(newSection)
   courseToInit.init(null, null, false)
-  GeneratorUtils.createSection(newSection, virtualFile)
+  GeneratorUtils.createSection(project, newSection, virtualFile)
   return newSection
 }

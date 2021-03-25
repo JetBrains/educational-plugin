@@ -41,13 +41,15 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
     val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList
     GeneratorUtils.createChildFile(
+      project,
       baseDir,
       mainCMakeTemplateInfo.generatedFileName,
       mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name), myCourse.languageVersion ?: "")
     )
 
     getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->
-      GeneratorUtils.createChildFile(baseDir, templateInfo.generatedFileName, templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
+      GeneratorUtils.createChildFile(project, baseDir, templateInfo.generatedFileName,
+                                     templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
     }
   }
 
@@ -56,7 +58,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       is ItemContainer -> item.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
       is Task -> {
         val cMakeFile = item.addCMakeList(getCMakeProjectUniqueName(item), projectSettings.languageStandard)
-        GeneratorUtils.createChildFile(item.getDir(project.courseDir) ?: return, cMakeFile.name, cMakeFile.text)
+        GeneratorUtils.createChildFile(project, item.getDir(project.courseDir) ?: return, cMakeFile.name, cMakeFile.text)
       }
     }
   }

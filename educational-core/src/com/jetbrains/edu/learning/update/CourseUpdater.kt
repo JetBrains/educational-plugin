@@ -17,7 +17,7 @@ abstract class CourseUpdater(val project: Project) {
     task.descriptionFormat = remoteTask.descriptionFormat
 
     // Task Description file needs to be regenerated as it already exists
-    GeneratorUtils.createDescriptionFile(task.getConfigDir(project), task) ?: return
+    GeneratorUtils.createDescriptionFile(project, task.getConfigDir(project), task) ?: return
   }
 
   protected fun showUpdateCompletedNotification(message: String) {

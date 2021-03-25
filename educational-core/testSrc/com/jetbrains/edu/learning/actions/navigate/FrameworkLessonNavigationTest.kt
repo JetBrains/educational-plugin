@@ -434,7 +434,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(rootDir, "lesson1/task/foo.kt", "fun foo() {}")
+      GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/foo.kt", "fun foo() {}")
       task.openTaskFileInEditor("fizz.kt")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())
@@ -472,7 +472,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     val course = createFrameworkCourse()
     val task = course.findTask("lesson1", "task1")
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(rootDir, "lesson1/task/foo.kt", "fun foo() {}")
+      GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/foo.kt", "fun foo() {}")
       task.openTaskFileInEditor("fizz.kt")
       task.status = CheckStatus.Solved
       myFixture.testAction(NextTaskAction())

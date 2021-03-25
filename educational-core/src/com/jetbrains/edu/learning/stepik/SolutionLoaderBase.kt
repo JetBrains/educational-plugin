@@ -292,7 +292,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       for ((path, solution) in taskSolutions.solutions) {
         val taskFile = task.getTaskFile(path)
         if (taskFile == null) {
-          GeneratorUtils.createChildFile(taskDir, path, solution.text)
+          GeneratorUtils.createChildFile(project, taskDir, path, solution.text)
           val createdFile = task.getTaskFile(path)
           if (createdFile == null) {
             val help = if (isUnitTestMode) "Don't you forget to use `withVirtualFileListener`?" else ""

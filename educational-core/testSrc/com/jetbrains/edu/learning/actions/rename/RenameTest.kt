@@ -118,7 +118,7 @@ class RenameTest : RenameTestBase() {
 
     }
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(findFile("lesson1/task1"), "taskFile2.txt", "")
+      GeneratorUtils.createChildFile(project, findFile("lesson1/task1"), "taskFile2.txt", "")
     }
     doRenameAction(course, "lesson1/task1/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)
     val task = course.findTask("lesson1", "task1")
@@ -157,7 +157,7 @@ class RenameTest : RenameTestBase() {
     course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true))
 
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(findFile("lesson1/task"), "taskFile2.txt", "")
+      GeneratorUtils.createChildFile(project, findFile("lesson1/task"), "taskFile2.txt", "")
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("taskFile2.txt")
       myFixture.testAction(NextTaskAction())

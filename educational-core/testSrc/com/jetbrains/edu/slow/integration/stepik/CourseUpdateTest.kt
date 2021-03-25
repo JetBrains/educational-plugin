@@ -301,11 +301,11 @@ class CourseUpdateTest : StepikTestCase() {
     parent.addLesson(newLesson)
     val courseDir = project.courseDir
     if (parent is Course) {
-      GeneratorUtils.createLesson(newLesson, courseDir)
+      GeneratorUtils.createLesson(project, newLesson, courseDir)
     }
     else {
       val sectionDir = courseDir.findChild(parent.name)
-      GeneratorUtils.createLesson(newLesson, sectionDir!!)
+      GeneratorUtils.createLesson(project, newLesson, sectionDir!!)
     }
 
     return newLesson
@@ -325,7 +325,7 @@ class CourseUpdateTest : StepikTestCase() {
     val newSection = course.getSection(name)!!
     newSection.index = index
     newSection.course = course
-    GeneratorUtils.createSection(newSection, project.courseDir)
+    GeneratorUtils.createSection(project, newSection, project.courseDir)
     return newSection
   }
 

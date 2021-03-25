@@ -19,7 +19,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |""".trimMargin()
 
-    val configFile = GeneratorUtils.createChildFile(LightPlatformTestCase.getSourceRoot(), YamlFormatSettings.REMOTE_COURSE_CONFIG, yamlText)
+    val configFile = GeneratorUtils.createChildFile(project, LightPlatformTestCase.getSourceRoot(), YamlFormatSettings.REMOTE_COURSE_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
   }
@@ -34,7 +34,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |""".trimMargin()
 
     val sectionDir = LightPlatformTestCase.getSourceRoot().findChild(course.sections[0].name)!!
-    val configFile = GeneratorUtils.createChildFile(sectionDir, YamlFormatSettings.REMOTE_SECTION_CONFIG, yamlText)
+    val configFile = GeneratorUtils.createChildFile(project, sectionDir, YamlFormatSettings.REMOTE_SECTION_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
   }
@@ -49,7 +49,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |""".trimMargin()
 
     val lessonDir = course.lessons[0].getDir(project.courseDir)!!
-    val configFile = GeneratorUtils.createChildFile(lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
+    val configFile = GeneratorUtils.createChildFile(project, lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
   }
@@ -66,7 +66,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |""".trimMargin()
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
-    val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
+    val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkEditorNotification(configFile)
   }
@@ -97,7 +97,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |""".trimMargin()
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
-    val configFile = GeneratorUtils.createChildFile(taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)
+    val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)
     myFixture.openFileInEditor(configFile!!)
     checkNoEditorNotification(configFile)
   }

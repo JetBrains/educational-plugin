@@ -54,7 +54,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
     VirtualFile packageJsonFile = baseDir.findChild(PACKAGE_JSON);
     if (packageJsonFile == null && !myCourse.isStudy()) {
       final String templateText = getInternalTemplateText(PACKAGE_JSON);
-      packageJsonFile = GeneratorUtils.createChildFile(baseDir, PACKAGE_JSON, templateText);
+      packageJsonFile = GeneratorUtils.createChildFile(project, baseDir, PACKAGE_JSON, templateText);
     }
 
     if (packageJsonFile != null && !OpenApiExtKt.isUnitTestMode()) {

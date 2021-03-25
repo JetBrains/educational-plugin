@@ -227,7 +227,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun Task.createTaskFileAndOpenInEditor(taskFilePath: String, text: String = "") {
     val taskDir = getDir(project.courseDir) ?: error("Can't find task dir")
-    val file = GeneratorUtils.createChildFile(taskDir, taskFilePath, text) ?: error("Failed to create `$taskFilePath` in $taskDir")
+    val file = GeneratorUtils.createChildFile(project, taskDir, taskFilePath, text) ?: error("Failed to create `$taskFilePath` in $taskDir")
     myFixture.openFileInEditor(file)
   }
 

@@ -70,7 +70,7 @@ class CheckiOCourseUpdater(
   private fun createNewStations(newStations: List<CheckiOStation>) {
     newStations.forEach {
       try {
-        GeneratorUtils.createLesson(it, project.courseDir)
+        GeneratorUtils.createLesson(project, it, project.courseDir)
       }
       catch (e: IOException) {
         LOG.error("IO error occurred creating station [${it.id}; ${it.name}]", e)
@@ -116,7 +116,7 @@ class CheckiOCourseUpdater(
     val lessonDir = oldStation.getDir(project.courseDir) ?: error("Failed to find station dir: ${oldStation.name}")
     try {
       newMission.lesson = newStation
-      GeneratorUtils.createTask(newMission, lessonDir)
+      GeneratorUtils.createTask(project, newMission, lessonDir)
       stationsWithNewMissions.add(newStation)
     }
     catch (e: IOException) {

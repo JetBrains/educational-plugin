@@ -33,12 +33,13 @@ object EduGradleUtils {
   @JvmStatic
   @Throws(IOException::class)
   fun createProjectGradleFiles(
+    project: Project,
     projectDir: VirtualFile,
     templates: Map<String, String>,
     templateVariables: Map<String, Any>
   ) {
     for ((name, templateName) in templates) {
-      createFileFromTemplate(projectDir, name, templateName, templateVariables)
+      createFileFromTemplate(project, projectDir, name, templateName, templateVariables)
     }
   }
 

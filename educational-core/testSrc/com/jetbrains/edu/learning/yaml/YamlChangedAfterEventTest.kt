@@ -18,7 +18,7 @@ class YamlChangedAfterEventTest : YamlTestCase() {
     val task1 = course.findTask("lesson1", "task1")
 
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(project.courseDir, "lesson1/task/userFile.txt", "user file")
+      GeneratorUtils.createChildFile(project, project.courseDir, "lesson1/task/userFile.txt", "user file")
       task1.openTaskFileInEditor("file1.txt")
       myFixture.testAction(NextTaskAction())
     }

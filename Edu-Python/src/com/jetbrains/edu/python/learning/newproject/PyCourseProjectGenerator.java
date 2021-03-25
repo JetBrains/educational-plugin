@@ -42,7 +42,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     final String testHelper = EduNames.TEST_HELPER;
     if (baseDir.findChild(testHelper) != null) return;
     final String templateText = GeneratorUtils.getInternalTemplateText("test_helper");
-    GeneratorUtils.createChildFile(baseDir, testHelper, templateText);
+    GeneratorUtils.createChildFile(project, baseDir, testHelper, templateText);
   }
 
   @Override

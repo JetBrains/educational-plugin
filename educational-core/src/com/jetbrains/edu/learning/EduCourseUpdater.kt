@@ -150,7 +150,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       }
 
       section.init(course, course, false)
-      GeneratorUtils.createSection(section, baseDir)
+      GeneratorUtils.createSection(project, section, baseDir)
     }
   }
 
@@ -229,7 +229,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       }
 
       lesson.init(course, lesson.section, false)
-      GeneratorUtils.createLesson(lesson, parentDir)
+      GeneratorUtils.createLesson(project, lesson, parentDir)
     }
   }
 
@@ -248,7 +248,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
       taskFromServer.init(course, currentLesson, false)
 
-      createTaskDirectories(lessonDir, taskFromServer)
+      createTaskDirectories(project, lessonDir, taskFromServer)
     }
   }
 
@@ -256,7 +256,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val filesToCreate = courseFromServer.additionalFiles
     val baseDir = project.courseDir
     for (file in filesToCreate) {
-      GeneratorUtils.createChildFile(baseDir, file.name, file.text)
+      GeneratorUtils.createChildFile(project, baseDir, file.name, file.text)
     }
   }
 
@@ -267,11 +267,11 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   }
 
   @Throws(IOException::class)
-  private fun createTaskDirectories(lessonDir: VirtualFile, task: Task) {
+  private fun createTaskDirectories(project: Project, lessonDir: VirtualFile, task: Task) {
     if (!task.lesson.course.isStudy) {
-      CCUtils.initializeTaskPlaceholders(task, project)
+      CCUtils.initializeTaskPlaceholders(task, this.project)
     }
-    GeneratorUtils.createTask(task, lessonDir)
+    GeneratorUtils.createTask(project, task, lessonDir)
   }
 
   private fun deleteRemovedItems(remoteItemsIds: List<Int>, items: List<StudyItem>) {

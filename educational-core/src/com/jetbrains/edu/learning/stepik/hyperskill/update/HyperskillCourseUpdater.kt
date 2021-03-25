@@ -135,7 +135,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       problemsUpdates.forEach {
         val localTask = it.localTask
         if (localTask.status != CheckStatus.Solved) {
-          GeneratorUtils.createTaskContent(it.taskFromServer, localTask.getDir(project.courseDir)!!)
+          GeneratorUtils.createTaskContent(project, it.taskFromServer, localTask.getDir(project.courseDir)!!)
         }
         updateTaskDescription(localTask, it.taskFromServer)
         localTask.updateDate = it.taskFromServer.updateDate
@@ -165,7 +165,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
 
       val courseDir = project.courseDir
       for (additionalFile in remoteCourse.additionalFiles) {
-        GeneratorUtils.createChildFile(courseDir, additionalFile.name, additionalFile.text)
+        GeneratorUtils.createChildFile(project, courseDir, additionalFile.name, additionalFile.text)
       }
     }
   }
@@ -191,7 +191,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         if (updateInLocalFS) {
           val taskDir = task.getDir(project.courseDir)
           if (taskDir != null) {
-            GeneratorUtils.createChildFile(taskDir, path, currentTaskFile.text)
+            GeneratorUtils.createChildFile(project, taskDir, path, currentTaskFile.text)
           }
         }
       }

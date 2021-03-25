@@ -24,7 +24,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
 
   @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Section, parentDirectory: VirtualFile): VirtualFile? {
-    return GeneratorUtils.createSection(item, parentDirectory)
+    return GeneratorUtils.createSection(project, item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int = course.items.size

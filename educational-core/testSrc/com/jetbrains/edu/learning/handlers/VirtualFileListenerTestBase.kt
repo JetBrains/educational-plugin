@@ -42,7 +42,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     val task = course.findTask("lesson1", "task1")
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
 
-    GeneratorUtils.createChildFile(taskDir, filePathInTask, "")
+    GeneratorUtils.createChildFile(project, taskDir, filePathInTask, "")
     checksProducer(task).forEach(FileCheck::check)
   }
 

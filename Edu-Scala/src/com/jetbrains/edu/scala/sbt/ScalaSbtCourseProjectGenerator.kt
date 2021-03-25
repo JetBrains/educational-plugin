@@ -32,8 +32,9 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
       "SBT_VERSION" to sbtVersion.toString()
     )
 
-    GeneratorUtils.createFileFromTemplate(baseDir, BUILD_SBT, BUILD_SBT, templateVariables)
+    GeneratorUtils.createFileFromTemplate(project, baseDir, BUILD_SBT, BUILD_SBT, templateVariables)
     GeneratorUtils.createFileFromTemplate(
+      project,
       baseDir,
       "${Sbt.ProjectDirectory()}/${Sbt.PropertiesFile()}",
       Sbt.PropertiesFile(),

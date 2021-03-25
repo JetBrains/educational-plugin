@@ -32,7 +32,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
 
   @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Task, parentDirectory: VirtualFile): VirtualFile? {
-    return GeneratorUtils.createTask(item, parentDirectory)
+    return GeneratorUtils.createTask(project, item, parentDirectory)
   }
 
   override fun onStudyItemCreation(project: Project, course: Course, item: StudyItem) {

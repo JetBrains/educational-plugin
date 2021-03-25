@@ -45,9 +45,12 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createCourse(course: Course,
-                   baseDir: VirtualFile,
-                   indicator: ProgressIndicator) {
+  fun createCourse(
+    project: Project,
+    course: Course,
+    baseDir: VirtualFile,
+    indicator: ProgressIndicator
+  ) {
     indicator.isIndeterminate = false
     indicator.fraction = 0.0
 
@@ -57,23 +60,23 @@ object GeneratorUtils {
 
       if (item is Lesson) {
         indicator.text = "Generating lesson ${i + 1} of ${items.size}"
-        createLesson(item, baseDir)
+        createLesson(project, item, baseDir)
       }
       else if (item is Section) {
         indicator.text = "Generating section ${i + 1} of ${items.size}"
-        createSection(item, baseDir)
+        createSection(project, item, baseDir)
       }
     }
     indicator.text = "Generating additional files"
-    createAdditionalFiles(course, baseDir)
+    createAdditionalFiles(project, course, baseDir)
     EduCounterUsageCollector.studyItemCreated(course)
   }
 
-  fun createSection(item: Section, baseDir: VirtualFile): VirtualFile {
+  fun createSection(project: Project, item: Section, baseDir: VirtualFile): VirtualFile {
     val sectionDir = createUniqueDir(baseDir, item)
 
     for (lesson in item.lessons) {
-      createLesson(lesson, sectionDir)
+      createLesson(project, lesson, sectionDir)
     }
     EduCounterUsageCollector.studyItemCreated(item)
     return sectionDir
@@ -81,11 +84,11 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createLesson(lesson: Lesson, parentDir: VirtualFile): VirtualFile {
+  fun createLesson(project: Project, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     val lessonDir = createUniqueDir(parentDir, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {
-      createTask(task, lessonDir)
+      createTask(project, task, lessonDir)
     }
     EduCounterUsageCollector.studyItemCreated(lesson)
     return lessonDir
@@ -93,7 +96,7 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createTask(task: Task, lessonDir: VirtualFile): VirtualFile {
+  fun createTask(project: Project, task: Task, lessonDir: VirtualFile): VirtualFile {
     val isFirstInFrameworkLesson = task.parent is FrameworkLesson && task.index == 1
     val isStudyCourse = task.course.isStudy
     val (contentDir, configDir) = if (isStudyCourse && isFirstInFrameworkLesson) {
@@ -109,30 +112,30 @@ object GeneratorUtils {
     }
 
     if (!isStudyCourse || task.parent !is FrameworkLesson || isFirstInFrameworkLesson) {
-      createTaskContent(task, contentDir)
+      createTaskContent(project, task, contentDir)
     }
 
-    createDescriptionFile(configDir, task)
+    createDescriptionFile(project, configDir, task)
     EduCounterUsageCollector.studyItemCreated(task)
     return contentDir
   }
 
   @Throws(IOException::class)
-  fun createTaskContent(task: Task, taskDir: VirtualFile) {
+  fun createTaskContent(project: Project, task: Task, taskDir: VirtualFile) {
     val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
 
     for (file in taskFiles) {
-      createChildFile(taskDir, file.name, file.text)
+      createChildFile(project, taskDir, file.name, file.text)
     }
 
     for (file in testFiles) {
-      createChildFile(taskDir, file.name, "")
+      createChildFile(project, taskDir, file.name, "")
     }
   }
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createDescriptionFile(taskDir: VirtualFile, task: Task): VirtualFile? {
+  fun createDescriptionFile(project: Project, taskDir: VirtualFile, task: Task): VirtualFile? {
     val descriptionFileName = when (task.descriptionFormat) {
       HTML -> EduNames.TASK_HTML
       MD -> EduNames.TASK_MD
@@ -142,19 +145,19 @@ object GeneratorUtils {
       }
     }
 
-    return createChildFile(taskDir, descriptionFileName, task.descriptionText)
+    return createChildFile(project, taskDir, descriptionFileName, task.descriptionText)
   }
 
   @Throws(IOException::class)
-  fun createAdditionalFiles(course: Course, courseDir: VirtualFile) {
+  fun createAdditionalFiles(project: Project, course: Course, courseDir: VirtualFile) {
     for (file in course.additionalFiles) {
-      createChildFile(courseDir, file.name, file.text)
+      createChildFile(project, courseDir, file.name, file.text)
     }
   }
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createChildFile(parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
     return runInWriteActionAndWait(ThrowableComputable {
       var newDirectories: String? = null
       var fileName = path
@@ -280,11 +283,11 @@ object GeneratorUtils {
    * Otherwise, substitutes all template variables in file text
    */
   @Throws(IOException::class)
-  fun createFileFromTemplate(baseDir: VirtualFile, path: String, templateName: String, templateVariables: Map<String, Any>) {
+  fun createFileFromTemplate(project: Project, baseDir: VirtualFile, path: String, templateName: String, templateVariables: Map<String, Any>) {
     val file = baseDir.findFileByRelativePath(path)
     if (file == null) {
       val configText = getInternalTemplateText(templateName, templateVariables)
-      createChildFile(baseDir, path, configText)
+      createChildFile(project, baseDir, path, configText)
     }
     else {
       evaluateExistingTemplate(file, templateVariables)

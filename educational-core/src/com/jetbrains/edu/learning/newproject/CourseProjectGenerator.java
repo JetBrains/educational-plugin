@@ -207,7 +207,7 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project, myCourse);
         }
-        GeneratorUtils.createCourse(myCourse, baseDir, indicator);
+        GeneratorUtils.createCourse(project, myCourse, baseDir, indicator);
         if (myCourse instanceof EduCourse &&
             (((EduCourse)myCourse).isStepikRemote() || ((EduCourse)myCourse).isMarketplaceRemote()) &&
             CCUtils.isCourseCreator(project)) {

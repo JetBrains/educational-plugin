@@ -220,7 +220,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       }
 
       try {
-        GeneratorUtils.createDescriptionFile(taskDir, task);
+        GeneratorUtils.createDescriptionFile(project, taskDir, task);
       }
       catch (IOException e) {
         LOG.warn("Cannot create task description file: " + e.getMessage());

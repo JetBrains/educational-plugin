@@ -68,8 +68,8 @@ object HyperskillProjectOpener {
           hyperskillCourse.init(null, null, false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
           val courseDir = hyperskillCourse.getDir(project.courseDir)
-          GeneratorUtils.createLesson(projectLesson, courseDir)
-          GeneratorUtils.createAdditionalFiles(course, courseDir)
+          GeneratorUtils.createLesson(project, projectLesson, courseDir)
+          GeneratorUtils.createAdditionalFiles(project, course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
           course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
           synchronizeProjectOnStageOpening(project, hyperskillCourse, projectLesson.taskList)
@@ -327,11 +327,11 @@ object HyperskillProjectOpener {
     problemsLesson.init(course, null, false)
 
     if (createLessonDir) {
-      GeneratorUtils.createLesson(problemsLesson, course.getDir(project.courseDir))
+      GeneratorUtils.createLesson(project, problemsLesson, course.getDir(project.courseDir))
       YamlFormatSynchronizer.saveAll(project)
     }
     else if (createTaskDir) {
-      GeneratorUtils.createTask(task, problemsLesson.getDir(project.courseDir)!!)
+      GeneratorUtils.createTask(project, task, problemsLesson.getDir(project.courseDir)!!)
       YamlFormatSynchronizer.saveItem(problemsLesson)
       YamlFormatSynchronizer.saveItem(task)
       YamlFormatSynchronizer.saveRemoteInfo(task)
@@ -378,7 +378,7 @@ object HyperskillProjectOpener {
 
       when {
         createSectionDir -> {
-          GeneratorUtils.createSection(topicsSection, course.getDir(project.courseDir))
+          GeneratorUtils.createSection(project, topicsSection, course.getDir(project.courseDir))
           tasks.forEach { task ->
             YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
           }
@@ -388,7 +388,7 @@ object HyperskillProjectOpener {
         }
         createLessonDir -> {
           val parentDir = topicsSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
-          GeneratorUtils.createLesson(topicLesson, parentDir)
+          GeneratorUtils.createLesson(project, topicLesson, parentDir)
           tasks.forEach { task ->
             YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
           }
@@ -397,7 +397,7 @@ object HyperskillProjectOpener {
         }
         else -> {
           tasks.forEach { task ->
-            GeneratorUtils.createTask(task, topicLesson.getDir(project.courseDir)!!)
+            GeneratorUtils.createTask(project, task, topicLesson.getDir(project.courseDir)!!)
             YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
           }
           YamlFormatSynchronizer.saveItem(topicLesson)

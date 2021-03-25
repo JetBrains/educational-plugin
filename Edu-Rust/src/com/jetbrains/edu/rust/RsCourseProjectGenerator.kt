@@ -45,7 +45,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
 
     val initialMembers = members.joinToString(",\n", postfix = if (members.isEmpty()) "" else ",")
 
-    GeneratorUtils.createFileFromTemplate(baseDir, "Cargo.toml", "workspaceCargo.toml", mapOf(INITIAL_MEMBERS to initialMembers))
+    GeneratorUtils.createFileFromTemplate(project, baseDir, "Cargo.toml", "workspaceCargo.toml", mapOf(INITIAL_MEMBERS to initialMembers))
   }
 
   companion object {

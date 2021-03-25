@@ -37,7 +37,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
 
   @Throws(IOException::class)
   override fun createItemDir(project: Project, course: Course, item: Lesson, parentDirectory: VirtualFile): VirtualFile? {
-    return GeneratorUtils.createLesson(item, parentDirectory)
+    return GeneratorUtils.createLesson(project, item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int {

@@ -115,7 +115,7 @@ class MoveTest : MoveTestBase() {
 
     val taskFileName = "taskFile.txt"
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(findFile("$lessonName/$taskName"), "src/$taskFileName", "")
+      GeneratorUtils.createChildFile(project, findFile("$lessonName/$taskName"), "src/$taskFileName", "")
     }
 
     val sourceFile = findPsiFile("$lessonName/$taskName/src/$taskFileName")
@@ -142,7 +142,7 @@ class MoveTest : MoveTestBase() {
 
     val taskFileName = "taskFile.txt"
     withVirtualFileListener(course) {
-      GeneratorUtils.createChildFile(findFile("$lessonName/$taskName1"), taskFileName, "")
+      GeneratorUtils.createChildFile(project, findFile("$lessonName/$taskName1"), taskFileName, "")
     }
 
     val sourceFile = findPsiFile("$lessonName/$taskName1/$taskFileName")

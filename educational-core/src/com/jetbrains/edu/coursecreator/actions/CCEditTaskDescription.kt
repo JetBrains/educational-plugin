@@ -41,7 +41,7 @@ class CCEditTaskDescription : DumbAwareAction(
     if (task.descriptionText.isEmpty()) {
       task.addDefaultTaskDescription()
     }
-    return GeneratorUtils.createDescriptionFile(taskDir, task) ?: error("Failed to create description file in $taskDir")
+    return GeneratorUtils.createDescriptionFile(project, taskDir, task) ?: error("Failed to create description file in $taskDir")
   }
 
   override fun update(e: AnActionEvent) {
