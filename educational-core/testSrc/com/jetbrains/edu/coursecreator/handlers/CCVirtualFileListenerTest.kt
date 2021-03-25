@@ -132,7 +132,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
   fun `test add custom run configuration file`() {
     val filePath = "runConfigurations/CustomRun.run.xml"
-    doAddFileTest(filePath) { task ->
+    doAddFileTest(filePath, "<component name=\"ProjectRunConfigurationManager\"></component>") { task ->
       listOf((filePath `in` task).withAdditionalCheck {
         check(!it.isVisible) { "Custom run configuration file should be invisible by default" }
       })

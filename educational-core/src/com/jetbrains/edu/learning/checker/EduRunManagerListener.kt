@@ -40,7 +40,7 @@ class EduRunManagerListener(private val project: Project) : RunManagerListener {
 
   private fun findSrcDir(file: VirtualFile): Result<VirtualFile, String> {
     val taskDir = file.getTaskDir(project) ?: return Err("Failed to find task dir for $file")
-    val task = taskDir.getTask(project) ?: return Err("Failed to find task for $taskDir")
+    val task = taskDir.getContainingTask(project) ?: return Err("Failed to find task for $taskDir")
     val srcDir = task.findSourceDir(taskDir) ?: return Err("Failed to find source dir for ${task.name} task")
     return Ok(srcDir)
   }

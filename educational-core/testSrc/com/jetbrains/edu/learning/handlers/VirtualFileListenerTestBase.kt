@@ -26,7 +26,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
       .subscribe(VirtualFileManager.VFS_CHANGES, createListener(project))
   }
   
-  protected fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
+  protected fun doAddFileTest(filePathInTask: String, text: String = "", checksProducer: (Task) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = courseMode,
       language = FakeGradleBasedLanguage,
@@ -42,7 +42,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     val task = course.findTask("lesson1", "task1")
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
 
-    GeneratorUtils.createChildFile(project, taskDir, filePathInTask, "")
+    GeneratorUtils.createChildFile(project, taskDir, filePathInTask, text)
     checksProducer(task).forEach(FileCheck::check)
   }
 

@@ -11,6 +11,7 @@ import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.EduPathMacroUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isToEncodeContent
 import org.apache.commons.codec.binary.Base64
@@ -179,7 +180,8 @@ sealed class Change {
         EduDocumentListener.modifyWithoutListener(task, path) {
           val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
           if (document != null) {
-            runUndoTransparentWriteAction { document.setText(text) }
+            val expandedText = EduPathMacroUtils.expandPathsForFile(project, file, text)
+            runUndoTransparentWriteAction { document.setText(expandedText) }
           }
           else {
             LOG.warn("Can't get document for `$file`")

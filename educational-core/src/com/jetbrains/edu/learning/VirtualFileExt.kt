@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.EduPathMacroUtils
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.codec.binary.Base64
@@ -183,7 +184,9 @@ fun VirtualFile.isTestsFile(project: Project): Boolean {
 fun VirtualFile.isTaskRunConfigurationFile(project: Project): Boolean {
   if (isDirectory) return false
   val parent = parent ?: return false
-  return parent.name == EduNames.RUN_CONFIGURATION_DIR && parent.parent?.getTask(project) != null
+  if (parent.name != EduNames.RUN_CONFIGURATION_DIR) return false
+  val grandParent = parent.parent
+  return grandParent != null && grandParent.getTaskDir(project) == grandParent
 }
 
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {
@@ -230,7 +233,8 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
           throw BrokenPlaceholderException(EduCoreBundle.message("exception.broken.placeholder.title"), answerPlaceholder ?: placeholder)
         }
       }
-      taskFile.setText(studentDocument.immutableCharSequence.toString())
+      val text = studentDocument.immutableCharSequence.toString()
+      taskFile.setText(EduPathMacroUtils.collapsePathsForFile(project, this, text))
     }
     return taskFile
   }
