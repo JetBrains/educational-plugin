@@ -32,10 +32,14 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
   override val supportedConfigs: List<String> = listOf(YamlFormatSettings.TASK_CONFIG)
 
   override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
-    val fix = if (isValidFilePath(element.textValue)) CreateTaskFileFix(element) else null
-    // TODO: shouldn't be reported if path is invalid
-    holder.registerProblem(element, EduYAMLBundle.message("cannot.find.file", element.textValue),
-                           ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(fix).toTypedArray())
+    val path = element.textValue
+    if (isValidFilePath(path)) {
+      holder.registerProblem(element, EduYAMLBundle.message("cannot.find.file", path),
+                             ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(CreateTaskFileFix(element)).toTypedArray())
+    }
+    else {
+      holder.registerProblem(element, EduYAMLBundle.message("file.invalid.path", path), ProblemHighlightType.ERROR)
+    }
   }
 
   private class CreateTaskFileFix(element: YAMLScalar) : LocalQuickFixOnPsiElement(element) {

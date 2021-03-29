@@ -270,4 +270,3 @@ object YamlDeserializer {
   @VisibleForTesting
   class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
 }
-

@@ -93,7 +93,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find `src\taskfile1.txt` file">src\taskfile1.txt</error>
+      |- name: <error descr="File path `src\taskfile1.txt` is invalid">src\taskfile1.txt</error>
       |  visible: true
     """.trimMargin("|"))
   }
@@ -110,7 +110,7 @@ class TaskFileNotFoundInspectionTest : YamlInspectionsTestBase(TaskFileNotFoundI
     testQuickFixIsUnavailable(task, "Create file", """
       |type: edu
       |files:
-      |- name: <error descr="Cannot find `src//taskfile1.txt` file">src//taskfile1.txt</error>
+      |- name: <error descr="File path `src//taskfile1.txt` is invalid">src//taskfile1.txt</error>
       |  visible: true
     """.trimMargin("|"))
   }
