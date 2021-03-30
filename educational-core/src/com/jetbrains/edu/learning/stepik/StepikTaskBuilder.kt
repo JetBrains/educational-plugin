@@ -45,7 +45,7 @@ open class StepikTaskBuilder(
 
   private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
     Step.CODE to this::codeTask,
-    "choice" to this::choiceTask,
+    Step.CHOICE to this::choiceTask,
     Step.TEXT to this::theoryTask,
     "string" to this::unsupportedTask,
     "pycharm" to { _: String -> pycharmTask() },
@@ -289,7 +289,7 @@ open class StepikTaskBuilder(
 
     private val DEFAULT_NAMES: Map<String, String> = mapOf(
       Step.CODE to "Programming",
-      "choice" to "Quiz",
+      Step.CHOICE to "Quiz",
       Step.TEXT to "Theory",
       "pycharm" to "Programming",
       "video" to "Video",

@@ -20,9 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
@@ -115,7 +117,12 @@ class Step {
   }
 
   companion object {
-    const val CODE = "code"
+    /**
+     Constants for stepik step types.
+     Please note: stepik step type might be different with task type in plugin. E.x.: theory task.
+     */
+    const val CHOICE = CHOICE_TASK_TYPE
+    const val CODE = CodeTask.CODE
     const val TEXT = "text"
   }
 }
