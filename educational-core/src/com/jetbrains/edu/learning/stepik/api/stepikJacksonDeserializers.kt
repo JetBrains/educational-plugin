@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
@@ -241,7 +242,7 @@ fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
   if (node.has(SerializationUtils.Json.TASK_TYPE)) {
     val taskType = node.get(SerializationUtils.Json.TASK_TYPE).asText()
     return when (taskType) {
-      "ide" -> objectMapper.treeToValue(node, IdeTask::class.java)
+      IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
       "choice" -> objectMapper.treeToValue(node, ChoiceTask::class.java)
       TheoryTask.THEORY -> objectMapper.treeToValue(node, TheoryTask::class.java)
       "video" -> objectMapper.treeToValue(node, VideoTask::class.java)

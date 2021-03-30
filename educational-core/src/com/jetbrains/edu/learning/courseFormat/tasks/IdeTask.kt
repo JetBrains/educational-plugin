@@ -14,7 +14,7 @@ class IdeTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType() = "ide"
+  override fun getItemType() = IDE_TASK_TYPE
 
   override fun getIcon(): Icon {
     if (myStatus == CheckStatus.Unchecked) {
@@ -25,5 +25,9 @@ class IdeTask : Task {
 
   override fun isToSubmitToStepik(): Boolean {
     return myStatus != CheckStatus.Unchecked
+  }
+
+  companion object {
+    const val IDE_TASK_TYPE: String = "ide"
   }
 }

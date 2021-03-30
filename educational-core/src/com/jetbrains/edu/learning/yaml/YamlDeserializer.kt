@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -132,7 +133,7 @@ object YamlDeserializer {
       TheoryTask.THEORY -> TheoryTask::class.java
       "video" -> VideoTask::class.java
       "choice" -> ChoiceTask::class.java
-      "ide" -> IdeTask::class.java
+      IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
       CodeTask.CODE -> CodeTask::class.java
       "checkiO" -> CheckiOMission::class.java
