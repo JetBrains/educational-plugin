@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -130,7 +131,7 @@ object YamlDeserializer {
     val type = asText(treeNode.get("type")) ?: formatError("Task type not specified")
 
     val clazz = when (type) {
-      "edu" -> EduTask::class.java
+      EDU_TASK_TYPE -> EduTask::class.java
       "output" -> OutputTask::class.java
       TheoryTask.THEORY -> TheoryTask::class.java
       VIDEO_TASK_TYPE -> VideoTask::class.java

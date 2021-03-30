@@ -9,6 +9,7 @@ import java.util.Date;
  * Original Edu plugin tasks with local tests and answer placeholders
  */
 public class EduTask extends Task {
+  public static final String EDU_TASK_TYPE = "edu";
 
   public EduTask() {
   }
@@ -23,7 +24,7 @@ public class EduTask extends Task {
 
   @Override
   public String getItemType() {
-    return "edu";
+    return EDU_TASK_TYPE;
   }
 
   @Override
