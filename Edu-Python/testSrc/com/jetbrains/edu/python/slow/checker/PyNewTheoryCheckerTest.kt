@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.PythonLanguage
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
 
 @Suppress("PyInterpreter")
@@ -24,13 +24,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
         theoryTask("TheoryWithCustomRunConfiguration") {
           pythonTaskFile("main.py", """
             import os
-            
+
             if __name__ == "__main__":
                 print(os.getenv("EXAMPLE_ENV"))
           """)
           taskFile("__init__.py")
           dir("runConfigurations") {
-            taskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", """
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="PythonConfigurationType" factoryName="Python">
                   <module name="Python Course7" />
@@ -55,7 +55,85 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                   <option name="INPUT_FILE" value="" />
                   <method v="2" />
                 </configuration>
-              </component>             
+              </component>
+            """)
+          }
+        }
+      }
+      frameworkLesson {
+        theoryTask("FrameworkTheoryWithCustomRunConfiguration1") {
+          pythonTaskFile("main.py", """
+            import os
+            
+            if __name__ == "__main__":
+                print(os.getenv("EXAMPLE_ENV"))
+          """)
+          taskFile("__init__.py")
+          dir("runConfigurations") {
+            xmlTaskFile("CustomRun.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration default="false" name="CustomRun1" type="PythonConfigurationType" factoryName="Python">
+                  <module name="Python Course" />
+                  <option name="INTERPRETER_OPTIONS" value="" />
+                  <option name="PARENT_ENVS" value="true" />
+                  <envs>
+                    <env name="PYTHONUNBUFFERED" value="1" />
+                    <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
+                  </envs>
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="IS_MODULE_SDK" value="true" />
+                  <option name="ADD_CONTENT_ROOTS" value="true" />
+                  <option name="ADD_SOURCE_ROOTS" value="true" />
+                  <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="PARAMETERS" value="" />
+                  <option name="SHOW_COMMAND_LINE" value="false" />
+                  <option name="EMULATE_TERMINAL" value="false" />
+                  <option name="MODULE_MODE" value="false" />
+                  <option name="REDIRECT_INPUT" value="false" />
+                  <option name="INPUT_FILE" value="" />
+                  <method v="2" />
+                </configuration>
+              </component>              
+            """)
+          }
+        }
+        theoryTask("FrameworkTheoryWithCustomRunConfiguration2") {
+          pythonTaskFile("main.py", """
+            import os
+            
+            if __name__ == "__main__":
+                print(os.getenv("EXAMPLE_ENV"))
+          """)
+          taskFile("__init__.py")
+          dir("runConfigurations") {
+            xmlTaskFile("CustomRun.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration default="false" name="CustomRun2" type="PythonConfigurationType" factoryName="Python">
+                  <module name="Python Course" />
+                  <option name="INTERPRETER_OPTIONS" value="" />
+                  <option name="PARENT_ENVS" value="true" />
+                  <envs>
+                    <env name="PYTHONUNBUFFERED" value="1" />
+                    <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
+                  </envs>
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="IS_MODULE_SDK" value="true" />
+                  <option name="ADD_CONTENT_ROOTS" value="true" />
+                  <option name="ADD_SOURCE_ROOTS" value="true" />
+                  <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="PARAMETERS" value="" />
+                  <option name="SHOW_COMMAND_LINE" value="false" />
+                  <option name="EMULATE_TERMINAL" value="false" />
+                  <option name="MODULE_MODE" value="false" />
+                  <option name="REDIRECT_INPUT" value="false" />
+                  <option name="INPUT_FILE" value="" />
+                  <method v="2" />
+                </configuration>
+              </component>              
             """)
           }
         }
@@ -66,8 +144,10 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
   fun `test python course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {
-        "Theory" -> CoreMatchers.equalTo(CheckStatus.Solved) to CoreMatchers.containsString("Hello!")
-        "TheoryWithCustomRunConfiguration" -> CoreMatchers.equalTo(CheckStatus.Solved) to CoreMatchers.containsString("Hello!")
+        "Theory" -> equalTo(CheckStatus.Solved) to containsString("Hello!")
+        "TheoryWithCustomRunConfiguration" -> equalTo(CheckStatus.Solved) to containsString("Hello!")
+        "FrameworkTheoryWithCustomRunConfiguration1" -> equalTo(CheckStatus.Solved) to containsString("Hello from FrameworkTheory1!")
+        "FrameworkTheoryWithCustomRunConfiguration2" -> equalTo(CheckStatus.Solved) to containsString("Hello from FrameworkTheory2!")
         else -> error("Unexpected task name: ${task.name}")
       }
       Assert.assertThat(checkResult.status, statusMatcher)

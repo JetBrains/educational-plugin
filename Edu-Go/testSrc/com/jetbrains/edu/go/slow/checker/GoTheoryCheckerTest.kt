@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
 
 class GoTheoryCheckerTest : GoCheckersTestBase() {
@@ -45,7 +45,7 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
             module theorywithcustomrunconfiguration
           """)
           dir("runConfigurations") {
-            taskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", """
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="GoApplicationRunConfiguration" factoryName="Go Application">
                   <module name="Go Course" />
@@ -64,14 +64,88 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
           }
         }
       }
+      frameworkLesson {
+        theoryTask("FrameworkTheoryWithCustomRunConfiguration1") {
+          goTaskFile("main.go", """
+            package main
+            
+            import (
+              "fmt"
+              "os"
+            )
+            
+            func main() {
+              fmt.Println(os.Getenv("EXAMPLE_ENV"))
+            }
+          """)
+          taskFile("go.mod", """
+            module task
+          """)
+          dir("runConfigurations") {
+            xmlTaskFile("CustomRun.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration default="false" name="CustomRun1" type="GoApplicationRunConfiguration" factoryName="Go Application">
+                  <module name="Go Course" />
+                  <working_directory value="${'$'}TASK_DIR${'$'}" />
+                  <envs>
+                    <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
+                  </envs>
+                  <kind value="PACKAGE" />
+                  <package value="task" />
+                  <directory value="${'$'}PROJECT_DIR${'$'}" />
+                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
+                  <method v="2" />
+                </configuration>
+              </component>             
+            """)
+          }
+        }
+        theoryTask("FrameworkTheoryWithCustomRunConfiguration2") {
+          goTaskFile("main.go", """
+            package main
+            
+            import (
+              "fmt"
+              "os"
+            )
+            
+            func main() {
+              fmt.Println(os.Getenv("EXAMPLE_ENV"))
+            }
+          """)
+          taskFile("go.mod", """
+            module task
+          """)
+          dir("runConfigurations") {
+            xmlTaskFile("CustomRun.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration default="false" name="CustomRun2" type="GoApplicationRunConfiguration" factoryName="Go Application">
+                  <module name="Go Course" />
+                  <working_directory value="${'$'}TASK_DIR${'$'}" />
+                  <envs>
+                    <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
+                  </envs>
+                  <kind value="PACKAGE" />
+                  <package value="task" />
+                  <directory value="${'$'}PROJECT_DIR${'$'}" />
+                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
+                  <method v="2" />
+                </configuration>
+              </component>             
+            """)
+          }
+        }
+      }
     }
   }
 
   fun `test go course`() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       val (statusMatcher, messageMatcher) = when (task.name) {
-        "Theory" -> CoreMatchers.equalTo(CheckStatus.Solved) to CoreMatchers.containsString("Hello!")
-        "TheoryWithCustomRunConfiguration" -> CoreMatchers.equalTo(CheckStatus.Solved) to CoreMatchers.containsString("Hello!")
+        "Theory" -> equalTo(CheckStatus.Solved) to containsString("Hello!")
+        "TheoryWithCustomRunConfiguration" -> equalTo(CheckStatus.Solved) to containsString("Hello!")
+        "FrameworkTheoryWithCustomRunConfiguration1" -> equalTo(CheckStatus.Solved) to containsString("Hello from FrameworkTheory1!")
+        "FrameworkTheoryWithCustomRunConfiguration2" -> equalTo(CheckStatus.Solved) to containsString("Hello from FrameworkTheory2!")
         else -> error("Unexpected task name: ${task.name}")
       }
       Assert.assertThat(checkResult.status, statusMatcher)

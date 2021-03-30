@@ -1,0 +1,45 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "TheoryWithCustomRunConfiguration",
+          "files" : {
+            "main.py" : {
+              "name" : "main.py",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "import os\n\nif __name__ == \"__main__\":\n    print(os.getenv(\"EXAMPLE_ENV\"))"
+            },
+            "CustomRun.run.xml" : {
+              "name" : "CustomRun.run.xml",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "<component name=\"ProjectRunConfigurationManager\">\n  <configuration default=\"false\" name=\"CustomCustomRun\" type=\"PythonConfigurationType\" factoryName=\"Python\">\n    <module name=\"Python Course7\" />\n    <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n    <option name=\"PARENT_ENVS\" value=\"true\" />\n    <envs>\n      <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      <env name=\"EXAMPLE_ENV\" value=\"Hello!\" />\n    </envs>\n    <option name=\"SDK_HOME\" value=\"$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python\" />\n    <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration\" />\n    <option name=\"IS_MODULE_SDK\" value=\"true\" />\n    <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n    <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n    <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\n    <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration/main.py\" />\n    <option name=\"PARAMETERS\" value=\"\" />\n    <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n    <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n    <option name=\"MODULE_MODE\" value=\"false\" />\n    <option name=\"REDIRECT_INPUT\" value=\"false\" />\n    <option name=\"INPUT_FILE\" value=\"\" />\n    <method v=\"2\" />\n  </configuration>\n</component>"
+            },
+            "runConfigurations/CustomRun.run.xml" : {
+              "name" : "runConfigurations/CustomRun.run.xml",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "<component name=\"ProjectRunConfigurationManager\">\n  <configuration default=\"false\" name=\"CustomRun\" type=\"PythonConfigurationType\" factoryName=\"Python\">\n    <module name=\"Python Course7\" />\n    <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n    <option name=\"PARENT_ENVS\" value=\"true\" />\n    <envs>\n      <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      <env name=\"EXAMPLE_ENV\" value=\"Hello!\" />\n    </envs>\n    <option name=\"SDK_HOME\" value=\"$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python\" />\n    <option name=\"WORKING_DIRECTORY\" value=\"$TASK_DIR$\" />\n    <option name=\"IS_MODULE_SDK\" value=\"true\" />\n    <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n    <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n    <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\n    <option name=\"SCRIPT_NAME\" value=\"$TASK_DIR$/main.py\" />\n    <option name=\"PARAMETERS\" value=\"\" />\n    <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n    <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n    <option name=\"MODULE_MODE\" value=\"false\" />\n    <option name=\"REDIRECT_INPUT\" value=\"false\" />\n    <option name=\"INPUT_FILE\" value=\"\" />\n    <method v=\"2\" />\n  </configuration>\n</component>"
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "theory"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "version" : 11
+}

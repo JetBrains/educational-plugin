@@ -380,6 +380,13 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
+  fun xmlTaskFile(
+    name: String,
+    @Language("XML") text: String = "",
+    visible: Boolean = true,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, visible, buildTaskFile)
+
   fun taskFileFromResources(
     disposable: Disposable,
     name: String,

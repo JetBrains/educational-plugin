@@ -18,12 +18,14 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -92,14 +94,22 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
         myCourse.configurator!!.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 
-    protected open fun checkTask(currentTask: Task): List<AssertionError> {
+    protected open fun checkTask(task: Task): List<AssertionError> {
         UIUtil.dispatchAllInvocationEvents()
         val exceptions = mutableListOf<AssertionError>()
         try {
-            val taskFile = currentTask.taskFiles.values.first()
-            val virtualFile = taskFile.getVirtualFile(myProject)
-                              ?: error("Can't find virtual file for `${taskFile.name}` task file in `${currentTask.name} task`")
-            FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
+            // In case of framework lessons, we can't just run checker for the given task
+            // because code on file system may be not updated yet.
+            // Launch `NextTaskAction` to make all necessary updates on file system in similar was as users do it
+            val frameworkLesson = task.lesson as? FrameworkLesson
+            val currentFrameworkLessonTask = frameworkLesson?.currentTask()
+            if (frameworkLesson != null && currentFrameworkLessonTask != null && currentFrameworkLessonTask != task) {
+                val file = currentFrameworkLessonTask.openFirstTaskFileInEditor()
+                launchAction(file, NextTaskAction())
+                assertEquals(task, frameworkLesson.currentTask())
+            }
+
+            val virtualFile = task.openFirstTaskFileInEditor()
             launchAction(virtualFile, CheckAction())
             UIUtil.dispatchAllInvocationEvents()
         } catch (e: AssertionError) {
@@ -108,6 +118,15 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
             exceptions.add(e)
         }
         return exceptions
+    }
+
+    private fun Task.openFirstTaskFileInEditor(): VirtualFile {
+        val taskFile = taskFiles.values.first()
+        val virtualFile = taskFile.getVirtualFile(myProject)
+                          ?: error("Can't find virtual file for `${taskFile.name}` task file in `$name task`")
+
+        FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
+        return virtualFile
     }
 
     private class MultipleCauseException(val causes: List<AssertionError>) : Exception() {
@@ -125,6 +144,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     protected abstract fun createCourse(): Course
 
     private fun projectName() = getTestName(true)
+
 
     private fun launchAction(virtualFile: VirtualFile, action: AnAction) {
         val e = getActionEvent(virtualFile, action)
