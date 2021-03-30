@@ -13,15 +13,20 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
-import com.jetbrains.edu.learning.newproject.ui.communityCourses.EduCourseCard
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
-class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
+                         private val coursesProvider: StepikCoursesProvider,
+                         scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
   private var busConnection: MessageBusConnection? = null
 
   override fun toolbarAction(): ToolbarActionWrapper {
@@ -34,6 +39,13 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Corou
     val linkInfo = LinkInfo(linkText, StepikNames.getStepikUrl())
     val loginComponent = StepikLoginPanel()
     return TabInfo(infoText, linkInfo, loginComponent)
+  }
+
+  override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
+    val privateCourses = withContext(Dispatchers.IO) { coursesProvider.loadPrivateCourseInfos() }
+    val privateCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.private.courses.group"), privateCourses)
+    coursesGroups.add(0, privateCoursesGroup)
+    super.updateCoursesAfterLogin(preserveSelection)
   }
 
   private inner class StepikLoginPanel : LoginPanel(isLoginNeeded(),

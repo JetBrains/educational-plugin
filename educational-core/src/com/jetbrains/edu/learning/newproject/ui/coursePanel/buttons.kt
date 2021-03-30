@@ -14,6 +14,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.stepikMarketplaceIdsMap
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -94,7 +96,15 @@ class OpenCourseButton : CourseButtonBase() {
         }
         else -> {
           closeDialog()
-          JoinCourseDialog(course).show()
+          // if course is present both on stepik and marketplace we open marketplace-based one
+          val marketplaceId = stepikMarketplaceIdsMap[course.id]
+          val courseToOpen = if (marketplaceId != null) {
+            MarketplaceConnector.getInstance().searchCourse(marketplaceId) ?: course
+          }
+          else {
+            course
+          }
+          JoinCourseDialog(courseToOpen).show()
         }
       }
     }

@@ -4,7 +4,7 @@ query {
       filters: [{ field: "family", value: "edu" }]
       max: ${max}
       offset: ${offset}
-      sortBy: DOWNLOADS
+      sortBy: RATING
     }
   ) {
     total

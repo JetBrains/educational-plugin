@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -28,6 +29,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
+
+class JetBrainsAcademyPlatformProviderFactory : CoursesPlatformProviderFactory {
+  override fun getProviders(): List<CoursesPlatformProvider> = listOf(JetBrainsAcademyPlatformProvider())
+}
 
 class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   override val name: String = EduNames.JBA

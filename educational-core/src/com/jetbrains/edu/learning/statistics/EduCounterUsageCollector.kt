@@ -10,9 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
-import com.jetbrains.edu.learning.marketplace.MarketplacePlatformProvider
+import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.communityCourses.CommunityPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
 import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
@@ -171,7 +170,6 @@ object EduCounterUsageCollector {
     CHECKIO,
     CODEFORCES,
     COURSERA,
-    COMMUNITY,
     STEPIK,
     MY_COURSES,
     UNKNOWN;
@@ -179,13 +177,12 @@ object EduCounterUsageCollector {
     companion object {
       fun fromProvider(provider: CoursesPlatformProvider): CourseSelectionViewTab {
         return when (provider) {
-          is MarketplacePlatformProvider -> MARKETPLACE
           is JetBrainsAcademyPlatformProvider -> JBA
           is CheckiOPlatformProvider -> CHECKIO
           is CodeforcesPlatformProvider -> CODEFORCES
           is CourseraPlatformProvider -> COURSERA
           is StepikPlatformProvider -> STEPIK
-          is CommunityPlatformProvider -> COMMUNITY
+          is MarketplacePlatformProvider -> MARKETPLACE
           is MyCoursesProvider -> MY_COURSES
           else -> UNKNOWN
         }

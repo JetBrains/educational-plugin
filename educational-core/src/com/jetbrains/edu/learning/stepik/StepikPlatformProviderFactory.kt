@@ -1,13 +1,11 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.newproject.ui.communityCourses.CommunityPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
 import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
 
 /**
@@ -17,11 +15,6 @@ import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
  */
 class StepikPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> {
-    val coursesProvider = StepikCoursesProvider()
-    return listOf(
-      JetBrainsAcademyPlatformProvider(),
-      CommunityPlatformProvider(coursesProvider),
-      StepikPlatformProvider(coursesProvider)
-    )
+    return listOf(StepikPlatformProvider())
   }
 }

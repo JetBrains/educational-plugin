@@ -313,14 +313,16 @@
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
-    <coursesPlatformProviderFactory id="Stepik" order="first"
+    <coursesPlatformProviderFactory id="JetBrainsAcademy" order="first"
+                                    implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Marketplace" order="after JetBrainsAcademy"
+                                    implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Stepik" order="after Marketplace"
                                     implementation="com.jetbrains.edu.learning.stepik.StepikPlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="Coursera" order="after Stepik"
                                     implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="CheckiO" order="after Coursera"
                                     implementation="com.jetbrains.edu.learning.checkio.CheckiOPlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="Marketplace" order="after CheckiO"
-                                    implementation="com.jetbrains.edu.learning.marketplace.MarketplacePlatformProviderFactory"/>
     <!--    <coursesPlatformProviderFactory id="Codeforces" order="after Coursera"-->
     <!--                                    implementation="com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProviderFactory"/>-->
 

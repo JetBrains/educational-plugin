@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui.communityCourses
+package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.ui.components.JBLabel
@@ -7,9 +7,6 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
-import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import icons.EducationalCoreIcons
 import java.awt.Font

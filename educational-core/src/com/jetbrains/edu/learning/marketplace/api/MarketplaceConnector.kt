@@ -147,7 +147,7 @@ abstract class MarketplaceConnector : CourseConnector {
     }
     while (courses.size < coursesList.total)
 
-    return courses.toList()
+    return courses
   }
 
   private fun getCourses(offset: Int): CoursesList? {
