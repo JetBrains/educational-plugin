@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
@@ -251,7 +252,7 @@ fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
       VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
       CodeTask.CODE -> objectMapper.treeToValue(node, CodeTask::class.java)
       EDU_TASK_TYPE -> objectMapper.treeToValue(node, EduTask::class.java)
-      "output" -> objectMapper.treeToValue(node, OutputTask::class.java)
+      OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
       "pycharm" -> objectMapper.treeToValue(node, EduTask::class.java)     // deprecated: old courses have pycharm tasks
       else -> {
         LOG.warn("Unsupported task type $taskType")

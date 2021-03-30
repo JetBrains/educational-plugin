@@ -17,10 +17,6 @@ class OutputTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  companion object {
-    const val OUTPUT_TASK_TYPE = "output"
-  }
-
   override fun getItemType() = OUTPUT_TASK_TYPE
 
   override fun isToSubmitToStepik(): Boolean {
@@ -28,4 +24,8 @@ class OutputTask : Task {
   }
 
   override fun supportSubmissions(): Boolean = true
+
+  companion object {
+    const val OUTPUT_TASK_TYPE: String = "output"
+  }
 }
