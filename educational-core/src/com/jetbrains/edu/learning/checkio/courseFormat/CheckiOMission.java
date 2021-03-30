@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class CheckiOMission extends EduTask {
+  public static final String CHECK_IO_MISSION_TASK_TYPE = "checkiO";
+
   @NotNull
   @Transient // used to get missions from server
   private CheckiOStation myStation;
@@ -97,7 +99,7 @@ public class CheckiOMission extends EduTask {
   @Override
   @NonNls
   public String getItemType() {
-    return "checkiO";
+    return CHECK_IO_MISSION_TASK_TYPE;
   }
 
   @Override

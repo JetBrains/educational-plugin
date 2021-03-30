@@ -15,6 +15,7 @@ import com.intellij.psi.codeStyle.NameUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.CHECK_IO_MISSION_TASK_TYPE
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
@@ -142,7 +143,7 @@ object YamlDeserializer {
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
       CODE_TASK_TYPE -> CodeTask::class.java
-      "checkiO" -> CheckiOMission::class.java
+      CHECK_IO_MISSION_TASK_TYPE -> CheckiOMission::class.java
       CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
       CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
