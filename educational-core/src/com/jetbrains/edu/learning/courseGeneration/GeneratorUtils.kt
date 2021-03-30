@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -176,7 +177,7 @@ object GeneratorUtils {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
         }
         else {
-          VfsUtil.saveText(virtualTaskFile, EduPathMacroUtils.expandPathsForFile(project, virtualTaskFile, text))
+          VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandPathsForFile(project, virtualTaskFile, text))
         }
         virtualTaskFile
       }

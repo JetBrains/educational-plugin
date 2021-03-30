@@ -50,6 +50,9 @@
     <extensionPoint qualifiedName="Educational.coursesPlatformProviderFactory"
                     interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.pathMacroProvider"
+                    interface="com.jetbrains.edu.learning.courseGeneration.macro.EduMacroProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>
@@ -363,6 +366,8 @@
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
+
+    <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
   </extensions>
 
   <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>

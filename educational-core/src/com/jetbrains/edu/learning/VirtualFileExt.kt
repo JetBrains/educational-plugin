@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.EduPathMacroUtils
+import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.codec.binary.Base64
@@ -234,7 +234,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
         }
       }
       val text = studentDocument.immutableCharSequence.toString()
-      taskFile.setText(EduPathMacroUtils.collapsePathsForFile(project, this, text))
+      taskFile.setText(EduMacroUtils.collapsePathsForFile(project, this, text))
     }
     return taskFile
   }
