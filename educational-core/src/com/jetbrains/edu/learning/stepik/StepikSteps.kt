@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -123,7 +123,7 @@ class Step {
      Please note: stepik step type might be different with task type in plugin. E.x.: theory task.
      */
     const val CHOICE = CHOICE_TASK_TYPE
-    const val CODE = CodeTask.CODE
+    const val CODE = CODE_TASK_TYPE
     const val TEXT = "text"
     const val VIDEO = VIDEO_TASK_TYPE
   }
