@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
@@ -134,7 +135,7 @@ object YamlDeserializer {
     val clazz = when (type) {
       EDU_TASK_TYPE -> EduTask::class.java
       OUTPUT_TASK_TYPE -> OutputTask::class.java
-      TheoryTask.THEORY -> TheoryTask::class.java
+      THEORY_TASK_TYPE -> TheoryTask::class.java
       VIDEO_TASK_TYPE -> VideoTask::class.java
       CHOICE_TASK_TYPE -> ChoiceTask::class.java
       IDE_TASK_TYPE -> IdeTask::class.java

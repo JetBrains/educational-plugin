@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -67,7 +68,7 @@ open class StepikTaskBuilder(
     EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    TheoryTask.THEORY to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
+    THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
   open fun createTask(type: String): Task? {
