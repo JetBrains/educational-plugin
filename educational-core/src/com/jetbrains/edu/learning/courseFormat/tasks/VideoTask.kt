@@ -16,9 +16,13 @@ class VideoTask : TheoryTask {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType() = "video"
+  override fun getItemType() = VIDEO_TASK_TYPE
 
   override fun isPluginTaskType() = false
+
+  companion object {
+    const val VIDEO_TASK_TYPE: String = "video"
+  }
 }
 
 class VideoSource(var src: String, var res: String) {
