@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.Step
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TOPICS
@@ -114,6 +114,6 @@ class HyperskillCourse : Course {
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   companion object {
-    val SUPPORTED_STEP_TYPES: Set<String> = setOf(Step.CODE, Step.TEXT)
+    val SUPPORTED_STEP_TYPES: Set<String> = setOf(StepikTaskType.CODE.type, StepikTaskType.TEXT.type)
   }
 }

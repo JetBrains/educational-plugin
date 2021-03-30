@@ -44,7 +44,7 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
  * - Go to {@link ItemContainer#items} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
- * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
+ * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder.StepikTaskType} otherwise
  * - Handle yaml deserialization:
  *    - add type in {@link YamlDeserializer#deserializeTask(com.fasterxml.jackson.databind.ObjectMapper, String)}
  *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}

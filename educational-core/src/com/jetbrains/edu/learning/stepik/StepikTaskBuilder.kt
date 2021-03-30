@@ -10,12 +10,16 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -29,8 +33,6 @@ import org.jsoup.safety.Whitelist
 import java.util.*
 import java.util.Collections.unmodifiableList
 
-// TODO: get rid of LeakingThis warnings without suppression
-@Suppress("LeakingThis")
 open class StepikTaskBuilder(
   course: Course,
   private val lesson: Lesson,
@@ -46,24 +48,6 @@ open class StepikTaskBuilder(
   private val step: Step = stepSource.block ?: error("Step is empty")
   private val updateDate = stepSource.updateDate ?: Date(0)
 
-  private val stepikTaskTypes: Map<String, (String) -> Task> = mapOf(
-    Step.CODE to this::codeTask,
-    Step.CHOICE to this::choiceTask,
-    Step.TEXT to this::theoryTask,
-    "string" to this::unsupportedTask,
-    "pycharm" to { _: String -> pycharmTask() },
-    Step.VIDEO to this::videoTask,
-    "number" to this::unsupportedTask,
-    "sorting" to this::unsupportedTask,
-    "matching" to this::unsupportedTask,
-    "math" to this::unsupportedTask,
-    "free-answer" to this::unsupportedTask,
-    "table" to this::unsupportedTask,
-    "dataset" to this::unsupportedTask,
-    "admin" to this::unsupportedTask,
-    "manual-score" to this::unsupportedTask
-  )
-
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
     EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
@@ -71,14 +55,43 @@ open class StepikTaskBuilder(
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
-  open fun createTask(type: String): Task? {
-    val taskName = DEFAULT_NAMES[type] ?: UNKNOWN_TASK_NAME
-    return stepikTaskTypes[type]?.invoke(taskName)
+  private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskType.values().associateBy(
+    { it.type },
+    {
+      when (it) {
+        StepikTaskType.CHOICE -> this::choiceTask
+        StepikTaskType.CODE -> this::codeTask
+        StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
+        StepikTaskType.TEXT -> this::theoryTask
+        StepikTaskType.VIDEO -> this::videoTask
+        else -> this::unsupportedTask
+      }
+    })
+
+  enum class StepikTaskType(val type: String, val value: String) {
+    CHOICE(CHOICE_TASK_TYPE, "Quiz"),
+    CODE(CODE_TASK_TYPE, "Programming"),
+    PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
+    TEXT("text", "Theory"),
+    VIDEO(VIDEO_TASK_TYPE, "Video"),
+    NUMBER("number", "Number"),
+    SORTING("sorting", "Sorting"),
+    MATCHING("matching", "Matching"),
+    STRING("string", "Text"),
+    MATH("math", "Math"),
+    FREE_ANSWER("free-answer", "Free Response"),
+    TABLE("table", "Table"),
+    DATASET("dataset", "Data"),
+    ADMIN("admin", "Linux"),
+    MANUAL_SCORE("manual-score", "Manual Score")
   }
 
-  fun isSupported(type: String): Boolean {
-    return stepikTaskTypes.containsKey(type)
+  open fun createTask(type: String): Task? {
+    val taskName = StepikTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
+    return stepikTaskBuilders[type]?.invoke(taskName)
   }
+
+  fun isSupported(type: String): Boolean = stepikTaskBuilders.containsKey(type)
 
   private fun codeTask(name: String): CodeTask {
     val task = CodeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
@@ -288,28 +301,9 @@ open class StepikTaskBuilder(
   }
 
   companion object {
-    private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
-
-    private val DEFAULT_NAMES: Map<String, String> = mapOf(
-      Step.CODE to "Programming",
-      Step.CHOICE to "Quiz",
-      Step.TEXT to "Theory",
-      "pycharm" to "Programming",
-      Step.VIDEO to "Video",
-      "number" to "Number",
-      "sorting" to "Sorting",
-      "matching" to "Matching",
-      "string" to "Text",
-      "math" to "Math",
-      "free-answer" to "Free Response",
-      "table" to "Table",
-      "dataset" to "Data",
-      "admin" to "Linux",
-      "manual-score" to "Manual Score"
-    )
-
     private const val DEFAULT_EDU_TASK_NAME = "Edu Task"
     private const val UNKNOWN_TASK_NAME = "Unknown Task"
+    private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
 
     private fun addPlaceholdersTexts(file: TaskFile) {
       val fileText = file.text

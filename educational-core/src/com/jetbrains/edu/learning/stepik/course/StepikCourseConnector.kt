@@ -5,8 +5,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
-import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepikLanguage
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import java.io.IOException
@@ -80,7 +80,7 @@ object StepikCourseConnector : CourseConnector {
 
       for (stepSource in allStepSources) {
         val step = stepSource.block
-        if (step != null && step.name == Step.CODE && step.options != null) {
+        if (step != null && step.name == StepikTaskType.CODE.type && step.options != null) {
           val codeTemplates = (step.options as PyCharmStepOptions).codeTemplates
           if (codeTemplates != null) {
             return codeTemplates
