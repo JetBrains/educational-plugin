@@ -267,6 +267,11 @@ object YamlDeserializer {
     }
   }
 
+  fun getCourseMode(courseConfigText: String): String? {
+    val treeNode = MAPPER.readTree(courseConfigText)
+    return asText(treeNode.get(YamlMixinNames.MODE))
+  }
+
   @VisibleForTesting
   class ProcessedException(message: String, originalException: Exception?) : Exception(message, originalException)
 }

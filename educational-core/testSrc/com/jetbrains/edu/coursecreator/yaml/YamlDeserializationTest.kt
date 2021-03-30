@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.getCourseMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import java.util.*
@@ -673,6 +674,39 @@ class YamlDeserializationTest : YamlTestCase() {
       }
     })
     Locale.setDefault(defaultLocale)
+  }
+
+  fun `test cc mode`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |""".trimMargin()
+
+    assertNull(getCourseMode(yamlContent))
+  }
+
+  fun `test study mode`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |mode: Study
+      |""".trimMargin()
+
+    assertEquals(EduNames.STUDY, getCourseMode(yamlContent))
   }
 
   private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)

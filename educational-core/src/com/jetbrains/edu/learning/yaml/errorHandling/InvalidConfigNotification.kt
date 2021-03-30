@@ -8,26 +8,46 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.document
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import javax.swing.event.HyperlinkEvent
 
 
 private const val NOTIFICATION_ID = "Education: invalid config file"
 
-private const val NOTIFICATION_TITLE = "Invalid yaml"
-
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
   Notification(NOTIFICATION_ID,
-               NOTIFICATION_TITLE,
+               EduCoreBundle.message("yaml.invalid.config.notification.title"),
                messageWithEditLink(project, configFile, cause),
                NotificationType.ERROR,
                GoToFileListener(project, configFile))
 
-private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String) =
-  "File '${pathToConfig(project, configFile)}':<br /> ${cause.decapitalize()} <br /><a href=\"\">Edit</a>"
+private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String): String {
+  val courseConfig = if (configFile.name == COURSE_CONFIG) {
+    configFile
+  }
+  else {
+    project.courseDir.findChild(COURSE_CONFIG)
+  } ?: error("Can't find course config")
 
-private fun pathToConfig(project: Project, configFile: VirtualFile) =
-  FileUtil.getRelativePath(project.courseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR)
+  val mode = YamlDeserializer.getCourseMode(courseConfig.document.text)
+
+  val mainErrorMessage = "${EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))}: ${cause.decapitalize()}"
+  val editLink = if (mode == EduNames.STUDY) ""
+  else """<br>
+  <a href="">${
+    EduCoreBundle.message("yaml.invalid.config.notification.message.edit.link")
+  }</a>"""
+  return mainErrorMessage + editLink
+}
+
+private fun pathToConfig(project: Project, configFile: VirtualFile): String =
+  FileUtil.getRelativePath(project.courseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR) ?: error(
+    "Path to config file $configFile bot found")
 
 private class GoToFileListener(val project: Project, val file: VirtualFile) : NotificationListener {
   override fun hyperlinkUpdate(notification: Notification, event: HyperlinkEvent) {
