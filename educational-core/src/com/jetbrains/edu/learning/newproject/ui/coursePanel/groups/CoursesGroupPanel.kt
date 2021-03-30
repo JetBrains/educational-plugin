@@ -9,14 +9,24 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import java.awt.Color
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JPanel
 import javax.swing.SwingConstants
 
-private val SECTION_HEADER_FOREGROUND: Color = JBColor(0x787878, 0x999999)
-private val SECTION_HEADER_BACKGROUND: Color = JBColor(0xF7F7F7, 0x3C3F41)
+
+private val SECTION_HEADER_FOREGROUND: Color = JBColor.namedColor(
+  "BrowseCourses.GroupHeader.foreground",
+  getColorFromScheme("Plugins.SectionHeader.foreground", JBColor(0x787878, 0x999999))
+)
+
+private val SECTION_HEADER_BACKGROUND: Color = JBColor.namedColor(
+  "BrowseCourses.GroupHeader.background",
+  getColorFromScheme("Plugins.SectionHeader.background", JBColor(0xF7F7F7, 0x3C3F41))
+)
+
 private const val TOP_BOTTOM = 4
 private const val LEFT_RIGHT = 10
 private const val COLLAPSIBLE_GROUP_SIZE = 5
@@ -47,7 +57,7 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, createCourseCard: (Course) -
       border = JBUI.Borders.empty(TOP_BOTTOM, LEFT_RIGHT)
       isVisible = name.isNotEmpty()
     }
-    
+
     if (isCollapsible) {
       titleLabel.addMouseListener(object : MouseAdapter() {
         override fun mouseClicked(e: MouseEvent?) {
