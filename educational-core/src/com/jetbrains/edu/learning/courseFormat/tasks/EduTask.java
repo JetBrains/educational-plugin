@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class EduTask extends Task {
   public static final String EDU_TASK_TYPE = "edu";
+  public static final String PYCHARM_TASK_TYPE = "pycharm";
 
   public EduTask() {
   }
