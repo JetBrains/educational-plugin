@@ -55,7 +55,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     val course = courseInfo.course
     if (course is EduCourse && course.isMarketplace) {
-      computeUnderProgress(title = EduCoreBundle.message("marketplace.loading.course")) {
+      computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
         MarketplaceConnector.getInstance().loadCourseStructure(course)
       }
     }
