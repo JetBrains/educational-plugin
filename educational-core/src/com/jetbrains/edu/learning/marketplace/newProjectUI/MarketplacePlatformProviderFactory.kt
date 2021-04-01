@@ -35,7 +35,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   override val name: String
     get() = EduCoreBundle.message("course.dialog.marketplace")
 
-  override val icon: Icon get() = EducationalCoreIcons.CommunityCourses
+  override val icon: Icon get() = EducationalCoreIcons.MARKETPLACE_TAB
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MarketplaceCoursesPanel(this, scope)
 

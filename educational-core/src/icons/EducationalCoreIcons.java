@@ -36,9 +36,8 @@ public class EducationalCoreIcons {
 
   public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg"); // 24x24
 
-  public static final Icon CommunityCourses = load("/icons/com/jetbrains/edu/learning/communityCourses.svg"); // 24x24
-
-  public static final Icon MARKETPLACE = load("/icons/com/jetbrains/edu/learning/marketplace.svg");
+  public static final Icon MARKETPLACE = load("/icons/com/jetbrains/edu/learning/marketplace_courses.svg"); // 16x16
+  public static final Icon MARKETPLACE_TAB = load("/icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg"); // 24x24
 
   public static final Icon Student = load("/icons/com/jetbrains/edu/Learner.svg"); // 180x180
   public static final Icon StudentHover = load("/icons/com/jetbrains/edu/LearnerActive.svg"); // 180x180
