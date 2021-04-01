@@ -177,7 +177,7 @@ object GeneratorUtils {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
         }
         else {
-          VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandPathsForFile(project, virtualTaskFile, text))
+          VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandMacrosForFile(project, virtualTaskFile, text))
         }
         virtualTaskFile
       }

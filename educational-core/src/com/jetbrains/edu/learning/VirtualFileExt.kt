@@ -234,7 +234,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
         }
       }
       val text = studentDocument.immutableCharSequence.toString()
-      taskFile.setText(EduMacroUtils.collapsePathsForFile(project, this, text))
+      taskFile.setText(EduMacroUtils.collapseMacrosForFile(project, this, text))
     }
     return taskFile
   }

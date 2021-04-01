@@ -5,16 +5,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseGeneration.macro.EduMacro
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroProvider
 import com.jetbrains.edu.learning.getTaskDir
 import com.jetbrains.edu.learning.isTaskRunConfigurationFile
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 
 class TaskRunConfigurationPathMacroProvider : EduMacroProvider {
-  override fun provideMacro(project: Project, file: VirtualFile): EduMacroProvider.EduMacro? {
+  override fun provideMacro(project: Project, file: VirtualFile): EduMacro? {
     return if (file.isTaskRunConfigurationFile(project)) {
       val taskRelativePath = taskRelativePath(project, file)
-      EduMacroProvider.EduMacro(TASK_DIR_MACRO_NAME, "\$${PathMacroUtil.PROJECT_DIR_MACRO_NAME}\$/$taskRelativePath")
+      EduMacro(TASK_DIR_MACRO_NAME, "\$${PathMacroUtil.PROJECT_DIR_MACRO_NAME}\$/$taskRelativePath")
     } else {
       null
     }

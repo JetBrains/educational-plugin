@@ -180,7 +180,7 @@ sealed class Change {
         EduDocumentListener.modifyWithoutListener(task, path) {
           val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
           if (document != null) {
-            val expandedText = EduMacroUtils.expandPathsForFile(project, file, text)
+            val expandedText = EduMacroUtils.expandMacrosForFile(project, file, text)
             runUndoTransparentWriteAction { document.setText(expandedText) }
           }
           else {

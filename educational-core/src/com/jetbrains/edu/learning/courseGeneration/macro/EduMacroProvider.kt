@@ -13,8 +13,6 @@ interface EduMacroProvider {
 
   fun provideMacro(project: Project, file: VirtualFile): EduMacro?
 
-  data class EduMacro(val name: String, val substitution: String)
-
   companion object {
     val EP_NAME: ExtensionPointName<EduMacroProvider> = ExtensionPointName.create("Educational.pathMacroProvider")
   }
