@@ -6,8 +6,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.JBCardLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
@@ -78,8 +81,11 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
     init {
       layout = cardLayout
       val providers = CoursesPlatformProviderFactory.allProviders
-      providers.forEach {
-        addPanel(it)
+      for (provider in providers) {
+        if (provider is CodeforcesPlatformProvider && !isFeatureEnabled(EduExperimentalFeatures.CODEFORCES_TAB)) {
+          continue
+        }
+        addPanel(provider)
       }
 
       addPanel(myCoursesProvider)
