@@ -243,7 +243,7 @@
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
 
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
-    <statistics.counterUsagesCollector groupId="educational.counters" version="3"/>
+    <statistics.counterUsagesCollector groupId="educational.counters" version="4"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
