@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.File
 
 class CheckiOCourseGenerationTest : EduTestCase() {
@@ -36,11 +37,11 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     val missions = getProcessedMissions()
 
     val solved = missions.first { it.status == CheckStatus.Solved }
-    val expectedDescription = """
-      <p><a href="https://py.checkio.org/mission/stressful-subject/publications/category/clear">View solutions</a></p>
-      <p><a href="https://py.checkio.org/en/mission/stressful-subject">See the task on CheckiO</a></p>
-    """.trimIndent()
-    assertEquals(expectedDescription, solved.descriptionText)
+    val actualDescriptionText = solved.descriptionText
+
+    assertTrue(actualDescriptionText.contains("<h2>Stressful Subject</h2>"))
+    assertTrue(actualDescriptionText.contains(EduCoreBundle.message("checkio.view.solutions")))
+    assertTrue(actualDescriptionText.contains(EduCoreBundle.message("checkio.open.task.on.site")))
 
     // We should not have link to other solutions if the task was not solved
     val notSolved = missions.filter { it.status != CheckStatus.Solved && it.descriptionText.contains("View other solutions") }

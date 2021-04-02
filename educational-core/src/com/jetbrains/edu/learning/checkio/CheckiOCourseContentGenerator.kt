@@ -47,7 +47,12 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
     val taskLink = getTaskLink(apiConnector.languageId, locale.language, mission.slug)
     val task = "<p><a href=\"$taskLink\">${EduCoreBundle.message("checkio.open.task.on.site")}</a></p>"
 
-    mission.descriptionText += "$solutions\n$task"
+    mission.descriptionText = buildString {
+      appendln("<h2>${mission.name}</h2>")
+      appendln(mission.descriptionText)
+      appendln(solutions)
+      appendln(task)
+    }
   }
 
   private fun generateTaskFile(mission: CheckiOMission) {
