@@ -108,7 +108,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     actionsPanel.addToCenter(accountActionLabel)
 
     val synchronizeCourseAction = synchronizeCourseAction
-    if (currentAccount != null && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
+    if (!loginNeeded() && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
       actionsPanel.addToBottom(EduHyperlinkLabel(synchronizeCourseAction.loginWidgetText, true) {
         synchronizeCourseAction.synchronizeCourse(project)
         popup.closeOk(null)
@@ -119,6 +119,8 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
     return contentPanel
   }
+
+  open fun loginNeeded(): Boolean = account == null
 
   abstract fun authorize()
 

@@ -36,6 +36,8 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(proj
     MarketplaceSettings.INSTANCE.account = null
   }
 
+  override fun loginNeeded(): Boolean = false
+
   companion object {
     const val ID = "MarketplaceWidget"
   }
