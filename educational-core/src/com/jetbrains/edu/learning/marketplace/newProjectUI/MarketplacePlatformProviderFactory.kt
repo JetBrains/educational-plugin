@@ -40,7 +40,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MarketplaceCoursesPanel(this, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     val featuredCourseIds = stepikMarketplaceIdsMap.values
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()
 

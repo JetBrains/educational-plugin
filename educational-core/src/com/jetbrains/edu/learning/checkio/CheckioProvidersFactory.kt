@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.newProjectUI.CheckiOCoursesPanel
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
@@ -29,7 +28,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = CheckiOCoursesPanel(this, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     return if (EduUtils.isAndroidStudio()) {
       emptyList()
     }
@@ -37,10 +36,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
       val courses = listOf(
         CheckiOCourse(CheckiONames.PY_CHECKIO, "${EduNames.PYTHON} ${EduNames.PYTHON_3_VERSION}"),
         CheckiOCourse(CheckiONames.JS_CHECKIO, EduNames.JAVASCRIPT)
-      ).filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      }
+      )
 
       CoursesGroup(courses).asList()
     }

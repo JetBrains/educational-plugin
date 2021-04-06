@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -45,20 +44,12 @@ class StepikCoursesProvider : CoroutineScope {
       }
 
       LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
-      result.filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      }
+      result
     }
   }
 
   suspend fun getStepikCourses(): List<StepikCourse> {
-    return loadedCourses.await()
-      .filterIsInstance<StepikCourse>()
-      .filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      }
+    return loadedCourses.await().filterIsInstance<StepikCourse>()
   }
 
   fun loadPrivateCourseInfos(): List<EduCourse> {
@@ -172,9 +163,6 @@ class StepikCoursesProvider : CoroutineScope {
       }
     }
 
-    return result.filter {
-      val compatibility = it.compatibility
-      compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-    }
+    return result
   }
 }

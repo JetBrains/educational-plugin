@@ -21,7 +21,7 @@ class MyCoursesProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MyCoursesPanel(this, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     return CoursesStorage.getInstance().coursesInGroups()
   }
 

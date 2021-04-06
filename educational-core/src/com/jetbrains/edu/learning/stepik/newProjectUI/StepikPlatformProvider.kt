@@ -24,7 +24,7 @@ class StepikPlatformProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = StepikCoursesPanel(this, coursesProvider, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     checkIsBackgroundThread()
     return if (isUnitTestMode) {
       emptyList()

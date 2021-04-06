@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -28,7 +29,21 @@ abstract class CoursesPlatformProvider {
     joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
   }
 
-  abstract suspend fun loadCourses(): List<CoursesGroup>
+  suspend fun loadCourses(): List<CoursesGroup> {
+    val courseGroups = doLoadCourses()
+    return courseGroups.mapNotNull { courseGroup ->
+      val filteredCourses = courseGroup.courses.filter {
+        val compatibility = it.compatibility
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+      }
+
+      if (filteredCourses.isEmpty()) return@mapNotNull null
+      courseGroup.courses = filteredCourses
+      courseGroup
+    }
+  }
+
+  protected abstract suspend fun doLoadCourses(): List<CoursesGroup>
 
   companion object {
     fun joinCourse(courseInfo: CourseInfo,

@@ -65,7 +65,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
     }
   }
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     val courses = mutableListOf<Course>()
 
     val selectedProject = getSelectedProject()

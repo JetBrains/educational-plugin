@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.coursera.newProjectUI.CourseraCoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -41,7 +40,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = CourseraCoursesPanel(this, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     val tasks = mutableListOf<Future<Course?>>()
 
     for (link in getCourseLinks()) {
@@ -58,10 +57,6 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
     }
 
     val courses = tasks.mapNotNull { it.get(60, TimeUnit.SECONDS) }
-      .filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      }
       .sortedBy { it.name }
 
     return CoursesGroup(courses).asList()

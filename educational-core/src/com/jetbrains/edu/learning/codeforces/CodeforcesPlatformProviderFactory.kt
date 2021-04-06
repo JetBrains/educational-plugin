@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -24,18 +23,14 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
 
   override fun createPanel(scope: CoroutineScope): CoursesPanel = CodeforcesCoursesPanel(this, scope)
 
-  override suspend fun loadCourses(): List<CoursesGroup> {
+  override suspend fun doLoadCourses(): List<CoursesGroup> {
     checkIsBackgroundThread()
     val taskTextLanguage = CodeforcesSettings.getInstance().preferableTaskTextLanguage ?: TaskTextLanguage.ENGLISH
     return if (isUnitTestMode) {
       emptyList()
     }
     else {
-      val courses = CodeforcesContestLoader.getContestInfos(locale = taskTextLanguage.locale).filter {
-        val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
-      }
-
+      val courses = CodeforcesContestLoader.getContestInfos(locale = taskTextLanguage.locale)
       CoursesGroup(courses).asList()
     }
   }
