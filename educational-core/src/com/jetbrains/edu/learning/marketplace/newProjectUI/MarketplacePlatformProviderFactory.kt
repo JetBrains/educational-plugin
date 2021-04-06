@@ -43,10 +43,13 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()
       .sortedBy { it.id !in stepikMarketplaceIdsMap.values }
 
+    val marketplaceCourseNames = mutableSetOf<String>()
+    for (course in marketplaceCourses) {
+      marketplaceCourseNames += course.name
+    }
+
     val bundledCourses = loadBundledCourses().filter { bundled ->
-      marketplaceCourses.none { marketplace ->
-        marketplace.name == bundled.name
-      }
+      bundled.name !in marketplaceCourseNames
     }
 
     return CoursesGroup(bundledCourses + marketplaceCourses).asList()
