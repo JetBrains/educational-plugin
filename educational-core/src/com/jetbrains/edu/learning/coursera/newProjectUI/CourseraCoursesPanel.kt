@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.coursera.newProjectUI
 
+import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.coursera.CourseraNames.COURSERA
 import com.jetbrains.edu.learning.coursera.CourseraNames.COURSERA_HELP
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
@@ -12,8 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 class CourseraCoursesPanel(platformProvider: CourseraPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
 
   override fun tabInfo(): TabInfo {
-    val infoText = EduCoreBundle.message("coursera.courses.explanation", COURSERA)
-    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkText = COURSERA
+    val infoText = EduCoreBundle.message("coursera.courses.explanation", COURSERA).dropWhile { it in linkText }
     val linkInfo = LinkInfo(linkText, COURSERA_HELP)
     return TabInfo(infoText, linkInfo)
   }

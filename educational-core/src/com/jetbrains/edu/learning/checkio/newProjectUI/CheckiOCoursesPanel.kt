@@ -28,8 +28,8 @@ class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Coro
   }
 
   override fun tabInfo(): TabInfo {
-    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.TYPESCRIPT)
-    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkText = CheckiONames.CHECKIO
+    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.JAVASCRIPT).dropWhile { it in linkText }
     val linkInfo = LinkInfo(linkText, CHECKIO_HELP)
     return TabInfo(infoText, linkInfo, loginComponent)
   }

@@ -76,6 +76,9 @@ open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: Stri
     get() = UIUtil.getLabelForeground()
 }
 
-class TabInfo(val description: String, val linkInfo: LinkInfo? = null, val loginComponent: LoginPanel? = null)
+class TabInfo(val description: String,
+              val linkInfo: LinkInfo? = null,
+              val loginComponent: LoginPanel? = null,
+              val isLinkBeforeText: Boolean = true)
 
 class LinkInfo(val text: String, val url: String)

@@ -35,8 +35,8 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
   }
 
   override fun tabInfo(): TabInfo {
-    val infoText = EduCoreBundle.message("stepik.courses.explanation", StepikNames.STEPIK)
-    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkText = StepikNames.STEPIK
+    val infoText = EduCoreBundle.message("stepik.courses.explanation", linkText).dropWhile { it in linkText }
     val linkInfo = LinkInfo(linkText, STEPIK_HELP)
     val loginComponent = StepikLoginPanel()
     return TabInfo(infoText, linkInfo, loginComponent)

@@ -13,7 +13,8 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: C
   }
 
   override fun tabInfo(): TabInfo {
-    val linkInfo = LinkInfo(EduCoreBundle.message("course.dialog.go.to.website"), CodeforcesNames.CODEFORCES_URL)
-    return TabInfo(EduCoreBundle.message("codeforces.courses.description", CodeforcesNames.CODEFORCES), linkInfo)
+    val linkText = CodeforcesNames.CODEFORCES_TITLE
+    val linkInfo = LinkInfo(linkText, CodeforcesNames.CODEFORCES_URL)
+    return TabInfo(EduCoreBundle.message("codeforces.courses.description", linkText).dropWhile {it in linkText }, linkInfo)
   }
 }

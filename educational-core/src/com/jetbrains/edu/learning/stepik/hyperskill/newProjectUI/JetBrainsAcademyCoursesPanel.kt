@@ -20,8 +20,8 @@ class JetBrainsAcademyCoursesPanel(
 ) : CoursesPanel(platformProvider, scope) {
 
   override fun tabInfo(): TabInfo {
-    val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)
-    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkText = EduNames.JBA
+    val infoText = EduCoreBundle.message("hyperskill.courses.explanation", linkText).dropWhile { it in linkText }
     val linkInfo = LinkInfo(linkText, JBA_HELP)
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
   }
