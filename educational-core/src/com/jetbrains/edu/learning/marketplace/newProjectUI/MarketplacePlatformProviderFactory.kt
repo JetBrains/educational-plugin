@@ -7,6 +7,7 @@ import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -40,19 +41,23 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MarketplaceCoursesPanel(this, scope)
 
   override suspend fun loadCourses(): List<CoursesGroup> {
+    val featuredCourseIds = stepikMarketplaceIdsMap.values
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()
-      .sortedBy { it.id !in stepikMarketplaceIdsMap.values }
 
     val marketplaceCourseNames = mutableSetOf<String>()
     for (course in marketplaceCourses) {
       marketplaceCourseNames += course.name
+      if (course.id in featuredCourseIds) {
+        course.visibility = CourseVisibility.FeaturedVisibility(MARKETPLACE_GROUP_ID)
+      }
     }
 
     val bundledCourses = loadBundledCourses().filter { bundled ->
       bundled.name !in marketplaceCourseNames
     }
 
-    return CoursesGroup(bundledCourses + marketplaceCourses).asList()
+    val courses = (bundledCourses + marketplaceCourses).sortedBy { it.visibility }
+    return CoursesGroup(courses).asList()
   }
 
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
@@ -73,6 +78,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
         LOG.error("Failed to import local course form $path")
         continue
       }
+      localCourse.visibility = CourseVisibility.FeaturedVisibility(BUNDLED_GROUP_ID)
       courses.add(localCourse)
     }
     return courses
@@ -109,6 +115,11 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
   companion object {
     private val LOG = Logger.getInstance(MarketplacePlatformProvider::class.java)
+
+    // These ids are used only for sorting
+    // Probably, we should use separate id for each course to provide desired sorting
+    private const val BUNDLED_GROUP_ID = 0
+    private const val MARKETPLACE_GROUP_ID = 1
 
     //Machine Learning 101 stepikId=0, marketplaceId=
 
