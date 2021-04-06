@@ -9,7 +9,8 @@
       "type": "string",
       "enum": [
         "edu",
-        "coursera"
+        "coursera",
+        "marketplace"
       ]
     },
     "title": {

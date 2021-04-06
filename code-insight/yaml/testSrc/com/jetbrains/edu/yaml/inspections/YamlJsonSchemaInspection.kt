@@ -26,6 +26,26 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     """.trimMargin("|"))
   }
 
+  fun `test course with marketplace course type`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {}
+    }
+
+    testHighlighting(getCourse(), """
+      |title: Test Course
+      |type: marketplace
+      |language: Russian
+      |summary: sum
+      |<warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
+      |programming_language: Plain text
+      |programming_language_version: 1.42
+      |environment: Android
+      |content:
+      |- lesson1
+      |
+    """.trimMargin("|"))
+  }
+
   fun `test section with one wrong property`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
