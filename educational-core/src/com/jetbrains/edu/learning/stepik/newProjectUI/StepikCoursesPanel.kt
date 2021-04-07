@@ -43,6 +43,8 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
     val privateCourses = withContext(Dispatchers.IO) { coursesProvider.loadPrivateCourseInfos() }
+    if (privateCourses.isEmpty()) return
+    coursesGroups.firstOrNull()?.name = EduCoreBundle.message("course.dialog.public.courses.group")
     val privateCoursesGroup = CoursesGroup(EduCoreBundle.message("course.dialog.private.courses.group"), privateCourses)
     coursesGroups.add(0, privateCoursesGroup)
     super.updateCoursesAfterLogin(preserveSelection)

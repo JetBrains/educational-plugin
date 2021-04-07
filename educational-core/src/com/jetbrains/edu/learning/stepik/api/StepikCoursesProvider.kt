@@ -53,7 +53,12 @@ class StepikCoursesProvider : CoroutineScope {
   }
 
   suspend fun getStepikCourses(): List<StepikCourse> {
-    return loadedCourses.await().filterIsInstance<StepikCourse>()
+    return loadedCourses.await()
+      .filterIsInstance<StepikCourse>()
+      .filter {
+        val compatibility = it.compatibility
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+      }
   }
 
   fun loadPrivateCourseInfos(): List<EduCourse> {
@@ -78,10 +83,10 @@ class StepikCoursesProvider : CoroutineScope {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
       .filter { it.isPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
-      .sortedBy { ListedCoursesIdsProvider.featuredCommunityCourses.indexOf(it.id) }
+      .sortedByDescending { it.reviewScore }
   }
 
-  suspend fun getAllOtherCourses(): List<Course> {
+  suspend fun getAllOtherCourses(): List<EduCourse> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
       .filter { it.isPublic && it.id !in ListedCoursesIdsProvider.featuredCommunityCourses }
