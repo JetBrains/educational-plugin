@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.FilterComponent
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.JBScrollPane
@@ -47,7 +46,6 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
   private val errorComponent: ErrorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN).apply {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN + ERROR_LEFT_GAP, ERROR_BOTTOM_GAP, ERROR_RIGHT_GAP)
   }
-  private var mySearchField: FilterComponent? = null
 
   val locationString: String?
     get() = settings.locationString
@@ -144,10 +142,6 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
   }
 
   fun validateSettings(course: Course?) = settings.validateSettings(course)
-
-  fun bindSearchField(searchField: FilterComponent) {
-    mySearchField = searchField
-  }
 
   fun hideErrorPanel() {
     errorComponent.isVisible = false

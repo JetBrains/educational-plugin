@@ -212,7 +212,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private fun programmingLanguages(courses: List<Course>): Set<String> = courses.map { it.supportedTechnologies }.flatten().toSet()
 
   private fun createAndBindSearchComponent(): JPanel {
-    coursePanel.bindSearchField(coursesFilterComponent)
     searchPanel.add(coursesFilterComponent, BorderLayout.CENTER)
 
     programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
