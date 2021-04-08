@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert
 
@@ -31,7 +32,7 @@ class KtTheoryTaskCheckerTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          taskFile("CustomGradleRun.run.xml", """
+          xmlTaskFile("CustomGradleRun.run.xml", """
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleRun" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -59,6 +60,86 @@ class KtTheoryTaskCheckerTest : JdkCheckerTestBase() {
                 <DebugAllEnabled>false</DebugAllEnabled>
                 <method v="2" />
               </configuration>
+            </component>
+          """)
+        }
+      }
+    }
+    frameworkLesson {
+      theoryTask("FrameworkTheoryWithCustomRunConfiguration1") {
+        kotlinTaskFile("src/Main.kt", """
+          fun main(args: Array<String>) {
+              println(System.getenv("EXAMPLE_ENV"))
+          }
+        """)
+        dir("runConfigurations") {
+          xmlTaskFile("CustomGradleRun.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomGradleRun1" type="GradleRunConfiguration" factoryName="Gradle">
+                <ExternalSystemSettings>
+                  <option name="env">
+                    <map>
+                      <entry key="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
+                    </map>
+                  </option>
+                  <option name="executionName" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalSystemIdString" value="GRADLE" />
+                  <option name="scriptParameters" value="-PmainClass=MainKt" />
+                  <option name="taskDescriptions">
+                    <list />
+                  </option>
+                  <option name="taskNames">
+                    <list>
+                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                    </list>
+                  </option>
+                  <option name="vmOptions" value="" />
+                </ExternalSystemSettings>
+                <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+                <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+                <DebugAllEnabled>false</DebugAllEnabled>
+                <method v="2" />
+              </configuration>
+            </component>            
+          """)
+        }
+      }
+      theoryTask("FrameworkTheoryWithCustomRunConfiguration2") {
+        kotlinTaskFile("src/Main.kt", """
+          fun main(args: Array<String>) {
+              println(System.getenv("EXAMPLE_ENV"))
+          }
+        """)
+        dir("runConfigurations") {
+          xmlTaskFile("CustomGradleRun.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomGradleRun2" type="GradleRunConfiguration" factoryName="Gradle">
+                <ExternalSystemSettings>
+                  <option name="env">
+                    <map>
+                      <entry key="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
+                    </map>
+                  </option>
+                  <option name="executionName" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalSystemIdString" value="GRADLE" />
+                  <option name="scriptParameters" value="-PmainClass=MainKt" />
+                  <option name="taskDescriptions">
+                    <list />
+                  </option>
+                  <option name="taskNames">
+                    <list>
+                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                    </list>
+                  </option>
+                  <option name="vmOptions" value="" />
+                </ExternalSystemSettings>
+                <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+                <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+                <DebugAllEnabled>false</DebugAllEnabled>
+                <method v="2" />
+              </configuration>
             </component>            
           """)
         }
@@ -71,12 +152,22 @@ class KtTheoryTaskCheckerTest : JdkCheckerTestBase() {
       val (message, statusMatcher, messageMatcher) = when (task.name) {
         "TheoryTask" -> {
           val message = (CheckDetailsView.getInstance(project) as MockCheckDetailsView).getMessage()
-          Triple(message, CoreMatchers.equalTo(CheckStatus.Solved), CoreMatchers.containsString("Hello!"))
+          Triple(message, equalTo(CheckStatus.Solved), containsString("Hello!"))
         }
         "TheoryWithGradleCustomRunConfiguration" -> Triple(
           checkResult.message,
-          CoreMatchers.equalTo(CheckStatus.Solved),
-          CoreMatchers.allOf(CoreMatchers.containsString("Hello!"), CoreMatchers.not(CoreMatchers.containsString("#educational_plugin")))
+          equalTo(CheckStatus.Solved),
+          allOf(containsString("Hello!"), not(containsString("#educational_plugin")))
+        )
+        "FrameworkTheoryWithCustomRunConfiguration1" -> Triple(
+          checkResult.message,
+          equalTo(CheckStatus.Solved),
+          allOf(containsString("Hello from FrameworkTheory1!"), not(containsString("#educational_plugin")))
+        )
+        "FrameworkTheoryWithCustomRunConfiguration2" -> Triple(
+          checkResult.message,
+          equalTo(CheckStatus.Solved),
+          allOf(containsString("Hello from FrameworkTheory2!"), not(containsString("#educational_plugin")))
         )
         else -> error("Unexpected task name: ${task.name}")
       }

@@ -1,0 +1,53 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "JAVA",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "TheoryWithCustomRunConfiguration",
+          "files" : {
+            "src/Main.java" : {
+              "name" : "src/Main.java",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "public class Main {\n  public static void main(String[] args) {\n    System.out.println(System.getenv(\"EXAMPLE_ENV\"));\n  }\n}"
+            },
+            "CustomGradleRun.run.xml" : {
+              "name" : "CustomGradleRun.run.xml",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "<component name=\"ProjectRunConfigurationManager\">\n  <configuration default=\"false\" name=\"CustomCustomGradleRun\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\">\n    <ExternalSystemSettings>\n      <option name=\"env\">\n        <map>\n          <entry key=\"EXAMPLE_ENV\" value=\"Hello!\" />\n        </map>\n      </option>\n      <option name=\"executionName\" />\n      <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n      <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n      <option name=\"scriptParameters\" value=\"-PmainClass=Main\" />\n      <option name=\"taskDescriptions\">\n        <list />\n      </option>\n      <option name=\"taskNames\">\n        <list>\n          <option value=\":lesson1-TheoryWithCustomRunConfiguration:run\" />\n        </list>\n      </option>\n      <option name=\"vmOptions\" value=\"\" />\n    </ExternalSystemSettings>\n    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\n    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n    <DebugAllEnabled>false</DebugAllEnabled>\n    <method v=\"2\" />\n  </configuration>\n</component>            "
+            },
+            "runConfigurations/CustomGradleRun.run.xml" : {
+              "name" : "runConfigurations/CustomGradleRun.run.xml",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "<component name=\"ProjectRunConfigurationManager\">\n  <configuration default=\"false\" name=\"CustomGradleRun\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\">\n    <ExternalSystemSettings>\n      <option name=\"env\">\n        <map>\n          <entry key=\"EXAMPLE_ENV\" value=\"Hello!\" />\n        </map>\n      </option>\n      <option name=\"executionName\" />\n      <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n      <option name=\"externalSystemIdString\" value=\"GRADLE\" />\n      <option name=\"scriptParameters\" value=\"-PmainClass=Main\" />\n      <option name=\"taskDescriptions\">\n        <list />\n      </option>\n      <option name=\"taskNames\">\n        <list>\n          <option value=\":$TASK_GRADLE_PROJECT$:run\" />\n        </list>\n      </option>\n      <option name=\"vmOptions\" value=\"\" />\n    </ExternalSystemSettings>\n    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\n    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\n    <DebugAllEnabled>false</DebugAllEnabled>\n    <method v=\"2\" />\n  </configuration>\n</component>"
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "theory"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "additional_files" : [
+    {
+      "name" : "build.gradle",
+      "placeholders" : [ ],
+      "is_visible" : true,
+      "text" : "buildscript {\n    repositories {\n        mavenCentral()\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        println \"#educational_plugin_checker_version 1\"\n        def separator = System.lineSeparator()\n        def lines = output.toString().split(\"(?<=${separator})|(?=${separator})\")\n        for (line in lines) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n\n    sourceCompatibility = 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        testCompile group: 'junit', name: 'junit', version: '4.12'\n    }\n\n    sourceSets {\n        main {\n            java.srcDir 'src'\n        }\n        test {\n            java.srcDir 'test'\n        }\n    }\n\n    mainClassName = project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    if (project.hasProperty(\"educationalRun\") && \"true\".equalsIgnoreCase(project.getProperty(\"educationalRun\"))) {\n        def runOutput = new ByteArrayOutputStream()\n        tasks.run.setStandardOutput(runOutput)\n        tasks.run.doLast { printOutput(runOutput) }\n    }\n}\n\nproject(':util') {\n    dependencies {\n        compile group: 'junit', name: 'junit', version: '4.12'\n    }\n}\n\nconfigure(subprojects.findAll { it.name != 'util' }) {\n    dependencies {\n        compile project(':util').sourceSets.main.output\n        testCompile project(':util').sourceSets.test.output\n    }\n}\n"
+    }
+  ],
+  "version" : 11
+}

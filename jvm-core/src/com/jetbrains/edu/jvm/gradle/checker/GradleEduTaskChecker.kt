@@ -31,7 +31,7 @@ open class GradleEduTaskChecker(task: EduTask, protected val envChecker: Environ
     return GradleCommandLine.create(project, taskName, *params.toTypedArray())?.launchAndCheck(indicator) ?: failedToCheck
   }
 
-  protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")
+  protected open fun getGradleTask() = GradleTask(":${getGradleProjectName(task)}:$TEST_TASK_NAME")
 
   protected data class GradleTask(val taskName: String, val params: List<String> = emptyList())
 }

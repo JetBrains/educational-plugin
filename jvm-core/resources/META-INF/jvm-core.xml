@@ -20,5 +20,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <gradleRefresher implementation="com.jetbrains.edu.jvm.gradle.IdeaGradleCourseRefresher"/>
+    <pathMacroProvider implementation="com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider"/>
   </extensions>
 </idea-plugin>

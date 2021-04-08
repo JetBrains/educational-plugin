@@ -14,7 +14,7 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
   EduTaskCheckerBase(task, envChecker, project) {
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
-    return GradleCommandLine.create(project, "${getGradleProjectName(task)}:testClasses")?.launchAndCheck(indicator)
+    return GradleCommandLine.create(project, ":${getGradleProjectName(task)}:testClasses")?.launchAndCheck(indicator)
            ?: CheckResult.failedToCheck
   }
 

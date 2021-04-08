@@ -38,7 +38,7 @@ class AndroidChecker(task: EduTask, envChecker: EnvironmentChecker, project: Pro
     indicator.isIndeterminate = true
 
     val taskModuleName = getGradleProjectName(task)
-    val assembleTask = "$taskModuleName:assemble"
+    val assembleTask = ":$taskModuleName:assemble"
 
     indicator.text = EduAndroidBundle.message("building.task")
     val assembleResult = GradleCommandLine.create(project, assembleTask)?.launchAndCheck(indicator) ?: CheckResult.failedToCheck

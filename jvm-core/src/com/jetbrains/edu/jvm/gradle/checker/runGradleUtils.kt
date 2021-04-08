@@ -45,9 +45,9 @@ const val TESTS_ARG = "--tests"
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
-    ":${sanitizeName(task.lesson.section!!.name)}-${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
+    "${sanitizeName(task.lesson.section!!.name)}-${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
   else
-    ":${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
+    "${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
 
 class GradleCommandLine private constructor(
   private val cmd: GeneralCommandLine,
@@ -157,7 +157,7 @@ class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
 fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator): Result<String, CheckResult> {
   val mainClassName = findMainClass(project, task)
                       ?: return CodeExecutor.resultUnchecked(EduJVMBundle.message("error.no.main", task.name))
-  val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
+  val taskName = if (task.hasSeparateModule(project)) ":${getGradleProjectName(task)}:run" else "run"
 
   val gradleOutput = GradleCommandLine.create(
     project,
