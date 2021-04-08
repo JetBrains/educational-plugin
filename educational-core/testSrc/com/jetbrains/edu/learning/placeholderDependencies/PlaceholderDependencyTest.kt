@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -58,7 +57,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
-    checkEditorNotification(virtualFile, listOf("task1"))
+    checkEditorNotification(virtualFile, UnsolvedDependenciesNotificationProvider.KEY, UnsolvedDependenciesNotificationProvider.getText(listOf("task1")))
 
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 0))
   }
@@ -156,15 +155,6 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
 
     checkPlaceholderContent("placeholder", findPlaceholder(1, 0, "task.txt", 0))
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 1))
-  }
-
-  private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
-    completeEditorNotificationAsyncTasks()
-    val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
-    val notificationPanel = fileEditor.getUserData(UnsolvedDependenciesNotificationProvider.KEY)
-    assertNotNull("Notification not shown", notificationPanel)
-    assertEquals("Panel text is incorrect", UnsolvedDependenciesNotificationProvider.getText(taskNames),
-                          notificationPanel?.getText())
   }
 
   private fun checkPlaceholderContent(expectedContent: String, answerPlaceholder: AnswerPlaceholder) {

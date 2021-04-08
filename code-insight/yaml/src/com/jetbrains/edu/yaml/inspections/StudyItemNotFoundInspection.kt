@@ -91,8 +91,6 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
         }
       }
       ActionUtil.invokeAction(action, context, ActionPlaces.UNKNOWN, null, Runnable {
-        // TODO: extract setting of yaml error into editor notification provider
-        //  and just call `com.intellij.ui.EditorNotifications.updateNotifications` instead
         YamlLoader.loadItem(project, configFile)
       })
     }

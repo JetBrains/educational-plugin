@@ -73,13 +73,12 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
         // Remove added task file to keep correct task structure
         task.taskFiles.remove(path)
         ApplicationManager.getApplication().invokeLater {
-          Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path), EduYAMLBundle.message("failed.create.file.title"))
+          Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path),
+                                   EduYAMLBundle.message("failed.create.file.title"))
         }
       }
     }
 
-    // TODO: extract setting of yaml error into editor notification provider
-    //  and just call `com.intellij.ui.EditorNotifications.updateNotifications` instead
     private fun updateEditorNotifications(project: Project, file: VirtualFile) {
       YamlLoader.loadItem(project, file)
     }

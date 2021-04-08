@@ -1,12 +1,10 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.placeholderDependencies.NotificationsTestBase
 import com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 
@@ -20,8 +18,9 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     |""".trimMargin()
 
     val configFile = GeneratorUtils.createChildFile(project, LightPlatformTestCase.getSourceRoot(), YamlFormatSettings.REMOTE_COURSE_CONFIG, yamlText)
-    myFixture.openFileInEditor(configFile!!)
-    checkEditorNotification(configFile)
+    withYamlFileTypeRegistered {
+      checkEditorNotification(configFile!!, GeneratedRemoteInfoNotificationProvider.KEY)
+    }
   }
 
   fun `test section remote notification`() {
@@ -35,8 +34,9 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
     val sectionDir = LightPlatformTestCase.getSourceRoot().findChild(course.sections[0].name)!!
     val configFile = GeneratorUtils.createChildFile(project, sectionDir, YamlFormatSettings.REMOTE_SECTION_CONFIG, yamlText)
-    myFixture.openFileInEditor(configFile!!)
-    checkEditorNotification(configFile)
+    withYamlFileTypeRegistered {
+      checkEditorNotification(configFile!!, GeneratedRemoteInfoNotificationProvider.KEY)
+    }
   }
 
   fun `test lesson remote notification`() {
@@ -50,14 +50,15 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
     val lessonDir = course.lessons[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
-    myFixture.openFileInEditor(configFile!!)
-    checkEditorNotification(configFile)
+    withYamlFileTypeRegistered {
+      checkEditorNotification(configFile!!, GeneratedRemoteInfoNotificationProvider.KEY)
+    }
   }
 
   fun `test task remote notification`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
+        eduTask { }
       }
     }
     val yamlText = """
@@ -67,8 +68,9 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
-    myFixture.openFileInEditor(configFile!!)
-    checkEditorNotification(configFile)
+    withYamlFileTypeRegistered {
+      checkEditorNotification(configFile!!, GeneratedRemoteInfoNotificationProvider.KEY)
+    }
   }
 
   fun `test non config file`() {
@@ -82,13 +84,13 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
     val virtualFile = findFileInTask(0, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
-    checkNoEditorNotification(virtualFile)
+    checkNoEditorNotification(virtualFile, GeneratedRemoteInfoNotificationProvider.KEY)
   }
 
   fun `test local config file`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
+        eduTask { }
       }
     }
     val yamlText = """
@@ -98,21 +100,9 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)
-    myFixture.openFileInEditor(configFile!!)
-    checkNoEditorNotification(configFile)
+    withYamlFileTypeRegistered {
+      checkNoEditorNotification(configFile!!, GeneratedRemoteInfoNotificationProvider.KEY)
+    }
   }
 
-  private fun checkEditorNotification(virtualFile: VirtualFile) {
-    completeEditorNotificationAsyncTasks()
-    val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
-    val notificationPanel = fileEditor.getUserData(GeneratedRemoteInfoNotificationProvider.KEY)
-    assertNotNull("Notification not shown", notificationPanel)
-  }
-
-  private fun checkNoEditorNotification(virtualFile: VirtualFile) {
-    completeEditorNotificationAsyncTasks()
-    val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
-    val notificationPanel = fileEditor.getUserData(GeneratedRemoteInfoNotificationProvider.KEY)
-    assertNull("Notification is shown", notificationPanel)
-  }
 }
