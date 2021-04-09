@@ -31,6 +31,9 @@ object StyleResourcesManager {
 
   private const val STEPIK_LINK_CSS: String = "/style/stepikLink.css"
 
+  private const val YAML_TAB_BASE_CSS: String = "/style/yaml-tab/yaml-base.css"
+  private const val YAML_TAB_BASE_DARCULA_CSS: String = "/style/yaml-tab/yaml-base-darcula.css"
+
   private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/fonts/intellij-icon-font.eot"
   private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/fonts/intellij-icon-font.svg"
   private const val INTELLIJ_ICON_FONT_TTF: String = "/style/hint/fonts/intellij-icon-font.ttf"
@@ -57,6 +60,8 @@ object StyleResourcesManager {
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
     STEPIK_LINK_CSS,
+    YAML_TAB_BASE_CSS,
+    YAML_TAB_BASE_DARCULA_CSS,
     INTELLIJ_ICON_FONT_EOT,
     INTELLIJ_ICON_FONT_SVG,
     INTELLIJ_ICON_FONT_TTF,
@@ -94,16 +99,23 @@ object StyleResourcesManager {
       else -> SCROLL_BARS_LIGHT_CSS
     }
 
+  private val yamlTabCss: String
+    get() = when {
+      UIUtil.isUnderDarcula() -> YAML_TAB_BASE_DARCULA_CSS
+      else -> YAML_TAB_BASE_CSS
+    }
+
   // update style/template.html.ft in case of changing key names
-  fun getResources(taskText: String = "") = mapOf(
+  fun getResources(content: String) = mapOf(
     resourcePair("base_css", BROWSER_CSS),
     "typography_color_style" to StyleManager().typographyAndColorStylesheet(),
-    "content" to taskText,
+    "content" to content,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", STEPIK_LINK_CSS),
     resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
-    resourcePair("scrollbar_style_base", SCROLL_BARS_BASE)
+    resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),
+    resourcePair("yaml_base_css", yamlTabCss)
   )
     .plus(panelSpecificHintResources)
     .plus(VideoTaskResourcesManager().videoResources)

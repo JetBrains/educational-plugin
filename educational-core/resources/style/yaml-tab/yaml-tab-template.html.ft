@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
-  <!--suppress CheckTagEmptyBody, HtmlExtraClosingTag, HtmlUnknownTarget -->
-  <link rel="stylesheet" type="text/css" href="${yaml-base-css}"></link>
-  <!--suppress CheckTagEmptyBody, HtmlExtraClosingTag, HtmlUnknownTarget -->
-  <link rel="stylesheet" type="text/css" href="${base-css}"></link>
+  <link rel="stylesheet" type="text/css" href="${yaml_base_css}"></link>
+  <link rel="stylesheet" type="text/css" href="${base_css}"></link>
+  <link rel="stylesheet" type="text/css" href="${scrollbar_style_base}"></link>
+  <link rel="stylesheet" type="text/css" href="${scrollbar_style_laf}"></link>
   <style>
     ${typography_color_style}
   </style>
@@ -100,7 +100,7 @@ Here's a description of the format for each course item.
   <tr>
     <td>custom_name</td>
     <td>Custom name for the section if it differs from its directory name.
-      Useful when you need to use a symbol that is not allowed in directory names, for example, “:”.
+      Useful when you need to use a symbol that is not allowed in directory names, for example, &quot;:&quot;.
     </td>
     <td>String</td>
   </tr>
@@ -134,7 +134,7 @@ Here's a description of the format for each course item.
   <tr>
     <td>custom_name</td>
     <td>Custom name for the lesson if it differs from its directory name.
-      Useful when you need to use a symbol that is not allowed in directory names, for example, “:”.
+      Useful when you need to use a symbol that is not allowed in directory names, for example, &quot;:&quot;.
     </td>
     <td>String</td>
   </tr>
@@ -171,7 +171,7 @@ Here's a description of the format for each course item.
   <tr>
     <td>custom_name</td>
     <td>Custom name for the task if it differs from its directory name.
-      Useful when you need to use a symbol that is not allowed in directory names, for example, “:”.
+      Useful when you need to use a symbol that is not allowed in directory names, for example, &quot;:&quot;.
     </td>
     <td>String</td>
   </tr>
@@ -194,14 +194,14 @@ Here's a description of the format for each course item.
   <tr>
     <td>message_correct</td>
     <td><span class="enum">choice</span> Custom message to be shown to learner in case of correct solution</td>
-    <td>E.g., “Great job!” or “Fantastic!”</td>
+    <td>E.g., &quot;reat job!&quot; or &quot;Fantastic!&quot;</td>
   </tr>
   <tr>
     <td>message_incorrect</td>
     <td>
       <span class="enum">choice</span> Custom message to be shown to learner in case of incorrect solution
     </td>
-    <td>E.g., “Review how to define a function to solve this task”</td>
+    <td>E.g., &quot;Review how to define a function to solve this task&quot;</td>
   </tr>
   <tr>
     <td>options</td>
