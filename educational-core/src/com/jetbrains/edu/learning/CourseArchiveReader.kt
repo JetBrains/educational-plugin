@@ -25,9 +25,9 @@ import java.util.*
 
 private val LOG = Logger.getInstance(EduUtils::class.java.name)
 
-fun readCourseJson(jsonText: String, isEncrypted: Boolean): Course? {
+fun readCourseJson(jsonText: String, isEncrypted: Boolean, isMarketplace: Boolean): Course? {
   return try {
-    val courseMapper = getCourseMapper(isEncrypted)
+    val courseMapper = getCourseMapper(isEncrypted, isMarketplace)
     var courseNode = courseMapper.readTree(jsonText) as ObjectNode
     courseNode = migrate(courseNode)
     courseMapper.treeToValue(courseNode)
@@ -66,7 +66,7 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   return jsonObject
 }
 
-fun getCourseMapper(isEncrypted: Boolean): ObjectMapper { // TODO: common mapper for archive creator and reader?
+fun getCourseMapper(isEncrypted: Boolean, isMarketplace: Boolean = false): ObjectMapper { // TODO: common mapper for archive creator and reader?
   val factory = JsonFactory()
   val mapper = ObjectMapper(factory)
   val module = SimpleModule()
@@ -78,7 +78,12 @@ fun getCourseMapper(isEncrypted: Boolean): ObjectMapper { // TODO: common mapper
   }
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
-  mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
+  if (isMarketplace) {
+    mapper.addMixIn(EduCourse::class.java, MarketplaceCourseMixin::class.java)
+  }
+  else {
+    mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
+  }
   mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
   mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
   mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)

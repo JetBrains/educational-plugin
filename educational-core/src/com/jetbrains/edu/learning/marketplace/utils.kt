@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 private const val DATA_DELIMITER = ";"
@@ -41,5 +44,13 @@ fun Course.convertToMarketplace() {
   isMarketplace = true
   if (marketplaceCourseVersion == 0) {
     marketplaceCourseVersion = 1
+  }
+}
+
+fun Course.loadMarketplaceCourseStructure() {
+  if (this is EduCourse && isMarketplace && items.isEmpty()) {
+    computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
+      MarketplaceConnector.getInstance().loadCourseStructure(this)
+    }
   }
 }

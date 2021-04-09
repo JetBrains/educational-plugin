@@ -5,11 +5,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -61,19 +60,14 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   }
 
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
-    val course = courseInfo.course
-    if (course is EduCourse && course.isMarketplace) {
-      computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
-        MarketplaceConnector.getInstance().loadCourseStructure(course)
-      }
-    }
+    courseInfo.course.loadMarketplaceCourseStructure()
     super.joinAction(courseInfo, courseMode, coursePanel)
   }
 
   private fun loadBundledCourses(): List<Course> {
     val courses = mutableListOf<Course>()
     for (path in getBundledCoursesPaths()) {
-      val localCourse = EduUtils.getLocalCourse(path)
+      val localCourse = EduUtils.getLocalMarketplaceCourse(path)
       if (localCourse == null) {
         LOG.error("Failed to import local course form $path")
         continue

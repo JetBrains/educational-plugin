@@ -65,6 +65,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.encrypt.Encrypt
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
@@ -330,7 +331,13 @@ class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDe
       val courseType = jsonObject.get(COURSE_TYPE).asText()
       return when (courseType) {
         CourseraNames.COURSE_TYPE -> codec.treeToValue(jsonObject, CourseraCourse::class.java)
-        else -> codec.treeToValue(jsonObject, EduCourse::class.java)
+        else -> {
+          val course = codec.treeToValue(jsonObject, EduCourse::class.java)
+          if (courseType == MARKETPLACE) {
+            course.isMarketplace = true
+          }
+          course
+        }
       }
     }
     return codec.treeToValue(jsonObject, EduCourse::class.java)
