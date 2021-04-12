@@ -4,8 +4,10 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.update.StudentCourseUpdateTest
+import com.jetbrains.rd.util.firstOrNull
 
 class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
   override val defaultSettings: Unit get() = Unit
@@ -132,6 +134,145 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
 
     doTest(course, serverCourse, expectedStructure, 2)
     assertEquals(CheckStatus.Unchecked, getFirstTask(course)?.status)
+  }
+
+  fun `test placeholder possible answer changed`() {
+    val course = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Bar\"")
+          }
+        }
+      }
+    } as EduCourse
+    course.marketplaceCourseVersion = 1
+
+    val serverCourse = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Updated\"")
+          }
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("Buzz.kt")
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, serverCourse, expectedStructure, 2)
+    val placeholder = getFirstTask(course)?.taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
+    checkNotNull(placeholder)
+    assertEquals("\"Updated\"", placeholder.possibleAnswer)
+  }
+
+  fun `test placeholder length changed`() {
+    val course = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Bar\"")
+          }
+        }
+      }
+    } as EduCourse
+    course.marketplaceCourseVersion = 1
+
+    val serverCourse = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO</p>()") {
+            placeholder(0, "\"Updated\"")
+          }
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("Buzz.kt")
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, serverCourse, expectedStructure, 2)
+    val placeholder = getFirstTask(course)?.taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
+    checkNotNull(placeholder)
+    assertEquals(4, placeholder.length)
+  }
+
+  fun `test placeholder dependency changed`() {
+    val course = course {
+      lesson {
+        eduTask(stepId = 1, name = "task1") {
+          taskFile("TaskFile1.kt", "fn foo() = <p>TODO()</p>") {
+            placeholder(0, "123")
+          }
+        }
+        eduTask(stepId = 2, name = "task2") {
+          taskFile("TaskFile2.kt", "fn foo() = <p>TODO()</p>") {
+          placeholder(0, "123")
+        }
+        }
+        eduTask(stepId = 3, name = "task3") {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "123",  dependency = "lesson1#task1#TaskFile1.kt#1")
+          }
+        }
+      }
+    } as EduCourse
+    course.marketplaceCourseVersion = 1
+
+    val serverCourse = course {
+      lesson {
+      eduTask(stepId = 1, name = "task1") {
+        taskFile("TaskFile1.kt", "fn foo() = <p>TODO()</p>") {
+          placeholder(0, "123")
+        }
+      }
+      eduTask(stepId = 2, name = "task2") {
+        taskFile("TaskFile2.kt", "fn foo() = <p>TODO()</p>") {
+          placeholder(0, "123")
+        }
+      }
+      eduTask(stepId = 3, name = "task3") {
+        taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+          placeholder(0, "123",  dependency = "lesson1#task2#TaskFile2.kt#1")
+        }
+      }
+    }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("TaskFile1.kt")
+          file("task.html")
+        }
+        dir("task2") {
+          file("TaskFile2.kt")
+          file("task.html")
+        }
+        dir("task3") {
+          file("Buzz.kt")
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, serverCourse, expectedStructure, 2)
+    val placeholder = course.allTasks[2].taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
+    checkNotNull(placeholder)
+    assertEquals( "lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
   }
 
   private fun createCourse(firstTaskStatus: CheckStatus): EduCourse {
