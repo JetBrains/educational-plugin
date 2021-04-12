@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 apply(from = "common.gradle.kts")
+apply(from = "changes.gradle.kts")
 
 val environmentName: String by project
 val pluginVersion: String by project
@@ -28,6 +29,7 @@ val studioBuildVersion: String by project
 
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
+val generateNotes: (String) -> String by extra
 
 val isIdeaIDE = baseIDE == "idea"
 val isClionIDE = baseIDE == "clion"
@@ -93,6 +95,8 @@ val librariesToExclude = setOf(
   "jackson-module-kotlin-2.12.0.jar",
   "okhttp.jar"
 )
+
+val changesFile = "changes.html"
 
 plugins {
   idea
@@ -255,7 +259,7 @@ project(":") {
     downloadSources = false
 
     tasks.withType<PatchPluginXmlTask> {
-      changeNotes(file("changes.html").readText())
+      changeNotes(file(changesFile).readText())
       pluginDescription(file("description.html").readText())
       sinceBuild(prop("customSinceBuild"))
       untilBuild(prop("customUntilBuild"))
@@ -804,4 +808,20 @@ fun loadProperties(path: String): Properties {
   val properties = Properties()
   file(path).bufferedReader().use { properties.load(it) }
   return properties
+}
+
+/*
+Workflow is the following:
+
+1. Launch the task.
+2. Review changes in changes.html and edit if needed.
+3. Push.
+ */
+task("generate-release-notes") {
+  doLast {
+    val notes = generateNotes(pluginVersion)
+    val changesFile = file(changesFile)
+    val oldChangeNotes = changesFile.readText()
+    changesFile.writeText("$notes\n$oldChangeNotes")
+  }
 }
