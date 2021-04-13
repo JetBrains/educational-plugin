@@ -6,7 +6,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -55,7 +54,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     val projectSettings = SbtProjectSettings()
     projectSettings.externalProjectPath = location
 
-    val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.linkedProjectsSettings)
+    val projects = hashSetOf<Any>(systemSettings.linkedProjectsSettings)
     projects.add(projectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
     ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id)

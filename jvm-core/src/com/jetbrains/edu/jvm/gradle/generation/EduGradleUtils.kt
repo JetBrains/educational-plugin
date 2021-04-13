@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
@@ -67,7 +66,7 @@ object EduGradleUtils {
     gradleProjectSettings.delegatedBuild = false
     setUpGradleJvm(gradleProjectSettings, sdk)
 
-    val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
+    val projects = hashSetOf<Any>(systemSettings.linkedProjectsSettings)
     projects.add(gradleProjectSettings)
     systemSettings.setLinkedProjectsSettings(projects)
     ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
