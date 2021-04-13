@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
@@ -12,6 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.document
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
@@ -53,7 +56,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
   }
 
   fun `test next no tests dir in marketplace course`() {
-    val course = courseWithFiles() {
+    val course = courseWithFiles {
       frameworkLesson {
         eduTask {
           taskFile("task1.kt")
@@ -64,16 +67,14 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           taskFile("tests/test2.kt")
         }
       }
-    }
+    }.apply { isMarketplace = true }
 
-    withFeature(EduExperimentalFeatures.MARKETPLACE, true) {
-      withVirtualFileListener(course) {
-        val task = course.findTask("lesson1", "task1")
-        task.openTaskFileInEditor("task1.kt")
-        myFixture.type("123")
-        task.status = CheckStatus.Solved
-        myFixture.testAction(NextTaskAction())
-      }
+    withVirtualFileListener(course) {
+      val task = course.findTask("lesson1", "task1")
+      task.openTaskFileInEditor("task1.kt")
+      myFixture.type("123")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
     }
 
     val fileTree = fileTree {
@@ -100,7 +101,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
   }
 
   fun `test next in non-marketplace course`() {
-    val course = courseWithFiles() {
+    val course = courseWithFiles {
       frameworkLesson {
         eduTask {
           taskFile("task1.kt")
@@ -113,14 +114,12 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       }
     }
 
-    withFeature(EduExperimentalFeatures.MARKETPLACE, false) {
-      withVirtualFileListener(course) {
-        val task = course.findTask("lesson1", "task1")
-        task.openTaskFileInEditor("task1.kt")
-        myFixture.type("123")
-        task.status = CheckStatus.Solved
-        myFixture.testAction(NextTaskAction())
-      }
+    withVirtualFileListener(course) {
+      val task = course.findTask("lesson1", "task1")
+      task.openTaskFileInEditor("task1.kt")
+      myFixture.type("123")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
     }
 
     val fileTree = fileTree {

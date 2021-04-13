@@ -1,9 +1,6 @@
 <idea-plugin>
 
   <extensions defaultExtensionNs="com.intellij">
-    <experimentalFeature id="edu.course.marketplace" percentOfUsers="100" internalFeature="true">
-      <description>Enables marketplace integration</description>
-    </experimentalFeature>
     <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector"
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>

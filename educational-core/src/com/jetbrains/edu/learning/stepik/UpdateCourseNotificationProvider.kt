@@ -36,9 +36,9 @@ class UpdateCourseNotificationProvider(val project: Project) :
       return null
     }
     val course = project.course as? EduCourse ?: return null
-    if (course.isRemote && !course.isUpToDate && file.isTaskFile) {
+    if ((course.isStepikRemote || course.isMarketplaceRemote) && !course.isUpToDate && file.isTaskFile) {
       val panel = EditorNotificationPanel()
-      panel.setText(EduCoreBundle.message("update.notification"))
+      panel.text = EduCoreBundle.message("update.notification")
       panel.createActionLabel(EduCoreBundle.message("update.action")) {
         if (isUpdateRunning.get()) return@createActionLabel
         ProgressManager.getInstance().run(

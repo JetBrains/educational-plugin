@@ -82,7 +82,7 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
   private val Course.needsVerification: Boolean
     get() {
       return this is EduCourse
-             && isRemote
+             && isStepikRemote
              && isPublic
              && !ListedCoursesIdsProvider.featuredCommunityCourses.contains(id)
              && this !is StepikCourse

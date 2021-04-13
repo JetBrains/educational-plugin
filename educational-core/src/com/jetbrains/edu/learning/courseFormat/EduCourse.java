@@ -152,8 +152,12 @@ public class EduCourse extends Course {
     myAdminsGroup = adminsGroup;
   }
 
-  public boolean isRemote() {
-    return getId() != 0;
+  public boolean isStepikRemote() {
+    return getId() != 0 && !isMarketplace();
+  }
+
+  public boolean isMarketplaceRemote() {
+    return getId() != 0 && isMarketplace();
   }
 
   public void convertToLocal() {

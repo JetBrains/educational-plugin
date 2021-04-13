@@ -17,7 +17,7 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreBundle.lazyMessage("act
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (!course.isRemote) {
+    if (!course.isStepikRemote) {
       return
     }
     ProgressManager.getInstance().run(object : Task.Modal(
@@ -46,7 +46,7 @@ class UpdateAdditionalMaterials : DumbAwareAction(EduCoreBundle.lazyMessage("act
     presentation.isEnabledAndVisible = false
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (!course.isRemote || course.isStudy) {
+    if (!course.isStepikRemote || course.isStudy) {
       return
     }
     presentation.isEnabledAndVisible = true

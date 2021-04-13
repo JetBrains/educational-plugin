@@ -20,7 +20,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
 
   override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
     val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
-    if (course is EduCourse && course.isRemote && isLoggedIn()) {
+    if (course is EduCourse && course.isStepikRemote && isLoggedIn()) {
       val allTasks: List<Task> = course.allTasks
       for (task in allTasks) {
         if (task is ChoiceTask) {
@@ -43,7 +43,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun areSubmissionsAvailable(course: Course): Boolean {
-    return course is EduCourse && course.isStudy && course.isRemote && !course.isMarketplace
+    return course is EduCourse && course.isStudy && course.isStepikRemote
   }
 
   override fun getPlatformName(): String = StepikNames.STEPIK

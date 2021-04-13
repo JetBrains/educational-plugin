@@ -74,7 +74,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+    if (course instanceof EduCourse && ((EduCourse)course).isStepikRemote()) {
       return true;
     }
     return false;

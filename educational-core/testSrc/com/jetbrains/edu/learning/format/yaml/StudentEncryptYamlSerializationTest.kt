@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.encrypt.AES256
 import com.jetbrains.edu.learning.encrypt.getAesKey
@@ -143,9 +145,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   }
 
   private fun doTest(item: StudyItem, expected: String) {
-    withFeature(EduExperimentalFeatures.MARKETPLACE, true) {
-      val actual = YamlFormatSynchronizer.STUDENT_MAPPER_WITH_ENCRYPTION.writeValueAsString(item)
-      assertEquals(expected, actual)
-    }
+    val actual = YamlFormatSynchronizer.STUDENT_MAPPER_WITH_ENCRYPTION.writeValueAsString(item)
+    assertEquals(expected, actual)
   }
 }

@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 class PostSolutionCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.lesson.course
-    if (course is EduCourse && course.isRemote && course.isStudy && EduSettings.isLoggedIn() && task.isToSubmitToStepik) {
+    if (course is EduCourse && course.isStepikRemote && course.isStudy && EduSettings.isLoggedIn() && task.isToSubmitToStepik) {
       if (task.isUpToDate) {
         if (!isUnitTestMode) {
           ApplicationManager.getApplication().executeOnPooledThread {

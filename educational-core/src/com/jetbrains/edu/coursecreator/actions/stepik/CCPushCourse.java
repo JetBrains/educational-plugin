@@ -15,7 +15,10 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.PluginUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -35,8 +38,6 @@ import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.*;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
-import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
@@ -51,9 +52,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public CCPushCourse() {
-    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.lazyMessage("gluing.slash", getUploadToStepikMessage(COURSE_TYPE), getUpdateOnStepikMessage(COURSE_TYPE)),
-          null);
+    super(getUpdateTitleText(), getUpdateOnStepikMessage(COURSE_TYPE), null);
   }
 
   @Override
@@ -65,18 +64,10 @@ public class CCPushCourse extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof EduCourse) || course.isMarketplace()) {
+    if (!(course instanceof EduCourse) || !((EduCourse)course).isStepikRemote()) {
       return;
     }
-
-    if (((EduCourse)course).isRemote()) {
-      presentation.setText(() -> getUpdateOnStepikTitleMessage(COURSE_TYPE));
-      presentation.setEnabledAndVisible(true);
-    }
-    else {
-      presentation.setText(() -> getUploadToStepikTitleMessage(COURSE_TYPE));
-      presentation.setEnabledAndVisible(!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE));
-    }
+    presentation.setEnabledAndVisible(true);
   }
 
   @Override
@@ -98,7 +89,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
 
     // TODO i18n rewrite call when [checkIfAuthorized] will be localize
-    if (!checkIfAuthorizedToStepik(project, ((EduCourse)course).isRemote() ? "update course" : "post course")) {
+    if (!checkIfAuthorizedToStepik(project, ((EduCourse)course).isStepikRemote() ? "update course" : "post course")) {
       return;
     }
 
@@ -114,31 +105,28 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static void doPush(Project project, @NotNull EduCourse course) {
-    if (course.isRemote()) {
-      EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
-      if (courseInfo == null) {
-        Notification notification =
-          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
-                           EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
-                           NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
-        notification.notify(project);
-        return;
-      }
-      if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
-        Notification notification =
-          new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
-                           EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
-                                                 PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
-                           NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
-        notification.notify(project);
-        return;
-      }
-      updateCourse(project, course);
+    if (!course.isStepikRemote()) {
+      return;
     }
-    else {
-      postCourseWithProgress(project, course);
-      EduCounterUsageCollector.uploadCourse();
+    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
+    if (courseInfo == null) {
+      Notification notification =
+        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
+                         EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
+                         NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
+      notification.notify(project);
+      return;
     }
+    if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
+      Notification notification =
+        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
+                         EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
+                                               PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
+                         NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));
+      notification.notify(project);
+      return;
+    }
+    updateCourse(project, course);
   }
 
   @NotNull

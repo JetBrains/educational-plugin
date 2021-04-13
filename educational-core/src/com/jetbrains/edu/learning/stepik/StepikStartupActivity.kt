@@ -79,7 +79,7 @@ class StepikStartupActivity : StartupActivity {
   }
 
   private fun loadSolutionsFromStepik(project: Project, course: EduCourse) {
-    if (project.isDisposed || !course.isRemote) return
+    if (project.isDisposed || !course.isStepikRemote) return
 
     val component = PropertiesComponent.getInstance(project)
     if (component.getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {

@@ -10,10 +10,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -31,13 +29,13 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     val presentation = e.presentation
     val project = e.project
     presentation.isEnabledAndVisible = false
-    if (project == null || !isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)) {
+    if (project == null || !isCourseCreator(project)) {
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     presentation.isEnabledAndVisible = true
 
-    if (course.isRemote && course.isMarketplace) {
+    if (course.isMarketplaceRemote) {
       presentation.setText { updateTitle }
     }
     else {
@@ -47,13 +45,13 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
-    if (project == null || !isCourseCreator(project) || !isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE)) {
+    if (project == null || !isCourseCreator(project)) {
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val connector = MarketplaceConnector.getInstance()
 
-    if (!checkIfAuthorized(project, MARKETPLACE, if (course.isRemote) "update course" else "post course",
+    if (!checkIfAuthorized(project, MARKETPLACE, if (course.isMarketplaceRemote) "update course" else "post course",
                            MarketplaceSettings.INSTANCE.account != null) { connector.doAuthorize() }) {
       return
     }
@@ -69,7 +67,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
   }
 
   private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
-    if (course.isRemote) {
+    if (course.isMarketplaceRemote) {
       val courseOnRemote = connector.searchCourse(course.id)
       // courseOnRemote can be null if it was not validated yet
       if (courseOnRemote == null) {

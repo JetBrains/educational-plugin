@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {
     val course = task.course
-    return task.shouldBeCheckedOnStepik && (course is EduCourse && course.isRemote)
+    return task.shouldBeCheckedOnStepik && (course is EduCourse && course.isStepikRemote)
   }
 
   private val Task.shouldBeCheckedOnStepik: Boolean

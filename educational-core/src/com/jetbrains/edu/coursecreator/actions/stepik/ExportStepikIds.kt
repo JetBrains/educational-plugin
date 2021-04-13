@@ -50,7 +50,7 @@ class ExportStepikIds : DumbAwareAction(
       if (item is Lesson) {
         jsonObject.addProperty("unit_id", item.unitId)
       }
-      if (item is EduCourse && item.isRemote) {
+      if (item is EduCourse && item.isStepikRemote) {
         if (item.sectionIds.isNotEmpty()) {
           jsonObject.addChildren("sectionIds", item.sectionIds) { id ->
             JsonPrimitive(id)
@@ -77,7 +77,7 @@ class ExportStepikIds : DumbAwareAction(
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (!course.isRemote) {
+    if (!course.isStepikRemote) {
       return
     }
     presentation.isEnabledAndVisible = true

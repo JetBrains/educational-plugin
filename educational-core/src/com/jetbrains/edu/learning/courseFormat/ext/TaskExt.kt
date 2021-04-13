@@ -173,6 +173,5 @@ fun Task.shouldBeEmpty(path: String): Boolean {
 }
 
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {
-  return isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE) && course.isStudy && course is EduCourse &&
-         (this is EduTask || this is OutputTask)
+  return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }

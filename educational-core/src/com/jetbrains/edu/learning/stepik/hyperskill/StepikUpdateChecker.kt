@@ -21,7 +21,7 @@ class StepikUpdateChecker(project: Project) : CourseUpdateChecker(project) {
 
   override fun courseCanBeUpdated(): Boolean {
     val eduCourse = course as? EduCourse ?: return false
-    return !eduCourse.isMarketplace && (eduCourse.isRemote || eduCourse.isStudy)
+    return eduCourse.isStepikRemote || eduCourse.isStudy  && !eduCourse.isMarketplace
   }
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {

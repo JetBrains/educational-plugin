@@ -46,7 +46,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
     e.presentation.isEnabledAndVisible = when (feedbackLink.type) {
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> course is EduCourse && course.isRemote
+      FeedbackLink.LinkType.STEPIK -> course is EduCourse && course.isStepikRemote
     }
   }
 

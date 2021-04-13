@@ -41,7 +41,7 @@ class CCPushSection : DumbAwareAction(
     }
 
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CCUtils.COURSE_MODE || !course.isRemote) return
+    if (course.courseMode != CCUtils.COURSE_MODE || !course.isStepikRemote) return
     if (course.hasTopLevelLessons) return
 
     val section = course.getSection(sectionDir.name)

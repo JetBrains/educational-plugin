@@ -19,7 +19,7 @@ class ChoiceTask : Task {
       if (choiceOptions.any { it.status == ChoiceOptionStatus.UNKNOWN }) {
         return false
       }
-      return !(course is EduCourse && (course as EduCourse).isRemote && course.isStudy)
+      return !(course is EduCourse && (course as EduCourse).isStepikRemote && course.isStudy)
     }
 
   //used for deserialization

@@ -36,7 +36,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun focusOpenEduProject(courseId: Int, stepId: Int): Boolean {
-    val (project, course) = focusOpenProject { it is EduCourse && it.isRemote && it.getId() == courseId } ?: return false
+    val (project, course) = focusOpenProject { it is EduCourse && it.isStepikRemote && it.getId() == courseId } ?: return false
     ApplicationManager.getApplication().invokeLater { navigateToStep(project, course, stepId) }
     return true
   }
@@ -99,7 +99,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentEduCourse(courseId: Int, stepId: Int): Boolean {
-    val course = openRecentProject { it is EduCourse && it.isRemote && it.getId() == courseId }?.second ?: return false
+    val course = openRecentProject { it is EduCourse && it.isStepikRemote && it.getId() == courseId }?.second ?: return false
     course.dataHolder.putUserData(STEP_ID, stepId)
     return true
   }

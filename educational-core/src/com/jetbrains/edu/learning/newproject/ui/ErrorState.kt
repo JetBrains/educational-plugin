@@ -132,7 +132,7 @@ sealed class ErrorState(
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
 
     private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean =
-      selectedCourse.isRemote && !selectedCourse.isCompatible
+      selectedCourse.isStepikRemote && !selectedCourse.isCompatible
 
     private fun isCheckiOLoginRequired(selectedCourse: CheckiOCourse): Boolean {
       val checkiOConnectorProvider = selectedCourse.configurator as? CheckiOConnectorProvider ?: return false

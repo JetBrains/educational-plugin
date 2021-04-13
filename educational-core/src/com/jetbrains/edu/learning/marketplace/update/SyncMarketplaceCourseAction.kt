@@ -36,6 +36,6 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
       return false
     }
     val course = StudyTaskManager.getInstance(project).course
-    return course is EduCourse && course.isMarketplace && course.isStudy && course.isRemote
+    return course is EduCourse && course.isStudy && course.isMarketplaceRemote
   }
 }

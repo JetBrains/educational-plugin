@@ -17,7 +17,7 @@ class MarketplaceUpdateChecker(project: Project) : CourseUpdateChecker(project) 
 
   override fun courseCanBeUpdated(): Boolean {
     val marketplaceCourse = course as? EduCourse ?: return false
-    return marketplaceCourse.isMarketplace && (marketplaceCourse.isRemote || marketplaceCourse.isStudy)
+    return marketplaceCourse.isMarketplaceRemote || marketplaceCourse.isStudy && marketplaceCourse.isMarketplace
   }
 
   override fun doCheckIsUpToDate(onFinish: () -> Unit) {
