@@ -46,7 +46,7 @@ class SubmissionsManager(private val project: Project) {
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
       val submissionsById = submissionsProvider.loadSubmissions(stepIds)
       submissions.putAll(submissionsById)
-      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
+      updateSubmissionsTab()
       submissionsById.values.stream()
         .flatMap(List<Submission>::stream)
         .collect(Collectors.toList())
@@ -70,7 +70,7 @@ class SubmissionsManager(private val project: Project) {
     else {
       val loadedSubmissions = submissionsProvider.loadSubmissions(setOf(stepId))
       submissions.putAll(loadedSubmissions)
-      ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
+      updateSubmissionsTab()
       return loadedSubmissions[stepId] ?: emptyList()
     }
   }
@@ -82,6 +82,10 @@ class SubmissionsManager(private val project: Project) {
       submissionsList.sortByDescending { it.time }
       //potential race when loading submissions and checking task at one time
     }
+    updateSubmissionsTab()
+  }
+
+  private fun updateSubmissionsTab() {
     ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB) }
   }
 

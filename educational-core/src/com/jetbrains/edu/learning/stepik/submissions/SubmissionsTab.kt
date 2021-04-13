@@ -39,31 +39,33 @@ import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import kotlin.math.roundToInt
 
-class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, SUBMISSIONS_TAB) {
+class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(project, SUBMISSIONS_TAB) {
+  private val submissionsManager = SubmissionsManager.getInstance(project)
+  private val textStyleHeader: String
+    get() = StyleManager().textStyleHeader
 
   init {
-    val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
     val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
 
     if (submissionsManager.isLoggedIn()) {
       if (submissionsList != null) {
         when {
-          task is ChoiceTask -> addViewOnStepikLink(descriptionText, task)
+          task is ChoiceTask -> addViewOnStepikLink(descriptionText)
           submissionsList.isEmpty() -> descriptionText.append(
-            "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
+            "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
           else -> {
             addSubmissionsToText(submissionsList, descriptionText)
-            addHyperlinkListener(getSubmissionsListener(project, submissionsManager, task))
+            addSubmissionsListener()
           }
         }
       }
       else {
-        descriptionText.append("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.empty")}")
+        descriptionText.append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
       }
     }
     else {
-      addLoginLink(descriptionText, submissionsManager)
+      addLoginLink(descriptionText)
     }
     setText(descriptionText.toString(), plain = true)
   }
@@ -72,19 +74,19 @@ class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, 
     return SwingTabPanel(project, SUBMISSIONS_TAB)
   }
 
-  private fun addViewOnStepikLink(descriptionText: StringBuilder, currentTask: ChoiceTask) {
+  private fun addViewOnStepikLink(descriptionText: StringBuilder) {
+    if (task !is ChoiceTask) return
     descriptionText.append(
-      "<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
-      "href=https://stepik.org/submissions/${currentTask.id}?unit=${currentTask.lesson.unitId}\">" +
-      EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${StyleManager().textStyleHeader}>"))
+      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
+      "href=https://stepik.org/submissions/${task.id}?unit=${task.lesson.unitId}\">" +
+      EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a $textStyleHeader>"))
     addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
   }
 
-  private fun addLoginLink(descriptionText: StringBuilder,
-                           submissionsManager: SubmissionsManager) {
-    descriptionText.append("<a ${StyleManager().textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
+  private fun addLoginLink(descriptionText: StringBuilder) {
+    descriptionText.append("<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
                            " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
-                           "</a><a ${StyleManager().textStyleHeader}>")
+                           "</a><a $textStyleHeader>")
     addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         submissionsManager.doAuthorize()
@@ -92,19 +94,16 @@ class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, 
     })
   }
 
-  private fun getSubmissionsListener(project: Project,
-                                     submissionsManager: SubmissionsManager,
-                                     task: Task): HyperlinkListener {
-    return HyperlinkListener { e ->
+  private fun addSubmissionsListener() {
+    addHyperlinkListener(HyperlinkListener { e ->
       if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        val submission = submissionsManager.getSubmission(task.id, e.description.toInt())
-                         ?: return@HyperlinkListener
+        val submission = submissionsManager.getSubmission(task.id, e.description.toInt()) ?: return@HyperlinkListener
         val reply = submission.reply ?: return@HyperlinkListener
         runInEdt {
-          showDiff(project, task, reply)
+          showDiff(reply)
         }
       }
-    }
+    })
   }
 
   private fun getImageUrl(status: String?): URL? {
@@ -165,7 +164,7 @@ class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, 
     descriptionText.append("</ul>")
   }
 
-  private fun showDiff(project: Project, task: Task, reply: Reply) {
+  private fun showDiff(reply: Reply) {
     val taskFiles = task.taskFiles.values.toMutableList()
     val submissionTexts = getSubmissionTexts(reply, task.name) ?: return
     val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
@@ -195,6 +194,6 @@ class SubmissionsTab(project: Project, val task: Task) : AdditionalTab(project, 
     val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
     val text = formatDate(time)
     return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
-           "<a ${StyleManager().textStyleHeader};color:${getLinkColor(submission)} href=${submission.id}> ${text}</a></li>"
+           "<a $textStyleHeader;color:${getLinkColor(submission)} href=${submission.id}> ${text}</a></li>"
   }
 }
