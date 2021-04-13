@@ -13,19 +13,19 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.PythonSdkUpdater
+import javax.swing.JComponent
 
 class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
 
   override fun isAvailable(): Boolean = !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion())
 
-  override fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): ComboboxWithBrowseButton {
+  override fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): JComponent {
     val project = ProjectManager.getInstance().defaultProject
     val model = ProjectSdksModel()
     model.reset(project)
@@ -42,35 +42,19 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
 
     val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == PyFakeSdkType }
     val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
-    // BACKCOMPAT: 2019.3
-    @Suppress("DEPRECATION")
-    val comboBox = JdkComboBox(model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, true)
-    comboBox.addActionListener { onSdkSelected(comboBox, onSdkSelected) }
+    val comboBox = JdkComboBox(null, model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, null)
+    comboBox.addActionListener {
+      onSdkSelected(comboBox.selectedJdk)
+    }
 
     if (fakeSdk != null) {
       comboBox.selectedJdk = fakeSdk
     }
     else {
-      onSdkSelected(comboBox, onSdkSelected)
+      onSdkSelected(comboBox.selectedJdk)
     }
 
-    val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
-    val setupButton = comboBoxWithBrowseButton.button
-    // BACKCOMPAT: 2019.3
-    @Suppress("DEPRECATION")
-    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem?, null, false)
-    return comboBoxWithBrowseButton
-  }
-
-  private fun onSdkSelected(comboBox: JdkComboBox, onSdkSelected: (Sdk?) -> Unit) {
-    var selectedSdk = comboBox.selectedJdk
-    if (selectedSdk == null) {
-      val selectedItem = comboBox.selectedItem
-      if (selectedItem is JdkComboBox.SuggestedJdkItem) {
-        selectedSdk = PyDetectedSdk(selectedItem.path)
-      }
-    }
-    onSdkSelected(selectedSdk)
+    return comboBox
   }
 
   override fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {

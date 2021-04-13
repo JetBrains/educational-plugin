@@ -2,7 +2,6 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.PlatformUtils
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper
@@ -10,11 +9,12 @@ import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 import com.jetbrains.python.sdk.PythonSdkAdditionalData
 import com.jetbrains.python.sdk.PythonSdkUtil
+import javax.swing.JComponent
 
 class PyPyCharmSdkSettingsHelper : PySdkSettingsHelper {
   override fun isAvailable(): Boolean = PlatformUtils.isPyCharm() || PlatformUtils.isCLion()
 
-  override fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): ComboboxWithBrowseButton {
+  override fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): JComponent {
     val registeredSdks = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
     registeredSdks.removeIf {
       if (it != null && PythonSdkUtil.isVirtualEnv(it)) {

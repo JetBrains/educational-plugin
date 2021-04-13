@@ -1,13 +1,9 @@
 package com.jetbrains.edu.python.learning.newproject
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.ui.ComboboxWithBrowseButton
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.Err
@@ -33,10 +29,6 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     val fakeSdk = createFakeSdk(course, context)
 
     val combo = getInterpreterComboBox(fakeSdk)
-    if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
-      combo.putClientProperty("JButton.buttonType", null)
-    }
-    combo.setButtonIcon(AllIcons.General.GearPlain)
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, EduPythonBundle.message("python.interpreter"), BorderLayout.WEST))
   }
 
@@ -69,7 +61,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       }
     }
 
-  private fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
+  private fun getInterpreterComboBox(fakeSdk: Sdk?): JComponent {
     val helper = PySdkSettingsHelper.firstAvailable()
     return helper.getInterpreterComboBox(fakeSdk) { sdk ->
       mySettings.sdk = sdk

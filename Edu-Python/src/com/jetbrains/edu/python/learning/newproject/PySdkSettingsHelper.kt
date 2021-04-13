@@ -3,11 +3,11 @@ package com.jetbrains.edu.python.learning.newproject
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.ui.ComboboxWithBrowseButton
+import javax.swing.JComponent
 
 interface PySdkSettingsHelper {
   fun isAvailable(): Boolean
-  fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): ComboboxWithBrowseButton
+  fun getInterpreterComboBox(fakeSdk: Sdk?, onSdkSelected: (Sdk?) -> Unit): JComponent
   fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk?
   fun getAllSdks(): List<Sdk>
 
