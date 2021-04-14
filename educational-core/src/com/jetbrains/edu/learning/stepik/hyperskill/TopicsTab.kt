@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
@@ -20,8 +19,6 @@ class TopicsTab(project: Project,
 ) : AdditionalTab(project, TOPICS_TAB) {
 
   init {
-    addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
-
     val topics = course.taskToTopics[task.index - 1]
     val descriptionText = buildString {
       val textStyleHeader = StyleManager().textStyleHeader

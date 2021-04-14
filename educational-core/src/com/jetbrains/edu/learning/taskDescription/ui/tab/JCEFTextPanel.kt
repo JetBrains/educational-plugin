@@ -14,9 +14,6 @@ import javax.swing.JComponent
 
 class JCEFTextPanel(project: Project) : TabTextPanel(project) {
   private val jcefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
-  private val jcefLinkHandler = JCefToolWindowLinkHandler(project)
-  private val taskInfoRequestHandler = ToolWindowRequestHandler(jcefLinkHandler)
-  private val taskInfoLifeSpanHandler = TaskInfoLifeSpanHandler(jcefLinkHandler)
 
   override val component: JComponent
     get() = jcefBrowser.component
@@ -24,8 +21,12 @@ class JCEFTextPanel(project: Project) : TabTextPanel(project) {
   init {
     // BACKCOMPAT: 2020.3: error page is disabled by default in 211 branch
     jcefBrowser.disableErrorPage()
-    jcefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, jcefBrowser.cefBrowser)
-    jcefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, jcefBrowser.cefBrowser)
+
+    val toolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    val requestHandler = JCEFToolWindowRequestHandler(toolWindowLinkHandler)
+    jcefBrowser.jbCefClient.addRequestHandler(requestHandler, jcefBrowser.cefBrowser)
+    val lifeSpanHandler = JCEFTaskInfoLifeSpanHandler(toolWindowLinkHandler)
+    jcefBrowser.jbCefClient.addLifeSpanHandler(lifeSpanHandler, jcefBrowser.cefBrowser)
     add(jcefBrowser.component, BorderLayout.CENTER)
 
     Disposer.register(this, jcefBrowser)

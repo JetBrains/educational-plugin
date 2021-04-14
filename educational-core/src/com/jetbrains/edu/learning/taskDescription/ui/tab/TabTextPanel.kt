@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.event.HyperlinkListener
 
 
 abstract class TabTextPanel(val project: Project) : JPanel(BorderLayout()), Disposable {
@@ -34,8 +33,6 @@ abstract class TabTextPanel(val project: Project) : JPanel(BorderLayout()), Disp
   }
 
   protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String): String
-
-  open fun addHyperlinkListener(listener: HyperlinkListener) {}
 
   override fun dispose() {}
 

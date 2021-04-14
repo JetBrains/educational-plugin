@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.io.URLUtil
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,7 +24,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-abstract class ToolWindowLinkHandler(val project: Project) {
+
+open class ToolWindowLinkHandler(val project: Project) {
+  /**
+   * @return true if success else false
+   */
   open fun process(url: String): Boolean {
     return when {
       url.startsWith(PSI_ELEMENT_PROTOCOL) -> {
@@ -38,7 +43,13 @@ abstract class ToolWindowLinkHandler(val project: Project) {
     }
   }
 
-  abstract fun processExternalLink(url: String): Boolean
+  /**
+   * @return true if success else false
+   */
+  protected open fun processExternalLink(url: String): Boolean {
+    EduBrowser.getInstance().browse(url)
+    return true
+  }
 
   companion object {
     const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL

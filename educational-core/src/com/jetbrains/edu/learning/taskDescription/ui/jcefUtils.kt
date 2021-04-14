@@ -1,8 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.jetbrains.edu.learning.EduBrowser
+import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL_PREFIX
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
 import org.cef.browser.CefBrowser
@@ -23,12 +22,10 @@ class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(projec
 
   override fun processExternalLink(url: String): Boolean {
     val urlToOpen = when {
-      url.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX) -> StepikNames.getStepikUrl() + url.substringAfter(
-        StandardFileSystems.FILE_PROTOCOL_PREFIX)
+      url.startsWith(FILE_PROTOCOL_PREFIX) -> StepikNames.getStepikUrl() + url.substringAfter(FILE_PROTOCOL_PREFIX)
       else -> url
     }
-    EduBrowser.getInstance().browse(urlToOpen)
-    return true
+    return super.processExternalLink(urlToOpen)
   }
 
   companion object {
@@ -36,7 +33,7 @@ class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(projec
   }
 }
 
-class ToolWindowRequestHandler(private val jcefLinkHandler: JCefToolWindowLinkHandler) : CefRequestHandlerAdapter() {
+class JCEFToolWindowRequestHandler(private val jcefLinkHandler: JCefToolWindowLinkHandler) : CefRequestHandlerAdapter() {
   /**
    * Called before browser navigation. If the navigation is canceled LoadError will be called with an ErrorCode value of Aborted.
    *
@@ -52,7 +49,7 @@ class ToolWindowRequestHandler(private val jcefLinkHandler: JCefToolWindowLinkHa
   }
 }
 
-class TaskInfoLifeSpanHandler(private val jcefLinkHandler: JCefToolWindowLinkHandler) : CefLifeSpanHandlerAdapter() {
+class JCEFTaskInfoLifeSpanHandler(private val jcefLinkHandler: JCefToolWindowLinkHandler) : CefLifeSpanHandlerAdapter() {
   override fun onBeforePopup(browser: CefBrowser?, frame: CefFrame?, targetUrl: String?, targetFrameName: String?): Boolean {
     if (targetUrl == null) return true
     return jcefLinkHandler.process(targetUrl)

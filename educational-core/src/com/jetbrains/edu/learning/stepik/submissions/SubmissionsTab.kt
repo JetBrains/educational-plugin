@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
+import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
@@ -35,14 +35,14 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.stream.Collectors
-import javax.swing.event.HyperlinkEvent
-import javax.swing.event.HyperlinkListener
+import javax.swing.JTextPane
 import kotlin.math.roundToInt
 
 class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(project, SUBMISSIONS_TAB) {
   private val submissionsManager = SubmissionsManager.getInstance(project)
   private val textStyleHeader: String
     get() = StyleManager().textStyleHeader
+  private var linkHandler: ((JTextPane) -> SwingToolWindowLinkHandler)? = null
 
   init {
     val descriptionText = StringBuilder()
@@ -52,11 +52,10 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
       if (submissionsList != null) {
         when {
           task is ChoiceTask -> addViewOnStepikLink(descriptionText)
-          submissionsList.isEmpty() -> descriptionText.append(
-            "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
+          submissionsList.isEmpty() -> descriptionText.append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
           else -> {
             addSubmissionsToText(submissionsList, descriptionText)
-            addSubmissionsListener()
+            linkHandler = submissionsDifferenceLinkHandler
           }
         }
       }
@@ -65,44 +64,55 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
       }
     }
     else {
-      addLoginLink(descriptionText)
+      addLoginText(descriptionText)
+      linkHandler = loginLinkHandler
     }
     setText(descriptionText.toString(), plain = true)
   }
 
-  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project)
+  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder) {
     if (task !is ChoiceTask) return
     descriptionText.append(
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
       "href=https://stepik.org/submissions/${task.id}?unit=${task.lesson.unitId}\">" +
-      EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a $textStyleHeader>"))
-    addHyperlinkListener(EduBrowserHyperlinkListener.INSTANCE)
+      EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a $textStyleHeader>") + "</a>")
   }
 
-  private fun addLoginLink(descriptionText: StringBuilder) {
-    descriptionText.append("<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)}" +
-                           " href=>${EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName())}" +
-                           "</a><a $textStyleHeader>")
-    addHyperlinkListener(HyperlinkListener { e ->
-      if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        submissionsManager.doAuthorize()
-      }
-    })
+  private fun addLoginText(descriptionText: StringBuilder) {
+    descriptionText.append("<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=${SUBMISSION_LOGIN_URL}>" +
+                           EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
   }
 
-  private fun addSubmissionsListener() {
-    addHyperlinkListener(HyperlinkListener { e ->
-      if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-        val submission = submissionsManager.getSubmission(task.id, e.description.toInt()) ?: return@HyperlinkListener
-        val reply = submission.reply ?: return@HyperlinkListener
-        runInEdt {
-          showDiff(reply)
+  private val loginLinkHandler: (JTextPane) -> SwingToolWindowLinkHandler
+    get() = { textPane ->
+      object : SwingToolWindowLinkHandler(project, textPane) {
+        override fun process(url: String): Boolean {
+          if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
+
+          submissionsManager.doAuthorize()
+          return true
         }
       }
-    })
-  }
+    }
+
+  private val submissionsDifferenceLinkHandler: (JTextPane) -> SwingToolWindowLinkHandler
+    get() = { textPane ->
+      object : SwingToolWindowLinkHandler(project, textPane) {
+        override fun process(url: String): Boolean {
+          if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
+
+          val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
+          val submission = submissionsManager.getSubmission(task.id, submissionId) ?: return true
+          val reply = submission.reply ?: return true
+          runInEdt {
+            showDiff(reply)
+          }
+          return true
+        }
+      }
+    }
 
   private fun getImageUrl(status: String?): URL? {
     val icon = when (status) {
@@ -193,6 +203,12 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
     val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
     val text = formatDate(time)
     return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
-           "<a $textStyleHeader;color:${getLinkColor(submission)} href=${submission.id}> ${text}</a></li>"
+           "<a $textStyleHeader;color:${getLinkColor(submission)} href=${SUBMISSION_DIFF_URL}${submission.id}> ${text}</a></li>"
+  }
+
+  companion object {
+    private const val SUBMISSION_PROTOCOL = "submission://"
+    private const val SUBMISSION_DIFF_URL = "${SUBMISSION_PROTOCOL}diff/"
+    private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
   }
 }

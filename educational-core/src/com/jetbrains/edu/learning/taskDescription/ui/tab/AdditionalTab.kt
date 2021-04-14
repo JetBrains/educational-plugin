@@ -10,10 +10,9 @@ import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import java.awt.BorderLayout
 import javax.swing.JPanel
-import javax.swing.event.HyperlinkListener
 
 open class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
-  private val textPanel = createTextPanel()
+  private val innerTextPanel by lazy { createTextPanel() }
 
   override fun dispose() {}
 
@@ -39,10 +38,8 @@ open class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(Bo
    * and then will be inserted to "/style/template.html.ft" template as a content or text with Html resources and wrapping hints
    */
   protected fun setText(text: String, plain: Boolean) {
-    textPanel.setTabText(text, plain)
+    innerTextPanel.setTabText(text, plain)
   }
-
-  protected fun addHyperlinkListener(listener: HyperlinkListener) = textPanel.addHyperlinkListener(listener)
 
   fun createContent(): Content {
     val tabName = tabType.tabName

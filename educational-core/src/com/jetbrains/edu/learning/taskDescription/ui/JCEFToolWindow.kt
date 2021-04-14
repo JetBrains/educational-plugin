@@ -28,15 +28,14 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser)
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
-  private val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
-
   init {
     // BACKCOMPAT: 2020.3: error page is disable by default in 211 branch
     taskInfoJBCefBrowser.disableErrorPage()
 
-    val taskInfoRequestHandler = ToolWindowRequestHandler(jcefLinkInToolWindowHandler)
+    val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
+    val taskInfoRequestHandler = JCEFToolWindowRequestHandler(jcefLinkInToolWindowHandler)
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
-    val taskInfoLifeSpanHandler = TaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
+    val taskInfoLifeSpanHandler = JCEFTaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
     taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
 
