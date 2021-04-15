@@ -1,7 +1,6 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -46,7 +45,6 @@ open class GradleCourseProjectGenerator(
 
   companion object {
 
-    private val LOG = Logger.getInstance(GradleCourseProjectGenerator::class.java)
     // Unfortunately, org.jetbrains.plugins.gradle.service.project.GradleStartupActivity#SHOW_UNLINKED_GRADLE_POPUP is private
     // so create own const
     private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
