@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.checkIsStepikUpToDate
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
-import com.jetbrains.edu.learning.stepik.updateCourse
+import com.jetbrains.edu.learning.stepik.updateCourseOnStepik
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 
 @Service
@@ -35,7 +35,7 @@ class StepikUpdateChecker(project: Project) : CourseUpdateChecker(project) {
         if (!isUpToDate) {
           showUpdateAvailableNotification(project) {
             runInBackground(title = message("progress.loading.course")) {
-              updateCourse(project, eduCourse)
+              updateCourseOnStepik(project, eduCourse)
             }
           }
           eduCourse.markTasksUpToDate(courseFromStepik)

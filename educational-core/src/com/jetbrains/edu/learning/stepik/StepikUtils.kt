@@ -62,10 +62,10 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
  * Pass [courseFromStepik] to avoid additional network request to get remote course info
  * if you already have up to date result of such request.
  * In case of `null`, remote course info will be retrieved via [com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo].
- * Don't pass [courseFromStepik], if `[updateCourse]` may be called after an indeterminate amount of time (e.g. in notification action)
+ * Don't pass [courseFromStepik], if `[updateCourseOnStepik]` may be called after an indeterminate amount of time (e.g. in notification action)
  * after retrieving of remote course object. It may lead to outdated course info even after update
  */
-fun updateCourse(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
+fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
   StepikCourseUpdater(project, course).updateCourse(courseFromStepik)
   SubmissionsManager.getInstance(project).getSubmissions(course.allTasks.map { it.id }.toSet())
   StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()

@@ -48,7 +48,7 @@ class PostSolutionCheckListener : CheckListener {
                                     EduCoreBundle.message("error.solution.not.posted"),
                                     EduCoreBundle.message("stepik.task.was.updated", StepikNames.STEPIK, taskName),
                                     NotificationType.INFORMATION,
-                                    notificationListener(project) { updateCourse(project, course) })
+                                    notificationListener(project) { updateCourseOnStepik(project, course) })
     notification.notify(project)
   }
 }
