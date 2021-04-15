@@ -1,9 +1,14 @@
 package com.jetbrains.edu.coursecreator.stepik
 
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
+import com.jetbrains.edu.learning.EduBrowser.Companion.getInstance
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.LEARN_MARKETPLACE_COURSES
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
@@ -36,7 +41,11 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
     else {
       course.updateDate = remoteCourse.updateDate
-      showNotification(project, "Course is updated", openOnStepikAction("/course/${course.id}"))
+      showNotification(project, object: AnAction(message("course.dialog.learn.more")) {
+        override fun actionPerformed(e: AnActionEvent) {
+          getInstance().browse(LEARN_MARKETPLACE_COURSES)
+        }
+      }, message("stepik.course.updated.notification.title"), message("stepik.course.updated.notification.message"))
     }
   }
 

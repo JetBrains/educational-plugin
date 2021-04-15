@@ -12,6 +12,7 @@ const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 const val MARKETPLACE_PROFILE_PATH = "$PLUGINS_REPOSITORY_URL/author/me"
 const val LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
 const val COURSE_URL = "$PLUGINS_REPOSITORY_URL/plugin/"
+const val LEARN_MARKETPLACE_COURSES = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/courses-at-marketplace.html"
 
 var MARKETPLACE_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceHubClientId")
 var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("eduHubClientId")
