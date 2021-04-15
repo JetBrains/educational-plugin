@@ -2,11 +2,10 @@ package com.jetbrains.edu.learning.marketplace.newProjectUI
 
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.marketplace.LEARN_MARKETPLACE_COURSES
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
 import kotlinx.coroutines.CoroutineScope
-
-private const val LEARN_MARKETPLACE_COURSES = "https://www.jetbrains.com/help/education/learner-start-guide.html"
 
 class MarketplaceCoursesPanel(
   coursesPlatformProvider: CoursesPlatformProvider,
