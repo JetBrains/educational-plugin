@@ -25,7 +25,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.coursecreator.yaml.YamlInfoTaskDescriptionTabKt;
+import com.jetbrains.edu.coursecreator.ui.YamlHelpTab;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -199,7 +199,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
           notification.addAction(new AnAction("Learn More") {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-              YamlInfoTaskDescriptionTabKt.showYamlTab(myProject);
+              YamlHelpTab.show(myProject);
               notification.hideBalloon();
             }
           });

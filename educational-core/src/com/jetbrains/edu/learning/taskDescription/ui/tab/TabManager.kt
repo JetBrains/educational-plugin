@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentManager
+import com.jetbrains.edu.coursecreator.ui.YamlHelpTab
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.BUNDLE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -11,8 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.TOPICS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.*
 import org.jetbrains.annotations.PropertyKey
 
 
@@ -58,6 +58,8 @@ class TabManager(private val project: Project, private val contentManager: Conte
 
   private fun createSubmissionsTab(task: Task): SubmissionsTab = SubmissionsTab(project, task)
 
+  private fun createYamlHelpTab(): YamlHelpTab = YamlHelpTab(project)
+
   private fun addTab(additionalTab: AdditionalTab, tabIndex: Int) {
     val tabContent = additionalTab.createContent()
     tabContent.isCloseable = false
@@ -67,6 +69,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
   private fun createTab(tabType: TabType, task: Task): AdditionalTab = when (tabType) {
     TOPICS_TAB -> createTopicsTab(task)
     SUBMISSIONS_TAB -> createSubmissionsTab(task)
+    YAML_HELP_TAB -> createYamlHelpTab()
   }
 
   fun getContent(tabType: TabType): Content? {
@@ -95,11 +98,16 @@ class TabManager(private val project: Project, private val contentManager: Conte
     val result = mutableListOf<TabType>()
     val course = course
 
-    if (course is HyperskillCourse && course.isTaskInProject(this)) {
-      result.add(TOPICS_TAB)
+    if (course.isStudy) {
+      if (course is HyperskillCourse && course.isTaskInProject(this)) {
+        result.add(TOPICS_TAB)
+      }
+      if (supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
+        result.add(SUBMISSIONS_TAB)
+      }
     }
-    if (supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
-      result.add(SUBMISSIONS_TAB)
+    else {
+      result.add(YAML_HELP_TAB)
     }
 
     return result
@@ -125,7 +133,8 @@ class TabManager(private val project: Project, private val contentManager: Conte
 
   enum class TabType(@PropertyKey(resourceBundle = BUNDLE) private val nameId: String) {
     TOPICS_TAB("hyperskill.topics.tab.name"),
-    SUBMISSIONS_TAB("submissions.tab.name");
+    SUBMISSIONS_TAB("submissions.tab.name"),
+    YAML_HELP_TAB("yaml.help.tab.name");
 
     val tabName: String get() = EduCoreBundle.message(nameId)
   }

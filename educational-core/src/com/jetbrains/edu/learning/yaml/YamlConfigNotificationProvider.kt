@@ -7,7 +7,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.coursecreator.yaml.showYamlTab
+import com.jetbrains.edu.coursecreator.ui.YamlHelpTab
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
@@ -35,7 +35,7 @@ class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Pro
     val exception = cause
     if (exception == null) return null
     val panel = EditorNotificationPanel().text(EduCoreBundle.message("notification.yaml.config", exception.decapitalize()))
-    panel.createActionLabel(EduCoreBundle.message("notification.yaml.config.help")) { showYamlTab(project) }
+    panel.createActionLabel(EduCoreBundle.message("notification.yaml.config.help")) { YamlHelpTab.show(project) }
     return panel
   }
 

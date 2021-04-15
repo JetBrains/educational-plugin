@@ -13,7 +13,6 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.yaml.addTabToTaskDescription
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
@@ -60,7 +59,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun updateAdditionalTaskTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
     uiContent?.tabContentManager?.updateTabs(taskToUpdate)
-    addYamlTab()
   }
 
   override fun updateTab(tabType: TabType) {
@@ -69,13 +67,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun showTab(tabType: TabType) {
     uiContent?.tabContentManager?.selectTab(tabType)
-  }
-
-  private fun addYamlTab() {
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    if (!course.isStudy) {
-      addTabToTaskDescription(project)
-    }
   }
 
   override fun addLoadingPanel(platformName: String) {
