@@ -48,7 +48,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   }
 
   private fun setupSbtSettings(project: Project) {
-    val location = project.basePath ?: return
+    val location = project.basePath ?: error("Failed to find base path for the project during scala sbt setup")
     val systemSettings = ExternalSystemApiUtil.getSettings(project, SbtProjectSystem.Id)
 
     val projectSettings = SbtProjectSettings()

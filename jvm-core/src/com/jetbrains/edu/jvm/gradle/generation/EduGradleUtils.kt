@@ -89,7 +89,7 @@ object EduGradleUtils {
   private val Sdk.javaSdkVersion: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
 
   fun updateGradleSettings(project: Project) {
-    val projectBasePath = project.basePath ?: return
+    val projectBasePath = project.basePath ?: error("Failed to find base path for the project during gradle project setup")
     val sdk = ProjectRootManager.getInstance(project).projectSdk
     setGradleSettings(project, sdk, projectBasePath)
   }
