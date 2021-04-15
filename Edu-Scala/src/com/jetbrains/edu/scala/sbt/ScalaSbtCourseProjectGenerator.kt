@@ -48,15 +48,15 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   }
 
   private fun setupSbtSettings(project: Project) {
-    val location = project.basePath!!
+    val location = project.basePath ?: return
     val systemSettings = ExternalSystemApiUtil.getSettings(project, SbtProjectSystem.Id)
 
     val projectSettings = SbtProjectSettings()
     projectSettings.externalProjectPath = location
 
-    val projects = hashSetOf<Any>(systemSettings.linkedProjectsSettings)
+    val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(projectSettings)
-    systemSettings.setLinkedProjectsSettings(projects)
+    systemSettings.linkedProjectsSettings = projects
     ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id)
   }
 

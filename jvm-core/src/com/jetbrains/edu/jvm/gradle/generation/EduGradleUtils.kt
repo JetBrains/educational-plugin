@@ -66,9 +66,9 @@ object EduGradleUtils {
     gradleProjectSettings.delegatedBuild = false
     setUpGradleJvm(gradleProjectSettings, sdk)
 
-    val projects = hashSetOf<Any>(systemSettings.linkedProjectsSettings)
+    val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(gradleProjectSettings)
-    systemSettings.setLinkedProjectsSettings(projects)
+    systemSettings.linkedProjectsSettings = projects
     ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
   }
 
