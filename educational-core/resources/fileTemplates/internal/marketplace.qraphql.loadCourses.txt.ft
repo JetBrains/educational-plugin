@@ -1,7 +1,7 @@
 query {
   plugins(
     search: {
-      filters: [{ field: "family", value: "edu" }]
+      filters: [{ field: "family", value: "edu", field: "fields.isPrivate", value: false}]
       max: ${max}
       offset: ${offset}
       sortBy: RATING
