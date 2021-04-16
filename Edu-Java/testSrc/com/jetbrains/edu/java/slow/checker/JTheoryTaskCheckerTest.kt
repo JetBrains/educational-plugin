@@ -11,8 +11,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
 
-// TODO: add Theory task with custom Application configuration
-//  Currently, such test doesn't work because we haven't managed to make it compile and run in tests
+// Add Theory task with custom Application configuration
+// Currently, such test doesn't work because we haven't managed to make it compile and run in tests
+// https://youtrack.jetbrains.com/issue/EDU-4262
 class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
     lesson {
