@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.swing.Icon
 
-class CodeforcesCourse : Course {
+open class CodeforcesCourse : Course {
   var endDateTime: ZonedDateTime? = null
 
   @Suppress("unused") //used for deserialization

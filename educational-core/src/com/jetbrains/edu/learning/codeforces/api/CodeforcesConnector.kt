@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 abstract class CodeforcesConnector {
@@ -61,6 +62,14 @@ abstract class CodeforcesConnector {
     val contestLanguages = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contest.language"))
 
     return Ok(ContestInformation(contestId, contestInfo.name, contestInfo.endTime, availableLanguages = contestLanguages))
+  }
+
+  fun getContestsPage(): Result<Document, String> {
+    return service.contestsPage().executeParsingErrors().flatMap {
+      val body = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
+      val doc = Jsoup.parse(body.string())
+      Ok(doc)
+    }
   }
 
   companion object {

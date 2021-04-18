@@ -45,7 +45,11 @@ object CodeforcesContestConnector {
   }
 
   fun getUpcomingContests(document: Document): List<ContestInformation> {
-    val upcomingContests = getTables(document)[0]
+    val tables = getTables(document)
+    if (tables.isEmpty()) {
+      return emptyList()
+    }
+    val upcomingContests = tables[0]
 
     val contestElements = getContestsElements(upcomingContests)
 
@@ -54,8 +58,16 @@ object CodeforcesContestConnector {
     }
   }
 
+  /**
+   * Recent contest table goes after upcoming and current contests table.
+   * See the page format [com.jetbrains.edu.learning.codeforces.api.CodeforcesService.contestsPage]
+   */
   fun getRecentContests(document: Document): List<ContestInformation> {
-    val recentContests = getTables(document)[1]
+    val tables = getTables(document)
+    if (tables.size == 1) {
+      return emptyList()
+    }
+    val recentContests = tables[1]
 
     val contestElements = getContestsElements(recentContests)
 
