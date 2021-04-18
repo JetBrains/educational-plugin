@@ -9,17 +9,19 @@ import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindow
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import java.awt.FlowLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
 
-class SwingTabPanel(project: Project, tabType: TabType) : TabPanel(project, tabType) {
+class SwingTextPanel(project: Project) : TabTextPanel(project) {
   private val textPane: JTextPane = createTextPane()
+
+  override val component: JComponent = textPane
 
   init {
     val scrollPane = JBScrollPane(textPane)

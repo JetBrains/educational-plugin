@@ -49,7 +49,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
   open fun updateTaskSpecificPanel(task: Task?) {}
 
   /**
-   * Copy-paste [com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel.wrapHints]
+   * Copy-paste [com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel.wrapHints]
    * To be removed a bit later
    */
   protected fun wrapHints(text: String, task: Task?): String {

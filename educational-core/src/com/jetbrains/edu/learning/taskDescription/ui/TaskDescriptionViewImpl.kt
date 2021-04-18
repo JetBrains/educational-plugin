@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.getTopPanelForProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
@@ -74,7 +74,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val contentManager = uiContent?.tabContentManager ?: return
     val submissionsContent = contentManager.getContent(SUBMISSIONS_TAB) ?: return
     val panel = submissionsContent.component
-    if (panel is SwingTabPanel) {
+    if (panel is SwingTextPanel) {
       ApplicationManager.getApplication().invokeLater { panel.addLoadingSubmissionsPanel(platformName) }
     }
   }

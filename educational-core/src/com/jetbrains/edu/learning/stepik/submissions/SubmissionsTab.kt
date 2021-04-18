@@ -26,9 +26,9 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.ui.EduColors
 import icons.EducationalCoreIcons
 import java.net.URL
@@ -70,8 +70,8 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
     setText(descriptionText.toString(), plain = true)
   }
 
-  override fun createTabPanel(): TabPanel {
-    return SwingTabPanel(project, SUBMISSIONS_TAB)
+  override fun createTextPanel(): TabTextPanel {
+    return SwingTextPanel(project)
   }
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder) {

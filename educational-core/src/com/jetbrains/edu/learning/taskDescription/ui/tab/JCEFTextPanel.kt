@@ -7,15 +7,19 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.jetbrains.edu.learning.taskDescription.ui.*
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
+import javax.swing.JComponent
 
-class JCEFTabPanel(project: Project, tabType: TabType) : TabPanel(project, tabType) {
+
+class JCEFTextPanel(project: Project) : TabTextPanel(project) {
   private val jcefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
   private val jcefLinkHandler = JCefToolWindowLinkHandler(project)
   private val taskInfoRequestHandler = ToolWindowRequestHandler(jcefLinkHandler)
   private val taskInfoLifeSpanHandler = TaskInfoLifeSpanHandler(jcefLinkHandler)
+
+  override val component: JComponent
+    get() = jcefBrowser.component
 
   init {
     // BACKCOMPAT: 2020.3: error page is disabled by default in 211 branch
@@ -25,7 +29,6 @@ class JCEFTabPanel(project: Project, tabType: TabType) : TabPanel(project, tabTy
     add(jcefBrowser.component, BorderLayout.CENTER)
 
     Disposer.register(this, jcefBrowser)
-
     ApplicationManager.getApplication().messageBus.connect(this)
       .subscribe(LafManagerListener.TOPIC,
                  LafManagerListener {

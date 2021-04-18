@@ -9,9 +9,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.TOPICS_TAB
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.ui.EduColors
 
 class TopicsTab(project: Project,
@@ -40,8 +40,8 @@ class TopicsTab(project: Project,
     setText(descriptionText, plain = false)
   }
 
-  override fun createTabPanel(): TabPanel {
-    return SwingTabPanel(project, TOPICS_TAB)
+  override fun createTextPanel(): TabTextPanel {
+    return SwingTextPanel(project)
   }
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
