@@ -1,14 +1,20 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
 import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import java.awt.BorderLayout
 import java.awt.Font
 
 
@@ -23,18 +29,30 @@ private const val NOT_VERIFIED_NOTE = """
                                       and we would be glad to verify it with you.
                                       """
 
-class CourseDescriptionPanel(leftMargin: Int) : JBScrollPane() {
-  private val descriptionPanel: CourseDescriptionHtmlPanel
+class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0, 5)), CourseSelectionListener {
 
-  init {
-    border = JBUI.Borders.emptyLeft(leftMargin)
-    descriptionPanel = CourseDescriptionHtmlPanel()
-    descriptionPanel.border = JBUI.Borders.emptyTop(DESCRIPTION_AND_SETTINGS_TOP_OFFSET)
-    descriptionPanel.background = MAIN_BG_COLOR
-    setViewportView(descriptionPanel)
+  private val descriptionPanel: CourseDescriptionHtmlPanel = CourseDescriptionHtmlPanel().apply {
+    background = MAIN_BG_COLOR
   }
 
-  fun bind(course: Course) {
+  @Suppress("DialogTitleCapitalization")
+  private val courseDetailsHeader: JBLabel = JBLabel(EduCoreBundle.message("course.dialog.course.details")).apply {
+    font = JBFont.create(Font("SF UI Text", Font.BOLD, JBUI.scaleFontSize(15.0f)), true)
+  }
+
+  init {
+    border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, leftMargin, 0, 0)
+
+    add(courseDetailsHeader, BorderLayout.PAGE_START)
+    val jbScrollPane = JBScrollPane(descriptionPanel).apply {
+      border = null
+    }
+    add(jbScrollPane, BorderLayout.CENTER)
+  }
+
+  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+    val course = courseInfo.course
+    courseDetailsHeader.isVisible = !course.description.isNullOrEmpty()
     descriptionPanel.bind(course)
   }
 }

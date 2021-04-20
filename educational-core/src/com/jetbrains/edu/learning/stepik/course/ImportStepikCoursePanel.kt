@@ -24,7 +24,7 @@ class ImportStepikCoursePanel(
 ) : ImportCoursePanel(courseConnector, "https://stepik.org/course/*") {
 
   private var validationListener: ValidationListener? = null
-  private val errorComponent = ErrorComponent(getHyperlinkListener())
+  private val errorComponent = ErrorComponent(getHyperlinkListener()) { doValidation() }
 
   init {
     errorComponent.setErrorMessage(ValidationMessage("",

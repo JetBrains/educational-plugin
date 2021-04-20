@@ -8,6 +8,7 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.IdeBorderFactory
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.PathUtil
 import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
@@ -23,7 +24,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat
@@ -32,7 +33,7 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
-class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0) : JPanel(BorderLayout()) {
+class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePanel(), CourseSelectionListener {
   var languageSettings: LanguageSettings<*>? = null
   val locationString: String?
     get() = locationField?.component?.text
@@ -43,7 +44,7 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: In
   private var decorator: HideableNoLineDecorator
 
   init {
-    border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, leftMargin, 0, 0)
+    border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, HORIZONTAL_MARGIN, 0, 0)
     settingsPanel.layout = BoxLayout(settingsPanel, BoxLayout.Y_AXIS)
     settingsPanel.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
     add(settingsPanel, BorderLayout.CENTER)
@@ -87,7 +88,16 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: In
     locationField?.component?.textField?.document?.removeDocumentListener(listener)
   }
 
-  fun update(course: Course, showLanguageSettings: Boolean) {
+  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+    val course = courseInfo.course
+    if ((course is JetBrainsAcademyCourse
+         || course is ContestInformation
+         || CoursesStorage.getInstance().hasCourse(course))
+        && course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) != true) {
+      isVisible = false
+      return
+    }
+
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
       it.component.text = nameToLocation(course)
@@ -97,7 +107,7 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: In
     val configurator = course.configurator
     if (configurator != null) {
       languageSettings = configurator.courseBuilder.getLanguageSettings().apply {
-        if (showLanguageSettings) {
+        if (courseDisplaySettings.showLanguageSettings) {
           val components = getLanguageSettingsComponents(course, context)
           settingsComponents.addAll(components)
         }
@@ -145,5 +155,4 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: In
 
     fun getLanguageSettings(course: Course): LanguageSettings<out Any?>? = course.configurator?.courseBuilder?.getLanguageSettings()
   }
-
 }

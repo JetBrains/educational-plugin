@@ -6,6 +6,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -17,67 +18,172 @@ import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import java.awt.CardLayout
+import java.awt.Component
+import java.awt.FlowLayout
 import java.io.File
 import javax.swing.JPanel
-import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+import javax.swing.ScrollPaneConstants
 import javax.swing.event.DocumentEvent
 
-const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 25
-
-private const val HORIZONTAL_MARGIN = 20
-private const val ERROR_TOP_GAP = 27
-private const val ERROR_BOTTOM_GAP = 1
-private const val ERROR_LEFT_GAP = 5
-private const val ERROR_RIGHT_GAP = 19
-private const val ERROR_PANEL_MARGIN = 10
+const val HORIZONTAL_MARGIN = 20
+const val DESCRIPTION_AND_SETTINGS_TOP_OFFSET = 23
 
 private const val EMPTY = "empty"
 private const val CONTENT = "content"
+private const val ERROR_TOP_GAP = 17
+private const val ERROR_RIGHT_GAP = 19
+private const val ERROR_PANEL_MARGIN = 10
+private const val DEFAULT_BUTTON_OFFSET = 3
 
-abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel() {
+abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
+  private val tagsPanel: TagsPanel = TagsPanel()
+  private val titlePanel = CourseNameHtmlPanel().apply {
+    border = JBUI.Borders.empty(11, HORIZONTAL_MARGIN, 0, 0)
+  }
+  private val authorsPanel = InfoPanel()
+  private val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
+    border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN, 0, ERROR_RIGHT_GAP)
+  }
+  private val buttonsPanel: ButtonsPanel = ButtonsPanel()
+  private val courseDetailsPanel: CourseDetailsPanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
+  private val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
+  private val content = ContentPanel()
 
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
 
-  private val header: HeaderPanel = HeaderPanel(HORIZONTAL_MARGIN) { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
-  private val description = CourseDescriptionPanel(HORIZONTAL_MARGIN)
-  private val settings = CourseSettingsPanel(isLocationFieldNeeded, HORIZONTAL_MARGIN).apply { background = MAIN_BG_COLOR }
-  private val errorComponent: ErrorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN).apply {
-    border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN + ERROR_LEFT_GAP, ERROR_BOTTOM_GAP, ERROR_RIGHT_GAP)
-  }
-
   val locationString: String?
-    get() = settings.locationString
+    get() = settingsPanel.locationString
 
   val projectSettings: Any?
-    get() = settings.getProjectSettings()
+    get() = settingsPanel.getProjectSettings()
 
   val languageSettings: LanguageSettings<*>?
-    get() = settings.languageSettings
+    get() = settingsPanel.languageSettings
 
   init {
     layout = CardLayout()
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
-    val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
+    layoutComponents()
     @Suppress("LeakingThis")
-    add(emptyStatePanel, EMPTY)
-
-    val content = JPanel(VerticalFlowLayout(0, 0))
-    content.add(header)
-    content.add(errorComponent)
-    content.add(description)
-    content.add(settings)
-    content.background = MAIN_BG_COLOR
-
-    val scrollPane = JBScrollPane(content, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER).apply {
-      border = null
-    }
-    @Suppress("LeakingThis")
-    add(scrollPane, CONTENT)
     setButtonsEnabled(canStartCourse())
   }
+
+  private fun layoutComponents() {
+    val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
+    add(emptyStatePanel, EMPTY)
+
+    with(content) {
+      add(tagsPanel)
+      add(titlePanel)
+      add(authorsPanel)
+      add(errorComponent)
+      add(buttonsPanel)
+      add(courseDetailsPanel)
+      add(settingsPanel)
+    }
+
+    val scrollPane = JBScrollPane(content, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER).apply {
+      border = null
+    }
+
+    add(scrollPane, CONTENT)
+  }
+
+  protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
+
+  fun doValidation() {
+    setError(getErrorState(course) { validateSettings(it) })
+    setButtonsEnabled(errorState.courseCanBeStarted)
+  }
+
+  fun validateSettings(it: Course) = settingsPanel.validateSettings(it)
+
+  fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
+    (layout as CardLayout).show(this, CONTENT)
+    this.course = course
+    val courseInfo = CourseInfo(course, { settingsPanel.locationString }, { settingsPanel.languageSettings })
+
+    content.update(courseInfo, settings)
+
+    revalidate()
+    repaint()
+
+    return settingsPanel.languageSettings
+  }
+
+  fun showEmptyState() {
+    (layout as CardLayout).show(this, EMPTY)
+  }
+
+  fun setError(errorState: ErrorState) {
+    this.errorState = errorState
+    setButtonsEnabled(errorState.courseCanBeStarted)
+    buttonsPanel.setButtonToolTip(null)
+    hideErrorPanel()
+
+    showError(errorState)
+  }
+
+  private fun setError(message: ValidationMessage) {
+    errorComponent.setErrorMessage(message)
+    buttonsPanel.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
+  }
+
+  protected open fun showError(errorState: ErrorState) {
+    if (errorState is ErrorState.LocationError) {
+      addOneTimeLocationFieldValidation()
+    }
+
+    val message = errorState.message ?: return
+    when (errorState) {
+      is ErrorState.JetBrainsAcademyLoginNeeded -> {
+        errorComponent.setErrorMessage(message)
+        buttonsPanel.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
+      }
+      is ErrorState.LoginRequired -> {
+        course?.let {
+          if (CoursesStorage.getInstance().hasCourse(it)) {
+            return
+          }
+        }
+        setError(message)
+      }
+      else -> {
+        setError(message)
+      }
+    }
+    showErrorPanel()
+  }
+
+  private fun addOneTimeLocationFieldValidation() {
+    settingsPanel.addLocationFieldDocumentListener(object : DocumentAdapter() {
+      override fun textChanged(e: DocumentEvent) {
+        doValidation()
+        settingsPanel.removeLocationFieldDocumentListener(this)
+      }
+    })
+  }
+
+  private fun showErrorPanel() {
+    errorComponent.isVisible = true
+    revalidate()
+    repaint()
+  }
+
+  fun hideErrorPanel() {
+    errorComponent.isVisible = false
+    revalidate()
+    repaint()
+  }
+
+  fun setButtonsEnabled(canStartCourse: Boolean) {
+    buttonsPanel.setButtonsEnabled(canStartCourse)
+  }
+
+  fun canStartCourse(): Boolean = errorState.courseCanBeStarted
 
   private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
     val currentLocation = courseInfo.location()
@@ -96,111 +202,64 @@ abstract class CoursePanel(private val isLocationFieldNeeded: Boolean) : JPanel(
     }
   }
 
-  protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
+  private inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
+    private val buttons: List<CourseButtonBase> = mutableListOf(
+      StartCourseButton(joinCourse = { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }),
+      OpenCourseButton(),
+      EditCourseButton { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
+    )
 
-  private fun addOneTimeLocationFieldValidation() {
-    settings.addLocationFieldDocumentListener(object : DocumentAdapter() {
-      override fun textChanged(e: DocumentEvent) {
-        doValidation()
-        settings.removeLocationFieldDocumentListener(this)
-      }
-    })
-  }
-
-  fun setButtonsEnabled(isEnabled: Boolean) {
-    header.setButtonsEnabled(isEnabled)
-  }
-
-  fun showEmptyState() {
-    (layout as CardLayout).show(this, EMPTY)
-  }
-
-  private fun updateCourseDescriptionPanel(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()) {
-    val location = locationString
-    if (location == null && isLocationFieldNeeded) {
-      // TODO: set error
-      return
-    }
-    header.update(CourseInfo(course, { locationString }, { this.settings.languageSettings }), settings)
-    description.bind(course)
-  }
-
-  fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
-    (layout as CardLayout).show(this, CONTENT)
-    this.course = course
-    this.settings.update(course, settings.showLanguageSettings)
-    updateCourseDescriptionPanel(course, settings)
-    revalidate()
-    repaint()
-    doValidation()
-    return this.settings.languageSettings
-  }
-
-  fun doValidation() {
-    setError(getErrorState(course) { validateSettings(it) })
-    setButtonsEnabled(errorState.courseCanBeStarted)
-  }
-
-  fun validateSettings(course: Course?) = settings.validateSettings(course)
-
-  fun hideErrorPanel() {
-    errorComponent.isVisible = false
-    revalidate()
-    repaint()
-  }
-
-  fun setError(errorState: ErrorState) {
-    this.errorState = errorState
-    setButtonsEnabled(errorState.courseCanBeStarted)
-    header.setButtonToolTip(null)
-    hideErrorPanel()
-
-    showError(errorState)
-  }
-
-  protected open fun showError(errorState: ErrorState) {
-    if (errorState is ErrorState.LocationError) {
-      addOneTimeLocationFieldValidation()
-    }
-
-    val message = errorState.message ?: return
-    when (errorState) {
-      is ErrorState.JetBrainsAcademyLoginNeeded -> {
-        errorComponent.setErrorMessage(message)
-        header.setButtonToolTip(EduCoreBundle.message("course.dialog.login.required"))
-      }
-      is ErrorState.LoginRequired -> {
-        course?.let {
-          if (CoursesStorage.getInstance().hasCourse(it)) {
-            return
-          }
-        }
-        setError(message)
-      }
-      else -> {
-        setError(message)
+    init {
+      layout = FlowLayout(FlowLayout.LEFT, 0, 0)
+      border = JBUI.Borders.empty(17, HORIZONTAL_MARGIN - DEFAULT_BUTTON_OFFSET, 0, 0)
+      buttons.forEach {
+        add(it)
       }
     }
-    showErrorPanel()
-  }
 
-  private fun showErrorPanel() {
-    errorComponent.isVisible = true
-    revalidate()
-    repaint()
-  }
+    override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+      buttons.forEach {
+        it.update(courseInfo)
+      }
+    }
 
-  private fun setError(message: ValidationMessage) {
-    errorComponent.setErrorMessage(message)
-    header.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
-  }
+    fun setButtonToolTip(tooltip: String?) {
+      buttons.forEach {
+        it.toolTipText = tooltip
+      }
+    }
 
-  private fun canStartCourse(): Boolean = errorState.courseCanBeStarted
+    fun setButtonsEnabled(isEnabled: Boolean) {
+      buttons.forEach {
+        it.isEnabled = isEnabled
+      }
+    }
+  }
 
   companion object {
     // default divider's color too dark in Darcula, so use the same color as in plugins dialog
     val DIVIDER_COLOR = JBColor(0xC5C5C5, 0x515151)
   }
 
+  private class ContentPanel : NonOpaquePanel() {
+    init {
+      layout = VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false)
+      background = MAIN_BG_COLOR
+      border = JBUI.Borders.emptyRight(HORIZONTAL_MARGIN)
+    }
+
+    override fun add(comp: Component?): Component {
+      if (comp !is CourseSelectionListener) {
+        error("Content of this panel is updatable, so component must implement `Updatable`")
+      }
+      return super.add(comp)
+    }
+
+    fun update(courseInfo: CourseInfo, settings: CourseDisplaySettings) {
+      components.forEach {
+        (it as CourseSelectionListener).onCourseSelectionChanged(courseInfo, settings)
+      }
+    }
+  }
 }
 

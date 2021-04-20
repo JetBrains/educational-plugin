@@ -56,7 +56,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private var requiredAndDisabledPlugins: List<PluginId> = emptyList()
   private var validationListener: ValidationListener? = null
 
-  private val errorComponent = ErrorComponent(getHyperlinkListener())
+  private val errorComponent = ErrorComponent(getHyperlinkListener()) { doValidation() }
 
   private val context: UserDataHolder = UserDataHolderBase()
 

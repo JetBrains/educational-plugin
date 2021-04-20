@@ -60,11 +60,11 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   val selectedCourse get() = coursesListPanel.selectedCourse
 
-  val locationString: String
+  val locationString: String?
     get() {
       // We use `coursePanel` with location field
       // so `coursePanel.locationString` must return not null value
-      return coursePanel.locationString!!
+      return coursePanel.locationString
     }
 
   init {
