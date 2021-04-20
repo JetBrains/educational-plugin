@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.twitter
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator
@@ -16,7 +14,6 @@ import kotlin.random.Random
 class HyperskillTwitterConfigurator : TwitterPluginConfigurator {
 
   override fun askToTweet(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
-    if (!isUnitTestMode) return false
     val course = project.course as? HyperskillCourse ?: return false
     if (!course.isStudy) return false
     if (statusBeforeCheck == CheckStatus.Solved) return false
