@@ -1,0 +1,19 @@
+version: 1.0
+profile:
+  name: qodana.recommended
+exclude:
+  - name: All
+    paths:
+      - Edu-Android/resources/fileTemplates
+      - Edu-Cpp/resources/fileTemplates
+      - Edu-Go/resources/fileTemplates
+      - Edu-Java/resources/fileTemplates
+      - Edu-JavaScript/resources/fileTemplates
+      - Edu-Kotlin/resources/fileTemplates
+      - Edu-Python/resources/fileTemplates
+      - Edu-Rust/resources/fileTemplates
+      - Edu-Scala/resources/fileTemplates
+      - educational-core/resources/fileTemplates
+  - name: SyntaxError
+    paths:
+      - Edu-Python/testSrc # not to produce Syntax Errors in python injections
