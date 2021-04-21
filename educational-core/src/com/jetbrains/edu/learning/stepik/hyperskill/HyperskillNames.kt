@@ -5,6 +5,7 @@ import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import org.jetbrains.ide.BuiltInServerManager
 
@@ -16,6 +17,7 @@ const val HYPERSKILL_URL_PROPERTY = "Hyperskill URL"
 const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
 const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
 const val JBA_DEFAULT_URL = "https://www.jetbrains.com/academy/"
+const val JBA_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-edutools/docs/jetbrains-academy.html"
 const val HYPERSKILL_COMMENT_ANCHOR = "#comment"
 const val HYPERSKILL_SOLUTIONS_ANCHOR = "#solutions"
 val HYPERSKILL_PROFILE_PATH = "${HYPERSKILL_URL}profile/"

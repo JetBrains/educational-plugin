@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checkio.newProjectUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_HELP
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
@@ -27,9 +28,9 @@ class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Coro
   }
 
   override fun tabInfo(): TabInfo {
-    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.JAVASCRIPT)
-    val linkText = EduCoreBundle.message("course.dialog.go.to.website")
-    val linkInfo = LinkInfo(linkText, CheckiONames.CHECKIO_OAUTH_HOST)
+    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.TYPESCRIPT)
+    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkInfo = LinkInfo(linkText, CHECKIO_HELP)
     return TabInfo(infoText, linkInfo, loginComponent)
   }
 

@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.*
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors
@@ -21,8 +21,8 @@ class JetBrainsAcademyCoursesPanel(
 
   override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("hyperskill.courses.explanation", EduNames.JBA)
-    val linkText = EduCoreBundle.message("course.dialog.go.to.website")
-    val linkInfo = LinkInfo(linkText, HYPERSKILL_DEFAULT_URL)
+    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkInfo = LinkInfo(linkText, JBA_HELP)
     return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
   }
 

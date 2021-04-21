@@ -232,7 +232,7 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun openOnMarketplaceAction(courseId: Int): AnAction {
     return object : AnAction(message("action.open.on.text", MARKETPLACE)) {
       override fun actionPerformed(e: AnActionEvent) {
-        EduBrowser.getInstance().browse(COURSE_URL + courseId)
+        EduBrowser.getInstance().browse("$MARKETPLACE_PLUGIN_URL/$courseId")
       }
     }
   }
