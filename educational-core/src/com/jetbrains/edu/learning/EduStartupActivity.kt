@@ -49,7 +49,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
 
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
-      TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project))
+      TaskDescriptionView.updateAllTabs(project)
     })
 
     StartupManager.getInstance(project).runWhenProjectIsInitialized {

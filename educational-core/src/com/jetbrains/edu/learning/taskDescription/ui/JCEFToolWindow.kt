@@ -71,7 +71,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
     ApplicationManager.getApplication().messageBus.connect(this)
       .subscribe(LafManagerListener.TOPIC,
-                 LafManagerListener { TaskDescriptionView.updateAllTabs(TaskDescriptionView.getInstance(project)) })
+                 LafManagerListener { TaskDescriptionView.updateAllTabs(project) })
   }
 
   override fun createTaskInfoPanel(): JComponent {

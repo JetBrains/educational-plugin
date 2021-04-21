@@ -47,9 +47,11 @@ abstract class TaskDescriptionView {
     }
 
     @JvmStatic
-    fun updateAllTabs(taskDescription: TaskDescriptionView) {
-      taskDescription.updateTaskDescription()
-      taskDescription.updateAdditionalTaskTabs()
+    fun updateAllTabs(project: Project) {
+      getInstance(project).apply {
+        updateTaskDescription()
+        updateAdditionalTaskTabs()
+      }
     }
   }
 }

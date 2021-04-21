@@ -40,7 +40,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init(toolWindow)
-    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(taskDescriptionToolWindow, project)))
+    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
 
   private fun ToolWindow.initTitleActions() {
@@ -55,7 +55,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
    */
   private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
 
-  private inner class AdjustFontSize(private val taskDescription: TaskDescriptionView, private val project: Project) : DumbAwareAction(
+  private inner class AdjustFontSize(private val project: Project) : DumbAwareAction(
     "Adjust font size...") {
     override fun actionPerformed(e: AnActionEvent) {
       val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
@@ -68,7 +68,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_FACTOR_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         if (!(EduUtils.getCurrentTask(project) is VideoTask && isJCEF())) {
-          TaskDescriptionView.updateAllTabs(taskDescription)
+          TaskDescriptionView.updateAllTabs(project)
         }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
