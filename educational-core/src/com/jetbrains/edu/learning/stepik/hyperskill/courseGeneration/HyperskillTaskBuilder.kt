@@ -23,7 +23,7 @@ class HyperskillTaskBuilder(
   private val stepSource: HyperskillStepSource,
   private val stepId: Int
 ) : StepikTaskBuilder(course, lesson, stepSource, stepId, -1) {
-  override fun getLanguageName(language: Language, languageVersion: String): String? {
+  override fun getLanguageName(language: Language): String? {
     return HyperskillLanguages.langOfId(language.id).langName
   }
 

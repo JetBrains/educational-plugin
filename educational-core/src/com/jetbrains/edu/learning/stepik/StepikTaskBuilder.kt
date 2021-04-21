@@ -292,11 +292,11 @@ open class StepikTaskBuilder(
   }
 
   private fun getCodeTemplateForTask(codeTemplates: Map<String, String>?): String? {
-    val languageString = getLanguageName(language, languageVersion)
+    val languageString = getLanguageName(language)
     return codeTemplates?.get(languageString)
   }
 
-  protected open fun getLanguageName(language: Language, laguageVersion: String): String? {
+  protected open fun getLanguageName(language: Language): String? {
     return StepikLanguage.langOfId(language.id, languageVersion).langName
   }
 
