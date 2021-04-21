@@ -42,6 +42,6 @@ public class FeedbackLink {
   }
 
   public enum LinkType {
-    STEPIK, CUSTOM, NONE
+    MARKETPLACE, STEPIK, CUSTOM, NONE
   }
 }

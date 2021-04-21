@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -22,11 +23,12 @@ fun decodeHubToken(token: String): String? {
   return if (userData[2].isEmpty()) null else userData[2]
 }
 
-fun Course.generateCourseItemsIds() {
+fun Course.updateCourseItems() {
   visitSections { section -> section.generateId() }
   visitLessons { lesson ->
     lesson.visitTasks { task ->
       task.generateId()
+      task.feedbackLink.type = FeedbackLink.LinkType.MARKETPLACE
     }
     lesson.generateId()
   }
