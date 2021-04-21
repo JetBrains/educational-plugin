@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HELP
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import kotlinx.coroutines.CoroutineScope
@@ -35,8 +36,8 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
 
   override fun tabInfo(): TabInfo {
     val infoText = EduCoreBundle.message("stepik.courses.explanation", StepikNames.STEPIK)
-    val linkText = EduCoreBundle.message("course.dialog.go.to.website")
-    val linkInfo = LinkInfo(linkText, StepikNames.getStepikUrl())
+    val linkText = EduCoreBundle.message("course.dialog.find.details")
+    val linkInfo = LinkInfo(linkText, STEPIK_HELP)
     val loginComponent = StepikLoginPanel()
     return TabInfo(infoText, linkInfo, loginComponent)
   }
