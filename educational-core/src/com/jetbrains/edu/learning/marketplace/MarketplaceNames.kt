@@ -10,7 +10,7 @@ const val MARKETPLACE = "Marketplace"
 const val HUB_AUTH_URL = "https://hub.jetbrains.com/api/rest/"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 const val MARKETPLACE_PROFILE_PATH = "$PLUGINS_REPOSITORY_URL/author/me"
-const val LICENSE_URL = "https://plugins.jetbrains.com/legal/terms-of-use"
+const val LICENSE_URL = "https://creativecommons.org/licenses/by-sa/4.0/"
 const val MARKETPLACE_PLUGIN_URL = "$PLUGINS_REPOSITORY_URL/plugin"
 const val MARKETPLACE_COURSES_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-edutools/docs/courses-at-marketplace.html"
 
