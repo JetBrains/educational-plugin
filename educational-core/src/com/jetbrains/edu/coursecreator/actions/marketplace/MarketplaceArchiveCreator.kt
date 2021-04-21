@@ -17,9 +17,9 @@ import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.convertToMarketplace
-import com.jetbrains.edu.learning.marketplace.generateCourseItemsIds
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -52,7 +52,7 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
 
     course.convertToMarketplace()
     if (!isUnitTestMode) {
-      course.generateCourseItemsIds()
+      course.updateCourseItems()
     }
     if (course.vendor == null) {
       if (!addVendor(course)) return message("marketplace.vendor.empty")

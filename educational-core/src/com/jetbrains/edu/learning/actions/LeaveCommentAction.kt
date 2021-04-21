@@ -47,6 +47,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
       FeedbackLink.LinkType.STEPIK -> course is EduCourse && course.isStepikRemote
+      FeedbackLink.LinkType.MARKETPLACE -> false
     }
   }
 
@@ -61,6 +62,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
         FeedbackLink.LinkType.NONE -> error("LeaveFeedbackAction should be disabled for NONE links")
         FeedbackLink.LinkType.CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
         FeedbackLink.LinkType.STEPIK -> getStepikLink(task, task.lesson)
+        FeedbackLink.LinkType.MARKETPLACE -> error("LeaveFeedbackAction is not supported for marketplace courses")
       }
     }
   }
