@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -27,8 +28,8 @@ class HyperskillTaskBuilder(
     return HyperskillLanguages.langOfId(language.id).langName
   }
 
-  private fun Task.description(theoryId: Int?, langId: String): String = buildString {
-    appendln("<h2>$name</h2>")
+  private fun Task.description(theoryId: Int?, langId: String, title: String = name): String = buildString {
+    appendln("<h2>$title</h2>")
     appendln(descriptionText)
 
     val options = stepSource.block?.options as? PyCharmStepOptions
@@ -44,19 +45,22 @@ class HyperskillTaskBuilder(
   }
 
   override fun createTask(type: String): Task? {
-    val task = super.createTask(type)
-    task?.apply {
+    val task = super.createTask(type) ?: return null
+    task.apply {
       if (stepSource.isCompleted) {
         status = CheckStatus.Solved
       }
-    }
 
-    if (task is CodeTask) {
-      task.apply {
+      if (this is CodeTask) {
         name = stepSource.title
         descriptionText = description(stepSource.topicTheory, this@HyperskillTaskBuilder.course.languageID)
-        feedbackLink = FeedbackLink("${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR")
       }
+      else if (this is TheoryTask) {
+        descriptionText = description(stepSource.topicTheory, this@HyperskillTaskBuilder.course.languageID,
+                                      title = stepSource.title ?: name)
+      }
+
+      feedbackLink = FeedbackLink("${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR")
     }
     return task
   }
