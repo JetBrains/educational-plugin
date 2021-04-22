@@ -119,9 +119,9 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
     // corresponding ids for courses uploaded both to marketplace and Stepik, needed to
     // avoid courses duplication between marketplace and stepik tabs
-    val stepikMarketplaceIdsMap = mapOf(238 to 16322, //Introduction to Python
-                                        55498 to 16323, //Scala Tutorial
-                                        59778 to 16324, //Rustlings
-                                        4222 to 16325) //Kotlin Koans
+    val stepikMarketplaceIdsMap = mapOf(238 to 16630, //Introduction to Python
+                                        55498 to 16629, //Scala Tutorial
+                                        59778 to 16631, //Rustlings
+                                        4222 to 16628) //Kotlin Koans
   }
 }
