@@ -10,4 +10,6 @@ class AndroidHyperskillConfigurator: HyperskillConfigurator<JdkProjectSettings>(
 
   override val isCourseCreatorEnabled: Boolean
     get() = true
+
+  override fun getMockFileName(text: String): String = "Main.kt"
 }
