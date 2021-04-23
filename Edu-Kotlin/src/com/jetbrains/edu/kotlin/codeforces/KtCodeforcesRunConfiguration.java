@@ -1,7 +1,9 @@
 package com.jetbrains.edu.kotlin.codeforces;
 
+import com.intellij.execution.application.JvmMainMethodRunConfigurationOptions;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.JavaRunConfigurationModule;
+import com.intellij.execution.configurations.ModuleBasedConfigurationOptions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -32,5 +34,10 @@ public class KtCodeforcesRunConfiguration extends KotlinRunConfiguration impleme
     }
     String name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
     setRunClass(name);
+  }
+
+  @Override
+  protected @NotNull Class<? extends ModuleBasedConfigurationOptions> getDefaultOptionsClass() {
+    return JvmMainMethodRunConfigurationOptions.class;
   }
 }
