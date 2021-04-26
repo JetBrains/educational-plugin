@@ -124,8 +124,8 @@ allprojects {
 
   repositories {
     mavenCentral()
-    maven("https://dl.bintray.com/jetbrains/markdown")
-    maven("https://dl.bintray.com/kotlin/kotlin-js-wrappers/")
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
   }
 
   configure<JavaPluginConvention> {
