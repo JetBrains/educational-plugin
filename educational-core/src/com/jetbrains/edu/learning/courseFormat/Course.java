@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -114,8 +115,13 @@ public abstract class Course extends LessonContainer {
 
   @Nullable
   public Section getSection(@NotNull final String name) {
+    return getSection(section -> name.equals(section.getName()));
+  }
+
+  @Nullable
+  public Section getSection(Predicate<Section> isSection) {
     return (Section)items.stream().filter(Section.class::isInstance).
-      filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+      filter(item -> isSection.test((Section)item)).findFirst().orElse(null);
   }
 
   @NotNull

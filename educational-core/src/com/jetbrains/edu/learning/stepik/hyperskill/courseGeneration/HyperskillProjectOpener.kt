@@ -249,7 +249,7 @@ object HyperskillProjectOpener {
         return@computeUnderProgress Err(it)
       }
 
-      var topicLesson = topicsSection.getLesson(topicName)
+      var topicLesson = topicsSection.getLesson { it.presentableName == topicName }
       if (topicLesson == null) {
         topicLesson = topicsSection.createTopicLesson(topicName)
       }
@@ -363,7 +363,7 @@ object HyperskillProjectOpener {
         return@computeUnderProgress Err(it)
       }
 
-      var topicLesson = topicsSection.getLesson(topicName)
+      var topicLesson = topicsSection.getLesson { it.presentableName == topicName }
       var createLessonDir = false
       if (topicLesson == null) {
         topicLesson = topicsSection.createTopicLesson(topicName)

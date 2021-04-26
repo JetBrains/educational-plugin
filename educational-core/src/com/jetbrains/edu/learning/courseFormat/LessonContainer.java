@@ -8,19 +8,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class LessonContainer extends ItemContainer {
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
+    return getLesson(lesson -> name.equals(lesson.getName()));
   }
 
   @Nullable
   public Lesson getLesson(int id) {
+    return getLesson(lesson -> id == lesson.getId());
+  }
+
+  @Nullable
+  public Lesson getLesson(Predicate<Lesson> isLesson) {
     return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(item -> id == item.getId()).orElse(null);
+      .findFirst(item -> isLesson.test((Lesson)item)).orElse(null);
   }
 
   @NotNull

@@ -63,7 +63,7 @@ class HyperskillCourse : Course {
    *
    */
   @Deprecated("Problems lesson isn't used anymore, use Topics section instead", replaceWith = ReplaceWith("getTopicsSection()"))
-  fun getProblemsLesson(): Lesson? = getLesson(HYPERSKILL_PROBLEMS)
+  fun getProblemsLesson(): Lesson? = getLesson { it.presentableName == HYPERSKILL_PROBLEMS }
 
   /**
    * Hyperskill problems are grouped by their topics. Topics are lessons located in [HYPERSKILL_TOPICS] section.
@@ -89,7 +89,7 @@ class HyperskillCourse : Course {
    *        etc
    *
    */
-  fun getTopicsSection(): Section? = getSection(HYPERSKILL_TOPICS)
+  fun getTopicsSection(): Section? = getSection { it.presentableName == HYPERSKILL_TOPICS }
 
   fun getProblem(id: Int): Task? {
     getTopicsSection()?.lessons?.forEach { lesson ->
