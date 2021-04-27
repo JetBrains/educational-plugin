@@ -85,17 +85,6 @@ val jvmPlugins = arrayOf(
   "gradle-java"
 )
 
-/**
- * Since 2021.1 the platform contains several libraries that conflict with project dependencies
- */
-val librariesToExclude = setOf(
-  "jackson-core.2.12.0.jar",
-  "jackson-databind.jar",
-  "jackson-dataformat-yaml-2.12.1.jar",
-  "jackson-module-kotlin-2.12.0.jar",
-  "okhttp.jar"
-)
-
 val changesFile = "changes.html"
 
 plugins {
@@ -138,6 +127,13 @@ allprojects {
     targetCompatibility = VERSION_1_8
   }
 
+  configurations {
+    all {
+      // Allows using project dependencies instead of IDE dependencies during compilation and test running
+      resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+    }
+  }
+
   intellij {
     if (isStudioIDE) {
       localPath = studioPath
@@ -164,10 +160,6 @@ allprojects {
       filter {
         isFailOnNoMatchingTests = false
       }
-      doFirst {
-        // TODO: find out a better way to avoid wrong dependency during compilation
-        classpath = classpath.filter { it.name !in librariesToExclude }
-      }
     }
 
     withType<JavaCompile> { options.encoding = "UTF-8" }
@@ -177,10 +169,6 @@ allprojects {
         languageVersion = "1.4"
         apiVersion = "1.4"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
-      }
-      doFirst {
-        // TODO: find out a better way to avoid wrong dependency during compilation
-        classpath = classpath.filter { it.name !in librariesToExclude }
       }
     }
   }
