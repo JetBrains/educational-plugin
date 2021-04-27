@@ -1,0 +1,61 @@
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
+
+import com.jetbrains.edu.learning.TaskBuilder
+import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
+
+class HyperskillPlainTextCheckerTest : CheckersTestBase<Unit>() {
+
+  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+
+  override fun createCourse(): Course {
+    val course = course(courseProducer = ::HyperskillCourse) {
+      frameworkLesson {
+        eduTask(stepId = 1) {
+          okResultTaskFile()
+        }
+        eduTask(stepId = 2) {
+          okResultTaskFile()
+        }
+      }
+    } as HyperskillCourse
+    course.stages = listOf(HyperskillStage(1, "", 1), HyperskillStage(2, "", 2))
+    course.hyperskillProject = HyperskillProject()
+    return course
+  }
+
+  private fun TaskBuilder.okResultTaskFile() {
+    taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+      withText("OK!\n")
+    }
+  }
+
+  fun `test course`() {
+    CheckActionListener.expectedMessage { task ->
+      when (task.index) {
+        1 -> CheckUtils.CONGRATULATIONS
+        2 -> EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL)
+        else -> null
+      }
+    }
+    doTest()
+  }
+
+  override fun checkTask(task: Task): List<AssertionError> {
+    val assertions = super.checkTask(task)
+    if (assertions.isEmpty() && task.status == CheckStatus.Solved) {
+      markStageAsCompleted(task)
+    }
+    return assertions
+  }
+}

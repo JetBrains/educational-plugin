@@ -6,7 +6,10 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override val codeExecutor: CodeExecutor
@@ -21,9 +24,16 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
     return object : TaskChecker<EduTask>(task, project) {
       override fun check(indicator: ProgressIndicator): CheckResult {
         val checkResult = checker.check(indicator)
-        val course = task.course
-        if (checkResult.status == CheckStatus.Solved && course is HyperskillCourse) {
-          return CheckResult(checkResult.status, CheckUtils.CONGRATULATIONS)
+        val course = task.course as HyperskillCourse
+        val resultingStatus = checkResult.status
+        if (resultingStatus == CheckStatus.Solved) {
+          val projectLesson = course.getProjectLesson() ?: return CheckResult(resultingStatus, CheckUtils.CONGRATULATIONS)
+          val otherUnsolvedTasks = projectLesson.taskList.filter { it != task && it.status != CheckStatus.Solved }
+          return if (otherUnsolvedTasks.isEmpty())
+            CheckResult(resultingStatus,
+                        EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL),
+                        hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
+          else CheckResult(resultingStatus, CheckUtils.CONGRATULATIONS)
         }
         return checkResult
       }
