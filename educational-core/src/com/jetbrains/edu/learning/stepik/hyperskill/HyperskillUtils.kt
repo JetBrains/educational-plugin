@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.notification.*
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
@@ -36,9 +38,6 @@ val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROB
 
 val failedToPostToJBA: String
   get() = EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
-
-val hyperskillNotificationGroup: NotificationGroup
-  get() = NotificationGroup(EduNames.JBA, NotificationDisplayType.BALLOON, true)
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
@@ -134,7 +133,7 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
 fun showErrorDetails(project: Project, error: String) {
   if (error == EduCoreBundle.message("error.access.denied")) {
     Notification(
-      hyperskillNotificationGroup.displayId,
+      "JetBrains Academy",
       EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
       EduCoreBundle.message("error.access.denied.with.link"),
       NotificationType.ERROR
@@ -147,7 +146,7 @@ fun showErrorDetails(project: Project, error: String) {
 
   LOG.warn(error)
   Notification(
-    hyperskillNotificationGroup.displayId,
+    "JetBrains Academy",
     EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
     EduCoreBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
     NotificationType.ERROR,
@@ -160,7 +159,7 @@ object HyperskillLoginListener : HyperlinkAdapter() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return@Runnable
       Notification(
-        hyperskillNotificationGroup.displayId,
+        "JetBrains Academy",
         EduCoreBundle.message("login.successful"),
         EduCoreBundle.message("logged.in.as", fullName),
         NotificationType.INFORMATION

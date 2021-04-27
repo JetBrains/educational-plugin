@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillNotificationGroup
 
 @Suppress("ComponentNotRegistered")
 class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("hyperskill.update.project"),
@@ -41,7 +40,7 @@ class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("h
 
   private fun showNothingToUpdateNotification(project: Project) {
     Notification(
-      hyperskillNotificationGroup.displayId,
+      "JetBrains Academy",
       EduCoreBundle.message("update.nothing.to.update"),
       EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
       NotificationType.INFORMATION

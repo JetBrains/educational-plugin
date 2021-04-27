@@ -8,7 +8,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.SOLVED
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings.Companion.codeforcesNotificationGroup
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -49,7 +48,7 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(
 
   private fun showSuccessNotification(project: Project) {
     val notification = Notification(
-      codeforcesNotificationGroup.displayId,
+      "Codeforces",
       "",
       EduCoreBundle.message("codeforces.mark.as.completed.notification"),
       NotificationType.INFORMATION

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.checkio.notifications;
 
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import icons.EducationalCoreIcons;
@@ -9,14 +8,9 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.notification.NotificationDisplayType.BALLOON;
-import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
 import static com.intellij.notification.NotificationType.*;
 
 public abstract class CheckiONotification extends Notification {
-  private static final NotificationGroup CHECKIO_ERRORS = new NotificationGroup("CheckiO errors", STICKY_BALLOON, false);
-  private static final NotificationGroup CHECKIO_WARNINGS = new NotificationGroup("CheckiO warnings", BALLOON, false);
-  private static final NotificationGroup CHECKIO_INFOS = new NotificationGroup("CheckiO information", BALLOON, false);
 
   private CheckiONotification(
     @NotNull String groupDisplayId,
@@ -36,7 +30,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super(CHECKIO_ERRORS.getDisplayId(), title, subtitle, content, ERROR, listener);
+      super("CheckiO errors", title, subtitle, content, ERROR, listener);
     }
   }
 
@@ -47,7 +41,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super(CHECKIO_WARNINGS.getDisplayId(), title, subtitle, content, WARNING, listener);
+      super("CheckiO warnings", title, subtitle, content, WARNING, listener);
     }
   }
 
@@ -58,7 +52,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super(CHECKIO_INFOS.getDisplayId(), title, subtitle, content, INFORMATION, listener);
+      super("CheckiO information", title, subtitle, content, INFORMATION, listener);
     }
   }
 }

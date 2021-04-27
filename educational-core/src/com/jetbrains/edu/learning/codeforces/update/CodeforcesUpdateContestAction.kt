@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CONTEST
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings.Companion.codeforcesNotificationGroup
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -42,7 +41,7 @@ class CodeforcesUpdateContestAction : DumbAwareAction(EduCoreBundle.message("cod
 
   private fun showUpToDateNotification(project: Project) {
     val notification = Notification(
-      codeforcesNotificationGroup.displayId,
+      "Codeforces",
       "",
       EduCoreBundle.message("update.notification.text", CODEFORCES_TITLE, CONTEST),
       NotificationType.INFORMATION

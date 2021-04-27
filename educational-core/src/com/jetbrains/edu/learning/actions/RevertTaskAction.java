@@ -57,7 +57,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
 
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     EditorNotifications.getInstance(project).updateAllNotifications();
-    Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "",
+    Notification notification = new Notification("EduTools", EmptyIcon.ICON_16, "", "",
                                                  EduCoreBundle.message("action.reset.result"), NotificationType.INFORMATION, null);
     notification.notify(project);
     ProjectView.getInstance(project).refresh();

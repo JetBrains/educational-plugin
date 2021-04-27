@@ -192,7 +192,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
           createDescriptionFiles(myProject);
         }
         else {
-          Notification notification = new Notification("Education: yaml info",
+          Notification notification = new Notification("EduTools",
                                                        "New YAML Format for Educators",
                                                        "Modify course by editing <i>*.yaml</i> files",
                                                        NotificationType.INFORMATION);

@@ -245,17 +245,38 @@
     <!-- Move -->
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
 
+    <!-- Notifications   -->
+    <editorNotificationProvider
+        implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.editor.EduTaskFileNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
+
+    <notificationGroup id="EduTools" displayType="BALLOON"
+                       bundle="messages.EduCoreBundle" key="notification.group.edu.tools"/>
+    <!--suppress PluginXmlCapitalization -->
+    <notificationGroup id="JetBrains Academy" displayType="BALLOON"
+                       bundle="messages.EduCoreBundle" key="notification.group.jetbrains.academy"/>
+    <notificationGroup id="Stepik" displayType="BALLOON"
+                       bundle="messages.EduCoreBundle" key="notification.group.stepik"/>
+    <notificationGroup id="Stepik solution not posted" displayType="NONE"
+                       bundle="messages.EduCoreBundle" key="notification.group.stepik.solution.not.posted"/>
+    <notificationGroup id="Codeforces" displayType="BALLOON"
+                       bundle="messages.EduCoreBundle" key="notification.group.codeforces"/>
+
+    <notificationGroup id="CheckiO errors" displayType="STICKY_BALLOON" isLogByDefault="false"
+                       bundle="messages.EduCoreBundle" key="notification.group.checkio.errors"/>
+    <notificationGroup id="CheckiO warnings" displayType="BALLOON" isLogByDefault="false"
+                       bundle="messages.EduCoreBundle" key="notification.group.checkio.warnings"/>
+    <notificationGroup id="CheckiO information" displayType="BALLOON" isLogByDefault="false"
+                       bundle="messages.EduCoreBundle" key="notification.group.checkio.information"/>
+
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.edu.learning.statistics.EduCounterUsageCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler"/>
-    <editorNotificationProvider
-        implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.editor.EduTaskFileNotificationProvider"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>

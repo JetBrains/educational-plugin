@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillNotificationGroup
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -120,7 +119,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
   private fun notifyUnsupportedPort(port: Int) {
     Notification(
-      hyperskillNotificationGroup.displayId,
+      "JetBrains Academy",
       EduNames.JBA,
       EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
       NotificationType.ERROR,

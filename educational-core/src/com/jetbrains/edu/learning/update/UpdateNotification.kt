@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduNames
 import javax.swing.event.HyperlinkEvent
 
 class UpdateNotification(title: String, content: String) :
-  Notification("Plugin Update", title, content, NotificationType.WARNING, UpdateNotificationListener)
+  Notification("EduTools", title, content, NotificationType.WARNING, UpdateNotificationListener)
 
 private object UpdateNotificationListener : NotificationListener.Adapter() {
   override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {

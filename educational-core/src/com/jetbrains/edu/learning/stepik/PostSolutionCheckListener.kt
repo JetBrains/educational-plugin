@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -43,8 +41,7 @@ class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    val notificationGroup = NotificationGroup(EduCoreBundle.message("error.solution.not.posted"), NotificationDisplayType.NONE, true)
-    val notification = Notification(notificationGroup.displayId,
+    val notification = Notification("Stepik solution not posted",
                                     EduCoreBundle.message("error.solution.not.posted"),
                                     EduCoreBundle.message("stepik.task.was.updated", StepikNames.STEPIK, taskName),
                                     NotificationType.INFORMATION,

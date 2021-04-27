@@ -33,7 +33,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
 }
 
 class MyNotification(content: String, feedbackUrl : String) :
-    Notification("eduTools.shareFeedback",
+    Notification("EduTools",
     "Congratulations", content, NotificationType.INFORMATION,
         object : NotificationListener.Adapter() {
           override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
