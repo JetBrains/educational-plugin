@@ -112,6 +112,11 @@ idea {
     languageLevel = IdeaLanguageLevel("1.8")
     vcs = "Git"
   }
+  module {
+    // https://github.com/gradle/gradle/issues/8749
+    // `.add` can be used since Gradle 7.1
+    excludeDirs = excludeDirs + file("dependencies")
+  }
 }
 
 allprojects {
