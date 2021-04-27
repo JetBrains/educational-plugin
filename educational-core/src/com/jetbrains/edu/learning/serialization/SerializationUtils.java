@@ -5,7 +5,6 @@ import com.google.gson.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -392,15 +392,16 @@ public class SerializationUtils {
       return getChildMap(element, name, false);
     }
 
+    @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> getChildMap(Element element, String name, boolean optional) throws StudyUnrecognizedFormatException {
       Element mapParent = getChildWithName(element, name, optional);
       if (mapParent != null) {
         Element map = mapParent.getChild(MAP);
         if (map != null) {
-          HashMap result = new HashMap();
+          HashMap<K, V> result = new HashMap<>();
           for (Element entry : map.getChildren()) {
-            Object key = entry.getAttribute(KEY) == null ? entry.getChild(KEY).getChildren().get(0) : entry.getAttributeValue(KEY);
-            Object value = entry.getAttribute(VALUE) == null ? entry.getChild(VALUE).getChildren().get(0) : entry.getAttributeValue(VALUE);
+            K key = (K) (entry.getAttribute(KEY) == null ? entry.getChild(KEY).getChildren().get(0) : entry.getAttributeValue(KEY));
+            V value = (V) (entry.getAttribute(VALUE) == null ? entry.getChild(VALUE).getChildren().get(0) : entry.getAttributeValue(VALUE));
             result.put(key, value);
           }
           return result;

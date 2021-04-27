@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.serialization.converter.xml;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
@@ -10,6 +9,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
