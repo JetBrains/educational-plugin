@@ -3,13 +3,14 @@ package com.jetbrains.edu.learning.coursera
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.JComponent
 
 class CourseraOptions : OptionsProvider {
   private val emailField = JBTextField()
   private val loginPanel = panel {
-    row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
+    row("${EduCoreBundle.message("label.coursera.email")}:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
   }
 
   init {
