@@ -5,18 +5,18 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
-// TODO move text of labels to message bundle
 class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: ContestInformation) : DialogWrapper(false) {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
-  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")
+  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox(EduCoreBundle.message("codeforces.prefer.selected.languages"))
   private val comboBoxesWidth: Int = JBUI.scale(130)
 
   init {
-    title = "Choose Contest Languages"
+    title = EduCoreBundle.message("dialog.title.codeforces.choose.contest.languages")
     initTextLanguageComboBox()
     initLanguageComboBox()
     init()
@@ -24,13 +24,13 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: Con
 
   override fun createCenterPanel(): JComponent? = panel {
     row {
-      label("Contest: ${contestInformation.name}")
+      label("${EduCoreBundle.message("label.codeforces.contest")}: ${contestInformation.name}")
     }
     row {
-      row("Language:") {
+      row("${EduCoreBundle.message("label.codeforces.language")}:") {
         textLanguageComboBox()
       }
-      row("Programming language:") {
+      row("${EduCoreBundle.message("label.codeforces.programming.language")}:") {
         languageComboBox()
       }
       row {

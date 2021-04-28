@@ -11,10 +11,12 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.annotations.NonNls
 
 // This is a hack for ignoring Codeforces configuration if we have issues to set it up properly.
 class InvalidCodeforcesRunConfiguration(project: Project, factory: ConfigurationFactory) :
   CodeforcesRunConfiguration, AbstractRunConfiguration(project, factory) {
+  @NonNls
   private val message = "This code should be unreachable"
 
   override fun setExecutableFile(file: VirtualFile) = error(message)

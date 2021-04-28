@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.withRegistryKeyOff
 
 class CodeforcesTaskChecker(
@@ -20,7 +21,7 @@ class CodeforcesTaskChecker(
 ) : TaskChecker<CodeforcesTask>(task, project) {
 
   override fun check(indicator: ProgressIndicator): CheckResult {
-    indicator.text = "Executing tests"
+    indicator.text = EduCoreBundle.message("progress.text.codeforces.executing.tests")
     val testFolders = task.getTestFolders(project)
 
     for ((index, testFolder) in testFolders.withIndex()) {
@@ -33,7 +34,7 @@ class CodeforcesTaskChecker(
                            ?: error("Can't get document of output file - ${outputVirtualFile.path}")
 
       val testNumber = index + 1
-      indicator.text2 = "Running test $testNumber of ${testFolders.size}"
+      indicator.text2 = EduCoreBundle.message("progress.details.codeforces.running.test", testNumber, testFolders.size)
 
       val input = runReadAction { inputDocument.text }
 
@@ -53,7 +54,7 @@ class CodeforcesTaskChecker(
 
       val expectedOutput = runReadAction { outputDocument.text }.trimEnd('\n')
       if (expectedOutput != output) {
-        val message = "Test №$testNumber is failed"
+        val message = EduCoreBundle.message("codeforces.test.failed", testNumber)
         val diff = CheckResultDiff(expected = expectedOutput, actual = output)
         return CheckResult(CheckStatus.Failed, message, diff = diff)
       }

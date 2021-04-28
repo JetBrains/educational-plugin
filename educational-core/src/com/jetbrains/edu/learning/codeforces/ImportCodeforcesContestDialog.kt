@@ -23,7 +23,7 @@ import javax.swing.JComponent
 
 class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : DialogWrapper(false) {
   private var contestPanel = ImportCodeforcesContestPanel()
-  private val contestsList = HyperlinkLabel("View all contests...")
+  private val contestsList = HyperlinkLabel(EduCoreBundle.message("link.label.codeforces.view.all.contests"))
 
   override fun createCenterPanel(): JComponent? = contestPanel.panel
 
@@ -37,7 +37,7 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
 
   public override fun doValidate(): ValidationInfo? {
     if (!contestPanel.isValidCodeforcesLink()) {
-      return ValidationInfo("Contest URL is invalid")
+      return ValidationInfo(EduCoreBundle.message("dialog.message.codeforces.contest.url.invalid"))
     }
     return super.doValidate()
   }
@@ -45,7 +45,7 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
   override fun getPreferredFocusedComponent(): JComponent? = contestPanel.preferredFocusedComponent
 
   init {
-    title = "Start Codeforces Contest"
+    title = EduCoreBundle.message("dialog.title.codeforces.start.contest")
     val scope = CoroutineScope(AppUIExecutor.onUiThread(ModalityState.any()).coroutineDispatchingContext())
     contestsList.addHyperlinkListener { scope.launch { codeforcesListPanel() } }
 
@@ -79,11 +79,11 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
     val contestPanel = BrowseContestsPanel(courses)
 
     val builder = DialogBuilder()
-    builder.setTitle("Contests")
+    builder.setTitle(EduCoreBundle.message("dialog.title.codeforces.contests"))
     builder.centerPanel(contestPanel)
     builder.setPreferredFocusComponent(contestPanel.coursesList)
     builder.addActionDescriptor(DialogBuilder.ActionDescriptor {
-      object : AbstractAction("Select") {
+      object : AbstractAction(EduCoreBundle.message("codeforces.select")) {
         override fun actionPerformed(e: ActionEvent?) {
           it.close(OK_EXIT_CODE)
         }

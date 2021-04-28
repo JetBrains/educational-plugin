@@ -8,6 +8,7 @@ import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.DefaultListCellRenderer
@@ -16,12 +17,10 @@ import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
 
 class BrowseContestsPanel(courses: List<Course>) : JPanel(BorderLayout()) {
-  private val NO_CONTESTS = "No contests found"
-
   val coursesList: JBList<Course> = JBList(courses)
 
   init {
-    coursesList.setEmptyText(NO_CONTESTS)
+    coursesList.setEmptyText(EduCoreBundle.message("codeforces.no.contests.found"))
     coursesList.cellRenderer = ContestListCellRenderer()
 
     if (coursesList.itemsCount > 0) {

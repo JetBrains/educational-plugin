@@ -6,13 +6,14 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
 class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
-  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox("Do not ask if selected languages are available")
+  private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox(EduCoreBundle.message("codeforces.prefer.selected.languages"))
   private val comboBoxesWidth: Int = JBUI.scale(130)
   private val state: State
 
@@ -67,7 +68,7 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
     return listOf(CodeforcesLanguageProvider.EP_NAME)
   }
 
-  override fun getDisplayName(): String = "Codeforces"
+  override fun getDisplayName(): String = CodeforcesNames.CODEFORCES_TITLE
 
   override fun apply() {
     val textLanguage = getTaskTextLanguage()
@@ -85,10 +86,10 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
   }
 
   override fun createComponent(): JComponent? = panel {
-    row("Language:") {
+    row("${EduCoreBundle.message("label.codeforces.language")}:") {
       textLanguageComboBox()
     }
-    row("Programming language:") {
+    row("${EduCoreBundle.message("label.codeforces.programming.language")}:") {
       languageComboBox()
     }
     row {

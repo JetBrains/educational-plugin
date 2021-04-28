@@ -6,6 +6,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestIdFromLink
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_HELP_TEXT
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.lang.math.NumberUtils.isDigits
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -29,7 +30,7 @@ class ImportCodeforcesContestPanel {
     helpLabel.font = UIUtil.getLabelFont()
 
     panel = panel {
-      row("Contest URL:") {
+      row("${EduCoreBundle.message("label.codeforces.contest.url")}:") {
         contestURLTextField(comment = helpLabel.text)
       }
     }.apply {
