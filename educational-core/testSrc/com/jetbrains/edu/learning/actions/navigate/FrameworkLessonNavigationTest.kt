@@ -502,6 +502,46 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test empty directories removed`() {
+    val course = courseWithFiles {
+      frameworkLesson {
+        eduTask {
+          taskFile("foo/bar/file1.txt")
+          taskFile("foo/bar/baz/bar/file2.txt")
+        }
+        eduTask {
+          taskFile("foo/bar/file1.txt")
+        }
+      }
+    }
+
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      task.openTaskFileInEditor("foo/bar/file1.txt")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("foo") {
+            dir("bar") {
+              file("file1.txt")
+            }
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
 
   private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {
     init()

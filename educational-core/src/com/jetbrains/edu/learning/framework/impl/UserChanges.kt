@@ -11,8 +11,8 @@ import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.isToEncodeContent
 import org.apache.commons.codec.binary.Base64
 import java.io.DataInput
@@ -139,15 +139,25 @@ sealed class Change {
 
   class RemoveFile : Change {
 
-    constructor(path: String): super(path, "")
+    constructor(path: String) : super(path, "")
+
     @Throws(IOException::class)
-    constructor(input: DataInput): super(input)
+    constructor(input: DataInput) : super(input)
+
+    private fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
+      val parent = this.parent
+      delete(RemoveFile::class.java)
+      if (parent != taskDir && parent.children.isEmpty()) {
+        parent.removeWithEmptyParents(taskDir)
+      }
+    }
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       runUndoTransparentWriteAction {
         try {
-          taskDir.findFileByRelativePath(path)?.delete(RemoveFile::class.java)
-        } catch (e: IOException) {
+          taskDir.findFileByRelativePath(path)?.removeWithEmptyParents(taskDir)
+        }
+        catch (e: IOException) {
           LOG.error("Failed to delete file `${taskDir.path}/$path`", e)
         }
       }
