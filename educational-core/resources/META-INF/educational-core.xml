@@ -255,6 +255,7 @@
     <notificationGroup id="EduTools" displayType="BALLOON"
                        bundle="messages.EduCoreBundle" key="notification.group.edu.tools"/>
 
+    <!--suppress PluginXmlValidity -->
     <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.edu.learning.statistics.EduCounterUsageCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>

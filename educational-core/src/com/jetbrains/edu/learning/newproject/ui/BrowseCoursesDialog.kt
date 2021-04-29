@@ -65,8 +65,12 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
 
     val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { panel.doValidation() } }
     Disposer.register(disposable, Disposable {
+      // BACKCOMPAT: 2020.3
+      @Suppress("UnstableApiUsage", "DEPRECATION")
       PluginManager.getInstance().removeDisablePluginListener(disablePluginListener)
     })
+    // BACKCOMPAT: 2020.3
+    @Suppress("UnstableApiUsage", "DEPRECATION")
     PluginManager.getInstance().addDisablePluginListener(disablePluginListener)
   }
 

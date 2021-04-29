@@ -276,6 +276,7 @@ public abstract class CourseProjectGenerator<S> {
     return false;
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   private static void markTrusted(@NotNull Project project) {
     // BACKCOMPAT: 2020.3. Just drop this try and inline the method.
     // Try to load `TrustedProjects` class to ensure that IDE already has the corresponding API

@@ -229,6 +229,7 @@ class CoursesStorageTest : EduTestCase() {
     coursesStorage.state.courses.removeAll(courses)
     coursesStorage.addCourse(course, "\$USER_HOME\$/IdeaProjects/AtomicKotlin")
 
+    @Suppress("UnstableApiUsage")
     val actual = XmlSerializer.serialize(coursesStorage.state, SkipDefaultsSerializationFilter())
     val expected = loadFromFile()
 

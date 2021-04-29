@@ -109,6 +109,7 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
       EduNames.CORRECT -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskSolvedNoFrameHighContrast else EducationalCoreIcons.TaskSolvedNoFrame
       else -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskFailedNoFrameHighContrast else EducationalCoreIcons.TaskFailedNoFrame
     }
+    @Suppress("UnstableApiUsage")
     return (icon as IconLoader.CachedImageIcon).url
   }
 

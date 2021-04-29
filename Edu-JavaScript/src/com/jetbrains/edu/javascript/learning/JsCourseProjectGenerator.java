@@ -40,6 +40,7 @@ public class JsCourseProjectGenerator extends CourseProjectGenerator<JsNewProjec
         }
         else {
           LOG.warn("Couldn't retrieve Node interpreter version");
+          //noinspection UnstableApiUsage
           VirtualFile requester = ModuleManager.getInstance(project).getModules()[0].getModuleFile();
           ShowSettingsUtil.getInstance().editConfigurable(project, new NodeSettingsConfigurable(project, requester, true));
         }

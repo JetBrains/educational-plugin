@@ -156,6 +156,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
       return ArrayUtil.toObjectArray(elements)
     }
   }
+
+  @Suppress("UnstableApiUsage")
   override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
 
   override fun getTitle(): String = ID
@@ -170,7 +172,9 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     }
   }
 
+  @Suppress("UnstableApiUsage")
   override fun supportsFoldersAlwaysOnTop(): Boolean = false
+  @Suppress("UnstableApiUsage")
   override fun supportsSortByType(): Boolean = false
 
   override fun getData(dataId: String): Any? {

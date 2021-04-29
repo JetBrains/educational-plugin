@@ -65,6 +65,7 @@ class PyIdeaSdkSettingsHelper : PySdkSettingsHelper {
     val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByPath(name) }
     val newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.path, PythonSdkType.getInstance())
     if (newSdk != null) {
+      @Suppress("UnstableApiUsage")
       PythonSdkUpdater.updateOrShowError(newSdk, project, null)
       SdkConfigurationUtil.addSdk(newSdk)
     }

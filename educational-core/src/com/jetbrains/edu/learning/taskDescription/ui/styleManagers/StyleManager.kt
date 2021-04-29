@@ -19,6 +19,8 @@ class StyleManager {
   val codeFont = typographyManager.codeFont
 
   val bodyColor = bodyColor()
+  // BACKCOMPAT: 2020.3
+  @Suppress("UnstableApiUsage", "DEPRECATION")
   private val linkColor = JBUI.CurrentTheme.Link.linkColor().asCssColor()
   val bodyBackground = JBColor.background().asCssColor()
   val codeBackground = if (isJCEF()) codeBackground() else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()

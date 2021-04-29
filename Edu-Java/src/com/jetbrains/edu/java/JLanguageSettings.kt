@@ -15,6 +15,8 @@ import java.io.File
 
 class JLanguageSettings : JdkLanguageSettings() {
 
+  // BACKCOMPAT: 2020.3
+  @Suppress("UnstableApiUsage", "DEPRECATION")
   override fun setupProjectSdksModel(model: ProjectSdksModel) {
     val jdkBundle = JdkBundle.createBundled()
     if (jdkBundle != null && jdkBundle.isJdk) {
@@ -25,6 +27,8 @@ class JLanguageSettings : JdkLanguageSettings() {
     }
   }
 
+  // BACKCOMPAT: 2020.3
+  @Suppress("UnstableApiUsage", "DEPRECATION")
   private val JdkBundle.homeLocation get(): File {
     // `JdkBundle#getLocation` returns only location of bundled jdk/jre root folder
     // but we need to get directory where `javac` is located, and for macOS these folders are not the same
