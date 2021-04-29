@@ -91,7 +91,7 @@ class CCCreateCoursePreviewDialog(
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
       val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-        EduCourseArchiveCreator(project, archiveLocation, EncryptionBundle.message("aesKey")))
+        EduCourseArchiveCreator(project, archiveLocation, EncryptionBundle.value("aesKey")))
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

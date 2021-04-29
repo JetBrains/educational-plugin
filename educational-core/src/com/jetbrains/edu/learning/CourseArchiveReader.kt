@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.encrypt.EncryptionBundle.message
+import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
@@ -74,7 +74,7 @@ fun getCourseMapper(isEncrypted: Boolean, isMarketplace: Boolean = false): Objec
   module.addDeserializer(Course::class.java, CourseDeserializer())
   mapper.registerModule(module)
   if (isEncrypted) {
-    mapper.registerModule(EncryptionModule(message("aesKey")))
+    mapper.registerModule(EncryptionModule(EncryptionBundle.value("aesKey")))
   }
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)

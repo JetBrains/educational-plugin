@@ -12,6 +12,6 @@ class CCCreateCourseArchive
   override fun showAuthorField(): Boolean = true
 
   override fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator =
-    EduCourseArchiveCreator(project, location, EncryptionBundle.message("aesKey"))
+    EduCourseArchiveCreator(project, location, EncryptionBundle.value("aesKey"))
 
 }

@@ -91,4 +91,4 @@ object AES256 {
   }
 }
 
-fun getAesKey() = if (!isUnitTestMode) EncryptionBundle.message("aesKey") else "DFC929E375655998A34E56A21C98651C"
+fun getAesKey() = if (!isUnitTestMode) EncryptionBundle.value("aesKey") else "DFC929E375655998A34E56A21C98651C"
