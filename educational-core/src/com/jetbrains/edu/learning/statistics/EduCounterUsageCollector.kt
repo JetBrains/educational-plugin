@@ -1,8 +1,11 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.intellij.internal.statistic.eventLog.FeatureUsageData
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
+import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.events.EventFields
+import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -19,9 +22,12 @@ import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
  * provided to analytics platform team.
- * See `docs/statisticsRules.md` for more information
  */
-object EduCounterUsageCollector {
+@Suppress("UnstableApiUsage")
+class EduCounterUsageCollector : CounterUsagesCollector() {
+
+  override fun getGroup(): EventLogGroup = GROUP
+
   enum class TaskNavigationPlace {
     CHECK_ALL_NOTIFICATION,
     TASK_DESCRIPTION_TOOLBAR,
@@ -29,27 +35,9 @@ object EduCounterUsageCollector {
     UNRESOLVED_DEPENDENCY_NOTIFICATION
   }
 
-  @JvmStatic
-  fun taskNavigation(place: TaskNavigationPlace) =
-    reportEvent("navigate.to.task", mapOf(SOURCE to place.toLower()))
-
-  @JvmStatic
-  fun eduProjectCreated(course: Course) = reportEvent("edu.project.created", mapOf(MODE to course.courseMode, TYPE to course.itemType,
-                                                                                   LANGUAGE to course.languageID))
-
-  @JvmStatic
-  fun eduProjectOpened(course: Course) = reportEvent("edu.project.opened", mapOf(MODE to course.courseMode, TYPE to course.itemType))
-
-  @JvmStatic
-  fun studyItemCreated(item: StudyItem) =
-    reportEvent("study.item.created", mapOf(MODE to item.course.courseMode, TYPE to item.itemType))
-
   enum class LinkType {
     IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES, JBA
   }
-
-  @JvmStatic
-  fun linkClicked(linkType: LinkType) = reportEvent("link.clicked", mapOf(TYPE to linkType.toLower()))
 
   private enum class AuthorizationEvent {
     LOG_IN, LOG_OUT
@@ -59,94 +47,17 @@ object EduCounterUsageCollector {
     SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB
   }
 
-  private fun authorization(event: AuthorizationEvent, platform: String, place: AuthorizationPlace) =
-    reportEvent("authorization", mapOf(EVENT to event.toLower(), "platform" to platform, SOURCE to place.toLower()))
-
-  @JvmStatic
-  fun loggedIn(platform: String, place: AuthorizationPlace) =
-    authorization(AuthorizationEvent.LOG_IN, platform, place)
-
-  @JvmStatic
-  fun loggedOut(platform: String, place: AuthorizationPlace) =
-    authorization(AuthorizationEvent.LOG_OUT, platform, place)
-
-  @JvmStatic
-  fun fullOutputShown() = reportEvent("show.full.output")
-
-  @JvmStatic
-  fun solutionPeeked() = reportEvent("peek.solution")
-
-  @JvmStatic
-  fun leaveFeedback() = reportEvent("leave.feedback")
-
-  @JvmStatic
-  fun revertTask() = reportEvent("revert.task")
-
-  @JvmStatic
-  fun reviewStageTopics() = reportEvent("review.stage.topics")
-
-  @JvmStatic
-  fun checkTask(status: CheckStatus) = reportEvent("check.task", mapOf("status" to status.toLower()))
-
   private enum class HintEvent {
     EXPANDED, COLLAPSED
   }
-
-  private fun hintClicked(event: HintEvent) = reportEvent("hint", mapOf(EVENT to event.toLower()))
-
-  @JvmStatic
-  fun hintExpanded() = hintClicked(HintEvent.EXPANDED)
-
-  @JvmStatic
-  fun hintCollapsed() = hintClicked(HintEvent.COLLAPSED)
-
-  fun createCoursePreview() = reportEvent("create.course.preview")
-
-  @JvmStatic
-  fun previewTaskFile() = reportEvent("preview.task.file")
-
-  @JvmStatic
-  fun createCourseArchive() = reportEvent("create.course.archive")
 
   private enum class PostCourseEvent {
     UPLOAD, UPDATE
   }
 
-  private fun postCourse(event: PostCourseEvent) = reportEvent("post.course", mapOf(EVENT to event.toLower()))
-
-  @JvmStatic
-  fun updateCourse() = postCourse(PostCourseEvent.UPDATE)
-
-  @JvmStatic
-  fun uploadCourse() = postCourse(PostCourseEvent.UPLOAD)
-
   enum class SynchronizeCoursePlace {
     WIDGET, PROJECT_GENERATION, PROJECT_REOPEN
   }
-
-  @JvmStatic
-  fun synchronizeCourse(course: Course, place: SynchronizeCoursePlace) = reportEvent(
-    "synchronize.course",
-    mapOf(TYPE to course.itemType, SOURCE to place.toLower())
-  )
-
-  @JvmStatic
-  fun importCourseArchive() = reportEvent("import.course")
-
-  @JvmStatic
-  fun codeforcesSubmitSolution() = reportEvent("codeforces.submit.solution")
-
-  @JvmStatic
-  fun twitterDialogShown(course: Course) = reportEvent(
-    "twitter.dialog.shown",
-    mapOf(TYPE to course.itemType, LANGUAGE to course.languageID)
-  )
-
-  @JvmStatic
-  fun twitterAchievementPosted(course: Course) = reportEvent(
-    "twitter.achievement.posted",
-    mapOf(TYPE to course.itemType, LANGUAGE to course.languageID)
-  )
 
   @Suppress("unused") //enum values are not mentioned explicitly
   private enum class CourseSelectionViewSource(private val actionPlace: String? = null) {
@@ -157,10 +68,6 @@ object EduCounterUsageCollector {
         return values().firstOrNull { it.actionPlace == actionPlace } ?: UNKNOWN
       }
     }
-  }
-
-  fun courseSelectionViewOpened(actionPlace: String) {
-    reportEvent("open.course.selection.view", mapOf(SOURCE to CourseSelectionViewSource.fromActionPlace(actionPlace).toLower()))
   }
 
   @Suppress("unused")
@@ -190,31 +97,159 @@ object EduCounterUsageCollector {
     }
   }
 
-  fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
-    reportEvent("select.tab.course.selection.view", mapOf(EDU_TAB to CourseSelectionViewTab.fromProvider(provider).toLower()))
-  }
+  companion object {
+    private const val MODE = "mode"
+    private const val SOURCE = "source"
+    private const val EVENT = "event"
+    private const val TYPE = "type"
+    private const val LANGUAGE = "language"
+    private const val EDU_TAB = "tab"
 
-  fun viewEvent(task: Task?) {
-    val course = task?.course ?: return
-    reportEvent("open.task", mapOf(MODE to course.courseMode, TYPE to course.itemType))
-  }
+    private val GROUP = EventLogGroup("educational.counters", 4)
 
-  @Suppress("UnstableApiUsage")
-  private fun reportEvent(eventId: String, additionalData: Map<String, String> = emptyMap()) {
-    val data = FeatureUsageData()
-    additionalData.forEach {
-      data.addData(it.key, it.value)
+    private val COURSE_MODE_FIELD = EventFields.String(MODE,
+                                                       listOf(EduNames.STUDY, CCUtils.COURSE_MODE))
+    private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
+                                                                  "PyCharm",
+                                                                  "Coursera",
+                                                                  "Hyperskill",
+                                                                  "Marketplace",
+                                                                  "Codeforces",
+                                                                  "section",
+                                                                  "framework",
+                                                                  "lesson",
+                                                                  "edu",
+                                                                  "ide",
+                                                                  "choice",
+                                                                  "code",
+                                                                  "output",
+                                                                  "theory"))
+    private val LANGUAGE_FIELD = EventFields.String(LANGUAGE,
+                                                    listOf("JAVA", "kotlin", "Python", "Scala", "JavaScript", "Rust", "ObjectiveC", "go"))
+
+
+    private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))
+    private val EDU_PROJECT_CREATED_EVENT = GROUP.registerEvent("edu.project.created", COURSE_MODE_FIELD, ITEM_TYPE_FIELD, LANGUAGE_FIELD)
+    private val EDU_PROJECT_OPENED_EVENT = GROUP.registerEvent("edu.project.opened", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
+    private val STUDY_ITEM_CREATED_EVENT = GROUP.registerEvent("study.item.created", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
+    private val LICK_CLICKED_EVENT = GROUP.registerEvent("link.clicked", enumField<LinkType>(TYPE))
+    private val AUTHORIZATION_EVENT = GROUP.registerEvent("authorization",
+                                                          enumField<AuthorizationEvent>(EVENT),
+                                                          EventFields.String("platform", listOf("Hyperskill", "Stepik", "Js_CheckiO", "Py_CheckiO")),
+                                                          enumField<AuthorizationPlace>(SOURCE))
+    private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
+    private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
+    private val LEAVE_FEEDBACK_EVENT = GROUP.registerEvent("leave.feedback")
+    private val REVERT_TASK_EVENT = GROUP.registerEvent("revert.task")
+    private val CHECK_TASK_EVENT = GROUP.registerEvent("check.task", enumField<CheckStatus>("status"))
+    private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent("review.stage.topics")
+    private val HINT_CLICKED_EVENT = GROUP.registerEvent("hint", enumField<HintEvent>(EVENT))
+    private val CREATE_COURSE_PREVIEW_EVENT = GROUP.registerEvent("create.course.preview")
+    private val PREVIEW_TASK_FILE_EVENT = GROUP.registerEvent("preview.task.file")
+    private val CREATE_COURSE_ARCHIVE_EVENT = GROUP.registerEvent("create.course.archive")
+    private val POST_COURSE_EVENT = GROUP.registerEvent("post.course", enumField<PostCourseEvent>(EVENT))
+    private val SYNCHRONIZE_COURSE_EVENT = GROUP.registerEvent("synchronize.course",
+                                                               ITEM_TYPE_FIELD, enumField<SynchronizeCoursePlace>(SOURCE))
+    private val IMPORT_COURSE_EVENT = GROUP.registerEvent("import.course")
+    private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent("codeforces.submit.solution")
+    private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent("twitter.dialog.shown", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
+    private val TWITTER_ACHIEVEMENT_POSTED_EVENT = GROUP.registerEvent("twitter.achievement.posted", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
+    private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent("open.course.selection.view",
+                                                                         enumField<CourseSelectionViewSource>(SOURCE))
+    private val COURSE_SELECTION_TAB_SELECTED_EVENT = GROUP.registerEvent("select.tab.course.selection.view",
+                                                                          enumField<CourseSelectionViewTab>(EDU_TAB))
+    private val VIEW_EVENT = GROUP.registerEvent("open.task", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
+
+
+    @JvmStatic
+    fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
+
+    @JvmStatic
+    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageID)
+
+    @JvmStatic
+    fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
+
+    @JvmStatic
+    fun studyItemCreated(item: StudyItem) = STUDY_ITEM_CREATED_EVENT.log(item.course.courseMode, item.itemType)
+
+    @JvmStatic
+    fun linkClicked(linkType: LinkType) = LICK_CLICKED_EVENT.log(linkType)
+
+    @JvmStatic
+    fun loggedIn(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(AuthorizationEvent.LOG_IN, platform, place)
+
+    @JvmStatic
+    fun loggedOut(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(AuthorizationEvent.LOG_OUT, platform, place)
+
+    @JvmStatic
+    fun fullOutputShown() = SHOW_FULL_OUTPUT_EVENT.log()
+
+    @JvmStatic
+    fun solutionPeeked() = PEEK_SOLUTION_EVENT.log()
+
+    @JvmStatic
+    fun leaveFeedback() = LEAVE_FEEDBACK_EVENT.log()
+
+    @JvmStatic
+    fun revertTask() = REVERT_TASK_EVENT.log()
+
+    @JvmStatic
+    fun reviewStageTopics() = REVIEW_STAGE_TOPICS_EVENT.log()
+
+    @JvmStatic
+    fun checkTask(status: CheckStatus) = CHECK_TASK_EVENT.log(status)
+
+    @JvmStatic
+    fun hintExpanded() = HINT_CLICKED_EVENT.log(HintEvent.EXPANDED)
+
+    @JvmStatic
+    fun hintCollapsed() = HINT_CLICKED_EVENT.log(HintEvent.COLLAPSED)
+
+    @JvmStatic
+    fun createCoursePreview() = CREATE_COURSE_PREVIEW_EVENT.log()
+
+    @JvmStatic
+    fun previewTaskFile() = PREVIEW_TASK_FILE_EVENT.log()
+
+    @JvmStatic
+    fun createCourseArchive() = CREATE_COURSE_ARCHIVE_EVENT.log()
+
+    @JvmStatic
+    fun updateCourse() = POST_COURSE_EVENT.log(PostCourseEvent.UPDATE)
+
+    @JvmStatic
+    fun uploadCourse() = POST_COURSE_EVENT.log(PostCourseEvent.UPLOAD)
+
+    @JvmStatic
+    fun synchronizeCourse(course: Course, place: SynchronizeCoursePlace) = SYNCHRONIZE_COURSE_EVENT.log(course.itemType, place)
+
+    @JvmStatic
+    fun importCourseArchive() = IMPORT_COURSE_EVENT.log()
+
+    @JvmStatic
+    fun codeforcesSubmitSolution() = CODEFORCES_SUBMIT_SOLUTION_EVENT.log()
+
+    @JvmStatic
+    fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageID)
+
+    @JvmStatic
+    fun twitterAchievementPosted(course: Course) = TWITTER_ACHIEVEMENT_POSTED_EVENT.log(course.itemType, course.languageID)
+
+    @JvmStatic
+    fun courseSelectionViewOpened(actionPlace: String) {
+      COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseSelectionViewSource.fromActionPlace(actionPlace))
     }
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, eventId, data)
+
+    @JvmStatic
+    fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
+      COURSE_SELECTION_TAB_SELECTED_EVENT.log(CourseSelectionViewTab.fromProvider(provider))
+    }
+
+    @JvmStatic
+    fun viewEvent(task: Task?) {
+      val course = task?.course ?: return
+      VIEW_EVENT.log(course.courseMode, course.itemType)
+    }
   }
-
-  private fun Enum<*>.toLower() = this.toString().toLowerCase()
-
-  private const val GROUP_ID = "educational.counters"
-  private const val MODE = "mode"
-  private const val SOURCE = "source"
-  private const val EVENT = "event"
-  private const val TYPE = "type"
-  private const val LANGUAGE = "language"
-  private const val EDU_TAB = "tab"
 }
