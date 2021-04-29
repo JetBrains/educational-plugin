@@ -2,7 +2,8 @@
 
 package com.jetbrains.edu.learning
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.DisabledPluginsState
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ex.ApplicationManagerEx
@@ -14,15 +15,12 @@ private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10", true)
 private val KOTLIN_VERSION_PATTERN = """(\d+\.\d+(.\d+)?(-(eap-|M|rc-)\d+)?).*""".toRegex()
 
-fun getDisabledPlugins(ids: List<String>): List<String> {
-  val disabledPluginIds = PluginManager.getDisabledPlugins().toSet()
-  return ids.filter { it in disabledPluginIds }
+fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
+  return ids.filter { PluginManagerCore.isDisabled(it) }
 }
 
-fun enablePlugins(ids: List<String>) {
-  for (id in ids) {
-    PluginManager.enablePlugin(id)
-  }
+fun enablePlugins(ids: List<PluginId>) {
+  DisabledPluginsState.enablePluginsById(ids, true)
   restartIDE("Required plugins were enabled")
 }
 
@@ -35,7 +33,7 @@ fun restartIDE(messageInfo: String) {
   ApplicationManagerEx.getApplicationEx().restart(true)
 }
 
-fun pluginVersion(pluginId: String): String? = PluginManager.getPlugin(PluginId.getId(pluginId))?.version
+fun pluginVersion(pluginId: String): String? = PluginManagerCore.getPlugin(PluginId.getId(pluginId))?.version
 
 fun kotlinVersion(): KotlinVersion {
   val kotlinPluginVersion = pluginVersion(KOTLIN_PLUGIN_ID) ?: return DEFAULT_KOTLIN_VERSION

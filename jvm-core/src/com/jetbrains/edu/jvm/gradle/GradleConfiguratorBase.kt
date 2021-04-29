@@ -1,6 +1,7 @@
 package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -48,8 +49,8 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)
 
-  override val pluginRequirements: List<String>
-    get() = listOf("org.jetbrains.plugins.gradle", "JUnit")
+  override val pluginRequirements: List<PluginId>
+    get() = listOf(PluginId.getId("org.jetbrains.plugins.gradle"), PluginId.getId("JUnit"))
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(

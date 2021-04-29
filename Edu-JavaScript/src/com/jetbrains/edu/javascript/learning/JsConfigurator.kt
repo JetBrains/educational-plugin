@@ -1,5 +1,6 @@
 package com.jetbrains.edu.javascript.learning
 
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils.isCommunityEdition
@@ -28,8 +29,8 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
   override val taskCheckerProvider: TaskCheckerProvider
     get() = JsTaskCheckerProvider()
 
-  override val pluginRequirements: List<String>
-    get() = listOf("NodeJS")
+  override val pluginRequirements: List<PluginId>
+    get() = listOf(PluginId.getId("NodeJS"))
 
   override val isEnabled: Boolean
     get() = !isAndroidStudio() && !isCommunityEdition() && !isPyCharmEducational()

@@ -56,7 +56,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val pathField: PathField = PathField()
   private val locationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
   private lateinit var languageSettings: LanguageSettings<*>
-  private var requiredAndDisabledPlugins: List<String> = emptyList()
+  private var requiredAndDisabledPlugins: List<PluginId> = emptyList()
   private var validationListener: ValidationListener? = null
 
   private val errorComponent = ErrorComponent(getHyperlinkListener())
@@ -183,7 +183,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     val validationMessage = when {
       titleField.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title"))
       descriptionTextArea.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description"))
-      requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins.map { PluginId.getId(it) })
+      requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins)
       else -> {
         val validationMessage = languageSettings.validate(null, locationString)
         if (validationMessage != null) settings.setOn(true)

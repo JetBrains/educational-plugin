@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.configuration
 
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -137,7 +138,7 @@ interface EduConfigurator<Settings> {
    *
    * @return list of plugin ids
    */
-  val pluginRequirements: List<String>
+  val pluginRequirements: List<PluginId>
     get() = listOf()
 
   /**

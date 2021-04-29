@@ -26,18 +26,14 @@ import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
-import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.ui.Gray
-import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.UIUtil
@@ -56,7 +52,6 @@ import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
 import java.awt.BorderLayout
-import java.awt.Color
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -71,7 +66,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   private lateinit var progressBar: JProgressBar
 
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
-    return object : ProjectViewTree(myProject, treeModel) {
+    return object : ProjectViewTree(treeModel) {
       override fun toString(): String = "$title ${super.toString()}"
     }
   }
@@ -170,7 +165,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createSelectInTarget(): SelectInTarget {
     return object : ProjectViewSelectInTarget(myProject) {
-      override fun getMinorViewId(): String? = ID
+      override fun getMinorViewId(): String = ID
       override fun toString(): String = ID
     }
   }

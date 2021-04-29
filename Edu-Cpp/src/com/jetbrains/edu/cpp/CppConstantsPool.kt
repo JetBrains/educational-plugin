@@ -4,7 +4,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
-import com.jetbrains.cidr.cpp.toolchains.CMake
+import com.jetbrains.cidr.cpp.toolchains.CMakeExecutableTool
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 
 const val GTEST_VERSION_KEY: String = "GTEST_VERSION"
@@ -26,7 +26,7 @@ const val TEST_FRAMEWORKS_BASE_DIR_VALUE: String = "test-framework"
 const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
 val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
   val cMakeVersionExtractor = {
-    CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMake.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
+    CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMakeExecutableTool.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
   }
 
   val progressManager = ProgressManager.getInstance()

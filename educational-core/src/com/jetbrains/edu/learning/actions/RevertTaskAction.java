@@ -109,7 +109,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     if (project == null) return;
 
     int result = showOkCancelDialog(project, EduCoreBundle.message("action.reset.progress.dropped"),
-                                    EduCoreBundle.message("action.reset.request"), OK_BUTTON, CANCEL_BUTTON, getQuestionIcon());
+                                    EduCoreBundle.message("action.reset.request"), getOkButton(), getCancelButton(), getQuestionIcon());
     if (result != OK) return;
     revert(project);
     EduCounterUsageCollector.revertTask();

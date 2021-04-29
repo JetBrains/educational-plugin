@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -48,7 +49,7 @@ abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfig
   override val mockTemplate: String
     get() = baseConfigurator.mockTemplate
 
-  override val pluginRequirements: List<String>
+  override val pluginRequirements: List<PluginId>
     get() = baseConfigurator.pluginRequirements
 
   override val logo: Icon
