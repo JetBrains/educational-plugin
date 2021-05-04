@@ -29,14 +29,14 @@ class HyperskillTaskBuilder(
   }
 
   private fun Task.description(theoryId: Int?, langId: String, title: String = name): String = buildString {
-    appendln("<h2>$title</h2>")
-    appendln(descriptionText)
+    appendLine("<h2>$title</h2>")
+    appendLine(descriptionText)
 
     val options = stepSource.block?.options as? PyCharmStepOptions
     if (options?.hasHeaderOrFooter(langId) == true) {
-      appendln("<b>${EduCoreBundle.message("label.caution")}</b><br><br>")
-      appendln(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")))
-      appendln("<br><br>")
+      appendLine("<b>${EduCoreBundle.message("label.caution")}</b><br><br>")
+      appendLine(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")))
+      appendLine("<br><br>")
     }
 
     if (theoryId != null) {

@@ -57,12 +57,12 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       append(IdeBundle.message("warning.delete.all.files.and.subdirectories", studyItem.name))
       if (dependentTasks.isNotEmpty()) {
         // TODO: show dependent task in more convenient way. See https://youtrack.jetbrains.com/issue/EDU-1465
-        appendln()
-        appendln("Note, all placeholder dependencies on removing items will be deleted as well.")
-        appendln("Dependent tasks:")
-        appendln()
+        appendLine()
+        appendLine("Note, all placeholder dependencies on removing items will be deleted as well.")
+        appendLine("Dependent tasks:")
+        appendLine()
         for (task in dependentTasks) {
-          appendln("• ${taskMessageName(task)}")
+          appendLine("• ${taskMessageName(task)}")
         }
       }
     }

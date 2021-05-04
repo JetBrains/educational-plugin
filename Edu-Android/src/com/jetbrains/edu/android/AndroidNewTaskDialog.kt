@@ -53,7 +53,7 @@ class AndroidNewTaskAfterPopupDialog(
     androidVersionsInfo.loadLocalVersions()
     androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel, Consumer { items ->
       val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
-      val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.max() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
+      val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.maxOrNull() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
       comboBoxWrapper.init(FormFactor.MOBILE, nonPreviewItems)
       comboBoxWrapper.combobox.isEnabled = true

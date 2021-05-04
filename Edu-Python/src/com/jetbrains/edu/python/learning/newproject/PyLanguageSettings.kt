@@ -99,7 +99,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       if (baseSdks.isEmpty()) {
         return null
       }
-      return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxBy { it.version }
+      return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.version }
     }
 
     private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(EduPythonBundle.message("error.incorrect.python", requiredVersion))

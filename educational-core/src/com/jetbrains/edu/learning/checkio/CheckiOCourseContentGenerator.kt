@@ -48,10 +48,10 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
     val task = "<p><a href=\"$taskLink\">${EduCoreBundle.message("checkio.open.task.on.site")}</a></p>"
 
     mission.descriptionText = buildString {
-      appendln("<h2>${mission.name}</h2>")
-      appendln(mission.descriptionText)
-      appendln(solutions)
-      appendln(task)
+      appendLine("<h2>${mission.name}</h2>")
+      appendLine(mission.descriptionText)
+      appendLine(solutions)
+      appendLine(task)
     }
   }
 

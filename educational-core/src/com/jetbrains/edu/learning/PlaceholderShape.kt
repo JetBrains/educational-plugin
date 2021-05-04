@@ -165,9 +165,9 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
   var rightMaxBoundary = LineBoundary(startOffset, endOffset)
 
   if (startLine != endLine) {
-    leftMinBoundary = boundaries.subList(1, boundaries.size).minBy { it.getVisualBoundaries(editor).first } ?: leftMinBoundary
+    leftMinBoundary = boundaries.subList(1, boundaries.size).minByOrNull { it.getVisualBoundaries(editor).first } ?: leftMinBoundary
     val endBoundary = if (endOffset == document.getLineEndOffset(endLine)) boundaries.size else boundaries.size - 1
-    rightMaxBoundary = boundaries.subList(0, endBoundary).maxBy { it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
+    rightMaxBoundary = boundaries.subList(0, endBoundary).maxByOrNull { it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
 
     isLeftRectangular = editor.columnByOffset(leftMinBoundary.startOffset) >= editor.columnByOffset(startOffset)
     isRightRectangular = editor.columnByOffset(rightMaxBoundary.endOffset) <= editor.columnByOffset(endOffset) ||

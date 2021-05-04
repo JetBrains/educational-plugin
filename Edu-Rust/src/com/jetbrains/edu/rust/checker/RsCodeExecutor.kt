@@ -56,7 +56,7 @@ class RsCodeExecutor : CodeExecutor {
 
     for (line in lineSequence()) {
       if (programOutputStarted) {
-        outputBuffer.appendln(line)
+        outputBuffer.appendLine(line)
       }
       else {
         if (line.trimStart().startsWith("Running")) {

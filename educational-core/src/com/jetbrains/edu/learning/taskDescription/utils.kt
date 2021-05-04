@@ -224,8 +224,8 @@ private fun Task.containsLocalImages(project: Project, fileName: String): Boolea
 }
 
 fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
-  appendln("<h1 style=\"margin-top: 15px\">${uiName.capitalize()} $index/$tasksNumber: $name</h1>")
-  appendln(text)
+  appendLine("<h1 style=\"margin-top: 15px\">${uiName.capitalize()} $index/$tasksNumber: $name</h1>")
+  appendLine(text)
 }
 
 fun String.containsYoutubeLink(): Boolean = contains(YOUTUBE_LINKS_REGEX)
