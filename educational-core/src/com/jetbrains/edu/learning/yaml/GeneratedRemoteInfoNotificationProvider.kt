@@ -19,10 +19,10 @@ class GeneratedRemoteInfoNotificationProvider(val project: Project) :
 
   override fun getKey() = KEY
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
     if (isRemoteConfigFile(file)) {
       val panel = EditorNotificationPanel()
-      panel.setText(NOTIFICATION_TEXT)
+      panel.text = NOTIFICATION_TEXT
       return panel
     }
     return null

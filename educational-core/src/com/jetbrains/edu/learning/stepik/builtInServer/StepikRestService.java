@@ -82,14 +82,15 @@ public class StepikRestService extends OAuthRestService {
   }
 
   @Override
-  protected boolean isHostTrusted(@NotNull FullHttpRequest request) throws InterruptedException, InvocationTargetException {
+  protected boolean isHostTrusted(@NotNull FullHttpRequest request,
+                                  @NotNull QueryStringDecoder urlDecoder) throws InterruptedException, InvocationTargetException {
     String uri = request.uri();
     Matcher codeMatcher = OAUTH_CODE_PATTERN.matcher(uri);
     Matcher errorMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri);
     if (request.method() == HttpMethod.GET && (codeMatcher.matches() || errorMatcher.matches())) {
       return true;
     }
-    return super.isHostTrusted(request);
+    return super.isHostTrusted(request, urlDecoder);
   }
 
   @Nullable

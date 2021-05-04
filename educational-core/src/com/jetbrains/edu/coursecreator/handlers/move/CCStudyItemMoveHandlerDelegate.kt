@@ -19,7 +19,7 @@ abstract class CCStudyItemMoveHandlerDelegate(private val itemType: StudyItemTyp
     return isAvailable(directory)
   }
 
-  override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
+  override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?, reference: PsiReference?): Boolean {
     val directory = elements.singleOrNull() as? PsiDirectory ?: return false
     return isAvailable(directory)
   }

@@ -19,26 +19,18 @@ import com.jetbrains.edu.learning.marketplace.update.getUpdateVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.concurrent.atomic.AtomicBoolean
 
-class UpdateCourseNotificationProvider(val project: Project) :
-  EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
+class UpdateCourseNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 
-  private val VirtualFile.isTaskFile: Boolean
-    get() = getTaskFile(project) != null
   private var isUpdateRunning: AtomicBoolean = AtomicBoolean(false)
-
-  companion object {
-    @VisibleForTesting
-    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
-  }
 
   override fun getKey() = KEY
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
     if (!EduUtils.isStudentProject(project)) {
       return null
     }
     val course = project.course as? EduCourse ?: return null
-    if ((course.isStepikRemote || course.isMarketplaceRemote) && !course.isUpToDate && file.isTaskFile) {
+    if ((course.isStepikRemote || course.isMarketplaceRemote) && !course.isUpToDate && file.getTaskFile(project) != null) {
       val panel = EditorNotificationPanel()
       panel.text = EduCoreBundle.message("update.notification")
       panel.createActionLabel(EduCoreBundle.message("update.action")) {
@@ -66,5 +58,10 @@ class UpdateCourseNotificationProvider(val project: Project) :
       }
       false -> updateCourseOnStepik(project, course)
     }
+  }
+
+  companion object {
+    @VisibleForTesting
+    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
   }
 }

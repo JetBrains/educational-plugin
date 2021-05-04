@@ -30,13 +30,14 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
   }
 
   @Override
-  protected boolean isHostTrusted(@NotNull FullHttpRequest request) throws InterruptedException, InvocationTargetException {
+  protected boolean isHostTrusted(@NotNull FullHttpRequest request,
+                                  @NotNull QueryStringDecoder urlDecoder) throws InterruptedException, InvocationTargetException {
     final String uri = request.uri();
     final Matcher codeMatcher = myOAuthCodePattern.matcher(uri);
     if (request.method() == HttpMethod.GET && codeMatcher.matches()) {
       return true;
     }
-    return super.isHostTrusted(request);
+    return super.isHostTrusted(request, urlDecoder);
   }
 
   @Nullable

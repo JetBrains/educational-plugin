@@ -309,7 +309,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
-    EducationalExtensionPoint.EP_NAME.getPoint(null).registerExtension(extension, disposable)
+    EducationalExtensionPoint.EP_NAME.point.registerExtension(extension, disposable)
   }
 
   protected fun getTestFile(fileName: String) = testDataPath + fileName

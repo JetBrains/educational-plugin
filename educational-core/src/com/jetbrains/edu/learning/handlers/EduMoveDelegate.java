@@ -13,14 +13,14 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.handlers.HandlersUtils.isMoveForbidden;
 
-public class EduMoveDelegate extends MoveHandlerDelegate{
+public class EduMoveDelegate extends MoveHandlerDelegate {
   @Override
   public boolean canMove(DataContext dataContext) {
     return isMoveForbidden(dataContext);
   }
 
   @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
+  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer, @Nullable PsiReference reference) {
     if (elements.length == 1) {
       Project project = elements[0].getProject();
       return isMoveForbidden(project, elements[0], targetContainer);

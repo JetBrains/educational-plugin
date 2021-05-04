@@ -6,15 +6,12 @@ import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.ADDITIONAL_HINTS;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.HINT;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 public class ToFourthVersionXmlConverter implements XmlConverter {
 
@@ -31,7 +28,7 @@ public class ToFourthVersionXmlConverter implements XmlConverter {
           for (Element placeholder : getChildList(taskFileElement, ANSWER_PLACEHOLDERS)) {
             Element valueElement = new Element(SUBTASK_INFO);
             addChildMap(placeholder, SUBTASK_INFOS, Collections.singletonMap(String.valueOf(0), valueElement));
-            for (String childName : ContainerUtil.list(HINT, POSSIBLE_ANSWER, SELECTED, STATUS, TASK_TEXT)) {
+            for (String childName : Arrays.asList(HINT, POSSIBLE_ANSWER, SELECTED, STATUS, TASK_TEXT)) {
               Element child = getChildWithName(placeholder, childName, true);
               if (child == null) {
                 continue;

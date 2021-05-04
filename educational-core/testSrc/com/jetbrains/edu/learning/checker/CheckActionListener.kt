@@ -61,7 +61,7 @@ class CheckActionListener : CheckListener {
 
     @JvmStatic
     fun registerListener(disposable: Disposable) {
-      CheckListener.EP_NAME.getPoint(null).registerExtension(CheckActionListener(), disposable)
+      CheckListener.EP_NAME.point.registerExtension(CheckActionListener(), disposable)
     }
 
     @JvmStatic

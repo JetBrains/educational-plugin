@@ -15,20 +15,11 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
-class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
-  companion object {
-    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.unsolvedDependencies")
-
-    @VisibleForTesting
-    fun getText(taskNames: List<String>): String {
-      val taskNamesString = taskNames.joinToString(separator = ", ") { "'$it'" }
-      return "${StringUtil.pluralize("Task", taskNames.size)} $taskNamesString should be solved first"
-    }
-  }
+class UnsolvedDependenciesNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 
   override fun getKey() = KEY
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
+  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
     if (!EduUtils.isStudentProject(project)) {
       return null
     }
@@ -38,7 +29,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
       return null
     }
     val panel = EditorNotificationPanel()
-    panel.setText(getText(taskDependencies.map { it.name }))
+    panel.text = getText(taskDependencies.map { it.name })
     panel.createActionLabel("Solve '${taskDependencies[0].name}'") {
       NavigationUtils.navigateToTask(project, taskDependencies[0], task)
       EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
@@ -46,4 +37,13 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
     return panel
   }
 
+  companion object {
+    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.unsolvedDependencies")
+
+    @VisibleForTesting
+    fun getText(taskNames: List<String>): String {
+      val taskNamesString = taskNames.joinToString(separator = ", ") { "'$it'" }
+      return "${StringUtil.pluralize("Task", taskNames.size)} $taskNamesString should be solved first"
+    }
+  }
 }
