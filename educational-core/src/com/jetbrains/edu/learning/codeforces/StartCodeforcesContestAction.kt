@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
@@ -20,7 +20,7 @@ import java.util.function.Supplier
 class StartCodeforcesContestAction(
   title: Supplier<String> = EduCoreBundle.lazyMessage("codeforces.start.contest"),
   private val showViewAllLabel: Boolean = true
-) : AnAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
+) : DumbAwareAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
 
   override fun getHelpRelativePath(): String {
     return "education/codeforces-contests.html"

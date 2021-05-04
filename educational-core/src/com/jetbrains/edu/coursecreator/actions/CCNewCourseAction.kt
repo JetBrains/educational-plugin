@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
@@ -11,7 +11,7 @@ import java.util.function.Supplier
 class CCNewCourseAction(
   title: Supplier<String> = EduCoreBundle.lazyMessage("action.new.course.default.text"),
   private val onOKAction: () -> Unit = {}
-) : AnAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
+) : DumbAwareAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
 
   constructor(@Nls(capitalization = Nls.Capitalization.Title) title: String) : this(Supplier { title })
 
