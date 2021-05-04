@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
+import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -52,9 +54,12 @@ import java.util.regex.Pattern
 
 abstract class EduTestCase : BasePlatformTestCase() {
 
+  private lateinit var testPluginDescriptor: IdeaPluginDescriptor
+
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
+    testPluginDescriptor = PluginManager.getPlugins().first { it.pluginId.idString.startsWith("com.jetbrains.edu") }
     StudyTaskManager.getInstance(project).course = null // if a test doesn't set any course, course from the previous test stays incorrectly
     SubmissionsManager.getInstance(project).clear()
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
@@ -309,6 +314,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     extension.implementationClass = configuratorClass.name
     extension.courseType = courseType
     extension.environment = environment
+    extension.pluginDescriptor = testPluginDescriptor
     EducationalExtensionPoint.EP_NAME.point.registerExtension(extension, disposable)
   }
 

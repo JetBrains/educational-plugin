@@ -1,14 +1,12 @@
 package com.jetbrains.edu.learning.configuration;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.serviceContainer.BaseKeyedLazyInstance;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.jetbrains.edu.learning.EduNames;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
+public class EducationalExtensionPoint<T> extends BaseKeyedLazyInstance<T> {
   public static final ExtensionPointName<EducationalExtensionPoint<EduConfigurator<?>>> EP_NAME =
     ExtensionPointName.create("Educational.configurator");
 
@@ -27,21 +25,8 @@ public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   @Attribute("displayName")
   public String displayName = null;
 
-  private final AtomicNotNullLazyValue<T> myInstanceHolder = new AtomicNotNullLazyValue<T>() {
-    @NotNull
-    @Override
-    protected T compute() {
-      try {
-        return instantiate(implementationClass, ApplicationManager.getApplication().getPicoContainer());
-      }
-      catch (final ClassNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  };
-
-  @NotNull
-  public T getInstance() {
-    return myInstanceHolder.getValue();
+  @Override
+  protected @Nullable String getImplementationClassName() {
+    return implementationClass;
   }
 }
