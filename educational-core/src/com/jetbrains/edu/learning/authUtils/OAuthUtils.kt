@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.builtInWebServer.BuiltInServerOptions
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.IOException
-import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 object OAuthUtils {
   private const val OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html"
@@ -49,7 +49,7 @@ object OAuthUtils {
   @Throws(IOException::class)
   private fun getPageTemplate(pagePath: String): String {
     EduUtils::class.java.getResourceAsStream(pagePath).use { pageTemplateStream ->
-      return StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"))
+      return StreamUtil.readText(pageTemplateStream, StandardCharsets.UTF_8)
     }
   }
 

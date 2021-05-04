@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.apache.commons.lang.text.StrSubstitutor
 import org.jsoup.Jsoup
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
 const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
@@ -32,7 +33,7 @@ fun loadText(filePath: String): String? {
 
   // BACKCOMPAT 2020.2
   stream.use {
-    return StreamUtil.readText(stream, "utf-8")
+    return StreamUtil.readText(stream, StandardCharsets.UTF_8)
   }
 }
 

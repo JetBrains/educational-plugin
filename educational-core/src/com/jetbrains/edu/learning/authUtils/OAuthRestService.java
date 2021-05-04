@@ -16,7 +16,7 @@ import org.jetbrains.io.Responses;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 // Should be implemented to handle oauth redirect to localhost:<port>
 // and get the authorization code for different oauth providers
@@ -70,7 +70,7 @@ public abstract class OAuthRestService extends RestService {
     try (
       BufferExposingByteArrayOutputStream byteOut = new BufferExposingByteArrayOutputStream()
     ) {
-      byteOut.write(StreamUtil.loadFromStream(new ByteArrayInputStream(template.getBytes(Charset.forName("UTF-8")))));
+      byteOut.write(StreamUtil.loadFromStream(new ByteArrayInputStream(template.getBytes(StandardCharsets.UTF_8))));
       HttpResponse response = Responses.response("text/html", Unpooled.wrappedBuffer(byteOut.getInternalBuffer(), 0, byteOut.size()));
       Responses.addNoCache(response);
       response.headers().set("X-Frame-Options", "Deny");

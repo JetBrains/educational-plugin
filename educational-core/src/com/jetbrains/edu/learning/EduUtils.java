@@ -24,7 +24,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -467,7 +466,7 @@ public class EduUtils {
           return null;
         }
         byte[] bytes = entry.getData();
-        final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
+        final String jsonText = new String(bytes, StandardCharsets.UTF_8);
         return CourseArchiveReader.readCourseJson(jsonText, isEncrypted, isMarketplace);
       }
       finally {
