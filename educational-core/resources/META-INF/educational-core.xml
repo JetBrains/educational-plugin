@@ -226,11 +226,9 @@
                              id="Educational" displayName="Education"/>
 
     <toolWindow id="Task" anchor="right" order="first"
-                factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"
-                conditionClass="com.jetbrains.edu.learning.taskDescription.ui.EduCondition"/>
-    <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
-                factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
-                conditionClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowCondition"/>
+                factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"/>
+    <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
+                factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"/>
     <!-- placeholder size listener -->
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->

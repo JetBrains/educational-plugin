@@ -31,6 +31,7 @@ import javax.swing.SwingConstants
 import javax.swing.event.ChangeListener
 
 class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
+  override fun isApplicable(project: Project): Boolean = EduUtils.isEduProject(project)
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     if (!EduUtils.isEduProject(project)) {

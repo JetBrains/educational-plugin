@@ -5,7 +5,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -29,13 +28,7 @@ class CheckDetailsToolWindowFactory : ToolWindowFactory, DumbAware {
 
   override fun shouldBeAvailable(project: Project) = false
 
-  override fun isDoNotActivateOnStart() = true
-
   companion object {
     const val ID = "Educational.CheckDetails"
   }
-}
-
-class CheckDetailsToolWindowCondition : Condition<Any> {
-  override fun value(t: Any?) = true
 }
