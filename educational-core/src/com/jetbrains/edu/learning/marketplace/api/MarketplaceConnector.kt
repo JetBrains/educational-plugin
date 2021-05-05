@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -175,6 +176,7 @@ abstract class MarketplaceConnector : CourseConnector {
     }
   }
 
+  @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
     val courseId = course.id
     val updateInfo = getLatestCourseUpdateInfo(courseId)
@@ -182,7 +184,12 @@ abstract class MarketplaceConnector : CourseConnector {
       error("Update info for course $courseId is null")
     }
     course.marketplaceCourseVersion = updateInfo.version
-    val link = "$repositoryUrl/plugin/$courseId/update/${updateInfo.updateId}/download"
+    val buildNumber = MarketplaceRequests.getInstance().getBuildForPluginRepositoryRequests()
+
+    //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
+    val uuid = UUIDProvider.getUUID()
+
+    val link = "$repositoryUrl/plugin/$courseId/update/${updateInfo.updateId}/download?uuid=$uuid&build=$buildNumber"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
