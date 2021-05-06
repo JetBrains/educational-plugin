@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
 
 class CodeforcesChooseFileForRunConfigurationTest : EduActionTestCase() {
   fun `test first test set is selected`() {
@@ -29,7 +28,7 @@ class CodeforcesChooseFileForRunConfigurationTest : EduActionTestCase() {
     getCodeforcesCourse()
     val expectedFile = if (folderForDebug == null) null else myFixture.findFileInTempDir(folderForDebug)!!
     val selectedFile = myFixture.findFileInTempDir(selectedFileName) ?: error("Unable to find selected file")
-    val actualInputFile = CodeforcesRunConfigurationProducer.getInputFile(project, selectedFile)
+    val actualInputFile = CodeforcesUtils.getInputFile(project, selectedFile)
     assertEquals(expectedFile, actualInputFile)
   }
 

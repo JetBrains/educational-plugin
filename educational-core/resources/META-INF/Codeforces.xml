@@ -10,6 +10,8 @@
 
     <configurationType implementation="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer"/>
+    <runLineMarkerContributor language="TEXT"
+                              implementationClass="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunLineMarkerContributor"/>
   </extensions>
 
   <extensionPoints>
