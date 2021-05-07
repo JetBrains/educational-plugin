@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -35,21 +36,19 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
   }
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
-    checkIsBackgroundThread()
-    return if (isUnitTestMode) {
-      emptyList()
+    if (!isUnitTestMode) {
+      checkIsBackgroundThread()
     }
-    else {
-      val document = CodeforcesConnector.getInstance().getContestsPage().onError {
-        Logger.getInstance(CodeforcesPlatformProvider::class.java).error(it)
-        return emptyList()
-      }
-      val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
-      val recentContests = CodeforcesContestConnector.getRecentContests(document)
-      val upcomingGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.upcoming"), upcomingContests)
-      val recentGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.recent"), recentContests)
 
-      listOf(upcomingGroup, recentGroup)
+    val document = CodeforcesConnector.getInstance().getContestsPage().onError {
+      Logger.getInstance(CodeforcesPlatformProvider::class.java).error(it)
+      return emptyList()
     }
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+    val recentContests = CodeforcesContestConnector.getRecentContests(document)
+    val upcomingGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.upcoming"), upcomingContests)
+    val recentGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.recent"), recentContests)
+
+    return listOf(upcomingGroup, recentGroup)
   }
 }
