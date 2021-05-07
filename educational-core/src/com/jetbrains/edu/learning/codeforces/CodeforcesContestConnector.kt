@@ -18,6 +18,7 @@ object CodeforcesContestConnector {
   private const val FORMAT_TIME_CLASS = "format-time"
   private const val DATATABLE_CLASS = "datatable"
   private const val CONTEST_LIST_CLASS = "contestList"
+  private const val CONTEST_TABLE_CLASS = "contests-table"
 
   fun getContestIdFromLink(link: String): Int {
     val match = Regex("codeforces.com/contest/(\\d*)").find(link) ?: return -1
@@ -45,7 +46,8 @@ object CodeforcesContestConnector {
   }
 
   fun getUpcomingContests(document: Document): List<ContestInformation> {
-    val tables = getTables(document)
+    val upcomingContestList = document.body().getElementsByClass(CONTEST_LIST_CLASS).first() ?: error("Cannot parse $CONTEST_LIST_CLASS")
+    val tables = upcomingContestList.getElementsByClass(DATATABLE_CLASS)
     if (tables.isEmpty()) {
       return emptyList()
     }
@@ -63,11 +65,8 @@ object CodeforcesContestConnector {
    * See the page format [com.jetbrains.edu.learning.codeforces.api.CodeforcesService.contestsPage]
    */
   fun getRecentContests(document: Document): List<ContestInformation> {
-    val tables = getTables(document)
-    if (tables.size == 1) {
-      return emptyList()
-    }
-    val recentContests = tables[1]
+    val recentContestsParent = document.body().getElementsByClass(CONTEST_TABLE_CLASS).first() ?: return emptyList()
+    val recentContests = recentContestsParent.getElementsByClass(DATATABLE_CLASS)?.first() ?: return emptyList()
 
     val contestElements = getContestsElements(recentContests)
 
@@ -105,9 +104,4 @@ object CodeforcesContestConnector {
   }
 
   private fun getContestsElements(recentContests: Element) = recentContests.getElementsByTag(TR_TAG)
-
-  private fun getTables(document: Document): Elements {
-    val upcomingContestList = document.body().getElementsByClass(CONTEST_LIST_CLASS).first() ?: error("Cannot parse 'contestList'")
-    return upcomingContestList.getElementsByClass(DATATABLE_CLASS)
-  }
 }
