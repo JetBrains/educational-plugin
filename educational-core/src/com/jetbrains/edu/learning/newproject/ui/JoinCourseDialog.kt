@@ -31,7 +31,7 @@ open class JoinCourseDialog(
   private inner class JoinCoursePanel : CoursePanel(true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialog.course, { locationString }, { languageSettings }),
-                                         CourseMode.STUDY, this) {
+                                         mode, this) {
         setError(it)
       }
     }
