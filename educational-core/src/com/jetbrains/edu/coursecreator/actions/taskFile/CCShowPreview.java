@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import org.jetbrains.annotations.NotNull;
@@ -128,6 +129,11 @@ public class CCShowPreview extends DumbAwareAction {
       catch (BrokenPlaceholderException exception) {
         LOG.info("Failed to Create Preview: " + exception.getMessage());
         showErrorDialog(exception.getPlaceholderInfo(), EduCoreBundle.message("dialog.title.failed.to.create.preview"));
+        return;
+      }
+      catch (HugeBinaryFileException exception) {
+        LOG.info("Failed to Create Preview: " + exception.getMessage());
+        showErrorDialog(exception.getMessage(), EduCoreBundle.message("dialog.title.failed.to.create.preview"));
         return;
       }
       if (studentTaskFile != null) {

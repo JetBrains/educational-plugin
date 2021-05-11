@@ -2,13 +2,18 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Base class for all items of course: section, lessons, tasks, etc.
@@ -118,5 +123,21 @@ public abstract class StudyItem {
     if (myId == 0) {
       myId = System.identityHashCode(this);
     }
+  }
+
+  public String getPathInCourse() {
+    List<String> parents = new ArrayList<>();
+    StudyItem parent = getParent();
+    while (!(parent instanceof Course)) {
+      parents.add(parent.getName());
+      parent = parent.getParent();
+    }
+    Collections.reverse(parents);
+
+    String parentsLine = StringUtil.join(parents, VfsUtilCore.VFS_SEPARATOR);
+    if (parentsLine.isEmpty()) {
+      return getName();
+    }
+    return parentsLine + VfsUtilCore.VFS_SEPARATOR + getName();
   }
 }

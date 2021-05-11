@@ -21,7 +21,9 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.testFramework.LightVirtualFile
@@ -32,6 +34,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -190,10 +193,13 @@ object CCUtils {
 
         var taskFile = file.getTaskFile(project)
         if (taskFile == null) {
-          val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
-          taskFile = TaskFile(path, file.loadEncodedContent())
           try {
+            val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
+            taskFile = TaskFile(path, file.loadEncodedContent())
             additionalTaskFiles.add(taskFile)
+          }
+          catch (e: FileTooBigException) {
+            throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
           }
           catch (e: IOException) {
             LOG.error(e)

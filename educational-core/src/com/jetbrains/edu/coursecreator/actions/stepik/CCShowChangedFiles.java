@@ -11,7 +11,6 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -23,9 +22,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
@@ -143,7 +139,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @Nls String status) {
     stringBuilder
-      .append(getPath(item))
+      .append(item.getPathInCourse())
       .append(" ")
       .append(status)
       .append("\n");
@@ -161,18 +157,5 @@ public class CCShowChangedFiles extends DumbAwareAction {
     if (course instanceof EduCourse && ((EduCourse)course).isStepikRemote() && !course.isStudy()) {
       presentation.setEnabledAndVisible(true);
     }
-  }
-
-  private static String getPath(@NotNull StudyItem item) {
-    ArrayList<String> parents = new ArrayList<>();
-    StudyItem parent = item.getParent();
-    while (!(parent instanceof Course)) {
-      parents.add(parent.getName());
-      parent = parent.getParent();
-    }
-    Collections.reverse(parents);
-
-    String parentsLine = StringUtil.join(parents, "/");
-    return parentsLine + (parentsLine.isEmpty() ? "" : "/") + item.getName();
   }
 }

@@ -28,13 +28,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
-import java.util.*
 
 abstract class CourseArchiveCreator(
   protected val project: Project,
@@ -68,6 +68,9 @@ abstract class CourseArchiveCreator(
       val yamlFile = e.placeholder.taskFile?.task?.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return "${e.message}\n\n${e.placeholderInfo}"
+    }
+    catch (e: HugeBinaryFileException) {
+      return e.message
     }
     return try {
       val json = generateJson(jsonFolder, course)

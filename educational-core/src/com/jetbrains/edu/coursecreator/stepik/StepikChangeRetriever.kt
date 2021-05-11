@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.getInEdt
 
 @VisibleForTesting
@@ -116,6 +117,9 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
             CourseArchiveCreator.loadActualTexts(project, localTask)
           }
           catch (e: BrokenPlaceholderException) {
+            LOG.info("Failed to load actual texts: ${e.message}")
+          }
+          catch (e: HugeBinaryFileException) {
             LOG.info("Failed to load actual texts: ${e.message}")
           }
         }

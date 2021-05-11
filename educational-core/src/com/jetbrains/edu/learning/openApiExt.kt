@@ -55,6 +55,9 @@ fun checkIsBackgroundThread() {
 fun toEncodeFileContent(path: String): Boolean {
   val name = PathUtil.getFileName(path)
   val extension = FileUtilRt.getExtension(name)
+  if (isUnitTestMode && extension == EduUtils.EDU_TEST_BIN) {
+    return true
+  }
   val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
   if (fileType !is UnknownFileType) {
     return fileType.isBinary

@@ -13,7 +13,9 @@ import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
@@ -25,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -209,11 +212,15 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
   }
 }
 
+@Throws(HugeBinaryFileException::class)
 fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
     if (isToEncodeContent) {
+      if (task.lesson is FrameworkLesson && length >= EduUtils.getBinaryFileLimit()) {
+        throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, EduUtils.getBinaryFileLimit().toLong(), true)
+      }
       taskFile.setText(loadEncodedContent(isToEncodeContent = true))
       return taskFile
     }
@@ -237,6 +244,9 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
       taskFile.setText(EduMacroUtils.collapseMacrosForFile(project, this, text))
     }
     return taskFile
+  }
+  catch (e: FileTooBigException) {
+    throw HugeBinaryFileException("${task.pathInCourse}/${name}", length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
   }
   catch (e: IOException) {
     LOG.error("Failed to convert `${path}` to student file")
