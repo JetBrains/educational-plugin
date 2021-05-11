@@ -35,11 +35,10 @@ class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
   }
 
   override fun tabInfo(): TabInfo {
-    val linkText = StepikNames.STEPIK
-    val infoText = EduCoreBundle.message("stepik.courses.explanation", linkText).dropWhile { it in linkText }
-    val linkInfo = LinkInfo(linkText, STEPIK_HELP)
+    val linkText = """<a href="$STEPIK_HELP">${StepikNames.STEPIK}</a>"""
+    val infoText = EduCoreBundle.message("stepik.courses.explanation", linkText)
     val loginComponent = StepikLoginPanel()
-    return TabInfo(infoText, linkInfo, loginComponent)
+    return TabInfo(infoText, loginComponent)
   }
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {

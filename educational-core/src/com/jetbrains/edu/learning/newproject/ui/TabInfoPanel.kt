@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
@@ -23,14 +26,12 @@ private const val TOP_BOTTOM_INFO_OFFSET = 13
 
 class TabInfoPanel(tabInfo: TabInfo) : NonOpaquePanel() {
   private val infoText: String
-  private val infoLink: LinkInfo?
   private val loginComponent: JPanel?
 
   init {
     layout = BorderLayout()
 
     infoText = tabInfo.description
-    infoLink = tabInfo.linkInfo
     loginComponent = tabInfo.loginComponent
 
     if (loginComponent != null) {
@@ -38,8 +39,7 @@ class TabInfoPanel(tabInfo: TabInfo) : NonOpaquePanel() {
       add(loginComponent, BorderLayout.NORTH)
     }
 
-    val linkText = if (infoLink != null) " <a href='${infoLink.url}'>${infoLink.text}</a>" else ""
-    val infoPanel = GrayTextHtmlPanel(infoText, linkText)
+    val infoPanel = GrayTextHtmlPanel(infoText)
     infoPanel.border = JBUI.Borders.empty(TOP_BOTTOM_INFO_OFFSET, LEFT_RIGHT_OFFSET)
     val scrollPane = JBScrollPane(infoPanel).apply {
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
@@ -76,9 +76,6 @@ open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: Stri
     get() = UIUtil.getLabelForeground()
 }
 
-class TabInfo(val description: String,
-              val linkInfo: LinkInfo? = null,
-              val loginComponent: LoginPanel? = null,
-              val isLinkBeforeText: Boolean = true)
+class TabInfo(val description: String, val loginComponent: LoginPanel? = null)
 
 class LinkInfo(val text: String, val url: String)

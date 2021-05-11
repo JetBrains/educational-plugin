@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.newProjectUI
 
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -13,8 +14,7 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: C
   }
 
   override fun tabInfo(): TabInfo {
-    val linkText = CodeforcesNames.CODEFORCES_TITLE
-    val linkInfo = LinkInfo(linkText, CodeforcesNames.CODEFORCES_URL)
-    return TabInfo(EduCoreBundle.message("codeforces.courses.description", linkText).dropWhile {it in linkText }, linkInfo)
+    val linkText = """<a href="${CodeforcesNames.CODEFORCES_URL}">${CodeforcesNames.CODEFORCES_TITLE}</a>"""
+    return TabInfo(EduCoreBundle.message("codeforces.courses.description", linkText))
   }
 }

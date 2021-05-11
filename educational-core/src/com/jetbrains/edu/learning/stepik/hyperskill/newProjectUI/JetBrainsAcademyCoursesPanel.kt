@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
@@ -20,10 +21,9 @@ class JetBrainsAcademyCoursesPanel(
 ) : CoursesPanel(platformProvider, scope) {
 
   override fun tabInfo(): TabInfo {
-    val linkText = EduNames.JBA
-    val infoText = EduCoreBundle.message("hyperskill.courses.explanation", linkText).dropWhile { it in linkText }
-    val linkInfo = LinkInfo(linkText, JBA_HELP)
-    return TabInfo(infoText, linkInfo, JetBrainsAcademyLoginPanel())
+    val linkText = """<a href="${JBA_HELP}">${EduNames.JBA}</a>"""
+    val infoText = EduCoreBundle.message("hyperskill.courses.explanation", linkText)
+    return TabInfo(infoText, JetBrainsAcademyLoginPanel())
   }
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {

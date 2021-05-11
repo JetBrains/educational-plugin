@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_HELP
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.stepik.StepikNames
 import kotlinx.coroutines.CoroutineScope
 
 class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
@@ -28,10 +29,9 @@ class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: Coro
   }
 
   override fun tabInfo(): TabInfo {
-    val linkText = CheckiONames.CHECKIO
-    val infoText = EduCoreBundle.message("checkio.courses.explanation", CheckiONames.CHECKIO, EduNames.PYTHON, EduNames.JAVASCRIPT).dropWhile { it in linkText }
-    val linkInfo = LinkInfo(linkText, CHECKIO_HELP)
-    return TabInfo(infoText, linkInfo, loginComponent)
+    val linkText = """<a href="$CHECKIO_HELP">${CheckiONames.CHECKIO}</a>"""
+    val infoText = EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
+    return TabInfo(infoText, loginComponent)
   }
 
   private inner class CheckiOLoginPanel : LoginPanel(true,
