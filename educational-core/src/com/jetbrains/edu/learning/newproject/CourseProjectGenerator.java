@@ -243,8 +243,7 @@ public abstract class CourseProjectGenerator<S> {
     if (course.isStudy() &&
         course instanceof EduCourse &&
         ((EduCourse)course).isStepikRemote() &&
-        EduSettings.isLoggedIn() &&
-        course.isMarketplace()) {
+        EduSettings.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       if (alreadyEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
