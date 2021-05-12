@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.twitter
 
 import com.intellij.openapi.components.*
 import com.jetbrains.edu.learning.isUnitTestMode
+import java.util.*
 
 @Service
 @State(name = "StudyTwitterSettings", storages = [Storage("study_twitter_settings.xml", roamingType = RoamingType.DISABLED)])
@@ -13,16 +14,18 @@ class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(St
     state.askToTweet = askToTweet
   }
 
-  var accessToken: String
-    get() = state.accessToken ?: ""
-    set(accessToken) {
-      state.accessToken = accessToken
+  var userId: String
+    get() {
+      val idFromStorage = state.userId
+      if (idFromStorage == null) {
+        val randomId = UUID.randomUUID().toString()
+        state.userId = randomId
+        return randomId
+      }
+      return idFromStorage
     }
-
-  var tokenSecret: String
-    get() = state.tokenSecret ?: ""
-    set(tokenSecret) {
-      state.tokenSecret = tokenSecret
+    set(userId) {
+      state.userId = userId
     }
 
   companion object {
@@ -31,8 +34,7 @@ class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(St
   }
 
   class State : BaseState() {
+    var userId by string()
     var askToTweet by property(!isUnitTestMode)
-    var accessToken by string()
-    var tokenSecret by string()
   }
 }

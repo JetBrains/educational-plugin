@@ -1,6 +1,10 @@
 package com.jetbrains.edu.learning.twitter
 
+import com.intellij.credentialStore.CredentialAttributes
+import com.intellij.credentialStore.Credentials
+import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -12,6 +16,7 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.io.exists
@@ -27,12 +32,17 @@ import twitter4j.Twitter
 import twitter4j.TwitterException
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken
+import twitter4j.auth.RequestToken
 import twitter4j.conf.ConfigurationBuilder
 import java.io.IOException
 import java.nio.file.Path
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)
+
+  @Suppress("UnstableApiUsage")
+  @NlsSafe
+  const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
 
   /**
    * Set consumer key and secret.
@@ -55,7 +65,7 @@ object TwitterUtils {
       val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, imagePath, it) }
       if (dialog.showAndGet()) {
         val settings = TwitterSettings.getInstance()
-        val isAuthorized = settings.accessToken.isNotEmpty()
+        val isAuthorized = getToken(settings.userId) != null
         val twitter = twitter
         val info = TweetInfo(dialog.message, imagePath)
 
@@ -63,9 +73,9 @@ object TwitterUtils {
           override fun run(indicator: ProgressIndicator) {
             if (!isAuthorized) {
               if (!authorize(project, twitter)) return
-            }
-            else {
-              twitter.oAuthAccessToken = AccessToken(settings.accessToken, settings.tokenSecret)
+            } else {
+              val token = getToken(settings.userId) ?: throw TwitterException("Couldn't get credentials from keychain")
+              twitter.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
             }
 
             ProgressManager.checkCanceled()
@@ -76,8 +86,7 @@ object TwitterUtils {
             LOG.warn(error)
             val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
               EduCoreBundle.message("error.failed.to.authorize")
-            }
-            else {
+            } else {
               EduCoreBundle.message("error.failed.to.update.status")
             }
             Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.failed.to.tweet"))
@@ -86,6 +95,25 @@ object TwitterUtils {
       }
     }
   }
+
+  private fun getToken(userId: String): RequestToken? {
+    val tokenString = PasswordSafe.instance.get(credentialAttributes(userId))?.getPasswordAsString() ?: return null
+    val token = getParameter(tokenString, "token") ?: return null
+    val tokenSecret = getParameter(tokenString, "tokenSecret") ?: return null
+    return RequestToken(token, tokenSecret)
+  }
+
+  fun getParameter(tokenString: String, parameter: String): String? {
+    tokenString.split(", ").forEach {
+      if (it.startsWith("$parameter=")) {
+        return it.split("=")[1].trim()
+      }
+    }
+
+    LOG.warn("Failed to find parameter `token` in token string")
+    return null
+  }
+
   /**
    * Post on twitter media and text from panel.
    * As a result of succeeded tweet twitter website is opened in default browser.
@@ -115,12 +143,14 @@ object TwitterUtils {
     val token = twitter.getOAuthAccessToken(requestToken, pin)
     ProgressManager.checkCanceled()
     invokeAndWaitIfNeeded {
-      val settings = TwitterSettings.getInstance()
-      settings.accessToken = token.token
-      settings.tokenSecret = token.tokenSecret
+      val credentialAttributes = credentialAttributes(token.userId.toString())
+      PasswordSafe.instance.set(credentialAttributes, Credentials(TwitterBundle.value("twitterConsumerKey"), "token=${token.token}, tokenSecret=${token.tokenSecret}"))
     }
     return true
   }
+
+  private fun credentialAttributes(userId: String) =
+    CredentialAttributes(generateServiceName(SERVICE_DISPLAY_NAME, userId))
 
   private fun createAndShowPinDialog(project: Project): String? {
     return Messages.showInputDialog(project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"), null, "", TwitterPinValidator())
