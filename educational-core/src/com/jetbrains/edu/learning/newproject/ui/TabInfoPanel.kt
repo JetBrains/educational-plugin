@@ -1,14 +1,11 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
@@ -77,5 +74,3 @@ open class LoginPanel(isVisible: Boolean, beforeLinkText: String, linkText: Stri
 }
 
 class TabInfo(val description: String, val loginComponent: LoginPanel? = null)
-
-class LinkInfo(val text: String, val url: String)

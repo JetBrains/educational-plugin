@@ -2,11 +2,13 @@ package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
-import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.LoginPanel
+import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
