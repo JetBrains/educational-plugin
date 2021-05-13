@@ -35,14 +35,13 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.stream.Collectors
-import javax.swing.JTextPane
 import kotlin.math.roundToInt
 
 class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(project, SUBMISSIONS_TAB) {
   private val submissionsManager = SubmissionsManager.getInstance(project)
   private val textStyleHeader: String
     get() = StyleManager().textStyleHeader
-  private var linkHandler: ((JTextPane) -> SwingToolWindowLinkHandler)? = null
+  private var linkHandler: SwingToolWindowLinkHandler? = null
 
   init {
     val descriptionText = StringBuilder()
@@ -55,7 +54,7 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
           submissionsList.isEmpty() -> descriptionText.append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
           else -> {
             addSubmissionsToText(submissionsList, descriptionText)
-            linkHandler = submissionsDifferenceLinkHandler
+            linkHandler = SubmissionsDifferenceLinkHandler()
           }
         }
       }
@@ -65,12 +64,12 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
     }
     else {
       addLoginText(descriptionText)
-      linkHandler = loginLinkHandler
+      linkHandler = LoginLinkHandler()
     }
     setText(descriptionText.toString(), plain = true)
   }
 
-  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
+  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler?.hyperlinkListener)
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder) {
     if (task !is ChoiceTask) return
@@ -85,34 +84,28 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
                            EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
   }
 
-  private val loginLinkHandler: (JTextPane) -> SwingToolWindowLinkHandler
-    get() = { textPane ->
-      object : SwingToolWindowLinkHandler(project, textPane) {
-        override fun process(url: String): Boolean {
-          if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
+  private inner class LoginLinkHandler : SwingToolWindowLinkHandler(project) {
+    override fun process(url: String): Boolean {
+      if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
 
-          submissionsManager.doAuthorize()
-          return true
-        }
-      }
+      submissionsManager.doAuthorize()
+      return true
     }
+  }
 
-  private val submissionsDifferenceLinkHandler: (JTextPane) -> SwingToolWindowLinkHandler
-    get() = { textPane ->
-      object : SwingToolWindowLinkHandler(project, textPane) {
-        override fun process(url: String): Boolean {
-          if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
+  private inner class SubmissionsDifferenceLinkHandler : SwingToolWindowLinkHandler(project) {
+    override fun process(url: String): Boolean {
+      if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
 
-          val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
-          val submission = submissionsManager.getSubmission(task.id, submissionId) ?: return true
-          val reply = submission.reply ?: return true
-          runInEdt {
-            showDiff(reply)
-          }
-          return true
-        }
+      val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
+      val submission = submissionsManager.getSubmission(task.id, submissionId) ?: return true
+      val reply = submission.reply ?: return true
+      runInEdt {
+        showDiff(reply)
       }
+      return true
     }
+  }
 
   private fun getImageUrl(status: String?): URL? {
     val icon = when (status) {

@@ -16,10 +16,11 @@ import java.awt.FlowLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextPane
+import javax.swing.event.HyperlinkListener
 
 
 class SwingTextPanel(project: Project,
-                     linkHandler: ((JTextPane) -> SwingToolWindowLinkHandler)? = null) : TabTextPanel(project) {
+                     hyperlinkListener: HyperlinkListener? = null) : TabTextPanel(project) {
   private val textPane: JTextPane = createTextPane()
 
   override val component: JComponent = textPane
@@ -29,13 +30,12 @@ class SwingTextPanel(project: Project,
     scrollPane.border = JBUI.Borders.empty()
     add(scrollPane, BorderLayout.CENTER)
 
-    val toolWindowLinkHandler = if (linkHandler == null) {
-      SwingToolWindowLinkHandler(project, textPane)
+    if (hyperlinkListener != null) {
+      textPane.addHyperlinkListener(hyperlinkListener)
+    } else {
+      val linkHandler = SwingToolWindowLinkHandler(project)
+      textPane.addHyperlinkListener(linkHandler.hyperlinkListener)
     }
-    else {
-      linkHandler(textPane)
-    }
-    textPane.addHyperlinkListener(toolWindowLinkHandler.hyperlinkListener)
   }
 
   override fun setText(text: String) {
