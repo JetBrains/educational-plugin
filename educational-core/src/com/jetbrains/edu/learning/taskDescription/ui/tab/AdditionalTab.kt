@@ -11,7 +11,7 @@ import java.awt.BorderLayout
 import javax.swing.event.HyperlinkListener
 
 open class AdditionalTab(val project: Project, tabType: TabType) {
-  private val panel = TabPanel(tabType)
+  protected val panel = TabPanel(tabType)
   private val textPanel by lazy { createTextPanel() }
 
   init {

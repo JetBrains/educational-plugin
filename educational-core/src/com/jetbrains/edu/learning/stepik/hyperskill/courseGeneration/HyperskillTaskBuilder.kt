@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
-import com.jetbrains.edu.learning.taskDescription.link
 
 class HyperskillTaskBuilder(
   private val course: Course,
@@ -37,10 +36,6 @@ class HyperskillTaskBuilder(
       appendLine("<b>${EduCoreBundle.message("label.caution")}</b><br><br>")
       appendLine(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")))
       appendLine("<br><br>")
-    }
-
-    if (theoryId != null) {
-      append(link(stepLink(theoryId), "Show topic summary"))
     }
   }
 
