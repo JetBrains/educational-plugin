@@ -153,7 +153,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val IMPORT_COURSE_EVENT = GROUP.registerEvent("import.course")
     private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent("codeforces.submit.solution")
     private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent("twitter.dialog.shown", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
-    private val TWITTER_ACHIEVEMENT_POSTED_EVENT = GROUP.registerEvent("twitter.achievement.posted", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
     private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent("open.course.selection.view",
                                                                          enumField<CourseSelectionViewSource>(SOURCE))
     private val COURSE_SELECTION_TAB_SELECTED_EVENT = GROUP.registerEvent("select.tab.course.selection.view",
@@ -232,9 +231,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     @JvmStatic
     fun twitterDialogShown(course: Course) = TWITTER_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageID)
-
-    @JvmStatic
-    fun twitterAchievementPosted(course: Course) = TWITTER_ACHIEVEMENT_POSTED_EVENT.log(course.itemType, course.languageID)
 
     @JvmStatic
     fun courseSelectionViewOpened(actionPlace: String) {

@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
@@ -71,7 +70,6 @@ object TwitterUtils {
 
             ProgressManager.checkCanceled()
             updateStatus(twitter, info)
-            EduCounterUsageCollector.twitterAchievementPosted(task.course)
           }
 
           override fun onThrowable(error: Throwable) {
