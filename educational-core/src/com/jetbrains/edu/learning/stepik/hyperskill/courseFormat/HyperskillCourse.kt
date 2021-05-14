@@ -102,6 +102,8 @@ class HyperskillCourse : Course {
 
   fun isTaskInProject(task: Task): Boolean = task.lesson == getProjectLesson()
 
+  fun isTaskInTopicsSection(task: Task): Boolean = getTopicsSection()?.lessons?.contains(task.lesson) == true
+
   private fun descriptionNote(projectId: Int): String =
     "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/$projectId</a>"
 

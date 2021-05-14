@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.TheoryTab
 import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getRelatedTheoryTask
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.*
@@ -52,12 +53,8 @@ class TabManager(private val project: Project, private val contentManager: Conte
     }
   }
 
-  private fun createTheoryTab(task: Task): TheoryTab {
-    val theoryTask = task.lesson.taskList.find { it is TheoryTask }
-    if (theoryTask !is TheoryTask) {
-      error("Selected task is not Theory task")
-    }
-    task.course as? HyperskillCourse ?: error("Theory tab is designed for Hyperskill course, but task is located in different course")
+  private fun createTheoryTab(theoryTask: TheoryTask): TheoryTab {
+    theoryTask.course as? HyperskillCourse ?: error("Theory tab is designed for Hyperskill course, but task is located in different course")
     return TheoryTab(project, theoryTask)
   }
 
@@ -77,8 +74,11 @@ class TabManager(private val project: Project, private val contentManager: Conte
     contentManager.addContent(tabContent, tabIndex)
   }
 
-  private fun createTab(tabType: TabType, task: Task): AdditionalTab = when (tabType) {
-    THEORY_TAB -> createTheoryTab(task)
+  private fun createTab(tabType: TabType, task: Task): AdditionalTab? = when (tabType) {
+    THEORY_TAB -> {
+      val theoryTask = task.getRelatedTheoryTask()
+      if (theoryTask != null) createTheoryTab(theoryTask) else null
+    }
     TOPICS_TAB -> createTopicsTab(task)
     SUBMISSIONS_TAB -> createSubmissionsTab(task)
     YAML_HELP_TAB -> createYamlHelpTab()
@@ -97,7 +97,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
 
     removeTab(tabType)
     val tabIndex = index ?: getTabIndex(tabType, task) ?: return
-    val newTab = createTab(tabType, task)
+    val newTab = createTab(tabType, task) ?: return
     addTab(newTab, tabIndex)
   }
 
@@ -117,11 +117,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
       if (supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
         result.add(SUBMISSIONS_TAB)
       }
-      if (course is HyperskillCourse && !course.isTaskInProject(this) && this !is TheoryTask) {
-        /**
-         * Then this is a task in Topics section and Theory tab should be shown
-         * Except for Theory task itself
-         */
+      if (course is HyperskillCourse && course.isTaskInTopicsSection(this) && this !is TheoryTask) {
         result.add(THEORY_TAB)
       }
     }

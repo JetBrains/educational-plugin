@@ -185,3 +185,11 @@ fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
     HyperskillConnector.getInstance().markTheoryCompleted(task.id)
   }
 }
+
+fun Task.getRelatedTheoryTask(): TheoryTask? {
+  course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
+  if (this is TheoryTask) {
+    error("Function is called for Theory task itself")
+  }
+  return lesson.taskList.find { it is TheoryTask } as? TheoryTask
+}
