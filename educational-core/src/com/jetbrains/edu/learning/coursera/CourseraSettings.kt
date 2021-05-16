@@ -1,17 +1,13 @@
 package com.jetbrains.edu.learning.coursera
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.XmlSerializerUtil
 
-@State(name = "CourseraSettings", storages = arrayOf(Storage("other.xml")))
+@State(name = "CourseraSettings", storages = [Storage("other.xml", roamingType = RoamingType.DISABLED)])
 class CourseraSettings : PersistentStateComponent<CourseraSettings> {
   var email: String = ""
-  var token: String = ""
 
-  override fun getState(): CourseraSettings? = this
+  override fun getState(): CourseraSettings = this
 
   override fun loadState(state: CourseraSettings) {
     XmlSerializerUtil.copyBean(state, this)

@@ -2,11 +2,16 @@ package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.credentialStore.CredentialAttributes
+import com.intellij.credentialStore.Credentials
+import com.intellij.credentialStore.generateServiceName
+import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
@@ -44,21 +49,22 @@ class CourseraTaskChecker : RemoteTaskChecker {
     }
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
-    if (!courseraSettings.haveFullCredentials()) {
+    var token = getToken()
+    if (courseraSettings.email.isEmpty() || token == null) {
       askToEnterCredentials(task)
       askedForCredentials = true
-
-      if (!courseraSettings.haveFullCredentials()) {
+      token = getToken()
+      if (courseraSettings.email.isEmpty() || token == null) {
         return checkWithoutCredentials
       }
     }
 
     return try {
-      val response = postSubmission(createSubmissionJson(project, task, courseraSettings))
+      val response = postSubmission(createSubmissionJson(project, task, courseraSettings, token))
       var responseCode = response.code()
       if (responseCode != HttpStatus.SC_CREATED && !askedForCredentials) {
         askToEnterCredentials(task, createCheckResult(responseCode, task).message)
-        responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings)).code()
+        responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings, token)).code()
       }
       createCheckResult(responseCode, task)
     }
@@ -88,7 +94,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
   }
 
   @VisibleForTesting
-  fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
+  fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings, token: String): String {
     val taskDir = task.getDir(project.courseDir) ?: error("No directory for task ${task.name}")
 
     val assignmentKey = taskDir.getValueFromChildFile(ASSIGNMENT_KEY)
@@ -98,7 +104,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
       val file = it.value.getVirtualFile(project) ?: error("VirtualFile for ${it.key} not found")
       file.loadEncodedContent(isToEncodeContent = true)
     }
-    val submission = Submission(assignmentKey, courseraSettings.email, courseraSettings.token,
+    val submission = Submission(assignmentKey, courseraSettings.email, token,
                                 mapOf(Pair(partId, Part(ObjectMapper().writeValueAsString(output)))))
     return ObjectMapper().writeValueAsString(submission)
   }
@@ -120,7 +126,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val courseraSettings = CourseraSettings.getInstance()
 
     val emailField = JBTextField(courseraSettings.email)
-    val tokenField = JBTextField(courseraSettings.token)
+    val tokenField = JBTextField(getToken())
     val credentialsPanel = panel {
       if (message != null) {
         val messageLabel = JBLabel(message)
@@ -141,8 +147,9 @@ class CourseraTaskChecker : RemoteTaskChecker {
     }
 
     if (!refusedToProvideCredentials) {
+      val credentialAttributes = credentialAttributes(emailField.text)
+      PasswordSafe.instance.set(credentialAttributes, Credentials(emailField.text, tokenField.text))
       CourseraSettings.getInstance().email = emailField.text
-      CourseraSettings.getInstance().token = tokenField.text
     }
   }
 
@@ -151,7 +158,12 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return VfsUtil.loadText(file)
   }
 
-  private fun CourseraSettings.haveFullCredentials() = email.isNotEmpty() && token.isNotEmpty()
+  private fun credentialAttributes(email: String) =
+    CredentialAttributes(generateServiceName(SERVICE_DISPLAY_NAME, email))
+
+  private fun getToken(): String? {
+    return PasswordSafe.instance.get(credentialAttributes(CourseraSettings.getInstance().email))?.getPasswordAsString()
+  }
 
   companion object {
     private const val ON_DEMAND_SUBMIT = "https://www.coursera.org/api/onDemandProgrammingScriptSubmissions.v1"
@@ -162,5 +174,9 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     @VisibleForTesting
     const val PART_ID = "partId"
+
+    @Suppress("UnstableApiUsage")
+    @NlsSafe
+    private const val SERVICE_DISPLAY_NAME = "EduTools Coursera Integration"
   }
 }

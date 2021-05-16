@@ -97,9 +97,9 @@ object TwitterUtils {
   }
 
   private fun getToken(userId: String): RequestToken? {
-    val tokenString = PasswordSafe.instance.get(credentialAttributes(userId))?.getPasswordAsString() ?: return null
-    val token = getParameter(tokenString, "token") ?: return null
-    val tokenSecret = getParameter(tokenString, "tokenSecret") ?: return null
+    val tokens = PasswordSafe.instance.get(credentialAttributes(userId)) ?: return null
+    val token = tokens.userName
+    val tokenSecret = tokens.getPasswordAsString()
     return RequestToken(token, tokenSecret)
   }
 
@@ -144,7 +144,7 @@ object TwitterUtils {
     ProgressManager.checkCanceled()
     invokeAndWaitIfNeeded {
       val credentialAttributes = credentialAttributes(token.userId.toString())
-      PasswordSafe.instance.set(credentialAttributes, Credentials(TwitterBundle.value("twitterConsumerKey"), "token=${token.token}, tokenSecret=${token.tokenSecret}"))
+      PasswordSafe.instance.set(credentialAttributes, Credentials(token.token, token.tokenSecret))
     }
     return true
   }
