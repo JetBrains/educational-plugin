@@ -25,18 +25,19 @@ class TheoryTab(project: Project, theoryTask: TheoryTask) : AdditionalTab(projec
     val text = getTaskDescriptionWithCodeHighlighting(project, theoryTask)
     setText(text, plain = false)
 
-    panel.add(BottomPanel, BorderLayout.SOUTH)
+    panel.add(createBottomPanel(), BorderLayout.SOUTH)
   }
 
-  private object BottomPanel : JPanel(BorderLayout()) {
-    init {
+  private fun createBottomPanel(): JPanel {
+    val actionLink = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3)
+
+    val bottomPanel = JPanel(BorderLayout()).apply {
       border = JBUI.Borders.empty(8, 15, 15, 15)
-
       add(JSeparator(), BorderLayout.NORTH)
-      val actionLink = createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3)
       add(actionLink, BorderLayout.CENTER)
-
-      UIUtil.setBackgroundRecursively(this, TaskDescriptionView.getTaskDescriptionBackgroundColor())
     }
+
+    UIUtil.setBackgroundRecursively(bottomPanel, TaskDescriptionView.getTaskDescriptionBackgroundColor())
+    return bottomPanel
   }
 }
