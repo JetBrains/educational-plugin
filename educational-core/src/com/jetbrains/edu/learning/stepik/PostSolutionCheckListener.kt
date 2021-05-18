@@ -41,7 +41,7 @@ class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    val notification = Notification("Stepik solution not posted",
+    val notification = Notification("EduTools",
                                     EduCoreBundle.message("error.solution.not.posted"),
                                     EduCoreBundle.message("stepik.task.was.updated", StepikNames.STEPIK, taskName),
                                     NotificationType.INFORMATION,

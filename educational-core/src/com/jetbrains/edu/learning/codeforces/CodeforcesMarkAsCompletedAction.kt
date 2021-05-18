@@ -48,7 +48,7 @@ class CodeforcesMarkAsCompletedAction : DumbAwareAction(
 
   private fun showSuccessNotification(project: Project) {
     val notification = Notification(
-      "Codeforces",
+      "EduTools",
       "",
       EduCoreBundle.message("codeforces.mark.as.completed.notification"),
       NotificationType.INFORMATION

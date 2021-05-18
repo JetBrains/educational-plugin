@@ -30,7 +30,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super("CheckiO errors", title, subtitle, content, ERROR, listener);
+      super("EduTools", title, subtitle, content, ERROR, listener);
     }
   }
 
@@ -41,7 +41,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super("CheckiO warnings", title, subtitle, content, WARNING, listener);
+      super("EduTools", title, subtitle, content, WARNING, listener);
     }
   }
 
@@ -52,7 +52,7 @@ public abstract class CheckiONotification extends Notification {
       @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
       @Nullable NotificationListener listener
     ) {
-      super("CheckiO information", title, subtitle, content, INFORMATION, listener);
+      super("EduTools", title, subtitle, content, INFORMATION, listener);
     }
   }
 }

@@ -133,7 +133,7 @@ fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
 fun showErrorDetails(project: Project, error: String) {
   if (error == EduCoreBundle.message("error.access.denied")) {
     Notification(
-      "JetBrains Academy",
+      "EduTools",
       EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
       EduCoreBundle.message("error.access.denied.with.link"),
       NotificationType.ERROR
@@ -146,7 +146,7 @@ fun showErrorDetails(project: Project, error: String) {
 
   LOG.warn(error)
   Notification(
-    "JetBrains Academy",
+    "EduTools",
     EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
     EduCoreBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
     NotificationType.ERROR,
@@ -159,7 +159,7 @@ object HyperskillLoginListener : HyperlinkAdapter() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return@Runnable
       Notification(
-        "JetBrains Academy",
+        "EduTools",
         EduCoreBundle.message("login.successful"),
         EduCoreBundle.message("logged.in.as", fullName),
         NotificationType.INFORMATION

@@ -24,7 +24,7 @@ class HyperskillCheckListener : CheckListener {
     if (course.isTaskInProject(task)) {
       if (HyperskillSettings.INSTANCE.account == null) {
         Notification(
-          "JetBrains Academy",
+          "EduTools",
           EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
           EduCoreBundle.message("error.login.required", EduNames.JBA),
           NotificationType.ERROR

@@ -119,7 +119,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
   private fun notifyUnsupportedPort(port: Int) {
     Notification(
-      "JetBrains Academy",
+      "EduTools",
       EduNames.JBA,
       EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
       NotificationType.ERROR,

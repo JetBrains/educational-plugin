@@ -215,7 +215,7 @@ public class StepikRestService extends OAuthRestService {
   }
 
   private static void showStepikNotification(@NotNull NotificationType notificationType, @NotNull String text) {
-    Notification notification = new Notification("Stepik", "Stepik", text, notificationType);
+    Notification notification = new Notification("EduTools", "Stepik", text, notificationType);
     notification.notify(null);
   }
 }
