@@ -5,17 +5,18 @@ import com.intellij.notification.NotificationListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 
 class CheckiOErrorReporter(
   private val project: Project,
-  private val title: @Nls(capitalization = Nls.Capitalization.Sentence) String,
+  @Suppress("UnstableApiUsage")
+  private val title: @NlsContexts.NotificationTitle String,
   private val oAuthConnector: CheckiOOAuthConnector
 ) {
   private fun reportLoginRequiredError() {

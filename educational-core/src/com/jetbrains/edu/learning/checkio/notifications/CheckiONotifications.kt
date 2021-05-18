@@ -3,17 +3,18 @@ package com.jetbrains.edu.learning.checkio.notifications
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.util.NlsContexts.*
 import icons.EducationalCoreIcons
-import org.jetbrains.annotations.Nls
 
+@Suppress("UnstableApiUsage")
 object CheckiONotifications {
 
   @JvmOverloads
   @JvmStatic
   fun error(
-    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    title: @NotificationTitle String,
+    subtitle: @NotificationSubtitle String,
+    content: @NotificationContent String,
     listener: NotificationListener? = null
   ): Notification {
     return notification(title, subtitle, content, NotificationType.ERROR, listener)
@@ -22,9 +23,9 @@ object CheckiONotifications {
   @JvmOverloads
   @JvmStatic
   fun warn(
-    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    title: @NotificationTitle String,
+    subtitle: @NotificationSubtitle String,
+    content: @NotificationContent String,
     listener: NotificationListener? = null
   ): Notification {
     return notification(title, subtitle, content, NotificationType.WARNING, listener)
@@ -33,18 +34,18 @@ object CheckiONotifications {
   @JvmOverloads
   @JvmStatic
   fun info(
-    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    title: @NotificationTitle String,
+    subtitle: @NotificationSubtitle String,
+    content: @NotificationContent String,
     listener: NotificationListener? = null
   ): Notification {
     return notification(title, subtitle, content, NotificationType.INFORMATION, listener)
   }
 
   private fun notification(
-    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
-    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    title: @NotificationTitle String,
+    subtitle: @NotificationSubtitle String,
+    content: @NotificationContent String,
     type: NotificationType,
     listener: NotificationListener?
   ): Notification {
