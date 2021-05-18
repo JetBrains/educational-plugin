@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
+import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -26,7 +26,8 @@ abstract class CheckiOCheckListener(
           courseUpdater.doUpdate()
         }
         catch (e: Exception) {
-          CheckiOErrorHandler(
+          CheckiOErrorReporter(
+            project,
             EduCoreBundle.message("notification.title.failed.to.update.course"),
             oAuthConnector
           ).handle(e)

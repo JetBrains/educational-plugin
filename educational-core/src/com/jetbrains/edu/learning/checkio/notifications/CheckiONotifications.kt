@@ -1,58 +1,53 @@
-package com.jetbrains.edu.learning.checkio.notifications;
+package com.jetbrains.edu.learning.checkio.notifications
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
-import icons.EducationalCoreIcons;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
+import icons.EducationalCoreIcons
+import org.jetbrains.annotations.Nls
 
-import static com.intellij.notification.NotificationType.*;
+object CheckiONotifications {
 
-public abstract class CheckiONotification extends Notification {
-
-  private CheckiONotification(
-    @NotNull String groupDisplayId,
-    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
-    @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
-    @NotNull NotificationType type,
-    @Nullable NotificationListener listener
-  ) {
-    super(groupDisplayId, EducationalCoreIcons.CheckiO, title, subtitle, content, type, listener);
+  @JvmOverloads
+  @JvmStatic
+  fun error(
+    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    listener: NotificationListener? = null
+  ): Notification {
+    return notification(title, subtitle, content, NotificationType.ERROR, listener)
   }
 
-  public static class Error extends CheckiONotification {
-    public Error(
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
-      @Nullable NotificationListener listener
-    ) {
-      super("EduTools", title, subtitle, content, ERROR, listener);
-    }
+  @JvmOverloads
+  @JvmStatic
+  fun warn(
+    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    listener: NotificationListener? = null
+  ): Notification {
+    return notification(title, subtitle, content, NotificationType.WARNING, listener)
   }
 
-  public static class Warning extends CheckiONotification {
-    public Warning(
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
-      @Nullable NotificationListener listener
-    ) {
-      super("EduTools", title, subtitle, content, WARNING, listener);
-    }
+  @JvmOverloads
+  @JvmStatic
+  fun info(
+    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    listener: NotificationListener? = null
+  ): Notification {
+    return notification(title, subtitle, content, NotificationType.INFORMATION, listener)
   }
 
-  public static class Info extends CheckiONotification {
-    public Info(
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String title,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String subtitle,
-      @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String content,
-      @Nullable NotificationListener listener
-    ) {
-      super("EduTools", title, subtitle, content, INFORMATION, listener);
-    }
+  private fun notification(
+    title: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    subtitle: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    content: @Nls(capitalization = Nls.Capitalization.Sentence) String?,
+    type: NotificationType,
+    listener: NotificationListener?
+  ): Notification {
+    return Notification("EduTools", EducationalCoreIcons.CheckiO, title, subtitle, content, type, listener)
   }
 }

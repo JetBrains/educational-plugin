@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -52,7 +52,7 @@ class CheckiOCourseUpdater(
     @Nls(capitalization = Nls.Capitalization.Sentence) title: String
   ) {
     if (stations.isNotEmpty()) {
-      Notifications.Bus.notify(CheckiONotification.Info(title, "", stations.joinToString("\n") { it.name }, null))
+      Notifications.Bus.notify(CheckiONotifications.info(title, "", stations.joinToString("\n") { it.name }))
     }
   }
 

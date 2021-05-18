@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler
+import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -82,14 +82,14 @@ class CheckiOMissionCheck(private val project: Project,
       return checkResult
     }
     catch (e: CheckiOLoginRequiredException) {
-      CheckiOErrorHandler(EduCoreBundle.message("label.login.required"), oAuthConnector).handle(e)
+      CheckiOErrorReporter(project, EduCoreBundle.message("label.login.required"), oAuthConnector).handle(e)
       CheckResult.LOGIN_NEEDED
     }
     catch (e: InterruptedException) {
       CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("edu.check.was.cancelled"))
     }
     catch (e: Exception) {
-      CheckiOErrorHandler(EduCoreBundle.message("notification.title.failed.to.check.task"), oAuthConnector).handle(e)
+      CheckiOErrorReporter(project, EduCoreBundle.message("notification.title.failed.to.check.task"), oAuthConnector).handle(e)
       CheckResult.failedToCheck
     }
     finally {

@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.apache.http.client.utils.URIBuilder;
@@ -139,11 +139,10 @@ public abstract class CheckiOOAuthConnector {
     }
     catch (URISyntaxException | IOException e) {
       // IOException is thrown when there're no available ports, in some cases restarting can fix this
-      Notifications.Bus.notify(new CheckiONotification.Error(
+      Notifications.Bus.notify(CheckiONotifications.error(
         EduCoreBundle.message("notification.title.failed.to.authorize"),
         null,
-        EduCoreBundle.message("notification.content.try.to.restart.ide.and.log.in.again"),
-        null
+        EduCoreBundle.message("notification.content.try.to.restart.ide.and.log.in.again")
       ));
     }
   }
