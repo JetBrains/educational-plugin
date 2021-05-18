@@ -18,8 +18,6 @@ object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
 
   const val FAILED_TITLE = "Failed to publish "
-  const val UPDATE_NOTIFICATION_GROUP_ID = "Update.course"
-  private const val PUSH_COURSE_GROUP_ID = "Push.course"
 
   @JvmStatic
   fun getErrorMessage(item: StudyItem, isNew: Boolean): String {
@@ -49,7 +47,7 @@ object CCNotificationUtils {
                             @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
                             @Nls(capitalization = Nls.Capitalization.Sentence) message: String) {
     LOG.info(message)
-    val notification = Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR)
+    val notification = Notification("EduTools", title, message, NotificationType.ERROR)
     notification.notify(project)
   }
 
@@ -60,7 +58,7 @@ object CCNotificationUtils {
 
   fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, platformName: String, action: () -> Unit) {
     val message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to $platformName as New Course</a>"
-    val notification = Notification(PUSH_COURSE_GROUP_ID, FAILED_TITLE, message, NotificationType.ERROR,
+    val notification = Notification("EduTools", FAILED_TITLE, message, NotificationType.ERROR,
                                     createPostCourseNotificationListener(course, action))
     notification.notify(project)
   }
@@ -92,7 +90,7 @@ object CCNotificationUtils {
                        @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
                        @Nls(capitalization = Nls.Capitalization.Sentence) message: String,
                        notificationType: NotificationType = NotificationType.INFORMATION) {
-    val notification = Notification(PUSH_COURSE_GROUP_ID, title, message, notificationType)
+    val notification = Notification("EduTools", title, message, notificationType)
     if (action != null) {
       notification.addAction(action)
     }

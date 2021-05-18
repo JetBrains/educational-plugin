@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.update
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -21,7 +20,7 @@ abstract class CourseUpdater(val project: Project) {
   }
 
   protected fun showUpdateCompletedNotification(message: String) {
-    Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("update.notification.title"),
+    Notification("EduTools", EduCoreBundle.message("update.notification.title"),
                  message,
                  NotificationType.INFORMATION).notify(project)
   }

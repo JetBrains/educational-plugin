@@ -203,7 +203,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun showError(message: String) {
-    Notification(HYPERSKILL, EduNames.JBA, message, NotificationType.WARNING,
+    Notification("EduTools", EduNames.JBA, message, NotificationType.WARNING,
                  HSHyperlinkListener(false)).notify(null)
   }
 

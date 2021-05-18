@@ -24,7 +24,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -72,7 +71,7 @@ fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: 
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  val notification = Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("update.content"),
+  val notification = Notification("EduTools", EduCoreBundle.message("update.content"),
                                   EduCoreBundle.message("update.content.request"),
                                   NotificationType.INFORMATION,
                                   notificationListener(project, updateAction))

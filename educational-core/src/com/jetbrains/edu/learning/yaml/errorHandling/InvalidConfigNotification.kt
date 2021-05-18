@@ -16,11 +16,8 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import javax.swing.event.HyperlinkEvent
 
-
-private const val NOTIFICATION_ID = "Education: invalid config file"
-
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
-  Notification(NOTIFICATION_ID,
+  Notification("EduTools",
                EduCoreBundle.message("yaml.invalid.config.notification.title"),
                messageWithEditLink(project, configFile, cause),
                NotificationType.ERROR,

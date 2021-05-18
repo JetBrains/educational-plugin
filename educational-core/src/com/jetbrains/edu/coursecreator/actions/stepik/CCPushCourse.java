@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 
-import static com.jetbrains.edu.coursecreator.CCNotificationUtils.UPDATE_NOTIFICATION_GROUP_ID;
 import static com.jetbrains.edu.coursecreator.CCNotificationUtils.createPostStepikCourseNotificationListener;
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
@@ -111,7 +110,7 @@ public class CCPushCourse extends DumbAwareAction {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId(), null, true);
     if (courseInfo == null) {
       Notification notification =
-        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.failed.to.update"),
+        new Notification("EduTools", EduCoreBundle.message("error.failed.to.update"),
                          EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
                          NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
       notification.notify(project);
@@ -119,7 +118,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
     if (courseInfo.getFormatVersion() < EduVersions.JSON_FORMAT_VERSION) {
       Notification notification =
-        new Notification(UPDATE_NOTIFICATION_GROUP_ID, EduCoreBundle.message("error.mismatch.format.version"),
+        new Notification("EduTools", EduCoreBundle.message("error.mismatch.format.version"),
                          EduCoreBundle.message("error.mismatch.format.version.invalid.plugin.version",
                                                PluginUtils.pluginVersion(EduNames.PLUGIN_ID), getUpdateTitleText()),
                          NotificationType.WARNING, createUpdateCourseNotificationListener(project, course));

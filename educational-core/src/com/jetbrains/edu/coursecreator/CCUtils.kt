@@ -418,7 +418,7 @@ object CCUtils {
   @JvmStatic
   fun showLoginNeededNotification(project: Project, platformName: String, failedActionName: String, authAction: () -> Unit) {
     val text = "Log in to $platformName to $failedActionName"
-    val notification = Notification(platformName, "Failed to $failedActionName", text, NotificationType.ERROR)
+    val notification = Notification("EduTools", "Failed to $failedActionName", text, NotificationType.ERROR)
     notification.addAction(object : DumbAwareAction("Log in") {
       override fun actionPerformed(e: AnActionEvent) {
         authAction()

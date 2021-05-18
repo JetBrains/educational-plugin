@@ -17,8 +17,8 @@ class PyShowTutorialStartupActivity : StartupActivity {
     if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN) || !PlatformUtils.isPyCharmEducational()) return
 
     val notification = Notification(
+      "EduTools",
       message("watch.tutorials.title"),
-      "",
       XmlStringUtil.wrapInHtml(message("watch.tutorials.message.html")),
       NotificationType.INFORMATION,
       NotificationListener.UrlOpeningListener(true)

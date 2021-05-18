@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 
 class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks.text")) {
@@ -61,7 +59,7 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
         }
         val notification = if (failedTasks.isEmpty()) {
           Notification(
-            GROUP_ID,
+            "EduTools",
             EduCoreBundle.message("notification.title.check.finished"),
             EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
             NotificationType.INFORMATION
@@ -77,7 +75,7 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
 
   private fun createFailedTasksNotification(failedTasks: MutableList<Task>, tasksNum: Int, project: Project): Notification {
     val notification = Notification(
-      GROUP_ID,
+      "EduTools",
       null,
       EduCoreBundle.message("notification.title.check"),
       EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum),
@@ -113,8 +111,6 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
   }
 
   companion object {
-    @NonNls
-    private const val GROUP_ID = "Education: all tasks check"
     private val LOG = Logger.getInstance(CheckAllTasks::class.java)
   }
 }
