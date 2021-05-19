@@ -2,11 +2,11 @@ package com.jetbrains.edu.rust.slow.checker
 
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.rust.RsProjectSettings
-import org.rust.cargo.toolchain.RustToolchain
+import org.rust.cargo.toolchain.RsToolchainBase
 
 class RsCheckerFixture : EduCheckerFixture<RsProjectSettings>() {
 
-  private var toolchain: RustToolchain? = null
+  private var toolchain: RsToolchainBase? = null
 
   override val projectSettings: RsProjectSettings get() = RsProjectSettings(toolchain)
 
@@ -14,6 +14,6 @@ class RsCheckerFixture : EduCheckerFixture<RsProjectSettings>() {
 
   override fun setUp() {
     super.setUp()
-    toolchain = RustToolchain.suggest()
+    toolchain = RsToolchainBase.suggest()
   }
 }

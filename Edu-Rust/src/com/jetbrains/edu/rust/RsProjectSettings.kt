@@ -1,5 +1,5 @@
 package com.jetbrains.edu.rust
 
-import org.rust.cargo.toolchain.RsToolchain
+import org.rust.cargo.toolchain.RsToolchainBase
 
-data class RsProjectSettings(val toolchain: RsToolchain? = null)
+data class RsProjectSettings(val toolchain: RsToolchainBase? = null)
