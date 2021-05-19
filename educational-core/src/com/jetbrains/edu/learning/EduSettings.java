@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -22,13 +21,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.intellij.ide.plugins.PluginManagerCore.isUnitTestMode;
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
 public class EduSettings implements PersistentStateComponent<Element> {
-  private static final String RESET_JAVA_UI_LIBRARY = "EduTools.ResetJavaUiLibrary";
   public static final Topic<EduLogInListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", EduLogInListener.class);
   @Transient
   @Nullable
@@ -91,8 +88,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
     }
     catch (StudyUnrecognizedFormatException ignored) {
     }
-
-    resetJavaUiLibrary();
   }
 
   private void deserialize(@NotNull Element state) throws StudyUnrecognizedFormatException {
@@ -148,19 +143,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   public void setJavaUiLibrary(@NotNull JavaUILibrary javaUiLibrary) {
     this.javaUiLibrary = javaUiLibrary;
-  }
-
-  /**
-   * EDU-4061: get rid of this after 2020.1.4 release
-   */
-  private void resetJavaUiLibrary() {
-    if (isUnitTestMode) return;
-    PropertiesComponent propertyComponent = PropertiesComponent.getInstance();
-    if (!propertyComponent.getBoolean(RESET_JAVA_UI_LIBRARY)) {
-      javaUiLibrary = null;
-      javaUiLibrary = initialJavaUiLibrary();
-      propertyComponent.setValue(RESET_JAVA_UI_LIBRARY, true);
-    }
   }
 
   public static boolean isLoggedIn() {
