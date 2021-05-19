@@ -54,7 +54,7 @@ fun createIssue(content: String): Issue? {
 fun load(url: String): String = java.net.URL(url).readText()
 
 fun subsystemWeight(subsystem: String): Int = when (subsystem) {
-  "JB Academy (Hyperskill)" -> Integer.MIN_VALUE
+  "JetBrains Academy" -> Integer.MIN_VALUE
   "Marketplace" -> Integer.MIN_VALUE + 1
   else -> Integer.MAX_VALUE
 }
