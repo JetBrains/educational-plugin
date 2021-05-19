@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.tab
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.content.Content
@@ -8,18 +9,22 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import java.awt.BorderLayout
+import javax.swing.JPanel
 import javax.swing.event.HyperlinkListener
 
-open class AdditionalTab(val project: Project, tabType: TabType) {
-  protected val panel = TabPanel(tabType)
-  private val textPanel by lazy { createTextPanel() }
+open class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
+  private val textPanel = createTextPanel()
 
-  init {
-    panel.add(textPanel, BorderLayout.CENTER)
-    Disposer.register(panel, textPanel)
+  override fun dispose() {}
+
+  private fun createTextPanel(): TabTextPanel {
+    val panel = getTextPanel()
+    add(panel, BorderLayout.CENTER)
+    Disposer.register(this, panel)
+    return panel
   }
 
-  protected open fun createTextPanel(): TabTextPanel {
+  protected open fun getTextPanel(): TabTextPanel {
     return if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
       JCEFTextPanel(project)
     }
@@ -40,7 +45,7 @@ open class AdditionalTab(val project: Project, tabType: TabType) {
   protected fun addHyperlinkListener(listener: HyperlinkListener) = textPanel.addHyperlinkListener(listener)
 
   fun createContent(): Content {
-    val tabName = panel.tabType.tabName
-    return ContentFactory.SERVICE.getInstance().createContent(panel, tabName, false)
+    val tabName = tabType.tabName
+    return ContentFactory.SERVICE.getInstance().createContent(this, tabName, false)
   }
 }

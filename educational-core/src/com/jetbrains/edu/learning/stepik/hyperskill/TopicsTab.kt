@@ -40,9 +40,7 @@ class TopicsTab(project: Project,
     setText(descriptionText, plain = false)
   }
 
-  override fun createTextPanel(): TabTextPanel {
-    return SwingTextPanel(project)
-  }
+  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project)
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
     val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"

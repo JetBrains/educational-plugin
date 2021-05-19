@@ -87,7 +87,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
   fun getContent(tabType: TabType): Content? {
     return contentManager.contents
       .find { content ->
-        val panel = content.component as? TabPanel
+        val panel = content.component as? AdditionalTab
         panel?.tabType == tabType
       }
   }
@@ -135,7 +135,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
   }
 
   private fun getSelectedTab(): TabType? {
-    val currentContent = contentManager.selectedContent?.component as? TabPanel ?: return null
+    val currentContent = contentManager.selectedContent?.component as? AdditionalTab ?: return null
     return currentContent.tabType
   }
 

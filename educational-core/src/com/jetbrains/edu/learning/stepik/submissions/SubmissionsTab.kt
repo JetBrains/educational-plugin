@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.taskDescription.ui.*
+import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
@@ -70,9 +70,7 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
     setText(descriptionText.toString(), plain = true)
   }
 
-  override fun createTextPanel(): TabTextPanel {
-    return SwingTextPanel(project)
-  }
+  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project)
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder) {
     if (task !is ChoiceTask) return

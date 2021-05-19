@@ -25,7 +25,7 @@ class TheoryTab(project: Project, theoryTask: TheoryTask) : AdditionalTab(projec
     val text = getTaskDescriptionWithCodeHighlighting(project, theoryTask)
     setText(text, plain = false)
 
-    panel.add(createBottomPanel(), BorderLayout.SOUTH)
+    add(createBottomPanel(), BorderLayout.SOUTH)
   }
 
   private fun createBottomPanel(): JPanel {
