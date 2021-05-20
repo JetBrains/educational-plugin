@@ -89,7 +89,7 @@ val changesFile = "changes.html"
 
 plugins {
   idea
-  kotlin("jvm") version "1.4.10"
+  kotlin("jvm") version "1.5.0"
   id("org.jetbrains.intellij") version "0.7.2"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
@@ -166,7 +166,7 @@ allprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.4"
+        languageVersion = "1.5"
         apiVersion = "1.4"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
       }
