@@ -48,6 +48,7 @@ class HyperskillNextActivityTest : EduTestCase() {
         topic = 1
         isCompleted = true
         id = 5
+        block!!.name = TheoryTask.THEORY_TASK_TYPE
       }
     )
 
@@ -65,6 +66,7 @@ class HyperskillNextActivityTest : EduTestCase() {
       StepMockResponse("/api/steps?topic=1&is_recommended=true", ChoiceTask()) {
         topic = 1
         id = 5
+        block!!.name = ChoiceTask.CHOICE_TASK_TYPE
       }
     )
 

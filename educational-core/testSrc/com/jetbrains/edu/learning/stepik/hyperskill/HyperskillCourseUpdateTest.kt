@@ -386,7 +386,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test project with problems updated`() {
+  fun `test project with code problems updated`() {
     val taskFileName = "Task.txt"
     val oldText = "old text"
     val newText = "new text"
@@ -416,6 +416,46 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
           dir("task1") {
             file(taskFileName, newText)
             file("task.html", newText)
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test project with edu problems updated`() {
+    val taskFileName = "Task.txt"
+    val oldText = "old text"
+    val newText = "new text"
+    val topic = "topic"
+
+    course = hyperskillCourseWithFiles(projectId = null) {
+      section(HYPERSKILL_TOPICS) {
+        lesson(topic) {
+          eduTask(taskDescription = oldText) {
+            taskFile(taskFileName, oldText)
+            taskFile("build.gradle")
+          }
+        }
+      }
+    }
+
+    updateCourse(course.getTopicsSection()!!.getLesson(topic)!!.taskList.map {
+      it.toTaskUpdate {
+        descriptionText = newText
+        updateDate = Date(100)
+        getTaskFile(taskFileName)!!.setText(newText)
+      }
+    })
+
+    fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir("topic") {
+          dir("task1") {
+            file(taskFileName, newText)
+            file("task.html", newText)
+            file("build.gradle")
           }
         }
       }

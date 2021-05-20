@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
@@ -211,7 +210,13 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
   }
 
   private fun HyperskillCourse.addProblemsFromTopic(stepSource: HyperskillStepSource, topicLesson: Lesson): Result<List<Task>, String> {
-    val topicId = stepSource.topic ?: return Err("Can't get topic in step source with ${stepSource.id} id")
+    val topicId = stepSource.topic
+    if (topicId == null) {
+      LOG.warn("Can't get topic in step source with ${stepSource.id} id, adding a single task")
+      val task = topicLesson.createProblem(stepSource.id)
+      return Ok(listOf(task))
+    }
+
     val connector = HyperskillConnector.getInstance()
     val stepSources = connector.getRecommendedStepsForTopic(topicId).onError {
       return Err(it)
@@ -244,7 +249,12 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
   }
 
   private fun HyperskillStepSource.getTopicNameForProblem(): Result<String, String> {
-    val theoryId = topicTheory ?: return Err("Can't get theory step id for ${id} step")
+    val theoryId = topicTheory
+    if (theoryId == null) {
+      LOG.warn("Can't get theory step id for ${id} step")
+      val problemTitle = title ?: return Err("Can't get title of ${id} step")
+      return Ok(problemTitle)
+    }
     val theorySource = HyperskillConnector.getInstance().getStepSource(theoryId).onError {
       return Err(it)
     }
@@ -367,7 +377,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
 
     val task = course.getProblem(stepId) ?: return
     if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
-      val tasks = task.lesson.taskList.filterIsInstance<CodeTask>()
+      val tasks = task.lesson.taskList.filter { it.itemType in SUPPORTED_STEP_TYPES }
       HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
     }
     else {

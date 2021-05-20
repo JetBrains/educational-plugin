@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.net.MalformedURLException
 import java.net.URL
@@ -34,28 +35,29 @@ object HyperskillCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
 
-  fun postStageSolution(task: Task, project: Project, result: CheckResult) {
+  fun postEduTaskSolution(task: Task, project: Project, result: CheckResult) {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
-      is Err -> {
-        showErrorDetails(project, attemptResponse.error)
-      }
+      is Err -> showErrorDetails(project, attemptResponse.error)
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
         postEduSubmission(attemptResponse.value, project, task, feedback)
+        val course = task.course as HyperskillCourse
+        if (course.isTaskInProject(task) && task.status == CheckStatus.Solved) {
+          markStageAsCompleted(task)
+        }
       }
     }
   }
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
-    val files = getSolutionFiles(task, project).nullize() ?: return
+    val files = getSolutionFiles(task, project).nullize()
+    if (files == null) {
+      LOG.error("Unable to create submission: files with code is not found for the task ${task.name}")
+      return
+    }
     when (val response = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
       is Err -> showErrorDetails(project, response.error)
-      is Ok -> {
-        SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
-        if (task.status == CheckStatus.Solved) {
-          markStageAsCompleted(task)
-        }
-      }
+      is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
     }
   }
 

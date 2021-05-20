@@ -22,7 +22,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     }
   }
 
-  fun `test open problem in project`() {
+  fun `test open code problem in project`() {
     loginFakeUser()
     configureMockResponsesForStages()
     configureMockResponsesForProblems()
@@ -45,6 +45,42 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
           }
         }
       }
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open edu problem`() {
+    loginFakeUser()
+    configureMockResponsesForStages()
+    configureMockResponsesForProblems()
+
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step10960.id, "TEXT"))
+    val fileTree = fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir(step13292.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step10960.title) {
+            dir("src") {
+              dir("calculator") {
+                file("ArithmeticRestController.java")
+                file("WebCalculatorApplication.java")
+              }
+            }
+            dir("test") {
+              file("WebCalculatorApplicationTest.java")
+            }
+            dir("resources") {
+              file("application.properties")
+            }
+            file("task.html")
+            file("build.gradle")
+          }
+        }
+      }
+      file("build.gradle")
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
@@ -542,6 +578,9 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
         request.path.endsWith(STEPS_OF_85_TOPIC_REQUEST_SUFFIX) -> {
           mockResponse("steps_85_topic_response.json")
         }
+        request.path.endsWith(STEPS_OF_515_TOPIC_REQUEST_SUFFIX) -> {
+          mockResponse("steps_515_topic_recommended_response.json")
+        }
         else -> null
       }
     }
@@ -559,13 +598,16 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   companion object {
     private const val STEPS_OF_85_TOPIC_RECOMMENDED_REQUEST_SUFFIX = "/api/steps?topic=85&is_recommended=true"
     private const val STEPS_OF_85_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=85"
+    private const val STEPS_OF_515_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=515&is_recommended=true"
     private const val TOPIC_NAME = "topicName"
     private const val THEORY = "Theory"
     private val step2640 = StepInfo(2640, "Packing bakeries")
     private val step2641 = StepInfo(2641, "List multiplicator")
     private val step9455 = StepInfo(9455, "Wildcards")
     private val step9886 = StepInfo(9886, "Pets in boxes")
-    private val steps = listOf(step2640, step2641, step9455, step9886)
+    private val step10960 = StepInfo(10960, "Web calculator")
+    private val step13292 = StepInfo(13292, "Posting and deleting data via REST")
+    private val steps = listOf(step2640, step2641, step9455, step9886, step10960, step13292)
 
     private class StepInfo(val id: Int, val title: String) {
       val path: String

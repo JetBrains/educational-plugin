@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -20,29 +21,28 @@ class HyperskillCheckListener : CheckListener {
     if (!course.isStudy) {
       return
     }
+    if (!(course.isTaskInProject(task) || task is EduTask)) return
 
-    if (course.isTaskInProject(task)) {
-      if (HyperskillSettings.INSTANCE.account == null) {
-        Notification(
-          "EduTools",
-          EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
-          EduCoreBundle.message("error.login.required", EduNames.JBA),
-          NotificationType.ERROR
-        ) { notification, e ->
-          notification.expire()
-          HyperskillLoginListener.hyperlinkUpdate(e)
-        }.notify(project)
-        return
-      }
+    if (HyperskillSettings.INSTANCE.account == null) {
+      Notification(
+        "EduTools",
+        EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
+        EduCoreBundle.message("error.login.required", EduNames.JBA),
+        NotificationType.ERROR
+      ) { notification, e ->
+        notification.expire()
+        HyperskillLoginListener.hyperlinkUpdate(e)
+      }.notify(project)
+      return
+    }
 
-      if (!isUnitTestMode) {
-        ApplicationManager.getApplication().executeOnPooledThread {
-          HyperskillCheckConnector.postStageSolution(task, project, result)
-        }
+    if (!isUnitTestMode) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        HyperskillCheckConnector.postEduTaskSolution(task, project, result)
       }
-      else {
-        HyperskillCheckConnector.postStageSolution(task, project, result)
-      }
+    }
+    else {
+      HyperskillCheckConnector.postEduTaskSolution(task, project, result)
     }
   }
 }

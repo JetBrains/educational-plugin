@@ -197,9 +197,17 @@ abstract class HyperskillConnector {
       val task = builder.createTask(step.block!!.name)
       if (task != null) {
         tasks.add(task)
+        (course as HyperskillCourse).updateAdditionalFiles(step)
       }
     }
     return tasks
+  }
+
+  private fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
+    val files = (stepSource.block?.options as PyCharmStepOptions).hyperskill?.files ?: return
+    additionalFiles.addAll(files.filter { taskFile ->
+      taskFile.name !in additionalFiles.map { it.name }
+    })
   }
 
   fun getProblems(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {

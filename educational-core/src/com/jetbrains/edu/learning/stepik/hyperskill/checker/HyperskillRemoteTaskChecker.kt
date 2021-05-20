@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 class HyperskillRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {
     val course = task.course
-    return task is CodeTask && course is HyperskillCourse
+    return course is HyperskillCourse && !course.isTaskInProject(task) && task is CodeTask
   }
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {

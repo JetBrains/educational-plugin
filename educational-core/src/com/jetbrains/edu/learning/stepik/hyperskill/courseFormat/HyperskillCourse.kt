@@ -116,6 +116,6 @@ class HyperskillCourse : Course {
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   companion object {
-    val SUPPORTED_STEP_TYPES: Set<String> = setOf(StepikTaskType.CODE.type, StepikTaskType.TEXT.type)
+    val SUPPORTED_STEP_TYPES: Set<String> = setOf(StepikTaskType.CODE.type, StepikTaskType.TEXT.type, StepikTaskType.PYCHARM.type)
   }
 }

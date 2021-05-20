@@ -35,7 +35,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     }
   }
 
-  fun `test edu task submissions loaded`() {
+  fun `test edu task in framework lesson submissions loaded`() {
     hyperskillCourseWithFiles {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
@@ -47,6 +47,27 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     }
 
     doTestSubmissionsLoaded(setOf(1), mapOf(1 to 1))
+  }
+
+  fun `test edu problem submissions loaded`() {
+    val stepId = 5
+    hyperskillCourseWithFiles {
+      section("Topics") {
+        lesson("Topic name") {
+          eduTask("Problem name", stepId = stepId) {
+            taskFile("src/Task.kt", "fun foo() {}")
+            taskFile("src/Baz.kt", "fun baz() {}")
+            taskFile("test/Tests1.kt", "fun tests1() {}")
+            taskFile("resources/application.properties")
+            taskFile("task.html")
+            taskFile("build.gradle")
+          }
+        }
+      }
+      additionalFile("build.gradle")
+    }
+
+    doTestSubmissionsLoaded(setOf(stepId), mapOf(stepId to 1))
   }
 
   fun `test edu task several submissions loaded`() {
@@ -165,6 +186,14 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
           "status": "correct",
           "step": 2,
           "time": "2020-04-29T11:45:20.422Z",
+          "user": 6242591
+        },
+        {
+          "attempt": "7565800",
+          "id": "7565003",
+          "status": "correct",
+          "step": 5,
+          "time": "2020-04-29T11:46:20.422Z",
           "user": 6242591
         }
       ]

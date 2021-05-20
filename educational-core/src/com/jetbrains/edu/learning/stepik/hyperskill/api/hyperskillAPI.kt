@@ -4,10 +4,16 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
+import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.api.FILES
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
 import java.util.*
@@ -136,6 +142,21 @@ class HyperskillTopic {
 
   @JsonProperty(THEORY_ID)
   var theoryId: Int? = null
+}
+
+class HyperskillStepOptions : PyCharmStepOptions {
+  constructor()
+
+  constructor(project: Project, task: Task) : super(project, task) {
+    val hyperskillAdditionalInfo = HyperskillAdditionalInfo()
+    hyperskillAdditionalInfo.files = CCUtils.collectAdditionalFiles(task.course, project)
+    hyperskill = hyperskillAdditionalInfo
+  }
+}
+
+class HyperskillAdditionalInfo {
+  @JsonProperty(FILES)
+  var files: List<TaskFile>? = null
 }
 
 class HyperskillStepSource : StepSource() {

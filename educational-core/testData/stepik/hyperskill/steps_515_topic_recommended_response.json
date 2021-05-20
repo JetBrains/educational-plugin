@@ -1,0 +1,857 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        },
+        "table_of_contents" : [
+          {
+            "id" : "postmapping",
+            "title" : "PostMapping"
+          },
+          {
+            "id" : "deletemapping",
+            "title" : "DeleteMapping"
+          },
+          {
+            "id" : "conclusion",
+            "title" : "Conclusion"
+          }
+        ]
+      },
+      "bloom_level" : 0,
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 1
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-04-27T12:04:33Z",
+      "id" : 13292,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : null,
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 9
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : 1,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 1
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 1,
+      "seconds_to_complete" : 850.6016850011839,
+      "solved_by" : 173,
+      "stage" : null,
+      "stepik_id" : 2101772,
+      "success_rate" : null,
+      "title" : "Posting and deleting data via REST",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "theory",
+      "updated_at" : "2021-05-20T09:52:18.666818Z",
+      "content_updated_at" : "2021-05-20T09:50:40Z",
+      "progress_updated_at" : "2021-05-20T01:26:11.257963Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "pycharm",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "task_type" : "edu",
+          "lesson_type" : "framework",
+          "title" : "calculator",
+          "description_text" : "description text",
+          "description_format" : "HTML",
+          "feedback_link" : {
+            "link_type" : "STEPIK",
+            "link" : null
+          },
+          "files" : [
+            {
+              "name" : "resources/application.properties",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "server.port=8889\nmanagement.endpoints.web.exposure.include=*\nmanagement.endpoint.shutdown.enabled=true"
+            },
+            {
+              "name" : "build.gradle",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "plugins {\n    id 'java'\n    id 'org.springframework.boot' version '2.3.1.RELEASE'\n    id 'io.spring.dependency-management' version '1.0.9.RELEASE'\n}\n\nsourceCompatibility = 11\n\nrepositories {\n    mavenCentral()\n    maven { url \"https://jitpack.io\" }\n}\n\nsourceSets.main.resources.srcDirs = [\"resources\"]\n\ndependencies {\n    implementation 'org.springframework.boot:spring-boot-starter'\n    implementation 'org.springframework.boot:spring-boot-starter-actuator'\n    implementation 'org.springframework.boot:spring-boot-starter-web'\n    testImplementation 'com.github.hyperskill:hs-test:v8'\n}\n"
+            },
+            {
+              "name" : "test/WebCalculatorApplicationTest.java",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "// content of test/WebCalculatorApplicationTest.java"
+            },
+            {
+              "name" : "src/calculator/ArithmeticRestController.java",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "// content of src/calculator/ArithmeticRestController.java"
+            },
+            {
+              "name" : "src/calculator/WebCalculatorApplication.java",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "// content of src/calculator/WebCalculatorApplication.java"
+            }
+          ],
+          "samples" : null,
+          "execution_memory_limit" : null,
+          "execution_time_limit" : null,
+          "limits" : null,
+          "code_templates" : null,
+          "format_version" : 11,
+          "custom_name" : null,
+          "solution_hidden" : null,
+          "code_templates_header_lines_count" : null,
+          "code_templates_footer_lines_count" : null,
+          "hyperskill" : {
+            "files" : [
+              {
+                "name" : "build.gradle",
+                "placeholders" : [ ],
+                "is_visible" : true,
+                "text" : "buildscript {\n    repositories {\n        mavenCentral()\n    }\n}\n\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n\n    sourceCompatibility = 11\n\n    repositories {\n        mavenCentral()\n        maven { url \"https://jitpack.io\" }\n    }\n\n    dependencies {\n        testImplementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'\n    }\n\n    configurations.all {\n        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'\n    }\n\n    sourceSets {\n        main.java.srcDir 'src'\n        test.java.srcDir 'test'\n    }\n\n    test {\n        systemProperty \"file.encoding\", \"utf-8\"\n    }\n\n    compileJava.options.encoding = 'utf-8'\n    tasks.withType(JavaCompile) {\n        options.encoding = 'utf-8'\n    }\n}\n\nwrapper {\n    gradleVersion = '6.6.1'\n}"
+              }
+            ]
+          },
+          "language" : "java"
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 2,
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "hyperskill_gradle_spring",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 14
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 14
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 1
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 40
+        }
+      ],
+      "content_created_at" : "2020-10-03T19:26:18Z",
+      "id" : 10960,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T05:03:52.731959Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 11
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 55
+        },
+        {
+          "subject" : "skip",
+          "value" : 0,
+          "total_count" : 6
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 45
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 8
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 2
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 18
+        },
+        {
+          "subject" : "skip",
+          "value" : 101,
+          "total_count" : 2
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 1
+        }
+      ],
+      "lesson_stepik_id" : 414185,
+      "position" : 1,
+      "seconds_to_complete" : 691.457659999998,
+      "solved_by" : 555,
+      "stage" : null,
+      "stepik_id" : 1605357,
+      "success_rate" : 0.14,
+      "title" : "Web calculator",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T07:45:04.692825Z",
+      "content_updated_at" : "2021-03-05T19:30:43Z",
+      "progress_updated_at" : "2021-07-01T22:38:43.544985Z",
+      "popular_ide" : "idea",
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 1,
+      "can_abandon" : false,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 2
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-05-05T00:54:29Z",
+      "id" : 13295,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T18:48:10.426274Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 3
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 1
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 4,
+      "seconds_to_complete" : 48.28899999987334,
+      "solved_by" : 93,
+      "stage" : null,
+      "stepik_id" : 2115061,
+      "success_rate" : 0.8921568627450981,
+      "title" : "DeleteMapping request",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:52:21.609026Z",
+      "content_updated_at" : "2021-05-07T18:12:05Z",
+      "progress_updated_at" : "2021-05-20T01:26:32.281469Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 1,
+      "can_abandon" : false,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2019-08-09T14:31:12Z",
+      "id" : 7018,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T18:43:52.182618Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 10
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 57
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 2
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 2
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 2
+        }
+      ],
+      "lesson_stepik_id" : 247669,
+      "position" : 1,
+      "seconds_to_complete" : 35.12490000000037,
+      "solved_by" : 1095,
+      "stage" : null,
+      "stepik_id" : 791772,
+      "success_rate" : 0.598,
+      "title" : "@GetMapping and @PostMapping",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-19T18:12:25.605322Z",
+      "content_updated_at" : "2020-04-20T11:13:22Z",
+      "progress_updated_at" : "2021-05-20T01:27:33.215330Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 2,
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-05-07T01:57:28Z",
+      "id" : 13299,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T18:44:58.579386Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 5
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 8,
+      "seconds_to_complete" : 47.081,
+      "solved_by" : 107,
+      "stage" : null,
+      "stepik_id" : 2118742,
+      "success_rate" : 0.6385542168674698,
+      "title" : "Complete the handler description",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:52:25.375571Z",
+      "content_updated_at" : "2021-05-07T18:12:05Z",
+      "progress_updated_at" : "2021-06-30T22:31:16.815371Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 2,
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-05-07T02:22:28Z",
+      "id" : 13296,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T15:24:37.740302Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 4
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 5,
+      "seconds_to_complete" : 28.656999999999996,
+      "solved_by" : 85,
+      "stage" : null,
+      "stepik_id" : 2118746,
+      "success_rate" : 0.8,
+      "title" : "Post mapping",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:52:22.526733Z",
+      "content_updated_at" : "2021-05-07T18:12:04Z",
+      "progress_updated_at" : "2021-06-30T22:31:42.229443Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "matching",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 2,
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 1
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2019-08-09T14:31:17Z",
+      "id" : 7020,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T18:46:29.746678Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 91
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 12
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 1
+        },
+        {
+          "subject" : "skip",
+          "value" : 0,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 1
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 2
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 2
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 3
+        }
+      ],
+      "lesson_stepik_id" : 247671,
+      "position" : 1,
+      "seconds_to_complete" : 75.92168499995023,
+      "solved_by" : 1695,
+      "stage" : null,
+      "stepik_id" : 791774,
+      "success_rate" : 0.794,
+      "title" : "Find a handler for the request",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:49:28.984448Z",
+      "content_updated_at" : "2020-09-15T12:31:03Z",
+      "progress_updated_at" : "2021-06-30T22:32:52.699599Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 1,
+      "can_abandon" : false,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-05-05T00:44:55Z",
+      "id" : 13293,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-04T18:47:25.547095Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 4
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 2,
+      "seconds_to_complete" : 25.516599999999627,
+      "solved_by" : 97,
+      "stage" : null,
+      "stepik_id" : 2115059,
+      "success_rate" : 0.8558558558558559,
+      "title" : "Passing parameters",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:52:19.670886Z",
+      "content_updated_at" : "2021-05-07T18:12:04Z",
+      "progress_updated_at" : "2021-06-30T22:33:15.859421Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "choice",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "is_multiple_choice" : false,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "bloom_level" : 1,
+      "can_abandon" : false,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 0
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2021-05-07T02:07:21Z",
+      "id" : 13294,
+      "is_abandoned" : false,
+      "is_completed" : false,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-07-03T06:18:37.514269Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 3
+        }
+      ],
+      "lesson_stepik_id" : 527974,
+      "position" : 3,
+      "seconds_to_complete" : 26.35840000002645,
+      "solved_by" : 55,
+      "stage" : null,
+      "stepik_id" : 2118744,
+      "success_rate" : 1.0,
+      "title" : "Complete the method",
+      "topic" : 515,
+      "topic_theory" : 13292,
+      "type" : "practice",
+      "updated_at" : "2021-05-20T09:52:20.639015Z",
+      "content_updated_at" : "2021-05-07T18:12:05Z",
+      "progress_updated_at" : "2021-06-30T22:34:22.931096Z",
+      "popular_ide" : null,
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    }
+  ]
+}

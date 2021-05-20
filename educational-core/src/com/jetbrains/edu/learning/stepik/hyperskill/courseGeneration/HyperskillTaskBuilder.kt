@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -46,12 +47,17 @@ class HyperskillTaskBuilder(
         status = CheckStatus.Solved
       }
 
-      if (this is CodeTask) {
-        name = stepSource.title
-        descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
-      }
-      else if (this is TheoryTask) {
-        descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
+      when (this) {
+        is CodeTask -> {
+          name = stepSource.title
+          descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
+        }
+        is TheoryTask -> {
+          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
+        }
+        is EduTask -> {
+          name = stepSource.title
+        }
       }
 
       feedbackLink = FeedbackLink("${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR")

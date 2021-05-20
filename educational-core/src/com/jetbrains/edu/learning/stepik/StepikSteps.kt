@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames.FRAMEWORK
 import com.jetbrains.edu.learning.EduUtils
@@ -25,6 +24,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
@@ -121,11 +122,6 @@ class TaskDescriptionConverter : StdConverter<String, String>() {
   }
 }
 
-class HyperskillAdditionalInfo {
-  @JsonProperty(FILES)
-  var files: List<TaskFile>? = null
-}
-
 interface StepOptions
 
 // If you need to store non-plugin task/lesson info, please use com.jetbrains.edu.learning.stepik.api.AdditionalLessonInfo
@@ -181,6 +177,9 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(CODE_TEMPLATES_FOOTER)
   var codeTemplatesFooter: Map<String, Int>? = null
 
+  @JsonProperty(HYPERSKILL)
+  var hyperskill: HyperskillAdditionalInfo? = null
+
   constructor()
 
   constructor(project: Project, task: Task) {
@@ -218,20 +217,6 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
     }
   }
   return files
-}
-
-class HyperskillStepOptions : PyCharmStepOptions {
-  @JsonProperty(HYPERSKILL)
-  var hyperskill: HyperskillAdditionalInfo? = null
-
-  constructor()
-
-  constructor(project: Project, task: Task) : super(project, task) {
-    val hyperskillAdditionalInfo = HyperskillAdditionalInfo()
-    hyperskillAdditionalInfo.files = CCUtils.collectAdditionalFiles(task.course, project)
-    hyperskill = hyperskillAdditionalInfo
-  }
-
 }
 
 class ChoiceStepOptions : StepOptions {
