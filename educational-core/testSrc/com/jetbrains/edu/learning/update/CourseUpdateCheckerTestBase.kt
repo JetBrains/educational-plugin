@@ -30,7 +30,7 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<Unit>() {
     withCustomCheckInterval(checkInterval) {
       updateChecker.check()
       assertEquals(invocationNumber, updateChecker.invocationNumber)
-      testCheckScheduled(afterTimeoutInvocationNumber, updateChecker)
+      checkScheduled(afterTimeoutInvocationNumber, updateChecker)
       checkNotification(notificationListener, isCourseUpToDate)
       isCourseUpToDateCheck()
     }
@@ -66,7 +66,7 @@ abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<Unit>() {
     }
   }
 
-  private fun testCheckScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker) {
+  private fun checkScheduled(expectedInvocationNumber: Int, updateChecker: CourseUpdateChecker) {
     val future = ApplicationManager.getApplication().executeOnPooledThread { Thread.sleep(3000) }
     EduUtils.waitAndDispatchInvocationEvents(future)
     check(expectedInvocationNumber <= updateChecker.invocationNumber)
