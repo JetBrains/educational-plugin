@@ -31,7 +31,7 @@ class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
 
 @VisibleForTesting
 class CourseraPlatformProvider : CoursesPlatformProvider() {
-  private val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignmnets.txt"
+  private val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignments.txt"
   private val LOG = Logger.getInstance(CourseraPlatformProvider::class.java)
 
   override val name: String = CourseraNames.COURSERA
@@ -47,7 +47,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
       tasks.add(ApplicationManager.getApplication().executeOnPooledThread(Callable {
         val tempFile = FileUtil.createTempFile("coursera-zip", null)
         DownloadUtil.downloadAtomically(null, link, tempFile)
-        val courseraCourse: Course? = getCourseraCourse(tempFile.absolutePath)
+        val courseraCourse: Course? = EduUtils.getLocalCourse(tempFile.absolutePath)
         if (courseraCourse == null) {
           LOG.error("Failed to get local course from $link")
           return@Callable null
@@ -74,14 +74,6 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
       LOG.warn("Failed to get courses from ${LINK}")
     }
     return emptyList()
-  }
-
-  companion object {
-    @VisibleForTesting
-    fun getCourseraCourse(zipPath: String): CourseraCourse? {
-      val localCourse = EduUtils.getLocalCourse(zipPath) ?: return null
-      return courseraCourseFromLocal(localCourse)
-    }
   }
 
 }

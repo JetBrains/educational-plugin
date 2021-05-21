@@ -11,9 +11,3 @@ class CourseraCourse : Course() {
   override fun getCheckAction(): CheckAction = CheckAction(if (submitManually) EduCoreBundle.lazyMessage("action.coursera.run.tests.text")
                                                            else EduCoreBundle.lazyMessage("action.coursera.submit.text"))
 }
-
-// TODO: change course type in coursera archives for Kotlin and remove this method in 2020
-fun courseraCourseFromLocal(course: Course): CourseraCourse {
-  if (course is CourseraCourse) return course
-  return course.copyAs(CourseraCourse::class.java)
-}

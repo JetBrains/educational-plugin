@@ -4,15 +4,9 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class ImportCourseraAssignment : ImportLocalCourseAction(EduCoreBundle.lazyMessage("action.import.coursera.assigment.text")) {
-
-  override fun initCourse(course: Course): Course {
-    super.initCourse(course)
-    return courseraCourseFromLocal(course)
-  }
 
   override fun update(e: AnActionEvent) {
     e.presentation.icon = AllIcons.ToolbarDecorator.Import

@@ -9,7 +9,7 @@ class To8VersionLocalCourseConverter : JsonLocalCourseConverter {
 
   override fun convert(localCourse: ObjectNode): ObjectNode {
     val language = localCourse.get(PROGRAMMING_LANGUAGE)?.asText() ?: ""
-    var courseType = EduNames.PYCHARM
+    var courseType = localCourse.get(COURSE_TYPE)?.asText() ?: EduNames.PYCHARM
     if ("edu-android" == language) {
       localCourse.put(PROGRAMMING_LANGUAGE, EduNames.KOTLIN)
       courseType = EduNames.ANDROID
