@@ -69,7 +69,7 @@ class SubmissionsTab(project: Project, private val task: Task) : AdditionalTab(p
     setText(descriptionText.toString(), plain = true)
   }
 
-  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler?.hyperlinkListener)
+  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
 
   private fun addViewOnStepikLink(descriptionText: StringBuilder) {
     if (task !is ChoiceTask) return

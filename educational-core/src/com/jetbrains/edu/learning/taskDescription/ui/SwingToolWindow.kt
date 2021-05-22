@@ -54,7 +54,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     taskInfoPanel.add(scrollPane, BorderLayout.CENTER)
     taskInfoTextPane.border = JBUI.Borders.empty(20, 0, 0, 10)
     val toolWindowLinkHandler = HintElementLinkHandler()
-    taskInfoTextPane.addHyperlinkListener(toolWindowLinkHandler.hyperlinkListener)
+    taskInfoTextPane.addHyperlinkListener(toolWindowLinkHandler)
   }
 
   override fun updateTaskSpecificPanel(task: Task?) {

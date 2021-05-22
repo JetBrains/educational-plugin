@@ -30,12 +30,7 @@ class SwingTextPanel(project: Project,
     scrollPane.border = JBUI.Borders.empty()
     add(scrollPane, BorderLayout.CENTER)
 
-    if (hyperlinkListener != null) {
-      textPane.addHyperlinkListener(hyperlinkListener)
-    } else {
-      val linkHandler = SwingToolWindowLinkHandler(project)
-      textPane.addHyperlinkListener(linkHandler.hyperlinkListener)
-    }
+    textPane.addHyperlinkListener(hyperlinkListener ?: SwingToolWindowLinkHandler(project))
   }
 
   override fun setText(text: String) {
