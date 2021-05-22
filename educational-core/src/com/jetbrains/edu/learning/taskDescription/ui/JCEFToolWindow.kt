@@ -69,16 +69,14 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
                  LafManagerListener { TaskDescriptionView.updateAllTabs(project) })
   }
 
+  override val taskInfoPanel: JComponent
+    get() = taskInfoJBCefBrowser.component
+
+  override val taskSpecificPanel: JComponent
+    get() = taskSpecificJBCefBrowser.component
+
   override fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
     return wrapHint(project, hintElement, displayedHintNumber)
-  }
-
-  override fun createTaskInfoPanel(): JComponent {
-    return taskInfoJBCefBrowser.component
-  }
-
-  override fun createTaskSpecificPanel(): JComponent {
-    return taskSpecificJBCefBrowser.component
   }
 
   override fun setText(text: String, task: Task?) {

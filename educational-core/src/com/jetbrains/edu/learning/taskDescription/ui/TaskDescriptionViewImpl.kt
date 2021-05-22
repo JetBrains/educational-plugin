@@ -123,7 +123,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val taskTextTW = if (EduSettings.getInstance().javaUiLibraryWithCheck == JCEF) JCEFToolWindow(project) else SwingToolWindow(project)
     Disposer.register(contentManager, taskTextTW)
 
-    val taskTextPanel = taskTextTW.createTaskInfoPanel()
+    val taskTextPanel = taskTextTW.taskInfoPanel
     val topPanel = JPanel(BorderLayout())
 
     panel.add(topPanel, BorderLayout.NORTH)
@@ -138,7 +138,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     separatorPanel.add(separator, BorderLayout.CENTER)
     bottomPanel.add(separatorPanel, BorderLayout.NORTH)
 
-    val taskSpecificPanel = taskTextTW.createTaskSpecificPanel()
+    val taskSpecificPanel = taskTextTW.taskSpecificPanel
     taskSpecificPanel.border = JBUI.Borders.emptyRight(15)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 

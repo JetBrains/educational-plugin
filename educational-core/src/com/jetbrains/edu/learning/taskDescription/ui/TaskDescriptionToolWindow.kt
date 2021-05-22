@@ -42,9 +42,9 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
                                                null,
                                                this)
 
-  abstract fun createTaskInfoPanel(): JComponent
+  abstract val taskInfoPanel: JComponent
 
-  abstract fun createTaskSpecificPanel(): JComponent
+  abstract val taskSpecificPanel: JComponent
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
