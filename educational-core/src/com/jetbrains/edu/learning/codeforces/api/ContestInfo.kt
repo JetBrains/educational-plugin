@@ -8,6 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import java.time.Duration
 import java.time.ZonedDateTime
 
+/**
+ * There are more fields in Codeforces API, see [Contest](https://codeforces.com/apiHelp/objects#Contest)
+ * but we don't need so much of them right now
+ */
 class ContestInfo : Course() {
   override fun getId(): Int {
     return super.myId
@@ -66,8 +70,6 @@ class ContestInfo : Course() {
     get() = relativeTimeSeconds.toDuration()
 
   override fun getCompatibility(): CourseCompatibility = CourseCompatibility.Compatible
-
-  // TODO some more
 }
 
 enum class ContestType {
