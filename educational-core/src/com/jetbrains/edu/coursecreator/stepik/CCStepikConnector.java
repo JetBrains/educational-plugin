@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
@@ -40,7 +41,6 @@ import static com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getHasSectio
 
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
-  public static final String PUBLISHING_COURSE_TITLE = "Publishing additional course data";
   private static final String JETBRAINS_USER_ID = "17813950";
   private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
 
@@ -49,7 +49,11 @@ public class CCStepikConnector {
   // POST methods:
 
   public static void postCourseWithProgress(@NotNull final Project project, @NotNull final EduCourse course) {
-    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
+    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(
+      project,
+      EduCoreBundle.message("course.creator.stepik.upload.course.titled"),
+      true
+    ) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
@@ -67,7 +71,7 @@ public class CCStepikConnector {
       LOG.warn("User is null when posting the course");
       return;
     }
-    updateProgress("Uploading course to " + StepikNames.getStepikUrl());
+    updateProgress(EduCoreBundle.message("course.creator.stepik.upload.progress.title"));
     final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user);
     if (currentUser != null) {
       final List<UserInfo> courseAuthors = course.getAuthors();
@@ -102,7 +106,9 @@ public class CCStepikConnector {
 
     StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
     courseOnRemote.init(null, null, true);
-    String message = "Course is " + (success ? "" : "partially ") + "published";
+    String message = success
+                     ? EduCoreBundle.message("course.creator.stepik.published")
+                     : EduCoreBundle.message("course.creator.stepik.published.partially");
     showNotification(project, message, openOnStepikAction("/course/" + courseOnRemote.getId()));
   }
 
@@ -111,17 +117,19 @@ public class CCStepikConnector {
       return false;
     }
 
-    updateProgress(PUBLISHING_COURSE_TITLE);
+    updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
     String errors = checkIgnoredFiles(project);
     if (errors != null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post additional files." + errors);
+      showErrorNotification(project, FAILED_TITLE,
+                            String.format("%s. %s", EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"),
+                                          errors));
       return false;
     }
     final List<TaskFile> additionalFiles = collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
     if (code != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post additional files");
+      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"));
       return false;
     }
     return true;
@@ -186,7 +194,7 @@ public class CCStepikConnector {
     int position = 1;
     boolean success = true;
     for (Lesson lesson : lessons) {
-      updateProgress("Publishing lesson " + lesson.getIndex());
+      updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.lesson", lesson.getIndex()));
       success = postLesson(project, lesson, position, sectionId) && success;
       checkCanceled();
       position += 1;
@@ -234,7 +242,7 @@ public class CCStepikConnector {
 
     final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
     if (unit == null || unit.getId() == null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
+      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.post.unit"));
       return -1;
     }
     return unit.getId();
@@ -287,10 +295,12 @@ public class CCStepikConnector {
 
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
-    updateProgress(PUBLISHING_COURSE_TITLE);
+    updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
     String errors = checkIgnoredFiles(project);
     if (errors != null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to update additional files." + errors);
+      showErrorNotification(project, FAILED_TITLE,
+                            String.format("%s. %s", EduCoreBundle.message("course.creator.stepik.failed.to.update.additional.files"),
+                                          errors));
       return false;
     }
     final List<TaskFile> additionalFiles = collectAdditionalFiles(courseInfo, project);
@@ -367,7 +377,7 @@ public class CCStepikConnector {
       StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
       return true;
     }
-    updateProgress("Publishing additional data for " + lesson.getName());
+    updateProgress(EduCoreBundle.message("course.creator.stepik.progress.details.publishing.additional.data", lesson.getPresentableName()));
     return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED;
   }
 
@@ -376,7 +386,7 @@ public class CCStepikConnector {
 
     final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
-      showErrorNotification(project, FAILED_TITLE, "Failed to update unit");
+      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.update.unit"));
     }
   }
 
@@ -454,7 +464,8 @@ public class CCStepikConnector {
     }
   }
 
-  private static void updateProgress(@NotNull String text) {
+  @SuppressWarnings("UnstableApiUsage")
+  private static void updateProgress(@NlsContexts.ProgressDetails @NotNull String text) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
       indicator.checkCanceled();

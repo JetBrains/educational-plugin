@@ -399,13 +399,13 @@ object CCUtils {
         continue
       }
       if (item.id == 0 && item.index < itemToPush.index) {
-        showErrorNotification(project, "Failed to upload",
-                              "Previous siblings are not published yet. Use 'Update Course' action")
+        showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.upload"),
+                              EduCoreBundle.message("course.creator.stepik.previous.siblings.are.not.published"))
         return false
       }
       if (item.id != 0 && item.index > itemToPush.index) {
-        showErrorNotification(project, "Failed to upload",
-                              "Next siblings are affected. Use 'Update Course' action")
+        showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.upload"),
+                              EduCoreBundle.message("course.creator.stepik.next.siblings.are.affected"))
         return false
       }
     }

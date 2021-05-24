@@ -26,7 +26,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     val changedItems = changeRetriever.getChangedItems()
 
     if (changedItems.isEmpty()) {
-      showNotification(project, "Nothing to update", null)
+      showNotification(project, message("course.creator.stepik.nothing.to.update"), null)
       return
     }
 
@@ -37,7 +37,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     success = processTasks(changedItems) && success
 
     if (!success) {
-      showNotification(project, "Failed to update the course", null)
+      showNotification(project, message("course.creator.stepik.failed.to.update.course"), null)
     }
     else {
       course.updateDate = remoteCourse.updateDate
