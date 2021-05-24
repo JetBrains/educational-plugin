@@ -87,7 +87,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
-    if (!checkIfAuthorizedToStepik(project, "post lesson")) return;
+    if (!checkIfAuthorizedToStepik(project, e.getPresentation().getText())) return;
 
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (!(course instanceof HyperskillCourse)) {

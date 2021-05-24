@@ -9,6 +9,8 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.StudyItemType;
+import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
@@ -51,7 +53,7 @@ public class CCStepikConnector {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         indicator.setIndeterminate(false);
-        if (checkIfAuthorizedToStepik(project, "post course")) {
+        if (checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.COURSE_TYPE))) {
           postCourse(project, course);
         }
       }
@@ -105,7 +107,9 @@ public class CCStepikConnector {
   }
 
   public static boolean postCourseAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
-    if (!checkIfAuthorizedToStepik(project, "post course additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("course.creator.stepik.post.course.additional.information"))) {
+      return false;
+    }
 
     updateProgress(PUBLISHING_COURSE_TITLE);
     String errors = checkIgnoredFiles(project);
@@ -165,7 +169,7 @@ public class CCStepikConnector {
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
-    if (!checkIfAuthorizedToStepik(project, "post section")) return -1;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.SECTION_TYPE))) return -1;
 
     section.setCourseId(courseId);
     final Section postedSection = StepikConnector.getInstance().postSection(section);
@@ -207,7 +211,7 @@ public class CCStepikConnector {
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
-    if (!checkIfAuthorizedToStepik(project, "postLesson")) return null;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
@@ -226,7 +230,7 @@ public class CCStepikConnector {
   }
 
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, "postUnit")) return lessonId;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.LESSON_TYPE))) return lessonId;
 
     final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
     if (unit == null || unit.getId() == null) {
@@ -237,7 +241,7 @@ public class CCStepikConnector {
   }
 
   public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
-    if (!checkIfAuthorizedToStepik(project, "postTask")) return false;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
     // TODO: add meaningful comment to final Success notification that Code tasks were not pushed
     if (task instanceof CodeTask) return true;
 
@@ -254,7 +258,7 @@ public class CCStepikConnector {
   // UPDATE methods:
 
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
-    if (!checkIfAuthorizedToStepik(project, "update course")) return false;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.COURSE_TYPE))) return false;
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -279,7 +283,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateCourseAdditionalInfo(@NotNull Project project, @NotNull Course course) {
-    if (!checkIfAuthorizedToStepik(project, "update course additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("action.update.additional.materials.text"))) return false;
 
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
@@ -340,7 +344,7 @@ public class CCStepikConnector {
   public static Lesson updateLessonInfo(@NotNull final Project project,
                                         @NotNull final Lesson lesson,
                                         boolean showNotification, int sectionId) {
-    if (!checkIfAuthorizedToStepik(project, "update lesson")) return null;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
     // TODO: support case when lesson was removed from Stepik
 
     final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
@@ -356,7 +360,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, "update lesson additional information")) return false;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return false;
 
     LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
@@ -368,7 +372,7 @@ public class CCStepikConnector {
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, "updateUnit")) return;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return;
 
     final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
@@ -401,7 +405,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
-    if (!checkIfAuthorizedToStepik(project, "update task")) return false;
+    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
     VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
     final Course course = task.getLesson().getCourse();

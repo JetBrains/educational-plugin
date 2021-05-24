@@ -87,8 +87,7 @@ public class CCPushCourse extends DumbAwareAction {
       }
     }
 
-    // TODO i18n rewrite call when [checkIfAuthorized] will be localize
-    if (!checkIfAuthorizedToStepik(project, ((EduCourse)course).isStepikRemote() ? "update course" : "post course")) {
+    if (!checkIfAuthorizedToStepik(project, e.getPresentation().getText())) {
       return;
     }
 

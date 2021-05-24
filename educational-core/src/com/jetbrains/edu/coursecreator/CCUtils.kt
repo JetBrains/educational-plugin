@@ -37,7 +37,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikAuthorizer
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
@@ -414,12 +413,11 @@ object CCUtils {
   }
 
 
-  // TODO function is needed to be refactored for localization
   @JvmStatic
-  fun showLoginNeededNotification(project: Project, platformName: String, failedActionName: String, authAction: () -> Unit) {
-    val text = "Log in to $platformName to $failedActionName"
-    val notification = Notification("EduTools", "Failed to $failedActionName", text, NotificationType.ERROR)
-    notification.addAction(object : DumbAwareAction("Log in") {
+  fun showLoginNeededNotification(project: Project, failedActionTitle: String, authAction: () -> Unit) {
+    val notification = Notification("EduTools", EduCoreBundle.message("notification.title.authorization.required"),
+                                    EduCoreBundle.message("notification.content.authorization", failedActionTitle), NotificationType.ERROR)
+    notification.addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
       override fun actionPerformed(e: AnActionEvent) {
         authAction()
         notification.expire()
@@ -428,25 +426,23 @@ object CCUtils {
     notification.notify(project)
   }
 
-  // TODO function is needed to be refactored after refactoring [showLoginNeededNotification]
   fun checkIfAuthorized(project: Project,
-                        platformName: String,
-                        failedActionName: String,
+                        failedActionTitle: String,
                         isLoggedIn: Boolean,
                         authAction: () -> Unit): Boolean {
     val indicator = ProgressManager.getInstance().progressIndicator
     indicator?.checkCanceled()
 
     if (!isLoggedIn) {
-      showLoginNeededNotification(project, platformName, failedActionName) { authAction() }
+      showLoginNeededNotification(project, failedActionTitle) { authAction() }
       return false
     }
     return true
   }
 
   @JvmStatic
-  fun checkIfAuthorizedToStepik(project: Project, failedActionName: String): Boolean {
-    return checkIfAuthorized(project, StepikNames.STEPIK, failedActionName,
+  fun checkIfAuthorizedToStepik(project: Project, failedActionTitle: String): Boolean {
+    return checkIfAuthorized(project, failedActionTitle,
                              EduSettings.isLoggedIn()) { StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() } }
   }
 }

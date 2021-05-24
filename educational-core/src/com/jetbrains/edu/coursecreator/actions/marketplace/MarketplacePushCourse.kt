@@ -51,7 +51,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val connector = MarketplaceConnector.getInstance()
 
-    if (!checkIfAuthorized(project, MARKETPLACE, if (course.isMarketplaceRemote) "update course" else "post course",
+    if (!checkIfAuthorized(project, e.presentation.text,
                            MarketplaceSettings.INSTANCE.account != null) { connector.doAuthorize() }) {
       return
     }
