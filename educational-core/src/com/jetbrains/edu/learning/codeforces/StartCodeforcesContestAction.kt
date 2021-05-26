@@ -20,15 +20,7 @@ import java.util.function.Supplier
 class StartCodeforcesContestAction(
   title: Supplier<String> = EduCoreBundle.lazyMessage("codeforces.start.contest"),
   private val showViewAllLabel: Boolean = true
-) : DumbAwareAction(title, EduCoreBundle.lazyMessage("action.new.course.description"), null), ContextHelpProvider {
-
-  override fun getHelpRelativePath(): String {
-    return "education/codeforces-contests.html"
-  }
-
-  override fun getTooltipText(): String {
-    return templatePresentation.description
-  }
+) : DumbAwareAction(title) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val course = importCodeforcesContest() ?: return
