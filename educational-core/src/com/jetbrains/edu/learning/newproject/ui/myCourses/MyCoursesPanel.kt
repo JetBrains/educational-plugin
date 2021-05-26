@@ -47,7 +47,9 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: Coroutin
   }
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
-    updateModel(CoursesStorage.getInstance().coursesInGroups(), selectedCourse)
+    coursesGroups.clear()
+    coursesGroups.addAll(CoursesStorage.getInstance().coursesInGroups())
+    super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 
   override fun createCoursesListPanel() = MyCoursesList()
