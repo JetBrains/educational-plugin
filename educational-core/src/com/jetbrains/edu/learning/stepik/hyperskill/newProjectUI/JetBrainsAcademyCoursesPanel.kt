@@ -30,12 +30,14 @@ class JetBrainsAcademyCoursesPanel(
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
     if (deletedCourse is CourseMetaInfo) {
-      val coursesGroup = coursesGroups.first()
+      if (coursesGroups.isNotEmpty()) {
+        val coursesGroup = coursesGroups.first()
 
-      coursesGroup.courses = coursesGroup.courses.filter { it != deletedCourse }
+        coursesGroup.courses = coursesGroup.courses.filter { it != deletedCourse }
 
-      if (coursesGroup.courses.isEmpty()) {
-        coursesGroup.courses = listOf(JetBrainsAcademyCourse())
+        if (coursesGroup.courses.isEmpty()) {
+          coursesGroup.courses = listOf(JetBrainsAcademyCourse())
+        }
       }
     }
 
