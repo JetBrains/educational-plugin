@@ -20,15 +20,15 @@ Building and taking courses is currently supported for the following languages:
  * [C++](https://isocpp.org/)
  * [Go](https://golang.org/)
 
-The best place to learn what this plugin is about is to check out the EduTools plugin [documentation](https://www.jetbrains.com/help/education/educational-products.html).
+The best place to learn what this plugin is about is to check out the EduTools plugin [documentation](https://plugins.jetbrains.com/plugin/10081-edutools/docs).
 
 ### Issue tracker
-Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetbrains.com/issues/EDU)
+Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetbrains.com/issues/EDU).
 
 ### Resources
-* Sources of PyCharm Edu and IntelliJ IDEA Edu are stored in [IntelliJ IDEA repository](https://jetbrains.team/p/idea/code/intellij?path=%2Fedu)
-* This plugin comes with integration with [Stepik](http://welcome.stepik.org/) learning platform
-* You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)
+* Sources of PyCharm Edu and IntelliJ IDEA Edu are stored in [IntelliJ IDEA repository](https://jetbrains.team/p/idea/code/intellij?path=%2Fedu).
+* This plugin comes with integration with [JetBrains Academy](https://www.jetbrains.com/academy/), a project-based learning platform.
+* You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html).
 
 [plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-edutools?style=flat-square
 [plugin-downloads-svg]: https://img.shields.io/jetbrains/plugin/d/10081-edutools?style=flat-square
