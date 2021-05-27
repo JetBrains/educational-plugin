@@ -29,7 +29,7 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: C
       if (courseMetaInfo != null) {
         course.language = courseMetaInfo.language
       }
-      return super.createCourseCard(course)
+      return CodeforcesCardComponent(course)
     }
   }
 }

@@ -41,6 +41,8 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
     logoComponent.isOpaque = false
     logoComponent.icon = course.getScaledLogo(JBUI.scale(LOGO_SIZE), this)
     logoComponent.border = JBUI.Borders.emptyRight(CARD_GAP)
+    @Suppress("LeakingThis")
+    logoComponent.isVisible = isLogoVisible()
     this.add(logoComponent, BorderLayout.LINE_START)
 
     courseNameInfoComponent = this.createMainComponent()
@@ -48,6 +50,8 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
 
     updateColors(false)
   }
+
+  open fun isLogoVisible() = true
 
   open fun getClickComponent(): Component {
     return courseNameInfoComponent
