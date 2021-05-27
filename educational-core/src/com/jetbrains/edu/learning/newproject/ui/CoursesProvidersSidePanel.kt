@@ -10,10 +10,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -62,11 +59,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
   private fun createCourseProvidersTree(): Tree {
     val root = DefaultMutableTreeNode("")
     val allCoursesNode = DefaultMutableTreeNode(EduCoreBundle.message("course.dialog.all.courses"))
-    for (provider in CoursesPlatformProviderFactory.allProviders) {
-      if (provider is CodeforcesPlatformProvider && !isFeatureEnabled(EduExperimentalFeatures.CODEFORCES_TAB)) {
-        continue
-      }
-
+    CoursesPlatformProviderFactory.allProviders.forEach { provider ->
       allCoursesNode.add(DefaultMutableTreeNode(provider))
     }
     root.add(allCoursesNode)
