@@ -15,6 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_LOCAL_COURSE_KEY
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
@@ -105,6 +106,7 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
 
     if (settingsComponents.isNotEmpty()
         && course !is JetBrainsAcademyCourse
+        && course !is ContestInformation
         && (!CoursesStorage.getInstance().hasCourse(course))
         || course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) == true) {
       isVisible = true
