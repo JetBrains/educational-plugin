@@ -32,7 +32,7 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
-class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0) : JPanel(BorderLayout()) {
+class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0) : JPanel(BorderLayout()) {
   var languageSettings: LanguageSettings<*>? = null
   val locationString: String?
     get() = locationField?.component?.text

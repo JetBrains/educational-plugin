@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettings
+import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -49,7 +49,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val titleField: CourseTitleField = CourseTitleField()
   private val descriptionTextArea: JTextArea = JTextArea()
 
-  private val settings: CourseSettings = CourseSettings()
+  private val settings: CourseSettingsPanel = CourseSettingsPanel()
   private val pathField: PathField = PathField()
   private val locationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
   private lateinit var languageSettings: LanguageSettings<*>
