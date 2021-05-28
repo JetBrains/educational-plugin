@@ -40,9 +40,7 @@ private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
-
   protected var coursePanel: CoursePanel = DialogCoursePanel()
-
   private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
