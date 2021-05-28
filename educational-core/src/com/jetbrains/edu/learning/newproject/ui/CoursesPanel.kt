@@ -227,7 +227,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     filtersPanel.add(humanLanguagesFilterDropdown)
 
     searchPanel.add(filtersPanel, BorderLayout.LINE_END)
-    searchPanel.border = JBUI.Borders.empty(8, 0)
+    searchPanel.border = JBUI.Borders.empty(11, 0)
 
     UIUtil.setBackgroundRecursively(searchPanel, MAIN_BG_COLOR)
 
