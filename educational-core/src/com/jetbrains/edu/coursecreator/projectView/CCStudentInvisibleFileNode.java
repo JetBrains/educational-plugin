@@ -9,6 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.VirtualFileExt;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -32,7 +33,11 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
     super(project, value, viewSettings);
     VirtualFile file = value.getVirtualFile();
     boolean isExcluded = file != null && (VirtualFileExt.canBeAddedToTask(file, project) || CCUtils.isExcluded(file, project));
-    myName = isExcluded ? name + " (excluded)" : name;
+    myName = isExcluded ? excludedName(name) : name;
+  }
+
+  private static String excludedName(String name) {
+    return String.format("%s (%s)", name, EduCoreBundle.message("course.creator.course.view.excluded"));
   }
 
   @Override

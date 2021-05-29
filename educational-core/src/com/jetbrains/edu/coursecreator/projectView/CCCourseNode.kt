@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseNode
 import com.jetbrains.edu.learning.projectView.LessonNode
 import com.jetbrains.edu.learning.projectView.SectionNode
@@ -55,8 +56,8 @@ class CCCourseNode(
     return CCSectionNode(myProject, settings, section, directory)
   }
 
-  override val additionalInfo: String?
-    get() = "(Course Creation)"
+  override val additionalInfo: String
+    get() = "(${EduCoreBundle.message("course.creator.course.view.course.creation")})"
 
   companion object {
     private val NAMES_TO_IGNORE: Collection<String> = ContainerUtil.newHashSet(
