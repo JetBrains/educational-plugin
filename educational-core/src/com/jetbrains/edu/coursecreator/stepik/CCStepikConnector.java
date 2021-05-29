@@ -150,14 +150,14 @@ public class CCStepikConnector {
       List<Lesson> lessons = section.getLessons();
 
       final int sectionId = postSectionInfo(project, section, course.getId());
-      success = sectionId != -1 && postLessons(project, course, sectionId, lessons) && success;
+      success = sectionId != -1 && postLessons(project, sectionId, lessons) && success;
     }
     return success;
   }
 
   private static boolean postTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
     final int sectionId = postSectionForTopLevelLessons(project, course);
-    return sectionId != -1 && postLessons(project, course, sectionId, course.getLessons());
+    return sectionId != -1 && postLessons(project, sectionId, course.getLessons());
   }
 
   public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
@@ -173,7 +173,7 @@ public class CCStepikConnector {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, section, course.getId());
-    return sectionId != -1 && postLessons(project, course, sectionId, section.getLessons());
+    return sectionId != -1 && postLessons(project, sectionId, section.getLessons());
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
@@ -190,7 +190,7 @@ public class CCStepikConnector {
     return postedSection.getId();
   }
 
-  private static boolean postLessons(@NotNull Project project, @NotNull EduCourse course, int sectionId, @NotNull List<Lesson> lessons) {
+  private static boolean postLessons(@NotNull Project project, int sectionId, @NotNull List<Lesson> lessons) {
     int position = 1;
     boolean success = true;
     for (Lesson lesson : lessons) {
