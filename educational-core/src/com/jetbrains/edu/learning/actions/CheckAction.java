@@ -119,7 +119,6 @@ public class CheckAction extends DumbAwareAction {
     if (task == null) {
       return;
     }
-    EduCounterUsageCollector.checkTask(task.getStatus());
     for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
       listener.beforeCheck(project, task);
     }
@@ -322,6 +321,7 @@ public class CheckAction extends DumbAwareAction {
           myChecker.onTaskSolved();
         }
       }
+      EduCounterUsageCollector.checkTask(myTask.getStatus());
       TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
         ProgressUtil.updateCourseProgress(myProject);
