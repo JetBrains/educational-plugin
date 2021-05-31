@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
+import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -98,17 +99,17 @@ open class StepikTaskBuilder(
     val options = step.options as PyCharmStepOptions
     val samples = options.samples
 
+    fun String.prepareSample(): String = replace("\n", "<br>").xmlEscaped
+
     task.descriptionText = buildString {
       append(clearCodeBlockFromTags())
 
       if (samples != null) {
         append("<br>")
-        val inputBegin = "<b>Sample Input:</b><br><pre><code class=\"language-no-highlight\">"
-        val outputBegin = "<b>Sample Output:</b><br><pre><code class=\"language-no-highlight\">"
         for (sample in samples) {
           if (sample.size == 2) {
-            append("$inputBegin${sample[0].replace("\n", "<br>")}</code></pre><br>")
-            append("$outputBegin${sample[1].replace("\n", "<br>")}</code></pre><br><br>")
+            append("<b>Sample Input:</b><br><pre><code class=\"language-no-highlight\">${sample[0].prepareSample()}</code></pre><br>")
+            append("<b>Sample Output:</b><br><pre><code class=\"language-no-highlight\">${sample[1].prepareSample()}</code></pre><br><br>")
           }
         }
       }
