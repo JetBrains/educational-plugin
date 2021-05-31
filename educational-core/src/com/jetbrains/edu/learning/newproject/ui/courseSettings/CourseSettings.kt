@@ -88,10 +88,23 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
   }
 
   fun update(course: Course, showLanguageSettings: Boolean) {
+    if ((course is JetBrainsAcademyCourse
+        || course is ContestInformation
+        || CoursesStorage.getInstance().hasCourse(course))
+        && course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) != true) {
+      isVisible = false
+      return
+    }
+
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
       it.component.text = nameToLocation(course)
       settingsComponents.add(it)
+    }
+
+    if (settingsComponents.isEmpty()) {
+      isVisible = false
+      return
     }
 
     val configurator = course.configurator
@@ -104,17 +117,8 @@ class CourseSettings(isLocationFieldNeeded: Boolean = false, leftMargin: Int = 0
       }
     }
 
-    if (settingsComponents.isNotEmpty()
-        && course !is JetBrainsAcademyCourse
-        && course !is ContestInformation
-        && (!CoursesStorage.getInstance().hasCourse(course))
-        || course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) == true) {
-      isVisible = true
-      setSettingsComponents(settingsComponents)
-    }
-    else {
-      isVisible = false
-    }
+    isVisible = true
+    setSettingsComponents(settingsComponents)
   }
 
   fun getProjectSettings(): Any? = languageSettings?.settings
