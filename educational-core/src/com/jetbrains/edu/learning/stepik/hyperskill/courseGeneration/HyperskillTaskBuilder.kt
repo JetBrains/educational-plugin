@@ -27,7 +27,7 @@ class HyperskillTaskBuilder(
     return HyperskillLanguages.langOfId(language.id).langName
   }
 
-  private fun Task.description(theoryId: Int?, langId: String, title: String = name): String = buildString {
+  private fun Task.description(langId: String, title: String = name): String = buildString {
     appendLine("<h2>$title</h2>")
     appendLine(descriptionText)
 
@@ -48,11 +48,10 @@ class HyperskillTaskBuilder(
 
       if (this is CodeTask) {
         name = stepSource.title
-        descriptionText = description(stepSource.topicTheory, this@HyperskillTaskBuilder.course.languageID)
+        descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
       }
       else if (this is TheoryTask) {
-        descriptionText = description(stepSource.topicTheory, this@HyperskillTaskBuilder.course.languageID,
-                                      title = stepSource.title ?: name)
+        descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
       }
 
       feedbackLink = FeedbackLink("${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR")
