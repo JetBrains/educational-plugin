@@ -16,17 +16,17 @@ class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(St
 
   var userId: String
     get() {
-      val idFromStorage = state.userId
-      if (idFromStorage == null) {
-        val randomId = UUID.randomUUID().toString()
-        state.userId = randomId
-        return randomId
-      }
-      return idFromStorage
+      return state.userId ?: generateNewUserId()
     }
     set(userId) {
       state.userId = userId
     }
+
+  private fun generateNewUserId(): String {
+    val randomId = UUID.randomUUID().toString()
+    state.userId = randomId
+    return randomId
+  }
 
   companion object {
     @JvmStatic

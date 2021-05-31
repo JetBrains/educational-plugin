@@ -42,7 +42,7 @@ object TwitterUtils {
 
   @Suppress("UnstableApiUsage")
   @NlsSafe
-  const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
+  private const val SERVICE_DISPLAY_NAME: String = "EduTools Twitter Integration"
 
   /**
    * Set consumer key and secret.
@@ -100,18 +100,10 @@ object TwitterUtils {
     val tokens = PasswordSafe.instance.get(credentialAttributes(userId)) ?: return null
     val token = tokens.userName
     val tokenSecret = tokens.getPasswordAsString()
-    return RequestToken(token, tokenSecret)
-  }
-
-  fun getParameter(tokenString: String, parameter: String): String? {
-    tokenString.split(", ").forEach {
-      if (it.startsWith("$parameter=")) {
-        return it.split("=")[1].trim()
-      }
+    if (token == null || tokenSecret == null) {
+      throw TwitterException("Couldn't get credentials from the keychain")
     }
-
-    LOG.warn("Failed to find parameter `token` in token string")
-    return null
+    return RequestToken(token, tokenSecret)
   }
 
   /**
