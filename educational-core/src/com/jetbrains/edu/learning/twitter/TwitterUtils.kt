@@ -6,8 +6,8 @@ import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
 import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
@@ -59,39 +60,11 @@ object TwitterUtils {
 
   @JvmStatic
   fun createTwitterDialogAndShow(project: Project, configurator: TwitterPluginConfigurator, task: Task) {
-    ApplicationManager.getApplication().invokeLater {
+    invokeLater {
       val imagePath = configurator.getImagePath(task)
-
       val dialog = createTwitterDialogUI(project) { configurator.getTweetDialogPanel(task, imagePath, it) }
       if (dialog.showAndGet()) {
-        val settings = TwitterSettings.getInstance()
-        val isAuthorized = getToken(settings.userId) != null
-        val twitter = twitter
-        val info = TweetInfo(dialog.message, imagePath)
-
-        ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
-          override fun run(indicator: ProgressIndicator) {
-            if (!isAuthorized) {
-              if (!authorize(project, twitter)) return
-            } else {
-              val token = getToken(settings.userId) ?: throw TwitterException("Couldn't get credentials from keychain")
-              twitter.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
-            }
-
-            ProgressManager.checkCanceled()
-            updateStatus(twitter, info)
-          }
-
-          override fun onThrowable(error: Throwable) {
-            LOG.warn(error)
-            val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
-              EduCoreBundle.message("error.failed.to.authorize")
-            } else {
-              EduCoreBundle.message("error.failed.to.update.status")
-            }
-            Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.failed.to.tweet"))
-          }
-        })
+        ProgressManager.getInstance().run(TweetingBackgroundableTask(project, dialog, imagePath))
       }
     }
   }
@@ -101,7 +74,7 @@ object TwitterUtils {
     val token = tokens.userName
     val tokenSecret = tokens.getPasswordAsString()
     if (token == null || tokenSecret == null) {
-      throw TwitterException("Couldn't get credentials from the keychain")
+      return null
     }
     return RequestToken(token, tokenSecret)
   }
@@ -181,5 +154,36 @@ object TwitterUtils {
       ?.pluginPath
       ?.resolve(path)
       ?.takeIf { it.exists() }
+  }
+
+  private class TweetingBackgroundableTask(
+    project: Project,
+    private val dialog: TwitterDialogUI,
+    private val imagePath: Path?
+    ) : Backgroundable(project, EduCoreBundle.message("twitter.loading.posting"), true) {
+
+    override fun run(indicator: ProgressIndicator) {
+      val token = getToken(TwitterSettings.getInstance().userId)
+      val twitterInstance = twitter
+      if (token == null) {
+        if (!authorize(project, twitterInstance)) return
+      }
+      else {
+        twitterInstance.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
+      }
+
+      ProgressManager.checkCanceled()
+      updateStatus(twitterInstance, TweetInfo(dialog.message, imagePath))
+    }
+
+    override fun onThrowable(error: Throwable) {
+      LOG.warn(error)
+      val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
+        EduCoreBundle.message("error.failed.to.authorize")
+      } else {
+        EduCoreBundle.message("error.failed.to.update.status")
+      }
+      Messages.showErrorDialog(project, message, EduCoreBundle.message("twitter.error.failed.to.tweet"))
+    }
   }
 }
