@@ -173,9 +173,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     doValidation()
   }
 
-  open fun onCardClick(course: Course) {
-  }
-
   fun doValidation() {
     coursePanel.doValidation()
   }
