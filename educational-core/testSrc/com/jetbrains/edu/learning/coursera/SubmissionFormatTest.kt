@@ -28,8 +28,7 @@ class SubmissionFormatTest : EduTestCase() {
     courseraSettings.email = "my-email@email.com"
     val token = "xyz"
 
-    val courseraTaskChecker = CourseraTaskChecker()
-    val submission = courseraTaskChecker.createSubmissionJson(project, findTask(0, 0), courseraSettings, token)
+    val submission = CourseraTaskChecker().createSubmissionJson(project, findTask(0, 0), courseraSettings, token)
     val submissionNode = MAPPER.readTree(submission)
     checkJsonValues(submissionNode, mapOf(CourseraTaskChecker.ASSIGNMENT_KEY to assignmentKey,
                                           "submitterEmail" to courseraSettings.email,
