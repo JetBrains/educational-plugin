@@ -23,9 +23,9 @@ class MarketplaceCoursesPanel(
     return TabInfo(infoText, null)
   }
 
-  override fun createCoursesListPanel() = CommunityCoursesListPanel()
+  override fun createCoursesListPanel() = MarketplaceCoursesListPanel()
 
-  inner class CommunityCoursesListPanel : CoursesListWithResetFilters() {
+  inner class MarketplaceCoursesListPanel : CoursesListWithResetFilters() {
 
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
       return EduCourseCard(course)
