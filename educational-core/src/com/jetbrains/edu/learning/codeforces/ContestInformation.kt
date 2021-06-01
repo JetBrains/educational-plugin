@@ -21,6 +21,6 @@ class ContestInformation(
   }
 
   override fun getTags(): List<Tag> {
-    return mutableListOf()
+    return emptyList()
   }
 }
