@@ -11,19 +11,22 @@ import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
+/**
+ * Tab initialization is made in [com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab.init] method
+ * and it must be called in constructor to initialize all necessary UI.
+ */
 open class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(BorderLayout()), Disposable {
-  private val innerTextPanel by lazy { createTextPanel() }
+  private lateinit var innerTextPanel: TabTextPanel
 
   override fun dispose() {}
 
-  private fun createTextPanel(): TabTextPanel {
-    val panel = getTextPanel()
-    add(panel, BorderLayout.CENTER)
-    Disposer.register(this, panel)
-    return panel
+  protected fun init() {
+    innerTextPanel = createTextPanel()
+    add(innerTextPanel, BorderLayout.CENTER)
+    Disposer.register(this, innerTextPanel)
   }
 
-  protected open fun getTextPanel(): TabTextPanel {
+  protected open fun createTextPanel(): TabTextPanel {
     return if (EduSettings.getInstance().javaUiLibraryWithCheck == JavaUILibrary.JCEF) {
       JCEFTextPanel(project)
     }
@@ -36,8 +39,13 @@ open class AdditionalTab(val project: Project, val tabType: TabType) : JPanel(Bo
    * @param text text to be inserted to panel
    * @param plain if false, text will proceed through [com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel.wrapHints]
    * and then will be inserted to "/style/template.html.ft" template as a content or text with Html resources and wrapping hints
+   *
+   * Method must be called after [com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab.init]
    */
   protected fun setText(text: String, plain: Boolean) {
+    if (!this::innerTextPanel.isInitialized) {
+      error("setText must be called after init() method")
+    }
     innerTextPanel.setTabText(text, plain)
   }
 

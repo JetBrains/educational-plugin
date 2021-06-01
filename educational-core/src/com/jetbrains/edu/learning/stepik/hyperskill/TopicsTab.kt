@@ -19,6 +19,7 @@ class TopicsTab(project: Project,
 ) : AdditionalTab(project, TOPICS_TAB) {
 
   init {
+    init()
     val topics = course.taskToTopics[task.index - 1]
     val descriptionText = buildString {
       val textStyleHeader = StyleManager().textStyleHeader
@@ -37,7 +38,7 @@ class TopicsTab(project: Project,
     setText(descriptionText, plain = false)
   }
 
-  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project)
+  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
 
   private fun topicLink(topic: HyperskillTopic, textStyleHeader: String): String {
     val liStyle = "style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)};"

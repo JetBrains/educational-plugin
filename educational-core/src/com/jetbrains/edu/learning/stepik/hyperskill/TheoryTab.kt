@@ -19,9 +19,9 @@ import javax.swing.JSeparator
 class TheoryTab(project: Project, theoryTask: TheoryTask) : AdditionalTab(project, THEORY_TAB) {
 
   init {
+    init()
     val text = getTaskDescriptionWithCodeHighlighting(project, theoryTask)
     setText(text, plain = false)
-
     add(createBottomPanel(), BorderLayout.SOUTH)
   }
 

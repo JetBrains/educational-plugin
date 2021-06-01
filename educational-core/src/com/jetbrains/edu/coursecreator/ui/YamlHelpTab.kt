@@ -11,6 +11,7 @@ import org.apache.commons.lang.text.StrSubstitutor
 class YamlHelpTab(project: Project) : AdditionalTab(project, YAML_HELP_TAB) {
 
   init {
+    init()
     val template = loadText(YAML_TAB_TEMPLATE_FILE) ?: "Cannot load yaml documentation"
     val text = StrSubstitutor(StyleManager.resources()).replace(template)
     setText(text, plain = true)

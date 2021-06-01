@@ -37,10 +37,18 @@ import java.util.*
 import java.util.stream.Collectors
 import kotlin.math.roundToInt
 
-class SubmissionsTab private constructor(project: Project, private val linkHandler: SwingToolWindowLinkHandler?) :
-  AdditionalTab(project, SUBMISSIONS_TAB) {
+class SubmissionsTab private constructor(
+  project: Project,
+  private val linkHandler: SwingToolWindowLinkHandler?,
+  description: String
+) : AdditionalTab(project, SUBMISSIONS_TAB) {
 
-  override fun getTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
+  init {
+    init()
+    setText(description, plain = true)
+  }
+
+  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"
@@ -76,12 +84,13 @@ class SubmissionsTab private constructor(project: Project, private val linkHandl
         linkHandler = LoginLinkHandler(project, submissionsManager)
       }
 
-      return SubmissionsTab(project, linkHandler).apply {
-        setText(descriptionText.toString(), plain = true)
-      }
+      return SubmissionsTab(project, linkHandler, descriptionText.toString())
     }
 
-    private class LoginLinkHandler(project: Project, private val submissionsManager: SubmissionsManager) : SwingToolWindowLinkHandler(project) {
+    private class LoginLinkHandler(
+      project: Project,
+      private val submissionsManager: SubmissionsManager
+    ) : SwingToolWindowLinkHandler(project) {
       override fun process(url: String): Boolean {
         if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
 
@@ -90,8 +99,11 @@ class SubmissionsTab private constructor(project: Project, private val linkHandl
       }
     }
 
-    private class SubmissionsDifferenceLinkHandler(project: Project, private val task: Task,  private val submissionsManager: SubmissionsManager) :
-      SwingToolWindowLinkHandler(project) {
+    private class SubmissionsDifferenceLinkHandler(
+      project: Project,
+      private val task: Task,
+      private val submissionsManager: SubmissionsManager
+    ) : SwingToolWindowLinkHandler(project) {
       override fun process(url: String): Boolean {
         if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
 
@@ -115,7 +127,6 @@ class SubmissionsTab private constructor(project: Project, private val linkHandl
     private fun StringBuilder.addEmptySubmissionsMessage() {
       append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
     }
-
 
     private fun StringBuilder.addSubmissions(submissionsNext: List<Submission>) {
       append("<ul style=list-style-type:none;margin:0;padding:0;>")
@@ -163,7 +174,6 @@ class SubmissionsTab private constructor(project: Project, private val linkHandl
       }
       return solutions.stream().collect(Collectors.toMap(SolutionFile::name, SolutionFile::text))
     }
-
 
     private fun submissionLink(submission: Submission): String? {
       val time = submission.time ?: return null
