@@ -1,12 +1,24 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import org.jsoup.Jsoup
+import java.util.*
 
 class CodeforcesParsingTest : CodeforcesTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    val default = TimeZone.getDefault()
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    Disposer.register(testRootDisposable) {
+      TimeZone.setDefault(default)
+    }
+  }
+
   fun `test codeforces contest Kotlin Heroes Episode 2 task A`() {
     val course = CodeforcesCourse().apply {
       id = 1211
@@ -82,7 +94,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val firstContest = upcomingContests.first()
     assertEquals(1492, firstContest.id)
     assertEquals("Codeforces Round #704 (Div. 2)", firstContest.name)
-    assertEquals("2021-02-23T12:05+03:00[Europe/Moscow]", firstContest.startDate.toString())
+    assertEquals("2021-02-23T12:05Z[UTC]", firstContest.startDate.toString())
     assertEquals(120, firstContest.length.toMinutes())
     assertEquals(true, firstContest.isRegistrationOpen)
   }
@@ -96,7 +108,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val firstContest = recentContests.first()
     assertEquals(1486, firstContest.id)
     assertEquals("Codeforces Round #703 (Div. 2)", firstContest.name)
-    assertEquals("2021-02-18T17:35+03:00[Europe/Moscow]", firstContest.startDate.toString())
+    assertEquals("2021-02-18T17:35Z[UTC]", firstContest.startDate.toString())
     assertEquals(135, firstContest.length.toMinutes())
     assertEquals(false, firstContest.isRegistrationOpen)
   }
@@ -104,5 +116,4 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"
-
 }
