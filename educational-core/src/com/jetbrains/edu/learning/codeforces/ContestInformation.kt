@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.Tag
 import java.time.Duration
 import java.time.ZonedDateTime
 
@@ -17,5 +18,9 @@ class ContestInformation(
     this.id = id
     this.name = name
     this.endDateTime = endDateTime
+  }
+
+  override fun getTags(): List<Tag> {
+    return mutableListOf()
   }
 }
