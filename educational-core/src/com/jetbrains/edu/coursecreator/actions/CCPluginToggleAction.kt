@@ -11,15 +11,23 @@ class CCPluginToggleAction : ToggleAction(EduCoreBundle.lazyMessage("action.togg
   override fun isSelected(e: AnActionEvent): Boolean = isCourseCreatorFeaturesEnabled
 
   override fun setSelected(e: AnActionEvent, state: Boolean) {
-    PropertiesComponent.getInstance().setValue(COURSE_CREATOR_ENABLED, state)
+    isCourseCreatorFeaturesEnabled = state
   }
 
   companion object {
     @NonNls
-    const val COURSE_CREATOR_ENABLED = "Edu.CourseCreator.Enabled"
+    private const val COURSE_CREATOR_ENABLED = "Edu.CourseCreator.Enabled"
 
     @JvmStatic
-    val isCourseCreatorFeaturesEnabled: Boolean
+    var isCourseCreatorFeaturesEnabled: Boolean
       get() = PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED) || isUnitTestMode
+      set(value) {
+        // `PropertiesComponent` removes entry from the corresponding map if `value` equals default value.
+        // But we always want to write property value to property component so let's pass `!value` as default value
+        PropertiesComponent.getInstance().setValue(COURSE_CREATOR_ENABLED, value, !value)
+      }
+
+    val isCourseCreatorFeaturesPropertySet: Boolean
+      get() = PropertiesComponent.getInstance().isValueSet(COURSE_CREATOR_ENABLED)
   }
 }

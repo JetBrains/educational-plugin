@@ -69,9 +69,9 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       propertiesComponent.setValue(STEPIK_AUTH_RESET, true)
     }
 
-    if (!propertiesComponent.isValueSet(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
+    if (!CCPluginToggleAction.isCourseCreatorFeaturesPropertySet) {
       if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
-        propertiesComponent.setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
+        CCPluginToggleAction.isCourseCreatorFeaturesEnabled = true
       }
       else {
         // HACK: ActionManager is instantiated here

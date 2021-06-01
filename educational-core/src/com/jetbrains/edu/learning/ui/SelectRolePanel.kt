@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.ui
 
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -30,10 +29,10 @@ class SelectRolePanel : JPanel() {
     val teacher = JLabel(EducationalCoreIcons.Teacher)
     myStudent = JLabel(EducationalCoreIcons.StudentHover)
     myStudent.preferredSize = Dimension(iconSize, iconSize)
-    PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, false, true)
+    CCPluginToggleAction.isCourseCreatorFeaturesEnabled = false
     myStudent.addMouseListener(object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
-        PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, false, true)
+        CCPluginToggleAction.isCourseCreatorFeaturesEnabled = false
         myStudent.icon = EducationalCoreIcons.StudentHover
         teacher.icon = EducationalCoreIcons.Teacher
       }
@@ -56,7 +55,7 @@ class SelectRolePanel : JPanel() {
     teacherPanel.add(JLabel(EduCoreBundle.message("select.role.dialog.educator"), SwingConstants.CENTER))
     teacher.addMouseListener(object : MouseAdapter() {
       override fun mousePressed(e: MouseEvent?) {
-        PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
+        CCPluginToggleAction.isCourseCreatorFeaturesEnabled = true
         myStudent.icon = EducationalCoreIcons.Student
         teacher.icon = EducationalCoreIcons.TeacherHover
       }
