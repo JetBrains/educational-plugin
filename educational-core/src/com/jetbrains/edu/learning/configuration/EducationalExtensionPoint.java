@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.configuration;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.RequiredElement;
 import com.intellij.serviceContainer.BaseKeyedLazyInstance;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.jetbrains.edu.learning.EduNames;
@@ -11,9 +12,11 @@ public class EducationalExtensionPoint<T> extends BaseKeyedLazyInstance<T> {
     ExtensionPointName.create("Educational.configurator");
 
   @Attribute("implementationClass")
+  @RequiredElement
   public String implementationClass;
 
   @Attribute("language")
+  @RequiredElement
   public String language = "";
 
   @Attribute("courseType")
