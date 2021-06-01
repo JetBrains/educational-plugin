@@ -5,6 +5,7 @@ import com.intellij.execution.testframework.TestConsoleProperties
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter
 import com.intellij.execution.testframework.sm.runner.events.TreeNodeEvent
+import com.intellij.ide.IdeBundle
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
@@ -53,7 +54,7 @@ class PyCCTestEventsConverter(
       isStarted = true
     }
     parser.processMessage(text, processor)
-    if (PROCESS_FINISHED in text) {
+    if (getProcessFinishedMessage() in text) {
       if (nextId == 2) {
         // `nextId == 2` means that converter didn't receive any test result
         val failedMessage = TestMessage.Failed(ROOT_SUITE_NAME, CheckResult.noTestsRun.message)
@@ -119,6 +120,8 @@ class PyCCTestEventsConverter(
     private const val ACTUAL: String = "actual"
     private const val EXPECTED: String = "expected"
 
-    private const val PROCESS_FINISHED = "Process finished"
+    private fun getProcessFinishedMessage(): Regex {
+      return IdeBundle.message("finished.with.exit.code.text.message", "\\d+").toRegex()
+    }
   }
 }

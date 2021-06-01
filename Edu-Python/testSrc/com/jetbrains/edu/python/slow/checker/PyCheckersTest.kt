@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.python.PythonLanguage
 
-@Suppress("PyInterpreter")
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCheckersTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {
@@ -23,6 +23,13 @@ class PyCheckersTest : PyCheckersTestBase() {
           taskFile("output.txt") {
             withText("Hello, World!\n")
           }
+        }
+        eduTask("NonZeroExitCodeInTests") {
+          pythonTaskFile("hello_world.py", """print("Hello, world!")""")
+          pythonTaskFile("tests.py", """
+            print("#educational_plugin test OK")
+            exit(1)
+          """)
         }
       }
     }
