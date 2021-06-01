@@ -19,8 +19,7 @@ import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
 
-class SwingTextPanel(project: Project,
-                     hyperlinkListener: HyperlinkListener? = null) : TabTextPanel(project) {
+class SwingTextPanel(project: Project, hyperlinkListener: HyperlinkListener? = null) : TabTextPanel(project) {
   private val textPane: JTextPane = createTextPane()
 
   override val component: JComponent = textPane

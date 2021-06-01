@@ -64,7 +64,7 @@ class TabManager(private val project: Project, private val contentManager: Conte
     return TopicsTab(project, course, task)
   }
 
-  private fun createSubmissionsTab(task: Task): SubmissionsTab = SubmissionsTab(project, task)
+  private fun createSubmissionsTab(task: Task): SubmissionsTab = SubmissionsTab.create(project, task)
 
   private fun createYamlHelpTab(): YamlHelpTab = YamlHelpTab(project)
 
