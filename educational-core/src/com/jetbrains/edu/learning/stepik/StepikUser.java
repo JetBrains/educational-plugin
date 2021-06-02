@@ -60,26 +60,6 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
     return StringUtil.join(new String[]{info.getFirstName(), info.getLastName()}, " ");
   }
 
-  @Transient
-  @NotNull
-  public String getAccessToken() {
-    TokenInfo tokenInfo = getTokenInfo();
-    return tokenInfo.getAccessToken();
-  }
-
-  @Transient
-  public void setAccessToken(String accessToken) {
-    TokenInfo tokenInfo = getTokenInfo();
-    tokenInfo.setAccessToken(accessToken);
-  }
-
-  @Transient
-  @NotNull
-  public String getRefreshToken() {
-    TokenInfo tokenInfo = getTokenInfo();
-    return tokenInfo.getRefreshToken();
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
