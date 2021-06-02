@@ -32,6 +32,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -69,7 +70,6 @@ public abstract class CourseProjectGenerator<S> {
 
   public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");
   public static final Key<String> COURSE_MODE_TO_CREATE = Key.create("edu.courseModeToCreate");
-  public static final Key<String> COURSE_TYPE_TO_CREATE = Key.create("edu.courseTypeToCreate");
   public static final Key<String> COURSE_LANGUAGE_ID_TO_CREATE = Key.create("edu.courseLanguageIdToCreate");
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
@@ -106,6 +106,9 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+    StatusBarWidgetsManager statusBarWidgetsManager = project.getService(StatusBarWidgetsManager.class);
+    statusBarWidgetsManager.updateAllWidgets();
+
     loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
 
@@ -163,7 +166,6 @@ public abstract class CourseProjectGenerator<S> {
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
 
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
-    baseDir.putUserData(COURSE_TYPE_TO_CREATE, myCourse.getItemType());
     baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.getLanguageID());
 
     ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);

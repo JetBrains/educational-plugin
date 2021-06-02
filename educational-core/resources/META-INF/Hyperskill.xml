@@ -22,7 +22,7 @@
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStartupActivity"/>
 
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
-    <statusBarWidgetProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetProvider"/>
+    <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.stepik.hyperskill.widget.HyperskillWidgetFactory" order="before positionWidget"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader"/>
 
     <experimentalFeature id="edu.course.hyperskill" percentOfUsers="100" internalFeature="true">

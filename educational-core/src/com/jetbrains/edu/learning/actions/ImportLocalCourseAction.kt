@@ -17,6 +17,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -53,10 +54,7 @@ open class ImportLocalCourseAction(
                                              Messages.OK,
                                              Messages.getErrorIcon())
             if (result == Messages.NO) {
-              EduCounterUsageCollector.importCourseArchive()
-              course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
-              closeDialog(component)
-              ImportCourseDialog(course).show()
+              doImportNewCourse(course, component)
             }
             else if (result == Messages.OK) {
               closeDialog(component)
@@ -67,15 +65,28 @@ open class ImportLocalCourseAction(
           }
           return@chooseFile
         }
-        EduCounterUsageCollector.importCourseArchive()
-        closeDialog(component)
-        ImportCourseDialog(course).show()
+        doImportNewCourse(course, component)
       }
     }
   }
 
-  private class ImportCourseDialog(course: Course) : JoinCourseDialog(course) {
+  private fun doImportNewCourse(course: Course, component: Component?) {
+    EduCounterUsageCollector.importCourseArchive()
+    course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
+    closeDialog(component)
+    ImportCourseDialog(course).show()
+  }
+
+  private class ImportCourseDialog(private val course: Course) : JoinCourseDialog(course) {
     override fun isToShowError(errorState: ErrorState): Boolean = errorState !is ErrorState.NotLoggedIn
+
+    override fun show() {
+      super.show()
+      val project = course.project ?: return
+      // IS_LOCAL_COURSE = true info is stored in PropertiesComponent to keep it after course restart on purpose
+      // not to show login widget for local course
+      PropertiesComponent.getInstance(project).setValue(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE, true)
+    }
   }
 
   private fun closeDialog(component: Component?) {
