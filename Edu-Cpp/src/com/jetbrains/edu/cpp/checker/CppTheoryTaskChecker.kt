@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 class CppTheoryTaskChecker(task: TheoryTask, project: Project) : TheoryTaskChecker(task, project) {
   override fun getRunConfiguration(): RunnerAndConfigurationSettings? {
-    val taskProjectName = getCMakeProjectUniqueName(task)
+    val taskProjectName = "${getCMakeProjectUniqueName(task)}-run"
     return RunManager.getInstance(project).findConfigurationByName(taskProjectName)
   }
 }
