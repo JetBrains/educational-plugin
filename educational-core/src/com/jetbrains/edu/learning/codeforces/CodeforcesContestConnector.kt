@@ -6,7 +6,10 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
-import java.time.*
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -100,7 +103,8 @@ object CodeforcesContestConnector {
     val startDateString = dateElement.text()
     val formatter = DateTimeFormatter.ofPattern("MMM/dd/yyyy HH:mm", dateLocale)
     val startDateLocal = LocalDateTime.parse(startDateString, formatter)
-    return ZonedDateTime.ofInstant(startDateLocal, OffsetDateTime.now().offset, ZoneId.systemDefault())
+    val offset = ZoneId.systemDefault().rules.getOffset(startDateLocal)
+    return ZonedDateTime.ofInstant(startDateLocal, offset, ZoneId.systemDefault())
   }
 
   private fun getContestsElements(recentContests: Element) = recentContests.getElementsByTag(TR_TAG)

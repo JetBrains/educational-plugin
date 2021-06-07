@@ -113,6 +113,30 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(false, firstContest.isRegistrationOpen)
   }
 
+  fun testContestWinterTime() {
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"))
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val recentContests = CodeforcesContestConnector.getRecentContests(document)
+    assertTrue(recentContests.size == 100)
+
+    val firstContest = recentContests.first()
+
+    assertEquals("2021-02-18T17:35+01:00[Europe/Berlin]", firstContest.startDate.toString())
+  }
+
+  fun testContestSummerTime() {
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"))
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val recentContests = CodeforcesContestConnector.getRecentContests(document)
+    assertTrue(recentContests.size == 100)
+
+    val firstContest = recentContests.first()
+
+    assertEquals("2021-05-18T17:35+02:00[Europe/Berlin]", firstContest.startDate.toString())
+  }
+
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"
