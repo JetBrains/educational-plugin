@@ -83,7 +83,7 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
     get() {
       return this is EduCourse
              && isStepikRemote
-             && isPublic
+             && isStepikPublic
              && !ListedCoursesIdsProvider.featuredCommunityCourses.contains(id)
              && this !is StepikCourse
              && !ListedCoursesIdsProvider.inProgressCourses.contains(id)

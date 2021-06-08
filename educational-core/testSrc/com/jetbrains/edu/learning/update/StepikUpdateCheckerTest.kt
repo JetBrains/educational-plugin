@@ -62,7 +62,7 @@ class StepikUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       name = "Test Course"
       id = 1
       updateDate = date
-      isPublic = true
+      isStepikPublic = true
       isMarketplace = isMarketplaceCourse
     }
 

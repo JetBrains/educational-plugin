@@ -56,7 +56,7 @@ private fun AtomicInteger.compareAndUpdateValue(newPage: Int) {
 private fun getVisibility(course: EduCourse): CourseVisibility {
   val communityCourses = ListedCoursesIdsProvider.featuredCommunityCourses
   return when {
-    !course.isPublic -> CourseVisibility.PrivateVisibility
+    !course.isStepikPublic -> CourseVisibility.PrivateVisibility
     communityCourses.contains(course.id) -> CourseVisibility.FeaturedVisibility(communityCourses.indexOf(course.id))
     communityCourses.isEmpty() -> CourseVisibility.LocalVisibility
     else -> CourseVisibility.PublicVisibility

@@ -15,7 +15,8 @@
           "fields" : {
             "environment": null,
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           },
           "organization" : {
             "name" : "JetBrains s.r.o."
@@ -34,7 +35,8 @@
           "fields" : {
             "environment": null,
             "programmingLanguage" : "JAVA",
-            "language" : "ru"
+            "language" : "ru",
+            "isPrivate": false
           }
         },
         {
@@ -50,7 +52,8 @@
           "fields": {
             "environment": "sbt",
             "programmingLanguage": "Scala",
-            "language": "en"
+            "language": "en",
+            "isPrivate": false
           }
         }
       ]

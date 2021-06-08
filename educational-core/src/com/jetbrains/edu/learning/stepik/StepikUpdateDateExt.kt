@@ -30,7 +30,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
     return isUpToDate
   }
 
-  if (!isPublic && !EduSettings.isLoggedIn()) {
+  if (!isStepikPublic && !EduSettings.isLoggedIn()) {
     return isUpToDate
   }
 

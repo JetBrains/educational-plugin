@@ -263,7 +263,7 @@ public class CCStepikConnector {
     // so we get actual info here
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     if (courseInfo != null) {
-      course.setPublic(courseInfo.isPublic());
+      course.setStepikPublic(courseInfo.isStepikPublic());
       course.setCompatible(courseInfo.isCompatible());
     }
     else {

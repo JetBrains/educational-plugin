@@ -87,7 +87,7 @@ abstract class StepikEduCourseMixin {
   lateinit var myCreateDate: Date
 
   @JsonProperty(IS_PUBLIC)
-  var isPublic: Boolean = false
+  var isStepikPublic: Boolean = false
 
   @JsonProperty(SUMMARY)
   lateinit var description: String

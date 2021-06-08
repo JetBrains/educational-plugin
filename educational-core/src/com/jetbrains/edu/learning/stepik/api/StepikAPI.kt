@@ -177,7 +177,7 @@ class CourseData(course: Course) {
     this.course.authors = course.authors
     if (course is EduCourse && course.isStepikRemote) {
       this.course.instructors = course.instructors
-      this.course.isPublic = course.isPublic
+      this.course.isStepikPublic = course.isStepikPublic
     }
   }
 }

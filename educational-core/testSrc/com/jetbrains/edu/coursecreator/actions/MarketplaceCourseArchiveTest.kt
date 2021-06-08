@@ -67,6 +67,19 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test private course`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "new text")
+    }.apply {
+      isMarketplace = true
+      isMarketplacePrivate = true
+    }
+    doTest()
+  }
+
   fun `test plugin version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}
     courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
@@ -80,7 +93,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   fun `test possible answer encrypted`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -97,7 +110,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   fun `test course version`() {
     val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
       }

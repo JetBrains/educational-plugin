@@ -62,6 +62,10 @@
           ],
           "additionalProperties": false
         },
+        "is_private": {
+          "description": "Determines if course is private and should not be displayed in browse courses dialog",
+          "type": ["boolean", "null"]
+        },
         "course_type": {
           "description": "Course type",
           "type": "string",

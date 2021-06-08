@@ -124,7 +124,7 @@ class SyncStepikCourseTest : EduTestCase() {
     }
     course.apply {
       updateDate = courseUpdateDate
-      isPublic = true
+      isStepikPublic = true
       isUpToDate = isCourseUpToDate
     }
     return course

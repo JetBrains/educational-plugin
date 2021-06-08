@@ -73,20 +73,20 @@ class StepikCoursesProvider : CoroutineScope {
   suspend fun getFeaturedCourses(): List<Course> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
-      .filter { it.isPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
+      .filter { it.isStepikPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
       .sortedByDescending { it.reviewScore }
   }
 
   suspend fun getAllOtherCourses(): List<EduCourse> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
-      .filter { it.isPublic && it.id !in ListedCoursesIdsProvider.featuredCommunityCourses }
+      .filter { it.isStepikPublic && it.id !in ListedCoursesIdsProvider.featuredCommunityCourses }
   }
 
   suspend fun getPrivateCourses(): List<Course> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
-      .filterNot { it.isPublic }
+      .filterNot { it.isStepikPublic }
   }
 
   private fun getPublicCourseInfos(): List<EduCourse> {

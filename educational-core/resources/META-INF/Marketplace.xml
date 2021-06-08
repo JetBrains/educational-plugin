@@ -8,6 +8,9 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
     <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory" order="before positionWidget"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.marketplace.MarketplaceStartupActivity"/>
+    <experimentalFeature id="edu.course.marketplace.show.private" percentOfUsers="0">
+      <description>Enables displaying private courses in browse courses dialog</description>
+    </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

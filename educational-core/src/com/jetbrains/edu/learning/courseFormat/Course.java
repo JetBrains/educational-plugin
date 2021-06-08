@@ -58,6 +58,7 @@ public abstract class Course extends LessonContainer {
   private Vendor myVendor;
   private int myMarketplaceCourseVersion = 0;
   @Nullable private String organization;
+  private boolean isMarketplacePrivate = false;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
@@ -357,5 +358,13 @@ public abstract class Course extends LessonContainer {
 
   public void incrementMarketplaceCourseVersion(int remoteCourseVersion) {
     myMarketplaceCourseVersion = ++remoteCourseVersion;
+  }
+
+  public boolean isMarketplacePrivate() {
+    return isMarketplacePrivate;
+  }
+
+  public void setMarketplacePrivate(boolean isCoursePrivate) {
+    isMarketplacePrivate = isCoursePrivate;
   }
 }

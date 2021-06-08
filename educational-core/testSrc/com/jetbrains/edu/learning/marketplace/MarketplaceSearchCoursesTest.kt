@@ -84,6 +84,18 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     checkNotNull(course)
     doTest(course, courseId, "Introduction to Python", "Python", "English", "Introduction course to Python",
            2, 5.0)
+  }
+
+  fun `test private course found`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+      mockResponse("private_course.json")
+    }
+    val courseId = 1
+    val course = MarketplaceConnector.getInstance().searchCourse(courseId)
+    checkNotNull(course)
+    doTest(course, courseId, "Introduction to Python", "Python", "English", "Introduction course to Python",
+           2, 5.0, expectedIsPrivate = true)
     assertNull(course.organization)
     checkAuthorFullNames(listOf("FirstName LastName"), course.authorFullNames)
     checkAuthors(listOf("FirstName LastName"), course.authors)
@@ -97,7 +109,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
                      expectedDescription: String,
                      expectedLearnersCount: Int,
                      expectedReviewScore: Double,
-                     expectedEnvironment: String = DEFAULT_ENVIRONMENT) {
+                     expectedEnvironment: String = DEFAULT_ENVIRONMENT,
+                     expectedIsPrivate: Boolean = false) {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
@@ -106,6 +119,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedDescription, course.description)
     assertEquals(expectedLearnersCount, course.learnersCount)
     assertEquals(expectedReviewScore, course.reviewScore)
+    assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertTrue(course.isMarketplace)
   }
 

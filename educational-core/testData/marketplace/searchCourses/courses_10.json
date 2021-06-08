@@ -11,7 +11,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -22,7 +23,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -33,7 +35,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -44,7 +47,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -55,7 +59,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -66,7 +71,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -77,7 +83,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -88,7 +95,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -99,7 +107,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         },
         {
@@ -110,7 +119,8 @@
           ],
           "fields" : {
             "programmingLanguage" : "Python",
-            "language" : "en"
+            "language" : "en",
+            "isPrivate": false
           }
         }
       ]

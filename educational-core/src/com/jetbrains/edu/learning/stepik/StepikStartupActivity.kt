@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
 
 class StepikStartupActivity : StartupActivity {
@@ -44,7 +43,7 @@ class StepikStartupActivity : StartupActivity {
             if (!EduSettings.isLoggedIn()) return
 
             submissionsManager.prepareSubmissionsContent {}
-            if (!course.isPublic) {
+            if (!course.isStepikPublic) {
               updateChecker.check()
             }
           }

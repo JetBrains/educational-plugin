@@ -1,0 +1,22 @@
+query {
+  plugins(
+    search: {
+      filters: [{ field: "family", value: "edu"}]
+      max: ${max}
+      offset: ${offset}
+      sortBy: RATING
+    }
+  ) {
+    total
+    plugins {
+      id
+      name
+      description
+      downloads
+      rating
+      developers
+      organization {name}
+      fields
+    }
+  }
+}

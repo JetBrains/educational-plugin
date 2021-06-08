@@ -6,4 +6,5 @@ object EduExperimentalFeatures {
   const val CC_HYPERSKILL = "edu.course.hyperskill"
   const val PROBLEMS_BY_TOPIC = "edu.course.hyperskill.problems.by.topic"
   const val CODEFORCES_CURRENT_UPCOMING = "edu.codeforces.current.upcoming"
+  const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
 }

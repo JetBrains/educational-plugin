@@ -13,10 +13,11 @@ const val DEVELOPERS = "developers"
 const val DOWNLOADS = "downloads"
 const val ENVIRONMENT = "environment"
 const val FIELDS = "fields"
-const val MARKETPLACE_COURSE_VERSION = "course_version"
 const val GUEST = "guest"
 const val ID = "id"
+const val IS_PRIVATE = "isPrivate"
 const val LANGUAGE = "language"
+const val MARKETPLACE_COURSE_VERSION = "course_version"
 const val NAME = "name"
 const val ORGANIZATION = "organization"
 const val PLUGINS = "plugins"
@@ -90,6 +91,9 @@ class Fields {
 
   @JsonProperty(ENVIRONMENT)
   var environment: String? = DEFAULT_ENVIRONMENT
+
+  @JsonProperty(IS_PRIVATE)
+  var isPrivate: Boolean = false
 }
 
 class Organization {

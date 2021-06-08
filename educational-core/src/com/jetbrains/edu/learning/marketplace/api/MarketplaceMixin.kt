@@ -58,6 +58,7 @@ private class MarketplaceCourseBuilder(
       environment = fields.environment ?: DEFAULT_ENVIRONMENT
       marketplaceCourseVersion = version ?: 1
       organization = courseOrganization?.name
+      isMarketplacePrivate = fields.isPrivate
       setMarketplaceAuthorsAsString(developers)
     }
 

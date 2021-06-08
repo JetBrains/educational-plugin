@@ -28,7 +28,7 @@ public class EduCourse extends Course {
   List<Integer> instructors = new ArrayList<>();
   private Date myCreateDate = new Date(0);
   @Transient private boolean isUpToDate = true;
-  boolean isPublic;
+  boolean isStepikPublic;
   @Transient private String myAdminsGroup;
   private int learnersCount = 0;
 
@@ -118,12 +118,12 @@ public class EduCourse extends Course {
     myType = type;
   }
 
-  public boolean isPublic() {
-    return isPublic;
+  public boolean isStepikPublic() {
+    return isStepikPublic;
   }
 
-  public void setPublic(boolean isPublic) {
-    this.isPublic = isPublic;
+  public void setStepikPublic(boolean isPublic) {
+    this.isStepikPublic = isPublic;
   }
 
   public boolean isCompatible() {
@@ -161,7 +161,7 @@ public class EduCourse extends Course {
   }
 
   public void convertToLocal() {
-    isPublic = false;
+    isStepikPublic = false;
     isCompatible = true;
     setId(0);
     setUpdateDate(new Date(0));

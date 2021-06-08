@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_PRIVATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_COURSE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -61,7 +62,7 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, PROGRAMMING_LANGUAGE,
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
@@ -105,6 +106,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val myVendor: Vendor? = null
+
+  @JsonProperty(IS_PRIVATE)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var isMarketplacePrivate: Boolean = false
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -176,6 +181,7 @@ private class CourseBuilder(
   @JsonProperty(SUMMARY) val summary: String,
   @JsonProperty(IS_MARKETPLACE) val yamlIsMarketplace: Boolean,
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
+  @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
   @JsonProperty(MARKETPLACE_COURSE_VERSION) val yamlCourseVersion: Int?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
@@ -216,6 +222,7 @@ private class CourseBuilder(
       description = summary
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       vendor = yamlVendor
+      isMarketplacePrivate = yamlIsPrivate ?: false
       marketplaceCourseVersion = yamlCourseVersion ?: 1
       solutionsHidden = areSolutionsHidden ?: false
 
@@ -272,6 +279,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
+    existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
     }
