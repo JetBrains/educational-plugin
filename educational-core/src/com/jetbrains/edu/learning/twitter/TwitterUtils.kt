@@ -108,7 +108,7 @@ object TwitterUtils {
     val token = twitter.getOAuthAccessToken(requestToken, pin)
     ProgressManager.checkCanceled()
     invokeAndWaitIfNeeded {
-      val credentialAttributes = credentialAttributes(token.userId.toString())
+      val credentialAttributes = credentialAttributes(TwitterSettings.getInstance().userId)
       PasswordSafe.instance.set(credentialAttributes, Credentials(token.token, token.tokenSecret))
     }
     return true
