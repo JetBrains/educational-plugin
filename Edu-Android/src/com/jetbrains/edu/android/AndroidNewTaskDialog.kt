@@ -26,8 +26,6 @@ class AndroidNewTaskAfterPopupDialog(
   private val currentInfo: NewStudyItemInfo
 ) : CCCreateStudyItemDialogBase(project, course, model) {
 
-  init { init() }
-
   private val packageNameField: JBTextField = JBTextField(TEXT_FIELD_COLUMNS).apply {
     val userName = System.getProperty("user.name")
     val packageSuffix = if (userName != null) NewProjectModel.nameToJavaPackage(userName) else null
@@ -44,6 +42,10 @@ class AndroidNewTaskAfterPopupDialog(
   }
 
   private var compileSdkVersion: Int = SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
+
+  init {
+    init()
+  }
 
   override fun showNameField(): Boolean = false
   override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
