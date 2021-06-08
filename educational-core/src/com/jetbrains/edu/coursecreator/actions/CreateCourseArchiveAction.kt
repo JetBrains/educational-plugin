@@ -1,14 +1,16 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog
@@ -21,6 +23,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+import java.io.File
 import java.util.function.Supplier
 
 abstract class CreateCourseArchiveAction(text: Supplier<String>) : DumbAwareAction(text) {
@@ -58,10 +61,7 @@ abstract class CreateCourseArchiveAction(text: Supplier<String>) : DumbAwareActi
 
     val errorMessage = createCourseArchive(project, locationPath)
     if (errorMessage == null) {
-      invokeLater {
-        Messages.showInfoMessage(EduCoreBundle.message("dialog.message.course.archive.saved.to", locationPath),
-                                 EduCoreBundle.message("action.create.course.archive.success.message"))
-      }
+      showNotification(project, EduCoreBundle.message("action.create.course.archive.success.message"), ShowFileAction(locationPath))
       PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, locationPath)
       EduCounterUsageCollector.createCourseArchive()
     }
@@ -84,7 +84,21 @@ abstract class CreateCourseArchiveAction(text: Supplier<String>) : DumbAwareActi
   companion object {
     @NonNls
     const val LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation"
+
     @NonNls
     const val AUTHOR_NAME = "Edu.Author.Name"
+  }
+
+  @Suppress("ComponentNotRegistered")
+  class ShowFileAction(val path: String) : AnAction(
+    EduCoreBundle.message("action.create.course.archive.open.file", RevealFileAction.getFileManagerName())) {
+    override fun actionPerformed(e: AnActionEvent) {
+      RevealFileAction.openFile(File(path))
+    }
+
+    override fun update(e: AnActionEvent) {
+      val presentation = e.presentation
+      presentation.isVisible = RevealFileAction.isSupported()
+    }
   }
 }
