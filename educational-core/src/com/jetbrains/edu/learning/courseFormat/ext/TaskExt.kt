@@ -53,6 +53,11 @@ fun Task.getAllTestDirectories(project: Project): List<PsiDirectory> {
 }
 
 fun Task.getAllTestFiles(project: Project): List<PsiFile> {
+  val testFiles = getAllTestVFiles(project)
+  return PsiUtilCore.toPsiFiles(PsiManager.getInstance(project), testFiles)
+}
+
+fun Task.getAllTestVFiles(project: Project): MutableList<VirtualFile> {
   val testFiles = mutableListOf<VirtualFile>()
   findTestDirs(project).forEach { testDir ->
     VfsUtilCore.processFilesRecursively(testDir) {
@@ -62,7 +67,7 @@ fun Task.getAllTestFiles(project: Project): List<PsiFile> {
       true
     }
   }
-  return PsiUtilCore.toPsiFiles(PsiManager.getInstance(project), testFiles)
+  return testFiles
 }
 
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>

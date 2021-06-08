@@ -11,13 +11,12 @@ import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
-import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
@@ -211,6 +210,10 @@ object NavigationUtils {
         FileEditorManager.getInstance(project).closeFile(file)
       }
     }
+    if (CCUtils.isCourseCreator(project)) {
+      openCCTaskFiles(project, task)
+      return
+    }
     val taskFiles = task.taskFiles
 
     val lesson = task.lesson
@@ -259,6 +262,19 @@ object NavigationUtils {
 
     selectFirstAnswerPlaceholder(project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+  }
+
+  private fun openCCTaskFiles(project: Project, task: Task) {
+    val taskDir = task.getDir(project.courseDir) ?: return
+    val descriptionFile = task.getDescriptionFile(project)
+    descriptionFile?.let { FileEditorManager.getInstance(project).openFile(it, false) }
+
+    task.getAllTestVFiles(project).forEach { testFile ->
+      FileEditorManager.getInstance(project).openFile(testFile, false)
+    }
+    val firstTaskFile = getFirstTaskFile(taskDir, task)
+    ProjectView.getInstance(project).refresh()
+    firstTaskFile?.let { updateProjectView(project, it) }
   }
 
   private fun selectFirstAnswerPlaceholder(project: Project) {

@@ -407,7 +407,6 @@ public class EduUtils {
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
   }
 
-  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
   @Nullable
   public static VirtualFile flushWindows(@NotNull final TaskFile taskFile, @NotNull final VirtualFile file) {
     final VirtualFile taskDir = file.getParent();

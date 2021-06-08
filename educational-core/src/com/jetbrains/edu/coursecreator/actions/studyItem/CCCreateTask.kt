@@ -15,10 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import icons.EducationalCoreIcons.IdeTask
 import icons.EducationalCoreIcons.Task
 import java.io.IOException
-import java.util.*
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
@@ -31,7 +31,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     Function { file -> (item as? Task)?.lesson?.getTask(file.name) }
 
   @Throws(IOException::class)
-  override fun createItemDir(project: Project, course: Course, item: Task, parentDirectory: VirtualFile): VirtualFile? {
+  override fun createItemDir(project: Project, course: Course, item: Task, parentDirectory: VirtualFile): VirtualFile {
     return GeneratorUtils.createTask(project, item, parentDirectory)
   }
 
@@ -40,6 +40,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     if (!isUnitTestMode) {
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
     }
+    NavigationUtils.navigateToTask(project, item as Task)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =

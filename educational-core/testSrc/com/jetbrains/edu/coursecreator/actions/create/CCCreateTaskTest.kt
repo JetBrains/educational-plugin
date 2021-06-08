@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -8,8 +10,12 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getAllTestVFiles
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import org.hamcrest.CoreMatchers.allOf
@@ -32,6 +38,9 @@ class CCCreateTaskTest : EduActionTestCase() {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
     assertEquals(2, course.lessons[0].taskList.size)
+
+    val task = course.lessons[0].taskList[1]
+    checkOpenedFiles(task)
   }
 
   fun `test create task in lesson in section`() {
@@ -196,6 +205,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create framework task without test copy`() = doCreateFrameworkTaskTest(false)
+
   fun `test create framework task with test copy`() = doCreateFrameworkTaskTest(true)
 
   private fun doCreateFrameworkTaskTest(copyTests: Boolean) {
@@ -268,5 +278,15 @@ class CCCreateTaskTest : EduActionTestCase() {
   private fun getDefaultTestText(course: Course): String? {
     val testTemplateName = course.configurator?.courseBuilder?.testTemplateName ?: return null
     return GeneratorUtils.getInternalTemplateText(testTemplateName)
+  }
+
+  private fun checkOpenedFiles(task: Task) {
+    val taskDir = task.getDir(myFixture.project.courseDir)!!
+    val openFiles = FileEditorManagerEx.getInstanceEx(myFixture.project).openFiles
+    openFiles.forEach { openFile ->
+      assertTrue(VfsUtil.isAncestor(taskDir, openFile, true))
+    }
+    assertContainsElements(openFiles.toList(), task.getAllTestVFiles(myFixture.project))
+    assertContainsElements(openFiles.toList(), task.getDescriptionFile(project))
   }
 }
