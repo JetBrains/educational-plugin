@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
-import icons.AndroidIcons
+import icons.StudioIcons
 import javax.swing.Icon
 
 class AndroidConfigurator : GradleConfiguratorBase() {
@@ -29,5 +29,5 @@ class AndroidConfigurator : GradleConfiguratorBase() {
     get() = isFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES) || isUnitTestMode
 
   override val logo: Icon
-    get() = AndroidIcons.Android
+    get() = StudioIcons.Common.ANDROID_HEAD
 }
