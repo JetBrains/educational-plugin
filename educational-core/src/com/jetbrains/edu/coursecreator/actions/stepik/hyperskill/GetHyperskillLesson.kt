@@ -138,7 +138,7 @@ class GetHyperskillLesson : DumbAwareAction(
   private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String>? {
     for (task in lesson.taskList) {
       val taskFiles = task.taskFiles.values
-      if (taskFiles.any { it.name.contains("androidTest") }) {
+      if (taskFiles.any { it.name.contains("androidTest") || it.name.contains("AndroidManifest.xml") }) {
         return EduNames.KOTLIN to EduNames.ANDROID
       }
       if (taskFiles.any { it.name == "tests.py" }) {
