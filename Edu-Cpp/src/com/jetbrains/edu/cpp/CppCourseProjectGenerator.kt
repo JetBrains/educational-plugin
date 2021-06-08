@@ -53,11 +53,11 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  private fun addCMakeListToTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
+  private fun addCMakeListToStepikTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
     when (item) {
-      is ItemContainer -> item.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
+      is ItemContainer -> item.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
       is Task -> {
-        val cMakeFile = item.addCMakeList(getCMakeProjectUniqueName(item), projectSettings.languageStandard)
+        val cMakeFile = item.addCMakeList(getCMakeProjectName(item), projectSettings.languageStandard)
         GeneratorUtils.createChildFile(project, item.getDir(project.courseDir) ?: return, cMakeFile.name, cMakeFile.text)
       }
     }
@@ -65,7 +65,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
     if (myCourse is StepikCourse) {
-      myCourse.items.forEach { addCMakeListToTasks(it, project, projectSettings) }
+      myCourse.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
     }
 
     val googleTestSrc = FileUtil.join(project.courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE, GTEST_SOURCE_DIR_VALUE)

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.cidr.lang.OCLanguage
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
 /**
  * Create CMake for the task and add it as taskFile.
@@ -33,7 +35,9 @@ fun Task.addCMakeList(projectName: String, cppStandard: String = ""): TaskFile {
   return taskFile
 }
 
-fun getCMakeProjectUniqueName(task: Task, nameExtractor: (StudyItem) -> String = ::getDefaultName): String {
+fun getCMakeProjectName(task: Task): String {
+  val nameExtractor = if (task.course is StepikCourse) ::getDefaultName else StudyItem::getName
+
   val lesson = task.lesson
   val section = lesson.section
 
@@ -41,8 +45,10 @@ fun getCMakeProjectUniqueName(task: Task, nameExtractor: (StudyItem) -> String =
   val lessonPart = nameExtractor(lesson)
   val taskPart = nameExtractor(task)
 
-  return "$sectionPart-$lessonPart-$taskPart"
+  return "${sectionPart.sanitized()}-${lessonPart.sanitized()}-${taskPart.sanitized()}"
 }
+
+private fun String.sanitized(): String = FileUtil.sanitizeFileName(this, true)
 
 fun getDefaultName(item: StudyItem) = when (item) {
   is Section -> "${EduNames.SECTION}${item.index}"

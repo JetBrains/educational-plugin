@@ -12,9 +12,8 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeVisitor
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.cpp.findCMakeCommand
-import com.jetbrains.edu.cpp.getCMakeProjectUniqueName
+import com.jetbrains.edu.cpp.getCMakeProjectName
 import com.jetbrains.edu.cpp.messages.EduCppBundle
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getTaskFile
 
@@ -42,7 +41,7 @@ class NoTaskProjectNameInspection : LocalInspectionTool() {
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val mockFile = PsiFileFactory.getInstance(project).createFileFromText(
         "mock",
-        CMakeListsFileType.INSTANCE, "project(${getCMakeProjectUniqueName(taskFile.task, StudyItem::getName)})\n"
+        CMakeListsFileType.INSTANCE, "project(${getCMakeProjectName(taskFile.task)})\n"
       )
       val projectCommand = mockFile.findCMakeCommand("project")!! // must be set in mock file
       val cmakeMinimumRequiredCommand = file.findCMakeCommand("cmake_minimum_required")

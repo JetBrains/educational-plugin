@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -56,7 +55,7 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
   override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     super.initNewTask(project, course, task, info, withSources)
     if (withSources) {
-      val cMakeProjectName = getCMakeProjectUniqueName(task) { FileUtil.sanitizeFileName(it.name, true) }
+      val cMakeProjectName = getCMakeProjectName(task)
       task.addCMakeList(cMakeProjectName, getLanguageSettings().settings.languageStandard)
     }
   }
@@ -82,7 +81,7 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     val projectCommand = psiFile.findCMakeCommand("project")
 
     if (projectCommand != null) {
-      val newProjectName = getCMakeProjectUniqueName(newTask) { FileUtil.sanitizeFileName(it.name, true) }
+      val newProjectName = getCMakeProjectName(newTask)
       run {
         val cMakeCommandArguments = projectCommand.cMakeCommandArguments ?: return@run
         val firstArgument = cMakeCommandArguments.cMakeArgumentList.firstOrNull() ?: return@run
