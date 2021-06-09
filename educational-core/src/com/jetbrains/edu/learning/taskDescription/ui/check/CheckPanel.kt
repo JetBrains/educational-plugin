@@ -75,6 +75,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     //these options affect paddings
     toolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
     toolbar.adjustTheSameSize(true)
+    toolbar.setTargetComponent(this)
 
     val component = toolbar.component
     component.border = JBUI.Borders.empty(5, 0, 0, 0)

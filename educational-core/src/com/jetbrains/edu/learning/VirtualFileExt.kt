@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -33,7 +34,7 @@ import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 
 fun VirtualFile.getEditor(project: Project): Editor? {
-  val selectedEditor = getInEdt { FileEditorManager.getInstance(project).getSelectedEditor(this) }
+  val selectedEditor = invokeAndWaitIfNeeded { FileEditorManager.getInstance(project).getSelectedEditor(this) }
   return if (selectedEditor is TextEditor) selectedEditor.editor else null
 }
 
