@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.JB_VENDOR_NAME
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -63,6 +64,11 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       return
     }
 
+    if (!course.isMarketplacePrivate && course.vendor?.name == JB_VENDOR_NAME) {
+      val result = showConfirmationDialog(e.presentation.text)
+      if (result != Messages.OK) return
+    }
+
     doPush(project, connector, course, tempFile)
   }
 
@@ -95,4 +101,12 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       }
     }
   }
+
+  private fun showConfirmationDialog(actionTitle: String) = Messages.showOkCancelDialog(
+    message("marketplace.push.course.confirmation.dialog.message", actionTitle),
+    actionTitle,
+    actionTitle,
+    message("dialog.cancel"),
+    null
+    )
 }
