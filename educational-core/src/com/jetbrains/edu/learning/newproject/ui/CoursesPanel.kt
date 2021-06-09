@@ -43,7 +43,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   protected var coursePanel: CoursePanel = DialogCoursePanel()
   private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
-  private lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
+  protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
                                                                                       { groups -> updateModel(groups, null) })

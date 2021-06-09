@@ -9,6 +9,12 @@ import com.jetbrains.edu.learning.newproject.ui.*
 import kotlinx.coroutines.CoroutineScope
 
 class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+
+  init {
+    humanLanguagesFilterDropdown.isVisible = false
+    programmingLanguagesFilterDropdown.isVisible = false
+  }
+
   override fun toolbarAction(): ToolbarActionWrapper {
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("codeforces.open.contest.by.link"),
                                 StartCodeforcesContestAction(showViewAllLabel = false))
