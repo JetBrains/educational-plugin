@@ -4,8 +4,8 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
 import javax.swing.event.HyperlinkEvent
 
 class UpdateNotification(title: String, content: String) :
@@ -13,7 +13,7 @@ class UpdateNotification(title: String, content: String) :
 
 private object UpdateNotificationListener : NotificationListener.Adapter() {
   override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-    PluginsAdvertiser.installAndEnable(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {
+    installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {
       notification.expire()
     }
   }

@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
@@ -18,6 +17,7 @@ import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.browseHyperlink
@@ -59,10 +59,10 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
-      ErrorState.IncompatibleVersion -> PluginsAdvertiser.installAndEnable(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
+      ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {
         val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
-        PluginsAdvertiser.installAndEnable(pluginStringIds) {}
+        installAndEnablePlugin(pluginStringIds) {}
       }
       ErrorState.RestartNeeded -> {
         DialogWrapper.findInstance(coursesPanel)?.close(DialogWrapper.OK_EXIT_CODE)

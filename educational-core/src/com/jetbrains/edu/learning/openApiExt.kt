@@ -172,7 +172,6 @@ fun <T> withRegistryKeyOff(key: String, action: () -> T): T {
   }
   catch (e: MissingResourceException) {
     LOG.error(e)
-    Registry.removeKey(key)
     return action()
   }
 

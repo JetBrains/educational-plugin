@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -189,7 +188,7 @@ abstract class MarketplaceConnector : CourseConnector {
 
   @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
-    val buildNumber = MarketplaceRequests.getInstance().getBuildForPluginRepositoryRequests()
+    val buildNumber = getBuildNumberForRequests()
 
     //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
     val uuid = UUIDProvider.getUUID()

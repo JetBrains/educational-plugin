@@ -62,6 +62,7 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
 val isAtLeast211 = environmentName.toInt() >= 211
+val isLessThan212 = environmentName.toInt() < 212
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -281,7 +282,10 @@ project(":") {
       pluginsList += listOf("java", "junit", "Kotlin", scalaPlugin)
     }
     if (isIdeaIDE) {
-      pluginsList += listOf("NodeJS", "JavaScriptLanguage", goPlugin)
+      pluginsList += listOf("NodeJS", goPlugin)
+      if (isLessThan212) {
+        pluginsList += listOf("JavaScriptLanguage")
+      }
     }
 
     plugins.set(pluginsList)
@@ -301,7 +305,9 @@ project(":") {
     implementation(project(":Edu-Python:PyCharm"))
     implementation(project(":Edu-Scala"))
     implementation(project(":Edu-Android"))
-    implementation(project(":Edu-JavaScript"))
+    if (isLessThan212) {
+      implementation(project(":Edu-JavaScript"))
+    }
     implementation(project(":Edu-Rust"))
     implementation(project(":Edu-Cpp"))
     implementation(project(":Edu-Go"))
@@ -637,23 +643,22 @@ project(":Edu-Python:PyCharm") {
   }
 }
 
-project(":Edu-JavaScript") {
-  intellij {
-    localPath.set(null as String?)
-    version.set(ideaVersion)
-    val pluginList = mutableListOf(
-      "NodeJS",
-      "JavaScriptLanguage"
-    )
-    if (isAtLeast211) {
-      pluginList += "com.intellij.css"
-    }
+if (isLessThan212) {
+  project(":Edu-JavaScript") {
+    intellij {
+      localPath.set(null as String?)
+      version.set(ideaVersion)
+      val pluginList = mutableListOf("NodeJS", "JavaScriptLanguage")
+      if (isAtLeast211) {
+        pluginList += "com.intellij.css"
+      }
 
-    plugins.set(pluginList)
-  }
-  dependencies {
-    implementation(project(":educational-core"))
-    testImplementation(project(":educational-core", "testOutput"))
+      plugins.set(pluginList)
+    }
+    dependencies {
+      implementation(project(":educational-core"))
+      testImplementation(project(":educational-core", "testOutput"))
+    }
   }
 }
 

@@ -2,7 +2,6 @@
 
 package com.jetbrains.edu.learning
 
-import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -17,11 +16,6 @@ private val KOTLIN_VERSION_PATTERN = """(\d+\.\d+(.\d+)?(-(eap-|M|rc-)\d+)?).*""
 
 fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
   return ids.filter { PluginManagerCore.isDisabled(it) }
-}
-
-fun enablePlugins(ids: List<PluginId>) {
-  DisabledPluginsState.enablePluginsById(ids, true)
-  restartIDE("Required plugins were enabled")
 }
 
 fun restartIDE(messageInfo: String) {
