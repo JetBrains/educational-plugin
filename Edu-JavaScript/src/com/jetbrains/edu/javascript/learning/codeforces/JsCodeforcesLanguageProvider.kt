@@ -11,5 +11,5 @@ class JsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<JsNewProjectSettings> = JsConfigurator()
   override val languageId: String = EduNames.JAVASCRIPT
   override val preferableCodeforcesLanguage: String = "JavaScript"
-  override val templateFileName: String = "codeforces.main.js"
+  override val templateFileName: String = EduNames.CODEFORCES_JS_TEMPLATE
 }

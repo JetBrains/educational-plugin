@@ -103,6 +103,16 @@ public class EduNames {
   public static final String HELP_URL = "https://www.jetbrains.com/help";
   public static final String LEARNER_START_GUIDE = HELP_URL + "/education/learner-start-guide.html";
 
+  // Codeforces template file names
+  public static final String CODEFORCES_CPP_TEMPLATE = "CPP main.cpp";
+  public static final String CODEFORCES_GO_TEMPLATE = "Go main.go";
+  public static final String CODEFORCES_JAVA_TEMPLATE = "Main.java";
+  public static final String CODEFORCES_JS_TEMPLATE = "JS main.js";
+  public static final String CODEFORCES_KOTLIN_TEMPLATE = "Kotlin Main.kt";
+  public static final String CODEFORCES_PYTHON_TEMPLATE = "main.py";
+  public static final String CODEFORCES_RUST_TEMPLATE = "Rust main.rs";
+  public static final String CODEFORCES_SCALA_TEMPLATE = "Main.scala";
+
   private EduNames() {
   }
 

@@ -12,6 +12,7 @@
     <runConfigurationProducer implementation="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer"/>
     <runLineMarkerContributor language="TEXT"
                               implementationClass="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunLineMarkerContributor"/>
+    <fileTemplateGroup implementation="com.jetbrains.edu.learning.codeforces.CodeforcesFileTemplateFactory"/>
   </extensions>
 
   <extensionPoints>

@@ -271,6 +271,11 @@ object GeneratorUtils {
   fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()): String =
     FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
 
+  @JvmStatic
+  @JvmOverloads
+  fun getJ2eeTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()): String =
+    FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).getText(templateVariables)
+
   @Throws(IOException::class)
   fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
     val rawContent = VfsUtil.loadText(child)

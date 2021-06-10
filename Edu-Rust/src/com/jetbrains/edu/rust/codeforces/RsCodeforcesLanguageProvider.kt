@@ -17,10 +17,10 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Rust")
   override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
   override val languageId: String = EduNames.RUST
-  override val templateFileName: String = "codeforces.main.rs"
+  override val templateFileName: String = EduNames.CODEFORCES_RUST_TEMPLATE
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
-    val fileTemplate = GeneratorUtils.getInternalTemplateText(templateFileName)
+    val fileTemplate = GeneratorUtils.getJ2eeTemplateText(templateFileName)
 
     val packageName = task.name.replace(TASK_LEADING_SYMBOLS, "").toPackageName()
     val manifestTemplate = GeneratorUtils.getInternalTemplateText(MANIFEST_FILE, mapOf("PACKAGE_NAME" to packageName))

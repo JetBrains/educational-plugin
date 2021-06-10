@@ -22,9 +22,8 @@ interface CodeforcesLanguageProvider {
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
 
   fun createTaskFiles(task: Task): List<TaskFile> {
-    val text = GeneratorUtils.getInternalTemplateText(templateFileName)
-    val fileName = templateFileName.removePrefix("codeforces.")
-    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, fileName), text))
+    val text = GeneratorUtils.getJ2eeTemplateText(templateFileName)
+    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateFileName), text))
   }
 
   companion object {

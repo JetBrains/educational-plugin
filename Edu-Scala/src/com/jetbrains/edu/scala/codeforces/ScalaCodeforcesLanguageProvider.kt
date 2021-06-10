@@ -10,5 +10,5 @@ class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Scala")
   override val configurator: EduConfigurator<JdkProjectSettings> = ScalaGradleConfigurator()
   override val languageId: String = EduNames.SCALA
-  override val templateFileName: String = "codeforces.Main.scala"
+  override val templateFileName: String = EduNames.CODEFORCES_SCALA_TEMPLATE
 }

@@ -13,7 +13,7 @@ class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<PyNewProjectSettings> = PyNewConfigurator()
   override val languageId: String = EduNames.PYTHON
   override val preferableCodeforcesLanguage: String = "Python 3"
-  override val templateFileName: String = "codeforces.main.py"
+  override val templateFileName: String = EduNames.CODEFORCES_PYTHON_TEMPLATE
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage.split(" ").last()) {

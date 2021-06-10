@@ -16,7 +16,7 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<CppProjectSettings> = CppConfigurator()
   override val languageId: String = EduNames.CPP
   override val preferableCodeforcesLanguage: String = "GNU C++17"
-  override val templateFileName: String = "codeforces.main.cpp"
+  override val templateFileName: String = EduNames.CODEFORCES_CPP_TEMPLATE
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage) {
