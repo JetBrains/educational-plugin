@@ -4,6 +4,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.internal.HasConvention
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
+import org.jetbrains.intellij.tasks.IntelliJInstrumentCodeTask
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
@@ -148,6 +149,13 @@ allprojects {
         runIde {
           setJbrVersion(it)
         }
+      }
+    }
+
+    // TODO: check if we still need this after migration to gradle-intellij 1.0
+    if (isStudioIDE) {
+      withType<IntelliJInstrumentCodeTask> {
+        setCompilerVersion(studioBuildVersion)
       }
     }
 
@@ -548,6 +556,13 @@ project(":Edu-Android") {
       *jvmPlugins
     )
     setPlugins(*plugins.toTypedArray())
+  }
+
+  // TODO: check if we still need this after migration to gradle-intellij 1.0
+  tasks {
+    withType<IntelliJInstrumentCodeTask> {
+      setCompilerVersion(studioBuildVersion)
+    }
   }
 
   dependencies {
