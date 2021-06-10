@@ -191,6 +191,11 @@
     </action>
     <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
     <action id="Educational.Stepik.UpdateCourse" class="com.jetbrains.edu.learning.actions.SyncStepikCourseAction"/>
+    <action id="Educational.CreateNewIssue"
+            class="com.jetbrains.edu.learning.actions.CreateNewYouTrackIssue"
+            icon="/icons/com/jetbrains/edu/eduCourseAction.svg">
+      <add-to-group group-id="HelpMenu" anchor="after" relative-to-action="ReportProblem"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
