@@ -218,12 +218,16 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
     if (!isUserAuthorized()) return
     LOG.info("Uploading new course from ${file.absolutePath}")
-    val response = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody()).executeHandlingExceptions()
-    val courseBean = response?.body()
-    if (courseBean == null) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, true))
-      return
-    }
+    val courseBean = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody()).executeParsingErrors(true)
+      .flatMap {
+        val resultResponse = it.body()
+        return@flatMap if (resultResponse == null) Err(getErrorMessage(course, true)) else Ok(resultResponse)
+      }
+      .onError {
+        showErrorNotification(project, FAILED_TITLE, it)
+        return
+      }
+
     course.id = courseBean.id
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)

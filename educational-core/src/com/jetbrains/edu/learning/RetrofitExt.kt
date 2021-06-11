@@ -1,5 +1,10 @@
 package com.jetbrains.edu.learning
 
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
@@ -146,7 +151,11 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
         Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
         Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
-      HttpURLConnection.HTTP_FORBIDDEN -> Err(EduCoreBundle.message("error.access.denied"))
+      HttpURLConnection.HTTP_FORBIDDEN -> {
+        val errorMessage = processForbiddenErrorMessage(error) ?:
+                           EduCoreBundle.message("error.access.denied")
+        Err(errorMessage)
+      }
       in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
         Err(EduCoreBundle.message("error.unexpected.error", error)) // 400x
       else -> {
@@ -185,3 +194,18 @@ fun File.toMultipartBody(): MultipartBody.Part {
 }
 
 fun String.toRequestBody(): RequestBody = RequestBody.create(MediaType.parse("text/plain"), this)
+
+private fun processForbiddenErrorMessage(jsonText: String): String? {
+  return try {
+    val factory = JsonFactory()
+    val mapper = ObjectMapper(factory)
+    val module = SimpleModule()
+    mapper.registerModule(module)
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    val courseNode = mapper.readTree(jsonText) as ObjectNode
+    courseNode.get("message")?.asText()
+  }
+  catch (e: ClassCastException) {
+    null
+  }
+}
