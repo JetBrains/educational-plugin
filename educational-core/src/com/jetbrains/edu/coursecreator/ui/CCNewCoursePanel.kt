@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -36,10 +37,6 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.*
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.HyperlinkEvent
@@ -237,12 +234,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     this.settings.setSettingsComponents(settings)
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
-    descriptionTextArea.text = _course.description.nullize() ?: """
-      ${courseData.displayName} ${EduCoreBundle.message("item.course")}.
-      ${EduCoreBundle.message("cc.new.course.select.created.date.title")} ${
-      LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))
-    }.
-    """.trimIndent()
+    descriptionTextArea.text = _course.description.nullize() ?: EduCoreBundle.message("dialog.message.create.course",
+                                                                                      _course.languageDisplayName)
     doValidation()
   }
 
