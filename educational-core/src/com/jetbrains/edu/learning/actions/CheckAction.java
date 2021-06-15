@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.ui.UIUtil;
@@ -273,12 +274,13 @@ public class CheckAction extends DumbAwareAction {
     }
 
     private void replaceFileText(@NotNull final TaskFile file, @NotNull final String newText) {
+      String newDocumentText = StringUtil.convertLineSeparators(newText);
       CommandProcessor.getInstance().runUndoTransparentAction(
         () -> ApplicationManager.getApplication().runWriteAction(() -> {
           Document document = TaskFileExt.getDocument(file, myProject);
           if (document == null) return;
           CommandProcessor.getInstance().executeCommand(myProject,
-                                                        () -> document.setText(newText), "Change Test Text", "Edu Actions");
+                                                        () -> document.setText(newDocumentText), "Change Test Text", "Edu Actions");
           PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         })
       );
