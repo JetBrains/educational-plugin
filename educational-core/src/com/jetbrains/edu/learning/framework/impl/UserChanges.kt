@@ -6,6 +6,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
@@ -190,7 +191,7 @@ sealed class Change {
         EduDocumentListener.modifyWithoutListener(task, path) {
           val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
           if (document != null) {
-            val expandedText = EduMacroUtils.expandMacrosForFile(project, file, text)
+            val expandedText = StringUtil.convertLineSeparators(EduMacroUtils.expandMacrosForFile(project, file, text))
             runUndoTransparentWriteAction { document.setText(expandedText) }
           }
           else {

@@ -542,6 +542,42 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test windows line separators`() {
+    val course = courseWithFiles {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile("file.txt", "a")
+        }
+        eduTask("task2") {
+          taskFile("file.txt") {
+            withText("a\r\nb")
+          }
+        }
+      }
+    }
+
+    val task = course.findTask("lesson1", "task1")
+    withVirtualFileListener(course) {
+      task.openTaskFileInEditor("file.txt")
+      task.status = CheckStatus.Solved
+      myFixture.testAction(NextTaskAction())
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("file.txt", "a\nb")
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
 
   private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {
     init()
