@@ -17,7 +17,7 @@ import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration
 
 class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     // In general, python plugin can create run configuration for a directory
     // but it can skip some test files if they haven't proper names
     return createTestConfigurationsForTestFiles()

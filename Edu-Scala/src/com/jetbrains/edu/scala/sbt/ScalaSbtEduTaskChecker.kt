@@ -15,9 +15,12 @@ import org.jetbrains.plugins.scala.testingSupport.test.scalatest.ScalaTestConfig
 import org.jetbrains.plugins.scala.testingSupport.test.scalatest.ScalaTestRunConfiguration
 import org.jetbrains.plugins.scala.testingSupport.test.testdata.AllInPackageTestData
 
-class ScalaSbtEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
-  EduTaskCheckerBase(task, envChecker, project) {
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+class ScalaSbtEduTaskChecker(
+  task: EduTask,
+  envChecker: EnvironmentChecker,
+  project: Project
+) : EduTaskCheckerBase(task, envChecker, project) {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val configurations = createTestConfigurationsForTestDirectories().filter { it.configuration.type == preferredConfigurationType }
     return if (configurations.isEmpty()) {
       task.getAllTestDirectories(project).map { createConfiguration(it) }

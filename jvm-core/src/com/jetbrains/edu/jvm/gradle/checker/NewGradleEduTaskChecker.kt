@@ -18,7 +18,7 @@ open class NewGradleEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker
            ?: CheckResult.failedToCheck
   }
 
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return withGradleTestRunner(project, task) {
       createTestConfigurationsForTestDirectories()
     }.orEmpty()

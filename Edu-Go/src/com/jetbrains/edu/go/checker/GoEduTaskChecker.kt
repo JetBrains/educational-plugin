@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.withRegistryKeyOff
 
 class GoEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: EduTask) : EduTaskCheckerBase(task, envChecker, project) {
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return createTestConfigurationsForTestDirectories()
   }
 

@@ -36,7 +36,7 @@ import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
  */
 open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val producer = RunConfigurationProducer.getInstance(PyCCRunTestsConfigurationProducer::class.java)
     val taskDir = task.getDir(project.courseDir) ?: return emptyList()
     val testFilePath = task.course.configurator?.testFileName ?: return emptyList()

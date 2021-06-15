@@ -146,6 +146,15 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    */
   protected open fun areTestsFailedToRun(testRoots: List<SMTestProxy.SMRootTestProxy>): Boolean = testRoots.all { it.children.isEmpty() }
 
+  protected fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+    val customConfiguration = CheckUtils.getCustomRunConfiguration(project, task)
+    return if (customConfiguration != null) {
+      listOf(customConfiguration)
+    } else {
+      createDefaultTestConfigurations()
+    }
+  }
+
   /**
    * Creates and return list of run configurations to run task tests.
    *
@@ -154,7 +163,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
    *
    * @return Run configurations to run task tests
    */
-  protected abstract fun createTestConfigurations(): List<RunnerAndConfigurationSettings>
+  protected abstract fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings>
 
   protected fun createTestConfigurationsForTestFiles(): List<RunnerAndConfigurationSettings> {
     return task.getAllTestFiles(project).mapNotNull { createTestConfigurationFromPsiElement(it) }

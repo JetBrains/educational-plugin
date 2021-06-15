@@ -46,7 +46,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   override val preferredConfigurationType: ConfigurationType
     get() = CargoCommandConfigurationType.getInstance()
 
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val configurations = createTestConfigurationsForTestDirectories().filter { it.configuration.type == preferredConfigurationType }
 
     return if (configurations.isEmpty()) {

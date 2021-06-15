@@ -18,7 +18,7 @@ import javax.swing.event.HyperlinkEvent
 
 open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
-  override fun createTestConfigurations(): List<RunnerAndConfigurationSettings> {
+  override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     return createTestConfigurationsForTestFiles()
   }
 
