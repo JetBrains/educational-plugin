@@ -1,0 +1,17 @@
+query {
+  plugins(
+    search: {
+      filters: [{ field: "id", value: ${courseId} }, { field: "tags", value: "Early-bird" }]
+    }
+  ) {
+    total
+    plugins {
+      name
+      description
+      downloads
+      rating
+      fields
+      developers
+    }
+  }
+}

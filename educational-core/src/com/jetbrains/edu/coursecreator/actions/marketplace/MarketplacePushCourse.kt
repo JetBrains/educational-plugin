@@ -74,7 +74,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
 
   private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
     if (course.isMarketplaceRemote) {
-      val courseOnRemote = connector.searchCourse(course.id)
+      val courseOnRemote = connector.searchCourse(course.id, course.isMarketplacePrivate)
       // courseOnRemote can be null if it was not validated yet
       if (courseOnRemote == null) {
         CCNotificationUtils.showNotification(project,

@@ -99,7 +99,7 @@ class OpenCourseButton : CourseButtonBase() {
           // if course is present both on stepik and marketplace we open marketplace-based one
           val marketplaceId = stepikMarketplaceIdsMap[course.id]
           val courseToOpen = if (marketplaceId != null) {
-            MarketplaceConnector.getInstance().searchCourse(marketplaceId) ?: course
+            MarketplaceConnector.getInstance().searchCourse(marketplaceId, course.isMarketplacePrivate) ?: course
           }
           else {
             course

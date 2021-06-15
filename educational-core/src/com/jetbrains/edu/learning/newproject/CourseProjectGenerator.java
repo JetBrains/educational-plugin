@@ -228,7 +228,7 @@ public abstract class CourseProjectGenerator<S> {
   private void checkIfAvailableOnRemote() {
     EduCourse remoteCourse;
     if (myCourse.isMarketplace()) {
-      remoteCourse = MarketplaceConnector.getInstance().searchCourse(myCourse.getId());
+      remoteCourse = MarketplaceConnector.getInstance().searchCourse(myCourse.getId(), myCourse.isMarketplacePrivate());
     }
     else {
       remoteCourse = StepikConnector.getInstance().getCourseInfo(myCourse.getId(), null, true);

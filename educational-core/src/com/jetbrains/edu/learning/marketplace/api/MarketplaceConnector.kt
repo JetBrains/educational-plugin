@@ -136,11 +136,20 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   fun searchCourses(): List<EduCourse> {
+    val allCourses = mutableListOf<EduCourse>()
+    allCourses.addAll(searchCourses(false))
+    if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_PRIVATE_COURSES)) {
+      allCourses.addAll(searchCourses(true))
+    }
+    return allCourses
+  }
+
+  fun searchCourses(searchPrivate: Boolean): List<EduCourse> {
     var offset = 0
     val courses = mutableListOf<EduCourse>()
 
     do {
-      val coursesList = getCourses(offset) ?: return courses
+      val coursesList = getCourses(offset, searchPrivate) ?: return courses
       val loadedCourses = coursesList.courses
       if (loadedCourses.isEmpty()) return courses
       courses.addAll(loadedCourses)
@@ -151,14 +160,14 @@ abstract class MarketplaceConnector : CourseConnector {
     return courses
   }
 
-  private fun getCourses(offset: Int): CoursesList? {
-    val query = QueryData(GraphqlQuery.search(offset))
+  private fun getCourses(offset: Int, searchPrivate: Boolean): CoursesList? {
+    val query = QueryData(GraphqlQuery.search(offset, searchPrivate))
     val response = repositoryService.search(query).executeHandlingExceptions()
     return response?.body()?.data?.coursesList
   }
 
-  fun searchCourse(courseId: Int): EduCourse? {
-    val query = QueryData(GraphqlQuery.searchById(courseId))
+  fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
+    val query = QueryData(GraphqlQuery.searchById(courseId, searchPrivate))
     val response = repositoryService.search(query).executeHandlingExceptions()
     val course = response?.body()?.data?.coursesList?.courses?.firstOrNull()
     course?.id = courseId
@@ -340,7 +349,11 @@ abstract class MarketplaceConnector : CourseConnector {
   override fun getCourseInfoByLink(link: String): EduCourse? {
     val courseId = link.toIntOrNull() ?: getCourseIdFromLink(link)
     if (courseId != -1) {
-      return searchCourse(courseId)
+      // we don't know beforehand if the course to be searched for is private or public, while private and public courses
+      // need different templates to be found via graphql
+      return searchCourse(courseId, false) ?: if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_PRIVATE_COURSES))
+        searchCourse(courseId, true)
+      else null
     }
     return null
   }
