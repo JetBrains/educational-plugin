@@ -4,8 +4,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -15,7 +15,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
     loginFakeUser()
     configureMockResponsesForStages()
 
-    HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
 
     val fileTree = fileTree {
       dir("Test Hyperskill Project") {
@@ -54,7 +54,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
     }
 
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, false) {
-      HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
+      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
     }
 
     val fileTree = fileTree {
@@ -105,7 +105,7 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
     }
 
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
-      HyperskillProjectOpener.open(HyperskillOpenStageRequest(1, 1))
+      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
     }
 
     val fileTree = fileTree {

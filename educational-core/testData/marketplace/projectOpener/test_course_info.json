@@ -1,0 +1,23 @@
+{
+  "data" : {
+    "plugins" : {
+      "total" : 1,
+      "plugins" : [
+        {
+          "id" : "1",
+          "name" : "Introduction to Python",
+          "description" : "Introduction course to Python",
+          "downloads" : 2,
+          "rating" : 5.0,
+          "developers" : [
+            "FirstName LastName"
+          ],
+          "fields" : {
+            "programmingLanguage" : "FakeGradleBasedLanguage",
+            "language" : "en"
+          }
+        }
+      ]
+    }
+  }
+}

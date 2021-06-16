@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener.addProblem
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
 import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProblemLoadingTest : EduTestCase() {

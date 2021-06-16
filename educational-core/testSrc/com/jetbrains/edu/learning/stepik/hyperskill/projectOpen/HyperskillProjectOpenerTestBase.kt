@@ -1,25 +1,25 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.MockProjectOpener
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.MockHyperskillProjectManager
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 
 abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
   protected val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
-  private val mockProjectManager: MockHyperskillProjectManager get() = HyperskillProjectManager.getInstance() as MockHyperskillProjectManager
+  protected val mockProjectOpener: MockProjectOpener get() = ProjectOpener.getInstance() as MockProjectOpener
 
   override fun setUp() {
     super.setUp()
-    mockProjectManager.project = project
+    mockProjectOpener.project = project
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 
   override fun tearDown() {
-    mockProjectManager.project = null
+    mockProjectOpener.project = null
     super.tearDown()
   }
 

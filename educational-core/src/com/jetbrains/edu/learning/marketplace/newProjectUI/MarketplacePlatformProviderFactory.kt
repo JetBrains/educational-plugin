@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
+import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
@@ -40,15 +41,12 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope): CoursesPanel = MarketplaceCoursesPanel(this, scope)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
-    val featuredCourseIds = stepikMarketplaceIdsMap.values
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()
 
     val marketplaceCourseNames = mutableSetOf<String>()
     for (course in marketplaceCourses) {
       marketplaceCourseNames += course.name
-      if (course.id in featuredCourseIds) {
-        course.visibility = CourseVisibility.FeaturedVisibility(MARKETPLACE_GROUP_ID)
-      }
+      course.updateFeaturedStatus()
     }
 
     val bundledCourses = loadBundledCourses().filter { bundled ->
@@ -113,7 +111,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
     // These ids are used only for sorting
     // Probably, we should use separate id for each course to provide desired sorting
     private const val BUNDLED_GROUP_ID = 0
-    private const val MARKETPLACE_GROUP_ID = 1
+    const val MARKETPLACE_GROUP_ID = 1
 
     //Machine Learning 101 stepikId=0, marketplaceId=
 
@@ -123,5 +121,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
                                         55498 to 16629, //Scala Tutorial
                                         59778 to 16631, //Rustlings
                                         4222 to 16628) //Kotlin Koans
+
+    val featuredCourseIds get() = stepikMarketplaceIdsMap.values
   }
 }

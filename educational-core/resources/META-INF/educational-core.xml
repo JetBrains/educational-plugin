@@ -203,6 +203,10 @@
 
     <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
 
+    <applicationService serviceInterface="com.jetbrains.edu.learning.courseGeneration.ProjectOpener"
+                        serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>
+
     <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.stepik.StepikWidgetFactory" order="before positionWidget"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
                     serviceImplementation="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionViewImpl"

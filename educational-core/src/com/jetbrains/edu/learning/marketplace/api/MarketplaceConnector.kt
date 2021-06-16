@@ -178,18 +178,12 @@ abstract class MarketplaceConnector : CourseConnector {
 
   @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
-    val courseId = course.id
-    val updateInfo = getLatestCourseUpdateInfo(courseId)
-    if (updateInfo == null) {
-      error("Update info for course $courseId is null")
-    }
-    course.marketplaceCourseVersion = updateInfo.version
     val buildNumber = MarketplaceRequests.getInstance().getBuildForPluginRepositoryRequests()
 
     //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
     val uuid = UUIDProvider.getUUID()
 
-    val link = "$repositoryUrl/plugin/$courseId/update/${updateInfo.updateId}/download?uuid=$uuid&build=$buildNumber"
+    val link = "$repositoryUrl/plugin/${course.id}/update/${course.getLatestUpdateId()}/download?uuid=$uuid&build=$buildNumber"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
@@ -198,6 +192,15 @@ abstract class MarketplaceConnector : CourseConnector {
 
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
+  }
+
+  private fun EduCourse.getLatestUpdateId(): Int {
+    val updateInfo = getLatestCourseUpdateInfo(id)
+    if (updateInfo == null) {
+      error("Update info for course $id is null")
+    }
+    marketplaceCourseVersion = updateInfo.version
+    return updateInfo.updateId
   }
 
   private fun uploadUnderProgress(message: String, uploadAction: () -> Unit) =

@@ -12,6 +12,7 @@ import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -63,10 +64,11 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
         return false
       }
 
-      return HyperskillProjectOpener.open(HyperskillOpenStageRequest(projectId, null)).onError {
-        showError(it)
-        return false
-      }
+      return ProjectOpener.getInstance()
+        .open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(projectId, null)).onError {
+          showError(it)
+          return false
+        }
     }
   }
 }

@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -35,7 +35,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
       }
     })
 
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, "TEXT"))
 
     val fileTree = fileTree {
       dir(HYPERSKILL_PROBLEMS) {
@@ -69,7 +69,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
       }
     }
 
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 5, "TEXT"))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 5, "TEXT"))
 
     val fileTree = fileTree {
       dir(HYPERSKILL_PROBLEMS) {
@@ -98,7 +98,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
       }
     })
 
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
     val fileTree = fileTree {
       dir(HYPERSKILL_PROBLEMS) {
         dir("task1") {
@@ -138,7 +138,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
       }
     }
 
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
 
     val fileTree = fileTree {
       dir(TEST_HYPERSKILL_PROJECT_NAME) {
@@ -186,7 +186,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
     val unsupportedLanguage = "Unsupported"
     doLanguageValidationTest(unsupportedLanguage) {
       val expectedMessage = EduCoreBundle.message(
-        "hyperskill.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+        "rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
         unsupportedLanguage
       )
       assertEquals(expectedMessage, it)
@@ -205,7 +205,7 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
       }
     })
 
-    HyperskillProjectOpener.open(HyperskillOpenStepRequest(1, 4, language)).onError {
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, language)).onError {
       checkError(it)
       return
     }

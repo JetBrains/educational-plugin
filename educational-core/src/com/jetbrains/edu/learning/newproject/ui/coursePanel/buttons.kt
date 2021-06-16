@@ -14,6 +14,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.stepikMarketplaceIdsMap
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -25,8 +26,8 @@ import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.Color
 import java.awt.event.ActionListener
@@ -90,8 +91,10 @@ class OpenCourseButton : CourseButtonBase() {
         }
         course is HyperskillCourse -> {
           closeDialog()
-          HyperskillProjectOpener.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
-            Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+          ProjectOpener.getInstance().apply {
+            HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
+              Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+            }
           }
         }
         else -> {

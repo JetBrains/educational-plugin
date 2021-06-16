@@ -1,0 +1,13 @@
+{
+  "data" : {
+    "updates" : {
+      "total" : 1,
+      "updates" : [
+        {
+          "id" : "1",
+          "version" : "1"
+        }
+      ]
+    }
+  }
+}

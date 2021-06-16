@@ -24,6 +24,7 @@ public class EduNames {
 
   public static final String JBA = "JetBrains Academy";
 
+  public static final String EDU_PREFIX = "edu";
   public static final String TASK_HTML = "task.html";
   public static final String TASK_MD = "task.md";
   public static final String HINTS = "hints";

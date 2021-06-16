@@ -6,9 +6,10 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Disposer
+import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
+import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.builtInServer.createServerBootstrap
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInitializer
@@ -49,13 +50,15 @@ class EduCustomServerService : Disposable {
           override fun process(context: ChannelHandlerContext,
                                request: FullHttpRequest,
                                urlDecoder: QueryStringDecoder): Boolean {
-            if (!urlDecoder.path().contains(HyperskillRestService.EDU_HYPERSKILL_SERVICE_NAME)) {
-              return false
-            }
-            val hyperskillRestService = HttpRequestHandler.EP_NAME.findExtension(HyperskillRestService::class.java)
-                                        ?: error("No handler for Hyperskill")
+            val path = urlDecoder.path()
+            if (!path.contains(EDU_PREFIX)) return false
+
+            val restService = HttpRequestHandler.EP_NAME.findFirstSafe {
+              it is OAuthRestService && it.isSupported(request)
+            } as? OAuthRestService ?: error("No handler found for request $path")
+
             try {
-              hyperskillRestService.execute(urlDecoder, request, context)
+              restService.execute(urlDecoder, request, context)
             }
             catch (e: Throwable) {
               LOG.error(e)
@@ -67,7 +70,7 @@ class EduCustomServerService : Disposable {
     })
     val port = CustomAuthorizationServer.getAvailablePort()
     if (port == -1) {
-      error("No available port for Hyperskill server in Android Studio")
+      error("No available port for rest server in Android Studio")
     }
     val serverChannel = bootstrap.bind(InetAddress.getLoopbackAddress(), port).syncUninterruptibly().channel()
 
