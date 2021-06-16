@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.coursesStorage
 
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.Logger
@@ -58,6 +59,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
   fun removeCourseByLocation(location: String) {
     val deletedCourse = state.removeCourseByLocation(location) ?: return
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_DELETED).courseDeleted(deletedCourse)
+    RecentProjectsManager.getInstance().removePath(location)
   }
 
   fun coursesInGroups(): List<CoursesGroup> {
