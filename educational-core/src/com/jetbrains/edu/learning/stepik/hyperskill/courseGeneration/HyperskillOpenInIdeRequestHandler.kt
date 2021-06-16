@@ -1,16 +1,12 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.IdeFrame
-import com.intellij.openapi.wm.WindowManager
-import com.intellij.ui.AppIcon
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.pluginCompatibility
+import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -18,9 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
-import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -28,25 +23,15 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener.addProblemsWithTopicWithFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblemsWithTopicWithFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-object HyperskillProjectOpener {
-  private val LOG = Logger.getInstance(HyperskillProjectOpener::class.java)
+object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpenRequest>() {
+  private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)
+  override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("hyperskill.loading.project")
 
-  fun open(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
-    runInEdt {
-      // We might perform heavy operations (including network access)
-      // So we want to request focus and show progress bar so as it won't seem that IDE doesn't respond
-      requestFocus()
-    }
-    if (openInOpenedProject(request)) return Ok(true)
-    if (openInRecentProject(request)) return Ok(true)
-    return openInNewProject(request)
-  }
-
-  private fun openInExistingProject(request: HyperskillOpenInProjectRequest,
-                                    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
+  override fun openInExistingProject(request: HyperskillOpenRequest,
+                                     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
     val (project, course) = findExistingProject(findProject, request) ?: return false
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
@@ -82,7 +67,7 @@ object HyperskillProjectOpener {
   }
 
   private fun findExistingProject(findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
-                                  request: HyperskillOpenInProjectRequest): Pair<Project, Course>? {
+                                  request: HyperskillOpenRequest): Pair<Project, Course>? {
     val projectId = request.projectId
     return when (request) {
       is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
@@ -102,23 +87,7 @@ object HyperskillProjectOpener {
 
   private fun Course.matchesById(projectId: Int) = this is HyperskillCourse && hyperskillProject?.id == projectId
 
-  private fun openInOpenedProject(request: HyperskillOpenInProjectRequest): Boolean =
-    openInExistingProject(request, HyperskillProjectManager.getInstance()::focusOpenProject)
-
-  private fun openInRecentProject(request: HyperskillOpenInProjectRequest): Boolean =
-    openInExistingProject(request, EduBuiltInServerUtils::openRecentProject)
-
-
-  fun openInNewProject(request: HyperskillOpenInProjectRequest): Result<Boolean, String> {
-    return getHyperskillCourseUnderProgress(request).map { hyperskillCourse ->
-      getInEdt {
-        requestFocus()
-        HyperskillProjectManager.getInstance().newProject(hyperskillCourse)
-      }
-    }
-  }
-
-  fun createHyperskillCourse(request: HyperskillOpenInProjectRequest,
+  fun createHyperskillCourse(request: HyperskillOpenRequest,
                              hyperskillLanguage: String,
                              hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
     val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage]
@@ -135,57 +104,37 @@ object HyperskillProjectOpener {
     val eduEnvironment = hyperskillProject.eduEnvironment ?: return Err("Unsupported environment ${hyperskillProject.environment}")
 
     if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
-      return Err(EduCoreBundle.message("hyperskill.android.not.supported"))
+      return Err(EduCoreBundle.message("rest.service.android.not.supported"))
     }
 
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
   }
 
-  private fun HyperskillCourse.validateLanguage(hyperskillLanguage: String): Result<Unit, String> {
-    val pluginCompatibility = pluginCompatibility()
-    if (pluginCompatibility is CourseCompatibility.PluginsRequired) {
-      val requiredPluginsMessage = getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable)
-      val helpLink = "https://www.jetbrains.com/help/idea/managing-plugins.html"
-      return Err(
-        """$requiredPluginsMessage<a href="$helpLink">${EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")}.</a>"""
-      )
+  override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, String> {
+    val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
+      return Err(it)
     }
 
-    if (configurator == null) {
-      return Err(EduCoreBundle.message("hyperskill.language.not.supported",
-                                       ApplicationNamesInfo.getInstance().productName,
-                                       hyperskillLanguage.capitalize()))
+    val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
+
+    val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, hyperskillProject).onError {
+      return Err(it)
     }
-    return Ok(Unit)
-  }
 
-  private fun getHyperskillCourseUnderProgress(request: HyperskillOpenInProjectRequest): Result<HyperskillCourse, String> {
-    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.project")) { indicator ->
-      val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
-        return@computeUnderProgress Err(it)
+    hyperskillCourse.validateLanguage(hyperskillLanguage).onError { return Err(it) }
+
+    when (request) {
+      is HyperskillOpenStepRequest -> {
+        hyperskillCourse.addProblem(request.stepId)
+        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
       }
-
-      val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language
-
-      val hyperskillCourse = createHyperskillCourse(request, hyperskillLanguage, hyperskillProject).onError {
-        return@computeUnderProgress Err(it)
+      is HyperskillOpenStageRequest -> {
+        indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
+        HyperskillConnector.getInstance().loadStages(hyperskillCourse)
+        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
       }
-
-      hyperskillCourse.validateLanguage(hyperskillLanguage).onError { return@computeUnderProgress Err(it) }
-
-      when (request) {
-        is HyperskillOpenStepRequest -> {
-          hyperskillCourse.addProblem(request.stepId)
-          hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
-        }
-        is HyperskillOpenStageRequest -> {
-          indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
-          HyperskillConnector.getInstance().loadStages(hyperskillCourse)
-          hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, request.stageId)
-        }
-      }
-      Ok(hyperskillCourse)
     }
+    return Ok(hyperskillCourse)
   }
 
   /**
@@ -409,16 +358,6 @@ object HyperskillProjectOpener {
       }
       Ok(Unit)
     }
-  }
-
-  // We have to use visible frame here because project is not yet created
-  // See `com.intellij.ide.impl.ProjectUtil.focusProjectWindow` implementation for more details
-  fun requestFocus() {
-    val frame = WindowManager.getInstance().findVisibleFrame()
-    if (frame is IdeFrame) {
-      AppIcon.getInstance().requestFocus(frame)
-    }
-    frame?.toFront()
   }
 
   private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {

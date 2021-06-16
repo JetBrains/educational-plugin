@@ -13,9 +13,6 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector"/>
-    <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
-                        serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectManager"
-                        testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.MockHyperskillProjectManager"/>
     <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService"
                         serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService"
                         testServiceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.metrics.MockHyperskillMetricsService"/>

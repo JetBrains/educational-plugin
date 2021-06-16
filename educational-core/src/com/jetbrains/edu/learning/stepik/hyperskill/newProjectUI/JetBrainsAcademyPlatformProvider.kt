@@ -22,9 +22,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectOpener
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
@@ -84,7 +84,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   }
 
   private val HyperskillProject.course: HyperskillCourse?
-    get() = HyperskillProjectOpener.createHyperskillCourse(HyperskillOpenStageRequest(id, null), language, this).onError { null }
+    get() = HyperskillOpenInIdeRequestHandler.createHyperskillCourse((HyperskillOpenStageRequest(id, null)), language, this).onError { null }
 
   private fun getSelectedProject(): HyperskillProject? {
     val account = HyperskillSettings.INSTANCE.account ?: return null

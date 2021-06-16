@@ -1,15 +1,14 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.authUtils.OAuthRestService
+import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
+import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService.Companion.ReLoginDialogResult.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -45,8 +44,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
                        context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
     if (PLUGIN_INFO.matcher(uri).matches()) {
-      createResponse(ObjectMapper().writeValueAsString(PluginInfo(getIdeVersion(), pluginVersion(EduNames.PLUGIN_ID))))
-        .send(context.channel(), request)
+      sendPluginInfoResponse(request, context)
       return null
     }
 
@@ -63,17 +61,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       return sendErrorResponse(request, context, "Failed to login using provided code")
     }
 
-    val hasOpenDialogs = getInEdt(modalityState = ModalityState.any()) {
-      if (ModalityState.current() != ModalityState.NON_MODAL) {
-        HyperskillProjectOpener.requestFocus()
-        Messages.showInfoMessage(EduCoreBundle.message("hyperskill.rest.service.modal.dialogs.message"),
-                                 EduCoreBundle.message("hyperskill.rest.service.modal.dialogs.title"))
-        return@getInEdt false
-      }
-      true
-    }
-
-    if (!hasOpenDialogs) {
+    if (hasOpenDialogs(EduNames.JBA)) {
       sendOk(request, context)
       return null
     }
@@ -165,7 +153,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     return getInEdt {
-      HyperskillProjectOpener.requestFocus()
+      requestFocus()
 
       val dialogResult = Messages.showDialog(
         "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
@@ -182,11 +170,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
   }
 
-  private fun openInIDE(openInProjectRequest: HyperskillOpenInProjectRequest,
+  private fun openInIDE(openInProjectRequest: HyperskillOpenRequest,
                         request: FullHttpRequest,
                         context: ChannelHandlerContext): String? {
     LOG.info("Opening ${EduNames.JBA} project: $openInProjectRequest")
-    return when (val result = HyperskillProjectOpener.open(openInProjectRequest)) {
+    return when (val result = ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, openInProjectRequest)) {
       is Ok -> {
         sendOk(request, context)
         LOG.info("${EduNames.JBA} project opened: $openInProjectRequest")
@@ -217,7 +205,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private const val STEP_ID = "step_id"
     private const val USER_ID = "user_id"
 
-    const val EDU_HYPERSKILL_SERVICE_NAME: String = "edu/hyperskill"
+    const val EDU_HYPERSKILL_SERVICE_NAME: String = "$EDU_PREFIX/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\?$CODE=(\w+)""")
     private val OPEN_COURSE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STAGE_ID=.+&$PROJECT_ID=.+""")
     private val OPEN_STEP_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STEP_ID=.+""")
@@ -231,11 +219,4 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       }
     }
   }
-
-  private fun getIdeVersion(): String {
-    val appInfo = ApplicationInfoImpl.getShadowInstance()
-    return appInfo.versionName + " " + appInfo.fullVersion
-  }
-
-  data class PluginInfo(val version: String?, val edutools: String?)
 }

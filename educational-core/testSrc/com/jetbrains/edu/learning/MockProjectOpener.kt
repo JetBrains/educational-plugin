@@ -1,17 +1,17 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
+package com.jetbrains.edu.learning
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.createCourseFiles
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 
-class MockHyperskillProjectManager : HyperskillProjectManager() {
+class MockProjectOpener: ProjectOpener() {
   var project: Project? = null
 
-  override fun newProject(course: HyperskillCourse): Boolean {
+  override fun newProject(course: Course): Boolean {
     assertProject()
+    course.configurator?.beforeCourseStarted(course)
     course.createCourseFiles(project!!, ModuleManager.getInstance(project!!).modules[0])
     return true
   }

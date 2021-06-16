@@ -1,0 +1,3 @@
+package com.jetbrains.edu.learning.courseGeneration
+
+interface OpenInIdeRequest

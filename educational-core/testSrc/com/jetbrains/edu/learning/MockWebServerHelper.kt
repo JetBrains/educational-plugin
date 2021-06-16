@@ -19,7 +19,9 @@ class MockWebServerHelper(parentDisposable: Disposable) {
   private val mockWebServer = MockWebServer().apply {
     dispatcher = object : Dispatcher() {
       override fun dispatch(request: RecordedRequest): MockResponse {
-        assertEquals(eduToolsUserAgent, request.getHeader(USER_AGENT))
+        if (expectEduToolsUserAgent(request)) {
+          assertEquals(eduToolsUserAgent, request.getHeader(USER_AGENT))
+        }
         for (handler in handlers) {
           val response = handler(request)
           if (response != null) return response
@@ -41,4 +43,8 @@ class MockWebServerHelper(parentDisposable: Disposable) {
     handlers += handler
     Disposer.register(disposable, Disposable { handlers -= handler })
   }
+
+  // DownloadUtil.downloadAtomically(), used in com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector.loadCourseStructure(),
+  // sets product name as user agent, so such requests are not expected to contain eduToolsUserAgent
+  private fun expectEduToolsUserAgent(request: RecordedRequest): Boolean = !request.requestUrl.url().path.contains("plugin")
 }

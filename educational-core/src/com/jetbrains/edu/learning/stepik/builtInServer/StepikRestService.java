@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.jetbrains.edu.learning.authUtils.RestServiceUtilsKt.createResponse;
 import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
 import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils.*;
 

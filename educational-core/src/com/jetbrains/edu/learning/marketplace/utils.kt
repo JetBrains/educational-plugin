@@ -1,11 +1,22 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.project.Project
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
+import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.featuredCourseIds
+import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
+import com.jetbrains.edu.learning.marketplace.update.getUpdateVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 private const val DATA_DELIMITER = ";"
@@ -54,5 +65,39 @@ fun Course.loadMarketplaceCourseStructure() {
     computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
       MarketplaceConnector.getInstance().loadCourseStructure(this)
     }
+  }
+}
+
+fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish: () -> Unit) {
+  fun doUpdateInBackground(remoteCourseVersion: Int) {
+    runInBackground(title = EduCoreBundle.message("progress.loading.course")) {
+      MarketplaceCourseUpdater(project, this, remoteCourseVersion).updateCourse()
+    }
+  }
+
+  ApplicationManager.getApplication().executeOnPooledThread {
+    val remoteCourseVersion = getUpdateVersion()
+    runInEdt {
+      if (project.isDisposed) return@runInEdt
+      if (remoteCourseVersion != null) {
+        isUpToDate = false
+        if (updateForced) {
+          doUpdateInBackground(remoteCourseVersion)
+        }
+        else {
+          showUpdateAvailableNotification(project) {
+            doUpdateInBackground(remoteCourseVersion)
+          }
+          EditorNotifications.getInstance(project).updateAllNotifications()
+        }
+      }
+      onFinish()
+    }
+  }
+}
+
+fun EduCourse.updateFeaturedStatus() {
+  if (course.id in featuredCourseIds) {
+    course.visibility = CourseVisibility.FeaturedVisibility(MARKETPLACE_GROUP_ID)
   }
 }
