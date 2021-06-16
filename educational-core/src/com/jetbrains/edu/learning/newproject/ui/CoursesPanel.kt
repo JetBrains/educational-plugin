@@ -49,6 +49,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
                                                                                       { groups -> updateModel(groups, null) })
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
+  protected val searchPanel = JPanel(BorderLayout()).apply {
+    border = JBUI.Borders.empty(11, 0)
+  }
 
   @Volatile
   private var loadingFinished = false
@@ -209,7 +212,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private fun programmingLanguages(courses: List<Course>): Set<String> = courses.map { it.supportedTechnologies }.flatten().toSet()
 
   private fun createAndBindSearchComponent(): JPanel {
-    val searchPanel = JPanel(BorderLayout())
     coursePanel.bindSearchField(coursesFilterComponent)
     searchPanel.add(coursesFilterComponent, BorderLayout.CENTER)
 
@@ -224,7 +226,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     filtersPanel.add(humanLanguagesFilterDropdown)
 
     searchPanel.add(filtersPanel, BorderLayout.LINE_END)
-    searchPanel.border = JBUI.Borders.empty(11, 0)
 
     UIUtil.setBackgroundRecursively(searchPanel, MAIN_BG_COLOR)
 
