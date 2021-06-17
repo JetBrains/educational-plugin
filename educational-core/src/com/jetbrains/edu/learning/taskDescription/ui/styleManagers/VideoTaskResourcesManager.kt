@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import kotlinx.css.*
 import kotlinx.css.properties.lh
@@ -31,10 +32,10 @@ class VideoTaskResourcesManager {
 
   fun getText(task: VideoTask, lesson: Lesson): String = if (task.sources.isNotEmpty()) {
     GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, getResources(task, lesson))
-    }
-    else {
-      "View this video on <a href=" + getStepikLink(task, lesson) + ">Stepik</a>."
-    }
+  }
+  else {
+    EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
+  }
 
   private fun videoStylesheet(): String {
     val styleManager = StyleManager()

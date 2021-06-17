@@ -10,7 +10,10 @@ import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -80,7 +83,13 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   override fun setText(text: String, task: Task?) {
-    val html = htmlWithResources(project, wrapHints(text, task))
+    val taskText = if (task is VideoTask) {
+      EduCoreBundle.message("stepik.view.video", getStepikLink(task, task.lesson))
+    }
+    else {
+      text
+    }
+    val html = htmlWithResources(project, wrapHints(taskText, task))
     taskInfoJBCefBrowser.loadHTML(html)
   }
 

@@ -194,7 +194,7 @@ open class StepikTaskBuilder(
 
   private fun videoTask(name: String): VideoTask {
     val task = VideoTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
-    var descriptionText = "View this video on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
+    var descriptionText = EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
     val block = stepSource.block
     if (block != null) {
       val video = block.video
