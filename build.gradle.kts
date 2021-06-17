@@ -80,7 +80,7 @@ val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 
-val jvmPlugins = arrayOf(
+val jvmPlugins = listOf(
   "java",
   "junit",
   "gradle-java"
@@ -91,7 +91,7 @@ val changesFile = "changes.html"
 plugins {
   idea
   kotlin("jvm") version "1.5.0"
-  id("org.jetbrains.intellij") version "0.7.2"
+  id("org.jetbrains.intellij") version "1.0"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
 }
@@ -137,9 +137,9 @@ allprojects {
 
   intellij {
     if (isStudioIDE) {
-      localPath = studioPath
+      localPath.set(studioPath)
     } else {
-      version = baseVersion
+      version.set(baseVersion)
     }
   }
 
@@ -147,7 +147,7 @@ allprojects {
     withProp("customJbr") {
       if (it.isNotBlank()) {
         runIde {
-          setJbrVersion(it)
+          jbrVersion.set(it)
         }
       }
     }
@@ -155,7 +155,7 @@ allprojects {
     // TODO: check if we still need this after migration to gradle-intellij 1.0
     if (isStudioIDE) {
       withType<IntelliJInstrumentCodeTask> {
-        setCompilerVersion(studioBuildVersion)
+        compilerVersion.set(studioBuildVersion)
       }
     }
 
@@ -255,15 +255,15 @@ project(":") {
   }
 
   intellij {
-    pluginName = "EduTools"
-    updateSinceUntilBuild = true
-    downloadSources = false
+    pluginName.set("EduTools")
+    updateSinceUntilBuild.set(true)
+    downloadSources.set(false)
 
     tasks.withType<PatchPluginXmlTask> {
-      changeNotes(file(changesFile).readText())
-      pluginDescription(file("description.html").readText())
-      sinceBuild(prop("customSinceBuild"))
-      untilBuild(prop("customUntilBuild"))
+      changeNotes.set(provider { file(changesFile).readText() })
+      pluginDescription.set(provider { file("description.html").readText() })
+      sinceBuild.set(prop("customSinceBuild"))
+      untilBuild.set(prop("customUntilBuild"))
     }
 
     val pluginsList = mutableListOf(
@@ -283,7 +283,7 @@ project(":") {
       pluginsList += listOf("NodeJS", "JavaScriptLanguage", goPlugin)
     }
 
-    setPlugins(*pluginsList.toTypedArray())
+    plugins.set(pluginsList)
   }
 
   dependencies {
@@ -349,18 +349,22 @@ project(":") {
 
   task("configureIdea") {
     doLast {
-      intellij.sandboxDirectory = ideaSandbox
-      withProp("ideaPath") {
-        intellij.alternativeIdePath = it
+      intellij.sandboxDir.set(ideaSandbox)
+      withProp("ideaPath") { path ->
+        tasks.runIde {
+          ideDir.set(file(path))
+        }
       }
     }
   }
 
   task("configurePyCharm") {
     doLast {
-      intellij.sandboxDirectory = pycharmSandbox
-      withProp("pycharmPath") {
-        intellij.alternativeIdePath = it
+      intellij.sandboxDir.set(pycharmSandbox)
+      withProp("pycharmPath") { path ->
+        tasks.runIde {
+          ideDir.set(file(path))
+        }
       }
     }
   }
@@ -371,25 +375,31 @@ project(":") {
         throw InvalidUserDataException("Path to WebStorm installed locally is needed\nDefine \"webStormPath\" property")
       }
 
-      intellij.sandboxDirectory = webStormSandbox
-      intellij.alternativeIdePath = prop("webStormPath")
+      intellij.sandboxDir.set(webStormSandbox)
+      tasks.runIde {
+        ideDir.set(file(prop("webStormPath")))
+      }
     }
   }
 
   task("configureCLion") {
     doLast {
-      intellij.sandboxDirectory = clionSandbox
-      withProp("clionPath") {
-        intellij.alternativeIdePath = it
+      intellij.sandboxDir.set(clionSandbox)
+      withProp("clionPath") { path ->
+        tasks.runIde {
+          ideDir.set(file(path))
+        }
       }
     }
   }
 
   task("configureAndroidStudio") {
     doLast {
-      intellij.sandboxDirectory = studioSandbox
-      withProp("androidStudioPath") {
-        intellij.alternativeIdePath = it
+      intellij.sandboxDir.set(studioSandbox)
+      withProp("androidStudioPath") { path ->
+        tasks.runIde {
+          ideDir.set(file(path))
+        }
       }
     }
   }
@@ -400,8 +410,10 @@ project(":") {
         throw InvalidUserDataException("Path to GoLand installed locally is needed\nDefine \"goLandPath\" property")
       }
 
-      intellij.sandboxDirectory = goLandSandbox
-      intellij.alternativeIdePath = prop("goLandPath")
+      intellij.sandboxDir.set(goLandSandbox)
+      tasks.runIde {
+        ideDir.set(file(prop("goLandPath")))
+      }
     }
   }
 }
@@ -438,12 +450,12 @@ project(":code-insight:html") {
 }
 
 project(":code-insight:markdown") {
-  val plugins = mutableListOf(markdownPlugin)
+  val pluginList = mutableListOf(markdownPlugin)
   if (isStudioIDE) {
-    plugins.add("platform-images")
+    pluginList += "platform-images"
   }
   intellij {
-    setPlugins(*plugins.toTypedArray())
+    plugins.set(pluginList)
   }
 
   dependencies {
@@ -457,7 +469,7 @@ project(":code-insight:markdown") {
 
 project(":code-insight:yaml") {
   intellij {
-    setPlugins("yaml")
+    plugins.set(listOf("yaml"))
   }
 
   dependencies {
@@ -472,10 +484,10 @@ project(":code-insight:yaml") {
 project(":jvm-core") {
   intellij {
     if (!isJvmCenteredIDE) {
-      localPath = null
-      version = ideaVersion
+      localPath.set(null as String?)
+      version.set(ideaVersion)
     }
-    setPlugins(*jvmPlugins)
+    plugins.set(jvmPlugins)
   }
 
   val testOutput = configurations.create("testOutput")
@@ -490,9 +502,9 @@ project(":jvm-core") {
 
 project(":Edu-Java") {
   intellij {
-    localPath = null
-    version = ideaVersion
-    setPlugins(*jvmPlugins)
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(jvmPlugins)
   }
 
   dependencies {
@@ -506,14 +518,11 @@ project(":Edu-Java") {
 project(":Edu-Kotlin") {
   intellij {
     if (!isJvmCenteredIDE) {
-      localPath = null
-      version = ideaVersion
+      localPath.set(null as String?)
+      version.set(ideaVersion)
     }
-    val plugins = listOf(
-      "Kotlin",
-      *jvmPlugins
-    )
-    setPlugins(*plugins.toTypedArray())
+    val pluginList = jvmPlugins + "Kotlin"
+    plugins.set(pluginList)
   }
 
   dependencies {
@@ -526,13 +535,10 @@ project(":Edu-Kotlin") {
 
 project(":Edu-Scala") {
   intellij {
-    localPath = null
-    version = ideaVersion
-    val plugins = listOf(
-      scalaPlugin,
-      *jvmPlugins
-    )
-    setPlugins(*plugins.toTypedArray())
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    val pluginsList = jvmPlugins + scalaPlugin
+    plugins.set(pluginsList)
   }
 
   dependencies {
@@ -545,23 +551,22 @@ project(":Edu-Scala") {
 
 project(":Edu-Android") {
   intellij {
-    localPath = studioPath
-    val plugins = listOf(
+    localPath.set(studioPath)
+    val pluginsList = listOf(
       "android",
       // Looks like `android-layoutlib` is semantically mandatory dependency of android plugin
       // because we get `NoClassDefFoundError` without it.
       // But it's marked as optional one so gradle-intellij-plugin doesn't load it automatically.
       // So we have to add it manually
-      "android-layoutlib",
-      *jvmPlugins
-    )
-    setPlugins(*plugins.toTypedArray())
+      "android-layoutlib"
+    ) + jvmPlugins
+    plugins.set(pluginsList)
   }
 
   // TODO: check if we still need this after migration to gradle-intellij 1.0
   tasks {
     withType<IntelliJInstrumentCodeTask> {
-      setCompilerVersion(studioBuildVersion)
+      compilerVersion.set(studioBuildVersion)
     }
   }
 
@@ -580,11 +585,11 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    val plugins = listOfNotNull(
+    val pluginList = listOfNotNull(
       pythonPlugin,
       if (isJvmCenteredIDE) "java" else null
     )
-    setPlugins(*plugins.toTypedArray())
+    plugins.set(pluginList)
   }
 
   dependencies {
@@ -598,15 +603,15 @@ project(":Edu-Python") {
 project(":Edu-Python:Idea") {
   intellij {
     if (!isJvmCenteredIDE || isStudioIDE) {
-      localPath = null
-      version = ideaVersion
+      localPath.set(null as String?)
+      version.set(ideaVersion)
     }
 
-    val plugins = listOfNotNull(
+    val pluginList = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
       "java"
     )
-    setPlugins(*plugins.toTypedArray())
+    plugins.set(pluginList)
   }
 
   dependencies {
@@ -619,10 +624,10 @@ project(":Edu-Python:Idea") {
 project(":Edu-Python:PyCharm") {
   intellij {
     if (isStudioIDE) {
-      localPath = null
-      version = ideaVersion
+      localPath.set(null as String?)
+      version.set(ideaVersion)
     }
-    setPlugins(pythonPlugin)
+    plugins.set(listOf(pythonPlugin))
   }
 
   dependencies {
@@ -634,17 +639,17 @@ project(":Edu-Python:PyCharm") {
 
 project(":Edu-JavaScript") {
   intellij {
-    localPath = null
-    version = ideaVersion
-    val plugins = mutableListOf(
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    val pluginList = mutableListOf(
       "NodeJS",
       "JavaScriptLanguage"
     )
     if (isAtLeast211) {
-      plugins += listOf("com.intellij.css")
+      pluginList += "com.intellij.css"
     }
 
-    setPlugins(*plugins.toTypedArray())
+    plugins.set(pluginList)
   }
   dependencies {
     implementation(project(":educational-core"))
@@ -654,7 +659,7 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
-    setPlugins(rustPlugin, tomlPlugin)
+    plugins.set(listOf(rustPlugin, tomlPlugin))
   }
 
   dependencies {
@@ -683,9 +688,9 @@ project(":Edu-Rust") {
 
 project(":Edu-Cpp") {
   intellij {
-    localPath = null
-    version = clionVersion
-    setPlugins("clion-test-google", "clion-test-catch", "clion", "c-plugin")
+    localPath.set(null as String?)
+    version.set(clionVersion)
+    plugins.set(listOf("clion-test-google", "clion-test-catch", "clion", "c-plugin"))
   }
 
   dependencies {
@@ -696,9 +701,9 @@ project(":Edu-Cpp") {
 
 project(":Edu-Go") {
   intellij {
-    localPath = null
-    version = ideaVersion
-    setPlugins(goPlugin)
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(goPlugin))
   }
 
   dependencies {
