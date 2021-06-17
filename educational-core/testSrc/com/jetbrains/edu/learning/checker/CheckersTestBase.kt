@@ -10,9 +10,7 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.HeavyPlatformTestCase
-import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.*
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener
@@ -31,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.withTestDialog
 import org.junit.Assert
-import org.junit.ComparisonFailure
 
 abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     protected lateinit var myCourse: Course
@@ -95,8 +92,10 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     }
 
     protected open fun checkTask(task: Task): List<AssertionError> {
-        UIUtil.dispatchAllInvocationEvents()
-        val exceptions = mutableListOf<AssertionError>()
+        val errorProcessor = CollectingLoggedErrorProcessor()
+        LoggedErrorProcessor.setNewInstance(errorProcessor)
+
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
         try {
             // In case of framework lessons, we can't just run checker for the given task
             // because code on file system may be not updated yet.
@@ -111,13 +110,12 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
 
             val virtualFile = task.openFirstTaskFileInEditor()
             launchAction(virtualFile, CheckAction())
-            UIUtil.dispatchAllInvocationEvents()
-        } catch (e: AssertionError) {
-            exceptions.add(e)
-        } catch (e: ComparisonFailure) {
-            exceptions.add(e)
+            PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
         }
-        return exceptions
+        finally {
+            LoggedErrorProcessor.restoreDefaultProcessor()
+        }
+        return errorProcessor.exceptions
     }
 
     private fun Task.openFirstTaskFileInEditor(): VirtualFile {
