@@ -152,7 +152,6 @@ allprojects {
       }
     }
 
-    // TODO: check if we still need this after migration to gradle-intellij 1.0
     if (isStudioIDE) {
       withType<IntelliJInstrumentCodeTask> {
         compilerVersion.set(studioBuildVersion)
@@ -563,7 +562,6 @@ project(":Edu-Android") {
     plugins.set(pluginsList)
   }
 
-  // TODO: check if we still need this after migration to gradle-intellij 1.0
   tasks {
     withType<IntelliJInstrumentCodeTask> {
       compilerVersion.set(studioBuildVersion)
