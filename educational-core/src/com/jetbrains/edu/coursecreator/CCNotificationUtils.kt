@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
@@ -95,5 +96,14 @@ object CCNotificationUtils {
       notification.addAction(action)
     }
     notification.notify(project)
+  }
+
+  fun showLoginSuccessfulNotification(userName: String) {
+    Notification(
+      "EduTools",
+      EduCoreBundle.message("login.successful"),
+      EduCoreBundle.message("logged.in.as", userName),
+      NotificationType.INFORMATION
+    ).notify(null)
   }
 }

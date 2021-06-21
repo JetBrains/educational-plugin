@@ -17,12 +17,14 @@ import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.FAILED_TITLE
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.getErrorMessage
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
+import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
@@ -303,6 +305,9 @@ abstract class MarketplaceConnector : CourseConnector {
         for (action in postLoginActions) {
           action.run()
         }
+        requestFocus()
+        val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.getFullName() ?: return
+        showLoginSuccessfulNotification(userName)
       }
     })
   }

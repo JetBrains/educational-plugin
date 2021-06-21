@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.computeUnderProgress
@@ -158,12 +159,7 @@ object HyperskillLoginListener : HyperlinkAdapter() {
   override fun hyperlinkActivated(e: HyperlinkEvent?) {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return@Runnable
-      Notification(
-        "EduTools",
-        EduCoreBundle.message("login.successful"),
-        EduCoreBundle.message("logged.in.as", fullName),
-        NotificationType.INFORMATION
-      ).notify(null)
+      showLoginSuccessfulNotification(fullName)
     })
   }
 }
