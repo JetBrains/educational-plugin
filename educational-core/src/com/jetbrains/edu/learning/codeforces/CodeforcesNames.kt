@@ -10,6 +10,7 @@ object CodeforcesNames {
   const val CODEFORCES_PROBLEMS: String = "Problems"
   const val CODEFORCES_HELP_TEXT: String = "https://codeforces.com/contest/*"
   const val TEST_DATA_FOLDER: String = "testData"
+  const val CODEFORCES_EDU_TOOLS_HELP = "https://www.jetbrains.com/help/education/codeforces-contests.html"
 
   const val CODEFORCES_TASK_TYPE: String = CODEFORCES
   const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES}_file_io"
