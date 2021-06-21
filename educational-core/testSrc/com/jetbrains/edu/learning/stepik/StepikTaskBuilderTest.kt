@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.Companion.isValidHtml
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepsList
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -102,6 +103,22 @@ class StepikTaskBuilderTest : EduTestCase() {
     assertInstanceOf(options, PyCharmStepOptions::class.java)
     assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)));
     assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 5)));
+  }
+
+  // EDU-4363 Sample input XML is not correctly displayed in the task description
+  fun `test check is string html`() {
+    assertTrue(isValidHtml("<a attr=\"123\"><b>hello</b><c/></a>"))
+    assertFalse(isValidHtml("""
+        1
+        2
+        3
+        4
+        0
+    """.trimIndent()))
+    assertTrue(isValidHtml("<input value = \">\">"))
+    assertTrue(isValidHtml("<br/>"))
+    assertFalse(isValidHtml("br/>"))
+    assertFalse(isValidHtml("<>"))
   }
 
   private inline fun <reified T : Task> doTest(language: Language, postSubmissionOnOpen: Boolean = true) {
