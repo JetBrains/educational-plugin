@@ -77,7 +77,7 @@ object NavigationUtils {
     return task.lesson != course.getProjectLesson() && task.index == 1
   }
 
-  private fun isLastHyperskillProblem(task: Task): Boolean {
+  fun isLastHyperskillProblem(task: Task): Boolean {
     val course = task.course as? HyperskillCourse ?: return false
     val lesson = task.lesson
     return lesson != course.getProjectLesson() && task.index == lesson.items.size

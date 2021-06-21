@@ -2,6 +2,10 @@
 
 package com.jetbrains.edu.learning
 
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
@@ -41,4 +45,19 @@ inline fun withTestDialog(dialog: TestInputDialog, action: () -> Unit) {
   finally {
     TestDialogManager.setTestInputDialog(oldDialog)
   }
+}
+
+fun withNotificationCheck(project: Project, disposable: Disposable, check: (Boolean, String) -> Unit, action: () -> Unit) {
+  var notificationShown = false
+  var notificationText = ""
+
+  project.messageBus.connect(disposable).subscribe(Notifications.TOPIC, object : Notifications {
+    override fun notify(notification: Notification) {
+      notificationShown = true
+      notificationText = notification.content
+    }
+  })
+
+  action()
+  check(notificationShown, notificationText)
 }

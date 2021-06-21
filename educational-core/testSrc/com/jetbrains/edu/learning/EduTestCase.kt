@@ -207,6 +207,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = findLesson(lessonIndex).taskList[taskIndex]
 
+  protected fun findTask(sectionIndex: Int,
+                         lessonIndex: Int,
+                         taskIndex: Int): Task = getCourse().sections[sectionIndex].lessons[lessonIndex].taskList[taskIndex]
+
   protected fun findLesson(lessonIndex: Int): Lesson = getCourse().lessons[lessonIndex]
 
   protected fun findFileInTask(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {

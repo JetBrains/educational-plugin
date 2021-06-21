@@ -17,6 +17,8 @@ abstract class TaskNavigationAction(
   icon: Icon
 ) : DumbAwareAction(text, description, icon) {
 
+  protected open fun getCustomAction(task: Task): ((Project, Task) -> Unit)? = null
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     navigateTask(project, e.place)
@@ -26,13 +28,18 @@ abstract class TaskNavigationAction(
     e.presentation.isEnabled = false
     val project = e.project ?: return
     val currentTask = EduUtils.getCurrentTask(project) ?: return
-    if (getTargetTask(currentTask) != null) {
+    if (getTargetTask(currentTask) != null || getCustomAction(currentTask) != null) {
       e.presentation.isEnabled = true
     }
   }
 
   private fun navigateTask(project: Project, place: String) {
     val currentTask = EduUtils.getCurrentTask(project) ?: return
+    val customAction = getCustomAction(currentTask)
+    if (customAction != null) {
+      customAction(project, currentTask)
+      return
+    }
     val targetTask = getTargetTask(currentTask) ?: return
 
     NavigationUtils.navigateToTask(project, targetTask, currentTask)

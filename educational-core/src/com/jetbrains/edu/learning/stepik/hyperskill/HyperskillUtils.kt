@@ -11,21 +11,22 @@ import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TopPanel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -116,6 +117,8 @@ fun stageLink(projectId: Int, stageId: Int) = "$HYPERSKILL_PROJECTS_URL/$project
 
 fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
 
+fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
+
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
 
 fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
@@ -187,4 +190,38 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
     error("Function is called for Theory task itself")
   }
   return lesson.taskList.find { it is TheoryTask } as? TheoryTask
+}
+
+fun openNextActivity(project: Project, task: Task) {
+  val course = task.course
+  val language = HYPERSKILL_LANGUAGES.entries.find { it.value == course.language }?.key ?: return
+
+  val nextStep = computeUnderProgress(project, EduCoreBundle.message("hyperskill.next.activity"), true) {
+    val stepSource = HyperskillConnector.getInstance().getStepSource(task.id)
+      .onError { return@computeUnderProgress null }
+    val topic = stepSource.topic ?: return@computeUnderProgress null
+    val steps = HyperskillConnector.getInstance().getRecommendedStepsForTopic(topic)
+      .onError { return@computeUnderProgress null }
+    return@computeUnderProgress steps.lastOrNull()
+  }
+
+  if (nextStep == null) {
+    Notification(
+      "EduTools",
+      EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
+      EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)),
+      NotificationType.ERROR,
+      NotificationListener.URL_OPENING_LISTENER
+    ).notify(project)
+    return
+  }
+
+  if (nextStep.block!!.name in HyperskillCourse.SUPPORTED_STEP_TYPES && nextStep.id != task.id) {
+    ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(course.id, nextStep.id, language))
+  }
+  else {
+    val topic = nextStep.topic
+    val link = if (nextStep.isCompleted && topic != null) topicCompletedLink(topic) else stepLink(nextStep.id)
+    EduBrowser.getInstance().browse(link)
+  }
 }

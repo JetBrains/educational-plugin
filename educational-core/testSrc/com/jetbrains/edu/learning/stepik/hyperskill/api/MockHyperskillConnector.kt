@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okhttp3.mockwebserver.MockResponse
 
 class MockHyperskillConnector : HyperskillConnector() {
 
@@ -80,10 +81,13 @@ class MockHyperskillConnector : HyperskillConnector() {
     }
   }
 
-  private fun stepSources(tasks: List<Task>): String {
+  fun mockResponseFromTask(task: Task, initStepSource: (HyperskillStepSource) -> Unit): MockResponse =
+    MockResponseFactory.fromString(stepSources(listOf(task), initStepSource))
+
+  private fun stepSources(tasks: List<Task>, initStepSource: (HyperskillStepSource) -> Unit = {}): String {
     val stepsList = HyperskillStepsList().apply {
       steps = tasks.map { task ->
-        createStepSource(task)
+        createStepSource(task).also(initStepSource)
       }
     }
 

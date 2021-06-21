@@ -14,8 +14,8 @@ class HyperskillLegacyProblemsNavigationTest : HyperskillNavigateInCourseTestBas
   fun `test navigate to next available on first problem`() =
     checkNavigationAction(getFirstProblemsTask(), ::NextTaskAction, true)
 
-  fun `test navigate to next unavailable on last problem`() {
+  fun `test navigate to next available on last problem`() {
     val secondProblem = course.findTask(HYPERSKILL_PROBLEMS, problem2Name)
-    checkNavigationAction(secondProblem, ::NextTaskAction, false)
+    checkNavigationAction(secondProblem, ::NextTaskAction, true)
   }
 }

@@ -12,9 +12,9 @@ class HyperskillMixedProblemsNavigationTest : HyperskillNavigateInCourseTestBase
 
   override fun getFirstProblemsTask(): Task = course.findTask(HYPERSKILL_PROBLEMS, problem1Name)
 
-  fun `test navigate to next unavailable on last legacy problem`() {
+  fun `test navigate to next available on last legacy problem`() {
     val problem = course.findTask(HYPERSKILL_PROBLEMS, problem2Name)
-    checkNavigationAction(problem, ::NextTaskAction, false)
+    checkNavigationAction(problem, ::NextTaskAction, true)
   }
 
   fun `test navigate to previous unavailable on first topic problems task`() {
