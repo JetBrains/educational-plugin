@@ -13,6 +13,6 @@ class KtCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<JdkProjectSettings> = KtConfigurator()
   override val languageId: String = EduNames.KOTLIN
   override val templateFileName: String = "codeforces.Kotlin Main.kt"
-  override val templateName: String = "Main.kt"
+  override val displayTemplateName: String = "Main.kt"
   override val languageIcon: Icon = EducationalCoreIcons.KotlinLogo
 }

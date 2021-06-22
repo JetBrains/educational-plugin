@@ -19,14 +19,14 @@ interface CodeforcesLanguageProvider {
   val preferableCodeforcesLanguage: String
     get() = codeforcesLanguageNamings.first()
   val templateFileName: String
-  val templateName: String
+  val displayTemplateName: String
   val languageIcon: Icon
 
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
 
   fun createTaskFiles(task: Task): List<TaskFile> {
     val text = GeneratorUtils.getJ2eeTemplateText(templateFileName)
-    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateName), text))
+    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, displayTemplateName), text))
   }
 
   companion object {

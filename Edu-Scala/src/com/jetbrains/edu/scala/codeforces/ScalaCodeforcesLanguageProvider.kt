@@ -13,6 +13,6 @@ class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<JdkProjectSettings> = ScalaGradleConfigurator()
   override val languageId: String = EduNames.SCALA
   override val templateFileName: String = "codeforces.Scala Main.scala"
-  override val templateName: String = "Main.scala"
+  override val displayTemplateName: String = "Main.scala"
   override val languageIcon: Icon = EducationalCoreIcons.ScalaLogo
 }

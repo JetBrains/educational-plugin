@@ -16,7 +16,7 @@ class JCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val languageId: String = EduNames.JAVA
   override val preferableCodeforcesLanguage: String = "Java 8"
   override val templateFileName: String = "codeforces.Java Main.java"
-  override val templateName: String = "Main.java"
+  override val displayTemplateName: String = "Main.java"
   override val languageIcon: Icon = EducationalCoreIcons.JavaLogo
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? {

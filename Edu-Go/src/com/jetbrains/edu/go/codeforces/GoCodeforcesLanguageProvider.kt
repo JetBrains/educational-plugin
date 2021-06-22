@@ -16,7 +16,7 @@ class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Go")
   override val languageId: String = EduNames.GO
   override val templateFileName: String = "codeforces.Go main.go"
-  override val templateName: String = "main.go"
+  override val displayTemplateName: String = "main.go"
   override val languageIcon: Icon = EducationalCoreIcons.GoLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
