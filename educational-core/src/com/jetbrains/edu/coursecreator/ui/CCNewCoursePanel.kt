@@ -98,7 +98,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     bottomPanel.add(settings, BorderLayout.NORTH)
 
     add(panel {
-      row(EduCoreBundle.message("cc.new.course.error.enter.title")) { titleField(CCFlags.pushX) }
+      row(EduCoreBundle.message("cc.new.course.title")) { titleField(CCFlags.pushX) }
       row(EduCoreBundle.message("cc.new.course.type")) { courseDataComboBox(CCFlags.growX) }
       row(EduCoreBundle.message("cc.new.course.description")) { scrollPane(CCFlags.growX) }
     }, BorderLayout.NORTH)
