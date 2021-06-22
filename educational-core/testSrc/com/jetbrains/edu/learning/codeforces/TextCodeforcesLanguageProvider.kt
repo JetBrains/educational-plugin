@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class TextCodeforcesLanguageProvider: CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("TEXT")
   override val configurator: PlainTextConfigurator = PlainTextConfigurator()
   override val languageId: String = com.intellij.openapi.fileTypes.PlainTextLanguage.INSTANCE.id
-  override val templateFileName: String = "codeforces.Main.txt"
+  override val templateFileName: String = "codeforces.Text Main.txt"
+  override val templateName: String = "Main.txt"
+  override val languageIcon: Icon = EducationalCoreIcons.Codeforces
 }

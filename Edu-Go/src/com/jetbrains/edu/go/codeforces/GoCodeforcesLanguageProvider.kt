@@ -9,11 +9,15 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Go")
   override val languageId: String = EduNames.GO
-  override val templateFileName: String = EduNames.CODEFORCES_GO_TEMPLATE
+  override val templateFileName: String = "codeforces.Go main.go"
+  override val templateName: String = "main.go"
+  override val languageIcon: Icon = EducationalCoreIcons.GoLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val mainFileTemplate = GeneratorUtils.getJ2eeTemplateText(templateFileName)

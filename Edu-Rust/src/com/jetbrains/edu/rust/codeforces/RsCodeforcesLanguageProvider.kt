@@ -10,14 +10,18 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.rust.toPackageName
+import icons.EducationalCoreIcons
 import org.rust.cargo.CargoConstants.MANIFEST_FILE
 import org.rust.lang.RsConstants.MAIN_RS_FILE
+import javax.swing.Icon
 
 class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> = listOf("Rust")
   override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
   override val languageId: String = EduNames.RUST
-  override val templateFileName: String = EduNames.CODEFORCES_RUST_TEMPLATE
+  override val templateFileName: String = "codeforces.Rust main.rs"
+  override val templateName: String = "main.rs"
+  override val languageIcon: Icon = EducationalCoreIcons.RustLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
     val fileTemplate = GeneratorUtils.getJ2eeTemplateText(templateFileName)

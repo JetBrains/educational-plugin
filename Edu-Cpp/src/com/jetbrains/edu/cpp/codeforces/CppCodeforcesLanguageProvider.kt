@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> =
@@ -16,7 +18,9 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val configurator: EduConfigurator<CppProjectSettings> = CppConfigurator()
   override val languageId: String = EduNames.CPP
   override val preferableCodeforcesLanguage: String = "GNU C++17"
-  override val templateFileName: String = EduNames.CODEFORCES_CPP_TEMPLATE
+  override val templateFileName: String = "codeforces.CPP main.cpp"
+  override val templateName: String = "main.cpp"
+  override val languageIcon: Icon = EducationalCoreIcons.CppLogo
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage) {

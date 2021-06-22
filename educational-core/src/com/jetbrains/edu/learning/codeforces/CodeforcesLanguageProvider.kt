@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import javax.swing.Icon
 
 interface CodeforcesLanguageProvider {
   val codeforcesLanguageNamings: List<String>
@@ -18,12 +19,14 @@ interface CodeforcesLanguageProvider {
   val preferableCodeforcesLanguage: String
     get() = codeforcesLanguageNamings.first()
   val templateFileName: String
+  val templateName: String
+  val languageIcon: Icon
 
   fun getLanguageVersion(codeforcesLanguage: String): String? = null
 
   fun createTaskFiles(task: Task): List<TaskFile> {
     val text = GeneratorUtils.getJ2eeTemplateText(templateFileName)
-    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateFileName), text))
+    return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, templateName), text))
   }
 
   companion object {
