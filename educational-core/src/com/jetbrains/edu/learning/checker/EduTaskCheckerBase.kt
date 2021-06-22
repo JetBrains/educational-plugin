@@ -46,7 +46,6 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val configurations = runReadActionInSmartMode(project) { createTestConfigurations() }
     configurations.forEach {
       it.isActivateToolWindowBeforeRun = activateRunToolWindow
-      it.isTemporary = true
     }
 
     if (configurations.isEmpty()) return noTestsRun
@@ -150,8 +149,13 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     val customConfiguration = CheckUtils.getCustomRunConfiguration(project, task)
     return if (customConfiguration != null) {
       listOf(customConfiguration)
-    } else {
-      createDefaultTestConfigurations()
+    }
+    else {
+      val defaultConfigurations = createDefaultTestConfigurations()
+      // Only default run configurations should be marked as temporary
+      // Otherwise, custom run configurations will be removed from the disk by the platform
+      defaultConfigurations.forEach { it.isTemporary = true }
+      defaultConfigurations
     }
   }
 
