@@ -329,7 +329,7 @@ project(":") {
   tasks {
     withType<PrepareSandboxTask> {
       from("$rootDir/twitter") {
-        into("${intellij.pluginName}/twitter")
+        into("${pluginName.get()}/twitter")
         include("**/*.gif")
       }
       finalizedBy(removeIncompatiblePlugins)
