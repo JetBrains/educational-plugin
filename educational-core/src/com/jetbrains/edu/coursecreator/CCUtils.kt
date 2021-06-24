@@ -143,12 +143,15 @@ object CCUtils {
   fun checkIgnoredFiles(project: Project): String? {
     val excludedFiles = loadExcludedFilePaths(project)
     val filesNotFound = excludedFiles.filter { project.courseDir.findFileByRelativePath(it) == null }
-    if (filesNotFound.isNotEmpty()) {
-      return """|Files listed in the `${EduNames.COURSE_IGNORE}` are not found in the project:
-                |
-                |${filesNotFound.joinToString()}""".trimMargin()
+
+    return if (filesNotFound.isNotEmpty()) {
+      buildString {
+        appendLine("${EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)}:")
+        appendLine()
+        appendLine(filesNotFound.joinToString())
+      }
     }
-    return null
+    else null
   }
 
   private fun loadExcludedFilePaths(project: Project): List<String> {

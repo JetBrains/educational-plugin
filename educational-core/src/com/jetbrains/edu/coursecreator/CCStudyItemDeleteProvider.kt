@@ -18,9 +18,9 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDependentTasks
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import java.util.*
-import kotlin.collections.HashSet
 
 class CCStudyItemDeleteProvider : DeleteProvider {
 
@@ -33,9 +33,9 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     // currently, only gradle projects have module for study items
     val module = dataContext.getData(LangDataKeys.MODULE_CONTEXT)
     val itemType = when (studyItem) {
-      is Section -> "Section"
-      is Lesson -> "Lesson"
-      is Task -> "Task"
+      is Section -> EduCoreBundle.message("item.section.title")
+      is Lesson -> EduCoreBundle.message("item.lesson.title")
+      is Task -> EduCoreBundle.message("item.task.title")
       else -> return
     }
 
@@ -58,8 +58,8 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       if (dependentTasks.isNotEmpty()) {
         // TODO: show dependent task in more convenient way. See https://youtrack.jetbrains.com/issue/EDU-1465
         appendLine()
-        appendLine("Note, all placeholder dependencies on removing items will be deleted as well.")
-        appendLine("Dependent tasks:")
+        appendLine(EduCoreBundle.message("course.creator.warning.removing.dependencies"))
+        appendLine("${EduCoreBundle.message("course.creator.warning.dependent.tasks")}:")
         appendLine()
         for (task in dependentTasks) {
           appendLine("• ${taskMessageName(task)}")
