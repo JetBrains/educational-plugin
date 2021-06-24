@@ -49,12 +49,12 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="GoApplicationRunConfiguration" factoryName="Go Application">
                   <module name="Go Course" />
-                  <working_directory value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration" />
+                  <working_directory value="${'$'}TASK_DIR${'$'}" />
                   <envs>
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
                   <kind value="PACKAGE" />
-                  <filePath value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration/main.go" />
+                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
                   <package value="theorywithcustomrunconfiguration" />
                   <directory value="${'$'}PROJECT_DIR${'$'}" />
                   <method v="2" />

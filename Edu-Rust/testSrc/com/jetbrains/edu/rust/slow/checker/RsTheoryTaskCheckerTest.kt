@@ -50,7 +50,7 @@ class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
             edition = "2018"
           """)
           dir("runConfigurations") {
-            taskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", """
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
                   <option name="command" value="run --package theory-with-custom-run-configuration --bin theory-with-custom-run-configuration" />
