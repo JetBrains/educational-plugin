@@ -87,6 +87,64 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("gradleCustomRunConfiguration") {
+        javaTaskFile("src/Task.java", """
+          public class Task {
+              public static String foo() {
+                  return System.getenv("EXAMPLE_ENV");
+              }
+          }
+        """)
+        javaTaskFile("test/Tests.java", """
+          import org.junit.Assert;
+          import org.junit.Test;
+
+          public class Tests {
+
+            @Test
+            public void fail() {
+              Assert.fail();
+            }
+
+            @Test
+            public void test() {
+              Assert.assertEquals("Hello", Task.foo());
+            }
+          }
+        """)
+        dir("runConfigurations") {
+          xmlTaskFile("CustomGradleCheck.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomGradleCheck" type="GradleRunConfiguration" factoryName="Gradle">
+                <ExternalSystemSettings>
+                  <option name="env">
+                    <map>
+                      <entry key="EXAMPLE_ENV" value="Hello!" />
+                    </map>
+                  </option>
+                  <option name="executionName" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalSystemIdString" value="GRADLE" />
+                  <option name="scriptParameters" value="--tests &quot;Tests.test&quot;" />
+                  <option name="taskDescriptions">
+                    <list />
+                  </option>
+                  <option name="taskNames">
+                    <list>
+                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:test" />
+                    </list>
+                  </option>
+                  <option name="vmOptions" value="" />
+                </ExternalSystemSettings>
+                <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+                <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+                <DebugAllEnabled>false</DebugAllEnabled>
+                <method v="2" />
+              </configuration>
+            </component>
+          """)
+        }
+      }
     }
   }
 
@@ -101,6 +159,9 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
             diff(CheckResultDiff(expected = "42", actual = "0", title = "Comparison Failure (test)"))
         "escapeMessageInFailedTest" ->
           equalTo("<br>".xmlEscaped) to nullValue()
+        "gradleCustomRunConfiguration" ->
+          equalTo(EduCoreBundle.message("check.incorrect")) to
+            diff(CheckResultDiff(expected = "Hello", actual = "Hello!", title = "Comparison Failure (test)"))
         else -> error("Unexpected task `${task.name}`")
       }
       assertThat("Checker message for ${task.name} doesn't match", checkResult.message, messageMatcher)

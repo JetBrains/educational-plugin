@@ -168,6 +168,59 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
       }
+      eduTask("gradleCustomRunConfiguration") {
+        kotlinTaskFile("src/Task.kt", """
+          fun foo(): String? = System.getenv("EXAMPLE_ENV")
+        """)
+        kotlinTaskFile("test/Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+          
+          class Tests {
+              @Test
+              fun fail() {
+                  Assert.fail()
+              }
+          
+              @Test
+              fun testSolution() {
+                  Assert.assertEquals("Hello", foo())
+              }
+          }
+        """)
+        dir("runConfigurations") {
+          xmlTaskFile("CustomGradleCheck.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomGradleCheck" type="GradleRunConfiguration" factoryName="Gradle">
+                <ExternalSystemSettings>
+                  <option name="env">
+                    <map>
+                      <entry key="EXAMPLE_ENV" value="Hello!" />
+                    </map>
+                  </option>                
+                  <option name="executionName" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalSystemIdString" value="GRADLE" />
+                  <option name="scriptParameters" value="--tests &quot;Tests.testSolution&quot;" />
+                  <option name="taskDescriptions">
+                    <list />
+                  </option>
+                  <option name="taskNames">
+                    <list>
+                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:test" />
+                    </list>
+                  </option>
+                  <option name="vmOptions" value="" />
+                </ExternalSystemSettings>
+                <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+                <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+                <DebugAllEnabled>false</DebugAllEnabled>
+                <method v="2" />
+              </configuration>
+            </component>
+          """)
+        }
+      }
       outputTask("outputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
           fun main() {
@@ -225,6 +278,9 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           equalTo("expected: Foo<(0, 0)> but was: Bar<(0, 0)>".xmlEscaped) to nullValue()
         "escapeMessageInFailedTest" ->
           equalTo("<br>".xmlEscaped) to nullValue()
+        "gradleCustomRunConfiguration" ->
+          equalTo(EduCoreBundle.message("check.incorrect")) to
+            diff(CheckResultDiff(expected = "Hello", actual = "Hello!", title = title))
         "outputTaskFail" ->
           equalTo(EduCoreBundle.message("check.incorrect")) to
             diff(CheckResultDiff(expected = "OK!\n", actual = "OK\n"))

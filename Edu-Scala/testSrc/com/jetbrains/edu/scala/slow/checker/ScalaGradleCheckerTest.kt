@@ -51,6 +51,60 @@ class ScalaGradleCheckerTest : JdkCheckerTestBase() {
           """)
         }
 
+        eduTask("EduTaskWithGradleCustomRunConfiguration") {
+          scalaTaskFile("src/Task.scala", """
+            class Task {
+              def foo(): String = {
+                System.getenv("EXAMPLE_ENV")
+              }
+            }
+          """)
+          scalaTaskFile("test/Test.scala", """
+            import org.junit.runner.RunWith
+            import org.scalatest.junit.JUnitRunner
+            import org.scalatest.FunSuite
+            
+            @RunWith(classOf[JUnitRunner])
+            class Test extends FunSuite {
+              test("hello") {
+                assertResult("Hello!") { new Task().foo() }
+              }
+            }
+        """)
+          dir("runConfigurations") {
+            xmlTaskFile("CustomGradleCheck.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration name="CustomGradleCheck" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+                  <ExternalSystemSettings>
+                    <option name="env">
+                      <map>
+                        <entry key="EXAMPLE_ENV" value="Hello!" />
+                      </map>
+                    </option>
+                    <option name="executionName" />
+                    <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                    <option name="externalSystemIdString" value="GRADLE" />
+                    <option name="scriptParameters" value="--tests &quot;Test&quot;" />
+                    <option name="taskDescriptions">
+                      <list />
+                    </option>
+                    <option name="taskNames">
+                      <list>
+                        <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:test" />
+                      </list>
+                    </option>
+                    <option name="vmOptions" value="" />
+                  </ExternalSystemSettings>
+                  <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+                  <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+                  <DebugAllEnabled>false</DebugAllEnabled>
+                  <method v="2" />
+                </configuration>
+              </component>              
+            """)
+          }
+        }
+
         outputTask("OutputTask with main method") {
           scalaTaskFile("src/Main.scala", """
             object Main {

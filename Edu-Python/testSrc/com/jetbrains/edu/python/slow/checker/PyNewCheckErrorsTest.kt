@@ -84,6 +84,54 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
               |""".trimMargin())
           }
         }
+        eduTask("CustomRunConfiguration") {
+          pythonTaskFile("task.py", """
+            import os
+
+
+            def hello():
+                return os.getenv("EXAMPLE_ENV")
+            """)
+          dir("tests") {
+            taskFile("__init__.py")
+            taskFile("tests.py", """
+              import unittest
+
+              from task import hello
+
+
+              class TestCase(unittest.TestCase):
+                  def test_hello(self):
+                      self.assertEqual(hello(), "Hello", msg="Error message")
+              """)
+          }
+          dir("runConfigurations") {
+            xmlTaskFile("CustomCheck.run.xml", """
+              <component name="ProjectRunConfigurationManager">
+                <configuration name="CustomCheck" type="tests" factoryName="Unittests">
+                  <module name="Python Course14" />
+                  <option name="INTERPRETER_OPTIONS" value="" />
+                  <option name="PARENT_ENVS" value="true" />
+                  <envs>
+                    <env name="EXAMPLE_ENV" value="Hello!" />
+                  </envs>
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="IS_MODULE_SDK" value="true" />
+                  <option name="ADD_CONTENT_ROOTS" value="true" />
+                  <option name="ADD_SOURCE_ROOTS" value="true" />
+                  <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+                  <option name="_new_pattern" value="&quot;&quot;" />
+                  <option name="_new_additionalArguments" value="&quot;&quot;" />
+                  <option name="_new_target" value="&quot;tests.TestCase&quot;" />
+                  <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+                  <method v="2" />
+                </configuration>
+              </component>
+            """)
+          }
+        }
+
         outputTask("OutputTestsFailed") {
           pythonTaskFile("hello_world.py", """print("Hello, World")""")
           taskFile("output.txt") {
@@ -106,6 +154,10 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
         "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())
         "DoNotEscapeMessageInFailedTest" -> Result(CheckStatus.Failed, equalTo("False is not true : <br>"),
                                                    nullValue(), nullValue())
+        "CustomRunConfiguration" ->
+          Result(CheckStatus.Failed, equalTo("'Hello!' != 'Hello'"),
+                 diff(CheckResultDiff(expected = "Hello!", actual = "Hello", title = "Comparison Failure (test_hello)")), nullValue())
+
         "OutputTestsFailed" ->
           Result(CheckStatus.Failed, equalTo(EduCoreBundle.message("check.incorrect")),
                  diff(CheckResultDiff(expected = "Hello, World!\n", actual = "Hello, World\n")), nullValue())

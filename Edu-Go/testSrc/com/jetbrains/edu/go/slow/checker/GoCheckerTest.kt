@@ -55,6 +55,67 @@ class GoCheckerTest : GoCheckersTestBase() {
 
           """)
         }
+        eduTask("EduWithCustomRunConfiguration") {
+          goTaskFile("task.go", """
+            package task
+            
+            import "os"
+            
+            func Hello() string {
+              return os.Getenv("EXAMPLE_ENV")
+            }
+          """)
+          taskFile("go.mod", """
+            module eduwithcustomrunconfiguration
+          """)
+          goTaskFile("test/task_test.go", """
+            package test
+            
+            import (
+              task "eduwithcustomrunconfiguration"
+              "testing"
+            )
+            
+            func TestSum(t *testing.T) {
+              tests := []struct {
+                name string
+                want string
+              }{
+                {"hello", "Hello!"},
+                {"fail", "Hello"},
+              }
+              for _, tt := range tests {
+                t.Run(tt.name, func(t *testing.T) {
+                  if tt.name == "fail" {
+                    t.FailNow()
+                  }
+                  if got := task.Hello(); got != tt.want {
+                    t.Errorf("Hello() = %v, want %v", got, tt.want)
+                  }
+                })
+              }
+            }
+          """)
+          xmlTaskFile("runConfigurations/CustomCheck.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomCheck" type="GoTestRunConfiguration" factoryName="Go Test">
+                <module name="Go Course3" />
+                <working_directory value="${'$'}TASK_DIR${'$'}/test" />
+                <envs>
+                  <env name="EXAMPLE_ENV" value="Hello!" />
+                </envs>
+                <root_directory value="${'$'}TASK_DIR${'$'}" />
+                <kind value="PACKAGE" />
+                <package value="eduwithcustomrunconfiguration/test" />
+                <directory value="${'$'}PROJECT_DIR${'$'}" />
+                <filePath value="${'$'}PROJECT_DIR${'$'}" />
+                <framework value="gotest" />
+                <pattern value="^\QTestSum\E${'$'}/^\Qhello\E${'$'}" />
+                <method v="2" />
+              </configuration>
+            </component>        
+          """)
+        }
         outputTask("Output") {
           goTaskFile("main.go", """
               package main

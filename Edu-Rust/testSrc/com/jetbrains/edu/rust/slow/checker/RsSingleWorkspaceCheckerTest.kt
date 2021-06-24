@@ -17,10 +17,10 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
       additionalFile("Cargo.toml",  """
         [workspace]
         members = [
-            "lesson1/EduOk",
-            "lesson1/EduErr",
-            "lesson1/EduCompilationErr",
-            "lesson1/Output"
+            "lesson1/*/",
+        ]
+        exclude = [
+            "**/*.yaml"
         ]
       """)
       lesson("lesson1") {
@@ -87,6 +87,104 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
               }
           """)
         }
+        eduTask("EduWithCustomRunConfigurationOk") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "edu_with_custom_run_configuration_ok"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              use std::env;
+
+              pub fn hello() -> String {
+                  return env::var("EXAMPLE_ENV").unwrap()
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use edu_with_custom_run_configuration_ok::hello;
+
+              #[test]
+              fn test() {
+                  assert_eq!(hello(), "Hello!", "Error message");
+              }
+
+              #[test]
+              fn fail() {
+                  panic!("Error message")
+              }
+          """)
+          xmlTaskFile("runConfigurations/CustomCheckOk.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomCheckOk" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+                <option name="command" value="test --package edu_with_custom_run_configuration_ok --test tests test -- --exact" />
+                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR${'$'}" />
+                <option name="channel" value="DEFAULT" />
+                <option name="requiredFeatures" value="true" />
+                <option name="allFeatures" value="false" />
+                <option name="emulateTerminal" value="false" />
+                <option name="backtrace" value="SHORT" />
+                <envs>
+                  <env name="EXAMPLE_ENV" value="Hello!" />
+                </envs>
+                <option name="isRedirectInput" value="false" />
+                <option name="redirectInputPath" value="" />
+                <method v="2">
+                  <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+                </method>
+              </configuration>
+            </component>
+          """)
+        }
+        eduTask("EduWithCustomRunConfigurationErr") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "edu_with_custom_run_configuration_err"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              use std::env;
+
+              pub fn hello() -> String {
+                  return env::var("EXAMPLE_ENV").unwrap()
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use edu_with_custom_run_configuration_err::hello;
+
+              #[test]
+              fn test() {
+                  assert_eq!(hello(), "Hello", "Error message");
+              }
+
+              #[test]
+              fn fail() {
+                  panic!("Error message")
+              }
+          """)
+          xmlTaskFile("runConfigurations/CustomCheckErr.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomCheckErr" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+                <option name="command" value="test --package edu_with_custom_run_configuration_err --test tests test -- --exact" />
+                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR${'$'}" />
+                <option name="channel" value="DEFAULT" />
+                <option name="requiredFeatures" value="true" />
+                <option name="allFeatures" value="false" />
+                <option name="emulateTerminal" value="false" />
+                <option name="backtrace" value="SHORT" />
+                <envs>
+                  <env name="EXAMPLE_ENV" value="Hello!" />
+                </envs>
+                <option name="isRedirectInput" value="false" />
+                <option name="redirectInputPath" value="" />
+                <method v="2">
+                  <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+                </method>
+              </configuration>
+            </component>
+          """)
+        }
         outputTask("Output") {
           taskFile("Cargo.toml", """
             [package]
@@ -113,6 +211,8 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
         "EduOk" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
         "EduErr" -> equalTo(CheckStatus.Failed) to equalTo(EduCoreBundle.message("check.incorrect"))
         "EduCompilationErr" -> equalTo(CheckStatus.Failed) to equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE)
+        "EduWithCustomRunConfigurationOk" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
+        "EduWithCustomRunConfigurationErr" -> equalTo(CheckStatus.Failed) to equalTo("Error message")
         "Output" -> equalTo(CheckStatus.Solved) to equalTo(CheckUtils.CONGRATULATIONS)
         else -> error("Unexpected task name: ${task.name}")
       }

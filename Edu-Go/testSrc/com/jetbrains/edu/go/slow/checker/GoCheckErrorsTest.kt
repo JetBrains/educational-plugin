@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert
 
 class GoCheckErrorsTest : GoCheckersTestBase() {
@@ -106,6 +106,67 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
 
           """)
         }
+        eduTask("EduWithCustomRunConfigurationTestFailed") {
+          goTaskFile("task.go", """
+            package task
+            
+            import "os"
+            
+            func Hello() string {
+              return os.Getenv("EXAMPLE_ENV")
+            }
+          """)
+          taskFile("go.mod", """
+            module eduwithcustomrunconfigurationtestfailed
+          """)
+          goTaskFile("test/task_test.go", """
+            package test
+            
+            import (
+              task "eduwithcustomrunconfigurationtestfailed"
+              "testing"
+            )
+            
+            func TestSum(t *testing.T) {
+              tests := []struct {
+                name string
+                want string
+              }{
+                {"hello", "Hello"},
+                {"fail", "Hello"},
+              }
+              for _, tt := range tests {
+                t.Run(tt.name, func(t *testing.T) {
+                  if tt.name == "fail" {
+                    t.FailNow()
+                  }
+                  if got := task.Hello(); got != tt.want {
+                    t.Errorf("Hello() = %v, want %v", got, tt.want)
+                  }
+                })
+              }
+            }
+          """)
+          xmlTaskFile("runConfigurations/CustomCheck.run.xml", """
+            <component name="ProjectRunConfigurationManager">
+              <configuration default="false" name="CustomCheck" type="GoTestRunConfiguration" factoryName="Go Test">
+                <module name="Go Course3" />
+                <working_directory value="${'$'}TASK_DIR${'$'}/test" />
+                <envs>
+                  <env name="EXAMPLE_ENV" value="Hello!" />
+                </envs>
+                <root_directory value="${'$'}TASK_DIR${'$'}" />
+                <kind value="PACKAGE" />
+                <package value="eduwithcustomrunconfigurationtestfailed/test" />
+                <directory value="${'$'}PROJECT_DIR${'$'}" />
+                <filePath value="${'$'}PROJECT_DIR${'$'}" />
+                <framework value="gotest" />
+                <pattern value="^\QTestSum\E${'$'}/^\Qhello\E${'$'}" />
+                <method v="2" />
+              </configuration>
+            </component>        
+          """)
+        }
         outputTask("OutputTestFailed") {
           goTaskFile("main.go", """
               package main
@@ -145,11 +206,12 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
-        "EduTestFailed" -> CoreMatchers.equalTo(incorrect) to nullValue()
-        "EduCompilationFailed" -> CoreMatchers.equalTo(EduCoreBundle.message("error.execution.failed")) to nullValue()
-        "OutputTestFailed" -> CoreMatchers.equalTo(incorrect) to
+        "EduTestFailed" -> equalTo(incorrect) to nullValue()
+        "EduCompilationFailed" -> equalTo(EduCoreBundle.message("error.execution.failed")) to nullValue()
+        "EduWithCustomRunConfigurationTestFailed" -> equalTo(incorrect) to nullValue()
+        "OutputTestFailed" -> equalTo(incorrect) to
           CheckResultDiffMatcher.diff(CheckResultDiff(expected = "Yes", actual = "No"))
-        "OutputMultilineTestFailed" -> CoreMatchers.equalTo(incorrect) to
+        "OutputMultilineTestFailed" -> equalTo(incorrect) to
           CheckResultDiffMatcher.diff(CheckResultDiff(expected = "1\n\n2\n\n", actual = "1\n2\n"))
         else -> error("Unexpected task name: ${task.name}")
       }
