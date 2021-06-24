@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCStudyItemPathInputValidator @JvmOverloads constructor(
   private val project: Project,
@@ -19,10 +20,11 @@ class CCStudyItemPathInputValidator @JvmOverloads constructor(
 
   override fun checkInput(inputString: String): Boolean {
     errorText = when {
-      parentDir == null -> "Invalid parent directory"
-      inputString.isEmpty() -> "Empty name"
-      !PathUtil.isValidFileName(inputString) -> "Invalid name"
-      parentDir.findChild(inputString) != null && inputString != name -> "${parentDir.name} already contains directory named $inputString"
+      parentDir == null -> EduCoreBundle.message("course.creator.error.invalid.parent.directory")
+      inputString.isEmpty() -> EduCoreBundle.message("course.creator.error.empty.name")
+      !PathUtil.isValidFileName(inputString) -> EduCoreBundle.message("course.creator.error.invalid.name")
+      parentDir.findChild(inputString) != null && inputString != name ->
+        EduCoreBundle.message("course.creator.error.duplicated.name", parentDir.name, inputString)
       studyItemType != null -> course.configurator?.courseBuilder?.validateItemName(project, inputString, studyItemType)
       else -> null
     }
