@@ -1,67 +1,71 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 
 object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
 
-  const val FAILED_TITLE = "Failed to publish "
+  @JvmStatic
+  val showLogAction: AnAction
+    get() = ActionManager.getInstance().getAction("ShowLog")
 
   @JvmStatic
-  fun getErrorMessage(item: StudyItem, isNew: Boolean): String {
-    return "Failed to " + (if (isNew) "post " else "update ") + getItemInfo(item, isNew)
+  fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
+    val pathInCourse = item.pathInCourse
+
+    val title = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.title")
+    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.title")
+
+    val content = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.content", pathInCourse)
+    else EduCoreBundle.message("notification.course.creator.failed.to.update.item.content", pathInCourse)
+
+    showErrorNotification(project, title, content, showLogAction)
   }
 
+  @Suppress("UnstableApiUsage")
   @JvmStatic
-  fun getErrorMessage(item: StudyItem, parent: StudyItem, isNew: Boolean): String {
-    return getErrorMessage(item, isNew) + " in " + getItemInfo(parent, false)
-  }
-
-  private fun getItemInfo(item: StudyItem, isNew: Boolean): String {
-    val id = if (isNew) "" else " (id = " + item.id + ")"
-    return getPrintableType(item) + " `" + item.name + "`" + id
-  }
-
-  private fun getPrintableType(item: StudyItem): String {
-    if (item is Course) return EduNames.COURSE
-    if (item is Section) return EduNames.SECTION
-    if (item is FrameworkLesson) return EduNames.FRAMEWORK_LESSON
-    if (item is Lesson) return EduNames.LESSON
-    return if (item is Task) EduNames.TASK else "item"
-  }
-
-  @JvmStatic
+  @JvmOverloads
   fun showErrorNotification(project: Project,
-                            @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
-                            @Nls(capitalization = Nls.Capitalization.Sentence) message: String) {
+                            @NlsContexts.NotificationTitle title: String,
+                            @NlsContexts.NotificationContent message: String? = null,
+                            action: AnAction? = null
+  ) {
     LOG.info(message)
-    val notification = Notification("EduTools", title, message, NotificationType.ERROR)
+    val notification = Notification("EduTools", null, title, null, message, NotificationType.ERROR, null)
+    if (action != null) {
+      notification.addAction(action)
+    }
     notification.notify(project)
   }
 
   @JvmStatic
   fun showNoRightsToUpdateOnStepikNotification(project: Project, course: EduCourse) {
-    showNoRightsToUpdateNotification(project, course, StepikNames.STEPIK) { CCStepikConnector.postCourseWithProgress(project, course) }
+    showNoRightsToUpdateNotification(project, course) { CCStepikConnector.postCourseWithProgress(project, course) }
   }
 
-  fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, platformName: String, action: () -> Unit) {
-    val message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to $platformName as New Course</a>"
-    val notification = Notification("EduTools", FAILED_TITLE, message, NotificationType.ERROR,
-                                    createPostCourseNotificationListener(course, action))
-    notification.notify(project)
+  fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, action: () -> Unit) {
+    showErrorNotification(project,
+                          EduCoreBundle.message("notification.course.creator.access.denied.title"),
+                          EduCoreBundle.message("notification.course.creator.access.denied.content"),
+                          NotificationAction.createSimpleExpiring(
+                            EduCoreBundle.message("notification.course.creator.access.denied.action")) {
+                            course.convertToLocal()
+                            action()
+                          })
   }
 
   fun createPostCourseNotificationListener(course: EduCourse, action: () -> Unit): NotificationListener.Adapter {

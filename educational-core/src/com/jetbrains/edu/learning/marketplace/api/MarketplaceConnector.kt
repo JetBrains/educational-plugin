@@ -14,9 +14,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.FAILED_TITLE
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.getErrorMessage
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
@@ -235,10 +234,11 @@ abstract class MarketplaceConnector : CourseConnector {
     val courseBean = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody()).executeParsingErrors(true)
       .flatMap {
         val resultResponse = it.body()
-        return@flatMap if (resultResponse == null) Err(getErrorMessage(course, true)) else Ok(resultResponse)
+        return@flatMap if (resultResponse == null) Err(message("notification.course.creator.failed.to.upload.course.title"))
+        else Ok(resultResponse)
       }
       .onError {
-        showErrorNotification(project, FAILED_TITLE, it)
+        showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
         return
       }
 
@@ -272,11 +272,11 @@ abstract class MarketplaceConnector : CourseConnector {
     val response = repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id).executeHandlingExceptions()
     val responseCode = response?.code()
     if (responseCode == null || responseCode == HttpStatus.SC_FORBIDDEN) {
-      showNoRightsToUpdateNotification(project, course, MARKETPLACE) { uploadNewCourseUnderProgress(project, course, file) }
+      showNoRightsToUpdateNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
       return
     }
     if (responseCode != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, false))
+      showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
       return
     }
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)

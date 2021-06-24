@@ -87,7 +87,8 @@ public class CCStepikConnector {
 
     final EduCourse courseOnRemote = StepikConnector.getInstance().postCourse(course);
     if (courseOnRemote == null) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, true));
+      showErrorNotification(project, EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"), null,
+                            getShowLogAction());
       return;
     }
     final List<StudyItem> items = course.getItems();
@@ -120,16 +121,15 @@ public class CCStepikConnector {
     updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
     String errors = checkIgnoredFiles(project);
     if (errors != null) {
-      showErrorNotification(project, FAILED_TITLE,
-                            String.format("%s. %s", EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"),
-                                          errors));
+      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"), errors);
       return false;
     }
     final List<TaskFile> additionalFiles = collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
     if (code != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"));
+      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"), null,
+                            getShowLogAction());
       return false;
     }
     return true;
@@ -182,7 +182,7 @@ public class CCStepikConnector {
     section.setCourseId(courseId);
     final Section postedSection = StepikConnector.getInstance().postSection(section);
     if (postedSection == null) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(section, true));
+      showFailedToPostItemNotification(project, section, true);
       return -1;
     }
     section.setId(postedSection.getId());
@@ -212,7 +212,7 @@ public class CCStepikConnector {
       success = postTask(project, task, postedLesson.getId()) && success;
     }
     if (!updateLessonAdditionalInfo(lesson, project)) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, true));
+      showFailedToPostItemNotification(project, lesson, true);
       return false;
     }
     return success;
@@ -224,7 +224,7 @@ public class CCStepikConnector {
     assert course != null;
     final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
     if (postedLesson == null) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, true));
+      showFailedToPostItemNotification(project, lesson, true);
       return null;
     }
     if (sectionId != -1) {
@@ -242,7 +242,7 @@ public class CCStepikConnector {
 
     final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
     if (unit == null || unit.getId() == null) {
-      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.post.unit"));
+      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.unit"));
       return -1;
     }
     return unit.getId();
@@ -255,7 +255,7 @@ public class CCStepikConnector {
 
     final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
     if (stepSource == null) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(task, task.getLesson(), true));
+      showFailedToPostItemNotification(project, task, true);
       return false;
     }
     task.setId(stepSource.getId());
@@ -284,7 +284,8 @@ public class CCStepikConnector {
       return false;
     }
     if (responseCode != HttpStatus.SC_OK) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(course, false));
+      showErrorNotification(project, EduCoreBundle.message("notification.course.creator.failed.to.update.course.title"), null,
+                            getShowLogAction());
       return false;
     }
     return true;
@@ -298,9 +299,7 @@ public class CCStepikConnector {
     updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
     String errors = checkIgnoredFiles(project);
     if (errors != null) {
-      showErrorNotification(project, FAILED_TITLE,
-                            String.format("%s. %s", EduCoreBundle.message("course.creator.stepik.failed.to.update.additional.files"),
-                                          errors));
+      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.update.additional.files"), errors);
       return false;
     }
     final List<TaskFile> additionalFiles = collectAdditionalFiles(courseInfo, project);
@@ -320,7 +319,7 @@ public class CCStepikConnector {
     section.setCourseId(course.getId());
     boolean updated = updateSectionInfo(section);
     if (!updated) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(section, false));
+      showFailedToPostItemNotification(project, section, false);
       return false;
     }
     for (Lesson lesson : section.getLessons()) {
@@ -359,7 +358,7 @@ public class CCStepikConnector {
 
     final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
     if (updatedLesson == null && showNotification) {
-      showErrorNotification(project, FAILED_TITLE, getErrorMessage(lesson, false));
+      showFailedToPostItemNotification(project, lesson, false);
       return null;
     }
     if (sectionId != -1) {
@@ -386,7 +385,7 @@ public class CCStepikConnector {
 
     final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
     if (unit == null) {
-      showErrorNotification(project, FAILED_TITLE, EduCoreBundle.message("course.creator.stepik.failed.to.update.unit"));
+      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.update.unit"));
     }
   }
 
@@ -439,7 +438,7 @@ public class CCStepikConnector {
         showNoRightsToUpdateOnStepikNotification(project, (EduCourse)course);
         return false;
       default:
-        showErrorNotification(project, FAILED_TITLE, getErrorMessage(task, task.getLesson(), false));
+        showFailedToPostItemNotification(project, task, false);
         return false;
     }
   }
