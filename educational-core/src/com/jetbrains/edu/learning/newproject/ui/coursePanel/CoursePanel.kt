@@ -106,6 +106,8 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     this.course = course
     val courseInfo = CourseInfo(course, { settingsPanel.locationString }, { settingsPanel.languageSettings })
 
+    doValidation()
+
     content.update(courseInfo, settings)
 
     revalidate()
@@ -256,6 +258,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     }
 
     fun update(courseInfo: CourseInfo, settings: CourseDisplaySettings) {
+      // we have to update settings prior to buttons
       components.forEach {
         (it as CourseSelectionListener).onCourseSelectionChanged(courseInfo, settings)
       }
