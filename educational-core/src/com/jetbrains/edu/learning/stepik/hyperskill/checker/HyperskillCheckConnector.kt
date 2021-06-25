@@ -21,18 +21,17 @@ import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
-import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import java.net.MalformedURLException
+import java.net.URL
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private const val MAX_FILE_SIZE_FOR_PUBLISH = 5 * 1024 * 1024 // 5 Mb
-  private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(1)
+  private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
 
   fun postStageSolution(task: Task, project: Project, result: CheckResult) {
@@ -137,10 +136,19 @@ object HyperskillCheckConnector {
 
     val initialState = InitialState(project, task, webSocketConfiguration.token)
     val finalState = connector.connectToWebSocketWithTimeout(CODE_TASK_CHECK_TIMEOUT,
-                                                             "${webSocketConfiguration.url}/connection/websocket",
+                                                             "wss://${getWebsocketHostName()}/ws/connection/websocket",
                                                              initialState)
 
     return finalState.getResult()
+  }
+
+  private fun getWebsocketHostName(): String {
+    return try {
+      URL(HYPERSKILL_URL).host
+    }
+    catch (e: MalformedURLException) {
+      return HYPERSKILL_DEFAULT_HOST
+    }
   }
 
   fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
