@@ -90,14 +90,6 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePan
 
   override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
     val course = courseInfo.course
-    if ((course is JetBrainsAcademyCourse
-         || course is ContestInformation
-         || CoursesStorage.getInstance().hasCourse(course))
-        && course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) != true) {
-      isVisible = false
-      return
-    }
-
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
       it.component.text = nameToLocation(course)
