@@ -1,5 +1,7 @@
 /// Accomplished using the EduTools plugin by JetBrains https://plugins.jetbrains.com/plugin/10081-edutools
 
+/// You can modify this template: Preferences -> Editor -> File and Code Templates -> Other
+
 fn main() {
     // Write your solution here
 }
