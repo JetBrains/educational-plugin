@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.VisibleForTesting
 import java.awt.event.ActionEvent
 import java.io.IOException
 import javax.swing.AbstractAction
@@ -36,21 +37,22 @@ class CCCreateCoursePreviewDialog(
   private val configurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: CoursePanel = CourseArchivePanel()
+  @VisibleForTesting
+  val panel: CoursePanel = CourseArchivePanel()
 
   init {
     title = "Course Preview"
     setOKButtonText("Create")
-    myPanel.preferredSize = JBUI.size(WIDTH, HEIGHT)
-    myPanel.minimumSize = JBUI.size(WIDTH, HEIGHT)
+    panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
+    panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     val courseCopy = course.copy().apply {
       dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
     }
-    myPanel.bindCourse(courseCopy)
+    panel.bindCourse(courseCopy)
     init()
   }
 
-  override fun createCenterPanel(): JComponent = myPanel
+  override fun createCenterPanel(): JComponent = panel
 
   override fun createActions(): Array<out Action> {
     val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand("&Close")) {
@@ -71,7 +73,8 @@ class CCCreateCoursePreviewDialog(
   }
 
 
-  private inner class CourseArchivePanel : CoursePanel(false) {
+  @VisibleForTesting
+  inner class CourseArchivePanel : CoursePanel(false) {
 
     override fun showError(errorState: ErrorState) { }
 
@@ -101,7 +104,7 @@ class CCCreateCoursePreviewDialog(
           val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
           try {
             val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
-            val settings = myPanel.projectSettings ?: error("Project settings shouldn't be null")
+            val settings = panel.projectSettings ?: error("Project settings shouldn't be null")
             val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
               ?.doCreateCourseProject(location.absolutePath, settings)
             if (previewProject == null) {
