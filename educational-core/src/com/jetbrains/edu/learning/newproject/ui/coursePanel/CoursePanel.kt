@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.getErrorState
+import org.jetbrains.annotations.VisibleForTesting
 import java.awt.CardLayout
 import java.awt.Component
 import java.awt.FlowLayout
@@ -44,7 +45,8 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
   private val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN, 0, ERROR_RIGHT_GAP)
   }
-  private val buttonsPanel: ButtonsPanel = ButtonsPanel()
+  @VisibleForTesting
+  val buttonsPanel: ButtonsPanel = ButtonsPanel()
   private val courseDetailsPanel: CourseDetailsPanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
   private val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
   private val content = ContentPanel()
@@ -204,8 +206,10 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     }
   }
 
-  private inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
-    private val buttons: List<CourseButtonBase> = mutableListOf(
+  @VisibleForTesting
+  inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
+    @VisibleForTesting
+    val buttons: List<CourseButtonBase> = mutableListOf(
       StartCourseButton(joinCourse = { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }),
       OpenCourseButton(),
       EditCourseButton { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
