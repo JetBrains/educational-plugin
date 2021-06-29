@@ -177,8 +177,11 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   }
 
   private fun doValidation() {
+    val excessTitleLength = titleField.text.length - MAX_COURSE_TITLE_LENGTH
     val validationMessage = when {
       titleField.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title"))
+      excessTitleLength > 0 -> ValidationMessage(
+        EduCoreBundle.message("cc.new.course.error.exceeds.max.title.length", excessTitleLength, MAX_COURSE_TITLE_LENGTH))
       descriptionTextArea.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description"))
       requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins)
       else -> {
@@ -283,6 +286,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
   companion object {
     private val LOG = Logger.getInstance(CCNewCoursePanel::class.java)
+    // max course title length according to https://github.com/JetBrains/intellij-plugin-verifier/pull/67/files
+    private const val MAX_COURSE_TITLE_LENGTH = 64
   }
 
   interface ValidationListener {
