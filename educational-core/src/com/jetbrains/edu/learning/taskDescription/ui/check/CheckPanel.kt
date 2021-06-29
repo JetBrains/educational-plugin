@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -53,13 +53,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   private fun createRightActionsToolbar(): JPanel {
-    if (course is CodeforcesCourse) {
-      rightActionsToolbar.add(
-        createActionLink(EduCoreBundle.message("action.open.on.text", CODEFORCES_TITLE), OpenTaskOnSiteAction.ACTION_ID))
-      rightActionsToolbar.add(
-        createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID))
-      return rightActionsToolbar
-    }
     rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
     rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
     return rightActionsToolbar
@@ -83,8 +76,15 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   fun readyToCheck() {
-    if (course is HyperskillCourse) {
-      linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3))
+    when (course) {
+      is HyperskillCourse -> linkPanel.add(
+        createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3))
+      is CodeforcesCourse -> {
+        linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
+                                       OpenTaskOnSiteAction.ACTION_ID, 10, 3), BorderLayout.NORTH)
+        linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
+                                       CodeforcesCopyAndSubmitAction.ACTION_ID, 10, 3), BorderLayout.CENTER)
+      }
     }
     checkFinishedPanel.removeAll()
     checkDetailsPlaceholder.removeAll()
