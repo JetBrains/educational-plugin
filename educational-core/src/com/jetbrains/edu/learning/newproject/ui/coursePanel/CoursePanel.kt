@@ -40,7 +40,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
   private val titlePanel = CourseNameHtmlPanel().apply {
     border = JBUI.Borders.empty(11, HORIZONTAL_MARGIN, 0, 0)
   }
-  private val authorsPanel = InfoPanel()
+  private val authorsPanel = AuthorsPanel()
   private val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN, 0, ERROR_RIGHT_GAP)
   }
