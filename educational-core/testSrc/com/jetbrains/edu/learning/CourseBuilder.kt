@@ -39,11 +39,11 @@ fun course(
   val builder = CourseBuilder(courseProducer())
   builder.withName(name)
   builder.withMode(courseMode)
-  builder.buildCourse()
   val course = builder.course
   course.language = language.id
   course.environment = environment
   course.description = description
+  builder.buildCourse()
   return course
 }
 
@@ -175,6 +175,10 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     taskBuilder.withStepId(stepId)
     taskBuilder.withUpdateDate(updateDate)
     taskBuilder.buildTask()
+    for ((_, taskFile) in taskBuilder.task.taskFiles) {
+      taskFile.isVisible = taskBuilder.explicitVisibility[taskFile.name] ?: !EduUtils.isTestsFile(taskBuilder.task, taskFile.name)
+    }
+
     lesson.addTask(taskBuilder.task)
   }
 
@@ -281,6 +285,11 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {
+
+  private val _explicitVisibility: MutableMap<String, Boolean> = mutableMapOf()
+
+  val explicitVisibility: Map<String, Boolean> get() = _explicitVisibility
+
   init {
     task.lesson = lesson
   }
@@ -311,7 +320,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
    */
   fun taskFile(
     name: String, text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val taskFileBuilder = TaskFileBuilder(task)
@@ -322,7 +331,9 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     taskFileBuilder.withPlaceholders(placeholders)
     taskFileBuilder.buildTaskFile()
     val taskFile = taskFileBuilder.taskFile
-    taskFile.isVisible = visible
+    if (visible != null) {
+      _explicitVisibility[name] = visible
+    }
     taskFile.task = task
     task.addTaskFile(taskFile)
   }
@@ -334,56 +345,56 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun kotlinTaskFile(
     name: String,
     @Language("kotlin") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun javaTaskFile(
     name: String,
     @Language("JAVA") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun pythonTaskFile(
     name: String,
     @Language("Python") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun scalaTaskFile(
     name: String,
     @Language("Scala") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun rustTaskFile(
     name: String,
     @Language("Rust") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun goTaskFile(
     name: String,
     @Language("Go") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun cppTaskFile(
     name: String,
     @Language("ObjectiveC") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
   fun xmlTaskFile(
     name: String,
     @Language("XML") text: String = "",
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
@@ -391,7 +402,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     disposable: Disposable,
     name: String,
     path: String,
-    visible: Boolean = true,
+    visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val ioFile = File(path)
@@ -406,8 +417,12 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     val innerBuilder = TaskBuilder(lesson, tmpTask)
     innerBuilder.buildTask()
     for ((_, taskFile) in tmpTask.taskFiles) {
+      val visibility = innerBuilder.explicitVisibility[taskFile.name]
       taskFile.name = "$dirName/${taskFile.name}"
       task.addTaskFile(taskFile)
+      if (visibility != null) {
+        _explicitVisibility[taskFile.name] = visibility
+      }
     }
   }
 
