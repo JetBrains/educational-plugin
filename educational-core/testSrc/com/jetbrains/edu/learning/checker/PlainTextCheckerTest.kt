@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
@@ -36,10 +37,23 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
             withText("OK!\r\n")
           }
         }
-        eduTask {
+        eduTask("EduTask") {
           dir("tests") {
             taskFile("Tests.txt") {
-              withText("test file text")
+              withText(EDU_TEST_FILE_TEXT)
+            }
+          }
+          taskFile("task.txt") {
+            withText("task file")
+          }
+          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+            withText("Solved Congratulations!")
+          }
+        }
+        eduTask("EduTaskWithVisibleTests") {
+          dir("tests") {
+            taskFile("Tests.txt", visible = true) {
+              withText(EDU_TEST_FILE_TEXT)
             }
           }
           taskFile("task.txt") {
@@ -65,8 +79,7 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
   }
 
   fun `test test files content created and deleted in output task`() {
-    val allTasks = myCourse.allTasks
-    val outputTask = allTasks[0]
+    val outputTask = myCourse.allTasks.single { it.name == "OutputTask" }
 
     val testFiles = outputTask.taskFiles.values.filter { outputTask.shouldBeEmpty(it.name) }
     assertEquals(1, testFiles.size)
@@ -80,17 +93,34 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
   }
 
   fun `test test files content created and deleted in edu task`() {
-    val allTasks = myCourse.allTasks
-    val eduTask = allTasks[2]
+    val eduTask = myCourse.allTasks.single { it.name == "EduTask" }
 
     val testFiles = eduTask.taskFiles.values.filter { eduTask.shouldBeEmpty(it.name) }
     assertEquals(1, testFiles.size)
-    val taskDir = eduTask.getDir(project.courseDir) ?: return fail()
+    val taskDir = eduTask.getDir(project.courseDir) ?: error("No task dir found")
     val testFile = testFiles[0]
-    val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: return fail()
+    val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
 
     assertEmpty(vTestFile.document.text)
     checkTask(eduTask)
     assertEmpty(vTestFile.document.text)
+  }
+
+  fun `test visible test files content is not change in edu task`() {
+    val eduTask = myCourse.allTasks.first { it.name == "EduTaskWithVisibleTests" }
+
+    val testFiles = eduTask.taskFiles.values.filter { eduTask.shouldBeEmpty(it.name) }
+    assertEquals(0, testFiles.size)
+    val taskDir = eduTask.getDir(project.courseDir) ?: error("No task dir found")
+    val testFile = eduTask.taskFiles.values.single { EduUtils.isTestsFile(eduTask, it.name) }
+    val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
+
+    assertEquals(EDU_TEST_FILE_TEXT, vTestFile.document.text)
+    checkTask(eduTask)
+    assertEquals(EDU_TEST_FILE_TEXT, vTestFile.document.text)
+  }
+
+  companion object {
+    private const val EDU_TEST_FILE_TEXT = "test file text"
   }
 }
