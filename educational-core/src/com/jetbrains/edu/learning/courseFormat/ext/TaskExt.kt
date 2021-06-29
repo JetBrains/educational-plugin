@@ -174,7 +174,9 @@ fun Task.revertTaskParameters(project: Project) {
 }
 
 fun Task.shouldBeEmpty(path: String): Boolean {
-  return shouldGenerateTestsOnTheFly() && EduUtils.isTestsFile(this, path)
+  return shouldGenerateTestsOnTheFly() &&
+         EduUtils.isTestsFile(this, path) &&
+         getTaskFile(path)?.isVisible != true
 }
 
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {

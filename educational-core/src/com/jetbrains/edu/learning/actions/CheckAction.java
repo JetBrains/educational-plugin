@@ -243,7 +243,7 @@ public class CheckAction extends DumbAwareAction {
       if (myChecker == null) return CheckResult.NO_LOCAL_CHECK;
       VirtualFile taskDir = myTask.getDir(OpenApiExtKt.getCourseDir(myProject));
       if (taskDir == null) return CheckResult.NO_LOCAL_CHECK;
-      List<TaskFile> testFiles = getTestFiles();
+      List<TaskFile> testFiles = getInvisibleTestFiles();
       if (myTask.getCourse().isStudy()) {
         createTests(testFiles);
       }
@@ -287,9 +287,11 @@ public class CheckAction extends DumbAwareAction {
     }
 
     @NotNull
-    private List<TaskFile> getTestFiles() {
+    private List<TaskFile> getInvisibleTestFiles() {
       return myTask.getTaskFiles().values().stream()
-          .filter(it -> EduUtils.isTestsFile(myTask, it.getName()) && (myTask instanceof EduTask || myTask instanceof OutputTask))
+          .filter(it -> EduUtils.isTestsFile(myTask, it.getName()) &&
+                        !it.isVisible() &&
+                        (myTask instanceof EduTask || myTask instanceof OutputTask))
           .collect(Collectors.toList());
     }
 
