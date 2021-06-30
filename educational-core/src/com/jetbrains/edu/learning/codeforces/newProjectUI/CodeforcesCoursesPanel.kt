@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.TabInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
 import java.awt.BorderLayout
@@ -26,6 +27,10 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: C
     programmingLanguagesFilterDropdown.isVisible = false
 
     searchPanel.add(createOpenContestButtonPanel(), BorderLayout.LINE_END)
+  }
+
+  override fun createCoursePanel(): CoursePanel {
+    return CodeforcesCoursePanel()
   }
 
   private fun createOpenContestButtonPanel(): NonOpaquePanel {

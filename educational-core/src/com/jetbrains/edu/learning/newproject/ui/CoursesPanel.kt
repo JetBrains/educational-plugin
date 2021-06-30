@@ -42,7 +42,7 @@ private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
   @VisibleForTesting
-  var coursePanel: CoursePanel = DialogCoursePanel()
+  var coursePanel: CoursePanel = createCoursePanel()
   private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
@@ -266,6 +266,10 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       humanLanguagesFilterDropdown.resetSelection()
       programmingLanguagesFilterDropdown.resetSelection()
     }
+  }
+
+  protected fun createCoursePanel(): CoursePanel {
+    return DialogCoursePanel()
   }
 
   private inner class DialogCoursePanel : CoursePanel(true) {
