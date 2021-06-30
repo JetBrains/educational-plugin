@@ -111,7 +111,7 @@ open class CodeforcesTask : Task() {
       val course = task.course as CodeforcesCourse
       return "${course.getContestUrl()}/${CODEFORCES_SUBMIT}?locale=${course.languageCode}" +
              (codeforcesProgramTypeId(course)?.let { "&programTypeId=$it" } ?: "") +
-             "&submittedProblemIndex=${task.name.substringBefore(".")}"
+             "&submittedProblemIndex=${task.presentableName.substringBefore(".")}"
     }
 
     fun codeforcesTaskLink(task: Task): String {
