@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
+import java.util.*
 
 @JsonDeserialize(builder = MarketplaceCourseBuilder::class)
 abstract class MarketplaceEduCourseMixin {
@@ -41,6 +42,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(FIELDS) val fields: Fields,
   @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
   @JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
+  @JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -59,6 +61,7 @@ private class MarketplaceCourseBuilder(
       marketplaceCourseVersion = version ?: 1
       organization = courseOrganization?.name
       isMarketplacePrivate = fields.isPrivate
+      updateDate = Date(lastUpdateDate)
       setMarketplaceAuthorsAsString(developers)
     }
 

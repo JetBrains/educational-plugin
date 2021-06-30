@@ -116,7 +116,6 @@ private fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
 }
 
 fun EduCourse.setUpdated(courseFromServer: EduCourse) {
-  updateDate = courseFromServer.updateDate
 
   val lessonsById = courseFromServer.lessons.associateBy { it.id }
   lessons.forEach {
@@ -129,8 +128,6 @@ fun EduCourse.setUpdated(courseFromServer: EduCourse) {
     val sectionFromServer = sectionsById[it.id] ?: error("Section with id ${it.id} not found")
     it.setUpdated(sectionFromServer)
   }
-
-  isUpToDate = true
 }
 
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {

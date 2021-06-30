@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import okhttp3.mockwebserver.RecordedRequest
+import java.util.*
 
 class MarketplaceSearchCoursesTest : EduTestCase() {
 
@@ -55,7 +56,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
 
     val scalaCourse = courses[2]
     doTest(scalaCourse, 3, "Scala course", "Scala", "English",
-           "Introduction course to Scala", 5, 4.75, "sbt")
+           "Introduction course to Scala", 5, 4.75, expectedEnvironment = "sbt")
     assertNull(scalaCourse.organization)
     val expectedAuthors = listOf("FirstName LastName")
     checkAuthorFullNames(expectedAuthors, scalaCourse.authorFullNames)
@@ -109,6 +110,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
                      expectedDescription: String,
                      expectedLearnersCount: Int,
                      expectedReviewScore: Double,
+                     expectedUpdateDate: Date = Date(1619697473000),
                      expectedEnvironment: String = DEFAULT_ENVIRONMENT,
                      expectedIsPrivate: Boolean = false) {
     assertEquals(expectedId, course.id)
@@ -119,6 +121,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedDescription, course.description)
     assertEquals(expectedLearnersCount, course.learnersCount)
     assertEquals(expectedReviewScore, course.reviewScore)
+    assertEquals(expectedUpdateDate, course.updateDate)
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertTrue(course.isMarketplace)
   }

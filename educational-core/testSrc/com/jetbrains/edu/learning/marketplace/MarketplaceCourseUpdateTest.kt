@@ -8,9 +8,41 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.update.StudentCourseUpdateTest
 import com.jetbrains.rd.util.firstOrNull
+import java.util.*
 
 class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
   override val defaultSettings: Unit get() = Unit
+
+  fun `test update date updated` () {
+    val course = createCourse(CheckStatus.Solved).apply { updateDate = Date(1619697473000) }
+
+    val serverCourse = course {
+      lesson {
+        eduTask(stepId = 1) {
+          taskFile("TaskFile1.kt")
+        }
+        eduTask(stepId = 2) {
+          taskFile("TaskFile2Renamed.kt")
+        }
+      }
+    }.apply { updateDate = Date(1624354026000) } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("TaskFile1.kt")
+          file("task.html")
+        }
+        dir("task2") {
+          file("TaskFile2Renamed.kt")
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, serverCourse, expectedStructure, 2)
+    assertEquals(course.updateDate, serverCourse.updateDate)
+  }
 
   fun `test save task status Solved if task not updated`() {
     val course = createCourse(CheckStatus.Solved)

@@ -17,6 +17,7 @@ query {
       developers
       organization {name}
       fields
+      lastUpdateDate
     }
   }
 }

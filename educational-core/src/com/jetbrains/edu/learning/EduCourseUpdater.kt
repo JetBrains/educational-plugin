@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.net.URISyntaxException
-import java.util.*
 
 abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   private val LOG = Logger.getInstance(this.javaClass)
@@ -74,9 +73,14 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     updateLessons(courseFromServer)
     updateAdditionalMaterialsFiles(courseFromServer)
     setCourseItems(courseFromServer.items)
+    setUpdated(courseFromServer)
 
     //remove editor notification, suggesting to update course
     EditorNotifications.getInstance(project).updateAllNotifications()
+  }
+
+  protected open fun setUpdated(courseFromServer: EduCourse) {
+    course.updateDate = courseFromServer.updateDate
   }
 
   private fun setCourseItems(remoteItems: List<StudyItem>) {

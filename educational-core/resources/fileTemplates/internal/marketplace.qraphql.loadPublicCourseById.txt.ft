@@ -12,6 +12,7 @@ query {
       rating
       fields
       developers
+      lastUpdateDate
     }
   }
 }

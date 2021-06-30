@@ -17,6 +17,10 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
 
     super.doUpdate(courseFromServer)
     saveLearningProgress(courseFromServer)
+  }
+
+  override fun setUpdated(courseFromServer: EduCourse) {
+    super.setUpdated(courseFromServer)
     course.marketplaceCourseVersion = remoteCourseVersion
   }
 

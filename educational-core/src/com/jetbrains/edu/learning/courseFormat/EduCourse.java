@@ -26,7 +26,6 @@ public class EduCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  private Date myCreateDate = new Date(0);
   @Transient private boolean isUpToDate = true;
   boolean isStepikPublic;
   @Transient private String myAdminsGroup;
@@ -80,10 +79,6 @@ public class EduCourse extends Course {
     if (isMarketplace()) return MARKETPLACE;
     return super.getItemType();
   }
-
-  public Date getCreateDate() { return myCreateDate; }
-
-  public void setCreateDate(Date createDate) { myCreateDate = createDate; }
 
   public int getId() {
     return myId;
@@ -165,7 +160,6 @@ public class EduCourse extends Course {
     isCompatible = true;
     setId(0);
     setUpdateDate(new Date(0));
-    myCreateDate = new Date(0);
     sectionIds = new ArrayList<>();
     instructors = new ArrayList<>();
     myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());

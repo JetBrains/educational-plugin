@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStruct
 
 class StepikCourseUpdater(project: Project, course: EduCourse) : EduCourseUpdater(project, course) {
 
-  override fun doUpdate(courseFromServer: EduCourse) {
-    super.doUpdate(courseFromServer)
+  override fun setUpdated(courseFromServer: EduCourse) {
+    super.setUpdated(courseFromServer)
     course.setUpdated(courseFromServer)
   }
 
