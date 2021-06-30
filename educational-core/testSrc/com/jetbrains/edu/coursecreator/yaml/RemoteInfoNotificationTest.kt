@@ -12,10 +12,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
 
   fun `test course remote notification`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
-    val yamlText = """
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
+    val yamlText = createRemoteYamlConfigTest()
 
     val configFile = GeneratorUtils.createChildFile(project, LightPlatformTestCase.getSourceRoot(), YamlFormatSettings.REMOTE_COURSE_CONFIG, yamlText)
     withYamlFileTypeRegistered {
@@ -27,10 +24,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section { }
     }
-    val yamlText = """
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
+    val yamlText = createRemoteYamlConfigTest()
 
     val sectionDir = LightPlatformTestCase.getSourceRoot().findChild(course.sections[0].name)!!
     val configFile = GeneratorUtils.createChildFile(project, sectionDir, YamlFormatSettings.REMOTE_SECTION_CONFIG, yamlText)
@@ -43,10 +37,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson { }
     }
-    val yamlText = """
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
+    val yamlText = createRemoteYamlConfigTest()
 
     val lessonDir = course.lessons[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, lessonDir, YamlFormatSettings.REMOTE_LESSON_CONFIG, yamlText)
@@ -61,10 +52,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
         eduTask { }
       }
     }
-    val yamlText = """
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
+    val yamlText = createRemoteYamlConfigTest()
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.REMOTE_TASK_CONFIG, yamlText)
@@ -77,7 +65,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
-          taskFile("task.txt")
+          taskFile("task.txt", "empty text")
         }
       }
     }
@@ -93,10 +81,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
         eduTask { }
       }
     }
-    val yamlText = """
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
+    val yamlText = createRemoteYamlConfigTest()
 
     val taskDir = course.lessons[0].taskList[0].getDir(project.courseDir)!!
     val configFile = GeneratorUtils.createChildFile(project, taskDir, YamlFormatSettings.TASK_CONFIG, yamlText)
@@ -105,4 +90,10 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
     }
   }
 
+  private fun createRemoteYamlConfigTest(): String {
+    return """
+      |id: 2
+      |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    """.trimIndent()
+  }
 }
