@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Tag
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.time.Duration
@@ -21,6 +23,7 @@ class ContestInformation(
     this.id = id
     this.name = name
     this.endDateTime = endDateTime
+    this.language = PlainTextLanguage.INSTANCE.id
 
     val codeforcesLink = "<a href='${CodeforcesContestConnector.getContestURLFromID(id)}'>${CodeforcesNames.CODEFORCES_TITLE}</a>"
     val eduToolsLink = "<a href='${CodeforcesNames.CODEFORCES_EDU_TOOLS_HELP}'>EduTools</a>"
@@ -30,5 +33,9 @@ class ContestInformation(
 
   override fun getTags(): List<Tag> {
     return emptyList()
+  }
+
+  override fun getCompatibility(): CourseCompatibility {
+    return CourseCompatibility.Compatible
   }
 }
