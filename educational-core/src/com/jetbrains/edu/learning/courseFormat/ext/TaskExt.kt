@@ -178,5 +178,6 @@ fun Task.shouldBeEmpty(path: String): Boolean {
 }
 
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {
+  val course = lesson?.course ?: return false
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }
