@@ -22,6 +22,7 @@ import java.awt.CardLayout
 import java.awt.Component
 import java.awt.FlowLayout
 import java.io.File
+import java.util.function.Supplier
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
 import javax.swing.event.DocumentEvent
@@ -46,13 +47,16 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN, 0, ERROR_RIGHT_GAP)
   }
   @VisibleForTesting
-  val buttonsPanel: ButtonsPanel = ButtonsPanel()
+  val buttonsPanel: ButtonsPanel = ButtonsPanel().apply { setStartButtonText(startButtonText) }
   private val courseDetailsPanel: CourseDetailsPanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
   private val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
   private val content = ContentPanel()
 
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
+
+  protected open val startButtonText: String
+    get() = EduCoreBundle.message("course.dialog.start.button")
 
   val locationString: String?
     get() = settingsPanel.locationString
@@ -207,7 +211,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
   }
 
   @VisibleForTesting
-  inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
+  inner class ButtonsPanel() : NonOpaquePanel(), CourseSelectionListener {
     @VisibleForTesting
     val buttons: List<CourseButtonBase> = mutableListOf(
       StartCourseButton(joinCourse = { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }),
@@ -221,6 +225,10 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
       buttons.forEach {
         add(it)
       }
+    }
+
+    fun setStartButtonText(text: String) {
+      buttons.first().text = text
     }
 
     override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {

@@ -127,11 +127,6 @@ class OpenCourseButton : CourseButtonBase() {
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
   override val courseMode = CourseMode.STUDY
 
-  init {
-    text = "Start"
-    setWidth72(this)
-  }
-
   override fun isVisible(course: Course): Boolean =
     course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
     || course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
