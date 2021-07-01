@@ -10,6 +10,8 @@ class CodeforcesCoursePanel : CoursePanel(false) {
   override val startButtonText: String
     get() = EduCoreBundle.message("course.dialog.start.button.codeforces.practice")
 
+  override val openButtonText: String
+    get() = EduCoreBundle.message("course.dialog.start.button.codeforces.open.contest")
 
   override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
     CodeforcesPlatformProvider().joinAction(info, mode, this)
