@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.MatcherAssert.assertThat
 
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCodeforcesCheckerTest : PyCheckersTestBase() {
   override fun createCourse(): Course = course(language = PythonLanguage.INSTANCE, courseProducer = ::CodeforcesCourse) {
     lesson(CODEFORCES_PROBLEMS) {

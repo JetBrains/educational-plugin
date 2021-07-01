@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.python.PythonLanguage
 
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyHyperskillCheckerTest : PyCheckersTestBase() {
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {

@@ -4,6 +4,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionPsiLinksTestBase
 import com.jetbrains.python.PythonFileType
 
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyTaskDescriptionPsiLinksTest : TaskDescriptionPsiLinksTestBase() {
 
   override val fileType: FileType = PythonFileType.INSTANCE

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.python.slow.checker.PyCheckersTestBase
 import com.jetbrains.python.PythonLanguage
 
-@Suppress("PyInterpreter")
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewCheckersTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {

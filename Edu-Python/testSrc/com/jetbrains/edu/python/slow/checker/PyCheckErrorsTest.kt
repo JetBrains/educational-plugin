@@ -16,7 +16,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
 
-@Suppress("PyInterpreter")
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyCheckErrorsTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {
@@ -35,6 +35,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
            * We do not have test_helper.py here because it is generated automatically
            * @see com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.createAdditionalFiles
            * */
+          @Suppress("PyStatementEffect")
           pythonTaskFile("hello_world.py", """This is not Python code""")
           pythonTaskFile("tests.py", """
             from test_helper import run_common_tests, failed, passed, get_answer_placeholders
@@ -42,6 +43,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
             """)
         }
         eduTask("SyntaxErrorFromUnittest") {
+          @Suppress("PyStatementEffect")
           pythonTaskFile("hello_world.py", """This is not Python code""")
           pythonTaskFile("my_unit_tests.py", """
             import unittest

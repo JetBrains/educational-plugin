@@ -16,7 +16,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
 
-@Suppress("PyInterpreter")
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewCheckErrorsTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {

@@ -8,7 +8,7 @@ import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
 
-@Suppress("PyInterpreter")
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyNewTheoryCheckerTest : PyCheckersTestBase() {
 
   override fun createCourse(): Course {

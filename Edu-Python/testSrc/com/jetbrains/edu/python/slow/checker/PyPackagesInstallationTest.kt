@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.PythonLanguage
 
+@Suppress("PyInterpreter", "PyUnresolvedReferences")
 class PyPackagesInstallationTest : PyCheckersTestBase() {
   override fun createCourse(): Course {
     return course(language = PythonLanguage.INSTANCE, environment = "unittest") {
