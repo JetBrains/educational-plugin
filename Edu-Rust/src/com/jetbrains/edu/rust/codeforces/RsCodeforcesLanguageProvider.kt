@@ -24,6 +24,10 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val languageIcon: Icon = EducationalCoreIcons.RustLogo
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
+    val moduleName = GeneratorUtils.getDefaultName(task)
+    task.customPresentableName = task.name
+    task.name = moduleName
+
     val fileTemplate = GeneratorUtils.getJ2eeTemplateText(templateFileName)
 
     val packageName = task.name.replace(TASK_LEADING_SYMBOLS, "").toPackageName()

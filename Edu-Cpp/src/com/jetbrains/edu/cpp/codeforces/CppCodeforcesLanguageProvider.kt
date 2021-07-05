@@ -3,7 +3,7 @@ package com.jetbrains.edu.cpp.codeforces
 import com.jetbrains.edu.cpp.CppConfigurator
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.addCMakeList
-import com.jetbrains.edu.cpp.getDefaultName
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -31,7 +31,7 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
     }
 
   override fun createTaskFiles(task: Task): List<TaskFile> {
-    val moduleName = getDefaultName(task)
+    val moduleName = GeneratorUtils.getDefaultName(task)
     task.customPresentableName = task.name
     task.name = moduleName
     task.addCMakeList(moduleName)

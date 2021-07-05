@@ -8,12 +8,12 @@ import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cmake.CMakeLanguage
 import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeCommand
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getDefaultName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
@@ -49,14 +49,6 @@ fun getCMakeProjectName(task: Task): String {
 }
 
 private fun String.sanitized(): String = FileUtil.sanitizeFileName(this, true)
-
-fun getDefaultName(item: StudyItem) = when (item) {
-  is Section -> "${EduNames.SECTION}${item.index}"
-  is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
-  is Lesson -> "${EduNames.LESSON}${item.index}"
-  is Task -> "${EduNames.TASK}${item.index}"
-  else -> "NonCommonStudyItem${item.index}"
-}
 
 fun isEduCppProject(project: Project): Boolean {
   val course = StudyTaskManager.getInstance(project).course

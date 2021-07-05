@@ -81,6 +81,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     // Therefore, we generate folder names on the disk using ascii symbols (item.name)
     // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
     item.customPresentableName = item.name
-    item.name = getDefaultName(item)
+    item.name = GeneratorUtils.getDefaultName(item)
   }
 }

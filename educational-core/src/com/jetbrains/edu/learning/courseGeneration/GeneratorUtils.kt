@@ -339,4 +339,12 @@ object GeneratorUtils {
    * Also removes leading and trailing dots, because gradle project name must not start or end with a '.'
    */
   fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
+
+  fun getDefaultName(item: StudyItem) = when (item) {
+    is Section -> "${EduNames.SECTION}${item.index}"
+    is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
+    is Lesson -> "${EduNames.LESSON}${item.index}"
+    is Task -> "${EduNames.TASK}${item.index}"
+    else -> "NonCommonStudyItem${item.index}"
+  }
 }
