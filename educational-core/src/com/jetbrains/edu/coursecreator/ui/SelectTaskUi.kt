@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.TestOnly
 import java.awt.Component
 import javax.swing.DefaultListCellRenderer
@@ -50,7 +51,7 @@ private class SelectTaskDialog(project: Project, course: EduCourse) : DialogWrap
   private val tasks: ComboBox<Task> = ComboBox(course.allTasks.toTypedArray())
 
   init {
-    title = "Select Task"
+    title = EduCoreBundle.message("course.creator.select.task.dialog.title")
     tasks.renderer = object : DefaultListCellRenderer() {
       override fun getListCellRendererComponent(
         list: JList<*>,

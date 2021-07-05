@@ -210,7 +210,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     field.addBrowseFolderListener(EduCoreBundle.message("cc.new.course.select.location.title"),
                                   EduCoreBundle.message("cc.new.course.select.location.description"), null,
                                   FileChooserDescriptorFactory.createSingleFolderDescriptor())
-    return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
+    return LabeledComponent.create(field, "${EduCoreBundle.message("cc.new.course.select.location.label")}:", BorderLayout.WEST)
   }
 
   private fun onCourseDataSelected(courseData: CourseData) {

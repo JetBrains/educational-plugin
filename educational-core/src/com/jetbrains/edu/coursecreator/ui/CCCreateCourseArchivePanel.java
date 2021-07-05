@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
     myAuthorField.setText(getAuthorInitialValue(project));
     myLocationField.setText(getArchiveLocation(project, name));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    myLocationField.addBrowseFolderListener("Choose Location Folder", null, project, descriptor);
+    myLocationField.addBrowseFolderListener(EduCoreBundle.message("course.creator.create.archive.dialog.title"), null, project, descriptor);
     myAuthorLabel.setVisible(showAuthorField);
     myAuthorField.setVisible(showAuthorField);
   }

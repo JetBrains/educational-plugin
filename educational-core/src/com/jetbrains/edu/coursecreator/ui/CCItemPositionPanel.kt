@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ui.components.JBRadioButton
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 /**
  * Allows user to choose where new item should be located
@@ -11,13 +12,13 @@ import com.intellij.ui.layout.*
  */
 class CCItemPositionPanel(thresholdName: String) : AdditionalPanel {
 
-  private val beforeButton: JBRadioButton = JBRadioButton("before '$thresholdName'")
-  private val afterButton: JBRadioButton = JBRadioButton("after '$thresholdName'", true)
+  private val beforeButton: JBRadioButton = JBRadioButton(EduCoreBundle.message("radio.item.position.before", thresholdName))
+  private val afterButton: JBRadioButton = JBRadioButton(EduCoreBundle.message("radio.item.position.after", thresholdName))
 
   override fun attach(builder: LayoutBuilder) {
     with(builder) {
       buttonGroup {
-        row("Position:") { beforeButton() }
+        row("${EduCoreBundle.message("label.item.position")}:") { beforeButton() }
         row("") { afterButton() }
       }
     }

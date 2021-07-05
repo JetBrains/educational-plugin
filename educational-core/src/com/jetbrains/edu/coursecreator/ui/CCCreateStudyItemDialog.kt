@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.createItemTitleMessage
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
 abstract class CCCreateStudyItemDialogBase(
@@ -31,14 +32,14 @@ abstract class CCCreateStudyItemDialogBase(
   override fun createCenterPanel(): JComponent {
     addTextValidator(nameField) { text ->
       when {
-        text.isNullOrEmpty() -> "Empty name"
+        text.isNullOrEmpty() -> EduCoreBundle.message("course.creator.new.study.item.empty.name")
         !validator.checkInput(text) -> validator.getErrorText(text)
         else -> null
       }
     }
     return panel {
       if (showNameField()) {
-        row("Name:") { nameField() }
+        row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") { nameField() }
       }
       createAdditionalFields(this)
     }

@@ -25,10 +25,11 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
   override fun doValidate(): ValidationInfo? {
     val file = File(locationPath)
     if (file.exists()) {
-      return ValidationInfo("Invalid location. File already exists.", myPanel.locationField).asWarning().withOKEnabled()
+      return ValidationInfo(EduCoreBundle.message("course.creator.create.archive.invalid.location.file.exists"),
+                            myPanel.locationField).asWarning().withOKEnabled()
     }
     if (!EduUtils.isZip(locationPath)) {
-      return ValidationInfo("Invalid location. File should have '.zip' extension.", myPanel.locationField)
+      return ValidationInfo(EduCoreBundle.message("course.creator.create.archive.invalid.location.wrong.extension"), myPanel.locationField)
     }
     return super.doValidate()
   }

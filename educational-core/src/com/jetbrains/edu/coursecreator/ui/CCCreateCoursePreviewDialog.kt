@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.encrypt.EncryptionBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
@@ -41,8 +42,8 @@ class CCCreateCoursePreviewDialog(
   val panel: CoursePanel = CourseArchivePanel()
 
   init {
-    title = "Course Preview"
-    setOKButtonText("Create")
+    title = EduCoreBundle.message("course.creator.create.course.preview.dialog.title")
+    setOKButtonText(EduCoreBundle.message("course.creator.create.course.preview.button"))
     panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     val courseCopy = course.copy().apply {
@@ -55,7 +56,8 @@ class CCCreateCoursePreviewDialog(
   override fun createCenterPanel(): JComponent = panel
 
   override fun createActions(): Array<out Action> {
-    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand("&Close")) {
+    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand(
+      EduCoreBundle.message("course.creator.create.course.preview.close"))) {
       override fun actionPerformed(e: ActionEvent) {
         close()
       }
@@ -86,7 +88,8 @@ class CCCreateCoursePreviewDialog(
       val folder = CCUtils.getGeneratedFilesFolder(project)
       if (folder == null) {
         LOG.info(TMP_DIR_ERROR)
-        showErrorDialog(project, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
+        showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
+                        EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
         return
       }
       val courseName = course?.name
@@ -108,8 +111,9 @@ class CCCreateCoursePreviewDialog(
             val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
               ?.doCreateCourseProject(location.absolutePath, settings)
             if (previewProject == null) {
-              LOG.info(PREVIEW_PROJECT_ERROR)
-              showErrorDialog(project, "$PREVIEW_PROJECT_ERROR Please try again.", PREVIEW_CREATION_ERROR_TITLE)
+              LOG.info("Failed to create project for course preview")
+              showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.failed.message"),
+                              EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
               return
             }
             PropertiesComponent.getInstance(previewProject).setValue(IS_COURSE_PREVIEW, true)
@@ -118,7 +122,8 @@ class CCCreateCoursePreviewDialog(
           }
           catch (e: IOException) {
             LOG.info(TMP_DIR_ERROR, e)
-            showErrorDialog(project, "$TMP_DIR_ERROR Please check permissions and try again.", PREVIEW_CREATION_ERROR_TITLE)
+            showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
+                            EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
           }
           finally {
             RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
@@ -127,7 +132,7 @@ class CCCreateCoursePreviewDialog(
       }
       else {
         LOG.info(errorMessage)
-        showErrorDialog(project, errorMessage, PREVIEW_CREATION_ERROR_TITLE)
+        showErrorDialog(project, errorMessage, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
       }
     }
   }
@@ -137,9 +142,7 @@ class CCCreateCoursePreviewDialog(
 
     private const val WIDTH: Int = 450
     private const val HEIGHT: Int = 330
-    private const val PREVIEW_CREATION_ERROR_TITLE = "Failed to Create Course Preview"
-    private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview."
-    private const val PREVIEW_PROJECT_ERROR = "Failed to create project for course preview."
+    private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview"
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
     const val IS_COURSE_PREVIEW: String = "Edu.IsCoursePreview"
