@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillNextActivityTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   fun `test activity not available`() {
+    loginFakeUser()
     createHyperskillProblemsProject()
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
@@ -24,7 +26,19 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
+  fun `test activity not available without login`() {
+    HyperskillSettings.INSTANCE.account = null
+    createHyperskillProblemsProject()
+    withNotificationCheck(project, testRootDisposable, { shown, content ->
+      assertEquals(true, shown)
+      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"), content)
+    }) {
+      openNextActivity(project, findTask(0, 0, 1))
+    }
+  }
+
   fun `test topic is completed`() {
+    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
@@ -42,6 +56,7 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test next activity unsupported in IDE`() {
+    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
@@ -58,6 +73,7 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test open next step in IDE`() {
+    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
     val nextStepId = 5

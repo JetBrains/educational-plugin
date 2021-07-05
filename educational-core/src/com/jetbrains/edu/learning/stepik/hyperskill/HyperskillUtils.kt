@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -160,6 +161,10 @@ fun showErrorDetails(project: Project, error: String) {
 
 object HyperskillLoginListener : HyperlinkAdapter() {
   override fun hyperlinkActivated(e: HyperlinkEvent?) {
+    doLogin()
+  }
+
+  fun doLogin() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return@Runnable
       showLoginSuccessfulNotification(fullName)
@@ -193,6 +198,15 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
 }
 
 fun openNextActivity(project: Project, task: Task) {
+  if (HyperskillSettings.INSTANCE.account == null) {
+    Notification("EduTools", EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
+                 EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"), NotificationType.ERROR).apply {
+      addAction(NotificationAction.createSimpleExpiring(
+        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
+      ) { HyperskillLoginListener.doLogin() })
+    }.notify(project)
+    return
+  }
   val course = task.course
   val language = HYPERSKILL_LANGUAGES.entries.find { it.value == course.language }?.key ?: return
 
