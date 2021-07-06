@@ -205,6 +205,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     const val ID = "Course"
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
 
-    val STUDY_ITEM: DataKey<StudyItem> = DataKey.create<StudyItem>("Edu.studyItem")
+    val STUDY_ITEM: DataKey<StudyItem> = DataKey.create("Edu.studyItem")
   }
 }

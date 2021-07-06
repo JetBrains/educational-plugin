@@ -6,6 +6,7 @@ import java.awt.Point
 import java.awt.Rectangle
 import java.awt.Shape
 import java.awt.geom.GeneralPath
+import kotlin.math.roundToInt
 
 
 sealed class PlaceholderShape {
@@ -141,7 +142,7 @@ sealed class PlaceholderShape {
   }
 
   companion object {
-    private val HALF_STROKE_WIDTH: Int = Math.round(PlaceholderPainter.STROKE_WIDTH / 2)
+    private val HALF_STROKE_WIDTH: Int = (PlaceholderPainter.STROKE_WIDTH / 2).roundToInt()
   }
 }
 

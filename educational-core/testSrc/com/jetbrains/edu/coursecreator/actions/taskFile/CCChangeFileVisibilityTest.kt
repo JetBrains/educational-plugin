@@ -118,8 +118,8 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     shouldActionBeEnabled: Boolean = true,
     shouldOppositeActionBeEnabled: Boolean = false
   ) {
-    val initialStates = affectedCourseFiles.associate { it to it.isVisible }
-    val initialPlaceholders = affectedCourseFiles.associate { it to it.answerPlaceholders }
+    val initialStates = affectedCourseFiles.associateWith { it.isVisible }
+    val initialPlaceholders = affectedCourseFiles.associateWith { it.answerPlaceholders }
 
     val oppositeActionPresentation = testAction(dataContext, oppositeAction, false)
     checkActionEnabled(oppositeActionPresentation, shouldOppositeActionBeEnabled)

@@ -17,10 +17,10 @@ object ListedCoursesIdsProvider {
     val listedCoursesTexts: Map<CoursesListName, String> = try {
       val text = url.readText()
       val coursesListsChunks = text.split("##").filter { it.isNotEmpty() }
-      coursesListsChunks.map {
+      coursesListsChunks.associate {
         val name = CoursesListName.valueOf(it.lines().first())
         name to it.substringAfter("$name\n").trimEnd()
-      }.toMap()
+      }
     }
     catch (e: IOException) {
       LOG.warn("Failed to retrieve content of '$LISTED_COURSES_LINK'", e)

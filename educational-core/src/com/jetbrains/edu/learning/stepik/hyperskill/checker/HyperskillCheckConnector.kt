@@ -216,6 +216,6 @@ enum class HyperskillLanguages(val id: String?, val langName: String?) {
       values().associateBy { it.id }
     }
 
-    fun langOfId(lang: String) = titleMap.getOrElse(lang, { INVALID })
+    fun langOfId(lang: String) = titleMap.getOrElse(lang) { INVALID }
   }
 }

@@ -180,7 +180,7 @@ class PlaceholderPainterTest : EduTestCase() {
     assertEquals("Wrong number of points\n" + getMessage(expectedPoints, actual), expectedPoints.size, actual.size)
     val shift = expectedPoints.indexOf(actual[0])
     assertTrue(getMessage(expectedPoints, actual), shift >= 0)
-    for (i in 0 until expectedPoints.size) {
+    for (i in expectedPoints.indices) {
       assertEquals(getMessage(expectedPoints, actual), expectedPoints[(i + shift) % expectedPoints.size], actual[i])
     }
   }

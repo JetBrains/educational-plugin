@@ -40,13 +40,13 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
 
   override fun compareTo(other: CourseVisibility): Int {
     if (weight != other.weight) {
-      return Integer.compare(weight, other.weight)
+      return weight.compareTo(other.weight)
     }
     if (this is FeaturedVisibility && other is FeaturedVisibility) {
-      return Integer.compare(inGroup, other.inGroup)
+      return inGroup.compareTo(other.inGroup)
     }
     if (this is InProgressVisibility && other is InProgressVisibility) {
-      return Integer.compare(inGroup, other.inGroup)
+      return inGroup.compareTo(other.inGroup)
     }
     return 0
   }

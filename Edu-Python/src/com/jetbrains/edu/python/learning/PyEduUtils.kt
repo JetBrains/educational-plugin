@@ -86,5 +86,5 @@ private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDep
 private val FOLDERS_TO_EXCLUDE: List<String> = listOf("__pycache__", "venv")
 
 // should be the same as [PyPackageManagerUI.PackagingTask.PACKAGING_GROUP_ID]
-private val PY_PACKAGES_NOTIFICATION_GROUP = "Packaging"
+private const val PY_PACKAGES_NOTIFICATION_GROUP = "Packaging"
 

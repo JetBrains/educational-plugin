@@ -15,7 +15,7 @@ object EduNodeComparator : Comparator<NodeDescriptor<*>> {
       val taskFile1 = o1.getTaskFile()
       val taskFile2 = o2.getTaskFile()
       if (taskFile1 != null && taskFile2 != null) {
-        return Integer.compare(taskFile1.index, taskFile2.index)
+        return taskFile1.index.compareTo(taskFile2.index)
       }
     }
     return AlphaComparator.INSTANCE.compare(o1, o2)
