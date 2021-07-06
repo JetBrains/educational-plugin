@@ -11,11 +11,19 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
+import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
+import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.mimeType
 import com.jetbrains.edu.learning.stepik.SOURCE
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
@@ -24,6 +32,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResource
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.awt.BorderLayout
+import javax.swing.JPanel
 
 private const val SHORTCUT = "shortcut"
 private const val SHORTCUT_ENTITY = "&$SHORTCUT:"
@@ -210,6 +220,18 @@ fun getPictureSize(fontSize: Int): String {
   }.toString()
 }
 
+fun addActionLinks(course: Course?, linkPanel: JPanel, top: Int, left: Int) {
+  when (course) {
+    is HyperskillCourse -> linkPanel.add(
+      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, top, left))
+    is CodeforcesCourse -> {
+      linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
+                                     OpenTaskOnSiteAction.ACTION_ID, top, left), BorderLayout.NORTH)
+      linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
+                                     CodeforcesCopyAndSubmitAction.ACTION_ID, top, left), BorderLayout.CENTER)
+    }
+  }
+}
 
 fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10): ActionLink {
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)

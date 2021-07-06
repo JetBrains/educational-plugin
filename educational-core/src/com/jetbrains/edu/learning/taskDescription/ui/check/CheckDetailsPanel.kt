@@ -13,18 +13,13 @@ import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
-import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
-import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesMarkAsCompletedAction
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
@@ -33,7 +28,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.createActionLink
+import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
@@ -83,21 +78,11 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
     val course = task.course
 
-    when (course) {
-      is HyperskillCourse -> {
-        linksPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 16, 0),
-                       BorderLayout.NORTH)
-        if (course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-          val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
-          linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
-        }
-      }
-      is CodeforcesCourse -> {
-        linksPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
-                                        OpenTaskOnSiteAction.ACTION_ID, 16, 0), BorderLayout.NORTH)
-        linksPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
-                                        CodeforcesCopyAndSubmitAction.ACTION_ID, 16, 0), BorderLayout.CENTER)
-      }
+    addActionLinks(course, linksPanel, 16, 0)
+
+    if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
+      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
+      linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
     if (course !is CourseraCourse && task.showAnswerHints) {

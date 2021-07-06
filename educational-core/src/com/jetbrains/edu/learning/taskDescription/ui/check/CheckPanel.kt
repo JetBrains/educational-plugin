@@ -13,21 +13,19 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.actions.*
+import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.LeaveCommentAction
+import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.createActionLink
+import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -76,16 +74,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   fun readyToCheck() {
-    when (course) {
-      is HyperskillCourse -> linkPanel.add(
-        createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 10, 3))
-      is CodeforcesCourse -> {
-        linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
-                                       OpenTaskOnSiteAction.ACTION_ID, 10, 3), BorderLayout.NORTH)
-        linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
-                                       CodeforcesCopyAndSubmitAction.ACTION_ID, 10, 3), BorderLayout.CENTER)
-      }
-    }
+    addActionLinks(course, linkPanel, 10, 3)
     checkFinishedPanel.removeAll()
     checkDetailsPlaceholder.removeAll()
     checkTimeAlarm.cancelAllRequests()
