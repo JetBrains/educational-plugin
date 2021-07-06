@@ -43,7 +43,7 @@ private const val NO_COURSES = "NO_COURSES"
 abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
   @VisibleForTesting
   @Suppress("LeakingThis")
-  protected var coursePanel: CoursePanel = createCoursePanel()
+  var coursePanel: CoursePanel = createCoursePanel()
   private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
