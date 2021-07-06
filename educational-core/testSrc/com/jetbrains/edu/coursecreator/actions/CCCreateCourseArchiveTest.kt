@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.setStepikAuthorsAsString
 import com.jetbrains.edu.learning.yaml.configFileName
-import junit.framework.TestCase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -410,17 +410,19 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   fun `test ignored files contain missing file`() {
+    val tmpFileName = "tmp.txt"
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
-      additionalFile(EduNames.COURSE_IGNORE, "tmp.txt")
+      additionalFile(EduNames.COURSE_IGNORE, tmpFileName)
     }
     course.description = "my summary"
     val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator())
-    TestCase.assertEquals("Files listed in the `.courseignore` are not found in the project:\n\ntmp.txt", errorMessage)
+    assertTrue(errorMessage.contains(EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)))
+    assertTrue(errorMessage.contains(tmpFileName))
   }
 
   fun `test non templated based framework lesson`() {
