@@ -128,7 +128,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
   private fun doTest(lessonName: String, taskName: String, expectedFileTree: FileTreeBuilder.() -> Unit) {
     withMockSelectTaskUi(object : SelectTaskUi {
-      override fun selectTask(project: Project, course: EduCourse): Task? {
+      override fun selectTask(project: Project, course: EduCourse): Task {
         return course.findTask(lessonName, taskName)
       }
     }) {

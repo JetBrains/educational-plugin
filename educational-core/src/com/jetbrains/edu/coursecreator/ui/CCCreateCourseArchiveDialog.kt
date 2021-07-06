@@ -34,7 +34,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuth
     return super.doValidate()
   }
 
-  override fun createCenterPanel(): JComponent? {
+  override fun createCenterPanel(): JComponent {
     return myPanel
   }
 

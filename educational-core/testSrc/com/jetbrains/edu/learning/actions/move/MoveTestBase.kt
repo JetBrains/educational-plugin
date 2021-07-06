@@ -21,7 +21,7 @@ abstract class MoveTestBase : EduActionTestCase() {
   protected fun doMoveAction(course: Course, source: PsiElement, targetDir: PsiDirectory, delta: Int? = null) {
     val dataContext = dataContext(source).withTarget(targetDir)
     withMockMoveStudyItemUI(object : MoveStudyItemUI {
-      override fun showDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int? {
+      override fun showDialog(project: Project, itemType: StudyItemType, thresholdName: String): Int {
         return when (delta) {
           BEFORE_DELTA, AFTER_DELTA -> delta
           null -> error("Pass `delta` value explicitly")

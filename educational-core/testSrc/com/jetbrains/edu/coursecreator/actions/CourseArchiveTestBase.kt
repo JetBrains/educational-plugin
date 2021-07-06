@@ -69,7 +69,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     return getTestName(true).trim() + ".json"
   }
 
-  private val printer: PrettyPrinter?
+  private val printer: PrettyPrinter
     get() {
       val prettyPrinter = DefaultPrettyPrinter()
       prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)

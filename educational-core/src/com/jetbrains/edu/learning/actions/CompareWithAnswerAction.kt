@@ -77,7 +77,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.lazyMessage("
   private fun getTaskFiles(task: Task) =
     task.taskFiles.values.filter { it.answerPlaceholders.isNotEmpty() }.toMutableList()
 
-  private fun getSolution(taskFile: TaskFile): String? {
+  private fun getSolution(taskFile: TaskFile): String {
     val fullAnswer = StringBuilder(taskFile.text)
 
     taskFile.answerPlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->

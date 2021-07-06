@@ -12,7 +12,7 @@ class CodeforcesSettings : PersistentStateComponent<CodeforcesSettings> {
   var preferableLanguage: String? = null
   var doNotShowLanguageDialog: Boolean = false
 
-  override fun getState(): CodeforcesSettings? = this
+  override fun getState(): CodeforcesSettings = this
 
   override fun loadState(state: CodeforcesSettings) {
     XmlSerializerUtil.copyBean(state, this)

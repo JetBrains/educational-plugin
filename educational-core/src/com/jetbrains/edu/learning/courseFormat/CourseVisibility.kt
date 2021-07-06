@@ -17,7 +17,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
   object PrivateVisibility : CourseVisibility(0) {
     override val tooltipText = "Course is private"
 
-    override fun getDecoratedLogo(icon: Icon?): Icon? {
+    override fun getDecoratedLogo(icon: Icon?): Icon {
       val layeredIcon = LayeredIcon(2)
       layeredIcon.setIcon(icon, 0, 0, 0)
       layeredIcon.setIcon(AllIcons.Ide.Readonly, 1, JBUI.scale(7), JBUI.scale(7))

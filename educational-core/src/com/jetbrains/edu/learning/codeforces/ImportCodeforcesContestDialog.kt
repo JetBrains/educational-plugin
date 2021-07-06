@@ -25,7 +25,7 @@ class ImportCodeforcesContestDialog(private val showViewAllLabel: Boolean) : Dia
   private var contestPanel = ImportCodeforcesContestPanel()
   private val contestsList = HyperlinkLabel(EduCoreBundle.message("link.label.codeforces.view.all.contests"))
 
-  override fun createCenterPanel(): JComponent? = contestPanel.panel
+  override fun createCenterPanel(): JComponent = contestPanel.panel
 
   override fun createSouthPanel(): JComponent {
     val south = super.createSouthPanel()

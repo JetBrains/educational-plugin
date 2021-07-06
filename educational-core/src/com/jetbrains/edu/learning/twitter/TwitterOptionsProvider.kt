@@ -30,7 +30,7 @@ class TwitterOptionsProvider : OptionsProvider {
     askToTweetCheckBox.isSelected = TwitterSettings.getInstance().askToTweet()
   }
 
-  override fun createComponent(): JComponent? {
+  override fun createComponent(): JComponent {
     return panel {
       row { askToTweetCheckBox() }
     }.apply {

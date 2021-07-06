@@ -22,7 +22,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: Con
     init()
   }
 
-  override fun createCenterPanel(): JComponent? = panel {
+  override fun createCenterPanel(): JComponent = panel {
     row {
       label("${EduCoreBundle.message("label.codeforces.contest")}: ${contestInformation.name}")
     }
@@ -39,7 +39,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: Con
     }
   }
 
-  override fun getPreferredFocusedComponent(): JComponent? = languageComboBox
+  override fun getPreferredFocusedComponent(): JComponent = languageComboBox
 
   fun selectedTaskTextLanguage(): TaskTextLanguage = textLanguageComboBox.selectedItem as TaskTextLanguage
 

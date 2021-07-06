@@ -22,6 +22,6 @@ class InvalidCodeforcesRunConfiguration(project: Project, factory: Configuration
   override fun setExecutableFile(file: VirtualFile) = error(message)
   override fun getInputRedirectOptions(): InputRedirectAware.InputRedirectOptions = error(message)
   override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = error(message)
-  override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState? = error(message)
+  override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState = error(message)
   override fun getValidModules(): MutableCollection<Module> = error(message)
 }

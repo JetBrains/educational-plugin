@@ -31,7 +31,7 @@ class TwitterDialog(
 
   override val message: String get() = panel.message
 
-  override fun createCenterPanel(): JComponent? = panel
+  override fun createCenterPanel(): JComponent = panel
   override fun doValidate(): ValidationInfo? = panel.doValidate()
 
   private class DoNotAskOption : DialogWrapper.DoNotAskOption {

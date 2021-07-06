@@ -36,7 +36,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
   }
 
   @Throws(IOException::class)
-  override fun createItemDir(project: Project, course: Course, item: Lesson, parentDirectory: VirtualFile): VirtualFile? {
+  override fun createItemDir(project: Project, course: Course, item: Lesson, parentDirectory: VirtualFile): VirtualFile {
     return GeneratorUtils.createLesson(project, item, parentDirectory)
   }
 
@@ -44,7 +44,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
     return (parentItem as? ItemContainer)?.items?.size ?: 0
   }
 
-  override fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem? {
+  override fun getParentItem(project: Project, course: Course, directory: VirtualFile): StudyItem {
     val lesson = directory.getLesson(project)
     return lesson?.container ?: (course.getSection(directory.name) ?: course)
   }

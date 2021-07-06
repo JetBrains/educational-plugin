@@ -6,7 +6,7 @@ import javax.swing.Icon
 
 class RsCourseCompatibilityProvider : CourseCompatibilityProvider {
 
-  override fun requiredPlugins(): List<PluginInfo>? {
+  override fun requiredPlugins(): List<PluginInfo> {
     return listOf(
       PluginInfo.RUST,
       PluginInfo.TOML

@@ -10,6 +10,6 @@ class PyCheckiOCourseBuilder : PyCourseBuilder() {
   override val mainTemplateName: String? = null
   override val testTemplateName: String? = null
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> =
     PyCheckiOCourseProjectGenerator(this, course)
 }

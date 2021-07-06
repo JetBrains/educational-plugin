@@ -40,7 +40,7 @@ import java.nio.file.Path
 
 class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsProjectSettings>? =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsProjectSettings> =
     RsCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()

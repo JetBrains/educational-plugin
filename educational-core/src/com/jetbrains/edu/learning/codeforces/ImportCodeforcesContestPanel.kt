@@ -22,7 +22,7 @@ class ImportCodeforcesContestPanel {
 
   fun getContestId(): Int = CodeforcesContestConnector.getContestId(contestURLTextField.text)
 
-  val preferredFocusedComponent: JComponent?
+  val preferredFocusedComponent: JComponent
     get() = contestURLTextField
 
   init {

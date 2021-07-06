@@ -123,7 +123,7 @@ abstract class CourseArchiveCreator(
   companion object {
     private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
 
-    private val printer: PrettyPrinter?
+    private val printer: PrettyPrinter
       get() {
         val prettyPrinter = DefaultPrettyPrinter()
         prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)

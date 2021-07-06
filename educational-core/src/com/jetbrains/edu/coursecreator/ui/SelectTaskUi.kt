@@ -70,7 +70,7 @@ private class SelectTaskDialog(project: Project, course: EduCourse) : DialogWrap
     super.init()
   }
 
-  override fun createCenterPanel(): JComponent? {
+  override fun createCenterPanel(): JComponent {
     val panel = panel {
       row { tasks(CCFlags.growX) }
     }

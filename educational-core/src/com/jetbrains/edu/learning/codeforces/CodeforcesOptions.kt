@@ -85,7 +85,7 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
     state.doNotShowLanguageDialog = doNotShowLanguageDialog
   }
 
-  override fun createComponent(): JComponent? = panel {
+  override fun createComponent(): JComponent = panel {
     row("${EduCoreBundle.message("label.codeforces.language")}:") {
       textLanguageComboBox()
     }

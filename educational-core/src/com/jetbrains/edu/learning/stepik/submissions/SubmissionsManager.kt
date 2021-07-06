@@ -53,7 +53,7 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun getSubmissions(stepId: Int): List<Submission>? {
+  fun getSubmissions(stepId: Int): List<Submission> {
     return getOrLoadSubmissions(stepId)
   }
 

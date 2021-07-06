@@ -31,7 +31,7 @@ class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.W
   override fun getDisplayName(): String = "Education"
   override fun getHelpTopic(): String = ID
 
-  override fun createComponent(): JComponent? {
+  override fun createComponent(): JComponent {
     mainPanel.removeAll()
     for (provider in configurables) {
       val component = provider.createComponent() ?: continue

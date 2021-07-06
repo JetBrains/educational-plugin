@@ -70,8 +70,8 @@ class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
     this, course)
   override fun refreshProject(project: Project, cause: RefreshCause) {}
-  override val mainTemplateName: String? = "Main.kt"
-  override val testTemplateName: String? = "Tests.kt"
+  override val mainTemplateName: String = "Main.kt"
+  override val testTemplateName: String = "Tests.kt"
 }
 
 class FakeGradleCourseProjectGenerator(
