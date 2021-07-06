@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.coursera
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.learning.EduUtils
@@ -31,8 +31,6 @@ class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
 
 @VisibleForTesting
 class CourseraPlatformProvider : CoursesPlatformProvider() {
-  private val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignments.txt"
-  private val LOG = Logger.getInstance(CourseraPlatformProvider::class.java)
 
   override val name: String = CourseraNames.COURSERA
 
@@ -76,4 +74,9 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
     return emptyList()
   }
 
+
+  companion object {
+    private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignments.txt"
+    private val LOG = logger<CourseraPlatformProvider>()
+  }
 }

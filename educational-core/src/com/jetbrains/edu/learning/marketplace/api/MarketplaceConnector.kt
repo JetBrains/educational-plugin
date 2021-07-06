@@ -49,8 +49,6 @@ abstract class MarketplaceConnector : CourseConnector {
 
   protected abstract val repositoryUrl: String
 
-  private val XML_ID = "\\d{5,}-.*".toRegex()
-
   init {
     val module = SimpleModule()
     objectMapper = createMapper(module)
@@ -377,6 +375,8 @@ abstract class MarketplaceConnector : CourseConnector {
 
   companion object {
     private val LOG = logger<MarketplaceConnector>()
+
+    private val XML_ID = "\\d{5,}-.*".toRegex()
 
     @JvmStatic
     val AUTHORIZATION_TOPIC = Topic.create("Edu.marketplaceLoggedIn", EduLogInListener::class.java)

@@ -27,8 +27,6 @@ open class YamlUndoTest : YamlTestCase() {
     createConfigFiles(project)
   }
 
-  private val TASK_FILE_NAME = "Test.java"
-
   override fun createCourse() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -124,5 +122,9 @@ open class YamlUndoTest : YamlTestCase() {
 
   private fun getFileEditor(e: Editor?): FileEditor? {
     return if (e == null) null else TextEditorProvider.getInstance().getTextEditor(e)
+  }
+
+  companion object {
+    private const val TASK_FILE_NAME = "Test.java"
   }
 }

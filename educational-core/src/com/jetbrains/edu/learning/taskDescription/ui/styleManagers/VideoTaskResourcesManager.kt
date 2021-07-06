@@ -14,7 +14,6 @@ import kotlinx.css.properties.lh
  * Provides resources and stylesheet to stepikVideo.html.ft
  */
 class VideoTaskResourcesManager {
-  private val VIDEO_TEMPLATE = "stepikVideo.html"
 
   val videoResources = mapOf(
     "video_style" to videoStylesheet(),
@@ -76,5 +75,9 @@ class VideoTaskResourcesManager {
         display = Display.none
       }
     }.toString()
+  }
+
+  companion object {
+    private const val VIDEO_TEMPLATE = "stepikVideo.html"
   }
 }

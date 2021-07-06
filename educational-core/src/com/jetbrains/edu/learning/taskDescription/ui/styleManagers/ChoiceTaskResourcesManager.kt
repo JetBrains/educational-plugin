@@ -16,7 +16,6 @@ import kotlinx.css.properties.lh
 import kotlinx.css.properties.rotate
 
 class ChoiceTaskResourcesManager {
-  private val CHOICE_TASK_TEMPLATE = "choiceTask.html"
 
   val choiceTaskResources = mapOf("choice_options_style" to choiceOptionsStylesheet())
 
@@ -155,6 +154,10 @@ class ChoiceTaskResourcesManager {
       }.toString()
     }
     return ""
+  }
+
+  companion object {
+    private const val CHOICE_TASK_TEMPLATE = "choiceTask.html"
   }
 
 }

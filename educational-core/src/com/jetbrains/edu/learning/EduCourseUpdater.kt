@@ -7,7 +7,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
@@ -26,7 +26,6 @@ import java.io.IOException
 import java.net.URISyntaxException
 
 abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
-  private val LOG = Logger.getInstance(this.javaClass)
 
   private val oldLessonDirectories = HashMap<Int, VirtualFile>()
   private val oldSectionDirectories = HashMap<Int, VirtualFile>()
@@ -358,5 +357,9 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
         }
       }
     }
+  }
+
+  companion object {
+    private val LOG = logger<EduCourseUpdater>()
   }
 }

@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.api
 
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.EduSettings
@@ -18,10 +18,9 @@ import kotlin.coroutines.CoroutineContext
 
 
 class StepikCoursesProvider : CoroutineScope {
-  private val LOG = Logger.getInstance(StepikCoursesProvider::class.java)
-  private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
-  private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
-  private val PUBLIC_COURSES_THREADS_NUMBER = 4
+
+  private val executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+
   private val loadedCourses: Deferred<List<EduCourse>> = async { loadAllCourses() }
 
   override val coroutineContext: CoroutineContext
@@ -109,7 +108,7 @@ class StepikCoursesProvider : CoroutineScope {
     }
 
     val result = mutableListOf<EduCourse>()
-    ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)
+    ConcurrencyUtil.invokeAll(tasks, executorService)
       .filterNot { it.isCancelled }
       .mapNotNull { it.get() }
       .forEach { result.addAll(it) }
@@ -164,5 +163,11 @@ class StepikCoursesProvider : CoroutineScope {
     }
 
     return result
+  }
+
+  companion object {
+    private val LOG = logger<StepikCoursesProvider>()
+
+    private const val PUBLIC_COURSES_THREADS_NUMBER = 4
   }
 }

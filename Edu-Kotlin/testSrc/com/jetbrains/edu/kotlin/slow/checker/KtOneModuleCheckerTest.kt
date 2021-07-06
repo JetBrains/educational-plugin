@@ -145,123 +145,124 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
     doTest()
   }
 
-  @Language("Groovy")
-  private val ONE_MODULE_SETTINGS_GRADLE = """
-    static String sanitizeName(String name) {
-          return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
-    }
-    rootProject.name = sanitizeName('AtomicKotlinCourse')
-  """
+  companion object {
+    @Language("Groovy")
+    private const val ONE_MODULE_SETTINGS_GRADLE = """
+      static String sanitizeName(String name) {
+            return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
+      }
+      rootProject.name = sanitizeName('AtomicKotlinCourse')
+    """
 
-
-  @Suppress("DifferentKotlinGradleVersion", "GroovyAssignabilityCheck", "GroovyUnusedAssignment")
-  @Language("Groovy")
-  private val ONE_MODULE_BUILD_GRADLE = """
-      buildscript {
-          ext.kotlin_version = '1.4.0'
-          repositories {
-              mavenCentral()
-          }
-          dependencies {
-              classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
-          }
-      }
-
-      def printOutput(def output) {
-          return tasks.create("printOutput") {
-              for (line in output.toString().readLines()) {
-                  println "#educational_plugin" + line
-              }
-          }
-      }
-
-      allprojects {
-          apply plugin: 'java'
-          apply plugin: 'kotlin'
-          repositories {
-              jcenter()
-          }
-          dependencies {
-              compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
-
-              // kotlin.test
-              compile "org.jetbrains.kotlin:kotlin-test"
-              compile "org.jetbrains.kotlin:kotlin-test-junit"
-              compile "junit:junit:4.12"
-          }
-          compileKotlin.destinationDir = compileJava.destinationDir
-          compileKotlin {
-              kotlinOptions.jvmTarget = "1.8"
-          }
-          compileTestKotlin {
-              kotlinOptions.jvmTarget = "1.8"
-          }
-      }
-      apply plugin: 'application'
-      sourceCompatibility = 1.8
-      dependencies {
-          testCompile group: 'junit', name: 'junit', version: '4.12'
-          testCompile "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
-          testCompile "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
-      }
-      def srcList = []
-      def testList = []
-      rootProject.projectDir.eachDirRecurse {
-          if (!isTaskDir(it) || it.path.contains(".idea") || "util".equals(it.path)) {
-              return
-          }
-          def srcDir = new File(it, "src")
-          if (it.path.contains("Unit Testing")) {
-              testList.add(srcDir)
-          } else {
-              srcList.add(srcDir)
-          }
-          def testDir = new File(it, "test")
-          testList.add(testDir)
-      }
-      sourceSets {
-          main {
-              java {
-                  srcDirs = srcList
-              }
-              kotlin {
-                  srcDirs = srcList
-              }
-          }
-          test {
-              java {
-                  srcDirs = testList
-              }
-              kotlin {
-                  srcDirs = testList
-              }
-          }
-      }
-
-      static def isTaskDir(File dir) {
-          return new File(dir, "src").exists()
-      }
-
-      mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
-      test {
-          outputs.upToDateWhen { false }
-          afterTest { TestDescriptor test, TestResult result ->
-              if (result.resultType == TestResult.ResultType.FAILURE) {
-                  def message = result.exception?.message ?: "Wrong answer"
-                  def lines = message.readLines()
-                  println "#educational_plugin FAILED + " + lines[0]
-                  if (lines.size() > 1) {
-                      lines[1..-1].forEach { line ->
-                          println "#educational_plugin" + line
-                      }
-                  }
-                  // we need this to separate output of different tests
-                  println ""
-              }
-          }
-      }
-      def runOutput = new ByteArrayOutputStream()
-      tasks.run.setStandardOutput(runOutput)
-      tasks.run.doLast { printOutput(runOutput) }
-  """
+    @Suppress("DifferentKotlinGradleVersion", "GroovyAssignabilityCheck", "GroovyUnusedAssignment")
+    @Language("Groovy")
+    private const val ONE_MODULE_BUILD_GRADLE = """
+        buildscript {
+            ext.kotlin_version = '1.4.0'
+            repositories {
+                mavenCentral()
+            }
+            dependencies {
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+            }
+        }
+  
+        def printOutput(def output) {
+            return tasks.create("printOutput") {
+                for (line in output.toString().readLines()) {
+                    println "#educational_plugin" + line
+                }
+            }
+        }
+  
+        allprojects {
+            apply plugin: 'java'
+            apply plugin: 'kotlin'
+            repositories {
+                jcenter()
+            }
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
+  
+                // kotlin.test
+                compile "org.jetbrains.kotlin:kotlin-test"
+                compile "org.jetbrains.kotlin:kotlin-test-junit"
+                compile "junit:junit:4.12"
+            }
+            compileKotlin.destinationDir = compileJava.destinationDir
+            compileKotlin {
+                kotlinOptions.jvmTarget = "1.8"
+            }
+            compileTestKotlin {
+                kotlinOptions.jvmTarget = "1.8"
+            }
+        }
+        apply plugin: 'application'
+        sourceCompatibility = 1.8
+        dependencies {
+            testCompile group: 'junit', name: 'junit', version: '4.12'
+            testCompile "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+            testCompile "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
+        }
+        def srcList = []
+        def testList = []
+        rootProject.projectDir.eachDirRecurse {
+            if (!isTaskDir(it) || it.path.contains(".idea") || "util".equals(it.path)) {
+                return
+            }
+            def srcDir = new File(it, "src")
+            if (it.path.contains("Unit Testing")) {
+                testList.add(srcDir)
+            } else {
+                srcList.add(srcDir)
+            }
+            def testDir = new File(it, "test")
+            testList.add(testDir)
+        }
+        sourceSets {
+            main {
+                java {
+                    srcDirs = srcList
+                }
+                kotlin {
+                    srcDirs = srcList
+                }
+            }
+            test {
+                java {
+                    srcDirs = testList
+                }
+                kotlin {
+                    srcDirs = testList
+                }
+            }
+        }
+  
+        static def isTaskDir(File dir) {
+            return new File(dir, "src").exists()
+        }
+  
+        mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+        test {
+            outputs.upToDateWhen { false }
+            afterTest { TestDescriptor test, TestResult result ->
+                if (result.resultType == TestResult.ResultType.FAILURE) {
+                    def message = result.exception?.message ?: "Wrong answer"
+                    def lines = message.readLines()
+                    println "#educational_plugin FAILED + " + lines[0]
+                    if (lines.size() > 1) {
+                        lines[1..-1].forEach { line ->
+                            println "#educational_plugin" + line
+                        }
+                    }
+                    // we need this to separate output of different tests
+                    println ""
+                }
+            }
+        }
+        def runOutput = new ByteArrayOutputStream()
+        tasks.run.setStandardOutput(runOutput)
+        tasks.run.doLast { printOutput(runOutput) }
+    """
+  }
 }
