@@ -30,8 +30,7 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
 
     val fileTemplate = GeneratorUtils.getJ2eeTemplateText(templateFileName)
 
-    val packageName = task.name.replace(TASK_LEADING_SYMBOLS, "").toPackageName()
-    val manifestTemplate = GeneratorUtils.getInternalTemplateText(MANIFEST_FILE, mapOf("PACKAGE_NAME" to packageName))
+    val manifestTemplate = GeneratorUtils.getInternalTemplateText(MANIFEST_FILE, mapOf("PACKAGE_NAME" to task.name))
 
     return listOf(
       TaskFile(GeneratorUtils.joinPaths(task.sourceDir, MAIN_RS_FILE), fileTemplate),
