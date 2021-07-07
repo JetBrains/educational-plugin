@@ -34,7 +34,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     return super.templateVariables(project) + mapOf(
       "ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
       "KOTLIN_VERSION" to kotlinVersion.version,
-      "NEED_KOTLIN_EAP_REPOSITORY" to !kotlinVersion.isRelease
     )
   }
 
@@ -91,6 +90,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     if (withTests) {
       templates += TemplateFileInfo("android-ExampleUnitTest.kt", "src/test/java/$packagePath/ExampleUnitTest.kt", false)
       templates += TemplateFileInfo("android-AndroidEduTestRunner.kt", "src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", false)
+      templates += TemplateFileInfo("android-ExampleInstrumentedTest.kt", "src/androidTest/java/$packagePath/ExampleInstrumentedTest.kt",
+                                    false)
     }
 
     return templates

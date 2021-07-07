@@ -3,8 +3,6 @@ buildscript {
   repositories {
     google()
     jcenter()
-    #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
-
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:${ANDROID_GRADLE_PLUGIN_VERSION}'
@@ -16,8 +14,6 @@ allprojects {
   repositories {
     google()
     jcenter()
-    #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
-
   }
   afterEvaluate {
     if (extensions.findByName("android") != null) {

@@ -40,6 +40,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
         }
         dir("androidTest/java/com/example") {
           file("AndroidEduTestRunner.kt")
+          file("ExampleInstrumentedTest.kt")
         }
       }
     },
@@ -51,6 +52,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
         }
         dir("androidTest/java/com/example") {
           file("AndroidEduTestRunner.kt")
+          file("ExampleInstrumentedTest.kt")
         }
       }
     }
