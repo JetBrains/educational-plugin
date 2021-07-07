@@ -220,15 +220,15 @@ fun getPictureSize(fontSize: Int): String {
   }.toString()
 }
 
-fun addActionLinks(course: Course?, linkPanel: JPanel, top: Int, left: Int) {
+fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
   when (course) {
     is HyperskillCourse -> linkPanel.add(
-      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, top, left))
+      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin))
     is CodeforcesCourse -> {
       linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
-                                     OpenTaskOnSiteAction.ACTION_ID, top, left), BorderLayout.NORTH)
+                                     OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)
       linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
-                                     CodeforcesCopyAndSubmitAction.ACTION_ID, top, left), BorderLayout.CENTER)
+                                     CodeforcesCopyAndSubmitAction.ACTION_ID, topMargin, leftMargin), BorderLayout.CENTER)
     }
   }
 }
