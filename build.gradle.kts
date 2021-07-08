@@ -238,6 +238,12 @@ subprojects {
     prepareSandbox { enabled = false }
     buildSearchableOptions { enabled = false }
   }
+
+  val testOutput = configurations.create("testOutput")
+
+  dependencies {
+    testOutput(sourceSets.test.get().output.classesDirs)
+  }
 }
 
 project(":") {
@@ -421,24 +427,12 @@ project(":") {
   }
 }
 
-project(":educational-core") {
-
-  val testOutput = configurations.create("testOutput")
-
-  dependencies {
-    testOutput(sourceSets.getByName("test").output.classesDirs)
-  }
-}
+project(":educational-core")
 
 project(":code-insight") {
-
-  val testOutput = configurations.create("testOutput")
-
   dependencies {
     implementation(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
-
-    testOutput(sourceSets.getByName("test").output.classesDirs)
   }
 }
 
@@ -493,13 +487,9 @@ project(":jvm-core") {
     plugins.set(jvmPlugins)
   }
 
-  val testOutput = configurations.create("testOutput")
-
   dependencies {
     implementation(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
-
-    testOutput(sourceSets.getByName("test").output.classesDirs)
   }
 }
 
