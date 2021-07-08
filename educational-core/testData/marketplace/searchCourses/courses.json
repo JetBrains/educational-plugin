@@ -6,6 +6,7 @@
         {
           "id" : "1",
           "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
           "name" : "Introduction to Python",
           "description" : "Introduction course to Python",
           "downloads" : 2,
@@ -26,6 +27,7 @@
         {
           "id" : "2",
           "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
           "name" : "Introduction to Java",
           "description" : "Introduction course to Java",
           "downloads" : 5,
@@ -44,6 +46,7 @@
         {
           "id": "3",
           "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
           "name": "Scala course",
           "organization": null,
           "description" : "Introduction course to Scala",

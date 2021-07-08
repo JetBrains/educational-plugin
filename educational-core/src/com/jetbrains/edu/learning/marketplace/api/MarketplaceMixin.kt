@@ -43,6 +43,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
   @JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
   @JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
+  @JsonProperty(CREATE_DATE) val courseCreateDate: Long,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -62,6 +63,7 @@ private class MarketplaceCourseBuilder(
       organization = courseOrganization?.name
       isMarketplacePrivate = fields.isPrivate
       updateDate = Date(lastUpdateDate)
+      createDate = Date(courseCreateDate)
       setMarketplaceAuthorsAsString(developers)
     }
 

@@ -6,6 +6,7 @@
         {
           "id" : "1",
           "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
           "name" : "Introduction to Python",
           "description" : "Introduction course to Python",
           "downloads" : 2,

@@ -111,6 +111,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
                      expectedLearnersCount: Int,
                      expectedReviewScore: Double,
                      expectedUpdateDate: Date = Date(1619697473000),
+                     expectedCreateDate: Date = Date(1623321716000),
                      expectedEnvironment: String = DEFAULT_ENVIRONMENT,
                      expectedIsPrivate: Boolean = false) {
     assertEquals(expectedId, course.id)
@@ -122,6 +123,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedLearnersCount, course.learnersCount)
     assertEquals(expectedReviewScore, course.reviewScore)
     assertEquals(expectedUpdateDate, course.updateDate)
+    assertEquals(expectedCreateDate, course.createDate)
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertTrue(course.isMarketplace)
   }

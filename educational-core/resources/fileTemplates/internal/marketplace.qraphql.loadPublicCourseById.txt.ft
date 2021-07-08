@@ -13,6 +13,7 @@ query {
       fields
       developers
       lastUpdateDate
+      cdate
     }
   }
 }

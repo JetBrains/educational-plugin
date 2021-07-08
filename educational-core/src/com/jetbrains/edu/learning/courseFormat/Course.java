@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -59,6 +56,7 @@ public abstract class Course extends LessonContainer {
   private int myMarketplaceCourseVersion = 0;
   @Nullable private String organization;
   private boolean isMarketplacePrivate = false;
+  private Date myCreateDate = new Date(0);
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
@@ -366,5 +364,13 @@ public abstract class Course extends LessonContainer {
 
   public void setMarketplacePrivate(boolean isCoursePrivate) {
     isMarketplacePrivate = isCoursePrivate;
+  }
+
+  public Date getCreateDate() {
+    return myCreateDate;
+  }
+
+  public void setCreateDate(Date createDate) {
+    myCreateDate = createDate;
   }
 }

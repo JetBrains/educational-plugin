@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
+const val CREATE_DATE = "cdate"
 const val DATA = "data"
 const val DESCRIPTION = "description"
 const val DEVELOPERS = "developers"

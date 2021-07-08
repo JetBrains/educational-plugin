@@ -18,6 +18,7 @@ query {
       organization {name}
       fields
       lastUpdateDate
+      cdate
     }
   }
 }
