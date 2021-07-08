@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
@@ -48,7 +49,7 @@ object CodeforcesContestConnector {
       }
   }
 
-  fun getUpcomingContests(document: Document): List<ContestInformation> {
+  fun getUpcomingContests(document: Document): List<CodeforcesCourse> {
     val upcomingContestList = document.body().getElementsByClass(CONTEST_LIST_CLASS).first() ?: error("Cannot parse $CONTEST_LIST_CLASS")
     val tables = upcomingContestList.getElementsByClass(DATATABLE_CLASS)
     if (tables.isEmpty()) {
@@ -67,7 +68,7 @@ object CodeforcesContestConnector {
    * Recent contest table goes after upcoming and current contests table.
    * See the page format [com.jetbrains.edu.learning.codeforces.api.CodeforcesService.contestsPage]
    */
-  fun getRecentContests(document: Document): List<ContestInformation> {
+  fun getRecentContests(document: Document): List<CodeforcesCourse> {
     val recentContestsParent = document.body().getElementsByClass(CONTEST_TABLE_CLASS).first() ?: return emptyList()
     val recentContests = recentContestsParent.getElementsByClass(DATATABLE_CLASS)?.first() ?: return emptyList()
 
@@ -78,7 +79,7 @@ object CodeforcesContestConnector {
     }
   }
 
-  private fun parseContestInformation(element: Element, dateClass: String): ContestInformation? {
+  private fun parseContestInformation(element: Element, dateClass: String): CodeforcesCourse? {
     return try {
       val contestId = element.attr(DATA_CONTEST_ID_ATTR).toInt()
       val tableRow = element.getElementsByTag(TD_TAG)
@@ -88,7 +89,9 @@ object CodeforcesContestConnector {
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
       val isRegistrationOpen = tableRow[5].getElementsByClass("countdown").isNotEmpty()
       val duration = Duration.ofHours(contestLength[0]).plus(Duration.ofMinutes(contestLength[1]))
-      ContestInformation(contestId, contestName, startDate + duration, startDate, duration, isRegistrationOpen)
+      val codeforcesCourse = ContestParameters(contestId, name = contestName, endDateTime = startDate + duration, startDate = startDate,
+                                               length = duration, isRegistrationOpen = isRegistrationOpen)
+      CodeforcesCourse(codeforcesCourse)
     }
     catch (e: Exception) {
       Logger.getInstance(this::class.java).warn(e.message)

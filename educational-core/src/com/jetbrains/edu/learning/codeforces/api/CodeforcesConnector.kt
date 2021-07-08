@@ -6,7 +6,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
-import com.jetbrains.edu.learning.codeforces.ContestInformation
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -50,7 +49,7 @@ abstract class CodeforcesConnector {
       Ok(CodeforcesCourse(contestParameters, doc))
     }
 
-  fun getContestInformation(contestId: Int): Result<ContestInformation, String> {
+  fun getContestInformation(contestId: Int): Result<CodeforcesCourse, String> {
     val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contests.list"))
     val contestInfo = contestsList.contests.find { it.id == contestId }
                       ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
@@ -61,7 +60,9 @@ abstract class CodeforcesConnector {
     val doc = Jsoup.parse(responseBody.string())
     val contestLanguages = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contest.language"))
 
-    return Ok(ContestInformation(contestId, contestInfo.name, contestInfo.endTime, availableLanguages = contestLanguages))
+    val contestParameters = ContestParameters(contestId, name = contestInfo.name, endDateTime = contestInfo.endTime,
+                                              availableLanguages = contestLanguages)
+    return Ok(CodeforcesCourse(contestParameters))
   }
 
   fun getContestsPage(): Result<Document, String> {

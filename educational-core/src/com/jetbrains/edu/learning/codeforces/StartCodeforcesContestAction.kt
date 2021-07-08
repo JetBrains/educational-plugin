@@ -97,16 +97,16 @@ class StartCodeforcesContestAction(
       )
     }
 
-    private fun showDialogAndGetContestParameters(contestInformation: ContestInformation): ContestParameters? {
-      val contestName = contestInformation.name
-      val contestLanguages = contestInformation.availableLanguages
+    private fun showDialogAndGetContestParameters(codeforcesCourse: CodeforcesCourse): ContestParameters? {
+      val contestName = codeforcesCourse.name
+      val contestLanguages = codeforcesCourse.availableLanguages
 
       if (contestLanguages.isEmpty()) {
         showNoSupportedLanguagesForContestNotification(contestName)
         return null
       }
 
-      val dialog = ChooseCodeforcesContestLanguagesDialog(contestInformation)
+      val dialog = ChooseCodeforcesContestLanguagesDialog(codeforcesCourse)
       if (!dialog.showAndGet()) {
         return null
       }
@@ -123,16 +123,16 @@ class StartCodeforcesContestAction(
       }
 
       return ContestParameters(
-        contestInformation.id,
+        codeforcesCourse.id,
         languageIdAndVersion,
         taskTextLanguage.locale,
-        contestInformation.endDateTime,
+        codeforcesCourse.endDateTime,
         language
       )
     }
 
-    private fun getContestInfoUnderProgress(contestId: Int): Result<ContestInformation, String> =
-      ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<ContestInformation, String>, RuntimeException>(
+    private fun getContestInfoUnderProgress(contestId: Int): Result<CodeforcesCourse, String> =
+      ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
           EduUtils.execCancelable {
@@ -141,14 +141,14 @@ class StartCodeforcesContestAction(
         }, EduCoreBundle.message("codeforces.getting.available.languages"), true, null
       )
 
-    private fun getContestParametersFromSettings(contestInformation: ContestInformation): ContestParameters? {
+    private fun getContestParametersFromSettings(codeforcesCourse: CodeforcesCourse): ContestParameters? {
       val codeforcesSettings = CodeforcesSettings.getInstance()
 
       val locale = (codeforcesSettings.preferableTaskTextLanguage ?: return null).locale
       val language = codeforcesSettings.preferableLanguage ?: return null
       val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return null
 
-      return ContestParameters(contestInformation.id, language, locale, contestInformation.endDateTime, languageIdAndVersion)
+      return ContestParameters(codeforcesCourse.id, language, locale, codeforcesCourse.endDateTime, languageIdAndVersion)
     }
 
     private fun showNoSupportedLanguagesForContestNotification(contestName: String) {

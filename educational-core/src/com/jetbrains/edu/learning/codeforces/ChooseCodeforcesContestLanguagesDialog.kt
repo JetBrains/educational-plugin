@@ -5,11 +5,12 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 
-class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: ContestInformation) : DialogWrapper(false) {
+class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: CodeforcesCourse) : DialogWrapper(false) {
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox()
   private val languageComboBox: ComboBox<String> = ComboBox()
   private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox(EduCoreBundle.message("codeforces.prefer.selected.languages"))
@@ -24,7 +25,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: Con
 
   override fun createCenterPanel(): JComponent = panel {
     row {
-      label("${EduCoreBundle.message("label.codeforces.contest")}: ${contestInformation.name}")
+      label("${EduCoreBundle.message("label.codeforces.contest")}: ${codeforcesCourse.name}")
     }
     row {
       row("${EduCoreBundle.message("label.codeforces.language")}:") {
@@ -61,12 +62,12 @@ class ChooseCodeforcesContestLanguagesDialog(private val contestInformation: Con
   }
 
   private fun initLanguageComboBox() {
-    contestInformation.availableLanguages.sorted().forEach {
+    codeforcesCourse.availableLanguages.sorted().forEach {
       languageComboBox.addItem(it)
     }
 
     val preferableLanguage = CodeforcesSettings.getInstance().preferableLanguage
-    if (preferableLanguage != null && preferableLanguage in contestInformation.availableLanguages) {
+    if (preferableLanguage != null && preferableLanguage in codeforcesCourse.availableLanguages) {
       languageComboBox.selectedItem = preferableLanguage
     }
     else {
