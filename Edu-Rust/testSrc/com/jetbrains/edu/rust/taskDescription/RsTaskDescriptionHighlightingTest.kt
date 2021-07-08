@@ -1,6 +1,9 @@
 package com.jetbrains.edu.rust.taskDescription
 
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.lang.RsLanguage
@@ -8,6 +11,12 @@ import org.rust.lang.RsLanguage
 class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = RsLanguage
   override val settings: Any = RsProjectSettings(null)
+
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    // BACKCOMPAT: 2020.3
+    if (ApplicationInfo.getInstance().build < BUILD_211) return
+    super.runTestRunnable(testRunnable)
+  }
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
@@ -30,16 +39,16 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo</span><span style="...">&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
-          <span style="...">s</span><span style="...">: &amp;</span><span style="...">'a </span><span style="...">str</span>
+      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+          <span style="...">s: &amp;</span><span style="...">'a </span><span style="...">str</span>
       <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main</span><span style="...">() {</span>
-          <span style="...">println</span><span style="...">!(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
+          <span style="...">println!(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition </span><span style="...">{ </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
      </body>
     </html>
   """)
@@ -65,17 +74,22 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo</span><span style="...">&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
-          <span style="...">s</span><span style="...">: &amp;</span><span style="...">'a </span><span style="...">str</span>
+      <span class="code-block"><pre>  <span style="...">pub struct </span><span style="...">Foo&lt;</span><span style="...">'a</span><span style="...">&gt; {</span>
+          <span style="...">s: &amp;</span><span style="...">'a </span><span style="...">str</span>
       <span style="...">}</span>
     </pre> </span>
       <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main</span><span style="...">() {</span>
-          <span style="...">println</span><span style="...">!(</span><span style="...">"Hello!"</span><span style="...">)</span>
+      <span class="code-block"><pre>  <span style="...">fn </span><span style="...">main() {</span>
+          <span style="...">println!(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition </span><span style="...">{ </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
+      <p>Inline code <span class="code"><span style="...">if </span><span style="...">condition { </span><span style="...">1 </span><span style="...">} </span><span style="...">else </span><span style="...">{ </span><span style="...">2 </span><span style="...">}</span></span></p>
      </body>
     </html>
   """)
+
+  companion object {
+    // BACKCOMPAT: 2020.3
+    private val BUILD_211 = BuildNumber.fromString("211")!!
+  }
 }
