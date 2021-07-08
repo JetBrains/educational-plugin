@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 class CCItemPositionPanel(thresholdName: String) : AdditionalPanel {
 
   private val beforeButton: JBRadioButton = JBRadioButton(EduCoreBundle.message("radio.item.position.before", thresholdName))
-  private val afterButton: JBRadioButton = JBRadioButton(EduCoreBundle.message("radio.item.position.after", thresholdName))
+  private val afterButton: JBRadioButton = JBRadioButton(EduCoreBundle.message("radio.item.position.after", thresholdName), true)
 
   override fun attach(builder: LayoutBuilder) {
     with(builder) {
