@@ -1,23 +1,29 @@
 package com.jetbrains.edu.android
 
 import com.android.ide.common.repository.GradleCoordinate
+import com.android.sdklib.SdkVersionInfo
 import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.jetbrains.edu.android.AndroidNewTaskAfterPopupDialog.Companion.initAndroidProperties
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
+import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
@@ -64,7 +70,18 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     }
   }
 
-  override fun createInitialLesson(project: Project, course: Course): Lesson? = null
+  override fun createInitialLesson(project: Project, course: Course): Lesson {
+    val lessonInfo = NewStudyItemInfo(EduNames.LESSON + 1, 1, ::FrameworkLesson)
+    val lesson = CCCreateLesson().createAndInitItem(project, course, null, lessonInfo)
+
+    val taskInfo = NewStudyItemInfo(EduNames.TASK + 1, 1, ::EduTask).apply {
+      initAndroidProperties(SdkVersionInfo.HIGHEST_KNOWN_STABLE_API)
+    }
+    val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)
+    lesson.addTask(task)
+
+    return lesson
+  }
 
   // TODO: reuse AS project template to create all default files
   override fun getDefaultTaskTemplates(

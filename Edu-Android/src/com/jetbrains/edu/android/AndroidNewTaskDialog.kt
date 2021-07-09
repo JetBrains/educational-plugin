@@ -30,8 +30,9 @@ class AndroidNewTaskAfterPopupDialog(
     val userName = System.getProperty("user.name")
     val packageSuffix = if (userName != null) NewProjectModel.nameToJavaPackage(userName) else null
     text = if (packageSuffix.isNullOrEmpty()) {
-      "com.example.android.course"
-    } else {
+      DEFAULT_PACKAGE_NAME
+    }
+    else {
       "com.example.$packageSuffix"
     }
   }
@@ -72,11 +73,20 @@ class AndroidNewTaskAfterPopupDialog(
   }
 
   override fun showAndGetResult(): NewStudyItemInfo? {
-    val info = super.showAndGetResult()
-    val versionItem = comboBoxWrapper.combobox.selectedItem as? AndroidVersionsInfo.VersionItem
-    return info?.apply {
-      putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageNameField.text)
-      putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, versionItem?.minApiLevel ?: FormFactor.MOBILE.minOfflineApiLevel)
+    return super.showAndGetResult()?.apply {
+      val versionItem = comboBoxWrapper.combobox.selectedItem as? AndroidVersionsInfo.VersionItem
+      initAndroidProperties(compileSdkVersion, packageNameField.text, versionItem?.minApiLevel)
+    }
+  }
+
+  companion object {
+    private const val DEFAULT_PACKAGE_NAME = "com.example.android.course"
+
+    fun NewStudyItemInfo.initAndroidProperties(compileSdkVersion: Int,
+                                               packageName: String = DEFAULT_PACKAGE_NAME,
+                                               androidSdkVersion: Int? = null) {
+      putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
+      putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.minOfflineApiLevel)
       putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, compileSdkVersion)
     }
   }
