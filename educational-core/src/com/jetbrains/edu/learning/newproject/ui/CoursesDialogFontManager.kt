@@ -10,5 +10,5 @@ object CoursesDialogFontManager {
     get() = JBUI.scaleFontSize(12.0f)
 
   val headerFontSize
-    get () = JBUI.scaleFontSize(26.0f)
+    get() = JBUI.scaleFontSize(18.0f)
 }

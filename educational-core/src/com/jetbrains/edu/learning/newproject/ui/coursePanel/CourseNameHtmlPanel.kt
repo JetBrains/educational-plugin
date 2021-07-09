@@ -8,7 +8,7 @@ class CourseNameHtmlPanel : CourseHtmlPanel(), CourseSelectionListener {
 
   override fun getBody(): String {
     course?.let {
-      return "<html><span>${it.name ?: ""}</span></html>"
+      return "<html><span><b>${it.name ?: ""}</b></span></html>"
     }
     return ""
   }
