@@ -31,7 +31,7 @@ class AuthorsPanel : NonOpaquePanel(), CourseSelectionListener {
 
   override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
     val course = courseInfo.course
-    authorsLabel.isVisible = courseDisplaySettings.showInstructorField && course.allAuthors.isNotEmpty()
+    isVisible = courseDisplaySettings.showInstructorField && course.allAuthors.isNotEmpty()
     if (authorsLabel.isVisible) {
       authorsLabel.text = "by ${course.allAuthors}"
     }

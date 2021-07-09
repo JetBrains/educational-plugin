@@ -17,7 +17,9 @@ class TagsPanel : NonOpaquePanel(HorizontalLayout(HORIZONTAL_OFFSET)), CourseSel
 
   private fun addTags(course: Course) {
     removeAll()
-    for (tag in course.tags) {
+    val tags = course.tags
+    isVisible = tags.isNotEmpty()
+    for (tag in tags) {
       add(tag.createComponent())
     }
   }

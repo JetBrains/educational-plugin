@@ -52,23 +52,23 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
   private val participantsLabel: JBLabel = JBLabel()
 
   init {
-    border = JBUI.Borders.empty(5, HORIZONTAL_MARGIN, 8, 0)
+    border = JBUI.Borders.empty(8, HORIZONTAL_MARGIN, 9, 0)
 
     val headersPanel = NonOpaquePanel().apply {
-      layout = VerticalFlowLayout(0, 10)
+      layout = VerticalFlowLayout(0, 6)
       border = JBUI.Borders.emptyRight(18)
       add(createBoldLabel(EduCoreBundle.message("codeforces.course.selection.finished")))
       add(createBoldLabel(EduCoreBundle.message("codeforces.course.selection.participants")))
     }
 
     val valuePanel = NonOpaquePanel().apply {
-      layout = VerticalFlowLayout(0, 10)
+      layout = VerticalFlowLayout(0, 6)
       add(finishedLabel)
       add(participantsLabel)
     }
 
     val grayTextHtmlPanel = GrayTextHtmlPanel(EduCoreBundle.message("codeforces.past.contest.description")).apply {
-      border = JBUI.Borders.empty(8, 0, 0, 0)
+      border = JBUI.Borders.empty(10, 0, 0, 0)
     }
 
     add(headersPanel, BorderLayout.LINE_START)

@@ -39,7 +39,7 @@ private const val DEFAULT_BUTTON_OFFSET = 3
 abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
   protected val tagsPanel: TagsPanel = TagsPanel()
   protected val titlePanel = CourseNameHtmlPanel().apply {
-    border = JBUI.Borders.empty(11, HORIZONTAL_MARGIN, 0, 0)
+    border = JBUI.Borders.empty(8, HORIZONTAL_MARGIN, 0, 0)
   }
   protected val authorsPanel = AuthorsPanel()
   protected val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
