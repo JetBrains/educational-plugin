@@ -6,6 +6,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
@@ -304,7 +305,7 @@ abstract class MarketplaceConnector : CourseConnector {
         for (action in postLoginActions) {
           action.run()
         }
-        requestFocus()
+        runInEdt { requestFocus() }
         val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.getFullName() ?: return
         showLoginSuccessfulNotification(userName)
       }
