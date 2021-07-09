@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
 import java.time.Duration
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.swing.Icon
 
@@ -38,13 +37,6 @@ open class CodeforcesCourse : Course {
 
   constructor(contestParameters: ContestParameters) {
     setContestParameters(contestParameters)
-
-    val date = endDateTime?.toLocalDate()?.format(DateTimeFormatter.ofPattern("dd MMM YYYY", Locale.ENGLISH))
-    if (date != null) {
-      val codeforcesLink = "<a href='${getContestURLFromID(id)}'>${CodeforcesNames.CODEFORCES_TITLE}</a>"
-      val eduToolsLink = "<a href='${CodeforcesNames.CODEFORCES_EDU_TOOLS_HELP}'>EduTools</a>"
-      description = EduCoreBundle.message("codeforces.past.course.description", date, codeforcesLink, eduToolsLink)
-    }
   }
 
   private fun setContestParameters(contestParameters: ContestParameters) {
