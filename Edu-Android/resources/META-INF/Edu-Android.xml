@@ -6,6 +6,11 @@
 
   <xi:include href="/META-INF/Hyperskill-Android.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <projectListeners>
+    <listener class="com.jetbrains.edu.gradle.ChangeViewGradleSyncListener"
+              topic="com.android.tools.idea.gradle.project.sync.GradleSyncListener"/>
+  </projectListeners>
+
   <extensions defaultExtensionNs="Educational">
     <gradleRefresher implementation="com.jetbrains.edu.gradle.StudioGradleCourseRefresher"/>
     <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" environment="Android"
