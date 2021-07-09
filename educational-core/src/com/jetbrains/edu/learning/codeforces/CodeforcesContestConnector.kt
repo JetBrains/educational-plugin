@@ -88,15 +88,25 @@ object CodeforcesContestConnector {
       val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
       val isRegistrationOpen = tableRow[5].getElementsByClass("countdown").isNotEmpty()
+      val participantsNumber = parseParticipantsNumber(tableRow[5], isRegistrationOpen)
       val duration = Duration.ofHours(contestLength[0]).plus(Duration.ofMinutes(contestLength[1]))
       val codeforcesCourse = ContestParameters(contestId, name = contestName, endDateTime = startDate + duration, startDate = startDate,
-                                               length = duration, isRegistrationOpen = isRegistrationOpen)
+              length = duration, isRegistrationOpen = isRegistrationOpen, participantsNumber = participantsNumber)
       CodeforcesCourse(codeforcesCourse)
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
       Logger.getInstance(this::class.java).warn(e.message)
       null
     }
+  }
+
+  private fun parseParticipantsNumber(tableRow: Element, isRegistrationOpen: Boolean): Int {
+    if (isRegistrationOpen) {
+      return 0
+    }
+
+    val participantsElement = tableRow.getElementsByClass("contestParticipantCountLinkMargin").firstOrNull()
+    val participantsTextNode = participantsElement?.textNodes()?.firstOrNull() ?: return 0
+    return participantsTextNode.text().trimStart(' ', 'x').toInt()
   }
 
   private fun parseDate(tableRow: Elements, dateClass: String): ZonedDateTime {

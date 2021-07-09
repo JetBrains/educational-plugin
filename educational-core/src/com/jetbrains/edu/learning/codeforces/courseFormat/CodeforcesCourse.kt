@@ -25,6 +25,7 @@ open class CodeforcesCourse : Course {
   var length: Duration = Duration.ZERO
   var isRegistrationOpen: Boolean = false
   var availableLanguages: List<String> = emptyList()
+  var participantsNumber: Int = 0
 
   @Suppress("unused") //used for deserialization
   constructor()
@@ -57,6 +58,7 @@ open class CodeforcesCourse : Course {
     isRegistrationOpen = contestParameters.isRegistrationOpen
     availableLanguages = contestParameters.availableLanguages
     name = contestParameters.name
+    participantsNumber = contestParameters.participantsNumber
   }
 
   override fun getIcon(): Icon = EducationalCoreIcons.Codeforces

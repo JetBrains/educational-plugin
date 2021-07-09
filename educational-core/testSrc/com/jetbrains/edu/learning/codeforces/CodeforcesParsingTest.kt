@@ -137,6 +137,17 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("2021-05-18T17:35+02:00[Europe/Berlin]", firstContest.startDate.toString())
   }
 
+  fun testParticipantsNumber() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val recentContests = CodeforcesContestConnector.getRecentContests(document)
+    assertTrue(recentContests.size == 100)
+
+    val firstContest = recentContests.first()
+
+    assertEquals(20195, firstContest.participantsNumber)
+  }
+
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"
