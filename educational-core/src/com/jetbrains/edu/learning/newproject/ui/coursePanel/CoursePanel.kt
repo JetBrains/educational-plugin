@@ -37,22 +37,25 @@ private const val ERROR_PANEL_MARGIN = 10
 private const val DEFAULT_BUTTON_OFFSET = 3
 
 abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
-  private val tagsPanel: TagsPanel = TagsPanel()
-  private val titlePanel = CourseNameHtmlPanel().apply {
+  protected val tagsPanel: TagsPanel = TagsPanel()
+  protected val titlePanel = CourseNameHtmlPanel().apply {
     border = JBUI.Borders.empty(11, HORIZONTAL_MARGIN, 0, 0)
   }
-  private val authorsPanel = AuthorsPanel()
-  private val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
+  protected val authorsPanel = AuthorsPanel()
+  protected val errorComponent = ErrorComponent(ErrorStateHyperlinkListener(), ERROR_PANEL_MARGIN) { doValidation() }.apply {
     border = JBUI.Borders.empty(ERROR_TOP_GAP, HORIZONTAL_MARGIN, 0, ERROR_RIGHT_GAP)
   }
+
   @VisibleForTesting
   val buttonsPanel: ButtonsPanel = ButtonsPanel().apply {
     setStartButtonText(startButtonText)
     setOpenButtonText(openButtonText)
   }
-  private val courseDetailsPanel: CourseDetailsPanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
-  private val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
-  private val content = ContentPanel()
+
+  @Suppress("LeakingThis")
+  protected val courseDetailsPanel = createCourseDetailsPanel()
+  protected val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
+  protected val content = ContentPanel()
 
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
@@ -85,6 +88,17 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     val emptyStatePanel = JBPanelWithEmptyText().withEmptyText(EduCoreBundle.message("course.dialog.no.course.selected"))
     add(emptyStatePanel, EMPTY)
 
+    addComponents()
+
+    val scrollPane = JBScrollPane(content, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER).apply {
+      border = null
+    }
+
+    add(scrollPane, CONTENT)
+  }
+
+  protected open fun addComponents() {
     with(content) {
       add(tagsPanel)
       add(titlePanel)
@@ -95,15 +109,12 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
       add(settingsPanel)
     }
 
-    val scrollPane = JBScrollPane(content, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER).apply {
-      border = null
-    }
-
-    add(scrollPane, CONTENT)
+    buttonsPanel.border = JBUI.Borders.emptyTop(17)
   }
 
   protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
+
+  protected open fun createCourseDetailsPanel(): NonOpaquePanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
 
   fun doValidation() {
     setError(getErrorState(course) { validateSettings(it) })
@@ -216,7 +227,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
   }
 
   @VisibleForTesting
-  inner class ButtonsPanel() : NonOpaquePanel(), CourseSelectionListener {
+  inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
     @VisibleForTesting
     val buttons: List<CourseButtonBase> = mutableListOf(
       StartCourseButton(joinCourse = { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }),
@@ -225,11 +236,15 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     )
 
     init {
-      layout = FlowLayout(FlowLayout.LEFT, 0, 0)
-      border = JBUI.Borders.empty(17, HORIZONTAL_MARGIN - DEFAULT_BUTTON_OFFSET, 0, 0)
-      buttons.forEach {
-        add(it)
+      val contentPanel = NonOpaquePanel().apply {
+        layout = FlowLayout(FlowLayout.LEFT, 0, 0)
+        border = JBUI.Borders.empty(0, HORIZONTAL_MARGIN - DEFAULT_BUTTON_OFFSET, 0, 0)
       }
+      buttons.forEach {
+        contentPanel.add(it)
+      }
+
+      add(contentPanel)
     }
 
     fun setStartButtonText(text: String) {
@@ -264,7 +279,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     val DIVIDER_COLOR = JBColor(0xC5C5C5, 0x515151)
   }
 
-  private class ContentPanel : NonOpaquePanel() {
+  protected class ContentPanel : NonOpaquePanel() {
     init {
       layout = VerticalFlowLayout(VerticalFlowLayout.TOP, 0, 0, true, false)
       background = MAIN_BG_COLOR

@@ -71,6 +71,15 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
     revalidate()
     repaint()
   }
+
+  companion object {
+    const val DATE_PATTERN: String = "MMM d, yyyy"
+
+    fun formatNumber(number: Int): String {
+      return NumberFormat.getNumberInstance(Locale.US).format(number)
+    }
+
+  }
 }
 
 private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
@@ -169,13 +178,14 @@ private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
       EduCoreBundle.message("course.dialog.course.stats.one.learner")
     }
     else {
-      val learnersCount = NumberFormat.getNumberInstance(Locale.US).format(course.learnersCount)
+      val learnersCount = CourseDetailsPanel.formatNumber(course.learnersCount)
       EduCoreBundle.message("course.dialog.course.stats.learners", learnersCount)
     }
 
     lastDotLabel.isVisible = course.updateDate != Date(0)
     date.isVisible = course.updateDate != Date(0)
-    date.text = EduCoreBundle.message("course.dialog.updated", SimpleDateFormat("MMM d, yyyy", Locale.US).format(course.updateDate))
+    date.text = EduCoreBundle.message("course.dialog.updated",
+                                      SimpleDateFormat(CourseDetailsPanel.DATE_PATTERN, Locale.US).format(course.updateDate))
   }
 }
 
