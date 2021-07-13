@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -238,7 +239,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
     descriptionTextArea.text = _course.description.nullize() ?: EduCoreBundle.message("dialog.message.create.course",
-                                                                                      _course.languageDisplayName)
+                                                                                      _course.technologyName ?: _course.languageDisplayName)
     doValidation()
   }
 
