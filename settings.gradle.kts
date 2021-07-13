@@ -18,16 +18,11 @@ include(
   "Edu-Python:Idea", // python support for IDEA and Android Studio
   "Edu-Python:PyCharm", // python support for PyCharm and CLion
   "Edu-Android",
+  "Edu-JavaScript",
   "Edu-Rust",
   "Edu-Cpp",
   "Edu-Go"
 )
-
-val environmentName: String by extra
-
-if (environmentName.toInt() < 212) {
-  include("Edu-JavaScript")
-}
 
 apply(from = "common.gradle.kts")
 
