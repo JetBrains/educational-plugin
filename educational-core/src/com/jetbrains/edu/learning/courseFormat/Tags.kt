@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.ide.plugins.newui.TagComponent
-import com.intellij.lang.Language
 import java.util.*
 import javax.swing.JComponent
 

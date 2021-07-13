@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
-import java.util.*
 
 class MarketplaceUpdateCheckerTest : CourseUpdateCheckerTestBase() {
 

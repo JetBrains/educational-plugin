@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestInputDialog
-import com.intellij.util.ui.UIUtil
 
 sealed class EduTestDialogBase<T> {
 

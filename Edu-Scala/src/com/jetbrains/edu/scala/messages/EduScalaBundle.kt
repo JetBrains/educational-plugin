@@ -1,6 +1,5 @@
 package com.jetbrains.edu.scala.messages
 
-import com.intellij.CommonBundle
 import com.jetbrains.edu.learning.messages.EduBundle
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey

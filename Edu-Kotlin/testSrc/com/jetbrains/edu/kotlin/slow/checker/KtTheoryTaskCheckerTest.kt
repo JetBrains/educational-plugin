@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.checker.details.MockCheckDetailsView
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert

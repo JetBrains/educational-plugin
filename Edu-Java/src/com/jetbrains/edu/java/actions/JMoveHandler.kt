@@ -4,10 +4,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate
 import com.jetbrains.edu.learning.handlers.isMoveForbidden
 

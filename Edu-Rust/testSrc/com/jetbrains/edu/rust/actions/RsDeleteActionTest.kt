@@ -1,8 +1,6 @@
 package com.jetbrains.edu.rust.actions
 
 import com.intellij.ide.actions.DeleteAction
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.Course

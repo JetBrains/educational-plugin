@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.python.slow.checker.PyCheckersTestBase
 import com.jetbrains.python.PythonLanguage
 
 @Suppress("PyInterpreter", "PyUnresolvedReferences")
