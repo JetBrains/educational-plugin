@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
-import com.jetbrains.edu.rust.toPackageName
 import icons.EducationalCoreIcons
 import org.rust.cargo.CargoConstants.MANIFEST_FILE
 import org.rust.lang.RsConstants.MAIN_RS_FILE
@@ -36,9 +35,5 @@ class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
       TaskFile(GeneratorUtils.joinPaths(task.sourceDir, MAIN_RS_FILE), fileTemplate),
       TaskFile(MANIFEST_FILE, manifestTemplate)
     )
-  }
-
-  companion object {
-    private val TASK_LEADING_SYMBOLS = """^.*?\.\s""".toRegex()
   }
 }
