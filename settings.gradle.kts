@@ -3,6 +3,13 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.*
 
+pluginManagement {
+  repositories {
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    gradlePluginPortal()
+  }
+}
+
 rootProject.name = "educational-plugin"
 include(
   "educational-core",

@@ -91,7 +91,7 @@ val changesFile = "changes.html"
 plugins {
   idea
   kotlin("jvm") version "1.5.0"
-  id("org.jetbrains.intellij") version "1.0"
+  id("org.jetbrains.intellij") version "1.2-SNAPSHOT"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
 }
