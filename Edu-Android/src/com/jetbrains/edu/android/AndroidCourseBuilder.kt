@@ -2,13 +2,13 @@ package com.jetbrains.edu.android
 
 import com.android.ide.common.repository.GradleCoordinate
 import com.android.sdklib.SdkVersionInfo
+import com.android.tools.adtui.device.FormFactor
 import com.android.tools.idea.gradle.repositories.RepositoryUrlManager
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.jetbrains.edu.android.AndroidNewTaskAfterPopupDialog.Companion.initAndroidProperties
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
@@ -144,8 +144,18 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()
 
   companion object {
-    val PACKAGE_NAME: Key<String> = Key("PACKAGE_NAME")
-    val MIN_ANDROID_SDK: Key<Int> = Key("MIN_ANDROID_SDK")
-    val COMPILE_ANDROID_SDK: Key<Int> = Key("COMPILE_ANDROID_SDK")
+    private val PACKAGE_NAME: Key<String> = Key("PACKAGE_NAME")
+    private val MIN_ANDROID_SDK: Key<Int> = Key("MIN_ANDROID_SDK")
+    private val COMPILE_ANDROID_SDK: Key<Int> = Key("COMPILE_ANDROID_SDK")
+
+    const val DEFAULT_PACKAGE_NAME = "com.example.android.course"
+
+    fun NewStudyItemInfo.initAndroidProperties(compileSdkVersion: Int,
+                                               packageName: String = DEFAULT_PACKAGE_NAME,
+                                               androidSdkVersion: Int? = null) {
+      putUserData(PACKAGE_NAME, packageName)
+      putUserData(MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.minOfflineApiLevel)
+      putUserData(COMPILE_ANDROID_SDK, compileSdkVersion)
+    }
   }
 }

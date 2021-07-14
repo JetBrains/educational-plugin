@@ -1,7 +1,7 @@
 package com.jetbrains.edu.android.actions
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.android.AndroidCourseBuilder
+import com.jetbrains.edu.android.AndroidCourseBuilder.Companion.initAndroidProperties
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
@@ -21,9 +21,7 @@ class MockAndroidNewStudyUi(
     callback: NewStudyItemInfoCallback
   ) {
     val newStudyItemCreator: (NewStudyItemInfo) -> Unit = {
-      it.putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
-      it.putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, 15)
-      it.putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, 28)
+      it.initAndroidProperties(28, packageName, 15)
       callback.studyItemCreator(it)
     }
 

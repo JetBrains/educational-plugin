@@ -7,6 +7,8 @@ import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.jetbrains.edu.android.AndroidCourseBuilder.Companion.DEFAULT_PACKAGE_NAME
+import com.jetbrains.edu.android.AndroidCourseBuilder.Companion.initAndroidProperties
 import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
@@ -76,18 +78,6 @@ class AndroidNewTaskAfterPopupDialog(
     return super.showAndGetResult()?.apply {
       val versionItem = comboBoxWrapper.combobox.selectedItem as? AndroidVersionsInfo.VersionItem
       initAndroidProperties(compileSdkVersion, packageNameField.text, versionItem?.minApiLevel)
-    }
-  }
-
-  companion object {
-    private const val DEFAULT_PACKAGE_NAME = "com.example.android.course"
-
-    fun NewStudyItemInfo.initAndroidProperties(compileSdkVersion: Int,
-                                               packageName: String = DEFAULT_PACKAGE_NAME,
-                                               androidSdkVersion: Int? = null) {
-      putUserData(AndroidCourseBuilder.PACKAGE_NAME, packageName)
-      putUserData(AndroidCourseBuilder.MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.minOfflineApiLevel)
-      putUserData(AndroidCourseBuilder.COMPILE_ANDROID_SDK, compileSdkVersion)
     }
   }
 }
