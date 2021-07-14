@@ -145,6 +145,18 @@ class CourseFormatTest : EduTestCase() {
     assertTrue(task.solutionHidden!!)
   }
 
+  fun testLocalCourseWithPlugins() {
+    val course = courseFromJson
+    val pluginDependencies = course.pluginDependencies
+    assertSize(1, pluginDependencies)
+
+    with(pluginDependencies.first()) {
+      assertEquals("testPluginId", id)
+      assertEquals("1.0", minVersion)
+      assertEquals(null, maxVersion)
+    }
+  }
+
   private val courseFromJson: Course
     get() {
       val fileName = testFile

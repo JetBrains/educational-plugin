@@ -150,7 +150,7 @@ private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>(
 
 abstract class EduPluginDependencyMixin : EduPluginDependency() {
   @JsonProperty(PLUGIN_ID)
-  override lateinit var id: String
+  override var id: String = ""
 
   @JsonProperty(MIN_VERSION)
   @JsonInclude(JsonInclude.Include.NON_NULL)

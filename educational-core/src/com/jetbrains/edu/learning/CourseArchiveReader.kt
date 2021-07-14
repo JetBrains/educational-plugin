@@ -84,6 +84,7 @@ fun getCourseMapper(isEncrypted: Boolean, isMarketplace: Boolean = false): Objec
   else {
     mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
   }
+  mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
   mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
   mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
   mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
