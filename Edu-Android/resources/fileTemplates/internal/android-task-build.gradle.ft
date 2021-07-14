@@ -29,5 +29,5 @@ dependencies {
   testImplementation 'org.robolectric:robolectric:3.8'
   androidTestImplementation 'androidx.test.ext:junit:${ANDROIDX_TEST_RUNNER_VERSION}'
   androidTestImplementation 'androidx.test.espresso:espresso-core:${ANDROIDX_ESPRESSO_CORE_VERSION}'
-  androidTestImplementation 'androidx.test:rules:1.1.0'
+  androidTestImplementation 'androidx.test:rules:${ANDROIDX_RULES_VERSION}'
 }

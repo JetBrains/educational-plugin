@@ -127,7 +127,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       "ANDROIDX_CORE_VERSION" to getLibraryVersion(project, "androidx.core", "core-ktx", "1.0.2"),
       "ANDROIDX_APP_COMPAT_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.0.2"),
       "ANDROIDX_TEST_RUNNER_VERSION" to getLibraryVersion(project, "androidx.test.ext", "junit", "1.1.1"),
-      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0")
+      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0"),
+      "ANDROIDX_RULES_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_TEST_RULES, "1.1.0")
     )
   }
 
