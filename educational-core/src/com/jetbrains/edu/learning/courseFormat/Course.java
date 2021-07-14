@@ -60,6 +60,8 @@ public abstract class Course extends LessonContainer {
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
+  private List<EduPluginDependency> myPluginDependencies = new ArrayList<>();
+
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {
       StudyItem item = items.get(i);
@@ -372,5 +374,15 @@ public abstract class Course extends LessonContainer {
 
   public void setCreateDate(Date createDate) {
     myCreateDate = createDate;
+  }
+
+  @Transient
+  public List<EduPluginDependency> getPluginDependencies() {
+    return myPluginDependencies;
+  }
+
+  @Transient
+  public void setPluginDependencies(List<EduPluginDependency> pluginDependencies) {
+    myPluginDependencies = pluginDependencies;
   }
 }

@@ -33,6 +33,7 @@ class MarketplaceArchiveCreator(project: Project, location: String, aesKey: Stri
       val factory = JsonFactory()
       val mapper = ObjectMapper(factory)
       mapper.addMixIn(EduCourse::class.java, MarketplaceCourseMixin::class.java)
+      mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
       addStudyItemMixins(mapper)
       mapper.registerModule(EncryptionModule(aesKey))
       commonMapperSetup(mapper, course)

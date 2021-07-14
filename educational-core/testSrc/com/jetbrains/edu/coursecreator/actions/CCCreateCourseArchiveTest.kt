@@ -1,5 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.externalDependencies.DependencyOnPlugin
+import com.intellij.externalDependencies.ExternalDependenciesManager
+import com.intellij.externalDependencies.ProjectExternalDependency
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.util.ThrowableRunnable
@@ -447,6 +450,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
     course.description = "my summary"
     doTest()
+  }
+
+  fun `test local course with plugins`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>(
+      DependencyOnPlugin("testPluginId", "1.0", null))
+    course.description = "my summary"
+    doTest()
+    ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>()
   }
 
   fun `test custom command`() {

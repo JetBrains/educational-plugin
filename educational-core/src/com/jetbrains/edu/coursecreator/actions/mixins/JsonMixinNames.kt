@@ -18,6 +18,13 @@ object JsonMixinNames {
   const val DESCRIPTION_FORMAT = "description_format"
   const val ADDITIONAL_FILES = "additional_files"
   const val SOLUTIONS_HIDDEN = "solutions_hidden"
+  const val VERSION = "version"
+  const val PLUGINS = "plugins"
+
+  //plugin dependency
+  const val PLUGIN_ID = "id"
+  const val MAX_VERSION = "max_version"
+  const val MIN_VERSION = "min_version"
 
   // coursera course
   const val SUBMIT_MANUALLY = "submit_manually"
@@ -64,7 +71,4 @@ object JsonMixinNames {
   const val COURSE_VERSION = "course_version"
   const val URL = "url"
   const val EMAIL = "email"
-
-  // json version
-  const val VERSION = "version"
 }

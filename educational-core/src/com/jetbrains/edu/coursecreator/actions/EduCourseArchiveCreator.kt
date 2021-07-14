@@ -20,6 +20,7 @@ class EduCourseArchiveCreator(project: Project, location: String, aesKey: String
       val factory = JsonFactory()
       val mapper = ObjectMapper(factory)
       mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
+      mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
       mapper.addMixIn(EduCourse::class.java, LocalEduCourseMixin::class.java)
       addStudyItemMixins(mapper)
       commonMapperSetup(mapper, course)

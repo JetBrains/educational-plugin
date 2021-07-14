@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.externalDependencies.DependencyOnPlugin
+import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -94,6 +96,8 @@ abstract class CourseArchiveCreator(
     loadActualTexts(project, course)
     course.sortItems()
     course.additionalFiles = CCUtils.collectAdditionalFiles(course, project)
+    course.pluginDependencies = ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
+      .map { EduPluginDependency(it) }
   }
 
   private fun synchronize(project: Project) {

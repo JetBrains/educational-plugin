@@ -40,10 +40,14 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MAX_VERSION
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.OFFSET
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER_TEXT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
@@ -73,11 +77,11 @@ import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
-import java.util.*
 
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, ITEMS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
+                   ITEMS)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -114,6 +118,10 @@ abstract class LocalEduCourseMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<TaskFile>
 
+  @JsonProperty(PLUGINS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var myPluginDependencies: List<EduPluginDependency>
+
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var solutionsHidden: Boolean = false
@@ -138,6 +146,19 @@ private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>(
     }
     return StepikUserInfo(value)
   }
+}
+
+abstract class EduPluginDependencyMixin : EduPluginDependency() {
+  @JsonProperty(PLUGIN_ID)
+  override lateinit var id: String
+
+  @JsonProperty(MIN_VERSION)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  override var minVersion: String? = null
+
+  @JsonProperty(MAX_VERSION)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  override var maxVersion: String? = null
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
