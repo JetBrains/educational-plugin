@@ -2,13 +2,18 @@
 
 package com.jetbrains.edu.learning
 
+import com.intellij.externalDependencies.DependencyOnPlugin
+import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.VersionComparatorUtil
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10", true)
@@ -39,4 +44,16 @@ fun kotlinVersion(): KotlinVersion {
 
 data class KotlinVersion(val version: String, val isRelease: Boolean) : Comparable<KotlinVersion> {
   override fun compareTo(other: KotlinVersion): Int = VersionComparatorUtil.compare(version, other.version)
+}
+
+fun setUpPluginDependencies(project: Project, course: Course) {
+  val allDependencies = course.pluginDependencies.map { DependencyOnPlugin(it.id, it.minVersion, it.maxVersion) }.toMutableList()
+
+  course.configurator?.pluginRequirements?.forEach { plugin ->
+    if (allDependencies.none { plugin.idString == it.pluginId }) {
+      allDependencies.add(DependencyOnPlugin(plugin.idString, null, null))
+    }
+  }
+
+  ExternalDependenciesManager.getInstance(project).setAllDependencies(allDependencies)
 }

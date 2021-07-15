@@ -40,6 +40,7 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
@@ -108,6 +109,8 @@ public abstract class CourseProjectGenerator<S> {
   public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
     StatusBarWidgetsManager statusBarWidgetsManager = project.getService(StatusBarWidgetsManager.class);
     statusBarWidgetsManager.updateAllWidgets();
+
+    PluginUtils.setUpPluginDependencies(project, myCourse);
 
     loadSolutions(project, myCourse);
     EduUtils.openFirstTask(myCourse, project);
