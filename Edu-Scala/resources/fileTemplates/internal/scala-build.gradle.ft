@@ -27,9 +27,9 @@ subprojects {
     }
 
     dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-        compile 'org.scala-lang:scala-library:2.12.6'
-        testCompile 'org.scalatest:scalatest_2.12:3.0.0'
+        testImplementation group: 'junit', name: 'junit', version: '4.12'
+        implementation 'org.scala-lang:scala-library:2.12.6'
+        testImplementation 'org.scalatest:scalatest_2.12:3.0.0'
     }
 
     sourceSets {
@@ -54,13 +54,13 @@ subprojects {
 
 project(':util') {
     dependencies {
-        compile group: 'junit', name: 'junit', version: '4.12'
+        implementation group: 'junit', name: 'junit', version: '4.12'
     }
 }
 
 configure(subprojects.findAll { it.name != 'util' }) {
     dependencies {
-        compile project(':util').sourceSets.main.output
-        testCompile project(':util').sourceSets.test.output
+        implementation project(':util').sourceSets.main.output
+        testImplementation project(':util').sourceSets.test.output
     }
 }

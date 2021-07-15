@@ -18,7 +18,7 @@ subprojects {
     }
 
     dependencies {
-        compile 'org.scala-lang:scala-library:2.12.6'
+        implementation 'org.scala-lang:scala-library:2.12.6'
         testImplementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'
     }
 
