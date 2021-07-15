@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ide.DataManager
+import com.intellij.ide.plugins.IdeaPluginDescriptor
+import com.intellij.ide.plugins.PluginStateListener
+import com.intellij.ide.plugins.PluginStateManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -34,7 +37,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     if (e?.eventType != HyperlinkEvent.EventType.ACTIVATED) return
 
     val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? JTextPane) ?: return
-    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane) ?: return
+    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane)
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
         val course = coursePanel.course as CheckiOCourse
@@ -47,9 +50,9 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         addLoginListener(coursePanel, coursesPanel)
         HyperskillConnector.getInstance().doAuthorize(
           Runnable { coursePanel.hideErrorPanel() },
-          Runnable { coursesPanel.setButtonsEnabled(true) },
-          Runnable { coursesPanel.hideLoginPanel() },
-          Runnable { coursesPanel.scheduleUpdateAfterLogin() }
+          Runnable { coursesPanel?.setButtonsEnabled(true) },
+          Runnable { coursesPanel?.hideLoginPanel() },
+          Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
         )
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
@@ -58,14 +61,25 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
-      ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
-      ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
+      is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
+      is ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {
         val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
+        PluginStateManager.addStateListener(object : PluginStateListener {
+          override fun install(descriptor: IdeaPluginDescriptor) {
+            coursePanel.doValidation()
+          }
+
+          override fun uninstall(descriptor: IdeaPluginDescriptor) {
+
+          }
+
+        })
         installAndEnablePlugin(pluginStringIds) {}
       }
-      ErrorState.RestartNeeded -> {
+      is ErrorState.RestartNeeded -> {
         DialogWrapper.findInstance(coursesPanel)?.close(DialogWrapper.OK_EXIT_CODE)
+        DialogWrapper.findInstance(coursePanel)?.close(DialogWrapper.OK_EXIT_CODE)
         ApplicationManager.getApplication().exit(true, true, true)
       }
       is ErrorState.CustomSevereError -> state.action?.run()
@@ -73,27 +87,27 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
     }
   }
 
-  private fun addCheckiOLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel) {
+  private fun addCheckiOLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel?) {
     val course = coursePanel.course
     val checkiOConnectorProvider = (course?.configurator as CheckiOConnectorProvider?)!!
     val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
     checkiOOAuthConnector.doAuthorize(
-      Runnable { coursesPanel.hideLoginPanel() },
+      Runnable { coursesPanel?.hideLoginPanel() },
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { doValidation(coursePanel) }
     )
   }
 
-  private fun addLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel) {
+  private fun addLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel?) {
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
       override fun userLoggedOut() {}
       override fun userLoggedIn() {
         coursePanel.hideErrorPanel()
-        coursesPanel.hideLoginPanel()
+        coursesPanel?.hideLoginPanel()
         doValidation(coursePanel)
         connection.disconnect()
-        coursesPanel.scheduleUpdateAfterLogin()
+        coursesPanel?.scheduleUpdateAfterLogin()
       }
     })
   }

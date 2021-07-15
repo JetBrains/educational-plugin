@@ -65,7 +65,19 @@ sealed class CourseCompatibility {
     }
 
     fun Course.pluginCompatibility(): CourseCompatibility? {
-      val requiredPlugins = compatibilityProvider?.requiredPlugins() ?: return null
+      val requiredPlugins = mutableListOf<PluginInfo>()
+      compatibilityProvider?.requiredPlugins()?.let { requiredPlugins.addAll(it) }
+      for (eduPluginDependency in course.pluginDependencies) {
+        if (requiredPlugins.find { it.id.idString == eduPluginDependency.id } != null) {
+          continue
+        }
+        requiredPlugins.add(PluginInfo(eduPluginDependency.id, eduPluginDependency.id))
+      }
+
+      if (requiredPlugins.isEmpty()) {
+        return null
+      }
+
       // TODO: O(requiredPlugins * allPlugins) because PluginManager.getPlugin takes O(allPlugins).
       //  Can be improved at least to O(requiredPlugins * log(allPlugins))
       val loadedPlugins = PluginManager.getLoadedPlugins()
