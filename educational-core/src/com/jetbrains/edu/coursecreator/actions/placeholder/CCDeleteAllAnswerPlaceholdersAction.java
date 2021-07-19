@@ -24,7 +24,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
 
   @Override
   protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
-    presentation.setEnabledAndVisible(!eduState.getTaskFile().getAnswerPlaceholders().isEmpty());
+    presentation.setEnabledAndVisible(eduState.getTaskFile().getAnswerPlaceholders().size() > 1);
   }
 
   @Override

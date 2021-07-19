@@ -33,7 +33,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
     val course = courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Foo.kt", """fun foo(): String = <p>"Foo"</p>""")
+          taskFile("Foo.kt", """fun <p>foo()</p>: String = <p>"Foo"</p>""")
           taskFile("Bar.kt", """fun bar(): String = "Bar"""")
         }
       }
