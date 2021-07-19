@@ -61,7 +61,7 @@
       "is_abandoned": false,
       "is_completed": false,
       "is_cribbed": false,
-      "is_recommended": false,
+      "is_recommended": true,
       "is_next": false,
       "is_skipped": false,
       "last_completed_at": "2021-02-01T14:25:41.746440Z",

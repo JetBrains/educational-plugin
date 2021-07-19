@@ -86,32 +86,6 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  fun `test open problem in new project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
-    mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
-      lesson(HYPERSKILL_PROBLEMS) {
-        codeTask(stepId = 4) {
-          taskFile("task.txt", "file text")
-        }
-      }
-    })
-
-    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, 4, FakeGradleBasedLanguage.id))
-    val fileTree = fileTree {
-      dir(HYPERSKILL_PROBLEMS) {
-        dir("task1") {
-          file("task.txt", "file text")
-          file("task.html")
-        }
-      }
-      file("build.gradle")
-      file("settings.gradle")
-    }
-    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
-  }
-
   fun `test open problem in existing project with stages`() {
     loginFakeUser()
     configureMockResponsesForStages()

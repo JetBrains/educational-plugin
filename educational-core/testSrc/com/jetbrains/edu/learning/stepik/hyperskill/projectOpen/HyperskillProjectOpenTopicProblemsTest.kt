@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -608,10 +609,5 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private val step10960 = StepInfo(10960, "Web calculator")
     private val step13292 = StepInfo(13292, "Posting and deleting data via REST")
     private val steps = listOf(step2640, step2641, step9455, step9886, step10960, step13292)
-
-    private class StepInfo(val id: Int, val title: String) {
-      val path: String
-        get() = "/api/steps?ids=$id"
-    }
   }
 }

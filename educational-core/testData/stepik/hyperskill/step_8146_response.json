@@ -1,0 +1,51 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "<p>You are given the file <strong>test.txt. </strong>Read it and print the first letter from each line.</p>\n\n<p>Don't forget to close the file!</p>",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "python3" : {
+              "time" : 15,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "python3" : "# read test.txt"
+          },
+          "code_templates_header_lines_count" : {
+            "python3" : 4
+          },
+          "code_templates_footer_lines_count" : {
+            "python3" : 4
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "id" : 8146,
+      "is_completed" : false,
+      "is_recommended" : false,
+      "lesson_stepik_id" : 282512,
+      "position" : 6,
+      "stage" : null,
+      "stepik_id" : 963023,
+      "title" : "Acronym",
+      "topic" : 632,
+      "topic_theory" : 8139,
+      "type" : "practice"
+    }
+  ]
+}

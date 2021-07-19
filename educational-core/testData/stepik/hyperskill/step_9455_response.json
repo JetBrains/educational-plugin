@@ -41,7 +41,7 @@
       "is_abandoned": false,
       "is_completed": false,
       "is_cribbed": false,
-      "is_recommended": false,
+      "is_recommended": true,
       "is_next": false,
       "is_skipped": false,
       "last_completed_at": null,

@@ -77,7 +77,7 @@
       },
       "id" : 10960,
       "is_completed" : true,
-      "is_recommended" : false,
+      "is_recommended" : true,
       "lesson_stepik_id" : 414185,
       "position" : 1,
       "stage" : null,

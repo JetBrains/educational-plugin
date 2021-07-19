@@ -36,6 +36,7 @@ const val IDE_FILES = "ide_files"
 const val IDE_VERSION = "ide_version"
 const val IS_COMPLETED = "is_completed"
 const val IS_GUEST = "is_guest"
+const val IS_RECOMMENDED = "is_recommended"
 const val IS_TEMPLATE_BASED = "is_template_based"
 const val LANGUAGE = "language"
 const val META = "meta"
@@ -162,6 +163,9 @@ class HyperskillAdditionalInfo {
 class HyperskillStepSource : StepSource() {
   @JsonProperty(IS_COMPLETED)
   var isCompleted: Boolean = false
+
+  @JsonProperty(IS_RECOMMENDED)
+  var isRecommended: Boolean = false
 
   @JsonProperty(TITLE)
   var title: String? = null

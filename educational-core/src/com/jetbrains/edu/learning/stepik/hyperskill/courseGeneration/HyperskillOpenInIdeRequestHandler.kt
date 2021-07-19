@@ -142,7 +142,9 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
    * */
   @VisibleForTesting
   fun HyperskillCourse.addProblem(stepId: Int) {
-    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
+    val isStepRecommended = isRecommended(stepId).onError { error(it) }
+
+    if (isStepRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
       return addProblemsWithTopic(stepId).onError { error(it) }
     }
 
@@ -262,10 +264,19 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     return if (topicName == null) Err("Can't get topic name of ${id} step id") else Ok(topicName)
   }
 
+  private fun isRecommended(stepId: Int): Result<Boolean, String> {
+    val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
+      return Err(it)
+    }
+    return Ok(stepSource.isRecommended)
+  }
+
   /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]
    * after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
   private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
-    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
+    val isStepRecommended = isRecommended(stepId).onError { error(it) }
+
+    if (isStepRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
       return addProblemsWithTopicWithFiles(project, stepId).onError { error(it) }
     }
 

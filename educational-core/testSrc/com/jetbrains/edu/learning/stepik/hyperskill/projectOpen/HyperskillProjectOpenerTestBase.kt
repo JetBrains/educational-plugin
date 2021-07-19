@@ -37,4 +37,11 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
       }
     })
   }
+
+  companion object {
+    class StepInfo(val id: Int, val title: String) {
+      val path: String
+        get() = "/api/steps?ids=$id"
+    }
+  }
 }

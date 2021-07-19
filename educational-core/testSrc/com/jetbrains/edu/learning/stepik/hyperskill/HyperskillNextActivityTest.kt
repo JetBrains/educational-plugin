@@ -87,16 +87,19 @@ class HyperskillNextActivityTest : EduTestCase() {
         id = nextStepId
         topicTheory = 11
         block!!.name = CodeTask.CODE_TASK_TYPE
+        isRecommended = true
       },
       StepMockResponse("/api/steps?ids=11", TheoryTask()) {
         topic = 1
         title = "Test Topic Name"
         block!!.name = TheoryTask.THEORY_TASK_TYPE
+        isRecommended = true
       },
       StepMockResponse("/api/steps?topic=1&is_recommended=true", task) {
         block!!.name = CodeTask.CODE_TASK_TYPE
         topic = 1
         id = nextStepId
+        isRecommended = true
       }
     )
 
