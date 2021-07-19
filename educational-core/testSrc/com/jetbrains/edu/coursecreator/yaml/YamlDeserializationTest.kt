@@ -451,6 +451,30 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals("type here   ", answerPlaceholder.placeholderText)
   }
 
+  fun `test placeholder with invisible dependency`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: 'type here   '
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: false
+    |""".trimMargin()
+    val task = MAPPER.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    val placeholderDependency = answerPlaceholder.placeholderDependency
+    assertNotNull(placeholderDependency)
+    assertFalse(placeholderDependency!!.isVisible)
+  }
+
   fun `test edu task without dependency`() {
     val yamlContent = """
     |type: edu
