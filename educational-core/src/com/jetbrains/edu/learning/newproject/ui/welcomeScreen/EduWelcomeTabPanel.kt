@@ -16,6 +16,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
@@ -31,9 +32,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import java.awt.BorderLayout
-import java.awt.CardLayout
-import java.awt.Font
+import java.awt.*
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -86,7 +85,6 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private fun createEmptyPanel(): JPanel {
     val contentPanel = NonOpaquePanel(VerticalFlowLayout(VerticalFlowLayout.CENTER, 0, 0, false, false))
       .apply {
-        border = JBUI.Borders.emptyTop(180)
         add(createHeaderPanel())
         add(createDescriptionPanel())
         add(createStartButtonPanel())
@@ -94,8 +92,10 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
       }
 
     return JPanel().apply {
+      layout = GridBagLayout()
       background = MAIN_BG_COLOR
-      add(contentPanel)
+      val gridBag = GridBag().setDefaultAnchor(GridBagConstraints.CENTER)
+      add(contentPanel, gridBag.nextLine())
     }
   }
 
