@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
@@ -95,10 +96,11 @@ private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(Flo
       add(progressBar)
     }
 
+    val isStudentMode = courseMetaInfo.courseMode == EduNames.STUDY
     val infoLabel = JLabel().apply {
       foreground = GRAY_COLOR
       text = when (tasksSolved) {
-        0 -> if (tasksTotal != 0) EduCoreBundle.message("course.dialog.my.courses.card.no.tasks") else ""
+        0 -> if (tasksTotal != 0 && isStudentMode) EduCoreBundle.message("course.dialog.my.courses.card.no.tasks") else ""
         tasksTotal -> EduCoreBundle.message("course.dialog.my.courses.card.completed")
         else -> "${tasksSolved}/${tasksTotal}"
       }
