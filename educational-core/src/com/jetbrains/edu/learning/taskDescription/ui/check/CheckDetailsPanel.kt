@@ -13,10 +13,8 @@ import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
-import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -30,7 +28,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.createActionLink
+import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
@@ -80,10 +78,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
     val course = task.course
 
-    if (course is HyperskillCourse) {
-      linksPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, 16, 0),
-                     BorderLayout.NORTH)
-    }
+    addActionLinks(course, linksPanel, 16, 0)
 
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
       val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
@@ -93,7 +88,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     if (course !is CourseraCourse && task.showAnswerHints) {
       val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
       if (answerHintsPanel != null) {
-        linksPanel.add(answerHintsPanel, BorderLayout.CENTER)
+        linksPanel.add(answerHintsPanel, BorderLayout.SOUTH)
       }
     }
     return linksPanel
