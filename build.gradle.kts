@@ -296,23 +296,23 @@ project(":") {
   }
 
   dependencies {
-    implementation(project(":educational-core"))
-    implementation(project(":code-insight"))
-    implementation(project(":code-insight:html"))
-    implementation(project(":code-insight:markdown"))
-    implementation(project(":code-insight:yaml"))
-    implementation(project(":jvm-core"))
-    implementation(project(":Edu-Java"))
-    implementation(project(":Edu-Kotlin"))
-    implementation(project(":Edu-Python"))
-    implementation(project(":Edu-Python:Idea"))
-    implementation(project(":Edu-Python:PyCharm"))
-    implementation(project(":Edu-Scala"))
-    implementation(project(":Edu-Android"))
-    implementation(project(":Edu-JavaScript"))
-    implementation(project(":Edu-Rust"))
-    implementation(project(":Edu-Cpp"))
-    implementation(project(":Edu-Go"))
+    compileOnly(project(":educational-core"))
+    compileOnly(project(":code-insight"))
+    compileOnly(project(":code-insight:html"))
+    compileOnly(project(":code-insight:markdown"))
+    compileOnly(project(":code-insight:yaml"))
+    compileOnly(project(":jvm-core"))
+    compileOnly(project(":Edu-Java"))
+    compileOnly(project(":Edu-Kotlin"))
+    compileOnly(project(":Edu-Python"))
+    compileOnly(project(":Edu-Python:Idea"))
+    compileOnly(project(":Edu-Python:PyCharm"))
+    compileOnly(project(":Edu-Scala"))
+    compileOnly(project(":Edu-Android"))
+    compileOnly(project(":Edu-JavaScript"))
+    compileOnly(project(":Edu-Rust"))
+    compileOnly(project(":Edu-Cpp"))
+    compileOnly(project(":Edu-Go"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -329,6 +329,14 @@ project(":") {
   }
 
   tasks {
+    jar {
+      from({
+        // Collect all `compileOnly` project dependencies and add their compilation output to jar.
+        // We need to put all plugin manifest files into single jar to make new plugin model work
+        val projectDependencies = project.configurations.compileOnly.get().allDependencies.withType<ProjectDependency>()
+        projectDependencies.map { it.dependencyProject.sourceSets.main.get().output }
+      })
+    }
     withType<PrepareSandboxTask> {
       from("$rootDir/twitter") {
         into("${pluginName.get()}/twitter")
