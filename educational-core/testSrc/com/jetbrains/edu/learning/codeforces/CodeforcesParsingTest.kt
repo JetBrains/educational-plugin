@@ -148,6 +148,15 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(20195, firstContest.participantsNumber)
   }
 
+  fun testUpcomingContestParticipantsNumber() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+
+    val firstContest = upcomingContests[3]
+    assertEquals(1880, firstContest.participantsNumber)
+  }
+
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"
