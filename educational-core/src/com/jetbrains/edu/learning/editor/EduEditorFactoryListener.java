@@ -18,10 +18,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -76,7 +73,6 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     if (course == null) {
       return;
     }
-
 
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
@@ -135,7 +131,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       if (course instanceof HyperskillCourse) {
         markTheoryTaskAsCompleted(project, theoryTask);
       }
-      else if (EduSettings.isLoggedIn()) {
+      else if (course instanceof EduCourse && ((EduCourse)course).isStepikRemote() && EduSettings.isLoggedIn()) {
         StepikConnectorUtils.postTheory(theoryTask, project);
       }
 
