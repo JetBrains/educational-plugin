@@ -181,7 +181,6 @@ allprojects {
   }
 
   dependencies {
-    compileOnly(kotlin("stdlib-jdk8"))
     implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
     implementation("org.jsoup:jsoup:1.12.1")
     implementation("org.jetbrains:markdown:0.1.41") {
