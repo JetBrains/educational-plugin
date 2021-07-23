@@ -54,10 +54,6 @@ private val BorderColor: Color = JBColor.namedColor("BrowseCourses.Button.border
 
 class OpenCourseButton : CourseButtonBase() {
 
-  fun setButtonText(text: String) {
-    this.text = text
-  }
-
   override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
     invokeLater {
       val course = courseInfo.course
