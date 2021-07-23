@@ -64,7 +64,7 @@ abstract class CoursePanel(isLocationFieldNeeded: Boolean) : JPanel() {
     get() = EduCoreBundle.message("course.dialog.start.button")
 
   protected open val openButtonText: String
-    get() = EduCoreBundle.message("course.dialog.start.button")
+    get() = EduCoreBundle.message("course.dialog.open.button")
 
   val locationString: String?
     get() = settingsPanel.locationString
