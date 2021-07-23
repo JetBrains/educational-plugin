@@ -3,17 +3,19 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import java.awt.BorderLayout
-import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
 
 private const val TOOLBAR_TOP_OFFSET = 10
 private const val TOOLBAR_BOTTOM_OFFSET = 8
 private const val TOOLBAR_LEFT_OFFSET = 13
 
-class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: ToolbarActionWrapper?) : NonOpaquePanel() {
+class CoursesListDecorator(private val mainPanel: CoursesListPanel, tabInfo: TabInfo?, toolbarAction: ToolbarActionWrapper?) : NonOpaquePanel() {
   private var tabInfoPanel: TabInfoPanel? = null
 
   init {
@@ -48,4 +50,18 @@ class CoursesListDecorator(mainPanel: JPanel, tabInfo: TabInfo?, toolbarAction: 
   fun hideLoginPanel() {
     tabInfoPanel?.hideLoginPanel()
   }
+
+  fun setSelectionListener(processSelectionChanged: () -> Unit) {
+    mainPanel.setSelectionListener(processSelectionChanged)
+  }
+
+  fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?) {
+    mainPanel.updateModel(coursesGroups, courseToSelect)
+  }
+
+  fun setSelectedValue(newCourseToSelect: Course?) {
+    mainPanel.setSelectedValue(newCourseToSelect)
+  }
+
+  fun getSelectedCourse() = mainPanel.selectedCourse
 }

@@ -56,6 +56,7 @@ abstract class CodeforcesConnector {
 
     val responseBody = service.status(contestId).executeParsingErrors()
                          .onError { return Err(it) }
+
                          .body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
     val doc = Jsoup.parse(responseBody.string())
     val contestLanguages = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contest.language"))

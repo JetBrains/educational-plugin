@@ -47,8 +47,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   @VisibleForTesting
   @Suppress("LeakingThis")
   var coursePanel: CoursePanel = createCoursePanel(disposable)
-  private val coursesListPanel = this.createCoursesListPanel()
-  private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
+  private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
   protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
   private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
@@ -64,7 +63,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   val languageSettings get() = coursePanel.languageSettings
 
-  val selectedCourse get() = coursesListPanel.selectedCourse
+  val selectedCourse get() = coursesListDecorator.getSelectedCourse()
 
   val locationString: String?
     get() {
@@ -76,7 +75,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   init {
     layout = cardLayout
     background = MAIN_BG_COLOR
-    coursesListPanel.setSelectionListener { this.processSelectionChanged() }
+    coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
@@ -202,10 +201,10 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
       val filteredCoursesGroups = coursesGroups.map {
         CoursesGroup(it.name, filterCourses(it.courses))
       }
-      coursesListPanel.updateModel(filteredCoursesGroups, courseToSelect)
+      coursesListDecorator.updateModel(filteredCoursesGroups, courseToSelect)
     }
     else {
-      coursesListPanel.updateModel(coursesGroups, courseToSelect)
+      coursesListDecorator.updateModel(coursesGroups, courseToSelect)
     }
   }
 
@@ -252,7 +251,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     val courseToSelect = selectedCourse
     updateModel(coursesGroups, null)
     if (preserveSelection) {
-      coursesListPanel.setSelectedValue(courseToSelect)
+      coursesListDecorator.setSelectedValue(courseToSelect)
     }
   }
 
