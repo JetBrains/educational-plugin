@@ -73,110 +73,19 @@
             ]
           },
           "language" : "java"
-        },
-        "table_of_contents" : [ ]
+        }
       },
-      "bloom_level" : 2,
-      "can_abandon" : false,
-      "can_skip" : false,
-      "check_profile" : "hyperskill_gradle_spring",
-      "comments_statistics" : [
-        {
-          "thread" : "comment",
-          "total_count" : 14
-        },
-        {
-          "thread" : "hint",
-          "total_count" : 14
-        },
-        {
-          "thread" : "useful link",
-          "total_count" : 1
-        },
-        {
-          "thread" : "solutions",
-          "total_count" : 40
-        }
-      ],
-      "content_created_at" : "2020-10-03T19:26:18Z",
       "id" : 10960,
-      "is_abandoned" : false,
       "is_completed" : true,
-      "is_cribbed" : false,
       "is_recommended" : false,
-      "is_next" : false,
-      "is_skipped" : false,
-      "last_completed_at" : "2021-07-04T05:03:52.731959Z",
-      "likes_statistics" : [
-        {
-          "subject" : "",
-          "value" : -2,
-          "total_count" : 8
-        },
-        {
-          "subject" : "",
-          "value" : -1,
-          "total_count" : 1
-        },
-        {
-          "subject" : "",
-          "value" : 0,
-          "total_count" : 2
-        },
-        {
-          "subject" : "",
-          "value" : 1,
-          "total_count" : 11
-        },
-        {
-          "subject" : "",
-          "value" : 2,
-          "total_count" : 55
-        },
-        {
-          "subject" : "skip",
-          "value" : 0,
-          "total_count" : 6
-        },
-        {
-          "subject" : "skip",
-          "value" : 100,
-          "total_count" : 45
-        },
-        {
-          "subject" : "skip",
-          "value" : 101,
-          "total_count" : 2
-        },
-        {
-          "subject" : "skip",
-          "value" : 102,
-          "total_count" : 18
-        }
-      ],
       "lesson_stepik_id" : 414185,
       "position" : 1,
-      "seconds_to_complete" : 691.457659999998,
-      "solved_by" : 555,
       "stage" : null,
       "stepik_id" : 1605357,
-      "success_rate" : 0.14,
       "title" : "Web calculator",
       "topic" : 515,
       "topic_theory" : 13292,
-      "type" : "practice",
-      "updated_at" : "2021-05-20T07:45:04.692825Z",
-      "content_updated_at" : "2021-03-05T19:30:43Z",
-      "progress_updated_at" : "2021-07-01T22:38:43.544985Z",
-      "popular_ide" : "idea",
-      "project" : null,
-      "is_beta" : true,
-      "is_deprecated" : false,
-      "error_issues_count" : 0,
-      "warning_issues_count" : 0,
-      "error_issues" : [ ],
-      "warning_issues" : [ ],
-      "can_see_admin_toolbar" : true
+      "type" : "practice"
     }
   ]
 }

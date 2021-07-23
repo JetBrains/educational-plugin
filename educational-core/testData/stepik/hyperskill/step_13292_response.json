@@ -12,93 +12,19 @@
         "video" : null,
         "options" : {
           "language" : ""
-        },
-        "table_of_contents" : [
-          {
-            "id" : "postmapping",
-            "title" : "PostMapping"
-          },
-          {
-            "id" : "deletemapping",
-            "title" : "DeleteMapping"
-          },
-          {
-            "id" : "conclusion",
-            "title" : "Conclusion"
-          }
-        ]
+        }
       },
-      "bloom_level" : 0,
-      "can_abandon" : false,
-      "can_skip" : false,
-      "check_profile" : "",
-      "comments_statistics" : [
-        {
-          "thread" : "comment",
-          "total_count" : 1
-        },
-        {
-          "thread" : "hint",
-          "total_count" : 0
-        },
-        {
-          "thread" : "useful link",
-          "total_count" : 0
-        },
-        {
-          "thread" : "solutions",
-          "total_count" : 0
-        }
-      ],
-      "content_created_at" : "2021-04-27T12:04:33Z",
       "id" : 13292,
-      "is_abandoned" : false,
       "is_completed" : true,
-      "is_cribbed" : false,
       "is_recommended" : false,
-      "is_next" : false,
-      "is_skipped" : false,
-      "last_completed_at" : null,
-      "likes_statistics" : [
-        {
-          "subject" : "",
-          "value" : 1,
-          "total_count" : 1
-        },
-        {
-          "subject" : "",
-          "value" : 2,
-          "total_count" : 9
-        },
-        {
-          "subject" : "cheatsheet",
-          "value" : 1,
-          "total_count" : 1
-        }
-      ],
       "lesson_stepik_id" : 527974,
       "position" : 1,
-      "seconds_to_complete" : 850.6016850011839,
-      "solved_by" : 173,
       "stage" : null,
       "stepik_id" : 2101772,
-      "success_rate" : null,
       "title" : "Posting and deleting data via REST",
       "topic" : 515,
       "topic_theory" : 13292,
-      "type" : "theory",
-      "updated_at" : "2021-05-20T09:52:18.666818Z",
-      "content_updated_at" : "2021-05-20T09:50:40Z",
-      "progress_updated_at" : "2021-05-20T01:26:11.257963Z",
-      "popular_ide" : null,
-      "project" : null,
-      "is_beta" : true,
-      "is_deprecated" : false,
-      "error_issues_count" : 0,
-      "warning_issues_count" : 0,
-      "error_issues" : [ ],
-      "warning_issues" : [ ],
-      "can_see_admin_toolbar" : true
+      "type" : "theory"
     }
   ]
 }
