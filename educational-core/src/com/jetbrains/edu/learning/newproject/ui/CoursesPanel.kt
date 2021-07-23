@@ -10,11 +10,9 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.supportedTechnologies
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
@@ -22,9 +20,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
-import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
-import com.jetbrains.edu.learning.newproject.ui.filters.HumanLanguageFilterDropdown
-import com.jetbrains.edu.learning.newproject.ui.filters.ProgrammingLanguageFilterDropdown
+import com.jetbrains.edu.learning.newproject.ui.filters.CoursesSearchComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,24 +43,17 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   @VisibleForTesting
   @Suppress("LeakingThis")
   var coursePanel: CoursePanel = createCoursePanel(disposable)
+  protected val coursesSearchComponent : CoursesSearchComponent = CoursesSearchComponent({ coursesGroups },
+                                                                                         { groups -> updateModel(groups, selectedCourse) })
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
-  protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
-  protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
-  private val coursesSearchPanel: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
-                                                                                  { groups -> updateModel(groups, null) })
+
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
-  protected val searchPanel = JPanel(BorderLayout()).apply {
-    border = JBUI.Borders.empty(11, 0)
-  }
-
   @Volatile
   private var loadingFinished = false
 
   val languageSettings get() = coursePanel.languageSettings
-
   val selectedCourse get() = coursesListDecorator.getSelectedCourse()
-
   val locationString: String?
     get() {
       // We use `coursePanel` with location field
@@ -91,7 +80,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   private fun createContentPanel(): JPanel {
     val mainPanel = JPanel(BorderLayout())
-    mainPanel.add(createAndBindSearchComponent(), BorderLayout.NORTH)
+    mainPanel.add(coursesSearchComponent, BorderLayout.NORTH)
     mainPanel.add(createSplitPane(), BorderLayout.CENTER)
     mainPanel.background = MAIN_BG_COLOR
     return mainPanel
@@ -163,9 +152,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   }
 
   protected open fun updateFilters(coursesGroups: List<CoursesGroup>) {
-    val courses = coursesGroups.flatMap { it.courses }
-    humanLanguagesFilterDropdown.updateItems(humanLanguages(courses))
-    programmingLanguagesFilterDropdown.updateItems(programmingLanguages(courses))
+    coursesSearchComponent.updateFilters(coursesGroups)
   }
 
   protected open fun createCoursesListPanel(): CoursesListPanel = CoursesListWithResetFilters()
@@ -190,16 +177,10 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     revalidate()
   }
 
-  private fun filterCourses(courses: List<Course>): List<Course> {
-    var filteredCourses = programmingLanguagesFilterDropdown.filter(courses)
-    filteredCourses = humanLanguagesFilterDropdown.filter(filteredCourses)
-    return filteredCourses
-  }
-
   fun updateModel(coursesGroups: List<CoursesGroup>, courseToSelect: Course?, filterCourses: Boolean = true) {
     if (filterCourses) {
       val filteredCoursesGroups = coursesGroups.map {
-        CoursesGroup(it.name, filterCourses(it.courses))
+        CoursesGroup(it.name, coursesSearchComponent.filterCourses(it.courses))
       }
       coursesListDecorator.updateModel(filteredCoursesGroups, courseToSelect)
     }
@@ -210,30 +191,6 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
 
   fun setButtonsEnabled(canStartCourse: Boolean) {
     coursePanel.setButtonsEnabled(canStartCourse)
-  }
-
-  private fun humanLanguages(courses: List<Course>): Set<String> = courses.map { it.humanLanguage }.toSet()
-
-  private fun programmingLanguages(courses: List<Course>): Set<String> = courses.map { it.supportedTechnologies }.flatten().toSet()
-
-  private fun createAndBindSearchComponent(): JPanel {
-    searchPanel.add(coursesSearchPanel, BorderLayout.CENTER)
-
-    programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
-      updateModel(coursesGroups, selectedCourse)
-    }
-    humanLanguagesFilterDropdown = HumanLanguageFilterDropdown(humanLanguages(emptyList())) {
-      updateModel(coursesGroups, selectedCourse)
-    }
-    val filtersPanel = JPanel(HorizontalLayout(0))
-    filtersPanel.add(programmingLanguagesFilterDropdown)
-    filtersPanel.add(humanLanguagesFilterDropdown)
-
-    searchPanel.add(filtersPanel, BorderLayout.LINE_END)
-
-    UIUtil.setBackgroundRecursively(searchPanel, MAIN_BG_COLOR)
-
-    return searchPanel
   }
 
   fun scheduleUpdateAfterLogin() {
@@ -260,14 +217,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   open inner class CoursesListWithResetFilters : CoursesListPanel() {
 
     override fun resetFilters() {
-      coursesSearchPanel.resetSearchField()
-      resetSelection()
+      coursesSearchComponent.resetSearchField()
+      coursesSearchComponent.resetSelection()
       updateModel(coursesGroups, null, true)
-    }
-
-    private fun resetSelection() {
-      humanLanguagesFilterDropdown.resetSelection()
-      programmingLanguagesFilterDropdown.resetSelection()
     }
   }
 

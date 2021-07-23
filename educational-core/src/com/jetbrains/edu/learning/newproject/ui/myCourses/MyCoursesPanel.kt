@@ -46,7 +46,7 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider,
 
   override fun updateFilters(coursesGroups: List<CoursesGroup>) {
     super.updateFilters(coursesGroups)
-    humanLanguagesFilterDropdown.selectedItems = humanLanguagesFilterDropdown.allItems
+    coursesSearchComponent.selectAllHumanLanguageItems()
   }
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {

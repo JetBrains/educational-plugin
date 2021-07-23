@@ -26,10 +26,8 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
                              private val disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
 
   init {
-    humanLanguagesFilterDropdown.isVisible = false
-    programmingLanguagesFilterDropdown.isVisible = false
-
-    searchPanel.add(createOpenContestButtonPanel(), BorderLayout.LINE_END)
+    coursesSearchComponent.hideFilters()
+    coursesSearchComponent.add(createOpenContestButtonPanel(), BorderLayout.LINE_END)
   }
 
   override fun createCoursePanel(disposable: Disposable): CoursePanel {
