@@ -50,8 +50,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
   protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
   protected lateinit var humanLanguagesFilterDropdown: HumanLanguageFilterDropdown
-  private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
-                                                                                      { groups -> updateModel(groups, null) })
+  private val coursesSearchPanel: CoursesFilterComponent = CoursesFilterComponent({ coursesGroups },
+                                                                                  { groups -> updateModel(groups, null) })
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
   protected val searchPanel = JPanel(BorderLayout()).apply {
@@ -217,7 +217,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   private fun programmingLanguages(courses: List<Course>): Set<String> = courses.map { it.supportedTechnologies }.flatten().toSet()
 
   private fun createAndBindSearchComponent(): JPanel {
-    searchPanel.add(coursesFilterComponent, BorderLayout.CENTER)
+    searchPanel.add(coursesSearchPanel, BorderLayout.CENTER)
 
     programmingLanguagesFilterDropdown = ProgrammingLanguageFilterDropdown(programmingLanguages(emptyList())) {
       updateModel(coursesGroups, selectedCourse)
@@ -260,7 +260,7 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   open inner class CoursesListWithResetFilters : CoursesListPanel() {
 
     override fun resetFilters() {
-      coursesFilterComponent.resetSearchField()
+      coursesSearchPanel.resetSearchField()
       resetSelection()
       updateModel(coursesGroups, null, true)
     }
