@@ -43,7 +43,9 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   @VisibleForTesting
   @Suppress("LeakingThis")
   var coursePanel: CoursePanel = createCoursePanel(disposable)
-  protected val coursesSearchComponent : CoursesSearchComponent = CoursesSearchComponent({ coursesGroups },
+  @Suppress("LeakingThis")
+  protected val coursesSearchComponent : CoursesSearchComponent = CoursesSearchComponent(getEmptySearchText(),
+                                                                                         { coursesGroups },
                                                                                          { groups -> updateModel(groups, selectedCourse) })
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
 
@@ -75,6 +77,8 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
   open fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
     updateModel(coursesGroups, null, true)
   }
+
+  open fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
 
   fun hideLoginPanel() = coursesListDecorator.hideLoginPanel()
 

@@ -44,8 +44,10 @@ import javax.swing.JPanel
 
 class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout()) {
   private val coursesListPanel = MyCoursesOnWelcomeScreenList()
-  private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent({ createCoursesGroup() },
-                                                                                      { group -> updateModel(group) })
+  private val coursesFilterComponent: CoursesFilterComponent = CoursesFilterComponent(
+    EduCoreBundle.message("course.dialog.search.placeholder"),
+    { createCoursesGroup() },
+    { group -> updateModel(group) })
 
   init {
     background = MAIN_BG_COLOR

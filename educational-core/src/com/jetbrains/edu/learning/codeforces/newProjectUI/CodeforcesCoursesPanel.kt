@@ -55,6 +55,10 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
     }
   }
 
+  override fun getEmptySearchText(): String {
+    return EduCoreBundle.message("codeforces.search.placeholder")
+  }
+
   override fun tabInfo(): TabInfo {
     val linkText = """<a href="${CodeforcesNames.CODEFORCES_URL}">${CodeforcesNames.CODEFORCES_TITLE}</a>"""
     return TabInfo(EduCoreBundle.message("codeforces.courses.description", linkText))

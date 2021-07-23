@@ -11,10 +11,12 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 class CoursesSearchComponent(
+  val emptySearchText: String,
   val getCoursesGroups: () -> List<CoursesGroup>,
   val updateModel: (List<CoursesGroup>) -> Unit
 ) : JPanel(BorderLayout()) {
-  private val coursesSearchComponent: CoursesFilterComponent = CoursesFilterComponent({ getCoursesGroups() },
+  private val coursesSearchComponent: CoursesFilterComponent = CoursesFilterComponent(emptySearchText,
+                                                                                      { getCoursesGroups() },
                                                                                       { groups -> updateModel(groups) })
   private var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown = ProgrammingLanguageFilterDropdown(
     programmingLanguages(emptyList())) {

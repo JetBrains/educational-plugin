@@ -1,19 +1,26 @@
 package com.jetbrains.edu.learning.newproject.ui.filters
 
+import com.intellij.ide.plugins.newui.ListPluginComponent
 import com.intellij.ui.FilterComponent
+import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import org.jetbrains.annotations.NonNls
 import java.util.*
-import kotlin.collections.HashSet
+
 
 class CoursesFilterComponent(
+  emptySearchText: String,
   private val getCoursesGroups: () -> List<CoursesGroup>,
   private val updateModel: (List<CoursesGroup>) -> Unit
 ) : FilterComponent("Edu.NewCourse", 5, true) {
 
   init {
     removeBorder()
+    val emptyText: StatusText = (textEditor as JBTextField).emptyText
+    emptyText.appendText(emptySearchText, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, ListPluginComponent.GRAY_COLOR))
   }
 
   fun removeBorder() {
