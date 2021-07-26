@@ -460,11 +460,16 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
     }
+    course.description = "my summary"
     ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>(
       DependencyOnPlugin("testPluginId", "1.0", null))
-    course.description = "my summary"
-    doTest()
-    ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>()
+
+    try {
+      doTest()
+    }
+    finally {
+      ExternalDependenciesManager.getInstance(project).allDependencies = mutableListOf<ProjectExternalDependency>()
+    }
   }
 
   fun `test custom command`() {
