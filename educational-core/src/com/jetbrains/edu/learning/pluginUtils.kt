@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10", true)
@@ -49,9 +49,9 @@ data class KotlinVersion(val version: String, val isRelease: Boolean) : Comparab
 fun setUpPluginDependencies(project: Project, course: Course) {
   val allDependencies = course.pluginDependencies.map { DependencyOnPlugin(it.id, it.minVersion, it.maxVersion) }.toMutableList()
 
-  course.configurator?.pluginRequirements?.forEach { plugin ->
-    if (allDependencies.none { plugin.idString == it.pluginId }) {
-      allDependencies.add(DependencyOnPlugin(plugin.idString, null, null))
+  course.compatibilityProvider?.requiredPlugins()?.forEach { plugin ->
+    if (allDependencies.none { plugin.stringId == it.pluginId }) {
+      allDependencies.add(DependencyOnPlugin(plugin.stringId, null, null))
     }
   }
 
