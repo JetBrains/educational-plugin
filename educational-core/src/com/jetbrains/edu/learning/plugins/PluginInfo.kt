@@ -2,13 +2,29 @@ package com.jetbrains.edu.learning.plugins
 
 import com.intellij.openapi.extensions.PluginId
 
-data class PluginInfo(val stringId: String, val displayName: String) {
+open class PluginInfo {
+  open var stringId: String = ""
+  open var displayName: String? = null
+  open var minVersion: String? = null
+  open var maxVersion: String? = null
+
+  constructor()
+
+  @Suppress("LeakingThis")
+  constructor(stringId: String, displayName: String? = null, minVersion: String? = null, maxVersion: String? = null) {
+    this.stringId = stringId
+    this.displayName = displayName
+    this.minVersion = minVersion
+    this.maxVersion = maxVersion
+  }
+
   val id: PluginId get() = PluginId.getId(stringId)
 
   companion object {
     val JAVA: PluginInfo = PluginInfo("com.intellij.java", "Java")
     val KOTLIN: PluginInfo = PluginInfo("org.jetbrains.kotlin", "Kotlin")
     val SCALA: PluginInfo = PluginInfo("org.intellij.scala", "Scala")
+
     // Since 193 is named `Gradle-Java`
     val GRADLE: PluginInfo = PluginInfo("org.jetbrains.plugins.gradle", "Gradle")
     val JUNIT: PluginInfo = PluginInfo("JUnit", "JUnit")

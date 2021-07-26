@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo;
+import com.jetbrains.edu.learning.plugins.PluginInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import icons.EducationalCoreIcons;
@@ -60,7 +61,7 @@ public abstract class Course extends LessonContainer {
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
-  private List<EduPluginDependency> myPluginDependencies = new ArrayList<>();
+  private List<PluginInfo> myPluginDependencies = new ArrayList<>();
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {
@@ -377,12 +378,12 @@ public abstract class Course extends LessonContainer {
   }
 
   @Transient
-  public List<EduPluginDependency> getPluginDependencies() {
+  public List<PluginInfo> getPluginDependencies() {
     return myPluginDependencies;
   }
 
   @Transient
-  public void setPluginDependencies(List<EduPluginDependency> pluginDependencies) {
+  public void setPluginDependencies(List<PluginInfo> pluginDependencies) {
     myPluginDependencies = pluginDependencies;
   }
 }

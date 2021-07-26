@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -32,6 +34,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -97,7 +100,12 @@ abstract class CourseArchiveCreator(
     course.sortItems()
     course.additionalFiles = CCUtils.collectAdditionalFiles(course, project)
     course.pluginDependencies = ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
-      .map { EduPluginDependency(it) }
+      .map {
+        PluginInfo(it.pluginId,
+                   PluginManager.getInstance().findEnabledPlugin(PluginId.getId(it.pluginId))?.name,
+                   it.minVersion,
+                   it.maxVersion)
+      }
   }
 
   private fun synchronize(project: Project) {
@@ -141,7 +149,7 @@ abstract class CourseArchiveCreator(
       else {
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
       }
-      mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
+      mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
       mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)

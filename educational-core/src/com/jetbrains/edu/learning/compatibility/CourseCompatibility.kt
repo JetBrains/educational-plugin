@@ -67,11 +67,11 @@ sealed class CourseCompatibility {
     fun Course.pluginCompatibility(): CourseCompatibility? {
       val requiredPlugins = mutableListOf<PluginInfo>()
       compatibilityProvider?.requiredPlugins()?.let { requiredPlugins.addAll(it) }
-      for (eduPluginDependency in course.pluginDependencies) {
-        if (requiredPlugins.find { it.id.idString == eduPluginDependency.id } != null) {
+      for (pluginInfo in course.pluginDependencies) {
+        if (requiredPlugins.find { it.id.idString == pluginInfo.stringId } != null) {
           continue
         }
-        requiredPlugins.add(PluginInfo(eduPluginDependency.id, eduPluginDependency.id))
+        requiredPlugins.add(pluginInfo)
       }
 
       if (requiredPlugins.isEmpty()) {

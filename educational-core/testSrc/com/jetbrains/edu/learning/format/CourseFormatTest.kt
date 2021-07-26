@@ -151,7 +151,7 @@ class CourseFormatTest : EduTestCase() {
     assertSize(1, pluginDependencies)
 
     with(pluginDependencies.first()) {
-      assertEquals("testPluginId", id)
+      assertEquals("testPluginId", stringId)
       assertEquals("1.0", minVersion)
       assertEquals(null, maxVersion)
     }

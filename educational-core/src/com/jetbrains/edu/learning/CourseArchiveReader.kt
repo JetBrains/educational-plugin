@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
@@ -84,7 +85,7 @@ fun getCourseMapper(isEncrypted: Boolean, isMarketplace: Boolean = false): Objec
   else {
     mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
   }
-  mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
+  mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
   mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
   mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
   mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)

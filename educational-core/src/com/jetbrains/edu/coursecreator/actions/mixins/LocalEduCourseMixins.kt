@@ -48,6 +48,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER_TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_ID
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
@@ -70,6 +71,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.encrypt.Encrypt
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
@@ -120,7 +122,7 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(PLUGINS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private lateinit var myPluginDependencies: List<EduPluginDependency>
+  private lateinit var myPluginDependencies: List<PluginInfo>
 
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -148,9 +150,13 @@ private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>(
   }
 }
 
-abstract class EduPluginDependencyMixin : EduPluginDependency() {
+abstract class PluginInfoMixin : PluginInfo() {
   @JsonProperty(PLUGIN_ID)
-  override var id: String = ""
+  override var stringId: String = ""
+
+  @JsonProperty(PLUGIN_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  override var displayName: String? = null
 
   @JsonProperty(MIN_VERSION)
   @JsonInclude(JsonInclude.Include.NON_NULL)

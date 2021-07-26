@@ -47,7 +47,7 @@ data class KotlinVersion(val version: String, val isRelease: Boolean) : Comparab
 }
 
 fun setUpPluginDependencies(project: Project, course: Course) {
-  val allDependencies = course.pluginDependencies.map { DependencyOnPlugin(it.id, it.minVersion, it.maxVersion) }.toMutableList()
+  val allDependencies = course.pluginDependencies.map { DependencyOnPlugin(it.stringId, it.minVersion, it.maxVersion) }.toMutableList()
 
   course.compatibilityProvider?.requiredPlugins()?.forEach { plugin ->
     if (allDependencies.none { plugin.stringId == it.pluginId }) {

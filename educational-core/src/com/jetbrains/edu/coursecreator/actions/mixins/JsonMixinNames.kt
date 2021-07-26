@@ -22,6 +22,7 @@ object JsonMixinNames {
   const val PLUGINS = "plugins"
 
   //plugin dependency
+  const val PLUGIN_NAME = "plugin_name"
   const val PLUGIN_ID = "id"
   const val MAX_VERSION = "max_version"
   const val MIN_VERSION = "min_version"

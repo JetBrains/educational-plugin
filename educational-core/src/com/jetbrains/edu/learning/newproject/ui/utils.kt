@@ -87,7 +87,7 @@ fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, limit: Int = 3): 
   }
   else {
     val suffix = if (plugins.size <= limit) " and ${plugins.last().displayName}" else " and ${plugins.size - limit + 1} more"
-    plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName } + suffix
+    plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName ?: it.stringId } + suffix
   }
 
   return "$names ${StringUtil.pluralize("plugin", plugins.size)} required. "
