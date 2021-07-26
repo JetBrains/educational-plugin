@@ -78,8 +78,12 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
         installAndEnablePlugin(pluginStringIds) {}
       }
       is ErrorState.RestartNeeded -> {
+        //close Course Selection View if it's open
         DialogWrapper.findInstance(coursesPanel)?.close(DialogWrapper.OK_EXIT_CODE)
+
+        //close individual Start Course dialog if it's open
         DialogWrapper.findInstance(coursePanel)?.close(DialogWrapper.OK_EXIT_CODE)
+
         ApplicationManager.getApplication().exit(true, true, true)
       }
       is ErrorState.CustomSevereError -> state.action?.run()
