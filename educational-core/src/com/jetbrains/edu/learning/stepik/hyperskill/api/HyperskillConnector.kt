@@ -189,27 +189,6 @@ abstract class HyperskillConnector {
     return lesson
   }
 
-  fun getTasks(course: Course, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
-    val tasks = ArrayList<Task>()
-    for (step in stepSources) {
-      val builder = HyperskillTaskBuilder(course, lesson, step, step.id)
-      if (!builder.isSupported(step.block!!.name)) continue
-      val task = builder.createTask(step.block!!.name)
-      if (task != null) {
-        tasks.add(task)
-        (course as HyperskillCourse).updateAdditionalFiles(step)
-      }
-    }
-    return tasks
-  }
-
-  private fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
-    val files = (stepSource.block?.options as PyCharmStepOptions).hyperskill?.files ?: return
-    additionalFiles.addAll(files.filter { taskFile ->
-      taskFile.name !in additionalFiles.map { it.name }
-    })
-  }
-
   fun getProblems(course: Course, lesson: Lesson, steps: List<Int>): List<Task> {
     val stepSources = getStepSources(steps).onError { emptyList() }
     return getTasks(course, lesson, stepSources)
@@ -392,6 +371,26 @@ abstract class HyperskillConnector {
 
     @JvmStatic
     fun getInstance(): HyperskillConnector = service()
-  }
 
+    fun getTasks(course: Course, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
+      val tasks = ArrayList<Task>()
+      for (step in stepSources) {
+        val builder = HyperskillTaskBuilder(course, lesson, step, step.id)
+        if (!builder.isSupported(step.block!!.name)) continue
+        val task = builder.createTask(step.block!!.name)
+        if (task != null) {
+          tasks.add(task)
+          (course as HyperskillCourse).updateAdditionalFiles(step)
+        }
+      }
+      return tasks
+    }
+
+    fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
+      val files = (stepSource.block?.options as PyCharmStepOptions).hyperskill?.files ?: return
+      additionalFiles.addAll(files.filter { taskFile ->
+        taskFile.name !in additionalFiles.map { it.name }
+      })
+    }
+  }
 }

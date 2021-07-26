@@ -35,7 +35,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
   private fun doTest(responseFileName: String, shouldContainWarning: Boolean) {
     configureResponse(responseFileName)
     val course = createHyperskillCourse()
-    val task = course.getTopicsSection()?.getLesson(STEP_10086_TITLE)?.getTask("Violator")
+    val task = course.getProblemsLesson()?.getTask("Violator")
                ?: error("Can't find task from topics section")
     assertEquals(shouldContainWarning,
                  EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in task.descriptionText)
@@ -64,26 +64,11 @@ class HyperskillProblemLoadingTest : EduTestCase() {
       }
       else null
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(STEP_10086_REQUEST_SUFFIX)) {
-        mockResponse("steps_response_10086.json")
-      }
-      else null
-    }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(STEPS_OF_84_TOPIC)) {
-        mockResponse(responseFileName)
-      }
-      else null
-    }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 
   companion object {
     private const val STEP_4894_REQUEST_SUFFIX = "/api/steps?ids=4894"
-    private const val STEP_10086_REQUEST_SUFFIX = "/api/steps?ids=10086"
-    private const val STEPS_OF_84_TOPIC = "/api/steps?topic=84&is_recommended=true"
-    private const val STEP_10086_TITLE = "Type Erasure"
   }
 }

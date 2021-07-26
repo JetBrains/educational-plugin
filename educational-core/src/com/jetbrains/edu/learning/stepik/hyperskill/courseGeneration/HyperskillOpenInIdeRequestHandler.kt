@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblemsWithTopicWithFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpenRequest>() {
@@ -142,10 +141,18 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
    * */
   @VisibleForTesting
   fun HyperskillCourse.addProblem(stepId: Int) {
-    val isStepRecommended = isRecommended(stepId).onError { error(it) }
+    if (getProblem(stepId) != null) {
+      LOG.info("Task with $stepId already exists in the course")
+      return
+    }
 
-    if (isStepRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
-      return addProblemsWithTopic(stepId).onError { error(it) }
+    val connector = HyperskillConnector.getInstance()
+    val stepSource = connector.getStepSource(stepId).onError {
+      error(it)
+    }
+
+    if (stepSource.canBeAddedWithTopic()) {
+      return addProblemsWithTopic(stepSource).onError { error(it) }
     }
 
     var lesson = getProblemsLesson()
@@ -155,8 +162,12 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
 
     val task = lesson.getTask(stepId)
     if (task == null) {
-      lesson.createProblem(stepId)
+      lesson.addProblem(stepSource)
     }
+  }
+
+  private fun HyperskillStepSource.canBeAddedWithTopic(): Boolean {
+    return topic != null && isRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)
   }
 
   private fun HyperskillCourse.createProblemsLesson(): Lesson {
@@ -168,34 +179,18 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     return lesson
   }
 
-  private fun Lesson.createProblem(stepId: Int): Task {
-    val task = computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
-      HyperskillConnector.getInstance().getProblems(course, this, listOf(stepId)).firstOrNull()
-    } ?: error("Failed to load problem: id = $stepId")
-    addTask(task)
-    return task
-  }
-
   /**
    * See [com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.getTopicsSection]
    */
   @VisibleForTesting
-  fun HyperskillCourse.addProblemsWithTopic(stepId: Int): Result<Unit, String> {
-    if (getProblem(stepId) != null) {
-      LOG.info("Task with $stepId already exists in the course")
-      return Ok(Unit)
-    }
-
-    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.problems.loading.code.problems")) {
+  fun HyperskillCourse.addProblemsWithTopic(stepSource: HyperskillStepSource): Result<Unit, String> {
+    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
       var topicsSection = getTopicsSection()
       if (topicsSection == null) {
         topicsSection = createTopicsSection()
       }
 
-      val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
-        return@computeUnderProgress Err(it)
-      }
-      val topicName = stepSource.getTopicNameForProblem().onError {
+      val (topicName, stepSources) = stepSource.getTopicAndRecommendedSteps().onError {
         return@computeUnderProgress Err(it)
       }
 
@@ -204,30 +199,29 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
         topicLesson = topicsSection.createTopicLesson(topicName)
       }
 
-      addProblemsFromTopic(stepSource, topicLesson).onError {
+      topicLesson.addProblems(stepSources).onError {
         return@computeUnderProgress Err(it)
       }
       Ok(Unit)
     }
   }
 
-  private fun HyperskillCourse.addProblemsFromTopic(stepSource: HyperskillStepSource, topicLesson: Lesson): Result<List<Task>, String> {
-    val topicId = stepSource.topic
-    if (topicId == null) {
-      LOG.warn("Can't get topic in step source with ${stepSource.id} id, adding a single task")
-      val task = topicLesson.createProblem(stepSource.id)
-      return Ok(listOf(task))
-    }
-
-    val connector = HyperskillConnector.getInstance()
-    val stepSources = connector.getRecommendedStepsForTopic(topicId).onError {
+  private fun Lesson.addProblem(stepSource: HyperskillStepSource): Result<Task, String> {
+    val problems = addProblems(listOf(stepSource)).onError {
       return Err(it)
     }
-    val existingTasksIds = topicLesson.items.map { it.id }
+    if (problems.isEmpty()) {
+      return Err("Problem has not been added")
+    }
+    return Ok(problems.first())
+  }
 
-    val tasks = connector
-      .getTasks(this, topicLesson, stepSources.filter { it.block!!.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds })
-    tasks.forEach(topicLesson::addTask)
+  private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
+    val existingTasksIds = items.map { it.id }
+    val filteredStepSources = stepSources.filter { it.block!!.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds }
+
+    val tasks = HyperskillConnector.getTasks(course, this, filteredStepSources)
+    tasks.forEach(this::addTask)
     return Ok(tasks)
   }
 
@@ -250,34 +244,41 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     return lesson
   }
 
-  private fun HyperskillStepSource.getTopicNameForProblem(): Result<String, String> {
-    val theoryId = topicTheory
-    if (theoryId == null) {
-      LOG.warn("Can't get theory step id for ${id} step")
-      val problemTitle = title ?: return Err("Can't get title of ${id} step")
-      return Ok(problemTitle)
-    }
-    val theorySource = HyperskillConnector.getInstance().getStepSource(theoryId).onError {
+  private fun HyperskillStepSource.getTopicAndRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
+    val connector = HyperskillConnector.getInstance()
+    val topicId = topic ?: return Err("Topic must not be null")
+    val stepSources = connector.getRecommendedStepsForTopic(topicId).onError {
       return Err(it)
     }
-    val topicName = theorySource.title
-    return if (topicName == null) Err("Can't get topic name of ${id} step id") else Ok(topicName)
-  }
 
-  private fun isRecommended(stepId: Int): Result<Boolean, String> {
-    val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
-      return Err(it)
+    val theoryId = topicTheory
+    if (theoryId != null) {
+      val theoryTitle = stepSources.find { it.id == theoryId }?.title
+      if (theoryTitle != null) {
+        return Ok(Pair(theoryTitle, stepSources))
+      }
     }
-    return Ok(stepSource.isRecommended)
+
+    LOG.warn("Can't get theory step title for ${id} step")
+    val problemTitle = title ?: return Err("Can't get title of ${id} step")
+    return Ok(Pair(problemTitle, stepSources))
   }
 
   /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]
    * after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
   private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
-    val isStepRecommended = isRecommended(stepId).onError { error(it) }
+    if (getProblem(stepId) != null) {
+      LOG.info("Task with $stepId already exists in the course")
+      return
+    }
 
-    if (isStepRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
-      return addProblemsWithTopicWithFiles(project, stepId).onError { error(it) }
+    val connector = HyperskillConnector.getInstance()
+    val stepSource = connector.getStepSource(stepId).onError {
+      error(it)
+    }
+
+    if (stepSource.canBeAddedWithTopic()) {
+      return addProblemsWithTopicWithFiles(project, stepSource).onError { error(it) }
     }
 
     var problemsLesson = getProblemsLesson()
@@ -290,7 +291,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     var task = problemsLesson.getTask(stepId)
     var createTaskDir = false
     if (task == null) {
-      task = problemsLesson.createProblem(stepId)
+      task = problemsLesson.addProblem(stepSource).onError { error(it) }
       createTaskDir = true
     }
 
@@ -312,13 +313,8 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     }
   }
 
-  private fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project, stepId: Int): Result<Unit, String> {
-    if (getProblem(stepId) != null) {
-      LOG.info("Task with $stepId already exists in the course")
-      return Ok(Unit)
-    }
-
-    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.problems.loading.code.problems")) {
+  private fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project, stepSource: HyperskillStepSource): Result<Unit, String> {
+    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
       var topicsSection = getTopicsSection()
       var createSectionDir = false
       if (topicsSection == null) {
@@ -326,10 +322,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
         createSectionDir = true
       }
 
-      val stepSource = HyperskillConnector.getInstance().getStepSource(stepId).onError {
-        return@computeUnderProgress Err(it)
-      }
-      val topicName = stepSource.getTopicNameForProblem().onError {
+      val (topicName, stepSources) = stepSource.getTopicAndRecommendedSteps().onError {
         return@computeUnderProgress Err(it)
       }
 
@@ -340,7 +333,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
         createLessonDir = true
       }
 
-      val tasks = addProblemsFromTopic(stepSource, topicLesson).onError {
+      val tasks = topicLesson.addProblems(stepSources).onError {
         return@computeUnderProgress Err(it)
       }
 

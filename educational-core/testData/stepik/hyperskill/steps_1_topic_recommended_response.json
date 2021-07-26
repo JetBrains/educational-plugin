@@ -1,0 +1,115 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        },
+        "table_of_contents" : [
+          {
+            "id" : "generics-replacement",
+            "title" : "Generics replacement"
+          },
+          {
+            "id" : "bridge-methods",
+            "title" : "Bridge methods"
+          },
+          {
+            "id" : "conclusion",
+            "title" : "Conclusion"
+          }
+        ]
+      },
+      "id" : 11,
+      "is_completed" : false,
+      "is_recommended" : true,
+      "stage" : null,
+      "title" : "Test Topic Name",
+      "topic" : 1,
+      "topic_theory" : 11
+    },
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "java11" : {
+              "time" : 8,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "java11" : "/**\n * Class to work with\n */\nclass Violator {\n\n    public static List<Box<? extends Bakery>> defraud() {\n        // Add implementation here\n    }\n\n}"
+          },
+          "code_templates_header_lines_count" : {
+            "java11" : 8
+          },
+          "code_templates_footer_lines_count" : {
+            "java11" : 124
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "id" : 2,
+      "is_completed" : false,
+      "is_recommended" : true,
+      "stage" : null,
+      "title" : "Test Code Task",
+      "topic" : 1,
+      "topic_theory" : 11
+    },
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "java11" : {
+              "time" : 8,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "java11" : "/**\n * Class to work with\n */\nclass Violator {\n\n    public static List<Box<? extends Bakery>> defraud() {\n        // Add implementation here\n    }\n\n}"
+          },
+          "code_templates_header_lines_count" : {
+            "java11" : 8
+          },
+          "code_templates_footer_lines_count" : {
+            "java11" : 124
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "id" : 5,
+      "is_recommended" : true,
+      "stage" : null,
+      "title" : "Test Code Task 2",
+      "topic" : 1,
+      "topic_theory" : 11
+    }
+  ]
+}

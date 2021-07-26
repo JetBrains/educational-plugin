@@ -81,27 +81,35 @@ class HyperskillNextActivityTest : EduTestCase() {
     val nextStepId = 5
 
     mockConnector.configureResponses(
-      StepMockResponse("/api/steps?ids=2", task) { topic = 1 },
+      StepMockResponse("/api/steps?ids=2", task) {
+        topic = 1
+        id = 2
+        topicTheory = 11
+        title = "Test Code Task"
+      },
       StepMockResponse("/api/steps?ids=5", task) {
+        block!!.name = CodeTask.CODE_TASK_TYPE
         topic = 1
         id = nextStepId
         topicTheory = 11
-        block!!.name = CodeTask.CODE_TASK_TYPE
+        title = "Test Code Task 2"
         isRecommended = true
       },
       StepMockResponse("/api/steps?ids=11", TheoryTask()) {
-        topic = 1
-        title = "Test Topic Name"
         block!!.name = TheoryTask.THEORY_TASK_TYPE
-        isRecommended = true
-      },
-      StepMockResponse("/api/steps?topic=1&is_recommended=true", task) {
-        block!!.name = CodeTask.CODE_TASK_TYPE
         topic = 1
-        id = nextStepId
+        id = 11
+        topicTheory = 11
+        title = "Test Topic Name"
         isRecommended = true
       }
     )
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      if (request.path.endsWith("/api/steps?topic=1&is_recommended=true")) {
+        mockResponse("steps_1_topic_recommended_response.json")
+      }
+      else null
+    }
 
     (ProjectOpener.getInstance() as MockProjectOpener).project = project
     openNextActivity(project, task)
@@ -112,7 +120,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     hyperskillCourseWithFiles {
       section(HYPERSKILL_TOPICS) {
         lesson("Test Topic Name") {
-          theoryTask("Theory", stepId = 1) {
+          theoryTask("Theory", stepId = 11) {
             taskFile("Task.txt")
           }
           codeTask("Test Code Task", stepId = 2) {
@@ -132,4 +140,6 @@ class HyperskillNextActivityTest : EduTestCase() {
       }
     }
   }
+
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 }
