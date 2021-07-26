@@ -141,6 +141,7 @@ abstract class CourseArchiveCreator(
       else {
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
       }
+      mapper.addMixIn(EduPluginDependency::class.java, EduPluginDependencyMixin::class.java)
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
       mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
