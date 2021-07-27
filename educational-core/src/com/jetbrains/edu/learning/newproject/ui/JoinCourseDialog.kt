@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.openapi.Disposable
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
@@ -12,7 +13,7 @@ open class JoinCourseDialog(
   private val course: Course,
   settings: CourseDisplaySettings = CourseDisplaySettings()
 ) : OpenCourseDialogBase() {
-  private val coursePanel: CoursePanel = JoinCoursePanel()
+  private val coursePanel: CoursePanel = JoinCoursePanel(disposable)
 
   init {
     super.init()
@@ -28,7 +29,7 @@ open class JoinCourseDialog(
 
   protected open fun isToShowError(errorState: ErrorState): Boolean = true
 
-  private inner class JoinCoursePanel : CoursePanel(true) {
+  private inner class JoinCoursePanel(parentDisposable: Disposable) : CoursePanel(parentDisposable, true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       CoursesPlatformProvider.joinCourse(CourseInfo(this@JoinCourseDialog.course, { locationString }, { languageSettings }),
                                          mode, this) {

@@ -4,6 +4,7 @@ import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginStateListener
 import com.intellij.ide.plugins.PluginStateManager
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
@@ -32,7 +34,7 @@ import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
-class ErrorStateHyperlinkListener : HyperlinkListener {
+class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : HyperlinkListener {
   override fun hyperlinkUpdate(e: HyperlinkEvent?) {
     if (e?.eventType != HyperlinkEvent.EventType.ACTIVATED) return
 
@@ -64,8 +66,7 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
       is ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {
-        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
-        PluginStateManager.addStateListener(object : PluginStateListener {
+        val listener = object : PluginStateListener {
           override fun install(descriptor: IdeaPluginDescriptor) {
             coursePanel.doValidation()
           }
@@ -73,8 +74,13 @@ class ErrorStateHyperlinkListener : HyperlinkListener {
           override fun uninstall(descriptor: IdeaPluginDescriptor) {
 
           }
+        }
 
+        Disposer.register(parentDisposable, Disposable {
+          PluginStateManager.removeStateListener(listener)
         })
+        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
+        PluginStateManager.addStateListener(listener)
         installAndEnablePlugin(pluginStringIds) {}
       }
       is ErrorState.RestartNeeded -> {

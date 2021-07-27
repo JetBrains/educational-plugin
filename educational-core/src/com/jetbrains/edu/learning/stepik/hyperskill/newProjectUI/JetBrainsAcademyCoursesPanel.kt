@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -19,8 +20,8 @@ import kotlinx.coroutines.withContext
 import java.awt.Color
 
 class JetBrainsAcademyCoursesPanel(
-  private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope
-) : CoursesPanel(platformProvider, scope) {
+  private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope, disposable: Disposable
+) : CoursesPanel(platformProvider, scope, disposable) {
 
   override fun tabInfo(): TabInfo {
     val linkText = """<a href="${JBA_HELP}">${EduNames.JBA}</a>"""

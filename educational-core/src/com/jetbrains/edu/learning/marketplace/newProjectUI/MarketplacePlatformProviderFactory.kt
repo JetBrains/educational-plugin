@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
@@ -38,7 +39,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.MARKETPLACE_TAB
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = MarketplaceCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MarketplaceCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()

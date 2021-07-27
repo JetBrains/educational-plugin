@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -39,7 +40,7 @@ class CCCreateCoursePreviewDialog(
 ) : DialogWrapper(true) {
 
   @VisibleForTesting
-  val panel: CoursePanel = CourseArchivePanel()
+  val panel: CoursePanel = CourseArchivePanel(disposable)
 
   init {
     title = EduCoreBundle.message("course.creator.create.course.preview.dialog.title")
@@ -76,9 +77,9 @@ class CCCreateCoursePreviewDialog(
 
 
   @VisibleForTesting
-  inner class CourseArchivePanel : CoursePanel(false) {
+  inner class CourseArchivePanel(parentDisposable: Disposable) : CoursePanel(parentDisposable, false) {
 
-    override fun showError(errorState: ErrorState) { }
+    override fun showError(errorState: ErrorState) {}
 
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       createCoursePreview()

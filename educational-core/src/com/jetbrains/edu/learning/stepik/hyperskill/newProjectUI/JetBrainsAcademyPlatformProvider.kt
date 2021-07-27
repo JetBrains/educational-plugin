@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
@@ -39,7 +40,8 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.JB_ACADEMY_TAB
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = JetBrainsAcademyCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = JetBrainsAcademyCoursesPanel(this, scope,
+                                                                                                                       disposable)
 
   override fun joinAction(courseInfo: CourseInfo,
                           courseMode: CourseMode,

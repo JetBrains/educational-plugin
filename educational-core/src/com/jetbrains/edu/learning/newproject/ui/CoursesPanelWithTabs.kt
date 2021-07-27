@@ -95,7 +95,7 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
     }
 
     private fun addPanel(coursesPlatformProvider: CoursesPlatformProvider) {
-      val panel = coursesPlatformProvider.createPanel(scope)
+      val panel = coursesPlatformProvider.createPanel(scope, disposable)
       panels.add(panel)
       add(coursesPlatformProvider.name, panel)
     }

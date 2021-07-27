@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -27,7 +28,8 @@ import kotlinx.coroutines.withContext
 
 class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
                          private val coursesProvider: StepikCoursesProvider,
-                         scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+                         scope: CoroutineScope,
+                         disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
   private var busConnection: MessageBusConnection? = null
 
   override fun toolbarAction(): ToolbarActionWrapper {

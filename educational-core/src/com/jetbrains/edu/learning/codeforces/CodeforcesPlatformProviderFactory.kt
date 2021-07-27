@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
@@ -31,7 +32,7 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Codeforces
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = CodeforcesCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CodeforcesCoursesPanel(this, scope, disposable)
 
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     val codeforcesCourse = StartCodeforcesContestAction.startContest(courseInfo.course.id) ?: error("Cannot load course ${courseInfo.course.name} ${courseInfo.course.id}")

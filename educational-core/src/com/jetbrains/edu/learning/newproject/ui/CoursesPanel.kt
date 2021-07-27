@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.newui.HorizontalLayout
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.ui.JBCardLayout
 import com.intellij.ui.OnePixelSplitter
@@ -40,10 +41,12 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider, private val scope: CoroutineScope) : JPanel() {
+abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider,
+                            private val scope: CoroutineScope,
+                            disposable: Disposable) : JPanel() {
   @VisibleForTesting
   @Suppress("LeakingThis")
-  var coursePanel: CoursePanel = createCoursePanel()
+  var coursePanel: CoursePanel = createCoursePanel(disposable)
   private val coursesListPanel = this.createCoursesListPanel()
   private val coursesListDecorator = CoursesListDecorator(coursesListPanel, this.tabInfo(), this.toolbarAction())
   protected lateinit var programmingLanguagesFilterDropdown: ProgrammingLanguageFilterDropdown
@@ -269,11 +272,11 @@ abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider
     }
   }
 
-  protected open fun createCoursePanel(): CoursePanel {
-    return DialogCoursePanel()
+  protected open fun createCoursePanel(disposable: Disposable): CoursePanel {
+    return DialogCoursePanel(disposable)
   }
 
-  private inner class DialogCoursePanel : CoursePanel(true) {
+  private inner class DialogCoursePanel(disposable: Disposable) : CoursePanel(disposable, true) {
     override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
       coursesProvider.joinAction(info, mode, this)
     }

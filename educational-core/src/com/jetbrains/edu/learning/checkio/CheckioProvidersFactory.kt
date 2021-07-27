@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checkio
 
+import com.intellij.openapi.Disposable
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.jetbrains.edu.learning.EduNames
@@ -26,7 +27,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.CheckiO.to24()
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = CheckiOCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CheckiOCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     return if (EduUtils.isAndroidStudio()) {

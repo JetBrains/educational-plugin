@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
 import com.intellij.ide.DataManager
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
@@ -19,7 +20,9 @@ import javax.swing.JPanel
 
 private const val ACTION_PLACE = "MyCoursesPanel"
 
-class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(myCoursesProvider, scope) {
+class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider,
+                     scope: CoroutineScope,
+                     disposable: Disposable) : CoursesPanel(myCoursesProvider, scope, disposable) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), ImportLocalCourseAction())

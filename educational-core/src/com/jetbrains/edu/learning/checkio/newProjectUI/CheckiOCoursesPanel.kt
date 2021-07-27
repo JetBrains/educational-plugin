@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checkio.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -12,7 +13,9 @@ import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
-class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider,
+                          scope: CoroutineScope,
+                          disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
   private val loginComponent = CheckiOLoginPanel()
 
   override fun processSelectionChanged() {

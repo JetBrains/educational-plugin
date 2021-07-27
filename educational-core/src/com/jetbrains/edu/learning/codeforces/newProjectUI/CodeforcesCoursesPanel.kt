@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.codeforces.newProjectUI
 
 import com.intellij.ide.DataManager
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -20,7 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import java.awt.BorderLayout
 import javax.swing.JButton
 
-class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: CoroutineScope) : CoursesPanel(platformProvider, scope) {
+class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
+                             scope: CoroutineScope,
+                             private val disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
 
   init {
     humanLanguagesFilterDropdown.isVisible = false
@@ -29,8 +32,8 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider, scope: C
     searchPanel.add(createOpenContestButtonPanel(), BorderLayout.LINE_END)
   }
 
-  override fun createCoursePanel(): CoursePanel {
-    return CodeforcesCoursePanel()
+  override fun createCoursePanel(disposable: Disposable): CoursePanel {
+    return CodeforcesCoursePanel(disposable)
   }
 
   private fun createOpenContestButtonPanel(): NonOpaquePanel {

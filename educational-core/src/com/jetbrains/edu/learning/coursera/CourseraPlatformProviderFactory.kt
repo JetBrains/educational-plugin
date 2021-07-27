@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
@@ -36,7 +37,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Coursera
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = CourseraCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CourseraCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     val tasks = mutableListOf<Future<Course?>>()

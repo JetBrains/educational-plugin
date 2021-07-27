@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.stepikMarketplaceIdsMap
@@ -22,7 +23,8 @@ class StepikPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.StepikCourseTab
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = StepikCoursesPanel(this, coursesProvider, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = StepikCoursesPanel(this, coursesProvider, scope,
+                                                                                                             disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     checkIsBackgroundThread()

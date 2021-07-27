@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -14,7 +15,7 @@ import java.awt.BorderLayout
 import java.awt.Font
 import java.time.format.DateTimeFormatter
 
-class CodeforcesCoursePanel : CoursePanel(false) {
+class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, false) {
 
   init {
     buttonsPanel.border = JBUI.Borders.empty()

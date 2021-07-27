@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.newProjectUI
 
+import com.intellij.openapi.Disposable
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_COURSES_HELP
@@ -9,8 +10,9 @@ import kotlinx.coroutines.CoroutineScope
 
 class MarketplaceCoursesPanel(
   coursesPlatformProvider: CoursesPlatformProvider,
-  scope: CoroutineScope
-) : CoursesPanel(coursesPlatformProvider, scope) {
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(coursesPlatformProvider, scope, disposable) {
 
   override fun tabInfo(): TabInfo {
     val linkText = """<a href="$MARKETPLACE_COURSES_HELP">$MARKETPLACE</a>"""

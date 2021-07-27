@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
+import com.intellij.openapi.Disposable
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
@@ -19,7 +20,7 @@ class MyCoursesProvider : CoursesPlatformProvider() {
 
   override val icon: Icon? = null
 
-  override fun createPanel(scope: CoroutineScope): CoursesPanel = MyCoursesPanel(this, scope)
+  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MyCoursesPanel(this, scope, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     return CoursesStorage.getInstance().coursesInGroups()

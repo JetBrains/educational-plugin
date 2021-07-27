@@ -13,7 +13,7 @@ class StartButtonsTest : EduTestCase() {
 
   fun `test edu course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
-    val panel = MarketplacePlatformProvider().createPanel(scope)
+    val panel = MarketplacePlatformProvider().createPanel(scope, testRootDisposable)
     val course = course { }
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)
@@ -25,7 +25,7 @@ class StartButtonsTest : EduTestCase() {
 
   fun `test codeforces course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
-    val panel = CodeforcesPlatformProvider().createPanel(scope)
+    val panel = CodeforcesPlatformProvider().createPanel(scope, testRootDisposable)
     val course = course { }
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)

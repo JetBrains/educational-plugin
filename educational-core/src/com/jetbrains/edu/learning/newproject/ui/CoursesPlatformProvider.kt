@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
@@ -23,7 +24,7 @@ abstract class CoursesPlatformProvider {
 
   abstract val icon: Icon?
 
-  abstract fun createPanel(scope: CoroutineScope): CoursesPanel
+  abstract fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel
 
   open fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
