@@ -21,7 +21,7 @@ class HyperskillCheckListener : CheckListener {
     if (!course.isStudy) {
       return
     }
-    if (!(course.isTaskInProject(task) || task is EduTask)) return
+    if (!course.isTaskInProject(task)) return
 
     if (HyperskillSettings.INSTANCE.account == null) {
       Notification(
