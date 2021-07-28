@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.codeforces
+package com.jetbrains.edu.learning.codeforces.actions
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.codeforces.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse

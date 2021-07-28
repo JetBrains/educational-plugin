@@ -1,0 +1,90 @@
+package com.jetbrains.edu.learning.codeforces.actions
+
+import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil
+import com.intellij.ide.ui.newItemPopup.NewItemSimplePopupPanel
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.InputValidatorEx
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.getContainingTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import javax.swing.SwingConstants
+
+
+class CodeforcesCreateTestAction : DumbAwareAction(EduCoreBundle.lazyMessage("codeforces.create.test")) {
+  override fun actionPerformed(e: AnActionEvent) {
+
+    val project = e.project ?: return
+    if (project.isDisposed) return
+
+    val currentTask = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)?.getContainingTask(project) as? CodeforcesTask ?: return
+    val taskDir = currentTask.getDir(project.courseDir) ?: return
+    val defaultTestName = getDefaultTestName(currentTask, project)
+    val validator = CCStudyItemPathInputValidator(project, currentTask.course, currentTask.studyItemType, taskDir)
+    val contentPanel = NewItemSimplePopupPanel()
+
+    val nameField = contentPanel.textField
+    nameField.text = defaultTestName
+    val popup = NewItemPopupUtil.createNewItemPopup(EduCoreBundle.message("dialog.title.test.name"), contentPanel, nameField)
+
+    contentPanel.setApplyAction {
+      val testName = nameField.text
+      if (validator.checkInput(testName)) {
+        popup.closeOk(it)
+        val testDir = GeneratorUtils.joinPaths(CodeforcesNames.TEST_DATA_FOLDER, testName)
+        val inputFile = GeneratorUtils.createChildFile(project, taskDir, GeneratorUtils.joinPaths(testDir, currentTask.inputFileName), "")
+                        ?: return@setApplyAction
+        val outputFile = GeneratorUtils.createChildFile(project, taskDir, GeneratorUtils.joinPaths(testDir, currentTask.outputFileName), "")
+                         ?: return@setApplyAction
+        openInSplitEditors(project, outputFile, inputFile)
+      }
+      else {
+        val errorMessage = (validator as InputValidatorEx).getErrorText(testName)
+        contentPanel.setError(errorMessage)
+      }
+    }
+
+    popup.showCenteredInCurrentWindow(project)
+  }
+
+  private fun openInSplitEditors(project: Project, outputFile: VirtualFile, inputFile: VirtualFile) {
+    val fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project)
+
+    if (fileEditorManagerEx.isInSplitter) {
+      fileEditorManagerEx.openFileWithProviders(outputFile, false, fileEditorManagerEx.splitters.windows[1])
+      fileEditorManagerEx.openFileWithProviders(inputFile, true, fileEditorManagerEx.splitters.windows[0])
+    }
+    else {
+      fileEditorManagerEx.openFile(inputFile, true, false)
+      fileEditorManagerEx.currentWindow?.split(SwingConstants.HORIZONTAL, true, outputFile, false)
+    }
+  }
+
+  private fun getDefaultTestName(task: CodeforcesTask, project: Project): String {
+    val maxOrNull = task.getTestFolders(project).mapNotNull { it.name.toIntOrNull() }.maxOrNull()
+    return if (maxOrNull == null) "1" else (maxOrNull + 1).toString()
+  }
+
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+
+    val project = e.project ?: return
+    if (!EduUtils.isStudentProject(project)) return
+
+    if (CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)?.getContainingTask(project) !is CodeforcesTask) return
+
+    presentation.isEnabledAndVisible = true
+  }
+
+}

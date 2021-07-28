@@ -56,7 +56,7 @@ class CodeforcesTaskChecker(
 
       val expectedOutput = runReadAction { outputDocument.text }.trimEnd('\n')
       if (expectedOutput != output) {
-        val message = EduCoreBundle.message("codeforces.test.failed", testNumber)
+        val message = EduCoreBundle.message("codeforces.test.failed", testFolder.name)
         val diff = CheckResultDiff(expected = expectedOutput, actual = output)
         return CheckResult(CheckStatus.Failed, message, diff = diff)
       }

@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.ContestParameters
-import com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.api.MockCodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse

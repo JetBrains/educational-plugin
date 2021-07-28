@@ -1,5 +1,6 @@
-package com.jetbrains.edu.learning.codeforces
+package com.jetbrains.edu.learning.codeforces.actions
 
+import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 
 class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {

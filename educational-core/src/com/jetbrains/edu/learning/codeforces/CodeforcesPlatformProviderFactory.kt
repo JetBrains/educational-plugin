@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checkIsBackgroundThread
+import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.isFeatureEnabled

@@ -22,11 +22,16 @@
   </extensionPoints>
 
   <actions>
-    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.StartCodeforcesContestAction">
+    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction">
       <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.Educator.NewCourse" anchor="after"/>
     </action>
-    <action id="Codeforces.MarkAsCompleted" class="com.jetbrains.edu.learning.codeforces.CodeforcesMarkAsCompletedAction"/>
-    <action id="Codeforces.CopyAndSubmit" class="com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction"/>
+    <action id="Codeforces.MarkAsCompleted" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction"/>
+    <action id="Codeforces.CopyAndSubmit" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction"/>
     <action id="Codeforces.UpdateContest" class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
+    <action id="Codeforces.CreateTestSample"
+            class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
+            icon="EducationalCoreIcons.CODEFORCES_SMALL">
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </action>
   </actions>
 </idea-plugin>

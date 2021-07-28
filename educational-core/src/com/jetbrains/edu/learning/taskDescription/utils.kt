@@ -14,7 +14,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
-import com.jetbrains.edu.learning.codeforces.CodeforcesCopyAndSubmitAction
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course

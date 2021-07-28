@@ -1,6 +1,7 @@
-package com.jetbrains.edu.learning.codeforces
+package com.jetbrains.edu.learning.codeforces.actions
 
 import com.intellij.openapi.ide.CopyPasteManager
+import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 
 class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
