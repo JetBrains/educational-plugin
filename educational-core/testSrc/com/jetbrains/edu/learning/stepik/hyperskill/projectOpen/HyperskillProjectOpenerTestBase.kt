@@ -39,6 +39,8 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
   }
 
   companion object {
+    const val THEORY = "Theory"
+
     class StepInfo(val id: Int, val title: String) {
       val path: String
         get() = "/api/steps?ids=$id"

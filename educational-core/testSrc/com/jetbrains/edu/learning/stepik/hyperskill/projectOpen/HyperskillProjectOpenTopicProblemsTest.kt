@@ -601,7 +601,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private const val STEPS_OF_85_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=85"
     private const val STEPS_OF_515_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=515&is_recommended=true"
     private const val TOPIC_NAME = "topicName"
-    private const val THEORY = "Theory"
+
     private val step2640 = StepInfo(2640, "Packing bakeries")
     private val step2641 = StepInfo(2641, "List multiplicator")
     private val step9455 = StepInfo(9455, "Wildcards")

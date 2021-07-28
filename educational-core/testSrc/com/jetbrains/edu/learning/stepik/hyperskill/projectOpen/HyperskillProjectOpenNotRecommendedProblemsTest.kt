@@ -27,10 +27,16 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, "TEXT"))
 
     val fileTree = fileTree {
-      dir(HYPERSKILL_PROBLEMS) {
-        dir(step8146.title) {
-          file("Task.txt")
-          file("task.html")
+      dir(HYPERSKILL_TOPICS) {
+        dir(step8139.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step8146.title) {
+            file("Task.txt")
+            file("task.html")
+          }
         }
       }
     }
@@ -55,9 +61,17 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
           file("task.txt", "file text")
           file("task.html")
         }
-        dir(step8146.title) {
-          file("Task.txt")
-          file("task.html")
+      }
+      dir(HYPERSKILL_TOPICS) {
+        dir(step8139.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step8146.title) {
+            file("Task.txt")
+            file("task.html")
+          }
         }
       }
     }
@@ -95,13 +109,19 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
             file("task.html")
           }
         }
-      }
-      dir(HYPERSKILL_PROBLEMS) {
-        dir(step8146.title) {
-          dir("src") {
-            file("Task.kt")
+        dir(step8139.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
           }
-          file("task.html")
+          dir(step8146.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
         }
       }
       file("build.gradle")
@@ -152,12 +172,20 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
           file("task.html")
         }
       }
-      dir(HYPERSKILL_PROBLEMS) {
-        dir(step8146.title) {
-          dir("src") {
-            file("Task.kt")
+      dir(HYPERSKILL_TOPICS) {
+        dir(step8139.title) {
+          dir(THEORY) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
           }
-          file("task.html")
+          dir(step8146.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
         }
       }
       file("build.gradle")
@@ -167,16 +195,12 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   }
 
   private fun configureMockResponsesForNotRecommendedProblem() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      when {
-        request.path.endsWith(step8146.path) -> {
-          mockResponse("step_${step8146.id}_response.json")
+    steps.forEach { step ->
+      mockConnector.withResponseHandler(testRootDisposable) { request ->
+        if (request.path.endsWith(step.path)) {
+          mockResponse("step_${step.id}_response.json")
         }
-        request.path.endsWith(step8139.path) -> {
-          LOG.error("Unexpected request of getting theory step")
-          null
-        }
-        else -> null
+        else null
       }
     }
   }
@@ -184,5 +208,6 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   companion object {
     private val step8139 = StepInfo(8139, "Reading files")
     private val step8146 = StepInfo(8146, "Acronym")
+    private val steps = listOf(step8139, step8146)
   }
 }

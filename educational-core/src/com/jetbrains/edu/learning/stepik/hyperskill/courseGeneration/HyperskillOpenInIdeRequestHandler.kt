@@ -147,9 +147,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     }
 
     val connector = HyperskillConnector.getInstance()
-    val stepSource = connector.getStepSource(stepId).onError {
-      error(it)
-    }
+    val stepSource = connector.getStepSource(stepId).onError { error(it) }
 
     if (stepSource.canBeAddedWithTopic()) {
       return addProblemsWithTopic(stepSource).onError { error(it) }
@@ -167,7 +165,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
   }
 
   private fun HyperskillStepSource.canBeAddedWithTopic(): Boolean {
-    return topic != null && isRecommended && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)
+    return topic != null && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)
   }
 
   private fun HyperskillCourse.createProblemsLesson(): Lesson {
@@ -190,7 +188,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
         topicsSection = createTopicsSection()
       }
 
-      val (topicName, stepSources) = stepSource.getTopicAndRecommendedSteps().onError {
+      val (topicName, stepSources) = stepSource.getTopicAndRelatedSteps().onError {
         return@computeUnderProgress Err(it)
       }
 
@@ -244,14 +242,22 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     return lesson
   }
 
-  private fun HyperskillStepSource.getTopicAndRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
+  private fun HyperskillStepSource.getTopicAndRelatedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
     val connector = HyperskillConnector.getInstance()
     val topicId = topic ?: return Err("Topic must not be null")
-    val stepSources = connector.getRecommendedStepsForTopic(topicId).onError {
-      return Err(it)
+    val theoryId = topicTheory
+
+    val stepSources = if (isRecommended) {
+      connector.getRecommendedStepsForTopic(topicId).onError { return Err(it) }
+    }
+    else if (theoryId != null) {
+      val theoryStep = connector.getStepSource(theoryId).onError { return Err(it) }
+      listOf(theoryStep, this)
+    }
+    else {
+      listOf(this)
     }
 
-    val theoryId = topicTheory
     if (theoryId != null) {
       val theoryTitle = stepSources.find { it.id == theoryId }?.title
       if (theoryTitle != null) {
@@ -322,7 +328,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
         createSectionDir = true
       }
 
-      val (topicName, stepSources) = stepSource.getTopicAndRecommendedSteps().onError {
+      val (topicName, stepSources) = stepSource.getTopicAndRelatedSteps().onError {
         return@computeUnderProgress Err(it)
       }
 

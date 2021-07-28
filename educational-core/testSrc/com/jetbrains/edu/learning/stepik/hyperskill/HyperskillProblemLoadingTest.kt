@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProblemLoadingTest : EduTestCase() {
@@ -35,7 +37,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
   private fun doTest(responseFileName: String, shouldContainWarning: Boolean) {
     configureResponse(responseFileName)
     val course = createHyperskillCourse()
-    val task = course.getProblemsLesson()?.getTask("Violator")
+    val task = course.getTopicsSection()?.getLesson(step10086.title)?.getTask(step4894.title)
                ?: error("Can't find task from topics section")
     assertEquals(shouldContainWarning,
                  EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in task.descriptionText)
@@ -59,8 +61,10 @@ class HyperskillProblemLoadingTest : EduTestCase() {
 
   private fun configureResponse(responseFileName: String) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(STEP_4894_REQUEST_SUFFIX)) {
+      if (request.path.endsWith(step4894.path)) {
         mockResponse(responseFileName)
+      } else if (request.path.endsWith(step10086.path)) {
+        mockResponse("step_${step10086.id}_response.json")
       }
       else null
     }
@@ -69,6 +73,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
 
   companion object {
-    private const val STEP_4894_REQUEST_SUFFIX = "/api/steps?ids=4894"
+    private val step4894 = StepInfo(4894, "Violator")
+    private val step10086 = StepInfo(10086, "Type Erasure")
   }
 }

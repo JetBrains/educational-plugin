@@ -1,0 +1,30 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        }
+      },
+      "id" : 8139,
+      "is_completed" : true,
+      "is_recommended" : false,
+      "lesson_stepik_id" : 282512,
+      "position" : 1,
+      "stage" : null,
+      "stepik_id" : 957846,
+      "title" : "Reading files",
+      "topic" : 632,
+      "topic_theory" : 8139,
+      "type" : "theory"
+    }
+  ]
+}
