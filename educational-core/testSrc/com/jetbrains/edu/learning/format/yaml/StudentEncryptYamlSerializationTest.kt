@@ -52,7 +52,6 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |    placeholder_text: |-
     |      type here
     |      and here
-    |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
     |    encrypted_possible_answer: 6zkm3NpDQQaIQ+CAebF//w==
@@ -90,7 +89,6 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
     |    initial_state:
     |      length: 16
     |      offset: 0
-    |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
     |    encrypted_possible_answer: $encryptedPossibleAnswer

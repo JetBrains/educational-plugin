@@ -70,29 +70,6 @@ fun Task.getAllTestVFiles(project: Project): MutableList<VirtualFile> {
   return testFiles
 }
 
-val Task.placeholderDependencies: List<AnswerPlaceholderDependency>
-  get() = taskFiles.values.flatMap { taskFile -> taskFile.answerPlaceholders.mapNotNull { it.placeholderDependency } }
-
-fun Task.getUnsolvedTaskDependencies(): List<Task> {
-  return placeholderDependencies
-    .mapNotNull { it.resolve(course)?.taskFile?.task }
-    .filter { it.status != CheckStatus.Solved }
-    .distinct()
-}
-
-fun Task.getDependentTasks(): Set<Task> {
-  val course = course
-  return course.items.flatMap { item ->
-    when (item) {
-      is Lesson -> item.taskList
-      is Section -> item.lessons.flatMap { it.taskList }
-      else -> emptyList()
-    }
-  }.filterTo(HashSet()) { task ->
-    task.placeholderDependencies.any { it.resolve(course)?.taskFile?.task == this }
-  }
-}
-
 fun Task.hasChangedFiles(project: Project): Boolean {
   for (taskFile in taskFiles.values) {
     val document = taskFile.getDocument(project) ?: continue

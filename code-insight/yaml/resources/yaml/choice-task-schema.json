@@ -78,43 +78,6 @@
       ],
       "additionalProperties": false
     },
-    "dependency": {
-      "properties": {
-        "section": {
-          "type": "string",
-          "description": "Section folder name if placeholder dependency is inside a section"
-        },
-        "lesson": {
-          "type": "string",
-          "description": "Lesson folder name"
-        },
-        "task": {
-          "type": "string",
-          "description": "Task folder name"
-        },
-        "file": {
-          "type": "string",
-          "description": "File path relative to the directory of the task"
-        },
-        "placeholder": {
-          "type": "number",
-          "description": "Placeholder index starting from 0",
-          "minimum": 0
-        },
-        "is_visible": {
-          "type": "boolean",
-          "default": true,
-          "description": "If placeholder is drawn in place of dependency"
-        }
-      },
-      "required": [
-        "lesson",
-        "task",
-        "file",
-        "placeholder"
-      ],
-      "additionalProperties": false
-    },
     "placeholder": {
       "properties": {
         "offset": {
@@ -130,9 +93,6 @@
         "placeholder_text": {
           "type": "string",
           "description": "Text which will be shown to learner in place of the placeholder"
-        },
-        "dependency": {
-          "$ref": "#/definitions/dependency"
         }
       },
       "required": [

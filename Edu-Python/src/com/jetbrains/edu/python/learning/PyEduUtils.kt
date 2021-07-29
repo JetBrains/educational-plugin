@@ -29,11 +29,6 @@ fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
     if (resultFile == null) {
       resultFile = file
     }
-
-    // TODO: Come up with a smarter way how to find correct task file
-    // Try to find task file with new placeholder. See https://youtrack.jetbrains.com/issue/EDU-1443
-    val hasNewPlaceholder = taskFile.answerPlaceholders.any { p -> p.placeholderDependency == null }
-    if (hasNewPlaceholder) return file
   }
   return resultFile
 }

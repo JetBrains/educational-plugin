@@ -363,7 +363,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |    initial_state:
     |      length: 16
     |      offset: 0
-    |    initialized_from_dependency: false
     |    selected: false
     |    status: Unchecked
     |  text: 42 is the answer

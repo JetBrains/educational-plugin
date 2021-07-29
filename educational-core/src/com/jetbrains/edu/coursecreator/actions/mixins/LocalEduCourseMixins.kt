@@ -27,7 +27,6 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CUSTOM_NAME
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DEPENDENCY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
@@ -243,7 +242,7 @@ abstract class TaskFileMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   private var myOffset: Int = -1
@@ -251,42 +250,16 @@ abstract class AnswerPlaceholderMixin {
   @JsonProperty(LENGTH)
   private var myLength: Int = -1
 
-  @JsonProperty(DEPENDENCY)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
-
   @JsonProperty(PLACEHOLDER_TEXT)
   private lateinit var myPlaceholderText: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
+@JsonPropertyOrder(OFFSET, LENGTH, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
   @JsonProperty(POSSIBLE_ANSWER)
   @Encrypt
   private lateinit var myPossibleAnswer: String
-}
-
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonInclude(JsonInclude.Include.NON_NULL)
-abstract class AnswerPlaceholderDependencyMixin {
-  @JsonProperty("section")
-  private lateinit var mySectionName: String
-
-  @JsonProperty("lesson")
-  private lateinit var myLessonName: String
-
-  @JsonProperty("task")
-  private lateinit var myTaskName: String
-
-  @JsonProperty("file")
-  private lateinit var myFileName: String
-
-  @JsonProperty("placeholder")
-  private var myPlaceholderIndex: Int = -1
-
-  @JsonProperty("is_visible")
-  private var myIsVisible = true
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

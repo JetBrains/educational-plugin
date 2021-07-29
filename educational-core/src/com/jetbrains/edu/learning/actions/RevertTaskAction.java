@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -55,7 +54,6 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     revertTaskFiles(task, project);
     revertTaskParameters(task, project);
 
-    PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     EditorNotifications.getInstance(project).updateAllNotifications();
     Notification notification = new Notification("EduTools", EmptyIcon.ICON_16, "", "",
                                                  EduCoreBundle.message("action.reset.result"), NotificationType.INFORMATION, null);

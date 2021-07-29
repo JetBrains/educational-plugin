@@ -31,7 +31,7 @@ public class PrevPlaceholderAction extends PlaceholderNavigationAction {
     if (!EduUtils.indexIsValid(endIndex - 1, placeholders)) return null;
 
     for (AnswerPlaceholder placeholder : CollectionsKt.asReversed(placeholders.subList(0, endIndex))) {
-      if (placeholder.getOffset() < offset && placeholder.isVisible()) {
+      if (placeholder.getOffset() < offset) {
         return placeholder;
       }
     }

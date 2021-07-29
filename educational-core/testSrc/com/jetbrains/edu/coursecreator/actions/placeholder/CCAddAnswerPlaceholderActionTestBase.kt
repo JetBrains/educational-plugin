@@ -9,13 +9,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
 abstract class CCAddAnswerPlaceholderActionTestBase : CCAnswerPlaceholderTestBase() {
 
-  class CCTestAddAnswerPlaceholder(val dependencyInfo: CCCreateAnswerPlaceholderDialog.DependencyInfo? = null) : CCAddAnswerPlaceholder() {
+  class CCTestAddAnswerPlaceholder : CCAddAnswerPlaceholder() {
     override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
-      return object : CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder) {
+      return object : CCCreateAnswerPlaceholderDialog(project, answerPlaceholder) {
         override fun showAndGet(): Boolean = true
         override fun getPlaceholderText(): String =
           StudyTaskManager.getInstance(project).course?.configurator?.defaultPlaceholderText ?: DEFAULT_PLACEHOLDER_TEXT
-        override fun getDependencyInfo(): DependencyInfo? = dependencyInfo
       }
     }
   }

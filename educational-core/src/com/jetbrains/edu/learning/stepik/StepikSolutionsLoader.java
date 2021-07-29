@@ -475,7 +475,6 @@ public class StepikSolutionsLoader implements Disposable {
       answerPlaceholder.setOffset(updatedPlaceholder.getOffset());
       answerPlaceholder.setLength(updatedPlaceholder.getLength());
       answerPlaceholder.setSelected(updatedPlaceholder.getSelected());
-      answerPlaceholder.setPlaceholderDependency(answerPlaceholder.getPlaceholderDependency());
     }
   }
 

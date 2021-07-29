@@ -8,14 +8,12 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -73,11 +71,6 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
     answerPlaceholder.setPlaceholderText(answerPlaceholderText);
     answerPlaceholder.setLength(possibleAnswer.length());
-    final DependencyInfo dependencyInfo = dlg.getDependencyInfo();
-    if (dependencyInfo != null) {
-      answerPlaceholder.setPlaceholderDependency(
-        AnswerPlaceholderDependency.create(answerPlaceholder, dependencyInfo.getDependencyPath(), dependencyInfo.isVisible()));
-    }
 
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction(() -> document.insertString(offset, defaultPlaceholderText));
@@ -155,6 +148,6 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
-    return new CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder);
+    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder);
   }
 }

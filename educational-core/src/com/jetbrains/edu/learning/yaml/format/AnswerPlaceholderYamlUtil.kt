@@ -6,16 +6,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.negativeParamNotAllowedMessage
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY)
+@JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT)
 @JsonDeserialize(builder = AnswerPlaceholderBuilder::class)
 abstract class AnswerPlaceholderYamlMixin {
   @JsonProperty(OFFSET)
@@ -32,15 +30,12 @@ abstract class AnswerPlaceholderYamlMixin {
     throw NotImplementedInMixin()
   }
 
-  @JsonProperty(DEPENDENCY)
-  private var myPlaceholderDependency: AnswerPlaceholderDependency? = null
 }
 
 @JsonPOJOBuilder(withPrefix = "")
 open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
                                     @JsonProperty(LENGTH) val length: Int,
-                                    @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-                                    @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
+                                    @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     return createPlaceholder()
@@ -58,7 +53,6 @@ open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
     placeholder.length = length
     placeholder.placeholderText = placeholderText
     placeholder.offset = offset
-    placeholder.placeholderDependency = dependency
     return placeholder
   }
 }

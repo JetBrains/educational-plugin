@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import javax.swing.tree.TreePath
 
@@ -153,7 +152,7 @@ object NavigationUtils {
   fun navigateToFirstFailedAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
     editor.project ?: return
     for (answerPlaceholder in taskFile.answerPlaceholders) {
-      if (answerPlaceholder.status != CheckStatus.Failed || !answerPlaceholder.isVisible) continue
+      if (answerPlaceholder.status != CheckStatus.Failed) continue
       navigateToAnswerPlaceholder(editor, answerPlaceholder)
       break
     }
@@ -170,8 +169,7 @@ object NavigationUtils {
 
   @JvmStatic
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
-    val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isVisible }
-    val firstAnswerPlaceholder = EduUtils.getFirst(visiblePlaceholders) ?: return
+    val firstAnswerPlaceholder = EduUtils.getFirst(taskFile.answerPlaceholders) ?: return
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
@@ -233,18 +231,12 @@ object NavigationUtils {
       return
     }
 
-    // We need update dependencies before file opening to find out which placeholders are visible
-    PlaceholderDependencyManager.updateDependentPlaceholders(project, task)
-
     @Suppress("NAME_SHADOWING")
     var fileToActivate : VirtualFile? = fileToActivate
 
     for ((_, taskFile) in taskFiles) {
       if (taskFile.answerPlaceholders.isEmpty()) continue
-      // We want to open task file only if it has `new` placeholder(s).
-      // Currently, we consider that `new` placeholder is a visible placeholder,
-      // i.e. placeholder without dependency or with visible dependency.
-      if (!taskFile.isVisible || taskFile.answerPlaceholders.all { !it.isVisible }) continue
+      if (!taskFile.isVisible) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       if (fileToActivate == null) {
@@ -286,7 +278,7 @@ object NavigationUtils {
       return
     }
 
-    val placeholder = taskFile.answerPlaceholders.firstOrNull { it.isVisible } ?: return
+    val placeholder = taskFile.answerPlaceholders.firstOrNull() ?: return
     val offsets = EduUtils.getPlaceholderOffsets(placeholder)
 
     with(editor) {

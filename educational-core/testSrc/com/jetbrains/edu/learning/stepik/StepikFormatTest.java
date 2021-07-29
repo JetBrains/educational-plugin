@@ -288,21 +288,6 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals("type your name", taskFile.getText().substring(offset, offset + length));
   }
 
-  public void testOptionsPlaceholderDependency() throws IOException {
-    final PyCharmStepOptions options = getStepOptions();
-    final List<TaskFile> files = options.getFiles();
-    final TaskFile taskFile = files.get(0);
-
-    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    assertEquals(1, placeholders.size());
-    final AnswerPlaceholderDependency dependency = placeholders.get(0).getPlaceholderDependency();
-    assertNotNull(dependency);
-    assertEquals("mysite/settings.py", dependency.getFileName());
-    assertEquals("task1", dependency.getTaskName());
-    assertEquals("lesson1", dependency.getLessonName());
-    assertEquals(1, dependency.getPlaceholderIndex());
-  }
-
   public void testTaskStatuses() throws IOException {
     String jsonText = loadJsonText();
     final ObjectMapper mapper = StepikConnector.getInstance().getObjectMapper();

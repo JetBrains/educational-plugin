@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of answer placeholders which user should type in
@@ -28,10 +26,6 @@ public class AnswerPlaceholder {
   private int myLength = -1;
   private int myIndex = -1;
   private MyInitialState myInitialState;
-  @Nullable
-  private AnswerPlaceholderDependency myPlaceholderDependency = null;
-  private boolean myIsInitializedFromDependency = false;
-  private List<String> myHints = new ArrayList<>();
   private String myPossibleAnswer = "";  // could be empty in course creator file
   private String myPlaceholderText;     //  could be empty in student file (including task file preview in course creator mode)
   private boolean mySelected = false;
@@ -51,9 +45,6 @@ public class AnswerPlaceholder {
   public void initAnswerPlaceholder(final TaskFile file, boolean isRestarted) {
     setTaskFile(file);
     if (!isRestarted) {
-      if (myPlaceholderDependency != null) {
-        myPlaceholderDependency.setAnswerPlaceholder(this);
-      }
       setInitialState(new MyInitialState(myOffset, myLength));
       myStatus = file.getTask().getStatus();
     }
@@ -122,7 +113,6 @@ public class AnswerPlaceholder {
     }
     myLength = myInitialState.getLength();
     myStatus = CheckStatus.Unchecked;
-    myIsInitializedFromDependency = false;
   }
 
   public CheckStatus getStatus() {
@@ -162,10 +152,6 @@ public class AnswerPlaceholder {
     myStudentAnswer = studentAnswer;
   }
 
-  public boolean isVisible() {
-    return myPlaceholderDependency == null || myPlaceholderDependency.isVisible() || !isInitializedFromDependency();
-  }
-
   public static class MyInitialState {
     private int length = -1;
     private int offset = -1;
@@ -198,26 +184,6 @@ public class AnswerPlaceholder {
   boolean isValid(int textLength) {
     int end = getEndOffset();
     return getOffset() >= 0 && getLength() >= 0 && end <= textLength;
-  }
-
-  @Nullable
-  public AnswerPlaceholderDependency getPlaceholderDependency() {
-    return myPlaceholderDependency;
-  }
-
-  public void setPlaceholderDependency(@Nullable AnswerPlaceholderDependency placeholderDependency) {
-    myPlaceholderDependency = placeholderDependency;
-    if (placeholderDependency != null) {
-      myPlaceholderDependency.setAnswerPlaceholder(this);
-    }
-  }
-
-  public boolean isInitializedFromDependency() {
-    return myIsInitializedFromDependency;
-  }
-
-  public void setInitializedFromDependency(boolean initializedFromDependency) {
-    myIsInitializedFromDependency = initializedFromDependency;
   }
 
   public int getEndOffset() {

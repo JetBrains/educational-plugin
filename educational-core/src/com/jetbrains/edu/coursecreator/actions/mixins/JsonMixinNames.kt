@@ -49,7 +49,6 @@ object JsonMixinNames {
   const val LENGTH = "length"
   const val PLACEHOLDER_TEXT = "placeholder_text"
   const val POSSIBLE_ANSWER = "possible_answer"
-  const val DEPENDENCY = "dependency"
 
   // remote study item
   const val UPDATE_DATE = "update_date"

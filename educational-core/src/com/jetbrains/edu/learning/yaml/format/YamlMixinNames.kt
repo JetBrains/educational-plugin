@@ -97,21 +97,11 @@ object YamlMixinNames {
   const val OFFSET = "offset"
   const val LENGTH = "length"
   const val PLACEHOLDER_TEXT = "placeholder_text"
-  const val DEPENDENCY = "dependency"
-  const val INIT_FROM_DEPENDENCY = "initialized_from_dependency"
   const val STUDENT_ANSWER = "student_answer"
   const val INITIAL_STATE = "initial_state"
   const val POSSIBLE_ANSWER = "possible_answer"
   const val ENCRYPTED_POSSIBLE_ANSWER = "encrypted_possible_answer"
   const val SELECTED = "selected"
-
-  // placeholder dependency
-  const val SECTION = "section"
-  const val LESSON = "lesson"
-  const val TASK = "task"
-  const val FILE = "file"
-  const val PLACEHOLDER = "placeholder"
-  const val IS_VISIBLE = "is_visible"
 
   // remote study item
   const val ID = "id"

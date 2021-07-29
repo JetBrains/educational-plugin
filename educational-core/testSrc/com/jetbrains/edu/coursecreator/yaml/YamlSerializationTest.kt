@@ -159,41 +159,6 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
-  fun `test edu task with dependency`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        eduTask {
-          taskFile("Test.java", "<p>f()</p>") {
-            placeholder(0, "test")
-          }
-        }
-      }
-      lesson {
-        eduTask {
-          taskFile("Test.java", "<p>f()</p>") {
-            placeholder(0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
-          }
-        }
-      }
-    }.findTask("lesson2", "task1")
-    doTest(task, """
-    |type: edu
-    |files:
-    |- name: Test.java
-    |  visible: true
-    |  placeholders:
-    |  - offset: 0
-    |    length: 3
-    |    placeholder_text: type here
-    |    dependency:
-    |      lesson: lesson1
-    |      task: task1
-    |      file: Test.java
-    |      placeholder: 1
-    |      is_visible: true
-    |""".trimMargin())
-  }
-
   fun `test output task`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {

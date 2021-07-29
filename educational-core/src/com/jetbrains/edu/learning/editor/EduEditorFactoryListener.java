@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -52,7 +51,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       final Point point = e.getMouseEvent().getPoint();
       final LogicalPosition pos = editor.xyToLogicalPosition(point);
       final AnswerPlaceholder answerPlaceholder = myTaskFile.getAnswerPlaceholder(editor.logicalPositionToOffset(pos));
-      if (answerPlaceholder == null || !answerPlaceholder.isVisible() || answerPlaceholder.getSelected()) {
+      if (answerPlaceholder == null || answerPlaceholder.getSelected()) {
         return;
       }
       final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder);
@@ -87,7 +86,6 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
 
         boolean isStudyProject = course.isStudy();
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
-          PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
           PlaceholderPainter.showPlaceholders(project, taskFile, editor);
           if (isStudyProject) {

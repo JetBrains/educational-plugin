@@ -100,19 +100,9 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
         initTask(project, course, item, info, withSources = false)
       }
 
-      // If we insert new task between `task1` and `task2`
-      // we should change target of all placeholder dependencies of `task2` from task file of `task1`
-      // to the corresponding task file in new task
-      parentItem.getTaskList().getOrNull(info.index - 1)
-        ?.placeholderDependencies
-        ?.forEach { dependency ->
-          if (dependency.resolve(course)?.taskFile?.task == prevTask) {
-            val placeholder = dependency.answerPlaceholder
-            placeholder.placeholderDependency = dependency.copy(taskName = item.name)
-          }
-        }
       item.init(course, parentItem, false)
-    } else {
+    }
+    else {
       initTask(project, course, item, info)
     }
   }
@@ -184,23 +174,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     if (state != null) {
       newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
     }
-    val taskFile = taskFile
-    val task = taskFile.task
-    val lesson = task.lesson
-    val sectionName = (lesson.container as? Section)?.name
-    newPlaceholder.placeholderDependency = AnswerPlaceholderDependency(newPlaceholder, sectionName, lesson.name, task.name, taskFile.name, index, false)
     return newPlaceholder
   }
-
-  private fun AnswerPlaceholderDependency.copy(
-    answerPlaceholder: AnswerPlaceholder = this.answerPlaceholder,
-    sectionName: String? = this.sectionName,
-    lessonName: String = this.lessonName,
-    taskName: String = this.taskName,
-    fileName: String = this.fileName,
-    placeholderIndex: Int = this.placeholderIndex,
-    isVisible: Boolean = this.isVisible
-  ): AnswerPlaceholderDependency =
-    AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, isVisible)
 
 }

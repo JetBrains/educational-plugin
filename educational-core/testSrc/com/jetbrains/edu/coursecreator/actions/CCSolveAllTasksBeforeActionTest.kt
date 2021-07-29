@@ -34,7 +34,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       lesson("lesson2") {
         eduTask("task3") {
           taskFile("Foo.kt", "fn foo() = <p>TODO()</p> + <p>TODO()</p>") {
-            placeholder(0, "456", dependency = "lesson1#task1#Foo.kt#1")
+            placeholder(0, "456")
             placeholder(1, "789")
           }
         }
@@ -82,7 +82,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
         eduTask("task2") {
           taskFile("Foo.kt", "fn foo() = <p>TODO()</p>") {
-            placeholder(0, "123", dependency = "lesson1#task1#Foo.kt#1")
+            placeholder(0, "123")
           }
           taskFile("Bar.kt", "fn bar(<p>params</p>) = <p>TODO()</p>") {
             placeholder(0, "a: Int")
@@ -92,14 +92,14 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
         eduTask("task3") {
           taskFile("Foo.kt", "fn foo() = <p>TODO()</p>") {
-            placeholder(0, "123", dependency = "lesson1#task2#Foo.kt#1")
+            placeholder(0, "123")
           }
           taskFile("Bar.kt", "fn bar(<p>params</p>) = <p>TODO()</p>") {
-            placeholder(0, "b: Int", dependency = "lesson1#task2#Bar.kt#1")
-            placeholder(1, "b + 10", dependency = "lesson1#task2#Bar.kt#2")
+            placeholder(0, "b: Int")
+            placeholder(1, "b + 10")
           }
           taskFile("Baz.kt", "fn baz() = <p>TODO()</p> + <p>TODO()</p>") {
-            placeholder(0, "456", dependency = "lesson1#task2#Foo.kt#1")
+            placeholder(0, "456")
             placeholder(1, "789")
           }
         }

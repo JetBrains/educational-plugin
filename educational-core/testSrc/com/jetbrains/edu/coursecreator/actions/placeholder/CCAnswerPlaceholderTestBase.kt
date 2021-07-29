@@ -60,18 +60,6 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
         assertEquals(placeholderExpected.placeholderText, placeholderActual.placeholderText)
         assertEquals(placeholderExpected.taskFile.text, placeholderActual.taskFile.text)
         assertEquals(placeholderExpected.taskFile.name, placeholderActual.taskFile.name)
-
-        val expectedDependency = placeholderExpected.placeholderDependency
-        if (expectedDependency == null) {
-          assertNull(placeholderActual.placeholderDependency)
-        }
-        else {
-          val actualDependency = placeholderActual.placeholderDependency ?: error("Answer placeholder dependency should not be null")
-          assertEquals(expectedDependency.fileName, actualDependency.fileName)
-          assertEquals(expectedDependency.taskName, actualDependency.taskName)
-          assertEquals(expectedDependency.lessonName, actualDependency.lessonName)
-          assertEquals(expectedDependency.isVisible, actualDependency.isVisible)
-        }
       }
     }
   }

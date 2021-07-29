@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -493,26 +492,6 @@ class StepikCompareCourseTest : EduTestCase() {
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.length = 1
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
-    checkChangedItems(localCourse, courseFromServer, expectedInfo)
-  }
-
-  fun `test add placeholder dependency`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-          taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "Foo")
-          }
-        }
-      }
-    }.asRemote()
-
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
-    changedPlaceholder.placeholderDependency = AnswerPlaceholderDependency()
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)

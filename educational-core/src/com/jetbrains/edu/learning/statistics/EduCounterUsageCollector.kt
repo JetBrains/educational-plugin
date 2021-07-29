@@ -31,8 +31,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   enum class TaskNavigationPlace {
     CHECK_ALL_NOTIFICATION,
     TASK_DESCRIPTION_TOOLBAR,
-    CHECK_PANEL,
-    UNRESOLVED_DEPENDENCY_NOTIFICATION
+    CHECK_PANEL
   }
 
   enum class LinkType {

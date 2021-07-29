@@ -255,25 +255,10 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
   private fun AnswerPlaceholder.isEqualTo(otherPlaceholder: AnswerPlaceholder): Boolean {
     if (this === otherPlaceholder) return true
 
-    val placeholderDependencyEqual = placeholderDependency?.isEqualTo(otherPlaceholder.placeholderDependency) ?:
-                                     (otherPlaceholder.placeholderDependency == null)
-
     return offset == otherPlaceholder.offset &&
            length == otherPlaceholder.length &&
            index == otherPlaceholder.index &&
-           placeholderText == otherPlaceholder.placeholderText &&
-           placeholderDependencyEqual
-  }
-
-  private fun AnswerPlaceholderDependency.isEqualTo(otherDependency: AnswerPlaceholderDependency?): Boolean {
-    if (this === otherDependency) return true
-    if (otherDependency == null) return false
-
-    return isVisible == otherDependency.isVisible &&
-           fileName == otherDependency.fileName &&
-           lessonName == otherDependency.lessonName &&
-           placeholderIndex == otherDependency.placeholderIndex &&
-           sectionName == otherDependency.sectionName
+           placeholderText == otherPlaceholder.placeholderText
   }
 
   companion object {

@@ -333,31 +333,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, initialState.length)
   }
 
-  fun `test placeholder init from dependency`() {
-    val yamlContent = """
-    |type: edu
-    |files:
-    |- name: Test.java
-    |  placeholders:
-    |  - offset: 0
-    |    length: 3
-    |    placeholder_text: type here
-    |    initialized_from_dependency: true
-    |    status: Solved
-    |    possible_answer: answer
-    |    student_answer: student answer
-    |    initial_state:
-    |      offset: 0
-    |      length: 1
-    |""".trimMargin()
-
-    val task = deserializeTask(yamlContent)
-    assertTrue(task is EduTask)
-    val taskFile = task.taskFiles.values.first()
-    val placeholder = taskFile.answerPlaceholders.first()
-    assertEquals(true, placeholder.isInitializedFromDependency)
-  }
-
   fun `test placeholder possible answer`() {
     val yamlContent = """
     |type: edu

@@ -214,30 +214,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
-  fun `test placeholder dependencies`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      frameworkLesson {
-        eduTask {
-          taskFile("fizz.kt", """
-          fn fizzz() = <p>TODO()</p>
-          fn buzz() = <p>TODO()</p>
-        """)
-        }
-        eduTask {
-          taskFile("fizz.kt", """
-          fn fizzz() = <p>TODO()</p>
-          fn buzz() = <p>TODO()</p>
-        """) {
-            placeholder(0, dependency = "lesson1#task1#fizz.kt#1")
-            placeholder(1, dependency = "lesson1#task1#fizz.kt#2")
-          }
-        }
-      }
-    }
-    course.description = "my summary"
-    doTest()
-  }
-
   fun `test throw exception if placeholder is broken`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {

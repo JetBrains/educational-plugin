@@ -87,7 +87,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
-            placeholder(0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
+            placeholder(0, placeholderText = "type here")
           }
         }
       }
@@ -104,13 +104,6 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
     |    length: 3
     |    <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
     |    placeholder_text: type here
-    |    dependency:
-    |      lesson: lesson1
-    |      task: task1
-    |      file: Test.java
-    |      <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
-    |      placeholder: 1
-    |      is_visible: true
     |""".trimMargin("|"))
   }
 

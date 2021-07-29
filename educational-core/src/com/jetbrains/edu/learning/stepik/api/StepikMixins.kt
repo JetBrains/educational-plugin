@@ -8,7 +8,10 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -38,7 +41,6 @@ const val IS_VISIBLE = "is_visible"
 const val TEXT = "text"
 const val OFFSET = "offset"
 const val LENGTH = "length"
-const val DEPENDENCY = "dependency"
 const val HINTS = "hints"
 const val POSSIBLE_ANSWER = "possible_answer"
 const val PLACEHOLDER_TEXT = "placeholder_text"
@@ -169,9 +171,6 @@ class StepikAnswerPlaceholderMixin {
   @JsonProperty(LENGTH)
   private var myLength = -1
 
-  @JsonProperty(DEPENDENCY)
-  lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
-
   @JsonProperty(HINTS)
   lateinit var myHints: List<String>
 
@@ -183,27 +182,6 @@ class StepikAnswerPlaceholderMixin {
 
   @JsonProperty(SELECTED)
   private var mySelected = false
-}
-
-class StepikAnswerPlaceholderDependencyMixin {
-
-  @JsonProperty(SECTION)
-  lateinit var mySectionName: String
-
-  @JsonProperty(LESSON)
-  lateinit var myLessonName: String
-
-  @JsonProperty(TASK)
-  lateinit var myTaskName: String
-
-  @JsonProperty(FILE)
-  lateinit var myFileName: String
-
-  @JsonProperty(PLACEHOLDER)
-  var myPlaceholderIndex: Int = 0
-
-  @JsonProperty(IS_VISIBLE)
-  var myIsVisible = true
 }
 
 class StepikFeedbackLinkMixin {

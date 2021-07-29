@@ -188,68 +188,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Solved))
   }
 
-  fun `test framework lesson solutions with dependencies`() {
-    configureSubmissionsResponse(
-      mapOf(1 to "submissions_response_with_placeholders_1.json", 2 to "submissions_response_with_placeholders_2.json"))
-    val course = courseWithFiles(id = 1) {
-      frameworkLesson("lesson1") {
-        eduTask("task1", stepId = 1) {
-          taskFile("fizz.kt", "fun fizz() = <p>\"Fizz\"</p>") {
-            placeholder(0, placeholderText = "TODO()")
-          }
-        }
-        eduTask("task2", stepId = 2) {
-          taskFile("foo.kt", "fun foo() = <p>\"Foo\"</p>") {
-            placeholder(0, placeholderText = "TODO()", dependency = "lesson1#task1#fizz.kt#1")
-          }
-        }
-      }
-    }
-
-    StepikSolutionsLoader.getInstance(project).loadSolutions(null, course)
-
-    UIUtil.dispatchAllInvocationEvents()
-
-    fileTree {
-      dir("lesson1") {
-        dir("task") {
-          file("fizz.kt", """
-            // comment from task 1
-            fun fizz() = "Fizz"
-          """)
-        }
-        dir("task1") {
-          file("task.html")
-        }
-        dir("task2") {
-          file("task.html")
-        }
-      }
-    }.assertEquals(rootDir, myFixture)
-
-    getFirstTask(course)!!.openTaskFileInEditor("fizz.kt")
-    myFixture.testAction(NextTaskAction())
-
-    fileTree {
-      dir("lesson1") {
-        dir("task") {
-          file("foo.kt", """
-          // comment from task 2
-          fun foo() = "Foo"
-          """)
-        }
-        dir("task1") {
-          file("task.html")
-        }
-        dir("task2") {
-          file("task.html")
-        }
-      }
-    }.assertEquals(rootDir, myFixture)
-
-    checkTaskStatuses(course.allTasks, listOf(CheckStatus.Failed, CheckStatus.Solved))
-  }
-
   private fun createStepikCourse(): EduCourse {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage,

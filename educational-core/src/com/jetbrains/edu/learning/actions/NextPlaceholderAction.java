@@ -33,7 +33,7 @@ public class NextPlaceholderAction extends PlaceholderNavigationAction {
     if (!EduUtils.indexIsValid(startIndex, placeholders)) return null;
 
     for (AnswerPlaceholder placeholder : placeholders.subList(startIndex, placeholders.size())) {
-      if (placeholder.getOffset() > offset && placeholder.isVisible()) {
+      if (placeholder.getOffset() > offset) {
         return placeholder;
       }
     }

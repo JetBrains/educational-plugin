@@ -137,7 +137,6 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
-    mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
   }
 
   private fun addRemoteMixIns(mapper: ObjectMapper) {

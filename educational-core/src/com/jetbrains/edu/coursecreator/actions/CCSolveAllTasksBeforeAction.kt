@@ -69,7 +69,6 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction(
         continue
       }
       for (placeholder in taskFile.answerPlaceholders) {
-        if (placeholder.isInitializedFromDependency) continue
         val possibleAnswer = placeholder.possibleAnswer
         val start = placeholder.offset
         val end = placeholder.endOffset

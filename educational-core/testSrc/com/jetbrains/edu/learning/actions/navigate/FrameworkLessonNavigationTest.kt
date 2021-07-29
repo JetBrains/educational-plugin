@@ -227,8 +227,8 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           fun fizzz() = <p>TODO()</p>
           fun buzz() = <p>TODO()</p>
         """) {
-            placeholder(0, dependency = "lesson1#task1#fizz.kt#1")
-            placeholder(1, dependency = "lesson1#task1#fizz.kt#2")
+            placeholder(0)
+            placeholder(1)
           }
         }
       }
@@ -600,7 +600,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
         taskFile("fizz.kt", """
           fun fizz() = <p>TODO()</p>
         """) {
-          placeholder(0, dependency = "lesson1#task1#fizz.kt#1", isVisible = false)
+          placeholder(0)
         }
         taskFile("buzz.kt", """
           fun buzz() = <p>TODO()</p>
@@ -610,8 +610,8 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
         taskFile("fizzBuzz.kt", """
           fun fizzBuzz() = <p>TODO()</p> + <p>TODO()</p>
         """) {
-          placeholder(0, dependency = "lesson1#task2#fizz.kt#1")
-          placeholder(1, dependency = "lesson1#task2#buzz.kt#1")
+          placeholder(0)
+          placeholder(1)
         }
       }
     }

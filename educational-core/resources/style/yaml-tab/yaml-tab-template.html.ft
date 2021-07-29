@@ -268,54 +268,6 @@ Here's a description of the format for each course item.
     <td>Text which will be shown to learner in place of the placeholder</td>
     <td>String</td>
   </tr>
-  <tr>
-    <td>dependency</td>
-    <td>Dependency on another placeholder</td>
-    <td><span class="enum">placeholder dependency</span> in format described below</td>
-  </tr>
-  </tbody>
-</table>
-
-<h4 id="placeholder-dependency"><span class="enum">placeholder dependency</span> structure</h4>
-<table class="yaml-format-table">
-  <tbody>
-  <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>Value</th>
-  </tr>
-  <tr>
-    <td>section</td>
-    <td>Section folder name if placeholder dependency is inside a section</td>
-    <td>String</td>
-  </tr>
-  <tr>
-    <td>lesson</td>
-    <td>Lesson directory name</td>
-    <td>String</td>
-  </tr>
-  <tr>
-    <td>task</td>
-    <td>Task directory name</td>
-    <td>String</td>
-  </tr>
-  <tr>
-    <td>file</td>
-    <td>File path relative to the directory of the task</td>
-    <td>String</td>
-  </tr>
-  <tr>
-    <td>placeholder</td>
-    <td>Placeholder index starting from 0</td>
-    <td>Number</td>
-  </tr>
-  <tr>
-    <td>is_visible</td>
-    <td>If placeholder is drawn in place of dependency</td>
-    <td><span class="enum">true</span> or <span class="enum">false</span><br>
-      Default: <span class="enum">true</span>
-    </td>
-  </tr>
   </tbody>
 </table>
 
