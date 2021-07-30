@@ -73,7 +73,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
   fun `test solve all tasks before action with framework lessons`() {
     courseWithFiles {
-      frameworkLesson("lesson1") {
+      frameworkLesson("lesson1", isTemplateBased = false) {
         eduTask("task1") {
           taskFile("Foo.kt", "fn foo() = <p>TODO()</p>") {
             placeholder(0, "123")
@@ -81,45 +81,20 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
         }
 
         eduTask("task2") {
-          taskFile("Foo.kt", "fn foo() = <p>TODO()</p>") {
-            placeholder(0, "123")
-          }
-          taskFile("Bar.kt", "fn bar(<p>params</p>) = <p>TODO()</p>") {
-            placeholder(0, "a: Int")
-            placeholder(1, "a + 10")
-          }
-        }
-
-        eduTask("task3") {
-          taskFile("Foo.kt", "fn foo() = <p>TODO()</p>") {
-            placeholder(0, "123")
-          }
-          taskFile("Bar.kt", "fn bar(<p>params</p>) = <p>TODO()</p>") {
-            placeholder(0, "b: Int")
-            placeholder(1, "b + 10")
-          }
-          taskFile("Baz.kt", "fn baz() = <p>TODO()</p> + <p>TODO()</p>") {
-            placeholder(0, "456")
-            placeholder(1, "789")
-          }
+          taskFile("Foo.kt", "fn foo() = 123")
         }
       }
     }
 
-    doTest("lesson1", "task3") {
+    doTest("lesson1", "task2") {
       dir("lesson1") {
         dir("task") {
           file("Foo.kt", "fn foo() = 123")
-          file("Bar.kt", "fn bar(a: Int) = a + 10")
-          file("Baz.kt", "fn baz() = 123 + TODO()")
         }
         dir("task1") {
           file("task.html")
         }
         dir("task2") {
-          file("task.html")
-        }
-        dir("task3") {
           file("task.html")
         }
       }
