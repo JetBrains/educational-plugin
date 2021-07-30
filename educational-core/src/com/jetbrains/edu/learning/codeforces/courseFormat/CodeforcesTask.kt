@@ -23,6 +23,7 @@ import org.jsoup.nodes.TextNode
 open class CodeforcesTask : Task() {
   open val inputFileName: String = "input.txt"
   open val outputFileName: String = "output.txt"
+  open val latestOutputFileName: String = "latest_output.txt"
 
   override fun getItemType(): String = CODEFORCES_TASK_TYPE
 

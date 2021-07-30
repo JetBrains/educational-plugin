@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.withRegistryKeyOff
@@ -51,6 +52,7 @@ class CodeforcesTaskChecker(
         is Ok -> result.value.trimEnd('\n')
         is Err -> return result.error
       }
+      GeneratorUtils.createChildFile(project, testFolder, task.latestOutputFileName, output.trimEnd('\n'))
 
       val expectedOutput = runReadAction { outputDocument.text }.trimEnd('\n')
       if (expectedOutput != output) {
