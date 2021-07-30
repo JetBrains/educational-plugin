@@ -60,7 +60,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       }
       dir("lesson2") {
         dir("task3") {
-          file("Foo.kt", "fn foo() = 123 + 789")
+          file("Foo.kt", "fn foo() = 456 + 789")
           file("task.html")
         }
         dir("task4") {

@@ -162,7 +162,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizzBuzz.kt", """
-            fun fizzBuzz() = 123 + 456
+            fun fizzBuzz() = TODO() + TODO()
           """)
         }
         dir("task1") {
@@ -291,7 +291,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       myFixture.testAction(NextTaskAction())
 
       val task2 = course.findTask("lesson1", "task2")
-      task2.openTaskFileInEditor("fizz.kt", 0)
+      task2.openTaskFileInEditor("buzz.kt", 0)
       myFixture.testAction(NextTaskAction())
     }
 
@@ -482,7 +482,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file("fizz.kt", """
-            fun fizz() = TODO()
+            fun fizz() = 123
           """)
           file("buzz.kt", """
             fun buzz() = TODO()
@@ -598,13 +598,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       }
       eduTask {
         taskFile("fizz.kt", """
-          fun fizz() = <p>TODO()</p>
+          fun fizz() = 123
+        """)
+        taskFile("buzz.kt", """
+          fun buzz() = <p>TODO()</p>
         """) {
           placeholder(0)
         }
-        taskFile("buzz.kt", """
-          fun buzz() = <p>TODO()</p>
-        """)
       }
       eduTask {
         taskFile("fizzBuzz.kt", """
