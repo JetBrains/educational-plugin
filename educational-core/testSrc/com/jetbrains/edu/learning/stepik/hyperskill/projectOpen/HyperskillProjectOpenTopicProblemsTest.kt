@@ -573,14 +573,11 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   private fun configureMockResponsesForProblems() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       when {
-        request.path.endsWith(STEPS_OF_85_TOPIC_RECOMMENDED_REQUEST_SUFFIX) -> {
-          mockResponse("steps_85_topic_recommended_response.json")
-        }
         request.path.endsWith(STEPS_OF_85_TOPIC_REQUEST_SUFFIX) -> {
           mockResponse("steps_85_topic_response.json")
         }
         request.path.endsWith(STEPS_OF_515_TOPIC_REQUEST_SUFFIX) -> {
-          mockResponse("steps_515_topic_recommended_response.json")
+          mockResponse("steps_515_topic_response.json")
         }
         else -> null
       }
@@ -597,9 +594,8 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   companion object {
-    private const val STEPS_OF_85_TOPIC_RECOMMENDED_REQUEST_SUFFIX = "/api/steps?topic=85&is_recommended=true"
     private const val STEPS_OF_85_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=85"
-    private const val STEPS_OF_515_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=515&is_recommended=true"
+    private const val STEPS_OF_515_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=515"
     private const val TOPIC_NAME = "topicName"
 
     private val step2640 = StepInfo(2640, "Packing bakeries")

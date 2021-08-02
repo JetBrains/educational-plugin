@@ -214,8 +214,7 @@ fun openNextActivity(project: Project, task: Task) {
     val stepSource = HyperskillConnector.getInstance().getStepSource(task.id)
       .onError { return@computeUnderProgress null }
     val topic = stepSource.topic ?: return@computeUnderProgress null
-    val steps = HyperskillConnector.getInstance().getRecommendedStepsForTopic(topic)
-      .onError { return@computeUnderProgress null }
+    val steps = HyperskillConnector.getInstance().getStepsForTopic(topic).onError { return@computeUnderProgress null }
     return@computeUnderProgress steps.lastOrNull()
   }
 

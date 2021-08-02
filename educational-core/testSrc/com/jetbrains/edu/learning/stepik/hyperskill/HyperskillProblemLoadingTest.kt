@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
-import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.withFeature
 
@@ -37,7 +36,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
   private fun doTest(responseFileName: String, shouldContainWarning: Boolean) {
     configureResponse(responseFileName)
     val course = createHyperskillCourse()
-    val task = course.getTopicsSection()?.getLesson(step10086.title)?.getTask(step4894.title)
+    val task = course.getTopicsSection()?.getLesson(step4894.title)?.getTask(step4894.title)
                ?: error("Can't find task from topics section")
     assertEquals(shouldContainWarning,
                  EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in task.descriptionText)
@@ -63,8 +62,9 @@ class HyperskillProblemLoadingTest : EduTestCase() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       if (request.path.endsWith(step4894.path)) {
         mockResponse(responseFileName)
-      } else if (request.path.endsWith(step10086.path)) {
-        mockResponse("step_${step10086.id}_response.json")
+      }
+      else if (request.path.endsWith("/api/steps?topic=84")) {
+        mockResponse(responseFileName)
       }
       else null
     }
@@ -74,6 +74,5 @@ class HyperskillProblemLoadingTest : EduTestCase() {
 
   companion object {
     private val step4894 = StepInfo(4894, "Violator")
-    private val step10086 = StepInfo(10086, "Type Erasure")
   }
 }

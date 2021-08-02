@@ -44,7 +44,7 @@ class HyperskillNextActivityTest : EduTestCase() {
 
     mockConnector.configureResponses(
       StepMockResponse("/api/steps?ids=2", task) { topic = 1 },
-      StepMockResponse("/api/steps?topic=1&is_recommended=true", TheoryTask()) {
+      StepMockResponse("/api/steps?topic=1", TheoryTask()) {
         topic = 1
         isCompleted = true
         id = 5
@@ -63,7 +63,7 @@ class HyperskillNextActivityTest : EduTestCase() {
 
     mockConnector.configureResponses(
       StepMockResponse("/api/steps?ids=2", task) { topic = 1 },
-      StepMockResponse("/api/steps?topic=1&is_recommended=true", ChoiceTask()) {
+      StepMockResponse("/api/steps?topic=1", ChoiceTask()) {
         topic = 1
         id = 5
         block!!.name = ChoiceTask.CHOICE_TASK_TYPE
@@ -105,8 +105,8 @@ class HyperskillNextActivityTest : EduTestCase() {
       }
     )
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith("/api/steps?topic=1&is_recommended=true")) {
-        mockResponse("steps_1_topic_recommended_response.json")
+      if (request.path.endsWith("/api/steps?topic=1")) {
+        mockResponse("steps_1_topic_response.json")
       }
       else null
     }

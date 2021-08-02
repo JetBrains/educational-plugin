@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType.TEXT
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -245,24 +246,14 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
   private fun HyperskillStepSource.getTopicAndRelatedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
     val connector = HyperskillConnector.getInstance()
     val topicId = topic ?: return Err("Topic must not be null")
-    val theoryId = topicTheory
 
-    val stepSources = if (isRecommended) {
-      connector.getRecommendedStepsForTopic(topicId).onError { return Err(it) }
-    }
-    else if (theoryId != null) {
-      val theoryStep = connector.getStepSource(theoryId).onError { return Err(it) }
-      listOf(theoryStep, this)
-    }
-    else {
-      listOf(this)
-    }
+    val stepSources = connector.getStepsForTopic(topicId)
+      .onError { return Err(it) }
+      .filter { it.isRecommended || it.id == id }
 
-    if (theoryId != null) {
-      val theoryTitle = stepSources.find { it.id == theoryId }?.title
-      if (theoryTitle != null) {
-        return Ok(Pair(theoryTitle, stepSources))
-      }
+    val theoryTitle = stepSources.find { it.block?.name == TEXT.type }?.title
+    if (theoryTitle != null) {
+      return Ok(Pair(theoryTitle, stepSources))
     }
 
     LOG.warn("Can't get theory step title for ${id} step")

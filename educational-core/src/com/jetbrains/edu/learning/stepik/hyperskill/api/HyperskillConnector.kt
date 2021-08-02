@@ -135,7 +135,7 @@ abstract class HyperskillConnector {
   private fun getStepSources(stepIds: List<Int>): Result<List<HyperskillStepSource>, String> =
     service.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
-  fun getRecommendedStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
+  fun getStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
     service.steps(topic).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
   fun getStepSource(stepId: Int): Result<HyperskillStepSource, String> =

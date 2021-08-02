@@ -37,6 +37,10 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
             file("Task.txt")
             file("task.html")
           }
+          dir(step8143.title) {
+            file("Task.txt")
+            file("task.html")
+          }
         }
       }
     }
@@ -69,6 +73,10 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
             file("task.html")
           }
           dir(step8146.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step8143.title) {
             file("Task.txt")
             file("task.html")
           }
@@ -117,6 +125,12 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
             file("task.html")
           }
           dir(step8146.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step8143.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -186,6 +200,12 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
             }
             file("task.html")
           }
+          dir(step8143.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
         }
       }
       file("build.gradle")
@@ -195,10 +215,19 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   }
 
   private fun configureMockResponsesForNotRecommendedProblem() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      if (request.path.endsWith(STEPS_OF_632_TOPIC_REQUEST_SUFFIX)) {
+        mockResponse("steps_632_topic_response.json")
+      }
+      else null
+    }
     steps.forEach { step ->
       mockConnector.withResponseHandler(testRootDisposable) { request ->
         if (request.path.endsWith(step.path)) {
           mockResponse("step_${step.id}_response.json")
+        }
+        else if (request.path.endsWith(step8143.path)) {
+          error("8143 step shouldn't be requested")
         }
         else null
       }
@@ -206,8 +235,10 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   }
 
   companion object {
+    private const val STEPS_OF_632_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=632"
     private val step8139 = StepInfo(8139, "Reading files")
     private val step8146 = StepInfo(8146, "Acronym")
+    private val step8143 = StepInfo(8143, "First")
     private val steps = listOf(step8139, step8146)
   }
 }
