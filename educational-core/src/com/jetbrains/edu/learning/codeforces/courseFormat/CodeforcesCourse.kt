@@ -53,7 +53,7 @@ open class CodeforcesCourse : Course {
     participantsNumber = contestParameters.participantsNumber
   }
 
-  override fun getIcon(): Icon = EducationalCoreIcons.Codeforces
+  override fun getIcon(): Icon = EducationalCoreIcons.CODEFORCES_SMALL
   override fun getId(): Int = myId
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
   override fun getCheckAction(): CheckAction = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
