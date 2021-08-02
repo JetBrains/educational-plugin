@@ -41,9 +41,23 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
   companion object {
     const val THEORY = "Theory"
 
-    class StepInfo(val id: Int, val title: String) {
-      val path: String
+    open class StepInfo(val id: Int, private val stepTitle: String? = null) {
+      open val file: String
+        get() = "step_${id}_response.json"
+
+      open val path: String
         get() = "/api/steps?ids=$id"
+
+      val title: String
+        get() = stepTitle ?: error("Title must be specified for step")
+    }
+
+    class TopicInfo(id: Int) : StepInfo(id) {
+      override val file: String
+        get() = "steps_${id}_topic_response.json"
+
+      override val path: String
+        get() = "/api/steps?topic=$id"
     }
   }
 }

@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillNextActivityTest : EduTestCase() {
@@ -20,7 +22,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     createHyperskillProblemsProject()
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
-      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(2)), content)
+      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(step2.id)), content)
     }) {
       openNextActivity(project, findTask(0, 0, 1))
     }
@@ -43,17 +45,17 @@ class HyperskillNextActivityTest : EduTestCase() {
     val task = findTask(0, 0, 1)
 
     mockConnector.configureResponses(
-      StepMockResponse("/api/steps?ids=2", task) { topic = 1 },
-      StepMockResponse("/api/steps?topic=1", TheoryTask()) {
-        topic = 1
+      StepMockResponse(step2.path, task) { topic = topic1.id },
+      StepMockResponse(topic1.path, TheoryTask()) {
+        topic = topic1.id
         isCompleted = true
-        id = 5
+        id = step5.id
         block!!.name = TheoryTask.THEORY_TASK_TYPE
       }
     )
 
     openNextActivity(project, task)
-    assertEquals(topicCompletedLink(1), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
+    assertEquals(topicCompletedLink(topic1.id), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
   }
 
   fun `test next activity unsupported in IDE`() {
@@ -62,10 +64,10 @@ class HyperskillNextActivityTest : EduTestCase() {
     val task = findTask(0, 0, 1)
 
     mockConnector.configureResponses(
-      StepMockResponse("/api/steps?ids=2", task) { topic = 1 },
-      StepMockResponse("/api/steps?topic=1", ChoiceTask()) {
-        topic = 1
-        id = 5
+      StepMockResponse(step2.path, task) { topic = topic1.id },
+      StepMockResponse(topic1.path, ChoiceTask()) {
+        topic = topic1.id
+        id = step5.id
         block!!.name = ChoiceTask.CHOICE_TASK_TYPE
       }
     )
@@ -78,35 +80,35 @@ class HyperskillNextActivityTest : EduTestCase() {
     loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
-    val nextStepId = 5
+    val nextStepId = step5.id
 
     mockConnector.configureResponses(
-      StepMockResponse("/api/steps?ids=2", task) {
-        topic = 1
-        id = 2
-        topicTheory = 11
-        title = "Test Code Task"
+      StepMockResponse(step2.path, task) {
+        topic = topic1.id
+        id = step2.id
+        topicTheory = step11.id
+        title = step2.title
       },
-      StepMockResponse("/api/steps?ids=5", task) {
+      StepMockResponse(step5.path, task) {
         block!!.name = CodeTask.CODE_TASK_TYPE
-        topic = 1
+        topic = topic1.id
         id = nextStepId
-        topicTheory = 11
-        title = "Test Code Task 2"
+        topicTheory = step11.id
+        title = step5.title
         isRecommended = true
       },
-      StepMockResponse("/api/steps?ids=11", TheoryTask()) {
+      StepMockResponse(step11.path, TheoryTask()) {
         block!!.name = TheoryTask.THEORY_TASK_TYPE
-        topic = 1
-        id = 11
-        topicTheory = 11
-        title = "Test Topic Name"
+        topic = topic1.id
+        id = step11.id
+        topicTheory = step11.id
+        title = step11.title
         isRecommended = true
       }
     )
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith("/api/steps?topic=1")) {
-        mockResponse("steps_1_topic_response.json")
+      if (request.path.endsWith(topic1.path)) {
+        mockResponse(topic1.file)
       }
       else null
     }
@@ -119,11 +121,11 @@ class HyperskillNextActivityTest : EduTestCase() {
   private fun createHyperskillProblemsProject() {
     hyperskillCourseWithFiles {
       section(HYPERSKILL_TOPICS) {
-        lesson("Test Topic Name") {
-          theoryTask("Theory", stepId = 11) {
+        lesson(step11.title) {
+          theoryTask("Theory", stepId = step11.id) {
             taskFile("Task.txt")
           }
-          codeTask("Test Code Task", stepId = 2) {
+          codeTask(step2.title, stepId = step2.id) {
             taskFile("Task.txt")
           }
         }
@@ -142,4 +144,11 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
+
+  companion object {
+    private val step2 = StepInfo(2, "Test Code Task")
+    private val step5 = StepInfo(5, "Test Code Task 2")
+    private val step11 = StepInfo(11, "Test Topic Name")
+    private val topic1 = TopicInfo(1)
+  }
 }

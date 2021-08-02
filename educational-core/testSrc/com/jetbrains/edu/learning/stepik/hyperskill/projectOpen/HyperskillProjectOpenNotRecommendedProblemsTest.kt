@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -216,18 +217,15 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
 
   private fun configureMockResponsesForNotRecommendedProblem() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(STEPS_OF_632_TOPIC_REQUEST_SUFFIX)) {
-        mockResponse("steps_632_topic_response.json")
+      if (request.path.endsWith(step8143.path)) {
+        error("8143 step shouldn't be requested")
       }
       else null
     }
-    steps.forEach { step ->
+    requestedInformation.forEach { information ->
       mockConnector.withResponseHandler(testRootDisposable) { request ->
-        if (request.path.endsWith(step.path)) {
-          mockResponse("step_${step.id}_response.json")
-        }
-        else if (request.path.endsWith(step8143.path)) {
-          error("8143 step shouldn't be requested")
+        if (request.path.endsWith(information.path)) {
+          mockResponse(information.file)
         }
         else null
       }
@@ -235,10 +233,10 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   }
 
   companion object {
-    private const val STEPS_OF_632_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=632"
     private val step8139 = StepInfo(8139, "Reading files")
     private val step8146 = StepInfo(8146, "Acronym")
     private val step8143 = StepInfo(8143, "First")
-    private val steps = listOf(step8139, step8146)
+    private val topic632 = TopicInfo(632)
+    private val requestedInformation = listOf(step8139, step8146, topic632)
   }
 }

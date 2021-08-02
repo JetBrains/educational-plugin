@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProblemLoadingTest : EduTestCase() {
@@ -63,7 +64,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
       if (request.path.endsWith(step4894.path)) {
         mockResponse(responseFileName)
       }
-      else if (request.path.endsWith("/api/steps?topic=84")) {
+      else if (request.path.endsWith(topic84.path)) {
         mockResponse(responseFileName)
       }
       else null
@@ -74,5 +75,6 @@ class HyperskillProblemLoadingTest : EduTestCase() {
 
   companion object {
     private val step4894 = StepInfo(4894, "Violator")
+    private val topic84 = TopicInfo(84)
   }
 }

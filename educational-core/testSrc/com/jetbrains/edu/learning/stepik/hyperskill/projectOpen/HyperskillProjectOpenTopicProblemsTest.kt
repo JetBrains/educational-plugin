@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -571,22 +572,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   private fun configureMockResponsesForProblems() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      when {
-        request.path.endsWith(STEPS_OF_85_TOPIC_REQUEST_SUFFIX) -> {
-          mockResponse("steps_85_topic_response.json")
-        }
-        request.path.endsWith(STEPS_OF_515_TOPIC_REQUEST_SUFFIX) -> {
-          mockResponse("steps_515_topic_response.json")
-        }
-        else -> null
-      }
-    }
-
-    steps.forEach { step ->
+    requestedInformation.forEach { information ->
       mockConnector.withResponseHandler(testRootDisposable) { request ->
-        if (request.path.endsWith(step.path)) {
-          mockResponse("step_${step.id}_response.json")
+        if (request.path.endsWith(information.path)) {
+          mockResponse(information.file)
         }
         else null
       }
@@ -594,8 +583,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   companion object {
-    private const val STEPS_OF_85_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=85"
-    private const val STEPS_OF_515_TOPIC_REQUEST_SUFFIX = "/api/steps?topic=515"
     private const val TOPIC_NAME = "topicName"
 
     private val step2640 = StepInfo(2640, "Packing bakeries")
@@ -604,6 +591,9 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private val step9886 = StepInfo(9886, "Pets in boxes")
     private val step10960 = StepInfo(10960, "Web calculator")
     private val step13292 = StepInfo(13292, "Posting and deleting data via REST")
-    private val steps = listOf(step2640, step2641, step9455, step9886, step10960, step13292)
+    private val topic85 = TopicInfo(85)
+    private val topic515 = TopicInfo(515)
+
+    private val requestedInformation = listOf(step2640, step2641, step9455, step9886, step10960, step13292, topic85, topic515)
   }
 }
