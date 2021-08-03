@@ -87,7 +87,7 @@ object CodeforcesContestConnector {
       val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
       val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
-      val isRegistrationOpen = tableRow[5].getElementsByClass("countdown").isNotEmpty()
+      val isRegistrationOpen = tableRow[5].getElementsByTag("a").isNotEmpty()
       val participantsNumber = parseParticipantsNumber(tableRow[5])
       val duration = Duration.ofHours(contestLength[0]).plus(Duration.ofMinutes(contestLength[1]))
       val codeforcesCourse = ContestParameters(contestId, name = contestName, endDateTime = startDate + duration, startDate = startDate,
