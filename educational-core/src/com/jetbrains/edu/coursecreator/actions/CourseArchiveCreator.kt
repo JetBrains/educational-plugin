@@ -102,7 +102,7 @@ abstract class CourseArchiveCreator(
     course.pluginDependencies = ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
       .map {
         PluginInfo(it.pluginId,
-                   PluginManager.getInstance().findEnabledPlugin(PluginId.getId(it.pluginId))?.name,
+                   PluginManager.getInstance().findEnabledPlugin(PluginId.getId(it.pluginId))?.name ?: it.pluginId,
                    it.minVersion,
                    it.maxVersion)
       }
