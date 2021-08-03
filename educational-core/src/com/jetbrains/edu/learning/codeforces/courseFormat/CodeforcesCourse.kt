@@ -22,9 +22,10 @@ open class CodeforcesCourse : Course {
   var endDateTime: ZonedDateTime? = null
   var startDate: ZonedDateTime? = null
   var length: Duration = Duration.ZERO
-  var isRegistrationOpen: Boolean = false
+  var registrationLink: String? = null
   var availableLanguages: List<String> = emptyList()
   var participantsNumber: Int = 0
+  var registrationCountdown: Duration? = null
 
   @Suppress("unused") //used for deserialization
   constructor()
@@ -47,7 +48,8 @@ open class CodeforcesCourse : Course {
     updateDate = Date()
     startDate = contestParameters.startDate
     length = contestParameters.length
-    isRegistrationOpen = contestParameters.isRegistrationOpen
+    registrationLink = contestParameters.registrationLink
+    registrationCountdown = contestParameters.registrationCountdown
     availableLanguages = contestParameters.availableLanguages
     name = contestParameters.name
     participantsNumber = contestParameters.participantsNumber

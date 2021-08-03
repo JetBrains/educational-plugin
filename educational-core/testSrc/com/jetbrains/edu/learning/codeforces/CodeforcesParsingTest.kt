@@ -96,7 +96,28 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("Codeforces Round #704 (Div. 2)", firstContest.name)
     assertEquals("2021-02-23T12:05Z[UTC]", firstContest.startDate.toString())
     assertEquals(120, firstContest.length.toMinutes())
-    assertEquals(true, firstContest.isRegistrationOpen)
+    assertNotNull(firstContest.registrationCountdown)
+  }
+
+  fun testUpcomingContestsRegistrationLink() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+    assertTrue(upcomingContests.size == 4)
+
+    val firstContest = upcomingContests[3]
+    assertEquals("/contestRegistration/1488", firstContest.registrationLink)
+  }
+
+  fun testUpcomingContestsRegistrationDate() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+    assertTrue(upcomingContests.size == 4)
+
+    val firstContest = upcomingContests[3]
+    val registrationCountdown = firstContest.registrationCountdown!!
+    assertEquals(18, registrationCountdown.toDays())
   }
 
   fun testRecentContests() {
@@ -110,7 +131,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("Codeforces Round #703 (Div. 2)", firstContest.name)
     assertEquals("2021-02-18T17:35Z[UTC]", firstContest.startDate.toString())
     assertEquals(135, firstContest.length.toMinutes())
-    assertEquals(false, firstContest.isRegistrationOpen)
+    assertNull(firstContest.registrationLink)
   }
 
   fun testContestWinterTime() {

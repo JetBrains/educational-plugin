@@ -87,16 +87,43 @@ object CodeforcesContestConnector {
       val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
       val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
-      val isRegistrationOpen = tableRow[5].getElementsByTag("a").isNotEmpty()
+      val registrationLinkElement = tableRow[5].getElementsByClass("red-link").firstOrNull()
+      val isRegistrationOpen = registrationLinkElement != null
+      val registrationCountdown = parseCountdown(tableRow[5])
+      val registrationLink = if (isRegistrationOpen) registrationLinkElement?.attr("href") else null
       val participantsNumber = parseParticipantsNumber(tableRow[5])
       val duration = Duration.ofHours(contestLength[0]).plus(Duration.ofMinutes(contestLength[1]))
-      val codeforcesCourse = ContestParameters(contestId, name = contestName, endDateTime = startDate + duration, startDate = startDate,
-              length = duration, isRegistrationOpen = isRegistrationOpen, participantsNumber = participantsNumber)
-      CodeforcesCourse(codeforcesCourse)
-    } catch (e: Exception) {
+      val contestParameters = ContestParameters(contestId,
+                                                name = contestName,
+                                                endDateTime = startDate + duration,
+                                                startDate = startDate,
+                                                length = duration,
+                                                registrationLink = registrationLink,
+                                                registrationCountdown = registrationCountdown,
+                                                participantsNumber = participantsNumber)
+      CodeforcesCourse(contestParameters)
+    }
+    catch (e: Exception) {
       Logger.getInstance(this::class.java).warn(e.message)
       null
     }
+  }
+
+  private fun parseCountdown(tableRow: Element): Duration? {
+    val countdownElement = tableRow.getElementsByClass("countdown").first() ?: return null
+    val countdownTitle = countdownElement.getElementsByAttribute("title").first() ?: return null
+    val countdownValue = countdownTitle.attr("title")
+    val dateParts = countdownValue.split(":")
+    if (dateParts.size != 3) {
+      error("wrong countdown format: '$countdownValue'")
+    }
+    val hours = dateParts[0].toLong()
+    val minutes = dateParts[1].toLong()
+    val seconds = dateParts[2].toLong()
+
+    return Duration.ofHours(hours)
+      .plus(Duration.ofMinutes(minutes))
+      .plus(Duration.ofSeconds(seconds))
   }
 
   private fun parseParticipantsNumber(tableRow: Element): Int {
