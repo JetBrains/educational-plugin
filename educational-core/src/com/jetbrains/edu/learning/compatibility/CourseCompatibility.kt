@@ -78,11 +78,17 @@ sealed class CourseCompatibility {
         return null
       }
 
+      val pluginsState = InstalledPluginsState.getInstance()
+
       // TODO: O(requiredPlugins * allPlugins) because PluginManager.getPlugin takes O(allPlugins).
       //  Can be improved at least to O(requiredPlugins * log(allPlugins))
       val loadedPlugins = PluginManager.getLoadedPlugins()
       val notLoadedPlugins = requiredPlugins
         .mapNotNull {
+          if (pluginsState.wasInstalledWithoutRestart(it.id)) {
+            return@mapNotNull null
+          }
+
           val pluginDescriptor = PluginManagerCore.getPlugin(it.id)
           if (pluginDescriptor == null || pluginDescriptor !in loadedPlugins) {
             it to pluginDescriptor
@@ -92,7 +98,6 @@ sealed class CourseCompatibility {
           }
         }
 
-      val pluginsState = InstalledPluginsState.getInstance()
       val toInstallOrEnable = notLoadedPlugins.filter { (info, pluginDescriptor) ->
         // Plugin is just installed and not loaded by IDE (i.e. it requires restart)
         pluginDescriptor == null && !pluginsState.wasInstalled(info.id) ||
