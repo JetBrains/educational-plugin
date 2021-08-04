@@ -27,6 +27,8 @@ open class CodeforcesCourse : Course {
   var participantsNumber: Int = 0
   var registrationCountdown: Duration? = null
 
+  val isUpcomingContest: Boolean get() = registrationCountdown != null
+
   @Suppress("unused") //used for deserialization
   constructor()
 
