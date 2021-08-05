@@ -8,13 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TOPICS
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
-import com.jetbrains.edu.learning.stepik.hyperskill.getProblemsProjectName
 import java.util.concurrent.ConcurrentHashMap
 
 class HyperskillCourse : Course {
@@ -104,8 +101,10 @@ class HyperskillCourse : Course {
 
   fun isTaskInTopicsSection(task: Task): Boolean = getTopicsSection()?.lessons?.contains(task.lesson) == true
 
-  private fun descriptionNote(projectId: Int): String =
-    "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org/projects/$projectId</a>"
+  private fun descriptionNote(projectId: Int): String {
+    val link = "https://hyperskill.org/projects/$projectId"
+    return """<br/><br/>Learn more at <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
+  }
 
   override fun getItemType(): String = HYPERSKILL
 

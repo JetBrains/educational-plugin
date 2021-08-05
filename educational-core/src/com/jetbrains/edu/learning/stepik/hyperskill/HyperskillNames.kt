@@ -44,8 +44,9 @@ val HYPERSKILL_URL: String
   get() = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)
 
 val AUTHORISATION_CODE_URL: String
-  get() = "${HYPERSKILL_URL}oauth2/authorize/?" +
-          "client_id=$CLIENT_ID&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&grant_type=code&scope=read+write&response_type=code"
+  get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
+    URLUtil.encodeURIComponent(REDIRECT_URI)
+  }&grant_type=code&scope=read+write&response_type=code", "login")
 
 val REDIRECT_URI: String
   get() = if (EduUtils.isAndroidStudio()) {

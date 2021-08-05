@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
 
 /**
  * Fake course type for advertising JBA
@@ -23,7 +24,7 @@ class JetBrainsAcademyCourse : Course() {
      
      JetBrains Academy experience starts in your browser 
      
-     <a href="https://www.jetbrains.com/academy/?utm_source=ide&utm_content=browse-courses">Learn more</a>
+     <a href="${wrapWithUtm("https://www.jetbrains.com/academy/", "browse-courses")}">Learn more</a>
    """.trimIndent()
   }
 
