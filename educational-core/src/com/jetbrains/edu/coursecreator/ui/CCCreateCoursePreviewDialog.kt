@@ -14,7 +14,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.EduCourseArchiveCreator
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -98,7 +98,7 @@ class CCCreateCoursePreviewDialog(
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
       val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-        EduCourseArchiveCreator(project, archiveLocation, EncryptionBundle.value("aesKey")))
+        CourseArchiveCreator(project, archiveLocation))
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")

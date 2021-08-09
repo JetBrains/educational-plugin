@@ -785,4 +785,11 @@
     }
     ```
 11. For Android courses replaced `Android` course type with `Pycharm` course type + `Android` environment
-    
+
+12. Unified Marketplace and Edu archives now all generated course archives are encrypted.
+    Before: 
+    Only archives with "course_type" : "Marketplace" were encrypted and needed EncryptionModule to be added to the ObjectMapper for 
+    proper deserialization.
+    After:
+    All generated archives, regardless course type, are encrypted and needed EncryptionModule to be added to the ObjectMapper for
+    proper deserialization.

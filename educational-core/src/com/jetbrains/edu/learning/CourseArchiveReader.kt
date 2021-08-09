@@ -10,25 +10,27 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator.Companion.addStudyItemMixins
 import com.jetbrains.edu.coursecreator.actions.mixins.*
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 private val LOG = Logger.getInstance(EduUtils::class.java.name)
 
-fun readCourseJson(jsonText: String, isEncrypted: Boolean, isMarketplace: Boolean): Course? {
+fun readCourseJson(jsonText: String): Course? {
   return try {
-    val courseMapper = getCourseMapper(isEncrypted, isMarketplace)
+    val courseMapper = getCourseMapper()
+    val isArchiveEncrypted = isArchiveEncrypted(jsonText, courseMapper)
+    courseMapper.configureCourseMapper(isArchiveEncrypted)
     var courseNode = courseMapper.readTree(jsonText) as ObjectNode
     courseNode = migrate(courseNode)
     courseMapper.treeToValue(courseNode)
@@ -37,6 +39,14 @@ fun readCourseJson(jsonText: String, isEncrypted: Boolean, isMarketplace: Boolea
     LOG.error("Failed to read course json \n" + e.message)
     null
   }
+}
+
+private fun isArchiveEncrypted(jsonText: String, courseMapper: ObjectMapper): Boolean {
+  val courseNode = courseMapper.readTree(jsonText) as ObjectNode
+  val version = courseNode.get(VERSION)?.asInt() ?: error("Format version is null")
+  if (version >= 12) return true
+  val courseType = courseNode.get(COURSE_TYPE)?.asText()
+  return courseType == MARKETPLACE
 }
 
 private fun migrate(jsonObject: ObjectNode): ObjectNode {
@@ -58,6 +68,8 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       8 -> converter = To9VersionLocalCourseConverter()
       9 -> converter = To10VersionLocalCourseConverter()
       10 -> converter = To11VersionLocalCourseConverter()
+      // We don't convert jsonObject with jsonVersion 11 to 12, because we use jsonVersion directly from jsonText in isArchiveEncrypted
+      // function, as we need to know if archive is encrypted before courseNode is created to configure courseMapper properly
     }
     if (converter != null) {
       jsonObject = converter.convert(jsonObject)
@@ -67,40 +79,29 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   return jsonObject
 }
 
-fun getCourseMapper(isEncrypted: Boolean, isMarketplace: Boolean = false): ObjectMapper { // TODO: common mapper for archive creator and reader?
+fun getCourseMapper(): ObjectMapper {
   val factory = JsonFactory()
   val mapper = ObjectMapper(factory)
   val module = SimpleModule()
   module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
   module.addDeserializer(Course::class.java, CourseDeserializer())
   mapper.registerModule(module)
-  if (isEncrypted) {
-    mapper.registerModule(EncryptionModule(EncryptionBundle.value("aesKey")))
-  }
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  mapper.addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
-  if (isMarketplace) {
-    mapper.addMixIn(EduCourse::class.java, MarketplaceCourseMixin::class.java)
-  }
-  else {
-    mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
-  }
-  mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
-  mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
-  mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
-  mapper.addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
-  mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-  mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-  mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-  mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
-  mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
-  mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
-  mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-  mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-  mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-  mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
-  val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
-  dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-  mapper.dateFormat = dateFormat
   return mapper
+}
+
+fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
+  if (isEncrypted) {
+    registerModule(EncryptionModule(EncryptionBundle.value("aesKey")))
+  }
+  addStudyItemMixins()
+  configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
+  addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
+  addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
+  addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
+  addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+  disable(MapperFeature.AUTO_DETECT_FIELDS)
+  disable(MapperFeature.AUTO_DETECT_GETTERS)
+  disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+  disable(MapperFeature.AUTO_DETECT_CREATORS)
 }

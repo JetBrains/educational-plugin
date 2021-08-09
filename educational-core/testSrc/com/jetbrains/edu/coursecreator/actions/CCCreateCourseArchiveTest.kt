@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.setStepikAuthorsAsString
@@ -441,14 +440,16 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   fun `test remote non templated based framework lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, id = 1) {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, id = 1) {
       frameworkLesson("lesson1", isTemplateBased = false) {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
+    }.apply {
+      description = "my summary"
+      updateDate = Date(86486865)
     }
-    course.description = "my summary"
     doTest()
   }
 
@@ -550,7 +551,5 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getArchiveCreator() =
-    EduCourseArchiveCreator(myFixture.project,
-                            "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip",
-                            getAesKey())
+    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
 }

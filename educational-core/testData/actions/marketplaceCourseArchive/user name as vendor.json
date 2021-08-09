@@ -1,5 +1,4 @@
 {
-  "course_version" : 0,
   "summary" : "Test Course Description",
   "title" : "Test Course",
   "programming_language" : "FakeGradleBasedLanguage",
@@ -10,11 +9,9 @@
   },
   "items" : [
     {
-      "id" : 0,
       "title" : "lesson1",
       "task_list" : [
         {
-          "id" : 0,
           "name" : "task1",
           "files" : { },
           "description_text" : "solve task",
@@ -48,6 +45,6 @@
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     }
   ],
-  "version" : 11,
-  "edu_plugin_version" : "unknown"
+  "version" : 12,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

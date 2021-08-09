@@ -18,8 +18,6 @@
   </extensions>
 
   <actions>
-    <action id="Educational.Educator.MarketplaceArchive"
-            class="com.jetbrains.edu.coursecreator.actions.marketplace.CreateMarketplaceArchive" internal="true"/>
     <action id="Educational.Educator.MarketplacePushCourse"
             class="com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse">
       <add-to-group group-id="Educational.Educator.File" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>

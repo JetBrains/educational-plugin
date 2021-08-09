@@ -195,7 +195,7 @@ abstract class MarketplaceConnector : CourseConnector {
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
-    val unpackedCourse = EduUtils.getLocalEncryptedCourse(tempFile.path) as? EduCourse ?: error(
+    val unpackedCourse = EduUtils.getLocalCourse(tempFile.path) as? EduCourse ?: error(
       message("dialog.title.failed.to.unpack.course"))
 
     course.items = unpackedCourse.items

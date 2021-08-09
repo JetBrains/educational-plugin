@@ -66,6 +66,8 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     get() {
       _course.name = titleField.text
       _course.description = descriptionTextArea.text
+      _course.isMarketplace = true
+      _course.marketplaceCourseVersion = 1
       return _course
     }
 

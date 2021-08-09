@@ -4,9 +4,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
-import com.jetbrains.edu.coursecreator.actions.EduCourseArchiveCreator
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.encrypt.getAesKey
 
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -98,9 +96,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
-  override fun getArchiveCreator(): CourseArchiveCreator = EduCourseArchiveCreator(
+  override fun getArchiveCreator(): CourseArchiveCreator = CourseArchiveCreator(
     myFixture.project,
-    "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip",
-    getAesKey()
-  )
+    "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip")
 }

@@ -66,7 +66,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   private fun loadBundledCourses(): List<Course> {
     val courses = mutableListOf<Course>()
     for (path in getBundledCoursesPaths()) {
-      val localCourse = EduUtils.getLocalMarketplaceCourse(path)
+      val localCourse = EduUtils.getLocalCourse(path)
       if (localCourse == null) {
         LOG.error("Failed to import local course form $path")
         continue

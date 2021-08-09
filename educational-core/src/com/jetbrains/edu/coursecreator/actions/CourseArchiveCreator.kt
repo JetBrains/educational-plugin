@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
@@ -10,7 +11,9 @@ import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
@@ -31,8 +34,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
@@ -40,22 +46,27 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
-abstract class CourseArchiveCreator(
-  protected val project: Project,
+class CourseArchiveCreator(
+  private val project: Project,
   @NonNls private val location: String,
-  protected val aesKey: String?
+  private val aesKey: String = getAesKey()
 ) : Computable<String?> {
 
-  protected val course: Course? = StudyTaskManager.getInstance(project).course
+  private val course: Course? = StudyTaskManager.getInstance(project).course
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun compute(): String? {
+    if (course != null && course.isMarketplace && !isUnitTestMode) {
+      course.updateCourseItems()
+    }
     val course = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
-    val error = validateCourse(course)
+    val error = checkIgnoredFiles(project)
     if (error != null) {
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: $error")
@@ -90,10 +101,6 @@ abstract class CourseArchiveCreator(
     }
   }
 
-  open fun validateCourse(course: Course): String? {
-    return checkIgnoredFiles(project)
-  }
-
   @VisibleForTesting
   fun prepareCourse(course: Course) {
     loadActualTexts(project, course)
@@ -121,15 +128,22 @@ abstract class CourseArchiveCreator(
     return jsonFile
   }
 
-  abstract fun getMapper(course: Course): ObjectMapper
+  @VisibleForTesting
+  fun getMapper(course: Course): ObjectMapper {
+    val factory = JsonFactory()
+    val mapper = ObjectMapper(factory)
+    mapper.addStudyItemMixins()
+    mapper.registerModule(EncryptionModule(aesKey))
+    commonMapperSetup(mapper, course)
+    return mapper
+  }
 
-  open fun addStudyItemMixins(mapper: ObjectMapper) {
-    mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
-    mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
-    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonMixin::class.java)
-    mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
-    mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-    mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
+  /**
+   * @return null if course archive was created successfully, non-empty error message otherwise
+   */
+  fun createArchive(): String? {
+    FileDocumentManager.getInstance().saveAllDocuments()
+    return ApplicationManager.getApplication().runWriteAction<String>(this)
   }
 
   companion object {
@@ -156,6 +170,20 @@ abstract class CourseArchiveCreator(
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
       mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
       mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+    }
+
+    fun ObjectMapper.addStudyItemMixins() {
+      addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
+      addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
+      addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
+      addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+      addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
+      addMixIn(Section::class.java, RemoteSectionMixin::class.java)
+      addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
+      addMixIn(Task::class.java, RemoteTaskMixin::class.java)
+      val mapperDateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
+      mapperDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+      dateFormat = mapperDateFormat
     }
 
     @JvmStatic

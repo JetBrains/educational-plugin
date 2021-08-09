@@ -520,7 +520,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
     val vendor = course.vendor
-    assertNotNull(vendor)
+    checkNotNull(vendor)
     assertEquals("Jetbrains", vendor.name)
     assertEquals("academy@jetbrains.com", vendor.email)
     assertNull(vendor.url)
@@ -541,7 +541,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
     val vendor = course.vendor
-    assertNotNull(vendor)
+    checkNotNull(vendor)
     assertEquals("Jetbrains", vendor.name)
     assertEquals("jetbrains.com", vendor.url)
     assertNull(vendor.email)

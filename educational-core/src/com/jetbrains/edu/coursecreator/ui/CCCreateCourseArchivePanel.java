@@ -7,16 +7,19 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.coursecreator.actions.CreateCourseArchiveAction;
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Vendor;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+
+import static com.jetbrains.edu.learning.marketplace.UtilsKt.addVendor;
 
 public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;
@@ -45,13 +48,19 @@ public class CCCreateCourseArchivePanel extends JPanel {
 
   @NotNull
   private static String getAuthorInitialValue(@NotNull Project project) {
-    String savedAuthorName = PropertiesComponent.getInstance(project).getValue(CreateCourseArchiveAction.AUTHOR_NAME);
+    Course course =  OpenApiExtKt.getCourse(project);
+    if (course != null) {
+      if (course.getVendor() == null) {
+        addVendor(course);
+      }
+      Vendor vendor = course.getVendor();
+      if (vendor != null) {
+        return vendor.getName();
+      }
+    }
+    String savedAuthorName = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchive.AUTHOR_NAME);
     if (savedAuthorName != null) {
       return savedAuthorName;
-    }
-    StepikUser stepikUser = EduSettings.getInstance().getUser();
-    if (stepikUser != null) {
-      return stepikUser.getName();
     }
 
     String userName = System.getProperty("user.name");
@@ -70,7 +79,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
   }
 
   private static String getArchiveLocation(@NotNull Project project, String name) {
-    String location = PropertiesComponent.getInstance(project).getValue(CreateCourseArchiveAction.LAST_ARCHIVE_LOCATION);
+    String location = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchive.LAST_ARCHIVE_LOCATION);
     if (location != null) return location;
 
     String sanitizedName = FileUtil.sanitizeFileName(name);

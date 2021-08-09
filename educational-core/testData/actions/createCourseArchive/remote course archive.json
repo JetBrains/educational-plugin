@@ -1,23 +1,23 @@
 {
-  "id" : 1,
-  "update_date" : "Jan 01, 1970 03:00:00 AM",
+  "summary" : "my summary",
   "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
   "items" : [
     {
       "id" : 1,
       "title" : "lesson1",
-      "update_date" : "Jan 01, 1970 03:00:00 AM",
       "task_list" : [
         {
+          "id" : 1,
           "name" : "task1",
-          "stepic_id" : 1,
-          "update_date" : "Jan 01, 1970 03:00:00 AM",
           "files" : {
             "taskFile1.txt" : {
               "name" : "taskFile1.txt",
               "placeholders" : [ ],
               "is_visible" : true,
-              "text" : ""
+              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
             }
           },
           "description_text" : "solve task",
@@ -28,13 +28,11 @@
           "task_type" : "edu"
         }
       ],
-      "unit_id" : 0,
       "type" : "lesson"
     }
   ],
-  "summary" : "my summary",
-  "programming_language" : "TEXT",
-  "language" : "en",
-  "course_type" : "PyCharm",
-  "version" : 11
+  "id" : 1,
+  "update_date" : "Jan 01, 1970 03:00:00 AM",
+  "version" : 12,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

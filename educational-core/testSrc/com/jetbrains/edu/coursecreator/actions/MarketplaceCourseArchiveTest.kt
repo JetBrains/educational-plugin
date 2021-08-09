@@ -2,9 +2,9 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
-import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplaceArchiveCreator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -22,9 +22,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     val account = MarketplaceAccount()
     account.userInfo = MarketplaceUserInfo("User Name")
     MarketplaceSettings.INSTANCE.account = account
-
-    val creator = getArchiveCreator()
-    creator.addVendor(course)
+    addVendor(course)
 
     doTest()
 
@@ -128,6 +126,6 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getArchiveCreator() =
-    MarketplaceArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
+    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
 
 }

@@ -17,18 +17,18 @@
                 {
                   "offset" : 13,
                   "length" : 6,
-                  "possible_answer" : "",
+                  "possible_answer" : "6zkm3NpDQQaIQ+CAebF//w==",
                   "placeholder_text" : "TODO()"
                 },
                 {
                   "offset" : 32,
                   "length" : 6,
-                  "possible_answer" : "",
+                  "possible_answer" : "6zkm3NpDQQaIQ+CAebF//w==",
                   "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
-              "text" : "fn fizzz() = TODO()\nfn buzz() = TODO()"
+              "text" : "Ypx0FM/A4RqT2NIKNhcmlrxpV7d4q85XwjBvQyB0fi1tpedpF+MM0t8nRvkmJ7li"
             }
           },
           "description_text" : "solve task",
@@ -47,8 +47,9 @@
       "name" : "additional.txt",
       "placeholders" : [ ],
       "is_visible" : true,
-      "text" : "file text"
+      "text" : "0vSewMnXdop+aaoDCcNsxA=="
     }
   ],
-  "version" : 11
+  "version" : 12,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

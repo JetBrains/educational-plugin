@@ -10,15 +10,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.marketplace.JB_VENDOR_NAME
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
 
 @Suppress("ComponentNotRegistered") // Marketplace.xml
@@ -57,8 +59,10 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       return
     }
 
+    course.prepareForUpload(project)
+
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
-    val errorMessage = MarketplaceArchiveCreator(project, tempFile.absolutePath).createArchiveWithRemoteCourseVersion()
+    val errorMessage = CourseArchiveCreator(project, tempFile.absolutePath).createArchive()
     if (errorMessage != null) {
       Messages.showErrorDialog(project, errorMessage, message("error.failed.to.create.course.archive"))
       return
@@ -109,4 +113,30 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     message("dialog.cancel"),
     null
     )
+
+  private fun EduCourse.prepareForUpload(project: Project) {
+    if (isMarketplaceRemote) {
+      course.setRemoteMarketplaceCourseVersion()
+    }
+
+    if (isStepikRemote) {
+      // if the course is Stepik remote, that means that the course was opened
+      // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
+      course.id = 0
+      CCNotificationUtils.showNotification(project, null, message("marketplace.course.converted"),
+                                           message("marketplace.not.possible.to.post.updates.to.stepik"))
+    }
+
+    if (!isUnitTestMode) {
+      course.updateCourseItems()
+    }
+    if (course.vendor == null) {
+      if (!addVendor(course)) {
+        Messages.showErrorDialog(project, message("marketplace.vendor.empty"), message("error.failed.to.create.course.archive"))
+        return
+      }
+    }
+
+    YamlFormatSynchronizer.saveItem(course)
+  }
 }

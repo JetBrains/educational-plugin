@@ -62,14 +62,11 @@ object JsonMixinNames {
   // remote study item
   const val UPDATE_DATE = "update_date"
   const val ID = "id"
-  const val STEPIK_ID = "stepic_id"
-  const val UNIT_ID = "unit_id"
 
   // marketplace
   const val PLUGIN_VERSION = "edu_plugin_version"
   const val VENDOR = "vendor"
   const val IS_PRIVATE = "is_private"
-  const val COURSE_VERSION = "course_version"
   const val URL = "url"
   const val EMAIL = "email"
 }

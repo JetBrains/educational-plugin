@@ -446,21 +446,6 @@ public class EduUtils {
 
   @Nullable
   public static Course getLocalCourse(@NotNull final String zipFilePath) {
-    return getLocalCourse(zipFilePath, false, false);
-  }
-
-  @Nullable
-  public static Course getLocalMarketplaceCourse(@NotNull final String zipFilePath) {
-    return getLocalCourse(zipFilePath, false, true);
-  }
-
-  @Nullable
-  public static Course getLocalEncryptedCourse(@NotNull final String zipFilePath) {
-    return getLocalCourse(zipFilePath, true, false);
-  }
-
-  @Nullable
-  private static Course getLocalCourse(@NotNull final String zipFilePath, boolean isEncrypted, boolean isMarketplace) {
     try {
       final JBZipFile zipFile = new JBZipFile(zipFilePath);
       try {
@@ -471,7 +456,7 @@ public class EduUtils {
         }
         byte[] bytes = entry.getData();
         final String jsonText = new String(bytes, StandardCharsets.UTF_8);
-        return CourseArchiveReader.readCourseJson(jsonText, isEncrypted, isMarketplace);
+        return CourseArchiveReader.readCourseJson(jsonText);
       }
       finally {
         zipFile.close();

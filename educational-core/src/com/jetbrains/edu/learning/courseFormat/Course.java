@@ -53,7 +53,7 @@ public abstract class Course extends LessonContainer {
 
   // Marketplace:
   private boolean isMarketplace = false;
-  private Vendor myVendor;
+  @Nullable private Vendor myVendor;
   private int myMarketplaceCourseVersion = 0;
   @Nullable private String organization;
   private boolean isMarketplacePrivate = false;
@@ -242,6 +242,7 @@ public abstract class Course extends LessonContainer {
     Element element = XmlSerializer.serialize(this);
     T copy = XmlSerializer.deserialize(element, clazz);
     copy.init(null, null, true);
+    copy.setVendor(this.getVendor());
     return copy;
   }
 
@@ -324,11 +325,14 @@ public abstract class Course extends LessonContainer {
     return ApplicationManager.getApplication().isInternal();
   }
 
+  @Transient
+  @Nullable
   public Vendor getVendor() {
     return myVendor;
   }
 
-  public void setVendor(Vendor vendor) {
+  @Transient
+  public void setVendor(@Nullable Vendor vendor) {
     myVendor = vendor;
   }
 

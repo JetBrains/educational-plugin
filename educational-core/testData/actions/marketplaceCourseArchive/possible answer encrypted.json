@@ -1,5 +1,4 @@
 {
-  "course_version" : 0,
   "summary" : "my summary",
   "title" : "Test Course",
   "programming_language" : "TEXT",
@@ -7,11 +6,9 @@
   "course_type" : "Marketplace",
   "items" : [
     {
-      "id" : 0,
       "title" : "lesson1",
       "task_list" : [
         {
-          "id" : 0,
           "name" : "task1",
           "files" : {
             "Task.kt" : {
@@ -39,6 +36,6 @@
       "type" : "lesson"
     }
   ],
-  "version" : 11,
-  "edu_plugin_version" : "unknown"
+  "version" : 12,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

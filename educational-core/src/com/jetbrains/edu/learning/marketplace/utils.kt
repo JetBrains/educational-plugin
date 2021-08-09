@@ -5,13 +5,11 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.computeUnderProgress
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.featuredCourseIds
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.marketplace.update.getUpdateVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -53,11 +51,10 @@ fun Course.setRemoteMarketplaceCourseVersion() {
   }
 }
 
-fun Course.convertToMarketplace() {
-  isMarketplace = true
-  if (marketplaceCourseVersion == 0) {
-    marketplaceCourseVersion = 1
-  }
+fun addVendor(course: Course): Boolean {
+  val currentUser = MarketplaceSettings.INSTANCE.account ?: return false
+  course.vendor = Vendor(currentUser.userInfo.name)
+  return true
 }
 
 fun Course.loadMarketplaceCourseStructure() {
