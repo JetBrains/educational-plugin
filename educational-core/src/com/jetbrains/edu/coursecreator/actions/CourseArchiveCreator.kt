@@ -26,6 +26,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -99,13 +100,7 @@ abstract class CourseArchiveCreator(
     loadActualTexts(project, course)
     course.sortItems()
     course.additionalFiles = CCUtils.collectAdditionalFiles(course, project)
-    course.pluginDependencies = ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
-      .map {
-        PluginInfo(it.pluginId,
-                   PluginManager.getInstance().findEnabledPlugin(PluginId.getId(it.pluginId))?.name ?: it.pluginId,
-                   it.minVersion,
-                   it.maxVersion)
-      }
+    course.pluginDependencies = collectCourseDependencies(project, course)
   }
 
   private fun synchronize(project: Project) {
@@ -208,6 +203,24 @@ abstract class CourseArchiveCreator(
       else {
         LOG.warn(String.format("Can't find description file for task `%s`", task.name))
       }
+    }
+
+    private fun collectCourseDependencies(project: Project, course: Course): List<PluginInfo> {
+      val requiredPluginIds = course.compatibilityProvider?.requiredPlugins().orEmpty().mapTo(HashSet()) { it.id.idString }
+      return ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
+        // Compatibility provider may produce different required plugins in different IDEs,
+        // for example, `PythonCore` in IDEA Community and `Pythonid` in PyCharm Pro.
+        // So exclude them from the plugin archive to keep course compatible with all desired IDEs.
+        // Note, it doesn't allow user to start course without required plugins because
+        // we still check required plugins from compatibility providers on course creation.
+        // See https://youtrack.jetbrains.com/issue/EDU-4514
+        .filter { it.pluginId !in requiredPluginIds }
+        .map {
+          PluginInfo(it.pluginId,
+                     PluginManager.getInstance().findEnabledPlugin(PluginId.getId(it.pluginId))?.name ?: it.pluginId,
+                     it.minVersion,
+                     it.maxVersion)
+        }
     }
   }
 }

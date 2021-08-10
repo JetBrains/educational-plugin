@@ -54,7 +54,7 @@ import java.util.regex.Pattern
 
 abstract class EduTestCase : BasePlatformTestCase() {
 
-  private lateinit var testPluginDescriptor: IdeaPluginDescriptor
+  protected lateinit var testPluginDescriptor: IdeaPluginDescriptor
 
   @Throws(Exception::class)
   override fun setUp() {

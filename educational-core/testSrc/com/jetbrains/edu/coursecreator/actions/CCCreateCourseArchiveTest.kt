@@ -5,18 +5,24 @@ import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.setStepikAuthorsAsString
+import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.yaml.configFileName
 import java.text.SimpleDateFormat
 import java.util.*
@@ -472,6 +478,34 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     }
   }
 
+  fun `test local course with plugin from compatibility provider`() {
+    val ep = CourseCompatibilityProviderEP()
+    ep.language = PlainTextLanguage.INSTANCE.id
+    ep.implementationClass = PlainTextCompatibilityProvider::class.java.name
+    ep.pluginDescriptor = testPluginDescriptor
+    CourseCompatibilityProviderEP.EP_NAME.point.registerExtension(ep, testRootDisposable)
+
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, description = "my summary") {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    // Invoke it manually since `courseWithFiles` doesn't call it
+    setUpPluginDependencies(project, course)
+    val dependenciesManager = ExternalDependenciesManager.getInstance(project)
+    val dependency = dependenciesManager.allDependencies.find { it is DependencyOnPlugin && it.pluginId == PLAIN_TEXT_PLUGIN_ID }
+    assertNotNull("`${course.name}` course should have `$PLAIN_TEXT_PLUGIN_ID` plugin dependency", dependency)
+
+    try {
+      doTest()
+    }
+    finally {
+      dependenciesManager.allDependencies = mutableListOf<ProjectExternalDependency>()
+    }
+  }
+
   fun `test custom command`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE, description = "my summary") {
       lesson("lesson1") {
@@ -553,4 +587,13 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     EduCourseArchiveCreator(myFixture.project,
                             "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip",
                             getAesKey())
+
+  private class PlainTextCompatibilityProvider : CourseCompatibilityProvider {
+    override val technologyName: String get() = "Plain Text"
+    override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfo(PLAIN_TEXT_PLUGIN_ID))
+
+    companion object {
+      const val PLAIN_TEXT_PLUGIN_ID = "PlainText"
+    }
+  }
 }
