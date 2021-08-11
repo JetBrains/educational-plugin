@@ -16,7 +16,6 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
@@ -112,6 +111,8 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
             exceptions.add(e)
         } catch (e: ComparisonFailure) {
             exceptions.add(e)
+        } catch (e: IllegalStateException) {
+            exceptions.add(AssertionError(e))
         }
         return exceptions
     }

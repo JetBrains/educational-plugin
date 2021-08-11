@@ -14,18 +14,16 @@ import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.testFramework.TestActionEvent
-import com.intellij.testFramework.TestApplicationManager
-import com.intellij.testFramework.TestDataProvider
 import com.intellij.util.ui.UIUtil
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 inline fun <reified T> nullValue(): Matcher<T> = CoreMatchers.nullValue(T::class.java)
 
-fun withFeature(featureId: String, enabled: Boolean, action: () -> Unit) {
+fun <T> withFeature(featureId: String, enabled: Boolean, action: () -> T): T {
   val currentValue = isFeatureEnabled(featureId)
   setFeatureEnabled(featureId, enabled)
-  try {
+  return try {
     action()
   }
   finally {

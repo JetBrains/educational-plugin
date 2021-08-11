@@ -12,7 +12,6 @@ abstract class ActionWithProgressIcon : AnAction {
   var processPanel: JPanel? = null
     private set
 
-  @Suppress("unused") // This constructor is used when action is called via Actions list
   protected constructor(actionText: Supplier<String>) : super(actionText)
   protected constructor(actionText: Supplier<String>, descriptionText: Supplier<String>) : super(actionText, descriptionText, null)
 

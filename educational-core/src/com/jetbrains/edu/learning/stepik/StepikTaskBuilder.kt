@@ -4,6 +4,8 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.text.StringUtil.join
+import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -21,6 +23,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_T
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -54,7 +61,8 @@ open class StepikTaskBuilder(
     EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
+    THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
+    DATA_TASK_TYPE to { name: String -> DataTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
   )
 
   private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskType.values().associateBy(
@@ -66,6 +74,7 @@ open class StepikTaskBuilder(
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
+        StepikTaskType.DATASET -> this::dataTask
         else -> this::unsupportedTask
       }
     })
@@ -83,7 +92,7 @@ open class StepikTaskBuilder(
     MATH("math", "Math"),
     FREE_ANSWER("free-answer", "Free Response"),
     TABLE("table", "Table"),
-    DATASET("dataset", "Data"),
+    DATASET(DATA_TASK_TYPE, "Data"),
     ADMIN("admin", "Linux"),
     MANUAL_SCORE("manual-score", "Manual Score")
   }
@@ -95,9 +104,14 @@ open class StepikTaskBuilder(
 
   fun isSupported(type: String): Boolean = stepikTaskBuilders.containsKey(type)
 
-  private fun codeTask(name: String): CodeTask {
-    val task = CodeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
-    val options = step.options as PyCharmStepOptions
+  private fun Step.pycharmOptions(): PyCharmStepOptions {
+    return options as PyCharmStepOptions
+  }
+
+  private fun Task.fillDescription() {
+    if (this !is CodeTask && this !is DataTask) return
+
+    val options = step.pycharmOptions()
     val samples = options.samples
 
     fun String.prepareSample(): String {
@@ -105,7 +119,7 @@ open class StepikTaskBuilder(
       return if (isValidHtml(this)) replaceBr.xmlEscaped else replaceBr
     }
 
-    task.descriptionText = buildString {
+    descriptionText = buildString {
       append(clearCodeBlockFromTags())
 
       if (samples != null) {
@@ -133,7 +147,13 @@ open class StepikTaskBuilder(
         append("""<br><font color="gray">${EduCoreBundle.message("stepik.time.limit", timeLimit!!)}</font><br><br>""")
       }
     }
+  }
 
+  private fun codeTask(name: String): CodeTask {
+    val task = CodeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val options = step.pycharmOptions()
+
+    task.fillDescription()
     initTaskFiles(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
     return task
   }
@@ -220,6 +240,32 @@ open class StepikTaskBuilder(
     return task
   }
 
+  private fun dataTask(name: String): DataTask {
+    val task = DataTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val options = step.pycharmOptions()
+
+    task.fillDescription()
+    initTaskFiles(task, "write your code here \n", getCodeTemplateForTask(options.codeTemplates))
+
+    val isSingleSample = options.samples?.size == 1
+    options.samples?.forEachIndexed { index, sample ->
+      if (sample.size == 2) {
+        val resultIndex = if (isSingleSample) "" else (index + 1).toString()
+        val folderName = "$DATA_SAMPLE_FOLDER_NAME$resultIndex"
+        val filePath = join(listOf(DATA_FOLDER_NAME, folderName, INPUT_FILE_NAME), VFS_SEPARATOR_CHAR.toString())
+        task.addTaskFile(TaskFile(filePath, sample.first()))
+      }
+      else {
+        LOG.warn("Unexpected sample format:")
+        sample.forEach {
+          LOG.warn("    $it")
+        }
+      }
+    }
+
+    return task
+  }
+
   private fun unsupportedTask(@NonNls name: String): Task {
     val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
@@ -231,7 +277,7 @@ open class StepikTaskBuilder(
   }
 
   private fun pycharmTask(): Task {
-    val stepOptions = step.options as PyCharmStepOptions
+    val stepOptions = step.pycharmOptions()
     val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
 
     val task = pluginTaskTypes[stepOptions.taskType]?.invoke(taskName)

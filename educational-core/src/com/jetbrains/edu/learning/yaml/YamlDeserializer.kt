@@ -35,6 +35,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
@@ -141,6 +143,7 @@ object YamlDeserializer {
       EDU_TASK_TYPE -> EduTask::class.java
       OUTPUT_TASK_TYPE -> OutputTask::class.java
       THEORY_TASK_TYPE -> TheoryTask::class.java
+      DATA_TASK_TYPE -> DataTask::class.java
       VIDEO_TASK_TYPE -> VideoTask::class.java
       CHOICE_TASK_TYPE -> ChoiceTask::class.java
       IDE_TASK_TYPE -> IdeTask::class.java
@@ -160,8 +163,8 @@ object YamlDeserializer {
     return when (configName) {
       REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
       REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
-      REMOTE_SECTION_CONFIG,
-      REMOTE_TASK_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
+      REMOTE_SECTION_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
+      REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
       else -> loadingError(unknownConfigMessage(configName))
     }
   }
@@ -174,6 +177,17 @@ object YamlDeserializer {
       type == CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse::class.java
       treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null -> HyperskillCourse::class.java
       else -> EduCourse::class.java
+    }
+
+    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
+  }
+
+  private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
+    val treeNode = REMOTE_MAPPER.readTree(configFileText)
+
+    val clazz = when (asText(treeNode.get(YamlMixinNames.TYPE))) {
+      DATA_TASK_TYPE -> DataTask::class.java
+      else -> RemoteStudyItem::class.java
     }
 
     return REMOTE_MAPPER.treeToValue(treeNode, clazz)

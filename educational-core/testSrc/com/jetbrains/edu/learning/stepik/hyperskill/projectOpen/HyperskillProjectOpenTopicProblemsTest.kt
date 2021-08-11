@@ -4,8 +4,10 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
+import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -19,8 +21,10 @@ import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
-      super.runTestRunnable(context)
+    withFeature(PROBLEMS_BY_TOPIC, true) {
+      withFeature(HYPERSKILL_DATA_TASKS_SUPPORT, true) {
+        super.runTestRunnable(context)
+      }
     }
   }
 
@@ -83,6 +87,61 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
         }
       }
       file("build.gradle")
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open dataset problem without samples`() {
+    loginFakeUser()
+    configureMockResponsesForStages()
+    configureMockResponsesForProblems()
+
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step14259.id, "TEXT"))
+    val fileTree = fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir(step8139.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step8143.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step14259.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+        }
+      }
+    }
+    fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
+  fun `test open dataset problem with samples`() {
+    loginFakeUser()
+    configureMockResponsesForStages()
+    configureMockResponsesForProblems()
+
+    mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step12164.id, "TEXT"))
+    val fileTree = fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir(step10933.title) {
+          dir(THEORY) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step12164.title) {
+            dir(DataTask.DATA_FOLDER_NAME) {
+              dir(DataTask.DATA_SAMPLE_FOLDER_NAME) {
+                file(DataTask.INPUT_FILE_NAME)
+              }
+            }
+            file("Task.txt")
+            file("task.html")
+          }
+        }
+      }
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
@@ -585,15 +644,33 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   companion object {
     private const val TOPIC_NAME = "topicName"
 
+    private val step9455 = StepInfo(9455, "Wildcards")
     private val step2640 = StepInfo(2640, "Packing bakeries")
     private val step2641 = StepInfo(2641, "List multiplicator")
-    private val step9455 = StepInfo(9455, "Wildcards")
+    @Suppress("unused") // not recommended step
     private val step9886 = StepInfo(9886, "Pets in boxes")
-    private val step10960 = StepInfo(10960, "Web calculator")
-    private val step13292 = StepInfo(13292, "Posting and deleting data via REST")
     private val topic85 = TopicInfo(85)
+
+    private val step13292 = StepInfo(13292, "Posting and deleting data via REST")
+    private val step10960 = StepInfo(10960, "Web calculator")
     private val topic515 = TopicInfo(515)
 
-    private val requestedInformation = listOf(step2640, step2641, step9455, step9886, step10960, step13292, topic85, topic515)
+    private val step8139 = StepInfo(8139, "Reading files")
+    @Suppress("unused") // not recommended step
+    private val step8146 = StepInfo(8146, "Acronym")
+    private val step8143 = StepInfo(8143, "First")
+    private val step14259 = StepInfo(14259, "Summer")
+    private val topic632 = TopicInfo(632)
+
+    private val step10933 = StepInfo(10933, "DataFrame")
+    private val step12164 = StepInfo(12164, "The shape of a data frame")
+    private val topic1034 = TopicInfo(1034)
+
+    private val requestedInformation = listOf(
+      step2640, step2641, topic85,
+      step10960, topic515,
+      step14259, topic632,
+      step12164, topic1034
+    )
   }
 }

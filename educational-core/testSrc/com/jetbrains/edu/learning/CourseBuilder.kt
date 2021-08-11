@@ -19,6 +19,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -282,6 +284,20 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(IdeTask(), name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+
+  fun dataTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    attempt: DataTaskAttempt? = null,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val dataTask = DataTask()
+    task(dataTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    dataTask.attempt = attempt
+  }
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

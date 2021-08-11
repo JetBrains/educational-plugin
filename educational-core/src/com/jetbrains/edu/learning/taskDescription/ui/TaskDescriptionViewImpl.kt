@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -174,6 +175,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
     uiContent?.checkPanel?.updateCheckDetails(task, checkResult)
+    if (task is DataTask) {
+      updateCheckPanel(task)
+    }
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
     }

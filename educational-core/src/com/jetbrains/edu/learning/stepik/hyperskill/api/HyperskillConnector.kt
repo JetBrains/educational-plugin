@@ -260,6 +260,27 @@ abstract class HyperskillConnector {
     return service.user(userId).executeAndExtractFirst(UsersList::users)
   }
 
+  fun getActiveAttempt(step: Int): Result<Attempt?, String> {
+    return withTokenRefreshIfNeeded {
+      val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id
+                   ?: return@withTokenRefreshIfNeeded Err("Attempt to get list of attempts for unauthorized user")
+      val attempts = service.attempts(step, userId).executeParsingErrors(true).flatMap {
+        val result = it.body()?.attempts
+        if (result == null) Err(it.message()) else Ok(result)
+      }.onError { return@withTokenRefreshIfNeeded Err(it) }
+
+      val activeAttempt = attempts.firstOrNull { it.isActive && it.isRunning }
+      Ok(activeAttempt)
+    }
+  }
+
+  fun getDataset(attemptId: Int): Result<String, String> {
+    return service.dataset(attemptId).executeParsingErrors().flatMap {
+      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
+      Ok(responseBody.string())
+    }
+  }
+
   // Post requests:
 
   fun postSubmission(submission: Submission): Result<Submission, String> {

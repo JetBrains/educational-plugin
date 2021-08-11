@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.AttemptsList
 import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -59,6 +60,12 @@ interface HyperskillService {
 
   @GET("api/users/{id}")
   fun user(@Path("id") id: Int): Call<UsersList>
+
+  @GET("api/attempts")
+  fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
+
+  @GET("api/attempts/{dataset_id}/dataset")
+  fun dataset(@Path("dataset_id") datasetId: Int): Call<ResponseBody>
 
   @POST("api/attempts")
   fun attempt(@Body attempt: Attempt): Call<AttemptsList>

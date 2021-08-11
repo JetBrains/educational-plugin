@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 const val USERS = "users"
@@ -47,6 +48,7 @@ const val CHOICES = "choices"
 const val SCORE = "score"
 const val SOLUTION = "solution"
 const val CODE = "code"
+private const val FILE = "file"
 const val EDU_TASK = "edu_task"
 const val VERSION = "version"
 const val ATTACHMENTS = "attachments"
@@ -55,6 +57,7 @@ const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASKS_INFO = "tasks_info"
 const val TIME = "time"
+const val TIME_LEFT = "time_left"
 const val MEMORY = "memory"
 const val AVERAGE = "average"
 
@@ -264,8 +267,7 @@ class Dataset {
   constructor(emptyDataset: String)  // stepik returns empty string instead of null
 }
 
-class Attempt {
-
+class Attempt : AttemptBase {
   @JsonProperty(STEP)
   var step: Int = 0
 
@@ -278,9 +280,6 @@ class Attempt {
   @JsonProperty(USER)
   var user: String? = null
 
-  @JsonProperty(ID)
-  var id: Int = 0
-
   val isActive: Boolean
     @JsonIgnore
     get() = status == "active"
@@ -290,6 +289,9 @@ class Attempt {
   constructor(step: Int) {
     this.step = step
   }
+
+  @TestOnly
+  constructor(id: Int, time: Date, timeLeft: Int) : super(id, time, timeLeft.toLong())
 }
 
 class StepikUnit {
@@ -371,6 +373,9 @@ class Reply {
 
   @JsonProperty(CODE)
   var code: String? = null
+
+  @JsonProperty(FILE)
+  var file: String? = null
 
   @JsonProperty(EDU_TASK)
   var eduTask: String? = null

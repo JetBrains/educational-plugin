@@ -109,6 +109,16 @@ public class StepikCheckerConnector {
     return submission;
   }
 
+  @NotNull
+  public static Submission createDataSubmission(int attemptId, @NotNull String answer) {
+    Submission submission = new Submission();
+    submission.setAttempt(attemptId);
+    final Reply reply = new Reply();
+    reply.setFile(answer);
+    submission.setReply(reply);
+    return submission;
+  }
+
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
     final List<Integer> selectedVariants = task.getSelectedVariants();
     final boolean[] answer = new boolean[task.getChoiceOptions().size()];

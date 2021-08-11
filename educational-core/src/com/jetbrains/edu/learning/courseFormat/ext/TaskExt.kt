@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -137,12 +138,14 @@ private fun TaskFile.canShowSolution() =
 
 fun Task.canShowSolution(): Boolean {
   if (course is HyperskillCourse) {
-    return this !is TheoryTask && status == CheckStatus.Solved
+    return hasSolutions() && status == CheckStatus.Solved
   }
   val hiddenByEducator = solutionHidden ?: course.solutionsHidden
   val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
+
+fun Task.hasSolutions(): Boolean = this !is TheoryTask && this !is DataTask
 
 fun Task.getCodeTaskFile(project: Project): TaskFile? {
   val files = taskFiles.values
@@ -182,6 +185,9 @@ fun Task.revertTaskParameters(project: Project) {
     }
     is ChoiceTask -> {
       clearSelectedVariants()
+    }
+    is DataTask -> {
+      attempt = null
     }
   }
 }

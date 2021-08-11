@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "dataset",
+        "text": "some text",
+        "video": null,
+        "options": {
+          "samples": [
+            [
+              "input",
+              "output"
+            ]
+          ],
+          "language": ""
+        },
+        "table_of_contents": [ ]
+      },
+      "id": 12164,
+      "is_completed": true,
+      "is_recommended": false,
+      "lesson_stepik_id": 482261,
+      "position": 1,
+      "stage": null,
+      "stepik_id": 1891596,
+      "title": "The shape of a data frame",
+      "topic": 1034,
+      "topic_theory": 10933,
+      "type": "practice"
+    }
+  ]
+}

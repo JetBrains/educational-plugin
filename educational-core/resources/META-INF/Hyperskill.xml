@@ -59,5 +59,7 @@
       <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
     </action>
     <action id="Hyperskill.UpdateCourse" class="com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction"/>
+    <action id="Hyperskill.DownloadDataset" class="com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction"/>
+    <action id="Hyperskill.RetryDataTask" class="com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction"/>
   </actions>
 </idea-plugin>

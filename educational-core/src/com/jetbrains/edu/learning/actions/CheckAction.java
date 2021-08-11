@@ -21,12 +21,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
@@ -52,7 +49,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -66,6 +62,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static com.jetbrains.edu.learning.EduUtilsKt.showPopup;
 
 public class CheckAction extends ActionWithProgressIcon implements DumbAware {
   @NonNls
@@ -94,7 +92,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       return;
     }
     if (DumbService.isDumb(project)) {
-      showCheckUnavailablePopup(project);
+      showPopup(e.getDataContext(), ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.title"), false));
       return;
     }
     CheckDetailsView.getInstance(project).clear();
@@ -112,7 +110,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       return;
     }
     if (!CheckActionState.getInstance(project).doLock()) {
-      showCheckAlreadyRunning(project);
+      showPopup(e.getDataContext(), EduCoreBundle.message("action.check.already.running"));
       return;
     }
     for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
@@ -132,30 +130,6 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     else {
       ProgressManager.getInstance().run(checkTask);
     }
-  }
-
-  private static void showCheckUnavailablePopup(Project project) {
-    Balloon balloon = JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(
-        ActionUtil.getUnavailableMessage(EduCoreBundle.message("check.title"), false),
-        null,
-        UIUtil.getToolTipActionBackground(),
-        EduBrowserHyperlinkListener.INSTANCE)
-      .createBalloon();
-
-    balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);
-  }
-
-  private static void showCheckAlreadyRunning(Project project) {
-    Balloon balloon = JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(
-        EduCoreBundle.message("action.check.already.running"),
-        null,
-        UIUtil.getToolTipActionBackground(),
-        EduBrowserHyperlinkListener.INSTANCE)
-      .createBalloon();
-
-    balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);
   }
 
   @Override

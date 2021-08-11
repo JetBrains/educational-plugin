@@ -70,6 +70,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
           ActionManager.getInstance(),
           e.modifiers
         )
+        // BACKCOMPAT: 2020.3. Replace with `performActionDumbAwareWithCallbacks`
         ActionUtil.performActionDumbAware(action, event)
       }
     }

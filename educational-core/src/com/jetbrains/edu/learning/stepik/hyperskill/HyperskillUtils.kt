@@ -198,14 +198,17 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
   return lesson.taskList.find { it is TheoryTask } as? TheoryTask
 }
 
+fun notifyJBAUnauthorized(project: Project, specificMessage: String) {
+  Notification("EduTools", specificMessage, EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
+               NotificationType.ERROR).apply {
+    addAction(NotificationAction.createSimpleExpiring(
+      EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")) { HyperskillLoginListener.doLogin() })
+  }.notify(project)
+}
+
 fun openNextActivity(project: Project, task: Task) {
   if (HyperskillSettings.INSTANCE.account == null) {
-    Notification("EduTools", EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
-                 EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"), NotificationType.ERROR).apply {
-      addAction(NotificationAction.createSimpleExpiring(
-        EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")
-      ) { HyperskillLoginListener.doLogin() })
-    }.notify(project)
+    notifyJBAUnauthorized(project, EduCoreBundle.message("notification.hyperskill.no.next.activity.title"))
     return
   }
   val course = task.course

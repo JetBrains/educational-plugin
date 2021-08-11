@@ -40,6 +40,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
@@ -146,6 +148,8 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(DataTask::class.java, RemoteDataTaskYamlMixin::class.java)
+    mapper.addMixIn(DataTaskAttempt::class.java, DataTaskAttemptYamlMixin::class.java)
     mapper.addHyperskillMixins()
   }
 

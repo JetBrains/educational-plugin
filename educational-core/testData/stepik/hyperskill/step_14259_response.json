@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "dataset",
+        "text": "some text",
+        "video": null,
+        "options": {
+          "samples": [ ],
+          "time_limit": 300,
+          "language": ""
+        },
+        "table_of_contents": [ ]
+      },
+      "id": 14259,
+      "is_completed": false,
+      "is_recommended": false,
+      "lesson_stepik_id": 559538,
+      "position": 1,
+      "stage": null,
+      "stepik_id": 2261446,
+      "title": "Summer",
+      "topic": 632,
+      "topic_theory": 8139,
+      "type": "practice"
+    }
+  ]
+}

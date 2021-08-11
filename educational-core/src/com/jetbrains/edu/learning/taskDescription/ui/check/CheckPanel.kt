@@ -12,6 +12,7 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.LeaveCommentAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
@@ -21,7 +22,10 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
+import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -121,8 +125,32 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
+    if (task is DataTask) {
+      updateCheckButtonWrapper(task)
+      return
+    }
     val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = true)
     checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
+  }
+
+  private fun updateCheckButtonWrapper(task: DataTask) {
+    when (task.status) {
+      CheckStatus.Unchecked -> {
+        val downloadDatasetComponent = CheckPanelButtonComponent(
+          EduActionUtils.getAction(DownloadDatasetAction.ACTION_ID) as DownloadDatasetAction)
+        checkButtonWrapper.add(downloadDatasetComponent, BorderLayout.WEST)
+
+        val isRunning = task.isRunning()
+        val checkComponent = CheckPanelButtonComponent(task.checkAction, isEnabled = isRunning, isDefault = isRunning)
+        checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
+      }
+      CheckStatus.Failed -> {
+        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
+                                                       isDefault = true)
+        checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
+      }
+      CheckStatus.Solved -> Unit
+    }
   }
 
   private fun updateRightActionsToolbar() {
@@ -137,7 +165,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
     if (NavigationUtils.nextTask(task) != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
       val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
-      nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
       add(nextButton, BorderLayout.WEST)
     }
   }

@@ -4,10 +4,8 @@ import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -54,7 +52,7 @@ class HyperskillTaskBuilder(
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
         }
-        is EduTask -> {
+        is EduTask, is DataTask -> {
           name = stepSource.title
         }
       }

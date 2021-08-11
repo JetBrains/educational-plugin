@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
+import org.jetbrains.annotations.NonNls
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -73,12 +74,15 @@ open class DefaultCodeExecutor : CodeExecutor {
 
     var outputString = processListener.output.joinToString("")
     if (outputString.isEmpty()) {
-      outputString = "<no output>"
+      outputString = NO_OUTPUT
     }
     return Ok(outputString)
   }
 
   companion object {
     private val LOG = Logger.getInstance(DefaultCodeExecutor::class.java)
+
+    @NonNls
+    const val NO_OUTPUT: String = "<no output>"
   }
 }

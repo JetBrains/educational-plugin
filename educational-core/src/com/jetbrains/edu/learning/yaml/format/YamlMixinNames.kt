@@ -62,6 +62,9 @@ object YamlMixinNames {
   const val FEEDBACK_INCORRECT = "message_incorrect"
   const val SELECTED_OPTIONS = "selected_options"
 
+  // data task
+  const val ATTEMPT = "attempt"
+
   // video task
   const val THUMBNAIL = "thumbnail"
   const val SOURCES = "sources"

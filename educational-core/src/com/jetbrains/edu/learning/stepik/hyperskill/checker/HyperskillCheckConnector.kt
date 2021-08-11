@@ -4,18 +4,21 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.nullize
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.api.Attempt
@@ -24,6 +27,7 @@ import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
 import java.net.MalformedURLException
 import java.net.URL
@@ -106,21 +110,27 @@ object HyperskillCheckConnector {
     else CheckResult(CheckStatus.Unchecked, this)
   }
 
-  fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
-    val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
-      is Err -> return attemptResponse
-      is Ok -> attemptResponse.value
-    }
-
+  fun getLanguage(task: Task): Result<String, String> {
     val course = task.course
     val defaultLanguage = HyperskillLanguages.langOfId(course.languageID).langName
     if (defaultLanguage == null) {
       val languageDisplayName = course.languageDisplayName
       return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
     }
+    return Ok(defaultLanguage)
+  }
 
-    val configurator = course.configurator as? HyperskillConfigurator
+  fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
+    val connector = HyperskillConnector.getInstance()
+    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
+      is Err -> return attemptResponse
+      is Ok -> attemptResponse.value
+    }
+    val defaultLanguage = getLanguage(task).onError {
+      return Err(it)
+    }
+
+    val configurator = task.course.configurator as? HyperskillConfigurator
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
     if (codeTaskText == null) {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
@@ -128,6 +138,13 @@ object HyperskillCheckConnector {
     }
     val codeSubmission = StepikCheckerConnector.createCodeSubmission(attempt.id, defaultLanguage, codeTaskText)
     return connector.postSubmission(codeSubmission)
+  }
+
+  private fun submitDataTask(task: DataTask, answer: String): Result<Submission, String> {
+    val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
+    val connector = HyperskillConnector.getInstance()
+    val dataSubmission = StepikCheckerConnector.createDataSubmission(attempt.id, answer)
+    return connector.postSubmission(dataSubmission)
   }
 
   private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<CheckResult, SubmissionError> {
@@ -153,11 +170,19 @@ object HyperskillCheckConnector {
     }
   }
 
-  fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
-    if (task.id == 0) {
-      val link = task.feedbackLink ?: return CheckResult.failedToCheck
+  private fun Task.checkId(): CheckResult? {
+    if (id == 0) {
+      val link = feedbackLink ?: return CheckResult.failedToCheck
       val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
       return CheckResult(CheckStatus.Unchecked, message)
+    }
+    return null
+  }
+
+  fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
     }
 
     return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
@@ -171,7 +196,36 @@ object HyperskillCheckConnector {
     }
   }
 
-  private fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: CodeTask): CheckResult {
+  fun checkDataTask(project: Project, task: DataTask, indicator: ProgressIndicator): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+
+    val codeExecutor = task.course.configurator?.taskCheckerProvider?.codeExecutor
+    if (codeExecutor == null) {
+      LOG.error("Unable to get code executor for the `${task.name}` task")
+      return EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA).toCheckResult()
+    }
+    val answer = codeExecutor.execute(project, task, indicator).onError {
+      return it
+    }
+
+    if (answer == NO_OUTPUT) {
+      LOG.warn("No output after execution of the `${task.name}` task")
+      return EduCoreBundle.message("error.no.output").toCheckResult()
+    }
+
+    val submission = submitDataTask(task, answer).onError { error ->
+      showErrorDetails(project, error)
+      return CheckResult.failedToCheck
+    }
+    return periodicallyCheckSubmissionResult(project, submission, task)
+  }
+
+  private fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
+    require(task.isRemotelyChecked()) { "Task is not checked remotely" }
+
     val submissionId = submission.id!!
     val connector = HyperskillConnector.getInstance()
 
@@ -185,7 +239,9 @@ object HyperskillCheckConnector {
     }
 
     if (lastSubmission.status != EVALUATION_STATUS) {
-      SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
+      if (task.supportSubmissions()) {
+        SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
+      }
       return lastSubmission.toCheckResult()
     }
 

@@ -5,7 +5,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -115,6 +117,15 @@ class HyperskillCourse : Course {
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   companion object {
-    val SUPPORTED_STEP_TYPES: Set<String> = setOf(StepikTaskType.CODE.type, StepikTaskType.TEXT.type, StepikTaskType.PYCHARM.type)
+    val SUPPORTED_STEP_TYPES: Set<String> = setOf(
+      StepikTaskType.CODE.type,
+      StepikTaskType.TEXT.type,
+      StepikTaskType.PYCHARM.type,
+      StepikTaskType.DATASET.type
+    )
+
+    private val REMOTELY_CHECKED_TASKS: Set<Class<out Task>> = setOf(CodeTask::class.java, DataTask::class.java)
+
+    fun Task.isRemotelyChecked(): Boolean = javaClass in REMOTELY_CHECKED_TASKS
   }
 }

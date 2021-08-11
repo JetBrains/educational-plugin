@@ -1,0 +1,58 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        }
+      },
+      "id" : 10933,
+      "is_completed" : true,
+      "is_recommended" : true,
+      "lesson_stepik_id" : 346021,
+      "position" : 1,
+      "stage" : null,
+      "stepik_id" : 1260519,
+      "title" : "DataFrame",
+      "topic" : 1034,
+      "topic_theory" : 10933,
+      "type" : "theory"
+    },
+    {
+      "block" : {
+        "name" : "dataset",
+        "text" : "some text",
+        "video" : null,
+        "options" : {
+          "samples" : [
+            [
+              "input",
+              "output"
+            ]
+          ],
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "id" : 12164,
+      "is_completed" : true,
+      "is_recommended" : true,
+      "lesson_stepik_id" : 482261,
+      "position" : 1,
+      "stage" : null,
+      "stepik_id" : 1891596,
+      "title" : "The shape of a data frame",
+      "topic" : 1034,
+      "topic_theory" : 10933,
+      "type" : "practice"
+    }
+  ]
+}

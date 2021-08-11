@@ -20,8 +20,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.hasSolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -83,7 +83,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
                                  force: Boolean = false) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
-    val tasksToUpdate = tasks.filter { task -> task !is TheoryTask }
+    val tasksToUpdate = tasks.filter { task -> task.hasSolutions() }
     var finishedTaskCount = 0
     val futures = HashMap<Int, Future<Boolean>>(tasks.size)
     for (task in tasksToUpdate) {

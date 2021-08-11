@@ -267,6 +267,11 @@ object GeneratorUtils {
   }
 
   @JvmStatic
+  fun joinPaths(vararg paths: String): String {
+    return paths.filter { it.isNotBlank() }.joinToString(VfsUtilCore.VFS_SEPARATOR_CHAR.toString())
+  }
+
+  @JvmStatic
   @JvmOverloads
   fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()): String =
     FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)

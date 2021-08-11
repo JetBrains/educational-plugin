@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 
 /**
  * If you add any new methods here, please do not forget to add it also to
@@ -35,12 +36,15 @@ interface TaskCheckerProvider {
 
   fun getIdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask> = IdeTaskChecker(task, project)
 
+  fun getDataTaskChecker(task: DataTask, project: Project): TaskChecker<DataTask>? = null
+
   // Should not be overloaded by anyone
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> getOutputTaskChecker(task, project, codeExecutor)
       is TheoryTask -> getTheoryTaskChecker(task, project)
+      is DataTask -> getDataTaskChecker(task, project)
       is CodeTask -> getCodeTaskChecker(task, project)
       is ChoiceTask -> getChoiceTaskChecker(task, project)
       is IdeTask -> getIdeTaskChecker(task, project)
