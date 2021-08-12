@@ -102,3 +102,12 @@ fun Properties.extractAndStore(path: String, vararg keys: String) {
   file.parentFile?.mkdirs()
   file.bufferedWriter().use { properties.store(it, "") }
 }
+
+buildCache {
+  local {
+    isEnabled = System.getenv("CI") == null
+    // By default, build cache is stored in gradle home directory
+    directory = File(rootDir, "build/build-cache")
+    removeUnusedEntriesAfterDays = 30
+  }
+}
