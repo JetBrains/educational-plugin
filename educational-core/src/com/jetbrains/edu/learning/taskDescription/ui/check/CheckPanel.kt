@@ -127,7 +127,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
-    checkButtonWrapper.add(CheckPanelButtonComponent(CheckAction.createCheckAction(task), true), BorderLayout.WEST)
+    checkButtonWrapper.add(CheckPanelButtonComponent(task.checkAction, true), BorderLayout.WEST)
     checkFinishedPanel.addNextTaskButton(task)
   }
 

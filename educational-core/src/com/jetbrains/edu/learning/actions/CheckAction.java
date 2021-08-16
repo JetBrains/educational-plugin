@@ -84,16 +84,8 @@ public class CheckAction extends DumbAwareAction {
     super(dynamicText, dynamicText, null);
   }
 
-  private CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
+  public CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
     super(dynamicText, dynamicDescription, null);
-  }
-
-  public static CheckAction createCheckAction(@NotNull Task task) {
-    if (task instanceof TheoryTask) {
-      return new CheckAction(EduCoreBundle.lazyMessage("action.check.run.text"),
-                             EduCoreBundle.lazyMessage("action.check.run.description"));
-    }
-    return task.getCheckAction();
   }
 
   @Override
@@ -170,14 +162,9 @@ public class CheckAction extends DumbAwareAction {
     TaskFile taskFile = OpenApiExtKt.getSelectedTaskFile(project);
     if (taskFile != null) {
       final Task task = taskFile.getTask();
-      if (task instanceof TheoryTask) {
-        presentation.setText(EduCoreBundle.lazyMessage("action.check.run.text"));
-        presentation.setDescription(EduCoreBundle.lazyMessage("action.check.run.description"));
-      }
-      else {
-        presentation.setText(EduCoreBundle.lazyMessage("action.check.text"));
-        presentation.setDescription(EduCoreBundle.lazyMessage("action.check.description"));
-      }
+      final Presentation checkActionPresentation = task.getCheckAction().getTemplatePresentation();
+      presentation.setText(checkActionPresentation.getText());
+      presentation.setDescription(checkActionPresentation.getDescription());
     }
     if (presentation.isEnabled()) {
       presentation.setEnabled(!myCheckInProgress.get());

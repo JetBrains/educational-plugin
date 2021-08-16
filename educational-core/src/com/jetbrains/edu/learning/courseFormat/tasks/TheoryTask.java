@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
+import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
@@ -29,5 +31,11 @@ public class TheoryTask extends Task {
   @Override
   public String getItemType() {
     return THEORY_TASK_TYPE;
+  }
+
+  @Override
+  public @NotNull CheckAction getCheckAction() {
+    return new CheckAction(EduCoreBundle.lazyMessage("action.check.run.text"),
+                           EduCoreBundle.lazyMessage("action.check.run.description"));
   }
 }
