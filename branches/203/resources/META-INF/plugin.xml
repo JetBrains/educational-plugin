@@ -1,6 +1,7 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
     <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+    <depends optional="true" config-file="Edu-JavaScript.xml">NodeJS</depends>
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
     <depends optional="true" config-file="Edu-Go.xml">org.jetbrains.plugins.go</depends>
 </idea-plugin>
