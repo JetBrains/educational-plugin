@@ -1,0 +1,9 @@
+<idea-plugin package="com.jetbrains.edu" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <!-- BACKCOMPAT: 2021.1. Inline it -->
+    <xi:include href="/META-INF/rust-plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+    <!--suppress PluginXmlValidity -->
+    <content>
+        <module name="Edu-Rust"/>
+    </content>
+</idea-plugin>
