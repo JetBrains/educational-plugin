@@ -26,7 +26,7 @@ class StartButtonsTest : EduTestCase() {
   fun `test codeforces course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = CodeforcesPlatformProvider().createPanel(scope, testRootDisposable)
-    val course = course { }
+    val course = course(courseProducer = ::CodeforcesCourse) { }
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)
 
