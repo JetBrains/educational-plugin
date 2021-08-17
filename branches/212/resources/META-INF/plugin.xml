@@ -5,5 +5,6 @@
   <!--suppress PluginXmlValidity -->
   <content>
     <module name="Edu-Rust"/>
+    <module name="Edu-Go"/>
   </content>
 </idea-plugin>

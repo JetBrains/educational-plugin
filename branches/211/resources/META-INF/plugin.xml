@@ -2,4 +2,5 @@
     <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
+    <depends optional="true" config-file="Edu-Go.xml">org.jetbrains.plugins.go</depends>
 </idea-plugin>
