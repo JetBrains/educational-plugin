@@ -127,6 +127,24 @@ allprojects {
     sourceCompatibility = VERSION_1_8
     targetCompatibility = VERSION_1_8
   }
+  sourceSets {
+    main {
+      if (project != rootProject) {
+        java.srcDirs("src", "branches/$environmentName/src")
+        kotlin.srcDirs("src", "branches/$environmentName/src")
+      }
+      resources.srcDirs("resources", "branches/$environmentName/resources")
+    }
+
+    test {
+      if (project != rootProject) {
+        java.srcDirs("testSrc", "branches/$environmentName/testSrc")
+        kotlin.srcDirs("testSrc", "branches/$environmentName/testSrc")
+        resources.srcDirs("testResources", "branches/$environmentName/testResources")
+      }
+    }
+  }
+
 
   configurations {
     all {
@@ -219,20 +237,6 @@ allprojects {
 }
 
 subprojects {
-  sourceSets {
-    main {
-      java.srcDirs("src", "branches/$environmentName/src")
-      resources.srcDirs("resources", "branches/$environmentName/resources")
-      kotlin.srcDirs("src", "branches/$environmentName/src")
-    }
-
-    test {
-      java.srcDirs("testSrc", "branches/$environmentName/testSrc")
-      resources.srcDirs("testResources", "branches/$environmentName/testResources")
-      kotlin.srcDirs("testSrc", "branches/$environmentName/testSrc")
-    }
-  }
-
   tasks {
     runIde { enabled = false }
     prepareSandbox { enabled = false }
@@ -256,12 +260,6 @@ project(":") {
   }
 
   version = "$pluginVersion-$platformVersion-$buildNumber"
-
-  sourceSets {
-    main {
-      resources.srcDirs("resources")
-    }
-  }
 
   intellij {
     pluginName.set("EduTools")
