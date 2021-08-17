@@ -1,6 +1,4 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>com.intellij.modules.lang</depends>
-
   <applicationListeners>
     <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
               topic="com.intellij.ide.plugins.DynamicPluginListener"/>
