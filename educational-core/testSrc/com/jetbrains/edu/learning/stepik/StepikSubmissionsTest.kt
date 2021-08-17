@@ -13,7 +13,10 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser()
+    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
+      userInfo = StepikUserInfo("Test User")
+      userInfo.id = 1
+    }
     courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::EduCourse,

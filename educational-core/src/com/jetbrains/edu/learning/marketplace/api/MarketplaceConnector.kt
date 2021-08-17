@@ -68,11 +68,12 @@ abstract class MarketplaceConnector : CourseConnector {
     get() = repositoryService(MarketplaceSettings.INSTANCE.account)
 
   private fun repositoryService(account: MarketplaceAccount?): MarketplaceRepositoryService {
-    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
+    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(repositoryUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken)
+    val accessToken = account?.getAccessToken()
+    val retrofit = createRetrofitBuilder(repositoryUrl, connectionPool, accessToken = accessToken)
       .addConverterFactory(converterFactory)
       .build()
 
@@ -95,17 +96,17 @@ abstract class MarketplaceConnector : CourseConnector {
                                                   AUTHORIZATION_CODE).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val userId = decodeHubToken(tokenInfo.accessToken) ?: return false
-    val account = MarketplaceAccount()
-    account.tokenInfo = tokenInfo
+    val account = MarketplaceAccount(tokenInfo.expiresIn)
     val currentUser = getCurrentUser(userId) ?: return false
     account.userInfo = currentUser
     MarketplaceSettings.INSTANCE.account = account
+    account.saveTokens(tokenInfo)
     ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
     return true
   }
 
   private fun MarketplaceAccount.refreshTokens() {
-    val refreshToken = tokenInfo.refreshToken
+    val refreshToken = getRefreshToken() ?: error("Refresh token is null")
     val response = authorizationService.refreshTokens(REFRESH_TOKEN,
                                                       EDU_CLIENT_ID,
                                                       EDU_CLIENT_SECRET,
@@ -117,7 +118,8 @@ abstract class MarketplaceConnector : CourseConnector {
     if (tokens.refreshToken.isEmpty()) {
       tokens.refreshToken = refreshToken
     }
-    updateTokens(tokens)
+    tokenExpiresIn = tokens.expiresIn
+    saveTokens(tokens)
   }
 
   // Get requests:

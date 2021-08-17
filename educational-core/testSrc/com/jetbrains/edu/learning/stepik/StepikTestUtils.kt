@@ -18,7 +18,6 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
-import java.util.*
 
 object StepikTestUtils {
 
@@ -38,7 +37,7 @@ object StepikTestUtils {
   private fun login(tokenInfo: TokenInfo): StepikUser {
     val user = StepikUser(tokenInfo)
 
-    val currentUser = StepikConnector.getInstance().getCurrentUserInfo(user)
+    val currentUser = StepikConnector.getInstance().getCurrentUserInfo(user, tokenInfo.accessToken)
     if (currentUser != null) {
       user.userInfo = currentUser
     }

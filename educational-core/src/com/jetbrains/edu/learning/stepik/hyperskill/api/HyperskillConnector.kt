@@ -61,14 +61,18 @@ abstract class HyperskillConnector {
     }
 
   private val service: HyperskillService
-    get() = service(HyperskillSettings.INSTANCE.account)
+    get() {
+      val account = HyperskillSettings.INSTANCE.account
+      val accessToken = account?.getAccessToken()
+      return service(account, accessToken)
+    }
 
-  private fun service(account: HyperskillAccount?): HyperskillService {
-    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
+  private fun service(account: HyperskillAccount?, accessToken: String?): HyperskillService {
+    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
       account.refreshTokens()
     }
 
-    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = account?.tokenInfo?.accessToken)
+    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = accessToken)
       .addConverterFactory(converterFactory)
       .build()
 
@@ -88,28 +92,29 @@ abstract class HyperskillConnector {
     val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code,
                                                   AUTHORIZATION_CODE).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
-    val account = HyperskillAccount()
-    account.tokenInfo = tokenInfo
-    val currentUser = getCurrentUser(account) ?: return false
+    val account = HyperskillAccount(tokenInfo.expiresIn)
+    val currentUser = getCurrentUser(account, tokenInfo.accessToken) ?: return false
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
+    account.saveTokens(tokenInfo)
     ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
     return true
   }
 
   private fun HyperskillAccount.refreshTokens() {
-    val refreshToken = tokenInfo.refreshToken
+    val refreshToken = getRefreshToken() ?: return
     val response = authorizationService.refreshTokens(REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET, refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
-      updateTokens(tokens)
+      tokenExpiresIn = tokens.expiresIn
+      saveTokens(tokens)
     }
   }
 
   // Get requests:
 
-  fun getCurrentUser(account: HyperskillAccount): HyperskillProfileInfo? {
-    val response = service(account).getCurrentUserInfo().executeHandlingExceptions()
+  fun getCurrentUser(account: HyperskillAccount, accessToken: String?): HyperskillProfileInfo? {
+    val response = service(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
     val userInfo = response?.body()?.profiles?.firstOrNull()
     if (userInfo?.isGuest == true) {
       // it means that session is broken and we should force user to relogin

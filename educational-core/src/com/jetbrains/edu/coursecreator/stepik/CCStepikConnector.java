@@ -72,7 +72,7 @@ public class CCStepikConnector {
       return;
     }
     updateProgress(EduCoreBundle.message("course.creator.stepik.upload.progress.title"));
-    final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user);
+    final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user, null);
     if (currentUser != null) {
       final List<UserInfo> courseAuthors = course.getAuthors();
       for (final UserInfo courseAuthor : courseAuthors) {
