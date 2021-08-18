@@ -126,8 +126,8 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private fun createDescriptionPanel(): JComponent {
     val linkText = "<a href=${EduNames.LEARNER_START_GUIDE}>${EduCoreBundle.message("course.dialog.learn.more")}</a>"
     val text = "${EduCoreBundle.message("course.dialog.welcome.tab.description")} $linkText"
-    val panel = GrayTextHtmlPanel(text, "text-align:center")
-    panel.preferredSize = JBUI.size(330, 50)
+    val panel = GrayTextHtmlPanel(text, "text-align:center; word-wrap: break-word;")
+    panel.preferredSize = JBUI.size(330, 60)
 
     return panel
   }
