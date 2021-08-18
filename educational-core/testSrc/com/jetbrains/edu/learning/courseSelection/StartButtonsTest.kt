@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseSelection
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
@@ -26,7 +27,7 @@ class StartButtonsTest : EduTestCase() {
   fun `test codeforces course`() {
     val scope = CoroutineScope(EmptyCoroutineContext)
     val panel = CodeforcesPlatformProvider().createPanel(scope, testRootDisposable)
-    val course = course { }
+    val course = course(courseProducer = ::CodeforcesCourse) { }
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)
 
