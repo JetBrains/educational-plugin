@@ -2,6 +2,7 @@
     <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
     <depends optional="true" config-file="jvm-core.xml">com.intellij.modules.java</depends>
+    <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
     <depends optional="true" config-file="Edu-JavaScript.xml">NodeJS</depends>
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>

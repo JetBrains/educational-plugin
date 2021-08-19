@@ -1,0 +1,14 @@
+<idea-plugin package="com.jetbrains.edu.java" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <module name="jvm-core"/>
+
+    <plugin id="com.intellij.modules.java"/>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <!-- BACKCOMPAT: 2021.1. Inline it -->
+  <xi:include href="/META-INF/Edu-Java-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>
+
