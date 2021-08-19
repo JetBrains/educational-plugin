@@ -1,8 +1,4 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-
-  <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.python</depends>
-
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.pySdkSettingsHelper"
                     interface="com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper"

@@ -1,7 +1,4 @@
 <idea-plugin>
-  <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.python</depends>
-
   <extensions defaultExtensionNs="Educational">
     <pySdkSettingsHelper implementation="com.jetbrains.edu.python.learning.PyPyCharmSdkSettingsHelper"/>
   </extensions>
