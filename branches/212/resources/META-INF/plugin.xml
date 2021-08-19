@@ -4,6 +4,9 @@
 
   <!--suppress PluginXmlValidity -->
   <content>
+    <module name="edu-html"/>
+    <module name="edu-markdown"/>
+    <module name="edu-yaml"/>
     <module name="jvm-core"/>
     <module name="Edu-Java"/>
     <module name="Edu-Kotlin"/>

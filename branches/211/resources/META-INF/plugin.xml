@@ -1,6 +1,9 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
     <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+    <depends optional="true" config-file="edu-html.xml">com.intellij.modules.xml</depends>
+    <depends optional="true" config-file="edu-markdown.xml">org.intellij.plugins.markdown</depends>
+    <depends optional="true" config-file="edu-yaml.xml">org.jetbrains.plugins.yaml</depends>
     <depends optional="true" config-file="jvm-core.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>

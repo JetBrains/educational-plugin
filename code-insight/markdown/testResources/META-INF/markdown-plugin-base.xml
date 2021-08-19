@@ -2,5 +2,4 @@
   <id>com.jetbrains.edu.markdown</id>
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <depends optional="true" config-file="edu-markdown.xml">org.intellij.plugins.markdown</depends>
 </idea-plugin>

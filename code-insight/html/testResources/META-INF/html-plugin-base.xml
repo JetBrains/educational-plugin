@@ -2,5 +2,4 @@
   <id>com.jetbrains.edu.html</id>
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <depends optional="true" config-file="edu-html.xml">com.intellij.modules.xml</depends>
 </idea-plugin>

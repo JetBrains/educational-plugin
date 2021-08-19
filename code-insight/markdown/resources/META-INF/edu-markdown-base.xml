@@ -1,6 +1,4 @@
 <idea-plugin>
-  <depends>org.intellij.plugins.markdown</depends>
-
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="Markdown"
                             id="EduMarkdownCompletionContributor"
