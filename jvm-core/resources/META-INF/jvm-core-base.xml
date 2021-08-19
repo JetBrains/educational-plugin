@@ -1,8 +1,4 @@
 <idea-plugin>
-  <depends>com.intellij.modules.lang</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
-  <depends>JUnit</depends>
-
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.gradleRefresher"
                     interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"
