@@ -5,6 +5,7 @@
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
+    <depends optional="true" config-file="Edu-Android.xml">com.intellij.modules.androidstudio</depends>
     <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
     <depends optional="true" config-file="Edu-JavaScript.xml">NodeJS</depends>
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
