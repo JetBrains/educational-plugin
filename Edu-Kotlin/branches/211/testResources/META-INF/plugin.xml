@@ -1,0 +1,6 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/kotlin-plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <depends optional="true" config-file="jvm-core.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>
+</idea-plugin>

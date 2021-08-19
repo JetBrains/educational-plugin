@@ -6,6 +6,7 @@
   <content>
     <module name="jvm-core"/>
     <module name="Edu-Java"/>
+    <module name="Edu-Kotlin"/>
     <module name="Edu-Python"/>
     <module name="Edu-JavaScript"/>
     <module name="Edu-Rust"/>

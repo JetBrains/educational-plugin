@@ -1,9 +1,4 @@
 <idea-plugin>
-  <depends>com.intellij.modules.lang</depends>
-  <depends>org.jetbrains.kotlin</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
-  <depends>JUnit</depends>
-
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
