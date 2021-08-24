@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.studyItem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableTitleName
 import com.jetbrains.edu.learning.courseDir
@@ -10,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import icons.EducationalCoreIcons
 import java.io.IOException
 
 class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {

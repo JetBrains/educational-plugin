@@ -1,11 +1,11 @@
 package com.jetbrains.edu.scala.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider {

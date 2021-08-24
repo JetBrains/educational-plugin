@@ -1,8 +1,8 @@
 package com.jetbrains.edu.cpp.compatibility
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class CppGTestCourseCompatibilityProvider : CourseCompatibilityProvider {

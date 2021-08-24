@@ -1,12 +1,12 @@
 package com.jetbrains.edu.scala.gradle
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import icons.EducationalCoreIcons
 import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
 

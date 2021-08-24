@@ -1,5 +1,6 @@
 package com.jetbrains.edu.go.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoCourseBuilder.Companion.FORBIDDEN_SYMBOLS
@@ -9,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider {

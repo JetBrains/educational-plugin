@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.checkio
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
@@ -8,7 +9,6 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import com.jetbrains.edu.python.learning.checkio.utils.profileUrl
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
-import icons.EducationalCoreIcons
 
 class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
                                                                       EduPythonBundle.message("checkio.widget.title"),

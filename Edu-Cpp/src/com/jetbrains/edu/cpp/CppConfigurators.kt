@@ -2,6 +2,7 @@ package com.jetbrains.edu.cpp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -11,7 +12,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class CppGTestConfigurator : CppConfigurator() {

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.gradle
+package com.jetbrains.edu.android.gradle
 
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.intellij.ide.projectView.ProjectView

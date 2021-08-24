@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import CoursesProvidersSidePanel
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.JBCardLayout

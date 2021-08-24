@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checkio
 import com.intellij.openapi.Disposable
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -13,7 +14,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
-import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 import kotlin.math.max

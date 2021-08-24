@@ -1,11 +1,11 @@
 package com.jetbrains.edu.kotlin.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.kotlin.KtConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class KtCodeforcesLanguageProvider : CodeforcesLanguageProvider {

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import icons.EducationalCoreIcons
 import java.util.*
 import javax.swing.Icon
 

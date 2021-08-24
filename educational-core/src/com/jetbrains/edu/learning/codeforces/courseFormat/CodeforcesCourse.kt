@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
@@ -10,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Tag
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
 import java.time.Duration

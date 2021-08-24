@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import icons.EducationalCoreIcons
 
 class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
                                                                EduCoreBundle.message("stepik.widget.title"),

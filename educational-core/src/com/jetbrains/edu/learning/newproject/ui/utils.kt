@@ -10,6 +10,7 @@ import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import icons.EducationalCoreIcons
 import kotlinx.css.CSSBuilder
 import kotlinx.css.body
 import kotlinx.css.properties.lh

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.checkio
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -21,7 +22,6 @@ import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnec
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames.*
 import com.jetbrains.python.PythonFileType
 import com.jetbrains.python.newProject.PyNewProjectSettings
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {

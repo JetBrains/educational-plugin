@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.compatibility
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class RsCourseCompatibilityProvider : CourseCompatibilityProvider {

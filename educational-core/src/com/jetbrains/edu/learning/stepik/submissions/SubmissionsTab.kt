@@ -9,6 +9,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
@@ -30,7 +31,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
 import com.jetbrains.edu.learning.ui.EduColors
-import icons.EducationalCoreIcons
 import java.net.URL
 import java.text.DateFormat
 import java.util.*

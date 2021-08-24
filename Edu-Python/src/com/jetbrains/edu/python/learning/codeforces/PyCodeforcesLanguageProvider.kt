@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
@@ -7,7 +8,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.python.learning.PyNewConfigurator
 import com.jetbrains.python.newProject.PyNewProjectSettings
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {

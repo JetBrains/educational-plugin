@@ -1,4 +1,4 @@
-package com.jetbrains.edu.gradle
+package com.jetbrains.edu.android.gradle
 
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.google.wireless.android.sdk.stats.GradleSyncStats

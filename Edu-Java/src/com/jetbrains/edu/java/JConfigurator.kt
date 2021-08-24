@@ -1,6 +1,7 @@
 package com.jetbrains.edu.java
 
 import com.intellij.lang.java.JavaLanguage
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
@@ -8,7 +9,6 @@ import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class JConfigurator : GradleConfiguratorBase() {

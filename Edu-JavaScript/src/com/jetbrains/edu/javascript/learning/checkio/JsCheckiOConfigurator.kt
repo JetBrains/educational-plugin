@@ -2,6 +2,7 @@ package com.jetbrains.edu.javascript.learning.checkio
 
 import com.intellij.lang.javascript.JavaScriptFileType
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.javascript.learning.JsConfigurator
 import com.jetbrains.edu.javascript.learning.JsEnvironmentChecker
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {

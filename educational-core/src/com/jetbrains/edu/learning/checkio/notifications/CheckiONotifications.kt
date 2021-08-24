@@ -4,7 +4,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.NlsContexts.*
-import icons.EducationalCoreIcons
+import com.jetbrains.edu.EducationalCoreIcons
 
 @Suppress("UnstableApiUsage")
 object CheckiONotifications {

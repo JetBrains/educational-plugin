@@ -1,4 +1,4 @@
-package icons;
+package com.jetbrains.edu;
 
 import com.intellij.openapi.util.IconLoader;
 

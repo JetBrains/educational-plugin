@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.newProjectUI
 
 import com.intellij.openapi.Disposable
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.stepikMarketplaceIdsMap
@@ -11,7 +12,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
-import icons.EducationalCoreIcons
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 

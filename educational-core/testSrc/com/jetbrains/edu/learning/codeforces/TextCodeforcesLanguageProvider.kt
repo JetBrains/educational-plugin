@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class TextCodeforcesLanguageProvider: CodeforcesLanguageProvider {

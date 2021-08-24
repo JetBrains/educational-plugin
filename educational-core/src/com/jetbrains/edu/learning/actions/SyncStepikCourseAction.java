@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.EducationalCoreIcons;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -17,7 +18,6 @@ import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker;
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
-import icons.EducationalCoreIcons;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.codeforces.run
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.runConfigurationType
-import icons.EducationalCoreIcons
+import com.jetbrains.edu.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 

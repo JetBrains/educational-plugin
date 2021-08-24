@@ -9,6 +9,7 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStyleshee
 import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
-import icons.EducationalCoreIcons
 import java.awt.BorderLayout
 import java.awt.Font
 import java.text.NumberFormat

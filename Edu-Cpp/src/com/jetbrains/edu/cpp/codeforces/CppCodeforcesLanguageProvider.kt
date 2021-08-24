@@ -1,15 +1,15 @@
 package com.jetbrains.edu.cpp.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.cpp.CppConfigurator
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.addCMakeList
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import icons.EducationalCoreIcons
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import javax.swing.Icon
 
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {

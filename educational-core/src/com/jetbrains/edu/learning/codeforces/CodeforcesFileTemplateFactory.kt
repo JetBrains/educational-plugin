@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
-import icons.EducationalCoreIcons
 
 class CodeforcesFileTemplateFactory : FileTemplateGroupDescriptorFactory {
 

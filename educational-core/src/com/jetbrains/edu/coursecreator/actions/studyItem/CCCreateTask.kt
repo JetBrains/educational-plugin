@@ -4,6 +4,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
+import com.jetbrains.edu.EducationalCoreIcons.IdeTask
+import com.jetbrains.edu.EducationalCoreIcons.Task
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
@@ -16,8 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import icons.EducationalCoreIcons.IdeTask
-import icons.EducationalCoreIcons.Task
 import java.io.IOException
 
 @Suppress("ComponentNotRegistered") // educational-core.xml

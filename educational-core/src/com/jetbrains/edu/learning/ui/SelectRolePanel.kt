@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.ui
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import icons.EducationalCoreIcons
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.FlowLayout

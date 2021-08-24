@@ -30,7 +30,7 @@
     <action id="Codeforces.UpdateContest" class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
     <action id="Codeforces.CreateTestSample"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
-            icon="EducationalCoreIcons.CODEFORCES_SMALL">
+            icon="com.jetbrains.edu.EducationalCoreIcons.CODEFORCES_SMALL">
       <add-to-group group-id="NewGroup" anchor="first"/>
     </action>
   </actions>

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.rust.codeforces
 
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -9,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
-import icons.EducationalCoreIcons
 import org.rust.cargo.CargoConstants.MANIFEST_FILE
 import org.rust.lang.RsConstants.MAIN_RS_FILE
 import javax.swing.Icon

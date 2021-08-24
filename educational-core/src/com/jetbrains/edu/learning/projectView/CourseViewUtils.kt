@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
@@ -19,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
-import icons.EducationalCoreIcons
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
 

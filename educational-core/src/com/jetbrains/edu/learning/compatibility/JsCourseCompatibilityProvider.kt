@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.util.PlatformUtils.*
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import icons.EducationalCoreIcons
 import javax.swing.Icon
 
 class JsCourseCompatibilityProvider : CourseCompatibilityProvider {
