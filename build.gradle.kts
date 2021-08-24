@@ -1,5 +1,7 @@
 import de.undercouch.gradle.tasks.download.DownloadAction
 import de.undercouch.gradle.tasks.download.DownloadSpec
+import groovy.util.Node
+import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.internal.HasConvention
@@ -61,7 +63,10 @@ val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
+// BACKCOMPAT: 2020.3
 val isAtLeast211 = environmentName.toInt() >= 211
+// BACKCOMPAT: 2021.1
+val isAtLeast212 = environmentName.toInt() >= 212
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -195,6 +200,18 @@ allprojects {
         apiVersion = "1.4"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
       }
+    }
+
+    val verifyClasses = task("verifyClasses") {
+      dependsOn(jar)
+      doLast {
+        if (!isAtLeast212) return@doLast
+        verifyClasses(project)
+      }
+    }
+    // Fail plugin build if there are errors in module packages
+    rootProject.tasks.buildPlugin {
+      dependsOn(verifyClasses)
     }
   }
 
@@ -831,5 +848,68 @@ task("generate-release-notes") {
     val changesFile = file(changesFile)
     val oldChangeNotes = changesFile.readText()
     changesFile.writeText("$notes\n$oldChangeNotes")
+  }
+}
+
+fun parseManifest(file: File): Node {
+  val node = XmlParser().parse(file)
+  check(node.name() == "idea-plugin") {
+    "Manifest file `$file` doesn't contain top-level `idea-plugin` attribute"
+  }
+  return node
+}
+
+fun manifestFile(project: Project, filePath: String? = null): File {
+  val mainOutput = project.sourceSets.main.get().output
+  val resourcesDir = mainOutput.resourcesDir ?: error("Failed to find resources dir for ${project.name}")
+
+  if (filePath != null) {
+    return resourcesDir.resolve(filePath).takeIf { it.exists() } ?: error("Failed to find manifest file for ${project.name} module")
+  }
+  val rootManifest = parseManifest(manifestFile(rootProject, "META-INF/plugin.xml"))
+  val children = ((rootManifest["content"] as? List<*>)?.single() as? Node)?.children()
+                 ?: error("Failed to find module declarations in root manifest")
+  return children.filterIsInstance<Node>()
+    .flatMap { node ->
+      if (node.name() != "module") return@flatMap emptyList()
+      val name = node.attribute("name") as? String ?: return@flatMap emptyList()
+      listOfNotNull(resourcesDir.resolve ("$name.xml").takeIf { it.exists() })
+    }.firstOrNull() ?: error("Failed to find manifest file for ${project.name} module")
+}
+
+fun findModulePackage(project: Project): String {
+  // Some gradle projects are not modules from IDEA plugin point of view
+  // because we use `include` for them inside manifests, i.e. they just a part of another module.
+  // That's why we delegate manifest search to other projects in some cases
+  val moduleManifest = when (project.path) {
+    ":", ":educational-core", ":code-insight" -> manifestFile(rootProject, "META-INF/plugin.xml")
+    ":Edu-Python:Idea", ":Edu-Python:PyCharm" -> manifestFile(project.parent!!)
+    else -> manifestFile(project)
+  }
+
+  val node = parseManifest(moduleManifest)
+  return node.attribute("package") as? String ?: error("Failed to find package for ${project.name}")
+}
+
+fun verifyClasses(project: Project) {
+  val pkg = findModulePackage(project)
+  val expectedDir = pkg.replace('.', '/')
+
+  var hasErrors = false
+  for (classesDir in project.sourceSets.main.get().output.classesDirs) {
+    val basePath = classesDir.toPath()
+    for (file in classesDir.walk()) {
+      if (file.isFile && file.extension == "class") {
+        val relativePath = basePath.relativize(file.toPath())
+        if (!relativePath.startsWith(expectedDir)) {
+          logger.error("Wrong package of `${relativePath.joinToString(".").removeSuffix(".class")}` class. Expected `$pkg`")
+          hasErrors = true
+        }
+      }
+    }
+  }
+
+  if (hasErrors) {
+    throw GradleException("Classes with wrong package were found. See https://docs.google.com/document/d/1pOy-qNlGOJe6wftHVYHkH8sZOoAfav1fdGDPJgkQWJo")
   }
 }
