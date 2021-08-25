@@ -171,5 +171,6 @@ data class ValidationMessage @JvmOverloads constructor(
 
 enum class ValidationMessageType {
   WARNING,
-  ERROR
+  ERROR,
+  INFO
 }

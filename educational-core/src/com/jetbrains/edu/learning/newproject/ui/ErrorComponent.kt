@@ -1,30 +1,33 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.errorBackgroundColor
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.warningBackgroundColor
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.ui.EduColors
-import java.awt.Color
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.RenderingHints
+import java.awt.*
+import javax.swing.Icon
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
 
 class ErrorComponent(
   hyperlinkListener: HyperlinkListener? = null,
-  errorPanelMargin: Int = 3,
-  private val doValidation: () -> Unit
+  errorPanelTopBottomMargin: Int = 3,
+  errorPanelLeftMargin: Int = 20,
+  icon: Icon? = null,
+  private val doValidation: (Course?) -> Unit
 ) : NonOpaquePanel(), CourseSelectionListener {
-  private val errorPanel = ErrorPanel(hyperlinkListener, errorPanelMargin)
+  private val errorPanel = ErrorPanel(icon, hyperlinkListener, errorPanelTopBottomMargin, errorPanelLeftMargin)
 
   init {
     isVisible = false
@@ -35,23 +38,27 @@ class ErrorComponent(
     errorPanel.setErrorMessage(validationMessage)
   }
 
-  inner class ErrorPanel(hyperlinkListener: HyperlinkListener?, margin: Int) : NonOpaquePanel() {
+  inner class ErrorPanel(icon: Icon?, hyperlinkListener: HyperlinkListener?, topMargin: Int, leftMargin: Int) : NonOpaquePanel() {
 
     private val errorTextPane: JTextPane = createTextPane()
-    private var messageType: ValidationMessageType? = null
+    private var messageType: ValidationMessageType = ValidationMessageType.INFO
 
     init {
-      border = JBUI.Borders.empty(margin, 20, margin, 0)
+      border = JBUI.Borders.empty(topMargin, leftMargin, topMargin, 0)
       background = MAIN_BG_COLOR
+
+      if (icon != null) {
+        add(JBLabel(icon), BorderLayout.LINE_START)
+      }
 
       errorTextPane.apply {
         background = getComponentColor()
         highlighter = null
         // specifying empty borders is necessary because otherwise JTextPane's preferred size is defined as zero on MAC OS
-        border = JBUI.Borders.empty(1)
+        border = JBUI.Borders.empty(1, 5, 1, 1)
         addHyperlinkListener(hyperlinkListener)
       }
-      add(errorTextPane)
+      add(errorTextPane, BorderLayout.CENTER)
     }
 
     fun setErrorMessage(validationMessage: ValidationMessage) {
@@ -71,7 +78,11 @@ class ErrorComponent(
     }
 
     private fun getComponentColor(): Color {
-      return if (messageType == ValidationMessageType.WARNING) warningBackgroundColor() else errorBackgroundColor()
+      return when (messageType) {
+        ValidationMessageType.WARNING -> warningBackgroundColor()
+        ValidationMessageType.ERROR -> errorBackgroundColor()
+        ValidationMessageType.INFO -> JBColor(Color(0xE6EEF7), JBUI.CurrentTheme.Notification.BACKGROUND)
+      }
     }
 
     override fun paintComponent(g: Graphics) {
@@ -90,6 +101,6 @@ class ErrorComponent(
   }
 
   override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-   doValidation()
+    doValidation(courseInfo.course)
   }
 }
