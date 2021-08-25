@@ -81,7 +81,7 @@ class ErrorComponent(
       return when (messageType) {
         ValidationMessageType.WARNING -> warningBackgroundColor()
         ValidationMessageType.ERROR -> errorBackgroundColor()
-        ValidationMessageType.INFO -> JBColor(Color(0xE6EEF7), JBUI.CurrentTheme.Notification.BACKGROUND)
+        ValidationMessageType.INFO -> JBColor(Color(0xE6EEF7), Color(0x1C3956))
       }
     }
 

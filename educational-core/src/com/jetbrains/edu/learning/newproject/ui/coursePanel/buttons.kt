@@ -124,6 +124,10 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
   override val courseMode = CourseMode.STUDY
 
   override fun isVisible(course: Course): Boolean {
+    if (CoursesStorage.getInstance().hasCourse(course)) {
+      return false
+    }
+
     if (course is CodeforcesCourse) {
       return (course.isRegistrationOpen && course.isUpcomingContest)
              || course.isOngoing
@@ -132,7 +136,6 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 
     return course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
            || course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
-           || !CoursesStorage.getInstance().hasCourse(course)
   }
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null

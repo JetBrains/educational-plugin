@@ -20,9 +20,11 @@ import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JButton
 
-class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
-                             scope: CoroutineScope,
-                             private val disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
+class CodeforcesCoursesPanel(
+  platformProvider: CoursesPlatformProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(platformProvider, scope, disposable) {
 
   init {
     coursesSearchComponent.hideFilters()

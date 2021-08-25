@@ -74,6 +74,7 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
 
   companion object {
     const val DATE_PATTERN: String = "MMM d, yyyy"
+    const val DATE_TIME_PATTERN: String = "MMM d, HH:mm"
 
     fun formatNumber(number: Int): String {
       return NumberFormat.getNumberInstance(Locale.US).format(number)

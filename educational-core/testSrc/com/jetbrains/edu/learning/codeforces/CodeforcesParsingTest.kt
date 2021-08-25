@@ -105,8 +105,8 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
     assertTrue(upcomingContests.size == 4)
 
-    val firstContest = upcomingContests[3]
-    assertEquals("/contestRegistration/1488", firstContest.registrationLink)
+    val contest = upcomingContests[3]
+    assertEquals("/contestRegistration/1488", contest.registrationLink)
   }
 
   fun testUpcomingContestsRegistrationDate() {
@@ -115,8 +115,8 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
     assertTrue(upcomingContests.size == 4)
 
-    val firstContest = upcomingContests[3]
-    val registrationCountdown = firstContest.registrationCountdown!!
+    val contest = upcomingContests[3]
+    val registrationCountdown = contest.registrationCountdown!!
     assertEquals(18, registrationCountdown.toDays())
   }
 
@@ -174,8 +174,34 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val document = Jsoup.parse(htmlText)
     val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
 
-    val firstContest = upcomingContests[3]
-    assertEquals(1880, firstContest.participantsNumber)
+    val contest = upcomingContests[3]
+    assertEquals(1880, contest.participantsNumber)
+  }
+
+  fun testUpcomingContestsRegistrationCountdown() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+
+    // countdown elements format: <span class="countdown" cdid="i3">40:15:33</span>
+    val firstContest = upcomingContests[0]
+    assertEquals(39, firstContest.registrationCountdown?.toHours()?.toInt())
+    // countdown elements format: <span class="countdown" cdid="i5"><span title="510:33:52">3 недели</span></span>
+    val secondContest = upcomingContests[1]
+    assertEquals(509, secondContest.registrationCountdown?.toHours()?.toInt())
+  }
+
+  fun testRunningContestsTimeRemaining() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+
+    // countdown elements format: <span class="countdown" cdid="i3">40:15:33</span>
+    val firstContest = upcomingContests[0]
+    val remainingTime = firstContest.remainingTime
+    assertNotNull(remainingTime)
+    assertEquals(0, remainingTime!!.toHoursPart())
+    assertEquals(29, remainingTime.toMinutesPart())
   }
 
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()

@@ -68,11 +68,12 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   fun `test custom check interval for ongoing contest`() {
-    val secondsToEnd = 3L
+    val secondsToEnd = 1000L
     val course = createCodeforcesCourse().apply {
+      startDate = ZonedDateTime.now().minusSeconds(secondsToEnd)
       endDateTime = ZonedDateTime.now().plusSeconds(secondsToEnd)
     }
-    assertTrue(course.isOngoing())
+    assertTrue(course.isOngoing)
 
     val checker = CodeforcesCourseUpdateChecker(project)
     assertEquals(ONGOING_COURSE_CHECK_INTERVAL, checker.checkInterval)
@@ -81,7 +82,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     EduUtils.waitAndDispatchInvocationEvents(future)
 
     checker.check()
-    assertFalse(course.isOngoing())
+    assertFalse(course.isOngoing)
     assertEquals(DateFormatUtil.SECOND * Registry.intValue(CourseUpdateChecker.REGISTRY_KEY), checker.checkInterval)
   }
 
