@@ -26,6 +26,8 @@ open class CodeforcesCourse : Course {
   var availableLanguages: List<String> = emptyList()
   var participantsNumber: Int = 0
   var registrationCountdown: Duration? = null
+  var standingsLink: String? = null
+  var remainingTime: Duration? = Duration.ZERO
 
   val isUpcomingContest: Boolean get() = registrationCountdown != null
 
@@ -55,6 +57,8 @@ open class CodeforcesCourse : Course {
     availableLanguages = contestParameters.availableLanguages
     name = contestParameters.name
     participantsNumber = contestParameters.participantsNumber
+    standingsLink = contestParameters.standingsLink
+    remainingTime = contestParameters.remainingTime
   }
 
   override fun getIcon(): Icon = EducationalCoreIcons.CODEFORCES_SMALL

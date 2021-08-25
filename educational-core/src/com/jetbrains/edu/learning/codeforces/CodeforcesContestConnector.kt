@@ -75,7 +75,7 @@ object CodeforcesContestConnector {
     val contestElements = getContestsElements(recentContests)
 
     return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
-      parseContestInformation(it, FORMAT_DATE_CLASS)
+      parseContestInformation(it, FORMAT_DATE_CLASS, FORMAT_DATE_CLASS)
     }
   }
 
@@ -87,6 +87,8 @@ object CodeforcesContestConnector {
       val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
       val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
+      val standings = parseStandings(tableRow[4])
+      val remainingTime = parseRemainingTime(tableRow[4])
       val registrationLinkElement = tableRow[5].getElementsByClass("red-link").firstOrNull()
       val isRegistrationOpen = registrationLinkElement != null
       val registrationCountdown = parseCountdown(tableRow[5])
@@ -100,7 +102,9 @@ object CodeforcesContestConnector {
                                                 length = duration,
                                                 registrationLink = registrationLink,
                                                 registrationCountdown = registrationCountdown,
-                                                participantsNumber = participantsNumber)
+                                                participantsNumber = participantsNumber,
+                                                standingsLink = standings,
+                                                remainingTime = remainingTime)
       CodeforcesCourse(contestParameters)
     }
     catch (e: Exception) {
@@ -109,14 +113,27 @@ object CodeforcesContestConnector {
     }
   }
 
+  private fun parseRemainingTime(tableRow: Element): Duration? {
+    val countdownElement = tableRow.getElementsByClass("countdown").firstOrNull() ?: return null
+
+    return parseCountdown(countdownElement)
+  }
+
+  private fun parseStandings(tableRow: Element): String? {
+    val linkElement = tableRow.getElementsByTag("a") ?: return null
+    return linkElement.attr("href")
+  }
+
   private fun parseCountdown(tableRow: Element): Duration? {
     val countdownElement = tableRow.getElementsByClass("countdown").first() ?: return null
-    val countdownTitle = countdownElement.getElementsByAttribute("title").first() ?: return null
-    val countdownValue = countdownTitle.attr("title")
-    val dateParts = countdownValue.split(":")
-    if (dateParts.size != 3) {
-      error("wrong countdown format: '$countdownValue'")
+    val countdownTitle = countdownElement.getElementsByAttribute("title").first()
+    val countdownValue = if (countdownTitle != null) {
+      countdownTitle.attr("title")
     }
+    else {
+      countdownElement.text()
+    }
+    val dateParts = parseCountdown(countdownValue)
     val hours = dateParts[0].toLong()
     val minutes = dateParts[1].toLong()
     val seconds = dateParts[2].toLong()
@@ -124,6 +141,14 @@ object CodeforcesContestConnector {
     return Duration.ofHours(hours)
       .plus(Duration.ofMinutes(minutes))
       .plus(Duration.ofSeconds(seconds))
+  }
+
+  private fun parseCountdown(countdownValue: String): List<String> {
+    val dateParts = countdownValue.split(":")
+    if (dateParts.size != 3) {
+      error("wrong countdown format: '$countdownValue'")
+    }
+    return dateParts
   }
 
   private fun parseParticipantsNumber(tableRow: Element): Int {

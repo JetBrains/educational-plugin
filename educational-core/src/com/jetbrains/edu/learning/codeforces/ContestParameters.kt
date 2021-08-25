@@ -16,5 +16,7 @@ data class ContestParameters(
   val registrationLink: String? = null,
   val registrationCountdown: Duration? = null,
   val availableLanguages: List<String> = emptyList(),
-  val participantsNumber: Int = 0
+  val participantsNumber: Int = 0,
+  val standingsLink: String? = null,
+  val remainingTime: Duration? = null
 )
