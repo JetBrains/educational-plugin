@@ -51,11 +51,10 @@ object CodeforcesContestConnector {
 
   fun getUpcomingContests(document: Document): List<CodeforcesCourse> {
     val upcomingContestList = document.body().getElementsByClass(CONTEST_LIST_CLASS).first() ?: error("Cannot parse $CONTEST_LIST_CLASS")
-    val tables = upcomingContestList.getElementsByClass(DATATABLE_CLASS)
-    if (tables.isEmpty()) {
+    val upcomingContests = upcomingContestList.children().find { it.className() == DATATABLE_CLASS }
+    if (upcomingContests == null) {
       return emptyList()
     }
-    val upcomingContests = tables[0]
 
     val contestElements = getContestsElements(upcomingContests)
 
