@@ -29,7 +29,12 @@ open class CodeforcesCourse : Course {
   var standingsLink: String? = null
   var remainingTime: Duration? = Duration.ZERO
 
-  val isUpcomingContest: Boolean get() = registrationCountdown != null
+  val isUpcomingContest: Boolean get() = registrationCountdown != null || isOngoing
+  val isRegistrationOpen: Boolean get() = registrationLink != null
+  val isPastContest: Boolean get() = !isUpcomingContest
+
+  val isOngoing: Boolean
+    get() = (startDate != null && ZonedDateTime.now().isAfter(startDate)) && (endDateTime?.isAfter(ZonedDateTime.now()) == true)
 
   @Suppress("unused") //used for deserialization
   constructor()
@@ -68,7 +73,6 @@ open class CodeforcesCourse : Course {
   override fun isViewAsEducatorEnabled(): Boolean = false
 
   fun getContestUrl(): String = getContestURLFromID(id)
-  fun isOngoing(): Boolean = if (endDateTime == null) false else (endDateTime!! > ZonedDateTime.now())
 
   private fun parseResponseToAddContent(doc: Document) {
     @NonNls val error = "Parsing failed. Unable to find CSS elements:"

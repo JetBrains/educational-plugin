@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.update.CourseUpdateChecker
 @Service
 class CodeforcesCourseUpdateChecker(project: Project) : CourseUpdateChecker(project) {
   private val isCourseOngoing: Boolean
-    get() = (course as? CodeforcesCourse)?.isOngoing() ?: false
+    get() = (course as? CodeforcesCourse)?.isOngoing ?: false
 
   override val checkInterval: Long
     get() = if (isCourseOngoing) ONGOING_COURSE_CHECK_INTERVAL else super.checkInterval
