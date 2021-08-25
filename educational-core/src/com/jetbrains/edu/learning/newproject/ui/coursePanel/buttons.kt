@@ -13,6 +13,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
@@ -122,10 +123,17 @@ class OpenCourseButton : CourseButtonBase() {
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
   override val courseMode = CourseMode.STUDY
 
-  override fun isVisible(course: Course): Boolean =
-    course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
-    || course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
-    || !CoursesStorage.getInstance().hasCourse(course)
+  override fun isVisible(course: Course): Boolean {
+    if (course is CodeforcesCourse) {
+      return (course.isRegistrationOpen && course.isUpcomingContest)
+             || course.isOngoing
+             || course.isPastContest
+    }
+
+    return course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+           || course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) == true
+           || !CoursesStorage.getInstance().hasCourse(course)
+  }
 
   override fun canStartCourse(courseInfo: CourseInfo) = courseInfo.projectSettings != null
                                                         && courseInfo.location() != null
