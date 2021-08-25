@@ -50,7 +50,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   @VisibleForTesting
   val buttonsPanel: ButtonsPanel = ButtonsPanel().apply {
-    setStartButtonText(startButtonText)
+    setStartButtonText(startButtonText(null))
     setOpenButtonText(openButtonText)
   }
 
@@ -61,9 +61,6 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   var errorState: ErrorState = ErrorState.NothingSelected
   var course: Course? = null
-
-  protected open val startButtonText: String
-    get() = EduCoreBundle.message("course.dialog.start.button")
 
   protected open val openButtonText: String
     get() = EduCoreBundle.message("course.dialog.open.button")
@@ -100,6 +97,10 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     add(scrollPane, CONTENT)
   }
 
+  protected open fun startButtonText(course: Course?): String {
+    return EduCoreBundle.message("course.dialog.start.button")
+  }
+
   protected open fun addComponents() {
     with(content) {
       add(tagsPanel)
@@ -132,6 +133,9 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
     doValidation()
 
+    buttonsPanel.apply {
+      setStartButtonText(startButtonText(course))
+    }
     content.update(courseInfo, settings)
 
     revalidate()
