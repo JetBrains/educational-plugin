@@ -13,6 +13,7 @@ class GrayTextHtmlPanel(private val infoText: String, private val style: String 
 
   override fun getBody(): String {
     // this check is needed because this method is called from superclass constructor
+    @Suppress("USELESS_ELVIS")
     return infoText ?: ""
   }
 
@@ -32,7 +33,7 @@ class GrayTextHtmlPanel(private val infoText: String, private val style: String 
           </style>
         </head>
         <body>
-        $infoText
+        $text
         </body>
         </html>
       """.trimIndent())
