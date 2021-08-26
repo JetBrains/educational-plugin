@@ -64,7 +64,10 @@ class CourseraTaskChecker : RemoteTaskChecker {
       var responseCode = response.code()
       if (responseCode != HttpStatus.SC_CREATED && !askedForCredentials) {
         askToEnterCredentials(task, createCheckResult(responseCode, task).message)
-        responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings, token)).code()
+        token = getToken()
+        if (token != null) {
+          responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings, token)).code()
+        }
       }
       createCheckResult(responseCode, task)
     }
