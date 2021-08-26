@@ -394,6 +394,19 @@ project(":") {
     }
   }
 
+  // Generates event scheme for EduTools plugin FUS events to `build/eventScheme.json`
+  task<RunIdeTask>("buildEventsScheme") {
+    dependsOn(tasks.prepareSandbox)
+    args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
+
+    // BACKCOMPAT: 2021.2
+    doFirst {
+      if (!isAtLeast213) {
+        throw GradleException("`buildEventsScheme` task is supported only for 213 platform or higher. Please, change `environmentName` property value")
+      }
+    }
+  }
+
   task("configureIdea") {
     doLast {
       intellij.sandboxDir.set(ideaSandbox)
