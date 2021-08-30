@@ -22,7 +22,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
@@ -43,7 +42,7 @@ private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
 class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
-  private val moreActionsGroup = DefaultActionGroup(CCNewCourseAction(), NewHyperskillCourseAction(), StartCodeforcesContestAction())
+  private val moreActionsGroup = DefaultActionGroup(CCNewCourseAction(), NewHyperskillCourseAction())
   private val cardLayout: CardLayout = CardLayout()
   private val mainPanel = JPanel(cardLayout)
 
