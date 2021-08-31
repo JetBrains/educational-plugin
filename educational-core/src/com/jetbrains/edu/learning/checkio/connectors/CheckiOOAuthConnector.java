@@ -60,12 +60,11 @@ public abstract class CheckiOOAuthConnector {
   @NotNull
   protected abstract String getPlatformName();
 
-  @NotNull
   public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
     ensureTokensUpToDate();
 
-    return currentAccount.getTokenInfo().getAccessToken();
+    return currentAccount.getAccessToken();
   }
 
   @NotNull
@@ -101,11 +100,15 @@ public abstract class CheckiOOAuthConnector {
   private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
 
-    TokenInfo tokenInfo = currentAccount.getTokenInfo();
-    if (!tokenInfo.isUpToDate()) {
-      final String refreshToken = tokenInfo.getRefreshToken();
+    if (!currentAccount.isTokenUpToDate()) {
+      final String refreshToken = currentAccount.getRefreshToken();
+      if (refreshToken == null) {
+        LOG.error("Cannot get refresh token");
+        return;
+      }
       final TokenInfo newTokens = refreshTokens(refreshToken);
-      currentAccount.updateTokens(newTokens);
+      currentAccount.setTokenExpiresIn(newTokens.getExpiresIn());
+      currentAccount.saveTokens(newTokens);
     }
   }
 

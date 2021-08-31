@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.authUtils.OAuthAccount;
@@ -10,7 +11,20 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
   private StepikUser() { }
 
   public StepikUser(@NotNull TokenInfo tokenInfo) {
-    super(tokenInfo);
+    super(tokenInfo.getExpiresIn());
+  }
+
+  @NotNull
+  @Override
+  @NlsSafe
+  public String getServicePrefix() {
+    return StepikNames.STEPIK;
+  }
+
+  @NotNull
+  @Override
+  protected String getUserName() {
+    return userInfo.getFullName();
   }
 
   public static StepikUser createEmptyUser() {
@@ -21,12 +35,6 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
   public int getId() {
     StepikUserInfo info = getUserInfo();
     return info.getId();
-  }
-
-  @Transient
-  public void setId(int id) {
-    StepikUserInfo info = getUserInfo();
-    info.setId(id);
   }
 
   @Transient
@@ -58,26 +66,6 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
   public String getName() {
     StepikUserInfo info = getUserInfo();
     return StringUtil.join(new String[]{info.getFirstName(), info.getLastName()}, " ");
-  }
-
-  @Transient
-  @NotNull
-  public String getAccessToken() {
-    TokenInfo tokenInfo = getTokenInfo();
-    return tokenInfo.getAccessToken();
-  }
-
-  @Transient
-  public void setAccessToken(String accessToken) {
-    TokenInfo tokenInfo = getTokenInfo();
-    tokenInfo.setAccessToken(accessToken);
-  }
-
-  @Transient
-  @NotNull
-  public String getRefreshToken() {
-    TokenInfo tokenInfo = getTokenInfo();
-    return tokenInfo.getRefreshToken();
   }
 
   @Override

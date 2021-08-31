@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.api.FILES
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 const val ACTION = "action"
@@ -59,7 +61,19 @@ const val URL = "url"
 const val USERS = "users"
 const val USE_IDE = "use_ide"
 
-class HyperskillAccount : OAuthAccount<HyperskillProfileInfo>()
+class HyperskillAccount : OAuthAccount<HyperskillProfileInfo> {
+  @TestOnly
+  constructor() : super()
+
+  constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
+
+  @NlsSafe
+  override val servicePrefix: String = EduNames.JBA
+
+  override fun getUserName(): String {
+    return userInfo.fullname
+  }
+}
 
 class HyperskillProfileInfo {
   @JsonProperty(ID)

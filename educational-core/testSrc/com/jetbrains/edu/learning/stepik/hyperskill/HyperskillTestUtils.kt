@@ -23,7 +23,7 @@ fun loginFakeUser() {
   HyperskillSettings.INSTANCE.account = HyperskillAccount().apply {
     userInfo = HyperskillProfileInfo()
     userInfo.id = 1
-    tokenInfo = fakeToken
+    saveTokens(fakeToken)
   }
 }
 

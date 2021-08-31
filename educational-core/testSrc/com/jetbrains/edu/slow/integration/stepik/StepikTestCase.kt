@@ -37,7 +37,7 @@ abstract class StepikTestCase : EduTestCase() {
     mockStepikConnector.setBaseUrl(getStepikUrl(), testRootDisposable)
     val user = StepikTestUtils.login(testRootDisposable)
     httpClient = HttpClients.custom()
-      .setDefaultHeaders(listOf(getAuthorizationHeader(user.accessToken), BasicHeader(USER_AGENT, eduToolsUserAgent)))
+      .setDefaultHeaders(listOf(getAuthorizationHeader(user.getAccessToken()!!), BasicHeader(USER_AGENT, eduToolsUserAgent)))
       .setDefaultCookieStore(BasicCookieStore()).build()
   }
 

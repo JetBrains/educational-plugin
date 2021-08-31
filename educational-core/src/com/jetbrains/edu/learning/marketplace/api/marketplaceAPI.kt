@@ -2,10 +2,13 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import org.jetbrains.annotations.TestOnly
 
 const val CREATE_DATE = "cdate"
 const val DATA = "data"
@@ -31,7 +34,19 @@ const val TYPE = "type"
 const val UPDATES = "updates"
 const val VERSION = "version"
 
-class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo>()
+class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
+  @TestOnly
+  constructor() : super()
+
+  constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
+
+  @NlsSafe
+  override val servicePrefix: String = MARKETPLACE
+
+  override fun getUserName(): String {
+    return userInfo.getFullName()
+  }
+}
 
 class MarketplaceUserInfo() : UserInfo {
   @JsonProperty(ID)

@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.checkio.account;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.learning.authUtils.OAuthAccount;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +17,9 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
   private CheckiOAccount() { }
 
   public CheckiOAccount(CheckiOUserInfo info, TokenInfo tokens) {
-    setTokenInfo(tokens);
+    super(tokens.getExpiresIn());
     setUserInfo(info);
+    saveTokens(tokens);
   }
 
   public Element serializeIntoService(@NotNull @NonNls String serviceName) {
@@ -25,6 +28,19 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
     Element userElement = serialize();
     mainElement.addContent(userElement);
     return mainElement;
+  }
+
+  @NotNull
+  @Override
+  @NlsSafe
+  public String getServicePrefix() {
+    return CheckiONames.CHECKIO;
+  }
+
+  @NotNull
+  @Override
+  protected String getUserName() {
+    return userInfo.getUsername();
   }
 
   public static CheckiOAccount fromElement(@NotNull Element element) {

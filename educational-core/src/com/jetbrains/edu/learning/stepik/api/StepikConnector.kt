@@ -24,7 +24,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
-import java.util.*
 
 abstract class StepikConnector {
 
@@ -49,14 +48,22 @@ abstract class StepikConnector {
       .create(StepikOAuthService::class.java)
 
   private val service: StepikService
-    get() = service(EduSettings.getInstance().user)
+    get() {
+      val stepikUser = EduSettings.getInstance().user
+      if (stepikUser != null) {
+        val accessToken = stepikUser.getAccessToken()
+        return service(stepikUser, accessToken)
+      }
 
-  private fun service(account: StepikUser?): StepikService {
-    if (!isUnitTestMode && account != null && !account.tokenInfo.isUpToDate()) {
+      return service(null, null)
+    }
+
+  private fun service(account: StepikUser?, accessToken: String?): StepikService {
+    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
       account.refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl, connectionPool, account?.tokenInfo?.accessToken)
+    return createRetrofitBuilder(baseUrl, connectionPool, accessToken)
       .addConverterFactory(converterFactory)
       .build()
       .create(StepikService::class.java)
@@ -65,12 +72,13 @@ abstract class StepikConnector {
   // Authorization requests:
 
   private fun StepikUser.refreshTokens() {
-    val refreshToken = tokenInfo.refreshToken
+    val refreshToken = getRefreshToken() ?: error("Refresh token is null")
     val response = authorizationService
       .refreshTokens("refresh_token", getClientId(), getClientSecret(), refreshToken).executeHandlingExceptions()
     val tokens = response?.body()
     if (tokens != null) {
-      updateTokens(tokens)
+      tokenExpiresIn = tokens.expiresIn
+      saveTokens(tokens)
     }
     else {
       error("Failed to refresh tokens")
@@ -83,21 +91,22 @@ abstract class StepikConnector {
     ).executeHandlingExceptions()
     val tokenInfo = response?.body() ?: return false
     val stepikUser = StepikUser(tokenInfo)
-    val stepikUserInfo = getCurrentUserInfo(stepikUser) ?: return false
+    val stepikUserInfo = getCurrentUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
     stepikUser.userInfo = stepikUserInfo
+    stepikUser.saveTokens(tokenInfo)
     EduSettings.getInstance().user = stepikUser
     return true
   }
 
   // Get requests:
 
-  fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
-    val response = service(stepikUser).getCurrentUser().executeHandlingExceptions()
+  fun getCurrentUserInfo(stepikUser: StepikUser, accessToken: String?): StepikUserInfo? {
+    val response = service(stepikUser, accessToken).getCurrentUser().executeHandlingExceptions()
     return response?.body()?.users?.firstOrNull()
   }
 
-  fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser): Boolean {
-    val response = service(stepikUser).enrollments(courseId).executeHandlingExceptions(true)
+  fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser, accessToken: String?): Boolean {
+    val response = service(stepikUser, accessToken).enrollments(courseId).executeHandlingExceptions(true)
     return response?.code() == HttpStatus.SC_OK
   }
 
@@ -278,8 +287,8 @@ abstract class StepikConnector {
     return response?.code() ?: -1
   }
 
-  fun enrollToCourse(courseId: Int, stepikUser: StepikUser) {
-    val response = service(stepikUser).enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
+  fun enrollToCourse(courseId: Int, stepikUser: StepikUser, accessToken: String?) {
+    val response = service(stepikUser, accessToken).enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
     if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.error("Failed to enroll user ${stepikUser.id} to course $courseId")
     }
