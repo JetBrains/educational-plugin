@@ -21,7 +21,6 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
-import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
@@ -127,9 +126,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
   private fun createMoreActionsButton(): JComponent {
     val moreActionGroup = DefaultActionGroup("", true)
-    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")),
-                           ImportLocalCourseAction(),
-                           StartCodeforcesContestAction())
+    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")), ImportLocalCourseAction())
 
     val moreActionPresentation = moreActionGroup.templatePresentation
     moreActionPresentation.icon = AllIcons.Actions.More
