@@ -1,108 +1,94 @@
-package com.jetbrains.edu.learning.actions.refresh;
+package com.jetbrains.edu.learning.actions.refresh
 
-import com.intellij.openapi.fileTypes.PlainTextLanguage;
-import com.intellij.testFramework.TestActionEvent;
-import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.testFramework.TestActionEvent
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.List;
-
-public class RefreshPlaceholderTest extends EduTestCase {
-
-  public void testRefreshPlaceholder() {
-    configureByTaskFile(1, 1, "taskFile1.txt");
-    myFixture.getEditor().getCaretModel().moveToOffset(12);
-
-    myFixture.type("test");
-    myFixture.testAction(new RefreshAnswerPlaceholder());
-
-    assertEquals("Look! There is placeholder.",
-        myFixture.getDocument(myFixture.getFile()).getText());
+class RefreshPlaceholderTest : EduTestCase() {
+  fun `test refresh placeholder`() {
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    myFixture.editor.caretModel.moveToOffset(12)
+    myFixture.type("test")
+    myFixture.testAction(RefreshAnswerPlaceholder())
+    assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
-  public void testCaretOutside() {
-    configureByTaskFile(1, 2, "taskFile2.txt");
-    myFixture.getEditor().getCaretModel().moveToOffset(2);
-    myFixture.type("test");
-    myFixture.getEditor().getCaretModel().moveToOffset(2);
-
-    final RefreshAnswerPlaceholder action = new RefreshAnswerPlaceholder();
-    TestActionEvent e = new TestActionEvent(action);
-    action.beforeActionPerformedUpdate(e);
-    assertFalse(e.getPresentation().isEnabled() && e.getPresentation().isVisible());
+  fun `test caret outside`() {
+    configureByTaskFile(1, 2, "taskFile2.txt")
+    myFixture.editor.caretModel.moveToOffset(2)
+    myFixture.type("test")
+    myFixture.editor.caretModel.moveToOffset(2)
+    val action = RefreshAnswerPlaceholder()
+    val e = TestActionEvent(action)
+    action.beforeActionPerformedUpdate(e)
+    assertFalse(e.presentation.isEnabled && e.presentation.isVisible)
   }
 
-  public void testSecondRefreshPlaceholder() {
-    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
-    myFixture.getEditor().getCaretModel().moveToOffset(16);
-
-    myFixture.type("test");
-    myFixture.getEditor().getCaretModel().moveToOffset(52);
-    myFixture.type("test");
-    myFixture.testAction(new RefreshAnswerPlaceholder());
-
-    assertEquals("Look! There is test placeholder.\n" +
-            "Look! There is second placeholder.",
-        myFixture.getDocument(myFixture.getFile()).getText());
+  fun `test second refresh placeholder`() {
+    findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
+    myFixture.editor.caretModel.moveToOffset(16)
+    myFixture.type("test")
+    myFixture.editor.caretModel.moveToOffset(52)
+    myFixture.type("test")
+    myFixture.testAction(RefreshAnswerPlaceholder())
+    assertEquals("""
+      Look! There is test placeholder.
+      Look! There is second placeholder.
+      """.trimIndent(), myFixture.getDocument(myFixture.file).text)
   }
 
-  public void testRefreshSecondPlaceholderStartOffset() {
-    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
-    myFixture.getEditor().getCaretModel().moveToOffset(16);
-
-    myFixture.type("test test");
-    myFixture.getEditor().getCaretModel().moveToOffset(56);
-    myFixture.type("test");
-    myFixture.testAction(new RefreshAnswerPlaceholder());
-
-    assertEquals("Look! There is test test placeholder.\n" +
-            "Look! There is second placeholder.",
-        myFixture.getDocument(myFixture.getFile()).getText());
-    final Course course = StudyTaskManager.getInstance(getProject()).getCourse();
-    final Lesson lesson = course.getLesson("lesson1");
-    final Task task = lesson.getTask("task3");
-    final TaskFile taskFile = task.getTaskFile("taskFile3.txt");
-    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    assertEquals(2, placeholders.size());
-    final AnswerPlaceholder secondPlaceholder = placeholders.get(1);
-    assertEquals(53, secondPlaceholder.getOffset());
+  fun `test refresh second placeholder start offset`() {
+    findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
+    myFixture.editor.caretModel.moveToOffset(16)
+    myFixture.type("test test")
+    myFixture.editor.caretModel.moveToOffset(56)
+    myFixture.type("test")
+    myFixture.testAction(RefreshAnswerPlaceholder())
+    assertEquals("""
+      Look! There is test test placeholder.
+      Look! There is second placeholder.
+      """.trimIndent(), myFixture.getDocument(myFixture.file).text)
+    val course = StudyTaskManager.getInstance(project).course
+    val lesson = course!!.getLesson("lesson1")
+    val task = lesson!!.getTask("task3")
+    val taskFile = task!!.getTaskFile("taskFile3.txt")
+    val placeholders = taskFile!!.answerPlaceholders
+    assertEquals(2, placeholders.size)
+    val secondPlaceholder = placeholders[1]
+    assertEquals(53, secondPlaceholder.offset)
   }
 
-  public void testFirstRefreshPlaceholder() {
-    openTaskFileInEditor(findTask(0, 2), "taskFile3.txt", 0);
-    myFixture.getEditor().getCaretModel().moveToOffset(16);
-
-    myFixture.type("test");
-    myFixture.getEditor().getCaretModel().moveToOffset(52);
-    myFixture.type("test");
-    myFixture.getEditor().getCaretModel().moveToOffset(16);
-    myFixture.testAction(new RefreshAnswerPlaceholder());
-    assertEquals("Look! There is first placeholder.\n" +
-            "Look! There is secotestnd placeholder.",
-        myFixture.getDocument(myFixture.getFile()).getText());
+  fun `test first refresh placeholder`() {
+    findTask(0, 2).openTaskFileInEditor("taskFile3.txt", 0)
+    myFixture.editor.caretModel.moveToOffset(16)
+    myFixture.type("test")
+    myFixture.editor.caretModel.moveToOffset(52)
+    myFixture.type("test")
+    myFixture.editor.caretModel.moveToOffset(16)
+    myFixture.testAction(RefreshAnswerPlaceholder())
+    assertEquals("""
+      Look! There is first placeholder.
+      Look! There is secotestnd placeholder.
+      """.trimIndent(), myFixture.getDocument(myFixture.file).text)
   }
 
-  @Override
-  protected void createCourse() throws IOException {
-    myFixture.copyDirectoryToProject("lesson1", "lesson1");
-    Course course = new EduCourse();
-    course.setName("Edu test course");
-    course.setLanguage(PlainTextLanguage.INSTANCE.getID());
-    StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
-
-    Lesson lesson1 = createLesson(1, 3);
-    course.addLesson(lesson1);
-    course.init(null, null, false);
+  @Throws(IOException::class)
+  override fun createCourse() {
+    myFixture.copyDirectoryToProject("lesson1", "lesson1")
+    val course = EduCourse()
+    course.name = "Edu test course"
+    course.language = PlainTextLanguage.INSTANCE.id
+    StudyTaskManager.getInstance(myFixture.project).course = course
+    val lesson1 = createLesson(1, 3)
+    course.addLesson(lesson1)
+    course.init(null, null, false)
   }
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return super.getTestDataPath() + "/actions/refreshPlaceholder";
+  override fun getTestDataPath(): String {
+    return super.getTestDataPath() + "/actions/refreshPlaceholder"
   }
 }
