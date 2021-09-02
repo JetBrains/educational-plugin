@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.testAction
 import java.util.*
 
 class SyncStepikCourseTest : EduTestCase() {
@@ -68,7 +69,7 @@ class SyncStepikCourseTest : EduTestCase() {
       }
     })
 
-    myFixture.testAction(SyncStepikCourseAction())
+    myFixture.testAction(SyncStepikCourseAction.ACTION_ID)
 
     assertTrue("Course should be up to date", course.isUpToDate)
     assertTrue(notificationShown)
@@ -98,7 +99,7 @@ class SyncStepikCourseTest : EduTestCase() {
       }
     }
 
-    myFixture.testAction(SyncStepikCourseAction())
+    myFixture.testAction(SyncStepikCourseAction.ACTION_ID)
 
     expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
     assertTrue("Updated course should be up to date", course.isUpToDate)

@@ -70,3 +70,8 @@ inline fun <reified T : AnAction> getActionById(actionId: String): T {
   val action = ActionManager.getInstance().getAction(actionId) ?: error("Failed to find action by `$actionId` id")
   return action as? T ?: error("Action `$actionId` is not `${T::class.java.name}`")
 }
+
+fun CodeInsightTestFixture.testAction(actionId: String): Presentation {
+  val action = getActionById<AnAction>(actionId)
+  return testAction(action)
+}

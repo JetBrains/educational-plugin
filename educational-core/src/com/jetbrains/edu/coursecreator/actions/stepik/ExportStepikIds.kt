@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class ExportStepikIds : DumbAwareAction(
@@ -81,5 +82,10 @@ class ExportStepikIds : DumbAwareAction(
       return
     }
     presentation.isEnabledAndVisible = true
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.ExportStepikIds"
   }
 }

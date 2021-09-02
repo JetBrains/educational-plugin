@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.configFileName
 
 class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
@@ -22,7 +23,7 @@ class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
     val task = course.findTask("lesson1", "task2")
     val virtualFile = findFile("lesson1/task2/Task.kt")
     myFixture.openFileInEditor(virtualFile)
-    myFixture.testAction(CCEditAnswerPlaceholder())
+    myFixture.testAction(CCEditAnswerPlaceholder.ACTION_ID)
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
   }

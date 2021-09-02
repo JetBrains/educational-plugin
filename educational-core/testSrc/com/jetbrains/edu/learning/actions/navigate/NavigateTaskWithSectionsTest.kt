@@ -6,13 +6,14 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 
 class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test next from lesson to section`() {
     configureByTaskFile(1, 1, "taskFile.txt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -25,7 +26,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test next for same lesson in section`() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -38,7 +39,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test next lesson in section`() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -51,7 +52,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test next from section to section`() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -64,7 +65,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test next from section to lesson`() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -75,7 +76,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test previous from lesson to section`() {
     configureByTaskFile(4, 1, "taskFile.txt")
-    myFixture.testAction(PreviousTaskAction())
+    myFixture.testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -88,7 +89,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test previous from section to section`() {
     configureByTaskFile(3, 1, 1, "taskFile.txt")
-    myFixture.testAction(PreviousTaskAction())
+    myFixture.testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -101,7 +102,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test previous lesson in same section`() {
     configureByTaskFile(2, 2, 1, "taskFile.txt")
-    myFixture.testAction(PreviousTaskAction())
+    myFixture.testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -114,7 +115,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test previous task same lesson in same section`() {
     configureByTaskFile(2, 1, 2, "taskFile.txt")
-    myFixture.testAction(PreviousTaskAction())
+    myFixture.testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task
@@ -127,7 +128,7 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
 
   fun `test previous from section to lesson`() {
     configureByTaskFile(2, 1, 1, "taskFile.txt")
-    myFixture.testAction(PreviousTaskAction())
+    myFixture.testAction(PreviousTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = currentFile!!.getTaskFile(myFixture.project)
     val task = taskFile!!.task

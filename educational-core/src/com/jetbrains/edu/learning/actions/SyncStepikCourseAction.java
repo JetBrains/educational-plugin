@@ -19,12 +19,16 @@ import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker;
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
 import one.util.streamex.StreamEx;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
 
 @SuppressWarnings("ComponentNotRegistered")
 public class SyncStepikCourseAction extends SyncCourseAction {
+
+  @NonNls
+  public static final String ACTION_ID = "Educational.Stepik.UpdateCourse";
 
   public SyncStepikCourseAction() {
     super(EduCoreBundle.lazyMessage("action.synchronize.course"),

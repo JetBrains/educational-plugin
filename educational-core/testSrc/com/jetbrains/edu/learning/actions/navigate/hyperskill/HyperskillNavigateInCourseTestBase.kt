@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.actions.navigate.hyperskill
 
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.TaskNavigationAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -10,6 +9,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import com.jetbrains.edu.learning.testAction
 
 abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
   private val stage1Name = "stage1"
@@ -26,11 +26,11 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
 
   fun `test navigate to next unavailable on last stage`() {
     val task = course.findTask(stagesLessonName, stage1Name)
-    return checkNavigationAction(task, ::NextTaskAction, false)
+    return checkNavigationAction(task, NextTaskAction.ACTION_ID, false)
   }
 
   fun `test navigate to previous unavailable on first problems task`() =
-    checkNavigationAction(getFirstProblemsTask(), ::PreviousTaskAction, false)
+    checkNavigationAction(getFirstProblemsTask(), PreviousTaskAction.ACTION_ID, false)
 
   protected fun findTopicProblem(lessonName: String, problemName: String): Task {
     return course.getTopicsSection()?.getLesson(lessonName)?.getTask(problemName)
@@ -86,11 +86,11 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
       }
     }
 
-  protected fun checkNavigationAction(task: Task, action: () -> TaskNavigationAction, expectedStatus: Boolean) {
+  protected fun checkNavigationAction(task: Task, actionId: String, expectedStatus: Boolean) {
     val firstTask = task.lesson.taskList.first()
     NavigationUtils.navigateToTask(project, task, firstTask, false)
     task.openTaskFileInEditor("src/Task.kt")
-    val presentation = myFixture.testAction(action())
+    val presentation = myFixture.testAction(actionId)
     assertEquals(expectedStatus, presentation.isEnabledAndVisible)
   }
 }

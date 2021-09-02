@@ -4,8 +4,8 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.TaskNavigationAction
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 
 class NavigateTaskTest : EduTestCase() {
@@ -60,15 +60,15 @@ class NavigateTaskTest : EduTestCase() {
     expectedTaskFile = TaskFileInfo(2, 4, "taskFile5.txt"))
 
   private fun doNextTest(initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) =
-    doTest(NextTaskAction(), initialTaskFile, expectedTaskFile)
+    doTest(NextTaskAction.ACTION_ID, initialTaskFile, expectedTaskFile)
 
   private fun doPrevTest(initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) =
-    doTest(PreviousTaskAction(), initialTaskFile, expectedTaskFile)
+    doTest(PreviousTaskAction.ACTION_ID, initialTaskFile, expectedTaskFile)
 
-  private fun doTest(action: TaskNavigationAction, initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) {
+  private fun doTest(actionId: String, initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) {
     val (lesson, task, taskFileName) = initialTaskFile
     configureByTaskFile(lesson, task, taskFileName)
-    myFixture.testAction(action)
+    myFixture.testAction(actionId)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
     val taskFile = currentFile.getTaskFile(myFixture.project) ?: error("Can't find current task file")
     val actualTaskFileInfo = TaskFileInfo(lesson = taskFile.task.lesson.index, task = taskFile.task.index, name = taskFile.name)

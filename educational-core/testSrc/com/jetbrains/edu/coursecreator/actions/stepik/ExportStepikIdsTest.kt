@@ -1,30 +1,20 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
-  lateinit var action: AnAction
-  override fun setUp() {
-    super.setUp()
-    action = ActionManager.getInstance().getAction("Educational.Educator.ExportStepikIds")
-  }
 
   fun `test not available for local course`() {
     courseWithFiles {
       lesson { eduTask { } }
       section { lesson { eduTask { } } }
     }
-    val presentation = myFixture.testAction(action)
+    val presentation = myFixture.testAction(ExportStepikIds.ACTION_ID)
     assertFalse("Action shouldn't be available for local course", presentation.isEnabledAndVisible)
   }
 
@@ -40,7 +30,7 @@ class ExportStepikIdsTest : EduTestCase() {
 
     StudyTaskManager.getInstance(project).course = remoteCourse
 
-    myFixture.testAction(action)
+    myFixture.testAction(ExportStepikIds.ACTION_ID)
     val courseDir = project.courseDir
     val stepikIdsFile = courseDir.findChild(EduNames.STEPIK_IDS_JSON) ?: error("file with wasn't created")
     val actualFileContent = VfsUtil.loadText(stepikIdsFile)

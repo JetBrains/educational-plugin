@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
+import com.jetbrains.edu.learning.testAction
 import java.util.*
 
 class HyperskillCourseUpdateTest : NavigationTestBase() {
@@ -205,7 +206,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     try {
       withVirtualFileListener(course) {
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
     }
     catch (e: Exception) {
@@ -244,9 +245,9 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
       task2.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val taskText = "fun foo2() {}"
@@ -267,7 +268,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
 
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     fileTree {

@@ -7,9 +7,14 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
+
+  @NonNls
+  public static final String ACTION_ID = "Educational.Educator.DeleteAnswerPlaceholder";
+
   public CCDeleteAnswerPlaceholder() {
     super(EduCoreBundle.lazyMessage("label.delete"), EduCoreBundle.lazyMessage("action.delete.answer.placeholder.description"));
   }

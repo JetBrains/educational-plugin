@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.testAction
 
 class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
   fun `test codeforces task is successfully marked as completed`() {
@@ -17,7 +18,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
 
     configureByTaskFile(1, 1, taskFileName)
     assertEquals(CheckStatus.Unchecked, task.status)
-    myFixture.testAction(CodeforcesMarkAsCompletedAction())
+    myFixture.testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
     assertEquals(CheckStatus.Solved, task.status)
   }
 
@@ -34,7 +35,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
 
     configureByTaskFile(1, 1, taskFileName)
     assertEquals(CheckStatus.Unchecked, task.status)
-    myFixture.testAction(CodeforcesMarkAsCompletedAction())
+    myFixture.testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
     assertEquals(CheckStatus.Unchecked, task.status)
   }
 }

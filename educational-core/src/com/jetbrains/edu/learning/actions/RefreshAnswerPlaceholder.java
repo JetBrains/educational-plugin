@@ -14,10 +14,14 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RefreshAnswerPlaceholder extends DumbAwareAction {
+
+  @NonNls
+  public static final String ACTION_ID = "Educational.RefreshAnswerPlaceholder";
 
   public RefreshAnswerPlaceholder() {
     super(EduCoreBundle.lazyMessage("action.refresh.answer.placeholder.text"),

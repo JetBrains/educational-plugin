@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost
 import com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHostUI
 import com.jetbrains.edu.learning.stepik.changeHost.StepikHost
 import com.jetbrains.edu.learning.stepik.changeHost.withMockStepikChangeHostUI
+import com.jetbrains.edu.learning.testAction
 
 class StepikChangeHostActionTest : EduTestCase() {
   private var initialStepikOrdinal: Int = 0
@@ -47,7 +48,7 @@ class StepikChangeHostActionTest : EduTestCase() {
         return stepikHost
       }
     }) {
-      myFixture.testAction(StepikChangeHost())
+      myFixture.testAction(StepikChangeHost.ACTION_ID)
     }
   }
 

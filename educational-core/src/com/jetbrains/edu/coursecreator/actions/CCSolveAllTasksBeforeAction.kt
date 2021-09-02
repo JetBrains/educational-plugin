@@ -88,5 +88,8 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction(
 
     @NonNls
     const val REGISTRY_KEY = "edu.course.creator.solve.all"
+
+    @NonNls
+    const val ACTION_ID = "Educational.SolveAllTasksBefore"
   }
 }

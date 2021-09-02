@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 
 class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
@@ -136,7 +137,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       val oldValue = registryValue.asBoolean()
       registryValue.setValue(true)
       try {
-        myFixture.testAction(CCSolveAllTasksBeforeAction())
+        myFixture.testAction(CCSolveAllTasksBeforeAction.ACTION_ID)
       } finally {
         registryValue.setValue(oldValue)
       }

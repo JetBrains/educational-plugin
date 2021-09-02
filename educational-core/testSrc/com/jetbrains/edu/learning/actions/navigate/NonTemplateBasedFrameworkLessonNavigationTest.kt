@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
@@ -27,7 +28,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -68,12 +69,12 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -113,19 +114,19 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
 
 
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
       withEduTestDialog(EduTestDialog(Messages.YES)) {
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }.checkWasShown()
     }
 
@@ -167,17 +168,17 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
 
 
       task1.openTaskFileInEditor("src/Task.kt")
       val dialog = withEduTestDialog(EduTestDialog(Messages.NO)) {
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
 
       BasePlatformTestCase.assertNull(dialog.shownMessage)
@@ -221,19 +222,19 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
 
 
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
 
       withEduTestDialog(EduTestDialog(Messages.NO)) {
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }.checkWasShown()
     }
 
@@ -278,7 +279,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/src/Bar.kt", "fun bar() {}")
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     assertThat(task1.taskFiles.keys, hasItem("src/Bar.kt"))
@@ -332,7 +333,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.YES)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
     }
 
@@ -378,7 +379,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           findFile("lesson1/task/src/Baz.kt").delete(HyperskillNavigationTest::class.java)
         }
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
     }
 
@@ -458,7 +459,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           findFile("lesson1/task/${gitObjectFiles[2].name}").delete(NonTemplateBasedFrameworkLessonNavigationTest::class.java)
         }
 
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
     }
 

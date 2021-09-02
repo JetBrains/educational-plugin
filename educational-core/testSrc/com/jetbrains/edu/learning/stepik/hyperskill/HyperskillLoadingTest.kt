@@ -4,17 +4,14 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
-import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.FileTreeBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.withEduTestDialog
 
 class HyperskillLoadingTest : NavigationTestBase() {
   override fun setUp() {
@@ -392,7 +389,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction())
+        myFixture.testAction(NextTaskAction.ACTION_ID)
       }
     }
 
@@ -507,14 +504,14 @@ class HyperskillLoadingTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun foo2() {}\n")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       assertEquals(task2, course.getProjectLesson()!!.currentTask())
 
       HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
       task2.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
 
       assertEquals(task1, course.getProjectLesson()!!.currentTask())
     }

@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.actions.refresh
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.testAction
 import java.io.IOException
 
 class RefreshPlaceholderTest : EduTestCase() {
@@ -13,7 +13,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(12)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder())
+    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
@@ -22,10 +22,8 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(2)
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(2)
-    val action = RefreshAnswerPlaceholder()
-    val e = TestActionEvent(action)
-    action.beforeActionPerformedUpdate(e)
-    assertFalse(e.presentation.isEnabled && e.presentation.isVisible)
+    val presentation = myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    assertFalse(presentation.isEnabled && presentation.isVisible)
   }
 
   fun `test second refresh placeholder`() {
@@ -34,7 +32,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(52)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder())
+    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is test placeholder.
       Look! There is second placeholder.
@@ -47,7 +45,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.type("test test")
     myFixture.editor.caretModel.moveToOffset(56)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder())
+    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is test test placeholder.
       Look! There is second placeholder.
@@ -69,7 +67,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(52)
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(16)
-    myFixture.testAction(RefreshAnswerPlaceholder())
+    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is first placeholder.
       Look! There is secotestnd placeholder.

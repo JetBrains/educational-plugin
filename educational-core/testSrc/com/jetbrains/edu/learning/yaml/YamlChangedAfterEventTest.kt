@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.testAction
 
 class YamlChangedAfterEventTest : YamlTestCase() {
   fun `test hyperskill framework lesson navigation with learner created file`() {
@@ -20,7 +21,7 @@ class YamlChangedAfterEventTest : YamlTestCase() {
     withVirtualFileListener(course) {
       GeneratorUtils.createChildFile(project, project.courseDir, "lesson1/task/userFile.txt", "user file")
       task1.openTaskFileInEditor("file1.txt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val expectedConfig = """

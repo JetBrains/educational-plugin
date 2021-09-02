@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 import com.intellij.openapi.ide.CopyPasteManager
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.testAction
 
 class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
   fun `test codeforces task contents is copied to clipboard`() {
@@ -17,7 +18,7 @@ class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
     }
     configureByTaskFile(1, 1, taskFileName)
 
-    myFixture.testAction(CodeforcesCopyAndSubmitAction())
+    myFixture.testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
     val actualContents = CopyPasteManager.getInstance().contents!!
     val actualContentsString = actualContents.getTransferData(actualContents.transferDataFlavors.first())
     assertEquals(contents, actualContentsString)
@@ -38,7 +39,7 @@ class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
     }
     configureByTaskFile(1, 1, testFileName)
 
-    myFixture.testAction(CodeforcesCopyAndSubmitAction())
+    myFixture.testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
     val actualContents = CopyPasteManager.getInstance().contents!!
     val actualContentsString = actualContents.getTransferData(actualContents.transferDataFlavors.first())
     assertEquals(contents, actualContentsString)

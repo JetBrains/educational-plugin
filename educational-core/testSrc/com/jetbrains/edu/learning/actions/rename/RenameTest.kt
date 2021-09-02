@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.testAction
 
 class RenameTest : RenameTestBase() {
 
@@ -160,7 +161,7 @@ class RenameTest : RenameTestBase() {
       GeneratorUtils.createChildFile(project, findFile("lesson1/task"), "taskFile2.txt", "")
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("taskFile2.txt")
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     doRenameAction(course, "lesson1/task/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)

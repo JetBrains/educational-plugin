@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 import java.text.SimpleDateFormat
 
@@ -164,7 +165,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     }.assertEquals(rootDir, myFixture)
 
     getFirstTask(course)!!.openTaskFileInEditor("task.kt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
 
     fileTree {
       dir("lesson1") {
@@ -228,7 +229,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     }.assertEquals(rootDir, myFixture)
 
     getFirstTask(course)!!.openTaskFileInEditor("fizz.kt")
-    myFixture.testAction(NextTaskAction())
+    myFixture.testAction(NextTaskAction.ACTION_ID)
 
     fileTree {
       dir("lesson1") {

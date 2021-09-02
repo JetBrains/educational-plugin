@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.TaskNavigationAction
@@ -12,9 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
@@ -28,7 +25,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -74,7 +71,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("task1.kt")
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -119,7 +116,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("task1.kt")
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -149,13 +146,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("buzz.kt", 0)
       myFixture.type("456")
       task2.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -187,9 +184,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -241,9 +238,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", placeholderIndex = 1)
       myFixture.type("90")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -273,7 +270,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val openFiles = FileEditorManager.getInstance(project).openFiles
@@ -288,11 +285,11 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       // go to the third task without solving prev tasks
       task1.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("fizz.kt", 0)
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     fileTree {
@@ -345,8 +342,8 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     val task3 = course.findTask("lesson1", "task3")
 
     withVirtualFileListener(course) {
-      doTest(PreviousTaskAction(), task1) { task2.openTaskFileInEditor("buzz.kt") }
-      doTest(NextTaskAction(), task3) { task2.openTaskFileInEditor("buzz.kt") }
+      doTest(PreviousTaskAction.ACTION_ID, task1) { task2.openTaskFileInEditor("buzz.kt") }
+      doTest(NextTaskAction.ACTION_ID, task3) { task2.openTaskFileInEditor("buzz.kt") }
     }
   }
 
@@ -359,9 +356,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       myFixture.editor.caretModel.moveToOffset(0)
       myFixture.type("fun foo() {}\n")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -393,16 +390,16 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.openTaskFileInEditor("fizz.kt", 0)
       myFixture.type("123")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("buzz.kt", 0)
       myFixture.type("456")
       myFixture.editor.caretModel.moveToOffset(0)
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
 
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -437,11 +434,11 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/foo.kt", "fun foo() {}")
       task.openTaskFileInEditor("fizz.kt")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("buzz.kt")
-      myFixture.testAction(PreviousTaskAction())
+      myFixture.testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -475,7 +472,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       GeneratorUtils.createChildFile(project, rootDir, "lesson1/task/foo.kt", "fun foo() {}")
       task.openTaskFileInEditor("fizz.kt")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -519,7 +516,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task.openTaskFileInEditor("foo/bar/file1.txt")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -560,7 +557,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task.openTaskFileInEditor("file.txt")
       task.status = CheckStatus.Solved
-      myFixture.testAction(NextTaskAction())
+      myFixture.testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -579,9 +576,9 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {
+  private inline fun doTest(actionId: String, expectedTask: Task, init: () -> Unit) {
     init()
-    myFixture.testAction(action)
+    myFixture.testAction(actionId)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
     val task = currentFile.getContainingTask(myFixture.project) ?: error("Can't find task for $currentFile")
     check(expectedTask == task) {

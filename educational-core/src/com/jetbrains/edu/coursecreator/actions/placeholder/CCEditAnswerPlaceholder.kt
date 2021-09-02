@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.configFileName
+import org.jetbrains.annotations.NonNls
 
 open class CCEditAnswerPlaceholder :
   CCAnswerPlaceholderAction(EduCoreBundle.lazyMessage("action.edit.answer.placeholder.text"),
@@ -36,5 +37,8 @@ open class CCEditAnswerPlaceholder :
 
   companion object {
     private val LOG = Logger.getInstance(CCEditAnswerPlaceholder::class.java)
+
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.EditAnswerPlaceholder"
   }
 }

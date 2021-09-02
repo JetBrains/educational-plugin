@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 
 
@@ -73,7 +74,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   private fun doOpenTaskDescription(): Presentation {
     val virtualFile = findFileInTask(0, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
-    return myFixture.testAction(CCEditTaskDescription())
+    return myFixture.testAction(CCEditTaskDescription.ACTION_ID)
   }
 
   private fun removeTaskDescriptionFile() {

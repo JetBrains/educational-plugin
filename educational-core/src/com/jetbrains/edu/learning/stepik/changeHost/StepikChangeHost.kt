@@ -11,6 +11,7 @@ import com.intellij.ui.EnumComboBoxModel
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
+import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
 @Suppress("ComponentNotRegistered")
@@ -30,6 +31,9 @@ class StepikChangeHost : DumbAwareAction(EduCoreBundle.message("stepik.change.ho
 
   companion object {
     private val LOG: Logger = logger<StepikChangeHost>()
+
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.StepikChangeHost"
   }
 }
 
