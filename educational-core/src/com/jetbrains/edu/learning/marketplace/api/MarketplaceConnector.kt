@@ -68,7 +68,7 @@ abstract class MarketplaceConnector : CourseConnector {
     get() = repositoryService(MarketplaceSettings.INSTANCE.account)
 
   private fun repositoryService(account: MarketplaceAccount?): MarketplaceRepositoryService {
-    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
+    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
       account.refreshTokens()
     }
 

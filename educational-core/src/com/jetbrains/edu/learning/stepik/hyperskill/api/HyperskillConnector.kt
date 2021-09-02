@@ -67,7 +67,7 @@ abstract class HyperskillConnector {
     }
 
   private fun service(account: HyperskillAccount?, accessToken: String?): HyperskillService {
-    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
+    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
       account.refreshTokens()
     }
 

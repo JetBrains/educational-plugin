@@ -3,15 +3,21 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.credentialStore.CredentialAttributes
+import com.intellij.credentialStore.generateServiceName
+import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
+import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 abstract class CodeforcesConnector {
@@ -72,6 +78,45 @@ abstract class CodeforcesConnector {
       val doc = Jsoup.parse(body.string())
       Ok(doc)
     }
+  }
+
+  fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {
+    val loginPage = service.getLoginPage().executeParsingErrors()
+      .onError { return Err(it) }
+    loginPage.body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
+
+    val body = Jsoup.parse(loginPage.body()!!.string())
+    val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
+
+    val jSessionId = loginPage.headers().toMultimap()["set-cookie"]!!.filter { it.contains("JSESSIONID") }.joinToString(
+      "; ") { it.split(";")[0] }.split("=")[1]
+    return Ok(Pair(csrfToken, jSessionId))
+  }
+
+
+  fun postLoginForm(handle: String, password: String, jSessionID: String, csrfToken: String): Result<Response<ResponseBody>, String> {
+    return service.postLoginPage(csrfToken = csrfToken,
+                                 handle = handle,
+                                 password = password,
+                                 cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
+  }
+
+  fun updateJSessionID(handle: String): Boolean {
+    val (csrfToken, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError { return false }
+    val credentialAttributes = CredentialAttributes(generateServiceName(CodeforcesNames.CODEFORCES_SUBSYSTEM_NAME, handle))
+    val password = PasswordSafe.instance.get(credentialAttributes)?.getPasswordAsString()
+    password ?: return false
+    val loginResponse = getInstance().postLoginForm(handle, password, jSessionId, csrfToken).onError { return false }
+    return loginResponse.isSuccessful && !loginResponse.body()!!.string().contains("Invalid handle/email or password")
+  }
+
+  fun getProfile(jSessionID: String): String? {
+    val response = service.profile("JSESSIONID=$jSessionID").executeParsingErrors().onError { return null }
+    return response.raw().priorResponse()
+      ?.headers("location")
+      ?.find { it.startsWith("https://codeforces.com/profile/") }
+      ?.split("/")
+      ?.last()
   }
 
   companion object {

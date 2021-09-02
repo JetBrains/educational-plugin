@@ -100,7 +100,7 @@ public abstract class CheckiOOAuthConnector {
   private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
 
-    if (!currentAccount.isTokenUpToDate()) {
+    if (!currentAccount.isUpToDate()) {
       final String refreshToken = currentAccount.getRefreshToken();
       if (refreshToken == null) {
         LOG.error("Cannot get refresh token");

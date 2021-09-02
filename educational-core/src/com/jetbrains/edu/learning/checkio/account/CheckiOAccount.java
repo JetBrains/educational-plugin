@@ -9,7 +9,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
+import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeOAuthAccount;
 
 public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
 
@@ -45,6 +45,6 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
 
   public static CheckiOAccount fromElement(@NotNull Element element) {
     Element user = element.getChild(CheckiOAccount.class.getSimpleName());
-    return deserializeAccount(user, CheckiOAccount.class, CheckiOUserInfo.class);
+    return deserializeOAuthAccount(user, CheckiOAccount.class, CheckiOUserInfo.class);
   }
 }

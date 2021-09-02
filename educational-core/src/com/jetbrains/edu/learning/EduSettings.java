@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
+import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeOAuthAccount;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
@@ -99,7 +99,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
     if (user != null) {
       Element userXml = user.getChild(STEPIK_USER);
       if (userXml != null) {
-        myUser = deserializeAccount(userXml, StepikUser.class, StepikUserInfo.class);
+        myUser = deserializeOAuthAccount(userXml, StepikUser.class, StepikUserInfo.class);
       }
     }
   }

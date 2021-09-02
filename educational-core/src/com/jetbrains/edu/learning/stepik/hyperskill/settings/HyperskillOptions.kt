@@ -4,7 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.settings.OauthOptions
+import com.jetbrains.edu.learning.settings.LoginOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
@@ -13,8 +13,9 @@ import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.event.HyperlinkEvent
 
-class HyperskillOptions : OauthOptions<HyperskillAccount>() {
-  private var automaticUpdateCheckBox: JBCheckBox = JBCheckBox(EduCoreBundle.message("hyperskill.settings.auto.update"), HyperskillSettings.INSTANCE.updateAutomatically)
+class HyperskillOptions : LoginOptions<HyperskillAccount>() {
+  private var automaticUpdateCheckBox: JBCheckBox = JBCheckBox(EduCoreBundle.message("hyperskill.settings.auto.update"),
+                                                               HyperskillSettings.INSTANCE.updateAutomatically)
 
   override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.INSTANCE.account
 

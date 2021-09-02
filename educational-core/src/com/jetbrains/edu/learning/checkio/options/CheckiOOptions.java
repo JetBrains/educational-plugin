@@ -4,14 +4,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.settings.OauthOptions;
-import org.jetbrains.annotations.NonNls;
+import com.jetbrains.edu.learning.settings.LoginOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 
-public abstract class CheckiOOptions extends OauthOptions<CheckiOAccount> {
+public abstract class CheckiOOptions extends LoginOptions<CheckiOAccount> {
   private final CheckiOOAuthConnector myOAuthConnector;
 
   protected CheckiOOptions(@NotNull CheckiOOAuthConnector oauthConnector) {

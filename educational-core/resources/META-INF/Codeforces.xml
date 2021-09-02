@@ -15,6 +15,10 @@
     <fileTemplateGroup implementation="com.jetbrains.edu.learning.codeforces.CodeforcesFileTemplateFactory"/>
   </extensions>
 
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.codeforces.authorization.CodeforcesLonginOptions"/>
+  </extensions>
+
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.codeforcesLanguageProvider"
                     interface="com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider"

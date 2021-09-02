@@ -6,7 +6,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
-import com.jetbrains.edu.learning.authUtils.deserializeAccount
+import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import org.jdom.Element
@@ -31,7 +31,7 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = MarketplaceAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeAccount(user, accountClass, MarketplaceUserInfo::class.java)
+    account = deserializeOAuthAccount(user, accountClass, MarketplaceUserInfo::class.java)
   }
 
   companion object {

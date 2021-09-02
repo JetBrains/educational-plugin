@@ -34,7 +34,7 @@ public class EducationalCoreIcons {
   public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg"); // 24x24
   public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/learning/codeforcesSmall.svg"); // 16x16
   public static final Icon CodeforcesGrayed = load("/icons/com/jetbrains/edu/learning/codeforcesGrayed.svg");
-
+  public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
   public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg"); // 24x24
 
   public static final Icon MARKETPLACE = load("/icons/com/jetbrains/edu/learning/marketplace_courses.svg"); // 16x16

@@ -18,14 +18,14 @@ package com.jetbrains.edu.learning.stepik;
 import com.intellij.openapi.application.ApplicationManager;
 import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.settings.OauthOptions;
+import com.jetbrains.edu.learning.settings.LoginOptions;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 
-public class StepikOptions extends OauthOptions<StepikUser> {
+public class StepikOptions extends LoginOptions<StepikUser> {
   @Nullable
   @Override
   public StepikUser getCurrentAccount() {

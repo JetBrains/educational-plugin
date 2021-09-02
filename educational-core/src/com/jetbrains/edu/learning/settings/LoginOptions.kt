@@ -7,7 +7,7 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.authUtils.Account
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import javax.swing.JComponent
@@ -15,7 +15,7 @@ import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
 // Implement this class to show oauth settings with login/logout link
-abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
+abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
   private var browseProfileLabel = createTextPane()
   private var loginLink = HoverHyperlinkLabel("")
   private var accountPanel = JPanel()

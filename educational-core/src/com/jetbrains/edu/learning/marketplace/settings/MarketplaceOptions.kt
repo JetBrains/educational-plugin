@@ -5,10 +5,10 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.settings.OauthOptions
+import com.jetbrains.edu.learning.settings.LoginOptions
 import javax.swing.event.HyperlinkEvent
 
-class MarketplaceOptions : OauthOptions<MarketplaceAccount>() {
+class MarketplaceOptions : LoginOptions<MarketplaceAccount>() {
   override fun getCurrentAccount(): MarketplaceAccount? = MarketplaceSettings.INSTANCE.account
 
   override fun setCurrentAccount(account: MarketplaceAccount?) {

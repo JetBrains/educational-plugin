@@ -59,7 +59,7 @@ abstract class StepikConnector {
     }
 
   private fun service(account: StepikUser?, accessToken: String?): StepikService {
-    if (!isUnitTestMode && account != null && !account.isTokenUpToDate()) {
+    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
       account.refreshTokens()
     }
 
