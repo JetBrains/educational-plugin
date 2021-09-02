@@ -32,6 +32,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.toShortcut
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.KeyAdapter
@@ -116,6 +117,11 @@ open class InsertShortcutAction : AnAction(
         }
       }
     }
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.InsertShortcut"
   }
 
   protected class ListWithSearchField(actions: Set<AnAction>, private val elementSelectedCallback: (AnAction) -> Unit) : JPanel(

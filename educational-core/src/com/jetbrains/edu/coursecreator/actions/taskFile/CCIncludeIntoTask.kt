@@ -7,9 +7,9 @@ import com.jetbrains.edu.learning.canBeAddedToTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
-class CCIncludeIntoTask
-  : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.include.into.task.title")) {
+class CCIncludeIntoTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.include.into.task.title")) {
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
     file.canBeAddedToTask(project)
@@ -18,6 +18,11 @@ class CCIncludeIntoTask
     if (!file.canBeAddedToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
     return IncludeFileIntoTask(info)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.IncludeIntoTask"
   }
 }
 

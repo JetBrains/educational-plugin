@@ -10,13 +10,22 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathRelativeToTask
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
-class CCMakeVisibleToLearner
-  : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.make.visible.to.learner.title"), true)
+class CCMakeVisibleToLearner : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.make.visible.to.learner.title"), true) {
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.ShowToStudent"
+  }
+}
 
-class CCHideFromLearner
-  : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.hide.from.learner.title"), false)
+class CCHideFromLearner : CCChangeFileVisibility(EduCoreBundle.lazyMessage("action.hide.from.learner.title"), false) {
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.HideFromStudent"
+  }
+}
 
 abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
 

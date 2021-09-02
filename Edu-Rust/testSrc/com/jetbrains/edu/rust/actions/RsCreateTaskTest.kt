@@ -48,7 +48,7 @@ class RsCreateTaskTest : RsActionTestBase() {
   private fun doTest(newTaskName: String, shouldBeCreated: Boolean) {
     val mockUi = MockNewStudyItemUi(newTaskName)
     withMockCreateStudyItemUi(mockUi) {
-      testAction(dataContext(findFile("lesson2")), CCCreateTask())
+      testAction(dataContext(findFile("lesson2")), CCCreateTask.ACTION_ID)
     }
 
     val task = project.course!!.getLesson("lesson2")!!.getTask(newTaskName)

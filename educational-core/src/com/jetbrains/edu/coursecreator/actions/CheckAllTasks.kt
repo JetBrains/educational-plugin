@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 
 class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks.text")) {
@@ -112,5 +113,8 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
 
   companion object {
     private val LOG = Logger.getInstance(CheckAllTasks::class.java)
+
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.CheckAllTasks"
   }
 }

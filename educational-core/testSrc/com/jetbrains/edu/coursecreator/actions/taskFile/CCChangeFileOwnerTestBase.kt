@@ -1,20 +1,15 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.command.undo.UndoManager
-import com.jetbrains.edu.learning.FileCheck
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.withEduTestDialog
 
-abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActionTestCase() {
+abstract class CCChangeFileOwnerTestBase(private val actionId: String) : EduActionTestCase() {
 
   protected fun doUnavailableTest(vararg filePaths: String) {
     val includedFiles = filePaths.map { findFile(it) }
     val context = dataContext(includedFiles.toTypedArray())
-    val presentation = testAction(context, action, false)
+    val presentation = testAction(context, actionId, false)
     checkActionEnabled(presentation, false)
   }
 
@@ -23,7 +18,7 @@ abstract class CCChangeFileOwnerTestBase(private val action: AnAction) : EduActi
 
     val includedFiles = filePaths.map { findFile(it) }
     val context = dataContext(includedFiles.toTypedArray())
-    val presentation = testAction(context, action, true)
+    val presentation = testAction(context, actionId, true)
     checkActionEnabled(presentation, true)
 
     val (constantChecks, regularChecks) = checksProducer(course)

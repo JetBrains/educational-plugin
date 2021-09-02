@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
@@ -42,8 +41,7 @@ class CourseViewTest : CourseViewTestBase() {
 
     val fileName = "lesson1/task1/taskFile1.txt"
     val taskFile = myFixture.findFileInTempDir(fileName)
-    val action = CheckAction()
-    launchAction(taskFile, action)
+    launchAction(taskFile, CheckAction.ACTION_ID)
 
     val structure = "-Project\n" +
                     " -CourseNode Edu test course  1/4\n" +
@@ -58,9 +56,8 @@ class CourseViewTest : CourseViewTestBase() {
                     "    taskFile4.txt"
     assertCourseView(structure)
 
-    val refreshTaskFileAction = RevertTaskAction()
     withEduTestDialog(EduTestDialog(Messages.OK)) {
-      launchAction(taskFile, refreshTaskFileAction)
+      launchAction(taskFile, RevertTaskAction.ACTION_ID)
     }
   }
 
@@ -85,8 +82,8 @@ class CourseViewTest : CourseViewTestBase() {
     }
   }
 
-  private fun launchAction(taskFile: VirtualFile, action: AnAction) {
-    val presentation = testAction(dataContext(taskFile), action)
+  private fun launchAction(taskFile: VirtualFile, actionId: String) {
+    val presentation = testAction(dataContext(taskFile), actionId)
     Assert.assertTrue(presentation.isEnabledAndVisible)
   }
 

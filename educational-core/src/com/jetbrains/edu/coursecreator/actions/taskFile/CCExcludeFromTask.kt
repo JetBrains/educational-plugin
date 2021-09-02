@@ -9,9 +9,9 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
-class CCExcludeFromTask
-  : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.task.title")) {
+class CCExcludeFromTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.task.title")) {
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
     file.belongsToTask(project)
@@ -20,6 +20,11 @@ class CCExcludeFromTask
     if (!file.belongsToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
     return RemoveFileFromTask(info)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.ExcludeFromTask"
   }
 }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions.move
 
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
@@ -30,7 +31,7 @@ abstract class MoveTestBase : EduActionTestCase() {
       }
     }) {
       withVirtualFileListener(course) {
-        testAction(dataContext, MoveAction())
+        testAction(dataContext, IdeActions.ACTION_MOVE)
       }
     }
   }

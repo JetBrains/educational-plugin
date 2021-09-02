@@ -5,10 +5,14 @@ package com.jetbrains.edu.learning
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ui.UIUtil
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -60,4 +64,9 @@ fun withNotificationCheck(project: Project, disposable: Disposable, check: (Bool
 
   action()
   check(notificationShown, notificationText)
+}
+
+inline fun <reified T : AnAction> getActionById(actionId: String): T {
+  val action = ActionManager.getInstance().getAction(actionId) ?: error("Failed to find action by `$actionId` id")
+  return action as? T ?: error("Action `$actionId` is not `${T::class.java.name}`")
 }

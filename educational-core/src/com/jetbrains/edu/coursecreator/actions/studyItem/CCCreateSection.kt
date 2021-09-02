@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
 class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTION_TYPE, EducationalCoreIcons.Section) {
@@ -51,4 +52,9 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
     get() = listOf(
       StudyItemVariant(StudyItemType.SECTION_TYPE.presentableTitleName, "", EducationalCoreIcons.Section) { Section() }
     )
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.CreateSection"
+  }
 }

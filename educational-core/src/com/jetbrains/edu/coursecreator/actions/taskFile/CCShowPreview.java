@@ -48,6 +48,7 @@ import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException;
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -60,6 +61,9 @@ import static com.intellij.openapi.ui.Messages.showInfoMessage;
 
 public class CCShowPreview extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCShowPreview.class.getName());
+
+  @NonNls
+  public static final String ACTION_ID = "Educational.Educator.ShowPreview";
 
   public CCShowPreview() {
     super(EduCoreBundle.lazyMessage("action.show.preview.text"), EduCoreBundle.lazyMessage("action.show.preview.description"), null);

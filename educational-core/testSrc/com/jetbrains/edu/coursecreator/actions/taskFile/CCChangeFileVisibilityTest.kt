@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.getActionById
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 
@@ -82,8 +83,8 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
       dataContext(selectedFiles.toTypedArray())
     }
 
-    val hide = CCHideFromLearner()
-    val show = CCMakeVisibleToLearner()
+    val hide = getActionById<CCChangeFileVisibility>(CCHideFromLearner.ACTION_ID)
+    val show = getActionById<CCChangeFileVisibility>(CCMakeVisibleToLearner.ACTION_ID)
     checkAction(hide, show, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)
     affectedCourseFiles.forEach { it.isVisible = !it.isVisible}
     checkAction(show, hide, dataContext, affectedCourseFiles, shouldActionBeEnabled, shouldOppositeActionBeEnabled)

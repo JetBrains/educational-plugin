@@ -62,6 +62,11 @@ abstract class EduActionTestCase : EduTestCase() {
     return e.presentation
   }
 
+  protected fun testAction(context: DataContext, actionId: String, runAction: Boolean = true): Presentation {
+    val action = getActionById<AnAction>(actionId)
+    return testAction(context, action, runAction)
+  }
+
   protected fun checkActionEnabled(presentation: Presentation, shouldBeEnabled: Boolean) {
     if (presentation.isEnabledAndVisible != shouldBeEnabled) {
       val message = if (shouldBeEnabled) {

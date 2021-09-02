@@ -1,6 +1,6 @@
 package com.jetbrains.edu.rust.actions
 
-import com.intellij.ide.actions.DeleteAction
+import com.intellij.openapi.actionSystem.IdeActions
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -191,7 +191,7 @@ class RsDeleteActionTest : RsActionTestBase() {
   private fun doTest(course: Course, path: String, @Language("TOML") expectedText: String) {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog()) {
-        testAction(dataContext(findFile(path)), DeleteAction())
+        testAction(dataContext(findFile(path)), IdeActions.ACTION_DELETE)
       }
     }
     checkCargoToml(expectedText)

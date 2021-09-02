@@ -39,7 +39,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     }
     openFirstTaskFile()
 
-    val presentation = testAction(dataContext(findFileInTask(0, 0, "task.txt")), CompareWithAnswerAction())
+    val presentation = testAction(dataContext(findFileInTask(0, 0, "task.txt")), CompareWithAnswerAction.ACTION_ID)
     checkActionEnabled(presentation, true)
 
     val mockEduBrowser = EduBrowser.getInstance() as MockEduBrowser
@@ -83,7 +83,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
   private fun doTestDisabled() {
     openFirstTaskFile()
 
-    val presentation = testAction(dataContext(findFileInTask(0, 0, "task.txt")), CompareWithAnswerAction())
+    val presentation = testAction(dataContext(findFileInTask(0, 0, "task.txt")), CompareWithAnswerAction.ACTION_ID)
     checkActionEnabled(presentation, false)
   }
 

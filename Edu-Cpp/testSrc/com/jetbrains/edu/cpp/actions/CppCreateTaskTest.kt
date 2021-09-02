@@ -32,7 +32,7 @@ class CppCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi()) {
-      testAction(dataContext(lessonFile), CCCreateTask())
+      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
     }
     val fileTree = fileTree {
       dir("lesson/task1") {
@@ -128,7 +128,7 @@ class CppCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi()) {
-      testAction(dataContext(lessonFile), CCCreateTask())
+      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
     }
     val fileTree = fileTree {
       dir("lesson") {

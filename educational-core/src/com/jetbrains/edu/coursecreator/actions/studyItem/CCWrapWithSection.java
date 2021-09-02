@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitl
 
 public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
+  @NonNls
+  public static final String ACTION_ID = "Educational.Educator.CCWrapWithSection";
 
   public CCWrapWithSection() {
     super(EduCoreBundle.lazyMessage("action.wrap.with.section.text"),

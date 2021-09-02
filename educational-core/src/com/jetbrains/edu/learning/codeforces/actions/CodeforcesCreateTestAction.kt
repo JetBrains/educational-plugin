@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.studyItemType
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import javax.swing.SwingConstants
 
 
@@ -90,4 +91,8 @@ class CodeforcesCreateTestAction : DumbAwareAction(EduCoreBundle.lazyMessage("co
     presentation.isEnabledAndVisible = true
   }
 
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Codeforces.CreateTestSample"
+  }
 }

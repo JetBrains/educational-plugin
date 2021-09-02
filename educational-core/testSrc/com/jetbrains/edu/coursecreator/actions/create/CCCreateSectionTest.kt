@@ -19,7 +19,7 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     withMockCreateStudyItemUi(MockNewStudyItemUi("section1")) {
-      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateSection())
+      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateSection.ACTION_ID)
     }
 
     TestCase.assertEquals(2, course.items.size)
@@ -50,7 +50,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
     withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
-      testAction(dataContext(lessonFile), CCCreateSection())
+      testAction(dataContext(lessonFile), CCCreateSection.ACTION_ID)
     }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -81,7 +81,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson2")
     withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
-      testAction(dataContext(lessonFile), CCCreateSection())
+      testAction(dataContext(lessonFile), CCCreateSection.ACTION_ID)
     }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -112,7 +112,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     }
     val sectionFile = findFile("section2")
     withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 2)) {
-      testAction(dataContext(sectionFile), CCCreateSection())
+      testAction(dataContext(sectionFile), CCCreateSection.ACTION_ID)
     }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -158,7 +158,7 @@ class CCCreateSectionTest : EduActionTestCase() {
     }
     val sectionFile = findFile("section2")
     withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 3)) {
-      testAction(dataContext(sectionFile), CCCreateSection())
+      testAction(dataContext(sectionFile), CCCreateSection.ACTION_ID)
     }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)

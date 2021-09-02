@@ -35,7 +35,7 @@ class CodeforcesCreateTestTest : EduActionTestCase() {
     every { anyConstructed<NewItemSimplePopupPanel>().textField.text = any() } answers { nothing }
     every { anyConstructed<NewItemSimplePopupPanel>().textField.text } returns "myAwesomeTestName"
 
-    testAction(dataContext(taskFile), CodeforcesCreateTestAction())
+    testAction(dataContext(taskFile), CodeforcesCreateTestAction.ACTION_ID)
 
     fileTree {
       dir("lesson1/task1") {

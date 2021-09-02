@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
 
-class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask()) {
+class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION_ID) {
 
   fun `test include single src file`() = doAvailableTest("lesson1/task1/src/excluded_folder1/excluded_file1.txt") { course ->
     val task = course.findTask("lesson1", "task1")

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.java.actions
 
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
-import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.MapDataContext
@@ -125,7 +125,7 @@ class JRenameTest : EduActionTestCase() {
     var isErrorDialogShown = false
     try {
       withVirtualFileListener(course) {
-        testAction(dataContext.withRenameDefaultName(newName), RenameElementAction())
+        testAction(dataContext.withRenameDefaultName(newName), IdeActions.ACTION_RENAME)
       }
     }
     catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {

@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
 class ApplyHyperskillSubmission : DumbAwareAction(
@@ -88,5 +89,10 @@ class ApplyHyperskillSubmission : DumbAwareAction(
       return null
     }
     return selectedFiles[0].getTask(project)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.ApplyHyperskillSubmission"
   }
 }

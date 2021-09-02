@@ -99,7 +99,7 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
 
     val lessonFile = findFile("lesson1")
     withMockCreateStudyItemUi(createMockUi("task1", taskType)) {
-      testAction(dataContext(lessonFile), CCCreateTask())
+      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
     }
     checkTaskStructure("lesson1", "task1", fullTaskStructure)
 
@@ -109,7 +109,7 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
       val copyTestOld = settings.copyTestsInFrameworkLessons()
       settings.setCopyTestsInFrameworkLessons(false)
       try {
-        testAction(dataContext(frameworkLessonFile), CCCreateTask())
+        testAction(dataContext(frameworkLessonFile), CCCreateTask.ACTION_ID)
       }
       finally {
         settings.setCopyTestsInFrameworkLessons(copyTestOld)

@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -203,4 +204,8 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
   ): AnswerPlaceholderDependency =
     AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, isVisible)
 
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.CreateTask"
+  }
 }

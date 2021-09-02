@@ -20,7 +20,7 @@ class CreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson1")
 
     withMockCreateStudyItemUi(MockAndroidNewStudyUi("task1", "com.edu.task1")) {
-      testAction(dataContext(lessonFile), CCCreateTask())
+      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
     }
     TestCase.assertEquals(1, course.lessons[0].taskList.size)
     val expectedFileTree = fileTree {

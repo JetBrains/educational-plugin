@@ -45,7 +45,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
 
     val file = findFile("lesson1/task1/src/Task.txt")
-    testAction(dataContext(file), CCShowPreview())
+    testAction(dataContext(file), CCShowPreview.ACTION_ID)
     val editor = EditorFactory.getInstance().allEditors[0]
     try {
       val document = editor.document
@@ -70,7 +70,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     placeholder.offset = 1000
 
     withEduTestDialog(EduTestDialog()) {
-      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
+      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview.ACTION_ID)
     }.checkWasShown(EduCoreBundle.message("exception.broken.placeholder.message", "lesson1/task1/fizz.kt", 1000, 0))
   }
 
@@ -84,7 +84,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
     }
 
     withEduTestDialog(EduTestDialog()) {
-      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview())
+      testAction(dataContext(findFile("lesson1/task1/fizz.kt")), CCShowPreview.ACTION_ID)
     }.checkWasShown(EduCoreBundle.message("dialog.message.no.preview.for.file"))
   }
 
@@ -95,7 +95,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
       }
     }
 
-    testAction(dataContext(findFile(taskFilePath)), CCShowPreview())
+    testAction(dataContext(findFile(taskFilePath)), CCShowPreview.ACTION_ID)
     val editor = EditorFactory.getInstance().allEditors[0]
 
     try {

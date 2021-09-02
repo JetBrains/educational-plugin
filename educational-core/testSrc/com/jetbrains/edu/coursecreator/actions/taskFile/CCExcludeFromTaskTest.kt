@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.notIn
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.fileTree
 
-class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
+class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask.ACTION_ID) {
 
   fun `test exclude single src file`() = doAvailableTest("lesson1/task1/src/folder1/taskFile1.txt") { course ->
     val task = course.findTask("lesson1", "task1")

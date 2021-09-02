@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getLesson
 import com.jetbrains.edu.learning.getSection
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
 class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) {
@@ -81,5 +82,10 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
     if (course.hasSections && getParentItem(project, course, sourceDirectory) is Course) {
       event.presentation.isEnabledAndVisible = false
     }
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.CreateLesson"
   }
 }

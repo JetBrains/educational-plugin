@@ -246,7 +246,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     }
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson())
+      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson.ACTION_ID)
     }
 
     checkCargoToml("""
@@ -285,7 +285,7 @@ class RsCreateLessonTest : RsActionTestBase() {
     }
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
-      testAction(dataContext(findFile("lesson1")), CCCreateTask())
+      testAction(dataContext(findFile("lesson1")), CCCreateTask.ACTION_ID)
     }
 
     checkCargoToml("""
@@ -321,13 +321,13 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   private fun addNewLessonWithTask(lessonName: String, taskName: String, context: VirtualFile) {
     withMockCreateStudyItemUi(MockNewStudyItemUi(lessonName)) {
-      testAction(dataContext(context), CCCreateLesson())
+      testAction(dataContext(context), CCCreateLesson.ACTION_ID)
     }
 
     val lessonDir = context.findChild(lessonName) ?: context.parent.findChild(lessonName)
     check(lessonDir != null)
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
-      testAction(dataContext(lessonDir), CCCreateTask())
+      testAction(dataContext(lessonDir), CCCreateTask.ACTION_ID)
     }
   }
 }

@@ -20,7 +20,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
     withEduTestDialog(EduTestInputDialog("section1")) {
-      testAction(dataContext(arrayOf(lesson2, lesson3)), CCWrapWithSection())
+      testAction(dataContext(arrayOf(lesson2, lesson3)), CCWrapWithSection.ACTION_ID)
     }
     TestCase.assertEquals(3, course.items.size)
     val section = course.getSection("section1")
@@ -41,7 +41,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     val lesson4 = findFile("lesson4")
 
     val context = dataContext(arrayOf(lesson2, lesson4))
-    val presentation = testAction(context, CCWrapWithSection(), false)
+    val presentation = testAction(context, CCWrapWithSection.ACTION_ID, false)
     checkActionEnabled(presentation, false)
   }
 
@@ -55,7 +55,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     }
     val lesson2 = findFile("lesson2")
     withEduTestDialog(EduTestInputDialog("section1")) {
-      testAction(dataContext(arrayOf(lesson2)), CCWrapWithSection())
+      testAction(dataContext(arrayOf(lesson2)), CCWrapWithSection.ACTION_ID)
     }
     TestCase.assertEquals(5, course.items.size)
     val section = course.getSection("section1")
@@ -78,7 +78,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
     withEduTestDialog(EduTestInputDialog("section1")) {
-      testAction(dataContext(arrayOf(lesson1, lesson2, lesson3)), CCWrapWithSection())
+      testAction(dataContext(arrayOf(lesson1, lesson2, lesson3)), CCWrapWithSection.ACTION_ID)
     }
     TestCase.assertEquals(1, course.items.size)
     val section = course.getSection("section1")

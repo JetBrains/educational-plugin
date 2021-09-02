@@ -58,7 +58,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
   private fun checkActionNotAvailable(virtualFile: VirtualFile) {
     myFixture.openFileInEditor(virtualFile)
-    val presentation = testAction(createDataContext(virtualFile), InsertShortcutAction(), false)
+    val presentation = testAction(createDataContext(virtualFile), InsertShortcutAction.ACTION_ID, false)
     checkActionEnabled(presentation, false)
   }
 

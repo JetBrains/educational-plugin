@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -27,6 +28,8 @@ import java.util.List;
 
 public class CCRemoveSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCRemoveSection.class);
+  @NonNls
+  public static final String ACTION_ID = "Educational.Educator.CCRemoveSection";
 
   public CCRemoveSection() {
     super(EduCoreBundle.lazyMessage("action.remove.section.text"),
