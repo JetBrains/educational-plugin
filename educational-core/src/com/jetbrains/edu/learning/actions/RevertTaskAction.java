@@ -6,23 +6,14 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.EducationalCoreIcons;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
@@ -34,13 +25,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.ui.Messages.*;
+import static com.jetbrains.edu.learning.courseFormat.ext.TaskExt.revertTaskFiles;
 import static com.jetbrains.edu.learning.courseFormat.ext.TaskExt.revertTaskParameters;
 
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   @NonNls
   public static final String ACTION_ID = "Educational.RefreshTask";
-  private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
 
   public RevertTaskAction() {
     super(EduCoreBundle.lazyMessage("action.reset.request"),
@@ -54,6 +45,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
 
     revertTaskFiles(task, project);
     revertTaskParameters(task, project);
+    YamlFormatSynchronizer.saveItem(task);
 
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
     EditorNotifications.getInstance(project).updateAllNotifications();
@@ -64,44 +56,6 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
     ProgressUtil.updateCourseProgress(project);
-  }
-
-  private static void revertTaskFiles(@NotNull Task task, @NotNull Project project) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      for (TaskFile taskFile : task.getTaskFiles().values()) {
-        revertTaskFile(taskFile, project);
-      }
-    });
-  }
-
-  private static void revertTaskFile(@NotNull final TaskFile taskFile, @NotNull final Project project) {
-    final Task task = taskFile.getTask();
-    final Document document = TaskFileExt.getDocument(taskFile, project);
-    final VirtualFile virtualFile = TaskFileExt.getVirtualFile(taskFile, project);
-    // Note, nullable document is valid situation in case of binary files.
-    if (document == null || virtualFile == null) {
-      LOG.warn("Failed to find document and virtual file for task file " + taskFile.getName());
-      return;
-    }
-    resetDocument(document, taskFile);
-    task.setStatus(CheckStatus.Unchecked);
-    resetAnswerPlaceholders(taskFile);
-
-    WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
-    taskFile.setHighlightErrors(false);
-    YamlFormatSynchronizer.saveItem(task);
-  }
-
-  static void resetAnswerPlaceholders(@NotNull TaskFile selectedTaskFile) {
-    for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getAnswerPlaceholders()) {
-      answerPlaceholder.reset(true);
-    }
-  }
-
-  public static void resetDocument(@NotNull final Document document, @NotNull final TaskFile taskFile) {
-    taskFile.setTrackChanges(false);
-    document.setText(taskFile.getText());
-    taskFile.setTrackChanges(true);
   }
 
   public void actionPerformed(@NotNull AnActionEvent event) {

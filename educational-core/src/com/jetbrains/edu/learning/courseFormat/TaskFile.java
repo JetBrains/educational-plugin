@@ -36,7 +36,7 @@ public class TaskFile {
 
   @Transient private Task myTask;
 
-  private static final Logger LOG = Logger.getInstance(TaskFile.class);
+  public static final Logger LOG = Logger.getInstance(TaskFile.class);
 
   public TaskFile() {
   }

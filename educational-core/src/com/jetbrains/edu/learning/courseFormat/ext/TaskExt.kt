@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -162,14 +163,26 @@ fun Task.getCodeTaskFile(project: Project): TaskFile? {
   }
 }
 
+@JvmName("revertTaskFiles")
+fun Task.revertTaskFiles(project: Project) {
+  ApplicationManager.getApplication().runWriteAction {
+    for (taskFile in taskFiles.values) {
+      taskFile.revert(project)
+    }
+  }
+}
+
 @JvmName("revertTaskParameters")
 fun Task.revertTaskParameters(project: Project) {
-  if (this is VideoTask) {
-    currentTime = 0
-    TaskDescriptionView.getInstance(project).updateTaskDescription()
-  }
-  else if (this is ChoiceTask) {
-    this.clearSelectedVariants()
+  status = CheckStatus.Unchecked
+  when (this) {
+    is VideoTask -> {
+      currentTime = 0
+      TaskDescriptionView.getInstance(project).updateTaskDescription()
+    }
+    is ChoiceTask -> {
+      clearSelectedVariants()
+    }
   }
 }
 

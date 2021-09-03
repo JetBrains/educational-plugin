@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.EduUtils.updateToolWindows
-import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
@@ -142,7 +141,11 @@ class CheckiOCourseUpdater(
       } ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
 
       runWriteAction {
-        RevertTaskAction.resetDocument(oldDocument, newMission.taskFile)
+        newMission.taskFile.apply {
+          isTrackChanges = false
+          oldDocument.setText(text)
+          isTrackChanges = true
+        }
       }
 
       val descriptionFile = oldMission.getDescriptionFile(project) ?: return
