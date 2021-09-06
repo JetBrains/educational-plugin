@@ -121,11 +121,6 @@ open class StepikTaskBuilder(
     val options = step.pycharmOptions()
     val samples = options.samples
 
-    fun String.prepareSample(): String {
-      val replaceBr = replace("\n", "<br>")
-      return if (isValidHtml(this)) replaceBr.xmlEscaped else replaceBr
-    }
-
     descriptionText = buildString {
       append(clearCodeBlockFromTags())
 
@@ -361,7 +356,6 @@ open class StepikTaskBuilder(
   companion object {
     private const val DEFAULT_EDU_TASK_NAME = "Edu Task"
     private const val UNKNOWN_TASK_NAME = "Unknown Task"
-    private val HTML_TAG_REGEX = "<[^>]+>".toRegex()
     private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
 
     private fun addPlaceholdersTexts(file: TaskFile) {
@@ -376,6 +370,13 @@ open class StepikTaskBuilder(
     }
 
     @VisibleForTesting
-    fun isValidHtml(text: String): Boolean = HTML_TAG_REGEX in text
+    fun String.prepareSample(): String {
+      val replaceBr = replace("\n", "<br>")
+      // text inside of a valid html
+      val wholeText = Jsoup.parse(replaceBr).wholeText()
+      // if it equals to source text, then it was not a valid html
+      val isValidHtml = wholeText != replaceBr
+      return if (isValidHtml) replaceBr.xmlEscaped else replaceBr
+    }
   }
 }
