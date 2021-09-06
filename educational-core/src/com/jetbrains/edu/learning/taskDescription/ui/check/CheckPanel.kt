@@ -12,6 +12,7 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.LeaveCommentAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -23,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
@@ -125,7 +127,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
-    if (task is DataTask) {
+    if (task is DataTask && isFeatureEnabled(HYPERSKILL_DATA_TASKS_SUPPORT)) {
       updateCheckButtonWrapper(task)
       return
     }
