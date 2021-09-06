@@ -186,14 +186,14 @@ object HyperskillCheckConnector {
 
     if (lastSubmission.status != EVALUATION_STATUS) {
       SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
-      return lastSubmission.toCheckResult(task)
+      return lastSubmission.toCheckResult()
     }
 
     return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.get.check.result.from", EduNames.JBA))
   }
 }
 
-fun Submission.toCheckResult(task: Task): CheckResult {
+fun Submission.toCheckResult(): CheckResult {
   val status = status ?: return CheckResult.failedToCheck
   val isSolved = status != "wrong"
   var message = hint.nullize() ?: "${StringUtil.capitalize(status)} solution"

@@ -85,7 +85,7 @@ private class SubmissionReceivedState(project: Project, task: CodeTask, private 
   }
 
   override fun getResult(): Result<CheckResult, SubmissionError> {
-    return Ok(submission.toCheckResult(task))
+    return Ok(submission.toCheckResult())
   }
 }
 

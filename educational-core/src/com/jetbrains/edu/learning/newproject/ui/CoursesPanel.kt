@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.plugins.newui.HorizontalLayout
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.ui.JBCardLayout

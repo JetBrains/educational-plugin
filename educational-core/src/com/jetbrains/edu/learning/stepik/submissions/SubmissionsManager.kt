@@ -103,8 +103,7 @@ class SubmissionsManager(private val project: Project) {
   fun submissionsSupported(): Boolean {
     val course = this.course
     if (course == null) return false
-    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(
-      course) ?: return false
+    val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return false
     return submissionsProvider.areSubmissionsAvailable(course)
   }
 
