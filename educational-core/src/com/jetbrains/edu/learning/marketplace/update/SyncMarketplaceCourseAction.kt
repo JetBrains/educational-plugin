@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
 class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("action.synchronize.course"),
@@ -37,5 +38,10 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
     }
     val course = StudyTaskManager.getInstance(project).course
     return course is EduCourse && course.isStudy && course.isMarketplaceRemote
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Marketplace.UpdateCourse"
   }
 }

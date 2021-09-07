@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -17,8 +16,8 @@ class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(projec
                                                                           EduCoreBundle.message("hyperskill.widget.tooltip"),
                                                                           EducationalCoreIcons.JB_ACADEMY) {
   override val account: HyperskillAccount? get() = HyperskillSettings.INSTANCE.account
-  override val synchronizeCourseAction: SyncCourseAction
-    get() = SyncHyperskillCourseAction()
+  override val synchronizeCourseActionId: String
+    get() = SyncHyperskillCourseAction.ACTION_ID
 
   override val platformName: String
     get() = EduNames.JBA

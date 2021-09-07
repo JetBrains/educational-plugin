@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -18,8 +17,8 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(proj
   override val account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
 
-  override val synchronizeCourseAction: SyncCourseAction
-    get() = SyncMarketplaceCourseAction()
+  override val synchronizeCourseActionId: String
+    get() = SyncMarketplaceCourseAction.ACTION_ID
 
   override val platformName: String
     get() = MARKETPLACE

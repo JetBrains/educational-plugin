@@ -13,6 +13,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -33,7 +34,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 ) : IconLikeCustomStatusBarWidget {
   abstract val account: T?
 
-  open val synchronizeCourseAction: SyncCourseAction? = null
+  open val synchronizeCourseActionId: String? = null
 
   protected abstract fun profileUrl(account: T): String
 
@@ -107,7 +108,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     val actionsPanel = JBUI.Panels.simplePanel(0, 10)
     actionsPanel.addToCenter(accountActionLabel)
 
-    val synchronizeCourseAction = synchronizeCourseAction
+    val synchronizeCourseAction = getSynchronizeCourseAction()
     if (!loginNeeded() && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
       actionsPanel.addToBottom(EduHyperlinkLabel(synchronizeCourseAction.loginWidgetText, true) {
         synchronizeCourseAction.synchronizeCourse(project)
@@ -118,6 +119,12 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     contentPanel.addToBottom(actionsPanel)
 
     return contentPanel
+  }
+
+  private fun getSynchronizeCourseAction(): SyncCourseAction? {
+    val synchronizeCourseActionId = synchronizeCourseActionId ?: return null
+    return EduActionUtils.getAction(synchronizeCourseActionId) as? SyncCourseAction
+           ?: error("Action `$synchronizeCourseActionId` should inherit `${SyncCourseAction::class.java.simpleName}`")
   }
 
   open fun loginNeeded(): Boolean = account == null

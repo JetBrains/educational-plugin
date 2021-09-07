@@ -5,6 +5,7 @@ import com.intellij.notification.Notifications
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.getActionById
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -89,7 +90,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       }
     })
 
-    SyncHyperskillCourseAction().synchronizeCourse(project)
+    synchronizeCourseViaAction()
     assertTrue(notificationShown)
     assertEquals("Phone Book", course.hyperskillProject!!.title)
     assertNotEquals(Date(0), course.updateDate)
@@ -108,8 +109,13 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       }
     })
 
-    SyncHyperskillCourseAction().synchronizeCourse(project)
+
     assertTrue(notificationShown)
+  }
+
+  private fun synchronizeCourseViaAction() {
+    val action = getActionById<SyncHyperskillCourseAction>(SyncHyperskillCourseAction.ACTION_ID)
+    action.synchronizeCourse(project)
   }
 
   private fun createHyperskillCourse(isNewlyCreated: Boolean = false): HyperskillCourse {
