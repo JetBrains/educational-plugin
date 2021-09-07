@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
@@ -146,10 +145,8 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val action = CCCreateLesson()
-    val event = TestActionEvent(dataContext(sourceVFile), action)
-    action.beforeActionPerformedUpdate(event)
-    assertFalse(event.presentation.isEnabledAndVisible)
+    val presentation = testAction(dataContext(sourceVFile), CCCreateLesson.ACTION_ID, runAction = false)
+    checkActionEnabled(presentation, false)
   }
 
   fun `test create lesson not available on top level with section on top level`() {
@@ -168,9 +165,7 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val action = CCCreateLesson()
-    val event = TestActionEvent(dataContext(sourceVFile), action)
-    action.beforeActionPerformedUpdate(event)
-    assertFalse(event.presentation.isEnabledAndVisible)
+    val presentation = testAction(dataContext(sourceVFile), CCCreateLesson.ACTION_ID, runAction = false)
+    checkActionEnabled(presentation, false)
   }
 }

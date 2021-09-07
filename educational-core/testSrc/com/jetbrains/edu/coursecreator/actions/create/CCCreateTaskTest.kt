@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.settings.CCSettings
@@ -180,11 +179,9 @@ class CCCreateTaskTest : EduActionTestCase() {
         }
       }
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot()
-    val action = CCCreateTask()
-    val event = TestActionEvent(dataContext(sourceVFile!!), action)
-    action.beforeActionPerformedUpdate(event)
-    assertFalse(event.presentation.isEnabledAndVisible)
+    val sourceVFile = LightPlatformTestCase.getSourceRoot()!!
+    val presentation = testAction(dataContext(sourceVFile), CCCreateTask.ACTION_ID, runAction = false)
+    checkActionEnabled(presentation, false)
   }
 
   fun `test create task not available on section`() {
@@ -198,10 +195,8 @@ class CCCreateTaskTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("section1")
-    val action = CCCreateTask()
-    val event = TestActionEvent(dataContext(sourceVFile), action)
-    action.beforeActionPerformedUpdate(event)
-    assertFalse(event.presentation.isEnabledAndVisible)
+    val presentation = testAction(dataContext(sourceVFile), CCCreateTask.ACTION_ID, runAction = false)
+    checkActionEnabled(presentation, false)
   }
 
   fun `test create framework task without test copy`() = doCreateFrameworkTaskTest(false)

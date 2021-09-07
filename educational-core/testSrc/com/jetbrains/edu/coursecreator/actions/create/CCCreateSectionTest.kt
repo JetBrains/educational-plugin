@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
@@ -130,10 +129,8 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val action = CCCreateSection()
-    val event = TestActionEvent(dataContext(sourceVFile), action)
-    action.beforeActionPerformedUpdate(event)
-    TestCase.assertFalse(event.presentation.isEnabledAndVisible)
+    val presentation = testAction(dataContext(sourceVFile), CCCreateSection.ACTION_ID, runAction = false)
+    checkActionEnabled(presentation, false)
   }
 
   fun `test create section after section`() {
