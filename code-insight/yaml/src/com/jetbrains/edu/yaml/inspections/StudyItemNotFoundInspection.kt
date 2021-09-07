@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateStudyItemAction
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.createItemMessage
 import com.jetbrains.edu.coursecreator.failedToFindItemMessage
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -73,12 +74,13 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
       val index = scalar.parentOfType<YAMLSequenceItem>()?.itemIndex ?: return
       val name = scalar.textValue
 
-      val action = when (itemType) {
-        SECTION_TYPE -> CCCreateSection()
-        LESSON_TYPE -> CCCreateLesson()
-        TASK_TYPE -> CCCreateTask()
+      val actionId = when (itemType) {
+        SECTION_TYPE -> CCCreateSection.ACTION_ID
+        LESSON_TYPE -> CCCreateLesson.ACTION_ID
+        TASK_TYPE -> CCCreateTask.ACTION_ID
         else -> return
       }
+      val action = EduActionUtils.getAction(actionId)
 
       val configFile = startElement.containingFile.originalFile.virtualFile
       val context = DataContext { dataId ->
