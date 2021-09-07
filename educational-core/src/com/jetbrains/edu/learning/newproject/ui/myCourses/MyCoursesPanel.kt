@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.newproject.ui.myCourses
 
-import com.intellij.ide.DataManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBPanelWithEmptyText
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
-import java.awt.event.ActionListener
 import javax.swing.JPanel
 
 private const val ACTION_PLACE = "MyCoursesPanel"
@@ -25,7 +24,8 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider,
                      disposable: Disposable) : CoursesPanel(myCoursesProvider, scope, disposable) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
-    return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), ImportLocalCourseAction())
+    val importCourseAction = EduActionUtils.getAction(ImportLocalCourseAction.ACTION_ID)
+    return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), importCourseAction)
   }
 
   override fun createNoCoursesPanel(): JPanel {
@@ -34,12 +34,7 @@ class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider,
       emptyText.appendSecondaryText(
         EduCoreBundle.message("course.dialog.open.course.from.disk"),
         SimpleTextAttributes.LINK_ATTRIBUTES,
-        ActionListener {
-          val action = ImportLocalCourseAction(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.ellipsis"))
-          val dataContext = DataManager.getInstance().getDataContext(this)
-          val actionEvent = AnActionEvent.createFromAnAction(action, null, ACTION_PLACE, dataContext)
-          action.actionPerformed(actionEvent)
-        }
+        ActionUtil.createActionListener(ImportLocalCourseAction.ACTION_ID, this, ACTION_PLACE)
       )
     }
   }
