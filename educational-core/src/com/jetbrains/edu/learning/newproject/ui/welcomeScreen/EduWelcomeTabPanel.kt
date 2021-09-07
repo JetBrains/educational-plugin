@@ -6,7 +6,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.VerticalFlowLayout
@@ -22,6 +21,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.NewHyperskillCourseAction
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.BrowseCoursesAction
@@ -42,7 +42,6 @@ private const val EMPTY = "empty"
 private const val MY_COURSES_PANEL = "my-courses"
 
 class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
-  private val moreActionsGroup = DefaultActionGroup(CCNewCourseAction(), NewHyperskillCourseAction())
   private val cardLayout: CardLayout = CardLayout()
   private val mainPanel = JPanel(cardLayout)
 
@@ -111,6 +110,11 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
 
   private fun createLinkListener(): LinkListener<String> {
     return LinkListener { source, _ ->
+      val moreActionsGroup = EduActionUtils.createActionGroup(
+        CCNewCourseAction.ACTION_ID,
+        NewHyperskillCourseAction.ACTION_ID
+      )
+
       val popup = JBPopupFactory.getInstance().createActionGroupPopup(
         null,
         moreActionsGroup,
@@ -143,7 +147,7 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
     }
 
     button.addActionListener { e ->
-      val action = BrowseCoursesAction()
+      val action = EduActionUtils.getAction(BrowseCoursesAction.ACTION_ID)
       val event = AnActionEvent(
         null,
         DataManager.getInstance().getDataContext(this),

@@ -6,6 +6,7 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
 class CCNewCourseAction(
@@ -27,5 +28,10 @@ class CCNewCourseAction(
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.NewCourse"
   }
 }

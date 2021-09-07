@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // Hyperskill.xml
 class NewHyperskillCourseAction : DumbAwareAction(
@@ -28,5 +29,10 @@ class NewHyperskillCourseAction : DumbAwareAction(
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = CCPluginToggleAction.isCourseCreatorFeaturesEnabled
                                          && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Educator.NewHyperskillCourse"
   }
 }
