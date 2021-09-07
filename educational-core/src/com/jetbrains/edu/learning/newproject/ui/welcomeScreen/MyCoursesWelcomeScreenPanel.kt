@@ -1,13 +1,12 @@
 package com.jetbrains.edu.learning.newproject.ui.welcomeScreen
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.DataManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.actionSystem.impl.IdeaActionButtonLook
 import com.intellij.openapi.actionSystem.impl.Win10ActionButtonLook
@@ -20,6 +19,7 @@ import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -35,7 +35,6 @@ import com.jetbrains.edu.learning.newproject.ui.filters.CoursesFilterComponent
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
 import java.awt.BorderLayout
 import java.awt.Graphics
-import java.awt.event.ActionListener
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -98,15 +97,9 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
   }
 
   private fun createActionToolbar(parent: NonOpaquePanel): JComponent {
-    val browseCoursesAction = BrowseCoursesAction()
-
     val button = JButton(EduCoreBundle.message("course.dialog.start.new.course")).apply {
       isOpaque = false
-      addActionListener(ActionListener {
-        val dataContext = DataManager.getInstance().getDataContext(parent)
-        browseCoursesAction.actionPerformed(
-          AnActionEvent.createFromAnAction(browseCoursesAction, null, ActionPlaces.WELCOME_SCREEN, dataContext))
-      })
+      addActionListener(ActionUtil.createActionListener(BrowseCoursesAction.ACTION_ID, parent, ActionPlaces.WELCOME_SCREEN))
     }
 
     return NonOpaquePanel().apply {
@@ -126,7 +119,9 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
 
   private fun createMoreActionsButton(): JComponent {
     val moreActionGroup = DefaultActionGroup("", true)
-    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")), ImportLocalCourseAction())
+
+    val importCourseAction = EduActionUtils.getAction(ImportLocalCourseAction.ACTION_ID)
+    moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")), importCourseAction)
 
     val moreActionPresentation = moreActionGroup.templatePresentation
     moreActionPresentation.icon = AllIcons.Actions.More

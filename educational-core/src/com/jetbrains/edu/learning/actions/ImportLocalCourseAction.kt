@@ -102,6 +102,9 @@ open class ImportLocalCourseAction(
     @NonNls
     private const val LAST_IMPORT_LOCATION = "Edu.LastImportLocation"
 
+    @NonNls
+    const val ACTION_ID = "Educational.ImportLocalCourse"
+
     @JvmStatic
     fun importLocation(): VirtualFile? {
       val defaultDir = VfsUtil.getUserHomeDir()
