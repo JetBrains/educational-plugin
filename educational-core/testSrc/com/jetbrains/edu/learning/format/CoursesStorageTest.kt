@@ -253,5 +253,10 @@ class CoursesStorageTest : EduTestCase() {
     }
   }
 
+  override fun tearDown() {
+    super.tearDown()
+    CoursesStorage.getInstance().state.courses.clear()
+  }
+
   override fun getTestDataPath() = "testData/coursesStorage"
 }

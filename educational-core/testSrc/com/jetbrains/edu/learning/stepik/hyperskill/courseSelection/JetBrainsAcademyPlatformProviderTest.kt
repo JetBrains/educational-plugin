@@ -69,6 +69,8 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
     val courseFromProvider = courseGroup.courses.first()
     assertEquals(localHyperskillCourse.id, courseFromProvider.id)
     assertTrue(courseFromProvider is CourseMetaInfo)
+
+    CoursesStorage.getInstance().removeCourseByLocation("")
   }
 
   private fun loadCourses() = runBlocking {
