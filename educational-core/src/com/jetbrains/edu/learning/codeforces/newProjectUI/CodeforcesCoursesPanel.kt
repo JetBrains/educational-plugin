@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.codeforces.newProjectUI
 
-import com.intellij.ide.DataManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
@@ -18,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JButton
 
@@ -38,15 +37,7 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
     val button = JButton(EduCoreBundle.message("codeforces.open.contest.by.link")).apply {
       background = MAIN_BG_COLOR
       isOpaque = false
-      addActionListener {
-        val action = StartCodeforcesContestAction(showViewAllLabel = false)
-        val anActionEvent = AnActionEvent(null,
-                                          DataManager.getInstance().getDataContext(this),
-                                          "Codeforces Courses Panel",
-                                          action.templatePresentation,
-                                          ActionManager.getInstance(), 0)
-        action.actionPerformed(anActionEvent)
-      }
+      addActionListener(ActionUtil.createActionListener(StartCodeforcesContestAction.ACTION_ID, this, PLACE))
     }
 
     return NonOpaquePanel().apply {
@@ -76,5 +67,10 @@ class CodeforcesCoursesPanel(platformProvider: CoursesPlatformProvider,
       }
       return CodeforcesCardComponent(course)
     }
+  }
+
+  companion object {
+    @NonNls
+    const val PLACE = "Codeforces Courses Panel"
   }
 }

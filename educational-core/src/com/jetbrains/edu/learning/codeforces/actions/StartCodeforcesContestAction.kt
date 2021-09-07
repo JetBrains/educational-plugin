@@ -11,28 +11,30 @@ import com.jetbrains.edu.learning.codeforces.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
 class StartCodeforcesContestAction(
   title: Supplier<String> = EduCoreBundle.lazyMessage("codeforces.start.contest"),
-  private val showViewAllLabel: Boolean = true
 ) : DumbAwareAction(title) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    val course = importCodeforcesContest() ?: return
+    val showViewAllLabel = e.place != CodeforcesCoursesPanel.PLACE
+    val course = importCodeforcesContest(showViewAllLabel) ?: return
     showCourseInfo(course)
   }
 
-  private fun importCodeforcesContest(): CodeforcesCourse? {
-    val contestId = showDialogAndGetContestId() ?: return null
+  private fun importCodeforcesContest(showViewAllLabel: Boolean): CodeforcesCourse? {
+    val contestId = showDialogAndGetContestId(showViewAllLabel) ?: return null
     return startContest(contestId)
   }
 
-  private fun showDialogAndGetContestId(): Int? {
+  private fun showDialogAndGetContestId(showViewAllLabel: Boolean): Int? {
     val dialog = ImportCodeforcesContestDialog(showViewAllLabel)
     if (!dialog.showAndGet()) {
       return null
@@ -41,6 +43,10 @@ class StartCodeforcesContestAction(
   }
 
   companion object {
+
+    @NonNls
+    const val ACTION_ID = "Educational.StartCodeforcesContest"
+
     @VisibleForTesting
     fun getContestUnderProgress(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =
       ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
