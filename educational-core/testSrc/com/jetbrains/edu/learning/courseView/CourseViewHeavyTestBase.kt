@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
@@ -23,6 +24,7 @@ abstract class CourseViewHeavyTestBase : CourseGenerationTestBase<Unit>() {
       if (openFirstTask) {
         EduUtils.openFirstTask(course, project)
       }
+      PlatformTestUtil.waitWhileBusy(currentProjectViewPane.tree)
     }
   }
 }

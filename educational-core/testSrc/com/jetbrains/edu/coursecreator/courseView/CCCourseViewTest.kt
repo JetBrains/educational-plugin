@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.courseView
 
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseView.CourseViewTestBase
@@ -44,17 +45,22 @@ class CCCourseViewTest : CourseViewTestBase() {
 
     val task = course.lessons.first().taskList.first()
 
-    doTest(task, "-Project\n" +
-                 " -CCCourseNode Test Course (Course Creation)\n" +
-                 "  -CCLessonNode lesson1\n" +
-                 "   +CCTaskNode custom name (task1)\n" +
-                 "   +CCTaskNode task2")
+    doTest(task,
+    """
+      -Project
+       -CCCourseNode Test Course (Course Creation)
+        -CCLessonNode lesson1
+         -CCTaskNode custom name (task1)
+          CCStudentInvisibleFileNode task.html
+         -CCTaskNode task2
+          CCStudentInvisibleFileNode task.html
+    """.trimIndent())
   }
 
   private fun doTest(item: StudyItem, structure: String) {
     item.customPresentableName = "custom name"
     val pane = createPane()
-
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpandAll(pane.tree))
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 }

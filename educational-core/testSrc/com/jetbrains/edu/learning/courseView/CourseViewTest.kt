@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseView
 
 import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
@@ -16,6 +17,7 @@ class CourseViewTest : CourseViewTestBase() {
     createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val pane = createPane()
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 3))
 
     val structure = "-Project\n" +
                     " -CourseNode Edu test course  0/4\n" +

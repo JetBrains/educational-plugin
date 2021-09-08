@@ -9,9 +9,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 abstract class CourseViewTestBase : EduActionTestCase() {
   protected fun assertCourseView(structure: String) {
     val tree = createPane().tree
-    PlatformTestUtil.waitWhileBusy(tree)
-    TreeUtil.expandAll(tree)
-    PlatformTestUtil.waitWhileBusy(tree)
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpandAll(tree))
     PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
   }
 
@@ -19,6 +17,7 @@ abstract class CourseViewTestBase : EduActionTestCase() {
     val pane = CourseViewPane(project)
     pane.createComponent()
     Disposer.register(testRootDisposable, pane)
+    PlatformTestUtil.waitWhileBusy(pane.tree)
     return pane
   }
 }

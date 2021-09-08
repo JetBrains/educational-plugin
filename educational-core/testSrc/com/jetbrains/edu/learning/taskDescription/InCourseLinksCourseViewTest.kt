@@ -13,17 +13,14 @@ class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
      -CourseNode Test Course  0/2
       +LessonNode lesson1
       -[SectionNode section1]
-       -LessonNode lesson2
-        -TaskNode task2
-         TaskFile2.txt  
+       +LessonNode lesson2
   """)
 
   fun `test lesson link`() = doTest("course://lesson1", """
     -Project
      -CourseNode Test Course  0/2
       -[LessonNode lesson1]
-       -TaskNode task1
-        TaskFile1.txt
+       +TaskNode task1
       +SectionNode section1     
   """)
 
@@ -48,7 +45,10 @@ class InCourseLinksCourseViewTest : CourseViewHeavyTestBase() {
     ToolWindowLinkHandler.processInCourseLink(project, url)
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
 
+    val tree = projectView.currentProjectViewPane.tree
+    PlatformTestUtil.waitWhileBusy(tree)
+
     assertEquals(CourseViewPane.ID, projectView.currentViewId)
-    PlatformTestUtil.assertTreeEqual(projectView.currentProjectViewPane.tree, expectedTree.trimIndent(), true)
+    PlatformTestUtil.assertTreeEqual(tree, expectedTree.trimIndent(), true)
   }
 }

@@ -35,9 +35,12 @@ class CourseViewHeavyTest : CourseViewHeavyTestBase() {
   fun testExpandAfterNavigation() {
     val projectView = createCourseAndChangeView()
 
-    navigateToNextTask()
+    val tree = projectView.currentProjectViewPane.tree
 
-    PlatformTestUtil.assertTreeEqual(projectView.currentProjectViewPane.tree, """
+    navigateToNextTask()
+    waitWhileBusy(tree)
+
+    PlatformTestUtil.assertTreeEqual(tree, """
       -Project
        -CourseNode Edu test course  0/4
         -LessonNode lesson1

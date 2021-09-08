@@ -20,6 +20,7 @@ package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
+import com.intellij.ide.projectView.BaseProjectTreeBuilder
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
@@ -30,6 +31,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
+import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAware
@@ -71,9 +73,11 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     }
   }
 
+  @Suppress("UnstableApiUsage")
+  override fun createBuilder(treeModel: DefaultTreeModel): BaseProjectTreeBuilder? = null
+
   override fun createComponent(): JComponent {
     val component = super.createComponent()
-    installComparator(EduNodeComparator)
 
     if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
@@ -96,6 +100,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     }
     return ScrollPaneFactory.createScrollPane(panel)
   }
+
+  override fun createComparator(): Comparator<NodeDescriptor<*>> = EduNodeComparator
 
   private fun createProgressPanel(): JPanel {
     val panel = JPanel(BorderLayout())
@@ -158,7 +164,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   }
 
   @Suppress("UnstableApiUsage")
-  override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
+  override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = error("This tree is async now")
 
   override fun getTitle(): String = ID
   override fun getIcon(): Icon = EducationalCoreIcons.CourseTree
