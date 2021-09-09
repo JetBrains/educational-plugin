@@ -75,8 +75,10 @@ public class EduSettings implements PersistentStateComponent<Element> {
       Element userOption = new Element(OPTION);
       userOption.setAttribute(NAME, USER);
       Element userElement = myUser.serialize();
-      userOption.addContent(userElement);
-      mainElement.addContent(userOption);
+      if (userElement != null) {
+        userOption.addContent(userElement);
+        mainElement.addContent(userOption);
+      }
     }
     return mainElement;
   }

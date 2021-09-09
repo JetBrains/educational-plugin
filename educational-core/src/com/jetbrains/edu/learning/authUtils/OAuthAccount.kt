@@ -46,7 +46,10 @@ abstract class OAuthAccount<UserInfo : Any> {
 
   fun isTokenUpToDate() = TokenInfo().apply { expiresIn = tokenExpiresIn }.isUpToDate()
 
-  fun serialize(): Element {
+  fun serialize(): Element? {
+    if (PasswordSafe.instance.isMemoryOnly) {
+      return null
+    }
     val accountElement = XmlSerializer.serialize(this, SkipDefaultValuesSerializationFilters())
 
     XmlSerializer.serializeInto(userInfo, accountElement)
