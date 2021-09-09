@@ -109,7 +109,7 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       }
     })
 
-
+    synchronizeCourseViaAction()
     assertTrue(notificationShown)
   }
 
