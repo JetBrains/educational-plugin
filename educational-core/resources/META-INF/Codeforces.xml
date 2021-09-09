@@ -16,7 +16,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
-    <optionsProvider instance="com.jetbrains.edu.learning.codeforces.authorization.CodeforcesLonginOptions"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.codeforces.authorization.CodeforcesLoginOptions"/>
   </extensions>
 
   <extensionPoints>

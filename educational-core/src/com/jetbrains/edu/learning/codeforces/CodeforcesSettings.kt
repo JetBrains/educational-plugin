@@ -8,9 +8,8 @@ import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.authUtils.deserializeDataFormAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.codeforces.authorization.deserializeCodeforcesAccount
 import org.jdom.Element
 import javax.swing.Icon
 
@@ -38,8 +37,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = CodeforcesAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeDataFormAccount(user, accountClass, CodeforcesUserInfo::class.java)
-
+    account = deserializeCodeforcesAccount(user)
   }
 
   fun isSet(): Boolean = preferableLanguage != null && preferableTaskTextLanguage != null

@@ -2,10 +2,11 @@ package com.jetbrains.edu.learning.codeforces.authorization
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
+import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.settings.LoginOptions
 import javax.swing.event.HyperlinkEvent
 
-class CodeforcesLonginOptions : LoginOptions<CodeforcesAccount>() {
+class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
 
   override fun getCurrentAccount(): CodeforcesAccount? {
     return CodeforcesSettings.getInstance().account
@@ -22,10 +23,15 @@ class CodeforcesLonginOptions : LoginOptions<CodeforcesAccount>() {
   override fun createAuthorizeListener(): LoginListener {
     return object : LoginListener() {
       override fun authorize(e: HyperlinkEvent?) {
-        val account = CodeforcesAuthorizer.login()
-        setCurrentAccount(account)
-        lastSavedAccount = getCurrentAccount()
-        updateLoginLabels()
+        val loginDialog = LoginDialog()
+        if (loginDialog.showAndGet()) {
+          if (CodeforcesConnector.getInstance().login(loginDialog.loginField.text, String(loginDialog.passwordField.password))) {
+            lastSavedAccount = getCurrentAccount()
+            updateLoginLabels()
+          } else {
+            authorize(e)
+          }
+        }
       }
     }
   }

@@ -50,4 +50,3 @@ abstract class Account<UserInfo : Any> {
   protected fun credentialAttributes(userName: String, serviceName: String) =
     CredentialAttributes(generateServiceName("${SERVICE_DISPLAY_NAME_PREFIX} $serviceName", userName))
 }
-

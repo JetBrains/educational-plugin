@@ -3,18 +3,21 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.credentialStore.CredentialAttributes
-import com.intellij.credentialStore.generateServiceName
+import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.components.service
+import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
+import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
+import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
+import org.jetbrains.projector.common.misc.firstNotNullOrNull
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
@@ -25,6 +28,7 @@ abstract class CodeforcesConnector {
   val objectMapper: ObjectMapper
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
+  private val handleRegex = """var handle = "([\w\-]+)"""".toRegex()
 
   init {
     val module = SimpleModule()
@@ -80,6 +84,50 @@ abstract class CodeforcesConnector {
     }
   }
 
+  fun login(userName: String, password: String): Boolean {
+    if (userName.isEmpty() || password.isEmpty()) {
+      return loginErrorMessage(EduCoreBundle.message("error.empty.handle.or.password"))
+    }
+
+    val (token, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError {
+      return loginErrorMessage(it)
+    }
+    val loginResponse = getInstance().postLoginForm(userName, password, jSessionId, token).onError {
+      return loginErrorMessage(it)
+    }
+
+    val htmlResponse = loginResponse.body()!!.string()
+
+
+    if (htmlResponse.contains("Invalid handle/email or password")) {
+      return loginErrorMessage(EduCoreBundle.message("error.invalid.handle.or.password"))
+    }
+
+    if (loginResponse.isSuccessful) {
+      var handle = Jsoup.parse(htmlResponse)
+        .getElementsByTag("script")
+        .map { it.data() }
+        .firstNotNullOrNull { handleRegex.find(it) }
+        ?.destructured?.toList()?.firstOrNull()
+
+      if (handle == null) handle = getInstance().getProfile(jSessionId) ?: return false
+
+      val userInfo = CodeforcesUserInfo()
+      userInfo.handle = handle
+      val account = CodeforcesAccount(userInfo)
+      account.saveSessionId(jSessionId)
+      PasswordSafe.instance.set(account.getCredentialAttributes(), Credentials(handle, password))
+      CodeforcesSettings.getInstance().account = account
+      return true
+    }
+    return loginErrorMessage(EduCoreBundle.message("error.unknown.error"))
+  }
+
+  private fun loginErrorMessage(message: String): Boolean {
+    Messages.showErrorDialog(message, EduCoreBundle.message("error.login.error.title"))
+    return false
+  }
+
   fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {
     val loginPage = service.getLoginPage().executeParsingErrors()
       .onError { return Err(it) }
@@ -101,13 +149,19 @@ abstract class CodeforcesConnector {
                                  cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
   }
 
-  fun updateJSessionID(handle: String): Boolean {
+  fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {
     val (csrfToken, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError { return false }
-    val credentialAttributes = CredentialAttributes(generateServiceName(CodeforcesNames.CODEFORCES_SUBSYSTEM_NAME, handle))
+    val credentialAttributes = codeforcesAccount.getCredentialAttributes()
     val password = PasswordSafe.instance.get(credentialAttributes)?.getPasswordAsString()
     password ?: return false
-    val loginResponse = getInstance().postLoginForm(handle, password, jSessionId, csrfToken).onError { return false }
-    return loginResponse.isSuccessful && !loginResponse.body()!!.string().contains("Invalid handle/email or password")
+    val loginResponse = getInstance().postLoginForm(codeforcesAccount.userInfo.handle, password, jSessionId,
+                                                    csrfToken).onError { return false }
+    if (loginResponse.isSuccessful && !loginResponse.body()!!.string().contains("Invalid handle/email or password")) {
+      codeforcesAccount.saveSessionId(jSessionId)
+      codeforcesAccount.updateExpiresAt()
+      return true
+    }
+    return false
   }
 
   fun getProfile(jSessionID: String): String? {
