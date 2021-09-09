@@ -94,7 +94,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val firstContest = upcomingContests.first()
     assertEquals(1492, firstContest.id)
     assertEquals("Codeforces Round #704 (Div. 2)", firstContest.name)
-    assertEquals("2021-02-23T12:05Z[UTC]", firstContest.startDate.toString())
+    assertEquals("2021-02-23T09:05Z[UTC]", firstContest.startDate.toString())
     assertEquals(120, firstContest.length.toMinutes())
     assertNotNull(firstContest.registrationCountdown)
   }
@@ -129,7 +129,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val firstContest = recentContests.first()
     assertEquals(1486, firstContest.id)
     assertEquals("Codeforces Round #703 (Div. 2)", firstContest.name)
-    assertEquals("2021-02-18T17:35Z[UTC]", firstContest.startDate.toString())
+    assertEquals("2021-02-18T14:35Z[UTC]", firstContest.startDate.toString())
     assertEquals(135, firstContest.length.toMinutes())
     assertNull(firstContest.registrationLink)
   }
@@ -143,7 +143,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     val firstContest = recentContests.first()
 
-    assertEquals("2021-02-18T17:35+01:00[Europe/Berlin]", firstContest.startDate.toString())
+    assertEquals("2021-02-18T15:35+01:00[Europe/Berlin]", firstContest.startDate.toString())
   }
 
   fun testContestSummerTime() {
@@ -155,7 +155,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
 
     val firstContest = recentContests.first()
 
-    assertEquals("2021-05-18T17:35+02:00[Europe/Berlin]", firstContest.startDate.toString())
+    assertEquals("2021-05-18T16:35+02:00[Europe/Berlin]", firstContest.startDate.toString())
   }
 
   fun testParticipantsNumber() {

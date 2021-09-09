@@ -163,8 +163,7 @@ object CodeforcesContestConnector {
     val startDateString = dateElement.text()
     val formatter = DateTimeFormatter.ofPattern("MMM/dd/yyyy HH:mm", dateLocale)
     val startDateLocal = LocalDateTime.parse(startDateString, formatter)
-    val offset = ZoneId.systemDefault().rules.getOffset(startDateLocal)
-    return ZonedDateTime.ofInstant(startDateLocal, offset, ZoneId.systemDefault())
+    return ZonedDateTime.of(startDateLocal, ZoneId.of("GMT+3")).withZoneSameInstant(ZoneId.systemDefault())
   }
 
   private fun getContestsElements(recentContests: Element) = recentContests.getElementsByTag(TR_TAG)
