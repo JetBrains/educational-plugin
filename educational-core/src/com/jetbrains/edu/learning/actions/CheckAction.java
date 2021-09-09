@@ -17,7 +17,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -49,7 +49,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -67,25 +66,26 @@ import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CheckAction extends DumbAwareAction {
+public class CheckAction extends ActionWithProgressIcon implements DumbAware {
   @NonNls
   public static final String ACTION_ID = "Educational.Check";
   private static final Logger LOG = Logger.getInstance(CheckAction.class);
+  @NonNls
+  private static final String PROCESS_MESSAGE = "Check in progress";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(EduCoreBundle.lazyMessage("action.check.text"),
-          EduCoreBundle.lazyMessage("action.check.description"), null);
+    this(EduCoreBundle.lazyMessage("action.check.text"), EduCoreBundle.lazyMessage("action.check.description"));
   }
 
   public CheckAction(Supplier<String> dynamicText) {
-    super(dynamicText, dynamicText, null);
+    this(dynamicText, dynamicText);
   }
 
   public CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
-    super(dynamicText, dynamicDescription, null);
+    super(dynamicText, dynamicDescription);
+    setUpProcessPanel(PROCESS_MESSAGE);
   }
 
   @Override
@@ -205,11 +205,16 @@ public class CheckAction extends DumbAwareAction {
       }
     }
 
-    @Override
-    public void run(@NotNull ProgressIndicator indicator) {
+    private void onStarted(@NotNull ProgressIndicator indicator) {
+      processStarted();
       ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
       myCheckInProgress.set(true);
       TaskDescriptionView.getInstance(myProject).checkStarted(myTask);
+    }
+
+    @Override
+    public void run(@NotNull ProgressIndicator indicator) {
+      onStarted(indicator);
       long start = System.currentTimeMillis();
       NotificationSettings notificationSettings = turnOffTestRunnerNotifications();
       CheckResult localCheckResult = localCheck(indicator);
@@ -329,6 +334,11 @@ public class CheckAction extends DumbAwareAction {
     public void onCancel() {
       finishChecking();
       TaskDescriptionView.getInstance(myProject).readyToCheck();
+    }
+
+    @Override
+    public void onFinished() {
+      processFinished();
     }
 
     @Override

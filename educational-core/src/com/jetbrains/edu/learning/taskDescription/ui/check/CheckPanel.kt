@@ -10,10 +10,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
-import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.LeaveCommentAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
@@ -82,11 +80,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   fun checkStarted() {
     readyToCheck()
-    val asyncProcessIcon = AsyncProcessIcon("Check in progress")
-    val iconPanel = JPanel(BorderLayout())
-    iconPanel.add(asyncProcessIcon, BorderLayout.CENTER)
-    iconPanel.border = JBUI.Borders.empty(8, 16, 0, 0)
-    checkFinishedPanel.add(iconPanel, BorderLayout.WEST)
     updateBackground()
   }
 
@@ -121,14 +114,15 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
+    checkFinishedPanel.addNextTaskButton(task)
     updateRightActionsToolbar()
     updateCheckDetails(task)
   }
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
-    checkButtonWrapper.add(CheckPanelButtonComponent(task.checkAction, true), BorderLayout.WEST)
-    checkFinishedPanel.addNextTaskButton(task)
+    val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = true)
+    checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
   private fun updateRightActionsToolbar() {
