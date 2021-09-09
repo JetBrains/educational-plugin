@@ -21,6 +21,10 @@ class DataTask : Task {
   @set: Synchronized
   var attempt: DataTaskAttempt? = null
 
+  @get: Synchronized
+  val isTimeLimited: Boolean
+    get() = attempt?.endDateTime != null
+
   @Suppress("unused") //used for deserialization
   constructor() : super()
 

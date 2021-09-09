@@ -8,6 +8,16 @@ import java.util.*
 class DataTaskAttempt : AttemptBase {
   var endDateTime: Date? = null
 
+  // If endDateTime was calculated before and specified in yaml file we shouldn't use isRunning from AttemptBase base class
+  // Because we don't save timeLeft value in yaml, so we can't calculate proper endDateTime at
+  // com.jetbrains.edu.learning.courseFormat.AttemptBase.calculateEndDateTime anymore
+  override val isRunning: Boolean
+    get() {
+      @Suppress("LocalVariableName")
+      val _endDateTime = endDateTime ?: return true
+      return Date() < _endDateTime
+    }
+
   @Suppress("unused") //used for deserialization
   private constructor()
 

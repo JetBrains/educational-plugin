@@ -138,11 +138,16 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   private fun updateCheckButtonWrapper(task: DataTask) {
     when (task.status) {
       CheckStatus.Unchecked -> {
-        val downloadDatasetComponent = CheckPanelButtonComponent(
-          EduActionUtils.getAction(DownloadDatasetAction.ACTION_ID) as DownloadDatasetAction)
-        checkButtonWrapper.add(downloadDatasetComponent, BorderLayout.WEST)
-
         val isRunning = task.isRunning()
+        val component = if (task.isTimeLimited && isRunning) {
+          val endDateTime = task.attempt?.endDateTime ?: error("EndDateTime is expected")
+          CheckTimer(endDateTime) { updateCheckPanel(task) }
+        }
+        else {
+          CheckPanelButtonComponent(EduActionUtils.getAction(DownloadDatasetAction.ACTION_ID) as DownloadDatasetAction)
+        }
+        checkButtonWrapper.add(component, BorderLayout.WEST)
+
         val checkComponent = CheckPanelButtonComponent(task.checkAction, isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }

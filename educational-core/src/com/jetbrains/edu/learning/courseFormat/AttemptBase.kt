@@ -17,7 +17,7 @@ abstract class AttemptBase {
   @JsonProperty(TIME_LEFT)
   var timeLeft: Long? = null
 
-  val isRunning: Boolean
+  open val isRunning: Boolean
     @JsonIgnore
     get() {
       val endDateTime = calculateEndDateTime() ?: return true
