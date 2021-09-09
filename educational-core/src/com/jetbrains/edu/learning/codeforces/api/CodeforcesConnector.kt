@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
-import org.jetbrains.projector.common.misc.firstNotNullOrNull
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
@@ -106,9 +105,8 @@ abstract class CodeforcesConnector {
     if (loginResponse.isSuccessful) {
       var handle = Jsoup.parse(htmlResponse)
         .getElementsByTag("script")
-        .map { it.data() }
-        .firstNotNullOrNull { handleRegex.find(it) }
-        ?.destructured?.toList()?.firstOrNull()
+        .map { handleRegex.find(it.data())?.destructured?.toList()?.firstOrNull() }
+        .firstOrNull()
 
       if (handle == null) handle = getInstance().getProfile(jSessionId) ?: return false
 
