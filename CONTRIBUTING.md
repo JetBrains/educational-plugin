@@ -19,10 +19,6 @@ You can get the latest IntelliJ IDEA Community Edition [here](https://www.jetbra
 should be used
 6. To build plugin distribution use *:buildPlugin* Gradle task. 
 It creates an archive at `build/distributions` which can be installed into your IDE via `Install plugin from disk...` action found in `Settings > Plugins`.
-   
-# CLA
-You need to have a signed Contributor License Agreement (CLA) sent to JetBrains before your
-code can be merged. Please [request it here](https://www.jetbrains.com/agreements/cla/).
 
 # Supporting different platforms
 
