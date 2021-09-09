@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -22,7 +23,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -63,6 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -72,8 +73,6 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
   private static final Logger LOG = Logger.getInstance(CheckAction.class);
   @NonNls
   private static final String PROCESS_MESSAGE = "Check in progress";
-
-  protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
     this(EduCoreBundle.lazyMessage("action.check.text"), EduCoreBundle.lazyMessage("action.check.description"));
@@ -116,6 +115,10 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       listener.beforeCheck(project, task);
     }
 
+    if (!CheckActionState.getInstance(project).doLock()) {
+      showCheckAlreadyRunning(project);
+      return;
+    }
     StudyCheckTask checkTask = new StudyCheckTask(project, task);
     if (checkTask.isHeadless()) {
       // It's hack to make checker tests work properly.
@@ -143,8 +146,20 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);
   }
 
+  private static void showCheckAlreadyRunning(Project project) {
+    Balloon balloon = JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder(
+        EduCoreBundle.message("action.check.already.running"),
+        null,
+        UIUtil.getToolTipActionBackground(),
+        EduBrowserHyperlinkListener.INSTANCE)
+      .createBalloon();
+
+    balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);
+  }
+
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     if (CheckPanel.ACTION_PLACE.equals(e.getPlace())) {
       //action is being added only in valid context
       //no project in event in this case, so just enable it
@@ -167,7 +182,8 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       presentation.setDescription(checkActionPresentation.getDescription());
     }
     if (presentation.isEnabled()) {
-      presentation.setEnabled(!myCheckInProgress.get());
+      boolean isInProgress = CheckActionState.getInstance(project).isLocked();
+      presentation.setEnabled(!isInProgress);
       return;
     }
     if (!CCUtils.isCourseCreator(project)) {
@@ -208,7 +224,6 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     private void onStarted(@NotNull ProgressIndicator indicator) {
       processStarted();
       ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
-      myCheckInProgress.set(true);
       TaskDescriptionView.getInstance(myProject).checkStarted(myTask);
     }
 
@@ -327,18 +342,20 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
           listener.afterCheck(myProject, myTask, myResult);
         }
       });
-      finishChecking();
     }
 
     @Override
     public void onCancel() {
-      finishChecking();
       TaskDescriptionView.getInstance(myProject).readyToCheck();
     }
 
     @Override
     public void onFinished() {
+      if (myChecker != null) {
+        myChecker.clearState();
+      }
       processFinished();
+      CheckActionState.getInstance(myProject).unlock();
     }
 
     @Override
@@ -346,14 +363,6 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       super.onThrowable(error);
       myResult = CheckResult.getFailedToCheck();
       TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
-      finishChecking();
-    }
-
-    private void finishChecking() {
-      if (myChecker != null) {
-        myChecker.clearState();
-      }
-      myCheckInProgress.set(false);
     }
 
     private NotificationSettings turnOffTestRunnerNotifications() {
@@ -361,6 +370,27 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
       NotificationSettings testRunnerSettings = NotificationsConfigurationImpl.getSettings(TEST_RESULTS_DISPLAY_ID);
       notificationsConfiguration.changeSettings(TEST_RESULTS_DISPLAY_ID, NotificationDisplayType.NONE, false, false);
       return testRunnerSettings;
+    }
+  }
+
+  @Service
+  private static final class CheckActionState {
+    private final AtomicBoolean isBusy = new AtomicBoolean(false);
+
+    boolean doLock() {
+      return isBusy.compareAndSet(false, true);
+    }
+
+    boolean isLocked() {
+      return isBusy.get();
+    }
+
+    void unlock() {
+      isBusy.set(false);
+    }
+
+    static CheckActionState getInstance(@NotNull Project project) {
+      return project.getService(CheckActionState.class);
     }
   }
 }
