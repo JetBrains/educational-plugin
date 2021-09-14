@@ -29,10 +29,12 @@ apply(from = "common.gradle.kts")
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
 
+val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
+
 configureSecretProperties()
 
 fun configureSecretProperties() {
-  if (inJetBrainsNetwork() || System.getenv("TEAMCITY_VERSION") != null) {
+  if (inJetBrainsNetwork() || isTeamCity) {
     download(URL("https://repo.labs.intellij.net/edu-tools/secret.properties"), secretProperties)
   }
   else {
@@ -105,7 +107,7 @@ fun Properties.extractAndStore(path: String, vararg keys: String) {
 
 buildCache {
   local {
-    isEnabled = System.getenv("CI") == null
+    isEnabled = !isTeamCity
     // By default, build cache is stored in gradle home directory
     directory = File(rootDir, "build/build-cache")
     removeUnusedEntriesAfterDays = 30
