@@ -111,14 +111,14 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     if (task == null) {
       return;
     }
-    for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
-      listener.beforeCheck(project, task);
-    }
-
     if (!CheckActionState.getInstance(project).doLock()) {
       showCheckAlreadyRunning(project);
       return;
     }
+    for (CheckListener listener : CheckListener.EP_NAME.getExtensionList()) {
+      listener.beforeCheck(project, task);
+    }
+
     StudyCheckTask checkTask = new StudyCheckTask(project, task);
     if (checkTask.isHeadless()) {
       // It's hack to make checker tests work properly.
