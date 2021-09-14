@@ -78,90 +78,92 @@ class GetHyperskillLesson : DumbAwareAction(
     }
   }
 
-  @VisibleForTesting
-  fun createCourse(lessonId: String): HyperskillCourse? {
-    val course = HyperskillCourse()
-    val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId))
-    if (lesson == null) {
-      showIncorrectCredentialsError()
+  companion object {
+    @VisibleForTesting
+    fun createCourse(lessonId: String): HyperskillCourse? {
+      val course = HyperskillCourse()
+      val lesson = StepikConnector.getInstance().getLesson(Integer.valueOf(lessonId))
+      if (lesson == null) {
+        showIncorrectCredentialsError()
+        return null
+      }
+      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
+      val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
+      for (task in tasks) {
+        lesson.addTask(task)
+      }
+
+      val languageAndEnvironment = getLanguageAndEnvironment(lesson)
+      if (languageAndEnvironment == null) {
+        showError(
+          EduCoreBundle.message("error.failed.to.create.lesson.undefined.language"),
+          EduCoreBundle.message("error.failed.to.create.lesson")
+        )
+        return null
+      }
+
+      @NonNls val hyperskillLessonName = "Hyperskill lesson $lessonId"
+      course.apply {
+        name = hyperskillLessonName
+        description = hyperskillLessonName
+        language = languageAndEnvironment.first
+        environment = languageAndEnvironment.second
+      }
+
+      val hyperskillLesson = FrameworkLesson(lesson)
+      course.addItem(hyperskillLesson, 0)
+      loadAndFillAdditionalCourseInfo(course)
+      loadAndFillLessonAdditionalInfo(lesson, course)
+
+      return course
+    }
+
+    private fun showIncorrectCredentialsError() {
+      val stepikUser = EduSettings.getInstance().user
+
+      val message = if (stepikUser == null) {
+        EduCoreBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
+      }
+      else {
+        EduCoreBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
+      }
+      showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
+    }
+
+    private fun showError(message: String, title: String) {
+      runInEdt {
+        Messages.showErrorDialog(message, title)
+      }
+    }
+
+    private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String>? {
+      for (task in lesson.taskList) {
+        val taskFiles = task.taskFiles.values
+        if (taskFiles.any { it.name.contains("androidTest") || it.name.contains("AndroidManifest.xml") }) {
+          return EduNames.KOTLIN to EduNames.ANDROID
+        }
+        if (taskFiles.any { it.name == "tests.py" }) {
+          return EduNames.PYTHON to EduNames.DEFAULT_ENVIRONMENT
+        }
+        for (taskFile in taskFiles) {
+          if (!taskFile.isVisible) {
+            continue
+          }
+          val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
+            "java" -> EduNames.JAVA to EduNames.DEFAULT_ENVIRONMENT
+            "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
+            "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
+            "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
+            "scala" -> EduNames.SCALA to EduNames.DEFAULT_ENVIRONMENT
+            else -> null
+          }
+
+          if (languageAndEnvironment != null) {
+            return languageAndEnvironment
+          }
+        }
+      }
       return null
     }
-    val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
-    val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
-    for (task in tasks) {
-      lesson.addTask(task)
-    }
-
-    val languageAndEnvironment = getLanguageAndEnvironment(lesson)
-    if (languageAndEnvironment == null) {
-      showError(
-        EduCoreBundle.message("error.failed.to.create.lesson.undefined.language"),
-        EduCoreBundle.message("error.failed.to.create.lesson")
-      )
-      return null
-    }
-
-    @NonNls val hyperskillLessonName = "Hyperskill lesson $lessonId"
-    course.apply {
-      name = hyperskillLessonName
-      description = hyperskillLessonName
-      language = languageAndEnvironment.first
-      environment = languageAndEnvironment.second
-    }
-
-    val hyperskillLesson = FrameworkLesson(lesson)
-    course.addItem(hyperskillLesson, 0)
-    loadAndFillAdditionalCourseInfo(course)
-    loadAndFillLessonAdditionalInfo(lesson, course)
-
-    return course
-  }
-
-  private fun showIncorrectCredentialsError() {
-    val stepikUser = EduSettings.getInstance().user
-
-    val message = if (stepikUser == null) {
-      EduCoreBundle.message("error.failed.to.get.lesson.not.log.in", StepikNames.STEPIK)
-    }
-    else {
-      EduCoreBundle.message("error.failed.to.get.lesson.no.access", StepikNames.STEPIK, stepikUser.name)
-    }
-    showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
-  }
-
-  private fun showError(message: String, title: String) {
-    runInEdt {
-      Messages.showErrorDialog(message, title)
-    }
-  }
-
-  private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String>? {
-    for (task in lesson.taskList) {
-      val taskFiles = task.taskFiles.values
-      if (taskFiles.any { it.name.contains("androidTest") || it.name.contains("AndroidManifest.xml") }) {
-        return EduNames.KOTLIN to EduNames.ANDROID
-      }
-      if (taskFiles.any { it.name == "tests.py" }) {
-        return EduNames.PYTHON to EduNames.DEFAULT_ENVIRONMENT
-      }
-      for (taskFile in taskFiles) {
-        if (!taskFile.isVisible) {
-          continue
-        }
-        val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
-          "java" -> EduNames.JAVA to EduNames.DEFAULT_ENVIRONMENT
-          "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
-          "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
-          "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
-          "scala" -> EduNames.SCALA to EduNames.DEFAULT_ENVIRONMENT
-          else -> null
-        }
-
-        if (languageAndEnvironment != null) {
-          return languageAndEnvironment
-        }
-      }
-    }
-    return null
   }
 }
