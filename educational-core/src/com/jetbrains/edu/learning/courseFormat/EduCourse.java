@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
@@ -26,9 +25,9 @@ public class EduCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  @Transient private boolean isUpToDate = true;
+  transient private boolean isUpToDate = true;
   boolean isStepikPublic;
-  @Transient private String myAdminsGroup;
+  transient private String myAdminsGroup;
   private int learnersCount = 0;
 
   private int reviewSummary;
@@ -137,12 +136,10 @@ public class EduCourse extends Course {
     isAdaptive = adaptive;
   }
 
-  @Transient
   public String getAdminsGroup() {
     return myAdminsGroup;
   }
 
-  @Transient
   public void setAdminsGroup(String adminsGroup) {
     myAdminsGroup = adminsGroup;
   }
@@ -170,7 +167,6 @@ public class EduCourse extends Course {
     setUpdateDate(new Date(0));
   }
 
-  @Transient
   public boolean isUpToDate() {
     return isUpToDate;
   }

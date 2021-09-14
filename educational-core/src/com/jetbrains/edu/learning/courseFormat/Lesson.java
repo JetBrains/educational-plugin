@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
@@ -19,14 +18,12 @@ import java.util.stream.Collectors;
  *  - Handle yaml deserialization {@link YamlDeserializer#deserializeLesson(com.fasterxml.jackson.databind.ObjectMapper, String)}
  */
 public class Lesson extends ItemContainer {
-  @Transient public List<Integer> steps;
-  @Transient boolean is_public;
+  transient public List<Integer> steps;
+  transient boolean is_public;
   public int unitId = 0;
 
-  @Transient
-  private Course myCourse = null;
-  @Transient
-  private Section mySection = null;
+  transient private Course myCourse = null;
+  transient private Section mySection = null;
 
   public Lesson() {
   }
@@ -50,7 +47,6 @@ public class Lesson extends ItemContainer {
   }
 
   @NotNull
-  @Transient
   public Course getCourse() {
     return myCourse;
   }
@@ -66,7 +62,6 @@ public class Lesson extends ItemContainer {
     return "lesson";
   }
 
-  @Transient
   public void setCourse(Course course) {
     myCourse = course;
   }
@@ -98,23 +93,19 @@ public class Lesson extends ItemContainer {
     return null;
   }
 
-  @Transient
   public boolean isPublic() {
     return is_public;
   }
 
-  @Transient
   public void setPublic(boolean isPublic) {
     this.is_public = isPublic;
   }
 
-  @Transient
   @Nullable
   public Section getSection() {
     return mySection;
   }
 
-  @Transient
   public void setSection(@Nullable Section section) {
     mySection = section;
   }

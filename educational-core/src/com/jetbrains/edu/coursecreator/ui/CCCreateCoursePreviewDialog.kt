@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
@@ -47,9 +46,8 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText(EduCoreBundle.message("course.creator.create.course.preview.button"))
     panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
-    val courseCopy = course.copy().apply {
-      dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
-    }
+    val courseCopy = course.copy() ?: error("Failed to create course preview")
+    courseCopy.dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
     panel.bindCourse(courseCopy)
     init()
   }

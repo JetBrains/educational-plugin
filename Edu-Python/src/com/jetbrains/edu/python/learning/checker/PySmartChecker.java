@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,11 @@ class PySmartChecker {
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document windowDocument = documentManager.getDocument(windowCopy);
       if (windowDocument != null) {
-        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(VirtualFileExt.pathRelativeToTask(virtualFile, project));
+        Task copy = answerTaskFile.getTask().copy();
+        if (copy == null) {
+          return;
+        }
+        TaskFile windowTaskFile = copy.getTaskFile(VirtualFileExt.pathRelativeToTask(virtualFile, project));
         if (windowTaskFile == null) {
           return;
         }
@@ -120,7 +125,11 @@ class PySmartChecker {
                                                         @NotNull final TaskFile source) {
     try {
       VirtualFile answerFile = file.copy(taskDir, taskDir, file.getNameWithoutExtension() + EduNames.ANSWERS_POSTFIX + "." + file.getExtension());
-      TaskFile answerTaskFile = source.getTask().copy().getTaskFile(VirtualFileExt.pathRelativeToTask(file, project));
+      Task copy = source.getTask().copy();
+      if (copy == null) {
+        return null;
+      }
+      TaskFile answerTaskFile = copy.getTaskFile(VirtualFileExt.pathRelativeToTask(file, project));
       if (answerTaskFile == null) {
         return null;
       }

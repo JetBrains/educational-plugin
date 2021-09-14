@@ -1,23 +1,26 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.Transient;
-import com.intellij.util.xmlb.annotations.XCollection;
 import com.jetbrains.edu.EducationalCoreIcons;
+import com.jetbrains.edu.coursecreator.actions.mixins.CourseDeserializer;
+import com.jetbrains.edu.coursecreator.actions.mixins.StudyItemDeserializer;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo;
 import com.jetbrains.edu.learning.plugins.PluginInfo;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import one.util.streamex.StreamEx;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,16 +32,13 @@ import java.util.stream.Collectors;
 /**
  * To introduce new course it's required to:
  * - Extend Course class
- * - Update {@link SerializationUtils.Xml#COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
  * - Update CourseBuilder#build() in {@link com.jetbrains.edu.learning.yaml.format.CourseYamlUtil} to handle course loading from YAML
  * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
-  @XCollection(elementTypes = {
-    MarketplaceUserInfo.class,
-    StepikUserInfo.class
-  })
-  @Transient private List<UserInfo> authors = new ArrayList<>();
+  private static final Logger LOG = Logger.getInstance(Course.class.getName());
+
+  transient private List<UserInfo> authors = new ArrayList<>();
   private String description;
 
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
@@ -49,7 +49,7 @@ public abstract class Course extends LessonContainer {
 
   private boolean solutionsHidden;
 
-  protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
+  transient protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
 
   // Marketplace:
   private boolean isMarketplace = false;
@@ -60,9 +60,9 @@ public abstract class Course extends LessonContainer {
   private Date myCreateDate = new Date(0);
   @Nullable private String myFeedbackLink;
 
-  @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
+  transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
-  private List<PluginInfo> myPluginDependencies = new ArrayList<>();
+  transient private List<PluginInfo> myPluginDependencies = new ArrayList<>();
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {
@@ -72,12 +72,10 @@ public abstract class Course extends LessonContainer {
     }
   }
 
-  @Transient
   public List<TaskFile> getAdditionalFiles() {
     return additionalFiles;
   }
 
-  @Transient
   public void setAdditionalFiles(@NotNull List<TaskFile> additionalFiles) {
     this.additionalFiles = additionalFiles;
   }
@@ -235,16 +233,35 @@ public abstract class Course extends LessonContainer {
     this.courseMode = courseMode;
   }
 
+  @Nullable
   public Course copy() {
     return copyAs(getClass());
   }
 
+  @Nullable
   public <T extends Course> T copyAs(Class<T> clazz) {
-    Element element = XmlSerializer.serialize(this);
-    T copy = XmlSerializer.deserialize(element, clazz);
-    copy.init(null, null, true);
-    copy.setVendor(this.getVendor());
-    return copy;
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+      mapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
+      mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+      SimpleModule module = new SimpleModule();
+      module.addSerializer(StudyItem.class, new StudyItemCopySerializer());
+      module.addDeserializer(StudyItem.class, new StudyItemDeserializer());
+      module.addDeserializer(Course.class, new CourseDeserializer());
+      mapper.registerModule(module);
+
+      String jsonText = mapper.writeValueAsString(this);
+      T copy = mapper.readValue(jsonText, clazz);
+      copy.init(null, null, true);
+      return copy;
+    }
+    catch (JsonProcessingException e) {
+      LOG.error("Failed to create course copy: " + this.getClass() + " as " + clazz);
+      LOG.error(e.getMessage());
+    }
+    return null;
   }
 
   public boolean isStudy() {
@@ -297,17 +314,14 @@ public abstract class Course extends LessonContainer {
     myLanguageCode = languageCode;
   }
 
-  @Transient
   public CourseVisibility getVisibility() {
     return myVisibility;
   }
 
-  @Transient
   public void setVisibility(CourseVisibility visibility) {
     myVisibility = visibility;
   }
 
-  @Transient
   @NotNull
   public CourseCompatibility getCompatibility() {
     return CourseCompatibility.forCourse(this);
@@ -326,13 +340,11 @@ public abstract class Course extends LessonContainer {
     return ApplicationManager.getApplication().isInternal();
   }
 
-  @Transient
   @Nullable
   public Vendor getVendor() {
     return myVendor;
   }
 
-  @Transient
   public void setVendor(@Nullable Vendor vendor) {
     myVendor = vendor;
   }
@@ -382,12 +394,10 @@ public abstract class Course extends LessonContainer {
     myCreateDate = createDate;
   }
 
-  @Transient
   public List<PluginInfo> getPluginDependencies() {
     return myPluginDependencies;
   }
 
-  @Transient
   public void setPluginDependencies(List<PluginInfo> pluginDependencies) {
     myPluginDependencies = pluginDependencies;
   }

@@ -504,7 +504,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
-    val remoteTask = this.copy()
+    val remoteTask = this.copy() ?: error("Failed to copy task")
     remoteTask.changeTask()
     remoteTask.init(this.course, this.parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)

@@ -109,7 +109,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
     stepikChanges.newTasks.addAll(localLesson.taskList.filter { it.id !in remoteTasksIds })
 
     for (task in localLesson.taskList) {
-      val localTask = task.copy()
+      val localTask = task.copy() ?: continue
       localTask.lesson = localLesson
       getInEdt {
         runReadAction {

@@ -1,13 +1,14 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.MapAnnotation;
-import com.intellij.util.xmlb.annotations.OptionTag;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.EducationalCoreIcons;
 import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
@@ -24,7 +25,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,14 +39,13 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
  *
  * Update {@link StepikChangeRetriever#taskFilesChanged and StepikChangeRetriever#taskInfoChanged} if you added new property that has to be compared
  *
- * To implement new task there are 6 steps to be done:
+ * To implement new task there are 5 steps to be done:
  * - Extend {@link Task} class
- * - Go to {@link ItemContainer#items} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder.StepikTaskType} otherwise
  * - Handle yaml deserialization:
- *    - add type in {@link YamlDeserializer#deserializeTask(com.fasterxml.jackson.databind.ObjectMapper, String)}
+ *    - add type in {@link YamlDeserializer#deserializeTask(ObjectMapper, String)}
  *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
  */
 public abstract class Task extends StudyItem {
@@ -64,7 +63,7 @@ public abstract class Task extends StudyItem {
   @Nullable
   private Boolean solutionHidden;
   private int myRecord = -1;
-  @Transient private Lesson myLesson;
+  transient private Lesson myLesson;
   private boolean isUpToDate = true;
   // Used for marketplace courses. We need to store a meta-entity id (corresponding to list of submissions) to correctly process submissions
   // storage on grazie platform
@@ -92,14 +91,11 @@ public abstract class Task extends StudyItem {
     }
   }
 
-  @MapAnnotation(sortBeforeSave = false)
-  @OptionTag("files")
   public Map<String, TaskFile> getTaskFiles() {
     return myTaskFiles;
   }
 
   // Use carefully. taskFiles is supposed to be ordered so use LinkedHashMap
-  @OptionTag("files")
   public void setTaskFiles(Map<String, TaskFile> taskFiles) {
     this.myTaskFiles = taskFiles;
   }
@@ -177,12 +173,10 @@ public abstract class Task extends StudyItem {
     return myTaskFiles.get(fileName);
   }
 
-  @Transient
   public Lesson getLesson() {
     return myLesson;
   }
 
-  @Transient
   public void setLesson(Lesson lesson) {
     myLesson = lesson;
   }
@@ -233,11 +227,24 @@ public abstract class Task extends StudyItem {
     myStatus = status;
   }
 
+  @Nullable
   public Task copy() {
-    Element element = XmlSerializer.serialize(this);
-    Task copy = XmlSerializer.deserialize(element, getClass());
-    copy.init(null, null, true);
-    return copy;
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
+      mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+      String jsonText = mapper.writeValueAsString(this);
+      Task copy = mapper.readValue(jsonText, getClass());
+      copy.init(null, null, true);
+      return copy;
+    }
+    catch (JsonProcessingException e) {
+      LOG.error("Failed to create task copy");
+      LOG.error(e.getMessage());
+    }
+    return null;
   }
 
   public int getPosition() {

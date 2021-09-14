@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
 
 object StepikCourseConnector : CourseConnector {
   private val LOG = Logger.getInstance(StepikCourseConnector::class.java.name)
@@ -44,7 +43,7 @@ object StepikCourseConnector : CourseConnector {
     }
 
     if (courseId != -1) {
-      val info = StepikConnector.getInstance().getCourseInfo (courseId) ?: return null
+      val info = StepikConnector.getInstance().getCourseInfo(courseId) ?: return null
 
       // do not convert idea_compatible courses to StepikCourse
       return if (info.isCompatible) info else stepikCourseFromRemote(info)

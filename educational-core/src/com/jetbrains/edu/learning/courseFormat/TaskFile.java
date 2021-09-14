@@ -5,7 +5,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
@@ -34,7 +33,7 @@ public class TaskFile {
 
   private String myText = "";
 
-  @Transient private Task myTask;
+  transient private Task myTask;
 
   public static final Logger LOG = Logger.getInstance(TaskFile.class);
 
@@ -80,12 +79,10 @@ public class TaskFile {
     myAnswerPlaceholders.add(answerPlaceholder);
   }
 
-  @Transient
   public Task getTask() {
     return myTask;
   }
 
-  @Transient
   public void setTask(Task task) {
     myTask = task;
   }

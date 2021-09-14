@@ -2,15 +2,12 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of answer placeholders which user should type in
@@ -31,13 +28,12 @@ public class AnswerPlaceholder {
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
   private boolean myIsInitializedFromDependency = false;
-  private List<String> myHints = new ArrayList<>();
   private String myPossibleAnswer = "";  // could be empty in course creator file
   private String myPlaceholderText;     //  could be empty in student file (including task file preview in course creator mode)
   private boolean mySelected = false;
   private CheckStatus myStatus = CheckStatus.Unchecked;
 
-  @Transient private TaskFile myTaskFile;
+  transient private TaskFile myTaskFile;
 
   /*
    * Actual student's answer, used to restore state of task of framework lesson after navigation actions
@@ -99,12 +95,10 @@ public class AnswerPlaceholder {
     myPlaceholderText = placeholderText;
   }
 
-  @Transient
   public TaskFile getTaskFile() {
     return myTaskFile;
   }
 
-  @Transient
   public void setTaskFile(TaskFile taskFile) {
     myTaskFile = taskFile;
   }

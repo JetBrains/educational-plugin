@@ -5,7 +5,6 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +32,9 @@ public abstract class StudyItem {
   private String myName;
   protected int myId;
   private Date myUpdateDate = new Date(0);
-  private final UserDataHolder myDataHolder = new UserDataHolderBase();
+  private transient final UserDataHolder myDataHolder = new UserDataHolderBase();
   private List<String> contentTags = new ArrayList<>();
 
-  @Transient
   public UserDataHolder getDataHolder() {
     return myDataHolder;
   }

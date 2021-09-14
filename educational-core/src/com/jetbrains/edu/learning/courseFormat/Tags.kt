@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.ide.plugins.newui.TagComponent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import java.util.*
-import javax.swing.JComponent
 
 @NonNls
 private const val PROGRAMMING_LANGUAGE_TAG_SEARCH_OPTION = "programming_language"
@@ -22,8 +20,6 @@ open class Tag @JvmOverloads constructor(val text: String, private val searchOpt
     val searchPrefix = "$searchOption:"
     return filter.startsWith(searchPrefix) && textInLowerCase.contains(filter.substring(searchPrefix.length))
   }
-
-  fun createComponent(): JComponent = TagComponent(text)
 }
 
 class ProgrammingLanguageTag(language: String) : Tag(language, PROGRAMMING_LANGUAGE_TAG_SEARCH_OPTION)

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -27,7 +26,7 @@ public class AnswerPlaceholderDependency {
   private String myFileName;
   private int myPlaceholderIndex;
   private boolean myIsVisible = true;
-  private AnswerPlaceholder myAnswerPlaceholder = null;
+  transient private AnswerPlaceholder myAnswerPlaceholder = null;
 
   public AnswerPlaceholderDependency() {
   }
@@ -68,12 +67,10 @@ public class AnswerPlaceholderDependency {
     return taskFile.getAnswerPlaceholders().get(myPlaceholderIndex);
   }
 
-  @Transient
   public AnswerPlaceholder getAnswerPlaceholder() {
     return myAnswerPlaceholder;
   }
 
-  @Transient
   public void setAnswerPlaceholder(AnswerPlaceholder answerPlaceholder) {
     myAnswerPlaceholder = answerPlaceholder;
   }

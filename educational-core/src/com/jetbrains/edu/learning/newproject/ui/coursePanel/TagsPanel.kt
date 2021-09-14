@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ide.plugins.newui.HorizontalLayout
+import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -20,7 +21,7 @@ class TagsPanel : NonOpaquePanel(HorizontalLayout(HORIZONTAL_OFFSET)), CourseSel
     val tags = course.tags
     isVisible = tags.isNotEmpty()
     for (tag in tags) {
-      add(tag.createComponent())
+      add(TagComponent(tag.text))
     }
   }
 

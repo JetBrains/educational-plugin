@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,13 +10,11 @@ import java.util.List;
 public class Section extends LessonContainer {
   public Section() {}
 
-  @Transient
-  public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
+  transient public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
   private int courseId;
   private int position;
 
-  @Transient
-  private Course myCourse;
+  transient private Course myCourse;
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     myCourse = course;
@@ -57,13 +54,11 @@ public class Section extends LessonContainer {
     return baseDir.findChild(getName());
   }
 
-  @Transient
   @NotNull
   public Course getCourse() {
     return myCourse;
   }
 
-  @Transient
   public void setCourse(Course course) {
     myCourse = course;
   }

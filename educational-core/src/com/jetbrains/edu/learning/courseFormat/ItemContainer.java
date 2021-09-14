@@ -1,12 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,24 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class ItemContainer extends StudyItem {
-  @SuppressWarnings("deprecation")
-  @AbstractCollection(elementTypes = {
-    Section.class,
-    //lessons:
-    Lesson.class,
-    FrameworkLesson.class,
-    //tasks:
-    CheckiOStation.class,
-    CheckiOMission.class,
-    EduTask.class,
-    ChoiceTask.class,
-    TheoryTask.class,
-    CodeTask.class,
-    OutputTask.class,
-    IdeTask.class,
-    VideoTask.class,
-    CodeforcesTask.class
-  })
   protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
