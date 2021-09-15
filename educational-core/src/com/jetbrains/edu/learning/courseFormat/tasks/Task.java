@@ -1,9 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -227,24 +223,9 @@ public abstract class Task extends StudyItem {
     myStatus = status;
   }
 
-  @Nullable
+  @NotNull
   public Task copy() {
-    ObjectMapper mapper = new ObjectMapper();
-    try {
-      mapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
-      mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-      String jsonText = mapper.writeValueAsString(this);
-      Task copy = mapper.readValue(jsonText, getClass());
-      copy.init(null, null, true);
-      return copy;
-    }
-    catch (JsonProcessingException e) {
-      LOG.error("Failed to create task copy");
-      LOG.error(e.getMessage());
-    }
-    return null;
+    return CopyUtilKt.copyAs(this, getClass());
   }
 
   public int getPosition() {

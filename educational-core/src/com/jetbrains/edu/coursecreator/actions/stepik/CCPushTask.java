@@ -121,9 +121,6 @@ public class CCPushTask extends DumbAwareAction {
 
   private static void postTask(Project project, Task task, Lesson lesson, int position) {
     Task taskCopy = task.copy();
-    if (taskCopy == null) {
-      return;
-    }
     taskCopy.setIndex(position);
     taskCopy.setLesson(lesson);
     boolean isPosted = CCStepikConnector.postTask(project, taskCopy, lesson.getId());
@@ -144,9 +141,6 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     Task taskCopy = task.copy();
-    if (taskCopy == null) {
-      return;
-    }
     taskCopy.setIndex(position);
     taskCopy.setLesson(task.getLesson());
     boolean updated = CCStepikConnector.updateTask(project, taskCopy);

@@ -134,21 +134,6 @@ public class SerializationUtils {
     private Xml() {
     }
 
-    public static int getVersion(Element element) throws StudyUnrecognizedFormatException {
-      if (element.getChild(COURSE_ELEMENT) != null) {
-        return 1;
-      }
-
-      final Element taskManager = element.getChild(MAIN_ELEMENT);
-
-      Element versionElement = getChildWithName(taskManager, "VERSION");
-      if (versionElement == null) {
-        return -1;
-      }
-
-      return Integer.valueOf(versionElement.getAttributeValue(VALUE));
-    }
-
     @NotNull
     public static Element convertToSecondVersion(@NotNull Project project,
                                                  @NotNull Element element) throws StudyUnrecognizedFormatException {

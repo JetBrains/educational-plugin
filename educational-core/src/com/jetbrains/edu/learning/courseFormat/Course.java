@@ -1,19 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.EducationalCoreIcons;
-import com.jetbrains.edu.coursecreator.actions.mixins.CourseDeserializer;
-import com.jetbrains.edu.coursecreator.actions.mixins.StudyItemDeserializer;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.actions.CheckAction;
@@ -36,8 +26,6 @@ import java.util.stream.Collectors;
  * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
-  private static final Logger LOG = Logger.getInstance(Course.class.getName());
-
   transient private List<UserInfo> authors = new ArrayList<>();
   private String description;
 
@@ -233,35 +221,9 @@ public abstract class Course extends LessonContainer {
     this.courseMode = courseMode;
   }
 
-  @Nullable
+  @NotNull
   public Course copy() {
-    return copyAs(getClass());
-  }
-
-  @Nullable
-  public <T extends Course> T copyAs(Class<T> clazz) {
-    ObjectMapper mapper = new ObjectMapper();
-    try {
-      mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-      mapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
-      mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-      mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-      SimpleModule module = new SimpleModule();
-      module.addSerializer(StudyItem.class, new StudyItemCopySerializer());
-      module.addDeserializer(StudyItem.class, new StudyItemDeserializer());
-      module.addDeserializer(Course.class, new CourseDeserializer());
-      mapper.registerModule(module);
-
-      String jsonText = mapper.writeValueAsString(this);
-      T copy = mapper.readValue(jsonText, clazz);
-      copy.init(null, null, true);
-      return copy;
-    }
-    catch (JsonProcessingException e) {
-      LOG.error("Failed to create course copy: " + this.getClass() + " as " + clazz);
-      LOG.error(e.getMessage());
-    }
-    return null;
+    return CopyUtilKt.copyAs(this, getClass());
   }
 
   public boolean isStudy() {

@@ -216,7 +216,7 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
 @Throws(HugeBinaryFileException::class)
 fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
   try {
-    val taskCopy = task.copy() ?: return null
+    val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
     if (isToEncodeContent) {
       if (task.lesson is FrameworkLesson && length >= EduUtils.getBinaryFileLimit()) {

@@ -271,7 +271,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   }
 
   protected fun Course.asEduCourse(): EduCourse {
-    return copyAs(EduCourse::class.java) ?: error("Failed to create EduCourse from $this")
+    return copyAs(EduCourse::class.java)
   }
 
   protected fun Course.asRemote(courseMode: String = CCUtils.COURSE_MODE): EduCourse {

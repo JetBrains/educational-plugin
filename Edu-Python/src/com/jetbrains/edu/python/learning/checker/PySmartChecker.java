@@ -49,9 +49,6 @@ class PySmartChecker {
       final Document windowDocument = documentManager.getDocument(windowCopy);
       if (windowDocument != null) {
         Task copy = answerTaskFile.getTask().copy();
-        if (copy == null) {
-          return;
-        }
         TaskFile windowTaskFile = copy.getTaskFile(VirtualFileExt.pathRelativeToTask(virtualFile, project));
         if (windowTaskFile == null) {
           return;
@@ -126,9 +123,6 @@ class PySmartChecker {
     try {
       VirtualFile answerFile = file.copy(taskDir, taskDir, file.getNameWithoutExtension() + EduNames.ANSWERS_POSTFIX + "." + file.getExtension());
       Task copy = source.getTask().copy();
-      if (copy == null) {
-        return null;
-      }
       TaskFile answerTaskFile = copy.getTaskFile(VirtualFileExt.pathRelativeToTask(file, project));
       if (answerTaskFile == null) {
         return null;

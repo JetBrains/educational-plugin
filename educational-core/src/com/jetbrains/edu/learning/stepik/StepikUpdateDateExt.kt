@@ -41,7 +41,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
   // as EduCourses, getItemType() will return EduNames.PYCHARM, which won't let us get a correct configurator
   // for C++ courses and we will get `Throwable: Could not find configurator for course` in fillItems
   val courseInfo = if (this is StepikCourse) {
-    stepikCourseFromRemote(eduCourseInfo) ?: return isUpToDate
+    stepikCourseFromRemote(eduCourseInfo)
   }
   else {
     eduCourseInfo

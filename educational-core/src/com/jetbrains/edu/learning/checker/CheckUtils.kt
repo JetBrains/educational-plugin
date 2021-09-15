@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -48,15 +49,18 @@ object CheckUtils {
   const val SYNTAX_ERROR_MESSAGE = "Syntax Error"
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduCoreBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE)
 
+  private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
+    return taskFile.answerPlaceholders.size > 0 && taskFile.hasFailedPlaceholders()
+  }
+
   fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {
     val selectedTaskFile = eduState.taskFile
     var editor = eduState.editor
     var taskFileToNavigate = selectedTaskFile
     var fileToNavigate = eduState.virtualFile
-    val studyTaskManager = StudyTaskManager.getInstance(project)
-    if (!studyTaskManager.hasFailedAnswerPlaceholders(selectedTaskFile)) {
+    if (!hasFailedAnswerPlaceholders(selectedTaskFile)) {
       for ((_, taskFile) in task.taskFiles) {
-        if (studyTaskManager.hasFailedAnswerPlaceholders(taskFile)) {
+        if (hasFailedAnswerPlaceholders(taskFile)) {
           taskFileToNavigate = taskFile
           val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
           val fileEditor = virtualFile.getEditor(project) ?: continue

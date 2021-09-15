@@ -46,7 +46,7 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText(EduCoreBundle.message("course.creator.create.course.preview.button"))
     panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
-    val courseCopy = course.copy() ?: error("Failed to create course preview")
+    val courseCopy = course.copy()
     courseCopy.dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
     panel.bindCourse(courseCopy)
     init()

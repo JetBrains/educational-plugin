@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.xmlb.XmlSerializer
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -10,6 +9,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.copyAs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -504,7 +504,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
-    val remoteTask = this.copy() ?: error("Failed to copy task")
+    val remoteTask = this.copy()
     remoteTask.changeTask()
     remoteTask.init(this.course, this.parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
@@ -519,8 +519,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
-    val element = XmlSerializer.serialize(course)
-    val remoteCourse = XmlSerializer.deserialize(element, HyperskillCourse::class.java)
+    val remoteCourse = course.copyAs(HyperskillCourse::class.java)
     remoteCourse.getTopicsSection()?.let { remoteCourse.removeSection(it) }
     remoteCourse.init(null, null, false)
     remoteCourse.changeCourse()

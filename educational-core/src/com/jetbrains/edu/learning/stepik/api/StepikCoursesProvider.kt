@@ -143,7 +143,7 @@ class StepikCoursesProvider : CoroutineScope {
       val languages = StepikListedCoursesIdsLoader.featuredStepikCourses[courseId]
 
       fun addCourse() {
-        val remoteCourse = stepikCourseFromRemote(course) ?: return
+        val remoteCourse = stepikCourseFromRemote(course)
         if (StepikListedCoursesIdsLoader.inProgressCourses.contains(courseId)) {
           remoteCourse.visibility = CourseVisibility.InProgressVisibility(StepikListedCoursesIdsLoader.inProgressCourses.indexOf(courseId))
         }
