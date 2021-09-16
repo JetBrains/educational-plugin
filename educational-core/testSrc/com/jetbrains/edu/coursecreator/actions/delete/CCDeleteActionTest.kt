@@ -5,11 +5,8 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.withEduTestDialog
 
 class CCDeleteActionTest : EduActionTestCase() {
 

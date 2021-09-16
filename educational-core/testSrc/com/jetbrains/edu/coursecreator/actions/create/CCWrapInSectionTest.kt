@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestInputDialog
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
 

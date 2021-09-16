@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.handlers.rename.MockRenameDialogFactory
 import com.jetbrains.edu.learning.handlers.rename.withMockRenameDialogFactory
+import com.jetbrains.edu.learning.testAction
 import java.util.function.Function
 
 abstract class RenameTestBase : EduActionTestCase() {

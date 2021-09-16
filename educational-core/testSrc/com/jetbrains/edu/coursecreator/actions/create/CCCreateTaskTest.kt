@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat

@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
 import org.rust.cargo.CargoConstants

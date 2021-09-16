@@ -8,12 +8,9 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCTestsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduTestDialog
-import com.jetbrains.edu.learning.TaskBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.withEduTestDialog
 import java.io.File
 
 class CCCreateTaskFilePreviewTest : EduActionTestCase() {

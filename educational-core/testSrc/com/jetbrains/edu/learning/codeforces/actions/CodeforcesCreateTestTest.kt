@@ -6,6 +6,7 @@ import com.intellij.util.Consumer
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import io.mockk.every
 import io.mockk.mockkConstructor
 import java.awt.event.InputEvent

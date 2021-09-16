@@ -7,11 +7,15 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
+import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.TestApplicationManager
+import com.intellij.testFramework.TestDataProvider
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ui.UIUtil
 import org.hamcrest.CoreMatchers
@@ -74,4 +78,30 @@ inline fun <reified T : AnAction> getActionById(actionId: String): T {
 fun CodeInsightTestFixture.testAction(actionId: String): Presentation {
   val action = getActionById<AnAction>(actionId)
   return testAction(action)
+}
+
+fun testAction(
+  context: DataContext,
+  action: AnAction,
+  runAction: Boolean = true
+): Presentation {
+  val e = TestActionEvent(context, action)
+  action.beforeActionPerformedUpdate(e)
+  val presentation = e.presentation
+
+  // BACKCOMPAT: 2021.1. Use the same implementation as `com.intellij.testFramework.fixtures.CodeInsightTestFixture.testAction`
+  if (presentation.isEnabledAndVisible && runAction) {
+    action.actionPerformed(e)
+  }
+
+  return presentation
+}
+
+fun testAction(
+  context: DataContext,
+  actionId: String,
+  runAction: Boolean = true
+): Presentation {
+  val action = getActionById<AnAction>(actionId)
+  return testAction(context, action, runAction)
 }

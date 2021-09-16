@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.testAction
 
 class CheckAllTest : EduActionTestCase() {
   private lateinit var connection: MessageBusConnection

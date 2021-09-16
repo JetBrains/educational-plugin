@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import org.junit.Assert.assertArrayEquals
 
 class CCCreateFrameworkTaskTest : EduActionTestCase() {

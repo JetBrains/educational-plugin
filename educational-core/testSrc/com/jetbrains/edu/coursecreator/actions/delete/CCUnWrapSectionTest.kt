@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 
 class CCUnWrapSectionTest : EduActionTestCase() {

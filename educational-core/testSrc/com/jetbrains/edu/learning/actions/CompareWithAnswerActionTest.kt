@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
+import com.jetbrains.edu.learning.testAction
 
 class CompareWithAnswerActionTest : EduActionTestCase() {
   fun `test disabled for codeforces`() {

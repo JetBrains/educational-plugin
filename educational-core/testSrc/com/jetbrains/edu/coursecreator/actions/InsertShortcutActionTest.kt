@@ -11,6 +11,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.testAction
 import java.awt.event.KeyEvent
 
 

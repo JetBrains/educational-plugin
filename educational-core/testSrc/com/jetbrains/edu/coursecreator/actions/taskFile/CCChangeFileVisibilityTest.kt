@@ -8,12 +8,9 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.getActionById
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 

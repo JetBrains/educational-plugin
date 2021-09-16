@@ -10,6 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.cargo.CfgOptions
 import org.rust.cargo.project.model.cargoProjects

@@ -7,6 +7,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
 import org.junit.Assert

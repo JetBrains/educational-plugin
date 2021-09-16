@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language

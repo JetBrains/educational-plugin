@@ -7,7 +7,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
@@ -51,20 +50,6 @@ abstract class EduActionTestCase : EduTestCase() {
       put(CommonDataKeys.PSI_ELEMENT, element)
       put(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
     }
-  }
-
-  protected fun testAction(context: DataContext, action: AnAction, runAction: Boolean = true): Presentation {
-    val e = TestActionEvent(context, action)
-    action.beforeActionPerformedUpdate(e)
-    if (e.presentation.isEnabledAndVisible && runAction) {
-      action.actionPerformed(e)
-    }
-    return e.presentation
-  }
-
-  protected fun testAction(context: DataContext, actionId: String, runAction: Boolean = true): Presentation {
-    val action = getActionById<AnAction>(actionId)
-    return testAction(context, action, runAction)
   }
 
   protected fun checkActionEnabled(presentation: Presentation, shouldBeEnabled: Boolean) {

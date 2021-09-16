@@ -8,6 +8,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 

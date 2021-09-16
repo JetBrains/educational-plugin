@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DE
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.BEFORE_DELTA
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.testAction
 
 abstract class MoveTestBase : EduActionTestCase() {
 

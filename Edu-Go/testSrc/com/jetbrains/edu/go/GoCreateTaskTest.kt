@@ -6,6 +6,7 @@ import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.testAction
 
 class GoCreateTaskTest : EduActionTestCase() {
   fun `test module name generated correctly`() {

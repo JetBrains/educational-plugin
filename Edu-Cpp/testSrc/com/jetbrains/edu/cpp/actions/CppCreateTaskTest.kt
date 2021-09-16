@@ -12,6 +12,7 @@ import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
 class CppCreateTaskTest : EduActionTestCase() {

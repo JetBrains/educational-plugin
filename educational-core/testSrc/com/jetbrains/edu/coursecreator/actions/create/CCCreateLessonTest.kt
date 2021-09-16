@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.testAction
 
 class CCCreateLessonTest : EduActionTestCase() {
 
