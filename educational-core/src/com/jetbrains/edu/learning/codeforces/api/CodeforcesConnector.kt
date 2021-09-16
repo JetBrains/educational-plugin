@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.credentialStore.Credentials
-import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.components.service
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
@@ -95,8 +93,7 @@ abstract class CodeforcesConnector {
       return loginErrorMessage(it)
     }
 
-    val htmlResponse = loginResponse.body()!!.string()
-
+    val htmlResponse = loginResponse.body()?.string() ?: return false
 
     if (htmlResponse.contains("Invalid handle/email or password")) {
       return loginErrorMessage(EduCoreBundle.message("error.invalid.handle.or.password"))
@@ -114,7 +111,7 @@ abstract class CodeforcesConnector {
       userInfo.handle = handle
       val account = CodeforcesAccount(userInfo)
       account.saveSessionId(jSessionId)
-      PasswordSafe.instance.set(account.getCredentialAttributes(), Credentials(handle, password))
+      account.savePassword(password)
       CodeforcesSettings.getInstance().account = account
       return true
     }
@@ -131,11 +128,13 @@ abstract class CodeforcesConnector {
       .onError { return Err(it) }
     loginPage.body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
 
-    val body = Jsoup.parse(loginPage.body()!!.string())
+    val body = Jsoup.parse(loginPage.body()?.string())
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 
-    val jSessionId = loginPage.headers().toMultimap()["set-cookie"]!!.filter { it.contains("JSESSIONID") }.joinToString(
-      "; ") { it.split(";")[0] }.split("=")[1]
+    val jSessionId = loginPage.headers().toMultimap()["set-cookie"]
+                       ?.filter { it.contains("JSESSIONID") }
+                       ?.joinToString("; ") { it.split(";")[0] }
+                       ?.split("=")?.get(1) ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
     return Ok(Pair(csrfToken, jSessionId))
   }
 
@@ -149,12 +148,11 @@ abstract class CodeforcesConnector {
 
   fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {
     val (csrfToken, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError { return false }
-    val credentialAttributes = codeforcesAccount.getCredentialAttributes()
-    val password = PasswordSafe.instance.get(credentialAttributes)?.getPasswordAsString()
-    password ?: return false
-    val loginResponse = getInstance().postLoginForm(codeforcesAccount.userInfo.handle, password, jSessionId,
-                                                    csrfToken).onError { return false }
-    if (loginResponse.isSuccessful && !loginResponse.body()!!.string().contains("Invalid handle/email or password")) {
+    val password = codeforcesAccount.getPassword() ?: return false
+    val loginResponse = getInstance().postLoginForm(codeforcesAccount.userInfo.handle, password, jSessionId, csrfToken)
+      .onError { return false }
+    val htmlResponse = loginResponse.body()?.string() ?: return false
+    if (loginResponse.isSuccessful && !htmlResponse.contains("Invalid handle/email or password")) {
       codeforcesAccount.saveSessionId(jSessionId)
       codeforcesAccount.updateExpiresAt()
       return true

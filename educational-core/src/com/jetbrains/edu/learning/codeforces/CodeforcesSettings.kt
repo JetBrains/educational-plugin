@@ -8,12 +8,13 @@ import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
-import com.jetbrains.edu.learning.codeforces.authorization.deserializeCodeforcesAccount
+import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import org.jdom.Element
 import javax.swing.Icon
 
-private const val serviceName = "CodeForcesSettings"
+private const val serviceName = "CodeforcesSettings"
 
 @State(name = serviceName, storages = [Storage("other.xml")])
 class CodeforcesSettings : PersistentStateComponent<Element> {
@@ -37,7 +38,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = CodeforcesAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeCodeforcesAccount(user)
+    account = deserializeAccount(user, accountClass, CodeforcesUserInfo::class.java)
   }
 
   fun isSet(): Boolean = preferableLanguage != null && preferableTaskTextLanguage != null

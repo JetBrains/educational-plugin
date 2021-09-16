@@ -14,7 +14,7 @@ class LoginDialog : DialogWrapper(false) {
   val passwordField = JBPasswordField()
 
   init {
-    title = EduCoreBundle.message("course.dialog.log.in.to.title", CodeforcesNames.CODEFORCES_TITLE)
+    title = EduCoreBundle.message("dialog.title.login.to", CodeforcesNames.CODEFORCES_TITLE)
     setOKButtonText(EduCoreBundle.message("course.dialog.button.login"))
     loginField.emptyText.text = EduCoreBundle.message("label.enter.handle.or.email")
     loginField.preferredSize = JBUI.size(350, 15)
@@ -22,11 +22,11 @@ class LoginDialog : DialogWrapper(false) {
     init()
   }
 
-  override fun getPreferredFocusedComponent(): JComponent? {
+  override fun getPreferredFocusedComponent(): JComponent {
     return loginField
   }
 
-  override fun createCenterPanel(): JComponent? {
+  override fun createCenterPanel(): JComponent {
     return panel {
       row("${EduCoreBundle.message("label.handle.email")}:") {
         loginField()

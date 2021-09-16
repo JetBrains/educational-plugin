@@ -7,6 +7,7 @@ import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
@@ -34,7 +35,7 @@ abstract class Account<UserInfo : Any> {
     return accountElement
   }
 
-  protected fun getToken(userName: String?, serviceNameForPasswordSafe: String?): String? {
+  protected fun getSecret(userName: String?, serviceNameForPasswordSafe: String?): String? {
     userName ?: return null
     serviceNameForPasswordSafe ?: return null
     val credentials = PasswordSafe.instance.get(credentialAttributes(userName, serviceNameForPasswordSafe)) ?: return null
@@ -49,4 +50,18 @@ abstract class Account<UserInfo : Any> {
 
   protected fun credentialAttributes(userName: String, serviceName: String) =
     CredentialAttributes(generateServiceName("${SERVICE_DISPLAY_NAME_PREFIX} $serviceName", userName))
+}
+
+fun <UserAccount : Account<UserInfo>, UserInfo : Any> deserializeAccount(
+  xmlAccount: Element,
+  accountClass: Class<UserAccount>,
+  userInfoClass: Class<UserInfo>): UserAccount {
+
+  val account = XmlSerializer.deserialize(xmlAccount, accountClass)
+
+  val userInfo = ReflectionUtil.newInstance(userInfoClass)
+  XmlSerializer.deserializeInto(userInfo, xmlAccount)
+  account.userInfo = userInfo
+
+  return account
 }

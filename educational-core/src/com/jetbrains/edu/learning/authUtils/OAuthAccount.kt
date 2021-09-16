@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.node.IntNode
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 
@@ -41,11 +40,11 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
   abstract override fun getUserName(): String
 
   fun getAccessToken(): String? {
-    return getToken(getUserName(), serviceNameForAccessToken)
+    return getSecret(getUserName(), serviceNameForAccessToken)
   }
 
   fun getRefreshToken(): String? {
-    return getToken(getUserName(), serviceNameForRefreshToken)
+    return getSecret(getUserName(), serviceNameForRefreshToken)
   }
 
   fun saveTokens(tokenInfo: TokenInfo) {
@@ -55,16 +54,12 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
   }
 }
 
-fun <Account : OAuthAccount<UserInfo>, UserInfo : Any> deserializeOAuthAccount(
+fun <OAuthAcc : OAuthAccount<UserInfo>, UserInfo : Any> deserializeOAuthAccount(
   xmlAccount: Element,
-  accountClass: Class<Account>,
-  userInfoClass: Class<UserInfo>): Account? {
+  accountClass: Class<OAuthAcc>,
+  userInfoClass: Class<UserInfo>): OAuthAcc? {
 
-  val account = XmlSerializer.deserialize(xmlAccount, accountClass)
-
-  val userInfo = ReflectionUtil.newInstance(userInfoClass)
-  XmlSerializer.deserializeInto(userInfo, xmlAccount)
-  account.userInfo = userInfo
+  val account = deserializeAccount(xmlAccount, accountClass, userInfoClass)
 
   val tokenInfo = TokenInfo()
   XmlSerializer.deserializeInto(tokenInfo, xmlAccount)
