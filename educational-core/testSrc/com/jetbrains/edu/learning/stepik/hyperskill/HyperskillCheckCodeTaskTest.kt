@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -9,6 +8,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.testAction
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
@@ -109,7 +109,7 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     })
 
     CheckActionListener.shouldSkip()
-    launchAction()
+    testAction(CheckAction.ACTION_ID)
   }
 
   private fun configureResponses() {
@@ -128,15 +128,7 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   private fun doTest() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Failed" }
-    launchAction()
-  }
-
-  private fun launchAction() {
-    val action = CheckAction()
-    val e = TestActionEvent(action)
-    action.beforeActionPerformedUpdate(e)
-    assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
-    action.actionPerformed(e)
+    testAction(CheckAction.ACTION_ID)
   }
 
   @Language("JSON")

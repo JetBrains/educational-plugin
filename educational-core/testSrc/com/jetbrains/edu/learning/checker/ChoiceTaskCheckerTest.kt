@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.testAction
 
 
 class ChoiceTaskCheckerTest : EduTestCase() {
@@ -111,10 +111,6 @@ class ChoiceTaskCheckerTest : EduTestCase() {
 
 
   private fun launchAction() {
-    val action = CheckAction()
-    val e = TestActionEvent(action)
-    action.beforeActionPerformedUpdate(e)
-    assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
-    action.actionPerformed(e)
+    testAction(CheckAction.ACTION_ID)
   }
 }

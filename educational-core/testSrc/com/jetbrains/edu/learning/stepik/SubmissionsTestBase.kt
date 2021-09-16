@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.testAction
 
 abstract class SubmissionsTestBase : EduTestCase() {
 
@@ -43,8 +44,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
 
     NavigationUtils.navigateToTask(project, findTask(0, 0))
-    val action = CheckAction()
-    action.actionPerformed(TestActionEvent(action))
+    testAction(CheckAction.ACTION_ID)
 
     checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus)
   }

@@ -5,6 +5,7 @@ import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
@@ -12,25 +13,20 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduDocumentListener
-import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationProducer
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.withTestDialog
-import org.junit.Assert
 import org.junit.ComparisonFailure
 
 abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
@@ -105,12 +101,12 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
             val currentFrameworkLessonTask = frameworkLesson?.currentTask()
             if (frameworkLesson != null && currentFrameworkLessonTask != null && currentFrameworkLessonTask != task) {
                 val file = currentFrameworkLessonTask.openFirstTaskFileInEditor()
-                launchAction(file, NextTaskAction())
+                launchAction(file, getActionById(NextTaskAction.ACTION_ID))
                 assertEquals(task, frameworkLesson.currentTask())
             }
 
             val virtualFile = task.openFirstTaskFileInEditor()
-            launchAction(virtualFile, CheckAction())
+            launchAction(virtualFile, task.checkAction)
             UIUtil.dispatchAllInvocationEvents()
         } catch (e: AssertionError) {
             exceptions.add(e)
@@ -145,19 +141,16 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
 
     private fun projectName() = getTestName(true)
 
-
     private fun launchAction(virtualFile: VirtualFile, action: AnAction) {
-        val e = getActionEvent(virtualFile, action)
-        action.beforeActionPerformedUpdate(e)
-        Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
-        action.actionPerformed(e)
+        val context = createDataEvent(virtualFile)
+        testAction(action, context)
     }
 
-    private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {
+    private fun createDataEvent(virtualFile: VirtualFile): DataContext {
         val context = MapDataContext()
         context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
         context.put(CommonDataKeys.PROJECT, myProject)
-        return TestActionEvent(context, action)
+        return context
     }
 
     override fun setUpProject() {
