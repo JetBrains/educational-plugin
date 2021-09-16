@@ -1,6 +1,13 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
     <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+    <!--update description in description.html file instead-->
+    <!--suppress PluginXmlValidity -->
+    <description/>
+
+    <!--update changes in changes.html file instead-->
+    <change-notes/>
+
     <depends optional="true" config-file="edu-html.xml">com.intellij.modules.xml</depends>
     <depends optional="true" config-file="edu-markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="edu-yaml.xml">org.jetbrains.plugins.yaml</depends>

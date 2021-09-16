@@ -2,6 +2,13 @@
   <!-- BACKCOMPAT: 2021.1. Inline it -->
   <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <!--update description in description.html file instead-->
+  <!--suppress PluginXmlValidity -->
+  <description/>
+
+  <!--update changes in changes.html file instead-->
+  <change-notes/>
+
   <!--suppress PluginXmlValidity -->
   <content>
     <module name="edu-html"/>
