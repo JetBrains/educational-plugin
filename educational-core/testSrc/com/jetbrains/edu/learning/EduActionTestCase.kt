@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -52,17 +51,6 @@ abstract class EduActionTestCase : EduTestCase() {
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
       put(CommonDataKeys.PSI_ELEMENT, element)
       put(PlatformDataKeys.DELETE_ELEMENT_PROVIDER, CCStudyItemDeleteProvider())
-    }
-  }
-
-  protected fun checkActionEnabled(presentation: Presentation, shouldBeEnabled: Boolean) {
-    if (presentation.isEnabledAndVisible != shouldBeEnabled) {
-      val message = if (shouldBeEnabled) {
-        "`${presentation.text}` action is not enabled as expected"
-      } else {
-        "`${presentation.text}` action is not disabled as expected"
-      }
-      error(message)
     }
   }
 }

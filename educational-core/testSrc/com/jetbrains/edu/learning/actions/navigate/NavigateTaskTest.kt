@@ -68,7 +68,7 @@ class NavigateTaskTest : EduTestCase() {
   private fun doTest(actionId: String, initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) {
     val (lesson, task, taskFileName) = initialTaskFile
     configureByTaskFile(lesson, task, taskFileName)
-    testAction(actionId)
+    testAction(actionId, shouldBeEnabled = initialTaskFile != expectedTaskFile, shouldBeVisible = true)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
     val taskFile = currentFile.getTaskFile(myFixture.project) ?: error("Can't find current task file")
     val actualTaskFileInfo = TaskFileInfo(lesson = taskFile.task.lesson.index, task = taskFile.task.index, name = taskFile.name)

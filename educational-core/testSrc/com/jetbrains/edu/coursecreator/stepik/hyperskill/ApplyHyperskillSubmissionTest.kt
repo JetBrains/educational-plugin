@@ -68,7 +68,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
 
     withEduTestDialog(EduTestInputDialog("1")) {
       val taskDir = findTask(0, 0).getDir(project.courseDir) ?: error("Task directory not found")
-      testAction(ApplyHyperskillSubmission.ACTION_ID, dataContext(taskDir), true)
+      testAction(ApplyHyperskillSubmission.ACTION_ID, dataContext(taskDir))
     }
 
     expectedFileTree.assertEquals(project.courseDir, myFixture)

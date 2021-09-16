@@ -391,7 +391,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        testAction(NextTaskAction.ACTION_ID)
+        testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
       }
     }
 

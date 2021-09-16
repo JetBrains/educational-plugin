@@ -86,11 +86,10 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
       }
     }
 
-  protected fun checkNavigationAction(task: Task, actionId: String, expectedStatus: Boolean) {
+  protected fun checkNavigationAction(task: Task, actionId: String, shouldBeEnabled: Boolean) {
     val firstTask = task.lesson.taskList.first()
     NavigationUtils.navigateToTask(project, task, firstTask, false)
     task.openTaskFileInEditor("src/Task.kt")
-    val presentation = testAction(actionId)
-    assertEquals(expectedStatus, presentation.isEnabledAndVisible)
+    testAction(actionId, shouldBeEnabled = shouldBeEnabled, shouldBeVisible = true)
   }
 }

@@ -48,9 +48,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
 
     myFixture.configureFromExistingVirtualFile(file)
 
-    val presentation = testAction(actionId)
-
-    assertEquals(shouldBeAvailable, presentation.isEnabledAndVisible)
+    testAction(actionId, shouldBeEnabled = shouldBeAvailable)
     if (shouldBeAvailable) {
       assertTrue("${CCDeleteAllAnswerPlaceholdersAction::class.java.simpleName} should delete all placeholdes",
                  taskFile.answerPlaceholders.isEmpty())

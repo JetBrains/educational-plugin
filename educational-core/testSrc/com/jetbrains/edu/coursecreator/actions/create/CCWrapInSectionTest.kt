@@ -42,8 +42,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
     val lesson4 = findFile("lesson4")
 
     val context = dataContext(arrayOf(lesson2, lesson4))
-    val presentation = testAction(CCWrapWithSection.ACTION_ID, context, false)
-    checkActionEnabled(presentation, false)
+    testAction(CCWrapWithSection.ACTION_ID, context, shouldBeEnabled = false)
   }
 
   fun `test wrap one lesson`() {

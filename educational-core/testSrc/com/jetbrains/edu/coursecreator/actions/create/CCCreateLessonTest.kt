@@ -146,8 +146,7 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val presentation = testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), runAction = false)
-    checkActionEnabled(presentation, false)
+    testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
   fun `test create lesson not available on top level with section on top level`() {
@@ -166,7 +165,6 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val presentation = testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), runAction = false)
-    checkActionEnabled(presentation, false)
+    testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 }

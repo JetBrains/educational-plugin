@@ -419,8 +419,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     val task = course.findTask("lesson1", "task1")
 
     task.openTaskFileInEditor("src/Task.kt")
-    val presentation = testAction(NextTaskAction.ACTION_ID)
-    assertFalse(presentation.isEnabledAndVisible)
+    testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = false, shouldBeVisible = true)
   }
 
   fun `test navigate to next available when we have correct submission`() {
@@ -429,8 +428,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     task.status = CheckStatus.Failed
 
     task.openTaskFileInEditor("src/Task.kt")
-    val presentation = testAction(NextTaskAction.ACTION_ID)
-    assertTrue(presentation.isEnabledAndVisible)
+    testAction(NextTaskAction.ACTION_ID)
   }
 
   private fun createHyperskillCourse(completeStages: Boolean = true): HyperskillCourse {

@@ -2,7 +2,6 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -10,7 +9,6 @@ import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
-import org.junit.Assert
 
 class CourseViewTest : CourseViewTestBase() {
 
@@ -42,7 +40,7 @@ class CourseViewTest : CourseViewTestBase() {
 
     val fileName = "lesson1/task1/taskFile1.txt"
     val taskFile = myFixture.findFileInTempDir(fileName)
-    launchAction(taskFile, CheckAction.ACTION_ID)
+    testAction(CheckAction.ACTION_ID, dataContext(taskFile))
 
     val structure = "-Project\n" +
                     " -CourseNode Edu test course  1/4\n" +
@@ -58,7 +56,7 @@ class CourseViewTest : CourseViewTestBase() {
     assertCourseView(structure)
 
     withEduTestDialog(EduTestDialog(Messages.OK)) {
-      launchAction(taskFile, RevertTaskAction.ACTION_ID)
+      testAction(RevertTaskAction.ACTION_ID, dataContext(taskFile))
     }
   }
 
@@ -81,11 +79,6 @@ class CourseViewTest : CourseViewTestBase() {
         }
       }
     }
-  }
-
-  private fun launchAction(taskFile: VirtualFile, actionId: String) {
-    val presentation = testAction(actionId, dataContext(taskFile))
-    Assert.assertTrue(presentation.isEnabledAndVisible)
   }
 
   override fun getTestDataPath(): String {

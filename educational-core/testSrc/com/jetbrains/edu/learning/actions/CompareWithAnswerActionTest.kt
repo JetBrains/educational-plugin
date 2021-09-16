@@ -40,8 +40,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
     }
     openFirstTaskFile()
 
-    val presentation = testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")))
-    checkActionEnabled(presentation, true)
+    testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")))
 
     val mockEduBrowser = EduBrowser.getInstance() as MockEduBrowser
     assertEquals("${hyperskillTaskLink(findTask(0, 0))}$HYPERSKILL_SOLUTIONS_ANCHOR", mockEduBrowser.lastVisitedUrl)
@@ -72,20 +71,18 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
 
     openFirstTaskFile()
 
-    val presentation = testAction(object : CompareWithAnswerAction() {
+    testAction(object : CompareWithAnswerAction() {
       override fun showSolution(project: Project, requests: List<SimpleDiffRequest>) {
         val answerContent = requests[0].contents[1] as DocumentContent
         assertEquals("task file text answer", answerContent.document.text)
       }
     }, dataContext(findFileInTask(0, 0, "task.txt")))
-    checkActionEnabled(presentation, true)
   }
 
   private fun doTestDisabled() {
     openFirstTaskFile()
 
-    val presentation = testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")))
-    checkActionEnabled(presentation, false)
+    testAction(CompareWithAnswerAction.ACTION_ID, dataContext(findFileInTask(0, 0, "task.txt")), shouldBeEnabled = false)
   }
 
   private fun openFirstTaskFile() {

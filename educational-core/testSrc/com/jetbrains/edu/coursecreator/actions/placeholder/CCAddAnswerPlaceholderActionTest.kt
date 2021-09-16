@@ -52,8 +52,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     myFixture.openFileInEditor(findFile("lesson1/task1/Task.kt"))
     testAction(CCTestAddAnswerPlaceholder())
     myFixture.editor.selectionModel.setSelection(0, 6)
-    val presentation = testAction(CCTestAddAnswerPlaceholder())
-    assertTrue(presentation.isVisible && !presentation.isEnabled)
+    testAction(CCTestAddAnswerPlaceholder(), shouldBeEnabled = false, shouldBeVisible = true)
   }
 
   fun `test add placeholder with dependency`() {
@@ -89,7 +88,6 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
 
     val file = findFile("lesson1/task1/Task.kt")
     myFixture.openFileInEditor(file)
-    val presentation = testAction(CCTestAddAnswerPlaceholder())
-    checkActionEnabled(presentation, false)
+    testAction(CCTestAddAnswerPlaceholder(), shouldBeEnabled = false)
   }
 }

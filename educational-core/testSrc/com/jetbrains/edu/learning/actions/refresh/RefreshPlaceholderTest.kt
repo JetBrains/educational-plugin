@@ -22,8 +22,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(2)
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(2)
-    val presentation = testAction(RefreshAnswerPlaceholder.ACTION_ID)
-    assertFalse(presentation.isEnabled && presentation.isVisible)
+    testAction(RefreshAnswerPlaceholder.ACTION_ID, shouldBeEnabled = false)
   }
 
   fun `test second refresh placeholder`() {

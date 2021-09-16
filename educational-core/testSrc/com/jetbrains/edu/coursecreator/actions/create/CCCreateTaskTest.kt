@@ -181,8 +181,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       }
     }
     val sourceVFile = LightPlatformTestCase.getSourceRoot()!!
-    val presentation = testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), runAction = false)
-    checkActionEnabled(presentation, false)
+    testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
   fun `test create task not available on section`() {
@@ -196,8 +195,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("section1")
-    val presentation = testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), runAction = false)
-    checkActionEnabled(presentation, false)
+    testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
   fun `test create framework task without test copy`() = doCreateFrameworkTaskTest(false)

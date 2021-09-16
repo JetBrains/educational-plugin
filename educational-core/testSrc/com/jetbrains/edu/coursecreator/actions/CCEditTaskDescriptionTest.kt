@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -12,7 +11,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
 
 
 class CCEditTaskDescriptionTest : EduTestCase() {
@@ -29,7 +27,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
   fun `test is invisible for student`() {
     getCourse().courseMode = EduNames.STUDY
-    TestCase.assertFalse("action should be invisible to student", doOpenTaskDescription().isEnabledAndVisible)
+    doOpenTaskDescription(shouldBeEnabled = false)
   }
 
   fun `test task description file opened`() {
@@ -71,10 +69,10 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   private fun getCurrentlyOpenedText() = FileEditorManager.getInstance(project).selectedTextEditor?.document?.text ?: error(
     "No selected editor")
 
-  private fun doOpenTaskDescription(): Presentation {
+  private fun doOpenTaskDescription(shouldBeEnabled: Boolean = true) {
     val virtualFile = findFileInTask(0, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
-    return testAction(CCEditTaskDescription.ACTION_ID)
+    testAction(CCEditTaskDescription.ACTION_ID, shouldBeEnabled = shouldBeEnabled)
   }
 
   private fun removeTaskDescriptionFile() {

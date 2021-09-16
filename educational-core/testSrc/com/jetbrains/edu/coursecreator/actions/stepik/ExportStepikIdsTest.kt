@@ -14,8 +14,7 @@ class ExportStepikIdsTest : EduTestCase() {
       lesson { eduTask { } }
       section { lesson { eduTask { } } }
     }
-    val presentation = testAction(ExportStepikIds.ACTION_ID)
-    assertFalse("Action shouldn't be available for local course", presentation.isEnabledAndVisible)
+    testAction(ExportStepikIds.ACTION_ID, shouldBeEnabled = false)
   }
 
   fun `test export stepik ids`() {

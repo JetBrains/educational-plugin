@@ -77,14 +77,34 @@ inline fun <reified T : AnAction> getActionById(actionId: String): T {
 fun testAction(
   action: AnAction,
   context: DataContext? = null,
-  runAction: Boolean = true
+  shouldBeEnabled: Boolean = true,
+  shouldBeVisible: Boolean = shouldBeEnabled,
+  runAction: Boolean = shouldBeEnabled
 ): Presentation {
   val e = if (context != null) TestActionEvent(context, action) else TestActionEvent(action)
   action.beforeActionPerformedUpdate(e)
   val presentation = e.presentation
 
+  if (presentation.isEnabled != shouldBeEnabled) {
+    val message = if (shouldBeEnabled) {
+      "`${action.javaClass.name}` action is not enabled as expected"
+    } else {
+      "`${action.javaClass.name}` action is not disabled as expected"
+    }
+    error(message)
+  }
+
+  if (presentation.isVisible != shouldBeVisible) {
+    val message = if (shouldBeVisible) {
+      "`${action.javaClass.name}` action is not visible as expected"
+    } else {
+      "`${action.javaClass.name}` action is not invisible as expected"
+    }
+    error(message)
+  }
+
   // BACKCOMPAT: 2021.1. Use the same implementation as `com.intellij.testFramework.fixtures.CodeInsightTestFixture.testAction`
-  if (presentation.isEnabledAndVisible && runAction) {
+  if (presentation.isEnabled && runAction) {
     action.actionPerformed(e)
   }
 
@@ -94,8 +114,10 @@ fun testAction(
 fun testAction(
   actionId: String,
   context: DataContext? = null,
-  runAction: Boolean = true
+  shouldBeEnabled: Boolean = true,
+  shouldBeVisible: Boolean = shouldBeEnabled,
+  runAction: Boolean = shouldBeEnabled
 ): Presentation {
   val action = getActionById<AnAction>(actionId)
-  return testAction(action, context, runAction)
+  return testAction(action, context, shouldBeEnabled, shouldBeVisible, runAction)
 }

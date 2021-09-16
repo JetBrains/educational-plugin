@@ -78,8 +78,7 @@ class CheckAllTest : EduActionTestCase() {
         }
       }
     }
-    val presentation = testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
-    checkActionEnabled(presentation, false)
+    testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()), shouldBeEnabled = false)
   }
 
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
@@ -91,8 +90,7 @@ class CheckAllTest : EduActionTestCase() {
       }
     })
 
-    val presentation = testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
-    checkActionEnabled(presentation, true)
+    testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
     assertTrue("Notification wasn't shown", notificationShown)
   }
 }

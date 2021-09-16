@@ -130,8 +130,7 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val presentation = testAction(CCCreateSection.ACTION_ID, dataContext(sourceVFile), runAction = false)
-    checkActionEnabled(presentation, false)
+    testAction(CCCreateSection.ACTION_ID, dataContext(sourceVFile), shouldBeEnabled = false)
   }
 
   fun `test create section after section`() {

@@ -9,8 +9,7 @@ abstract class CCChangeFileOwnerTestBase(private val actionId: String) : EduActi
   protected fun doUnavailableTest(vararg filePaths: String) {
     val includedFiles = filePaths.map { findFile(it) }
     val context = dataContext(includedFiles.toTypedArray())
-    val presentation = testAction(actionId, context, false)
-    checkActionEnabled(presentation, false)
+    testAction(actionId, context, shouldBeEnabled = false)
   }
 
   protected fun doAvailableTest(vararg filePaths: String, checksProducer: (Course) -> Pair<List<FileCheck>, List<FileCheck>>) {
@@ -18,8 +17,7 @@ abstract class CCChangeFileOwnerTestBase(private val actionId: String) : EduActi
 
     val includedFiles = filePaths.map { findFile(it) }
     val context = dataContext(includedFiles.toTypedArray())
-    val presentation = testAction(actionId, context, true)
-    checkActionEnabled(presentation, true)
+    testAction(actionId, context)
 
     val (constantChecks, regularChecks) = checksProducer(course)
 

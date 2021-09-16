@@ -35,7 +35,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
 
     configureByTaskFile(1, 1, taskFileName)
     assertEquals(CheckStatus.Unchecked, task.status)
-    testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
+    testAction(CodeforcesMarkAsCompletedAction.ACTION_ID, shouldBeEnabled = false)
     assertEquals(CheckStatus.Unchecked, task.status)
   }
 }
