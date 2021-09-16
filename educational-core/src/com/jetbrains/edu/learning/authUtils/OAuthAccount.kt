@@ -28,16 +28,7 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
     this.tokenExpiresIn = tokenExpiresIn
   }
 
-  fun isTokenUpToDate() = TokenInfo().apply { expiresIn = tokenExpiresIn }.isUpToDate()
-
-  fun serialize(): Element? {
-    if (PasswordSafe.instance.isMemoryOnly) {
-      return null
-    }
-    val accountElement = XmlSerializer.serialize(this, SkipDefaultValuesSerializationFilters())
   override fun isUpToDate() = TokenInfo().apply { expiresIn = tokenExpiresIn }.isUpToDate()
-
-  abstract override fun getUserName(): String
 
   fun getAccessToken(): String? {
     return getSecret(getUserName(), serviceNameForAccessToken)

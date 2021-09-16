@@ -27,7 +27,10 @@ abstract class Account<UserInfo : Any> {
   abstract fun isUpToDate(): Boolean
   protected abstract fun getUserName(): String
 
-  fun serialize(): Element {
+  fun serialize(): Element? {
+    if (PasswordSafe.instance.isMemoryOnly) {
+      return null
+    }
     val accountElement = XmlSerializer.serialize(this, SkipDefaultValuesSerializationFilters())
 
     XmlSerializer.serializeInto(userInfo, accountElement)
