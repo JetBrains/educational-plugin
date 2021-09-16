@@ -19,12 +19,12 @@ class CodeforcesNavigationTest : NavigationTestBase() {
 
   fun `test unable to open next task file`() {
     configureByTaskFile(1, 3, "src/Baz.kt")
-    myFixture.testAction(NextTaskAction.ACTION_ID)
+    testAction(NextTaskAction.ACTION_ID)
     assertNull(FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile)
   }
 
   private fun doTest(expectedFileName: String) {
-    myFixture.testAction(NextTaskAction.ACTION_ID)
+    testAction(NextTaskAction.ACTION_ID)
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
     val taskFile = currentFile.getTaskFile(myFixture.project) ?: error("Can't find current task file")
     assertEquals(expectedFileName, taskFile.name)

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.delete
 
-import com.intellij.ide.actions.DeleteAction
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
@@ -22,7 +21,7 @@ class CCDeleteActionTest : EduActionTestCase() {
 
     val testDialog = TestDeleteDialog()
     withEduTestDialog(testDialog) {
-      testAction(dataContext(taskFile), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(taskFile))
     }.checkWasShown()
 
     fileTree {
@@ -61,7 +60,7 @@ class CCDeleteActionTest : EduActionTestCase() {
 
     val taskFile = findFile("lesson1/task1")
     withEduTestDialog(testDialog) {
-      testAction(dataContext(taskFile), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(taskFile))
     }.checkWasShown()
 
     fileTree {
@@ -93,7 +92,7 @@ class CCDeleteActionTest : EduActionTestCase() {
 
     val lessonFile = findFile("lesson1")
     withEduTestDialog(EduTestDialog()) {
-      testAction(dataContext(lessonFile), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(lessonFile))
     }
 
     fileTree {
@@ -140,7 +139,7 @@ class CCDeleteActionTest : EduActionTestCase() {
 
     val lessonFile = findFile("lesson1")
     withEduTestDialog(testDialog) {
-      testAction(dataContext(lessonFile), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(lessonFile))
     }.checkWasShown()
 
     fileTree {
@@ -176,7 +175,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     
     val testDialog = TestDeleteDialog()
     withEduTestDialog(testDialog) {
-      testAction(dataContext(sectionFile), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(sectionFile))
     }.checkWasShown()
 
     fileTree {
@@ -240,7 +239,7 @@ class CCDeleteActionTest : EduActionTestCase() {
 
     val section1 = findFile("section1")
     withEduTestDialog(testDialog) {
-      testAction(dataContext(section1), IdeActions.ACTION_DELETE)
+      testAction(IdeActions.ACTION_DELETE, dataContext(section1))
     }.checkWasShown()
 
     fileTree {

@@ -16,7 +16,6 @@ import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.testFramework.TestApplicationManager
 import com.intellij.testFramework.TestDataProvider
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ui.UIUtil
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -75,17 +74,12 @@ inline fun <reified T : AnAction> getActionById(actionId: String): T {
   return action as? T ?: error("Action `$actionId` is not `${T::class.java.name}`")
 }
 
-fun CodeInsightTestFixture.testAction(actionId: String): Presentation {
-  val action = getActionById<AnAction>(actionId)
-  return testAction(action)
-}
-
 fun testAction(
-  context: DataContext,
   action: AnAction,
+  context: DataContext? = null,
   runAction: Boolean = true
 ): Presentation {
-  val e = TestActionEvent(context, action)
+  val e = if (context != null) TestActionEvent(context, action) else TestActionEvent(action)
   action.beforeActionPerformedUpdate(e)
   val presentation = e.presentation
 
@@ -98,10 +92,10 @@ fun testAction(
 }
 
 fun testAction(
-  context: DataContext,
   actionId: String,
+  context: DataContext? = null,
   runAction: Boolean = true
 ): Presentation {
   val action = getActionById<AnAction>(actionId)
-  return testAction(context, action, runAction)
+  return testAction(action, context, runAction)
 }

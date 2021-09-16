@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.testAction
 
 class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
@@ -49,9 +50,9 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     }
 
     myFixture.openFileInEditor(findFile("lesson1/task1/Task.kt"))
-    myFixture.testAction(CCTestAddAnswerPlaceholder())
+    testAction(CCTestAddAnswerPlaceholder())
     myFixture.editor.selectionModel.setSelection(0, 6)
-    val presentation = myFixture.testAction(CCTestAddAnswerPlaceholder())
+    val presentation = testAction(CCTestAddAnswerPlaceholder())
     assertTrue(presentation.isVisible && !presentation.isEnabled)
   }
 
@@ -88,7 +89,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
 
     val file = findFile("lesson1/task1/Task.kt")
     myFixture.openFileInEditor(file)
-    val presentation = myFixture.testAction(CCTestAddAnswerPlaceholder())
+    val presentation = testAction(CCTestAddAnswerPlaceholder())
     checkActionEnabled(presentation, false)
   }
 }

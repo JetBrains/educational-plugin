@@ -13,7 +13,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     myFixture.editor.caretModel.moveToOffset(12)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("Look! There is placeholder.", myFixture.getDocument(myFixture.file).text)
   }
 
@@ -22,7 +22,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(2)
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(2)
-    val presentation = myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    val presentation = testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertFalse(presentation.isEnabled && presentation.isVisible)
   }
 
@@ -32,7 +32,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(52)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is test placeholder.
       Look! There is second placeholder.
@@ -45,7 +45,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.type("test test")
     myFixture.editor.caretModel.moveToOffset(56)
     myFixture.type("test")
-    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is test test placeholder.
       Look! There is second placeholder.
@@ -67,7 +67,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.editor.caretModel.moveToOffset(52)
     myFixture.type("test")
     myFixture.editor.caretModel.moveToOffset(16)
-    myFixture.testAction(RefreshAnswerPlaceholder.ACTION_ID)
+    testAction(RefreshAnswerPlaceholder.ACTION_ID)
     assertEquals("""
       Look! There is first placeholder.
       Look! There is secotestnd placeholder.

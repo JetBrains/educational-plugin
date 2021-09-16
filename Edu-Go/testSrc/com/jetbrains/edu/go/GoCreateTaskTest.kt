@@ -18,7 +18,7 @@ class GoCreateTaskTest : EduActionTestCase() {
 
     val mockUi = MockNewStudyItemUi("Good Task 666 пробелы и кириллица")
     withMockCreateStudyItemUi(mockUi) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     check(mockUi.errorMessage == null)
 
@@ -35,7 +35,7 @@ class GoCreateTaskTest : EduActionTestCase() {
 
     val mockUi = MockNewStudyItemUi("Bad name !@#")
     withMockCreateStudyItemUi(mockUi) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
 
     assertEquals("Name contains forbidden symbols", mockUi.errorMessage)

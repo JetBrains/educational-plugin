@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.actions.rename
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.actions.RenameElementAction
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandlerRegistry
 import com.intellij.testFramework.LightPlatformTestCase
@@ -38,7 +37,7 @@ abstract class RenameTestBase : EduActionTestCase() {
         RenameHandlerRegistry.getInstance().setRenameHandlerSelectorInTests(Function { handlers ->
           error("Multiple rename handlers: ${handlers.map { it.javaClass.name }}")
         }, testRootDisposable)
-        testAction(dataContext.withRenameDefaultName(newName), IdeActions.ACTION_RENAME)
+        testAction(IdeActions.ACTION_RENAME, dataContext.withRenameDefaultName(newName))
       }
     }
 

@@ -18,7 +18,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
 
     configureByTaskFile(1, 1, taskFileName)
     assertEquals(CheckStatus.Unchecked, task.status)
-    myFixture.testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
+    testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
     assertEquals(CheckStatus.Solved, task.status)
   }
 
@@ -35,7 +35,7 @@ class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {
 
     configureByTaskFile(1, 1, taskFileName)
     assertEquals(CheckStatus.Unchecked, task.status)
-    myFixture.testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
+    testAction(CodeforcesMarkAsCompletedAction.ACTION_ID)
     assertEquals(CheckStatus.Unchecked, task.status)
   }
 }

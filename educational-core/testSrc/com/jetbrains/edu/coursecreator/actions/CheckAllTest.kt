@@ -78,7 +78,7 @@ class CheckAllTest : EduActionTestCase() {
         }
       }
     }
-    val presentation = testAction(dataContext(emptyArray()), CheckAllTasks.ACTION_ID)
+    val presentation = testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
     checkActionEnabled(presentation, false)
   }
 
@@ -91,7 +91,7 @@ class CheckAllTest : EduActionTestCase() {
       }
     })
 
-    val presentation = testAction(dataContext(emptyArray()), CheckAllTasks.ACTION_ID)
+    val presentation = testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
     checkActionEnabled(presentation, true)
     assertTrue("Notification wasn't shown", notificationShown)
   }

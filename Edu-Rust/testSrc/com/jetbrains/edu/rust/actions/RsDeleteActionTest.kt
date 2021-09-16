@@ -192,7 +192,7 @@ class RsDeleteActionTest : RsActionTestBase() {
   private fun doTest(course: Course, path: String, @Language("TOML") expectedText: String) {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog()) {
-        testAction(dataContext(findFile(path)), IdeActions.ACTION_DELETE)
+        testAction(IdeActions.ACTION_DELETE, dataContext(findFile(path)))
       }
     }
     checkCargoToml(expectedText)

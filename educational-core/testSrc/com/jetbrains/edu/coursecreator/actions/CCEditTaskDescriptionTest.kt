@@ -74,7 +74,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   private fun doOpenTaskDescription(): Presentation {
     val virtualFile = findFileInTask(0, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
-    return myFixture.testAction(CCEditTaskDescription.ACTION_ID)
+    return testAction(CCEditTaskDescription.ACTION_ID)
   }
 
   private fun removeTaskDescriptionFile() {

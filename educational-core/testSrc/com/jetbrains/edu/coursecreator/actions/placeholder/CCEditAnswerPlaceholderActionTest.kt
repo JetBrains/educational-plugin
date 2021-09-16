@@ -23,7 +23,7 @@ class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
     val task = course.findTask("lesson1", "task2")
     val virtualFile = findFile("lesson1/task2/Task.kt")
     myFixture.openFileInEditor(virtualFile)
-    myFixture.testAction(CCEditAnswerPlaceholder.ACTION_ID)
+    testAction(CCEditAnswerPlaceholder.ACTION_ID)
     val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile ?: error("Navigated file should not be null here")
     assertEquals(task.configFileName, navigatedFile.name)
   }

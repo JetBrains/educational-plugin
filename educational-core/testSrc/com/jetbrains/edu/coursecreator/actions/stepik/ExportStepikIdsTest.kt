@@ -14,7 +14,7 @@ class ExportStepikIdsTest : EduTestCase() {
       lesson { eduTask { } }
       section { lesson { eduTask { } } }
     }
-    val presentation = myFixture.testAction(ExportStepikIds.ACTION_ID)
+    val presentation = testAction(ExportStepikIds.ACTION_ID)
     assertFalse("Action shouldn't be available for local course", presentation.isEnabledAndVisible)
   }
 
@@ -30,7 +30,7 @@ class ExportStepikIdsTest : EduTestCase() {
 
     StudyTaskManager.getInstance(project).course = remoteCourse
 
-    myFixture.testAction(ExportStepikIds.ACTION_ID)
+    testAction(ExportStepikIds.ACTION_ID)
     val courseDir = project.courseDir
     val stepikIdsFile = courseDir.findChild(EduNames.STEPIK_IDS_JSON) ?: error("file with wasn't created")
     val actualFileContent = VfsUtil.loadText(stepikIdsFile)

@@ -10,7 +10,9 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.hyperskill.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
+import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillLoadingTest : NavigationTestBase() {
@@ -389,7 +391,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction.ACTION_ID)
+        testAction(NextTaskAction.ACTION_ID)
       }
     }
 
@@ -504,14 +506,14 @@ class HyperskillLoadingTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun foo2() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
 
       assertEquals(task2, course.getProjectLesson()!!.currentTask())
 
       HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
       task2.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
 
       assertEquals(task1, course.getProjectLesson()!!.currentTask())
     }

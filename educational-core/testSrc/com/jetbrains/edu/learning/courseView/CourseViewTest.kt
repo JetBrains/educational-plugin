@@ -84,7 +84,7 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   private fun launchAction(taskFile: VirtualFile, actionId: String) {
-    val presentation = testAction(dataContext(taskFile), actionId)
+    val presentation = testAction(actionId, dataContext(taskFile))
     Assert.assertTrue(presentation.isEnabledAndVisible)
   }
 

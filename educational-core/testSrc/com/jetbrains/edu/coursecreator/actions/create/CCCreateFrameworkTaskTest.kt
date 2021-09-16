@@ -28,7 +28,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       withVirtualFileListener(course) {
-        testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
       }
     }
 
@@ -66,7 +66,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
       withVirtualFileListener(course) {
-        testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
       }
     }
 
@@ -131,7 +131,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     val firstTaskFile = findFile("lesson1/task1")
     withMockCreateStudyItemUi(MockNewStudyItemUi("task1.5", 2)) {
-      testAction(dataContext(firstTaskFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(firstTaskFile))
     }
 
     val insertedTask = course.lessons[0].getTask("task1.5") ?: error("Can't find `task1.5`")
@@ -167,7 +167,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     withVirtualFileListener(course) {
       withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
-        testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
       }
     }
 
@@ -216,7 +216,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     withVirtualFileListener(course) {
       withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
-        testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
       }
     }
 

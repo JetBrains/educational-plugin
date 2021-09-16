@@ -161,7 +161,7 @@ class RenameTest : RenameTestBase() {
       GeneratorUtils.createChildFile(project, findFile("lesson1/task"), "taskFile2.txt", "")
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("taskFile2.txt")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     doRenameAction(course, "lesson1/task/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)

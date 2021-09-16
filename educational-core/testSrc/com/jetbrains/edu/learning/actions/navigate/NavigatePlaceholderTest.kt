@@ -14,7 +14,7 @@ class NavigatePlaceholderTest : EduTestCase() {
   fun `test next placeholder`() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(NextPlaceholderAction.ACTION_ID)
+    testAction(NextPlaceholderAction.ACTION_ID)
     assertNotEquals(caretOffset, myFixture.caretOffset)
     assertEquals(37, myFixture.caretOffset)
   }
@@ -22,7 +22,7 @@ class NavigatePlaceholderTest : EduTestCase() {
   fun `test previous placeholder`() {
     configureByTaskFile(1, 2, "taskFile2.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(PrevPlaceholderAction.ACTION_ID)
+    testAction(PrevPlaceholderAction.ACTION_ID)
     assertNotEquals(caretOffset, myFixture.caretOffset)
     assertEquals(12, myFixture.caretOffset)
   }
@@ -30,35 +30,35 @@ class NavigatePlaceholderTest : EduTestCase() {
   fun `test one placeholder next`() {
     configureByTaskFile(2, 1, "taskFile1.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(NextPlaceholderAction.ACTION_ID)
+    testAction(NextPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test one placeholder previous`() {
     configureByTaskFile(2, 1, "taskFile1.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(PrevPlaceholderAction.ACTION_ID)
+    testAction(PrevPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test last placeholder next`() {
     configureByTaskFile(1, 2, "taskFile2.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(NextPlaceholderAction.ACTION_ID)
+    testAction(NextPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test first placeholder previous`() {
     configureByTaskFile(1, 1, "taskFile1.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(PrevPlaceholderAction.ACTION_ID)
+    testAction(PrevPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test not in placeholder next`() {
     configureByTaskFile(2, 2, "taskFile2.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(NextPlaceholderAction.ACTION_ID)
+    testAction(NextPlaceholderAction.ACTION_ID)
     assertNotEquals(caretOffset, myFixture.caretOffset)
     assertEquals(12, myFixture.caretOffset)
   }
@@ -66,21 +66,21 @@ class NavigatePlaceholderTest : EduTestCase() {
   fun `test not in placeholder previous`() {
     configureByTaskFile(2, 2, "taskFile2.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(PrevPlaceholderAction.ACTION_ID)
+    testAction(PrevPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test caret after placeholder next`() {
     configureByTaskFile(2, 3, "taskFile3.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(NextPlaceholderAction.ACTION_ID)
+    testAction(NextPlaceholderAction.ACTION_ID)
     assertEquals(caretOffset, myFixture.caretOffset)
   }
 
   fun `test caret after placeholder previous`() {
     configureByTaskFile(2, 3, "taskFile3.txt")
     val caretOffset = myFixture.caretOffset
-    myFixture.testAction(PrevPlaceholderAction.ACTION_ID)
+    testAction(PrevPlaceholderAction.ACTION_ID)
     assertNotEquals(caretOffset, myFixture.caretOffset)
     assertEquals(12, myFixture.caretOffset)
   }

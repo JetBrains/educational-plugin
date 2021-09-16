@@ -206,7 +206,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     try {
       withVirtualFileListener(course) {
         task1.openTaskFileInEditor("src/Task.kt")
-        myFixture.testAction(NextTaskAction.ACTION_ID)
+        testAction(NextTaskAction.ACTION_ID)
       }
     }
     catch (e: Exception) {
@@ -245,9 +245,9 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
       task2.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val taskText = "fun foo2() {}"
@@ -268,7 +268,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
 
     withVirtualFileListener(course) {
       task1.openTaskFileInEditor("src/Task.kt")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     fileTree {

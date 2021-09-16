@@ -69,7 +69,7 @@ class SyncStepikCourseTest : EduTestCase() {
       }
     })
 
-    myFixture.testAction(SyncStepikCourseAction.ACTION_ID)
+    testAction(SyncStepikCourseAction.ACTION_ID)
 
     assertTrue("Course should be up to date", course.isUpToDate)
     assertTrue(notificationShown)
@@ -99,7 +99,7 @@ class SyncStepikCourseTest : EduTestCase() {
       }
     }
 
-    myFixture.testAction(SyncStepikCourseAction.ACTION_ID)
+    testAction(SyncStepikCourseAction.ACTION_ID)
 
     expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
     assertTrue("Updated course should be up to date", course.isUpToDate)

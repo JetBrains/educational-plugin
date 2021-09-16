@@ -30,7 +30,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       lesson("lesson4")
     }
     val section2 = findFile("section2")
-    testAction(dataContext(arrayOf(section2)), CCRemoveSection.ACTION_ID)
+    testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
     TestCase.assertEquals(4, course.items.size)
     val section = course.getSection("section2")
     TestCase.assertNull(section)
@@ -48,7 +48,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       lesson("lesson3")
     }
     val section2 = findFile("section2")
-    testAction(dataContext(arrayOf(section2)), CCRemoveSection.ACTION_ID)
+    testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
     TestCase.assertEquals(3, course.items.size)
     val section = course.getSection("section2")
     TestCase.assertNull(section)
@@ -70,7 +70,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       lesson("lesson7")
     }
     val section2 = findFile("section2")
-    testAction(dataContext(arrayOf(section2)), CCRemoveSection.ACTION_ID)
+    testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
     TestCase.assertEquals(7, course.items.size)
     val section = course.getSection("section2")
     TestCase.assertNull(section)
@@ -89,7 +89,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       lesson("lesson4")
     }
     val section2 = findFile("section2")
-    testAction(dataContext(arrayOf(section2)), CCRemoveSection.ACTION_ID)
+    testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
     val expectedFileTree = fileTree {
       dir("lesson1")
       dir("lesson2")
@@ -110,7 +110,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     }
     val section2 = findFile("section2")
     try {
-      testAction(dataContext(arrayOf(section2)), CCRemoveSection.ACTION_ID)
+      testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
       TestCase.fail("Expected failed to move lesson out message")
     }
     catch (e: Throwable) {}

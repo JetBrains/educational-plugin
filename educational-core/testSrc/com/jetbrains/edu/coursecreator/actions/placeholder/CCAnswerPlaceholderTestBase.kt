@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
+import com.jetbrains.edu.learning.testAction
 
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
@@ -27,7 +28,7 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
     if (selection != null) {
       myFixture.editor.selectionModel.setSelection(selection.start, selection.end)
     }
-    myFixture.testAction(action)
+    testAction(action)
 
     checkPlaceholders(taskFileExpected, taskFile)
     checkPainters(taskFile)

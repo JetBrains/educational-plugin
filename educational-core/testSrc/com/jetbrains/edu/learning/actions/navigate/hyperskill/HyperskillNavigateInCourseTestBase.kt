@@ -90,7 +90,7 @@ abstract class HyperskillNavigateInCourseTestBase : NavigationTestBase() {
     val firstTask = task.lesson.taskList.first()
     NavigationUtils.navigateToTask(project, task, firstTask, false)
     task.openTaskFileInEditor("src/Task.kt")
-    val presentation = myFixture.testAction(actionId)
+    val presentation = testAction(actionId)
     assertEquals(expectedStatus, presentation.isEnabledAndVisible)
   }
 }

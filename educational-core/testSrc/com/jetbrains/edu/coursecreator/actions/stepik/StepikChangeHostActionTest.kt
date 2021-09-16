@@ -48,7 +48,7 @@ class StepikChangeHostActionTest : EduTestCase() {
         return stepikHost
       }
     }) {
-      myFixture.testAction(StepikChangeHost.ACTION_ID)
+      testAction(StepikChangeHost.ACTION_ID)
     }
   }
 

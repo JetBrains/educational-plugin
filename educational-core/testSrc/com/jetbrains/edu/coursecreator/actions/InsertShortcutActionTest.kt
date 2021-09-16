@@ -30,7 +30,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
     myFixture.openFileInEditor(taskDescriptionFile)
 
-    testAction(createDataContext(taskDescriptionFile), object : InsertShortcutAction() {
+    testAction(object : InsertShortcutAction() {
       override fun createAndShowBalloon(listWithSearchField: ListWithSearchField, project: Project): JBPopup {
         val balloon = super.createAndShowBalloon(listWithSearchField, project)
         val actionList = listWithSearchField.list
@@ -41,7 +41,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
         assertTrue(myFixture.editor.document.text.contains(ActionManager.getInstance().getId(actionList.selectedValue)))
         return balloon
       }
-    })
+    }, createDataContext(taskDescriptionFile))
   }
 
   fun `test action not available in task file`() {
@@ -59,7 +59,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
   private fun checkActionNotAvailable(virtualFile: VirtualFile) {
     myFixture.openFileInEditor(virtualFile)
-    val presentation = testAction(createDataContext(virtualFile), InsertShortcutAction.ACTION_ID, false)
+    val presentation = testAction(InsertShortcutAction.ACTION_ID, createDataContext(virtualFile), false)
     checkActionEnabled(presentation, false)
   }
 

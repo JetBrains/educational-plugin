@@ -126,7 +126,7 @@ class JRenameTest : EduActionTestCase() {
     var isErrorDialogShown = false
     try {
       withVirtualFileListener(course) {
-        testAction(dataContext.withRenameDefaultName(newName), IdeActions.ACTION_RENAME)
+        testAction(IdeActions.ACTION_RENAME, dataContext.withRenameDefaultName(newName))
       }
     }
     catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {

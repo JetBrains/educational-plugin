@@ -137,7 +137,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
       val oldValue = registryValue.asBoolean()
       registryValue.setValue(true)
       try {
-        myFixture.testAction(CCSolveAllTasksBeforeAction.ACTION_ID)
+        testAction(CCSolveAllTasksBeforeAction.ACTION_ID)
       } finally {
         registryValue.setValue(oldValue)
       }

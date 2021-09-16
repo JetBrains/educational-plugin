@@ -18,7 +18,7 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(LightPlatformTestCase.getSourceRoot()))
     }
     assertEquals(2, course.lessons.size)
   }
@@ -36,7 +36,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     val sectionName = "section1"
     val sectionFile = findFile(sectionName)
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
-      testAction(dataContext(sectionFile), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(sectionFile))
     }
     assertEquals(2, course.getSection(sectionName)!!.lessons.size)
   }
@@ -56,7 +56,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2", 2)) {
-      testAction(dataContext(lessonFile), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(3, course.lessons.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -79,7 +79,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson12", 2)) {
-      testAction(dataContext(lessonFile), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(3, course.items.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -102,7 +102,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson2")
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson11", 2)) {
-      testAction(dataContext(lessonFile), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(3, course.items.size)
     assertEquals(1, course.getLesson("lesson1")!!.index)
@@ -128,7 +128,7 @@ class CCCreateLessonTest : EduActionTestCase() {
     val sectionName = "section1"
     val lessonFile = findFile("$sectionName/lesson1")
     withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2", 2)) {
-      testAction(dataContext(lessonFile), CCCreateLesson.ACTION_ID)
+      testAction(CCCreateLesson.ACTION_ID, dataContext(lessonFile))
     }
     val section = course.getSection(sectionName)
     assertEquals(3, section!!.items.size)
@@ -146,7 +146,7 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val presentation = testAction(dataContext(sourceVFile), CCCreateLesson.ACTION_ID, runAction = false)
+    val presentation = testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), runAction = false)
     checkActionEnabled(presentation, false)
   }
 
@@ -166,7 +166,7 @@ class CCCreateLessonTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("lesson1/task1")
-    val presentation = testAction(dataContext(sourceVFile), CCCreateLesson.ACTION_ID, runAction = false)
+    val presentation = testAction(CCCreateLesson.ACTION_ID, dataContext(sourceVFile), runAction = false)
     checkActionEnabled(presentation, false)
   }
 }

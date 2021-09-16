@@ -7,7 +7,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.refactoring.actions.MoveAction
 import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.handlers.move.MoveStudyItemUI
@@ -32,7 +31,7 @@ abstract class MoveTestBase : EduActionTestCase() {
       }
     }) {
       withVirtualFileListener(course) {
-        testAction(dataContext, IdeActions.ACTION_MOVE)
+        testAction(IdeActions.ACTION_MOVE, dataContext)
       }
     }
   }

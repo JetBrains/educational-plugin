@@ -20,7 +20,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task = course.findTask("lesson1", "task1")
       task.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -58,12 +58,12 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -102,18 +102,18 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun bar() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
       task2.openTaskFileInEditor("src/Baz.kt")
       myFixture.type("fun qqq() {}\n")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
 
       task1.openTaskFileInEditor("src/Task.kt")
       myFixture.type("fun baz() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -155,7 +155,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("NewFile.kt")
       myFixture.type("fun qwe() {}\n")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -193,11 +193,11 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("src/NewFile.kt")
       myFixture.type("fun qwe() {}")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Baz.kt")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -234,7 +234,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.removeTaskFile("src/Task.kt")
       task1.openTaskFileInEditor("src/Bar.kt")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {
@@ -272,11 +272,11 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.removeTaskFile("src/Task.kt")
       task1.openTaskFileInEditor("src/Bar.kt")
-      myFixture.testAction(NextTaskAction.ACTION_ID)
+      testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
       task2.openTaskFileInEditor("src/Baz.kt")
-      myFixture.testAction(PreviousTaskAction.ACTION_ID)
+      testAction(PreviousTaskAction.ACTION_ID)
     }
 
     val fileTree = fileTree {

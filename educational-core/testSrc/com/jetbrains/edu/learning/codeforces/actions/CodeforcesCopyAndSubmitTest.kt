@@ -18,7 +18,7 @@ class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
     }
     configureByTaskFile(1, 1, taskFileName)
 
-    myFixture.testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
+    testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
     val actualContents = CopyPasteManager.getInstance().contents!!
     val actualContentsString = actualContents.getTransferData(actualContents.transferDataFlavors.first())
     assertEquals(contents, actualContentsString)
@@ -39,7 +39,7 @@ class CodeforcesCopyAndSubmitTest : CodeforcesTestCase() {
     }
     configureByTaskFile(1, 1, testFileName)
 
-    myFixture.testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
+    testAction(CodeforcesCopyAndSubmitAction.ACTION_ID)
     val actualContents = CopyPasteManager.getInstance().contents!!
     val actualContentsString = actualContents.getTransferData(actualContents.transferDataFlavors.first())
     assertEquals(contents, actualContentsString)

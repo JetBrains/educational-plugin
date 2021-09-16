@@ -6,9 +6,12 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
-import com.jetbrains.edu.cpp.*
+import com.jetbrains.edu.cpp.CppCatchCourseBuilder
 import com.jetbrains.edu.cpp.CppConfigurator.Companion.TASK_CPP
 import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
+import com.jetbrains.edu.cpp.CppGTestCourseBuilder
+import com.jetbrains.edu.cpp.CppProjectSettings
+import com.jetbrains.edu.cpp.getExpectedTaskCMakeText
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
@@ -33,7 +36,7 @@ class CppCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi()) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     val fileTree = fileTree {
       dir("lesson/task1") {
@@ -129,7 +132,7 @@ class CppCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi()) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     val fileTree = fileTree {
       dir("lesson") {

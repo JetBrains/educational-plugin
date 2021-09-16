@@ -35,7 +35,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson1")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(2, course.lessons[0].taskList.size)
 
@@ -56,7 +56,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("section1/lesson1")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(2, course.sections[0].lessons[0].taskList.size)
   }
@@ -68,7 +68,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile("lesson1")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task1")) {
-      testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(1, course.lessons[0].taskList.size)
   }
@@ -87,7 +87,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val taskFile = findFile("lesson1/task1")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
-      testAction(dataContext(taskFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(taskFile))
     }
 
     val lesson = course.lessons[0]
@@ -111,7 +111,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val taskFile = findFile("lesson1/task2")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
-      testAction(dataContext(taskFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(taskFile))
     }
 
     val lesson = course.lessons[0]
@@ -136,7 +136,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val taskFile = findFile("lesson1/$customTaskName")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
-      testAction(dataContext(taskFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(taskFile))
     }
 
     val lesson = course.lessons[0]
@@ -162,7 +162,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     val taskFile = findFile("section1/lesson1/task1")
 
     withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
-      testAction(dataContext(taskFile), CCCreateTask.ACTION_ID)
+      testAction(CCCreateTask.ACTION_ID, dataContext(taskFile))
     }
 
     val lesson = course.sections[0].lessons[0]
@@ -181,7 +181,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       }
     }
     val sourceVFile = LightPlatformTestCase.getSourceRoot()!!
-    val presentation = testAction(dataContext(sourceVFile), CCCreateTask.ACTION_ID, runAction = false)
+    val presentation = testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), runAction = false)
     checkActionEnabled(presentation, false)
   }
 
@@ -196,7 +196,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       }
     }
     val sourceVFile = findFile("section1")
-    val presentation = testAction(dataContext(sourceVFile), CCCreateTask.ACTION_ID, runAction = false)
+    val presentation = testAction(CCCreateTask.ACTION_ID, dataContext(sourceVFile), runAction = false)
     checkActionEnabled(presentation, false)
   }
 
@@ -222,7 +222,7 @@ class CCCreateTaskTest : EduActionTestCase() {
       val copyTestOld = settings.copyTestsInFrameworkLessons()
       settings.setCopyTestsInFrameworkLessons(copyTests)
       try {
-        testAction(dataContext(lessonFile), CCCreateTask.ACTION_ID)
+        testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
       }
       finally {
         settings.setCopyTestsInFrameworkLessons(copyTestOld)
