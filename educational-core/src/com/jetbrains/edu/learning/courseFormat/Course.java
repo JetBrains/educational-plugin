@@ -58,6 +58,7 @@ public abstract class Course extends LessonContainer {
   @Nullable private String organization;
   private boolean isMarketplacePrivate = false;
   private Date myCreateDate = new Date(0);
+  @Nullable private String myFeedbackLink;
 
   @Transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
@@ -389,5 +390,14 @@ public abstract class Course extends LessonContainer {
   @Transient
   public void setPluginDependencies(List<PluginInfo> pluginDependencies) {
     myPluginDependencies = pluginDependencies;
+  }
+
+  @Nullable
+  public String getFeedbackLink() {
+    return myFeedbackLink;
+  }
+
+  public void setFeedbackLink(@Nullable String feedbackLink) {
+    myFeedbackLink = feedbackLink;
   }
 }

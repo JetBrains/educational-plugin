@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.serialization.converter.json.local;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,15 +9,6 @@ public class FeedbackLink {
 
   @Nullable
   private String myLink;
-
-  public FeedbackLink(@Nullable String link) {
-    myType = LinkType.CUSTOM;
-    myLink = link;
-  }
-
-  public FeedbackLink(@NotNull LinkType type) {
-    myType = type;
-  }
 
   public FeedbackLink() {
     myType = LinkType.STEPIK;

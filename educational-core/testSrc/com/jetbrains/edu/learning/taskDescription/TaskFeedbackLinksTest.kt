@@ -4,12 +4,11 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.LeaveCommentAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
-class FeedbackLinksTest : EduTestCase() {
+class TaskFeedbackLinksTest : EduTestCase() {
 
   fun testStepikLink() {
     val task = getRemoteEduTask()
@@ -17,35 +16,26 @@ class FeedbackLinksTest : EduTestCase() {
   }
 
   fun testNoneLink() {
-    val task = getRemoteEduTask()
-    val feedbackLink = FeedbackLink()
-    feedbackLink.type = FeedbackLink.LinkType.NONE
-    task.feedbackLink = feedbackLink
-    try {
-      println("link = ${LeaveCommentAction.getLink(task)}")
-      fail("Exception expected to be thrown")
-    }
-    catch (e: IllegalStateException) {
-      //exception thrown
-    }
+    val task = getRemoteEduTask(isMarketplaceCourse = true)
+    assertNull(LeaveCommentAction.getLink(task))
   }
 
   fun testCustomLink() {
     val task = getRemoteEduTask()
-    val feedbackLink = FeedbackLink()
-    feedbackLink.type = FeedbackLink.LinkType.CUSTOM
-    feedbackLink.link = "https://www.jetbrains.com/"
-    task.feedbackLink = feedbackLink
+    task.feedbackLink = "https://www.jetbrains.com/"
     assertEquals("Incorrect link", "https://www.jetbrains.com/", LeaveCommentAction.getLink(task))
   }
 
-  private fun getRemoteEduTask(): Task {
+  private fun getRemoteEduTask(isMarketplaceCourse: Boolean = false): Task {
     val course = course {
       lesson {
         eduTask { }
       }
     }
-    val remoteCourse = EduCourse()
+    val remoteCourse = EduCourse().apply {
+      id = 1
+      isMarketplace = isMarketplaceCourse
+    }
     remoteCourse.items = course.items
     remoteCourse.init(null, null, false)
 

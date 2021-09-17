@@ -8,7 +8,6 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -23,7 +22,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
-    val link = getLink(task)
+    val link = getLink(task) ?: error("LeaveFeedbackAction is not supported")
     EduBrowser.getInstance().browse(link)
     EduCounterUsageCollector.leaveFeedback()
   }
@@ -42,13 +41,7 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
       addSynonym(EduCoreBundle.lazyMessage("action.show.discussions.text"))
     }
 
-    val feedbackLink = task.feedbackLink
-    e.presentation.isEnabledAndVisible = when (feedbackLink.type) {
-      FeedbackLink.LinkType.NONE -> false
-      FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> course is EduCourse && course.isStepikRemote
-      FeedbackLink.LinkType.MARKETPLACE -> false
-    }
+    e.presentation.isEnabledAndVisible = getLink(task) != null
   }
 
   companion object {
@@ -56,13 +49,15 @@ class LeaveCommentAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.lea
 
     @JvmStatic
     @VisibleForTesting
-    fun getLink(task: Task): String {
+    fun getLink(task: Task): String? {
       val feedbackLink = task.feedbackLink
-      return when (feedbackLink.type) {
-        FeedbackLink.LinkType.NONE -> error("LeaveFeedbackAction should be disabled for NONE links")
-        FeedbackLink.LinkType.CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
-        FeedbackLink.LinkType.STEPIK -> getStepikLink(task, task.lesson)
-        FeedbackLink.LinkType.MARKETPLACE -> error("LeaveFeedbackAction is not supported for marketplace courses")
+      val course = task.course
+      val courseLink = course.feedbackLink
+      return when {
+        feedbackLink != null -> feedbackLink
+        courseLink != null -> courseLink
+        course is EduCourse && course.isStepikRemote -> getStepikLink(task, task.lesson)
+        else -> null
       }
     }
   }

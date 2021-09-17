@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYP
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TEST_DATA_FOLDER
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.isValidCodeforcesTestFolder
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -95,7 +94,7 @@ open class CodeforcesTask : Task() {
         // This replacement is needed for proper MathJax visualization
         .replace("$$$", "$")
 
-      task.feedbackLink = FeedbackLink(codeforcesTaskLink(task))
+      task.feedbackLink = codeforcesTaskLink(task)
 
       CodeforcesLanguageProvider.generateTaskFiles(task)?.forEach {
         task.addTaskFile(it)

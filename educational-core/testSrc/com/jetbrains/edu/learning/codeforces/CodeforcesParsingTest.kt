@@ -31,7 +31,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("A. Three Problems", task.name)
-    assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink)
     task.checkTaskDescription(1211, 'A')
   }
 
@@ -47,7 +47,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("G. King's Path", task.name)
-    assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink)
     task.checkTaskDescription(1211, 'G')
   }
 
@@ -82,7 +82,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("H. Road Repair in Treeland", tasks[7].name)
     assertEquals("I. Unusual Graph", tasks[8].name)
 
-    assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink)
   }
 
   fun testUpcomingContests() {

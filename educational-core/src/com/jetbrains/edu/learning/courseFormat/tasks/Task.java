@@ -59,8 +59,8 @@ public abstract class Task extends StudyItem {
   @NotNull
   private String descriptionText = "";
   private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
-  @NotNull
-  private FeedbackLink myFeedbackLink = new FeedbackLink();
+  @Nullable
+  private String myFeedbackLink = null;
   @Nullable
   private Boolean solutionHidden;
   private int myRecord = -1;
@@ -273,12 +273,12 @@ public abstract class Task extends StudyItem {
     return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
   }
 
-  @NotNull
-  public FeedbackLink getFeedbackLink() {
+  @Nullable
+  public String getFeedbackLink() {
     return myFeedbackLink;
   }
 
-  public void setFeedbackLink(@NotNull FeedbackLink feedbackLink) {
+  public void setFeedbackLink(@Nullable String feedbackLink) {
     myFeedbackLink = feedbackLink;
   }
 

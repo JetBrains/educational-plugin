@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -39,6 +40,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_PRIVATE
@@ -63,7 +65,7 @@ import java.util.*
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
-                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT)
+                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -110,6 +112,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var isMarketplacePrivate: Boolean = false
+
+  @JsonProperty(FEEDBACK_LINK)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  protected open lateinit var myFeedbackLink: String
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -117,6 +123,9 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var submitManually = false
+
+  @JsonIgnore
+  override lateinit var myFeedbackLink: String
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
@@ -183,6 +192,7 @@ private class CourseBuilder(
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
   @JsonProperty(MARKETPLACE_COURSE_VERSION) val yamlCourseVersion: Int?,
+  @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) val language: String,
@@ -224,6 +234,7 @@ private class CourseBuilder(
       vendor = yamlVendor
       isMarketplacePrivate = yamlIsPrivate ?: false
       marketplaceCourseVersion = yamlCourseVersion ?: 1
+      feedbackLink = yamlFeedbackLink
       solutionsHidden = areSolutionsHidden ?: false
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
@@ -279,6 +290,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
+    existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"

@@ -5,7 +5,6 @@ import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
@@ -161,6 +160,24 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(programmingLanguageVersion, course.languageVersion)
+  }
+
+  fun `test course with link`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "Plain text"
+    val link = "https://course_link.com"
+    val yamlContent = """
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |feedback_link: $link
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertEquals(link, course.feedbackLink)
   }
 
   fun `test section`() {
@@ -501,8 +518,7 @@ class YamlDeserializationTest : YamlTestCase() {
     |""".trimMargin()
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
-    assertEquals("http://example.com", task.feedbackLink.link)
-    assertEquals(FeedbackLink.LinkType.CUSTOM, task.feedbackLink.type)
+    assertEquals("http://example.com", task.feedbackLink)
   }
 
   fun `test vendor with email`() {

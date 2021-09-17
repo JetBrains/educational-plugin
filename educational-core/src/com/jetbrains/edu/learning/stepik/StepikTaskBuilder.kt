@@ -241,7 +241,6 @@ open class StepikTaskBuilder(
 
     task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty() && courseType != HYPERSKILL_TYPE) stepOptions.descriptionText.orEmpty() else step.text
     task.descriptionFormat = stepOptions.descriptionFormat
-    task.feedbackLink = stepOptions.myFeedbackLink
 
     initTaskFiles(task)
     return task

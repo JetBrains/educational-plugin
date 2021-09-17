@@ -273,7 +273,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     val status = CheckStatus.Unchecked
 
     val codeforcesTask = CodeforcesTask().apply {
-      feedbackLink = FeedbackLink(feedbackUrl)
+      feedbackLink = feedbackUrl
       this.status = status
     }
     codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
@@ -300,7 +300,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     val outputFileName = "out.txt"
 
     val codeforcesTask = CodeforcesTaskWithFileIO(inputFileName, outputFileName).apply {
-      feedbackLink = FeedbackLink(feedbackUrl)
+      feedbackLink = feedbackUrl
       this.status = status
     }
     codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })

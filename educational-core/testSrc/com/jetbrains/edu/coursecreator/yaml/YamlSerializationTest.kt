@@ -3,8 +3,9 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -392,17 +393,30 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
-  fun `test feedback link`() {
+  fun `test task feedback link`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask { }
       }
     }.findTask("lesson1", "task1")
-    task.feedbackLink = FeedbackLink()
-    task.feedbackLink.link = "example.com"
+    task.feedbackLink = "example.com"
     doTest(task, """
     |type: edu
     |feedback_link: example.com
+    |""".trimMargin())
+  }
+
+  fun `test checkiO mission feedback link not serialized`() {
+    val task = course(courseProducer = ::CheckiOCourse) {
+      lesson {
+        mission { }
+      }
+    }.findTask("lesson1", "task1")
+    task.feedbackLink = "example.com"
+    doTest(task, """
+    |type: checkiO
+    |status: Unchecked
+    |seconds_from_change: 0
     |""".trimMargin())
   }
 
@@ -434,6 +448,65 @@ class YamlSerializationTest : YamlTestCase() {
       |environment: Android
       |content:
       |- lesson1
+      |
+    """.trimMargin())
+  }
+
+  fun `test course feedback link`() {
+    val courseLink = "https://course_link.com"
+    val course = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask { }
+      }
+    }.apply { feedbackLink = courseLink }
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |feedback_link: $courseLink
+      |
+    """.trimMargin())
+  }
+
+  fun `test codeforces course feedback link not serialized`() {
+    val courseLink = "https://course_link.com"
+    val course = course(courseProducer = ::CodeforcesCourse) {
+      lesson {
+        codeforcesTask { }
+      }
+    }.apply { feedbackLink = courseLink }
+    doTest(course, """
+      |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test coursera course feedback link not serialized`() {
+    val courseLink = "https://course_link.com"
+    val course = course(courseProducer = ::CourseraCourse) {
+      lesson {
+        eduTask { }
+      }
+    }.apply { feedbackLink = courseLink }
+    doTest(course, """
+      |type: coursera
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |content:
+      |- lesson1
+      |mode: Study
       |
     """.trimMargin())
   }

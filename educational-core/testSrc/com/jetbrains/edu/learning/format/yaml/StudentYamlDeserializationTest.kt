@@ -131,7 +131,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val task = deserializeTask(yamlContent)
     assertNotNull(task)
     assertInstanceOf(task, CodeforcesTask::class.java)
-    assertEquals(feedbackUrl, task.feedbackLink.link)
+    assertEquals(feedbackUrl, task.feedbackLink)
     assertEquals(status, task.status)
   }
 
@@ -165,7 +165,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(true, taskFile.isVisible)
     assertEquals(taskSolution, taskFile.text)
 
-    assertEquals(feedbackUrl, task.feedbackLink.link)
+    assertEquals(feedbackUrl, task.feedbackLink)
     assertEquals(status, task.status)
 
     assertEquals(inputFileName, (task as CodeforcesTaskWithFileIO).inputFileName)

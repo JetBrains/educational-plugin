@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -60,7 +59,7 @@ class HyperskillTaskBuilder(
         }
       }
 
-      feedbackLink = FeedbackLink("${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR")
+      feedbackLink = "${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR"
     }
     return task
   }

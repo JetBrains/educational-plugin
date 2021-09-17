@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_C
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -232,8 +231,8 @@ abstract class HyperskillConnector {
     return true
   }
 
-  private fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
-    return FeedbackLink("${stageLink(project, stage.id)}$HYPERSKILL_COMMENT_ANCHOR")
+  private fun feedbackLink(project: Int, stage: HyperskillStage): String {
+    return "${stageLink(project, stage.id)}$HYPERSKILL_COMMENT_ANCHOR"
   }
 
   fun getSubmissions(stepIds: Set<Int>): List<Submission> {

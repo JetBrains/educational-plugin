@@ -39,7 +39,6 @@ object JsonMixinNames {
   // task
   const val FILES = "files"
   const val TASK_TYPE = "task_type"
-  const val FEEDBACK_LINK = "feedback_link"
   const val CUSTOM_NAME = "custom_name"
   const val SOLUTION_HIDDEN = "solution_hidden"
 
@@ -49,8 +48,7 @@ object JsonMixinNames {
   const val PLACEHOLDERS = "placeholders"
 
   // feedback
-  const val LINK = "link"
-  const val LINK_TYPE = "link_type"
+  const val FEEDBACK_LINK = "feedback_link"
 
   // placeholder
   const val OFFSET = "offset"

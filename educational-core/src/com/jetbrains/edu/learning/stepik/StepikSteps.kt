@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,7 +35,6 @@ const val SOURCE = "source"
 const val TASK_TYPE = "task_type"
 const val HYPERSKILL = "hyperskill"
 const val LESSON_TYPE = "lesson_type"
-const val FEEDBACK_LINK = "feedback_link"
 const val SAMPLES = "samples"
 const val EXECUTION_MEMORY_LIMIT = "execution_memory_limit"
 const val EXECUTION_TIME_LIMIT = "execution_time_limit"
@@ -141,9 +139,6 @@ open class PyCharmStepOptions : StepOptions {
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
   var descriptionFormat: DescriptionFormat? = null
 
-  @JsonProperty(FEEDBACK_LINK)
-  var myFeedbackLink = FeedbackLink()
-
   @JsonProperty(FILES)
   var files: MutableList<TaskFile>? = null
 
@@ -190,7 +185,6 @@ open class PyCharmStepOptions : StepOptions {
     files = collectTaskFiles(project, task)
     taskType = task.itemType
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
-    myFeedbackLink = task.feedbackLink
     @Suppress("deprecation")
     customPresentableName = task.customPresentableName
     solutionHidden = task.solutionHidden

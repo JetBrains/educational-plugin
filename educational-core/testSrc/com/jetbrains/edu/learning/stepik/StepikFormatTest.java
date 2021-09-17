@@ -7,7 +7,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
 import com.jetbrains.edu.learning.stepik.api.*;
@@ -234,11 +237,6 @@ public class StepikFormatTest extends EduTestCase {
         "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
         "\n" +
         "<br>\n", block.getText());
-  }
-
-  public void testOptionsFeedbackLinks() throws IOException {
-    PyCharmStepOptions stepOptions = getStepOptions();
-    assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.getMyFeedbackLink().getType());
   }
 
   public void testOptionsFiles() throws IOException {

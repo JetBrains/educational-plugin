@@ -5,7 +5,10 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.computeUnderProgress
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.featuredCourseIds
@@ -37,7 +40,7 @@ fun Course.updateCourseItems() {
   visitLessons { lesson ->
     lesson.visitTasks { task ->
       task.generateId()
-      task.feedbackLink.type = FeedbackLink.LinkType.MARKETPLACE
+      task.feedbackLink = null
     }
     lesson.generateId()
   }

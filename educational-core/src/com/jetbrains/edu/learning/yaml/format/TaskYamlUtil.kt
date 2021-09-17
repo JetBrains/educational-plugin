@@ -5,13 +5,9 @@ package com.jetbrains.edu.learning.yaml.format
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.PlaceholderPainter
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -49,10 +45,9 @@ abstract class TaskYamlMixin {
     throw NotImplementedInMixin()
   }
 
-  @JsonSerialize(converter = FeedbackLinkToStringConverter::class)
-  @JsonDeserialize(converter = StringToFeedbackLinkConverter::class)
-  @JsonProperty(value = FEEDBACK_LINK, access = JsonProperty.Access.READ_WRITE)
-  protected open lateinit var myFeedbackLink: FeedbackLink
+  @JsonProperty(value = FEEDBACK_LINK)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  protected open lateinit var myFeedbackLink: String
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -61,26 +56,6 @@ abstract class TaskYamlMixin {
   @JsonProperty(SOLUTION_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var solutionHidden: Boolean? = null
-}
-
-private class FeedbackLinkToStringConverter : StdConverter<FeedbackLink?, String>() {
-  override fun convert(value: FeedbackLink?): String? {
-    if (value?.link.isNullOrBlank()) {
-      return ""
-    }
-
-    return value?.link
-  }
-}
-
-private class StringToFeedbackLinkConverter : StdConverter<String?, FeedbackLink>() {
-  override fun convert(value: String?): FeedbackLink {
-    if (value == null || value.isBlank()) {
-      return FeedbackLink()
-    }
-
-    return FeedbackLink(value)
-  }
 }
 
 open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {

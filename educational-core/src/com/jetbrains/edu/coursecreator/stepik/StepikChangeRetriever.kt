@@ -212,8 +212,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            task.index != remoteTask.index ||
            task.descriptionText != remoteTask.descriptionText ||
            task.descriptionFormat != remoteTask.descriptionFormat ||
-           task.feedbackLink.link != remoteTask.feedbackLink.link ||
-           task.feedbackLink.type != remoteTask.feedbackLink.type ||
+           task.feedbackLink != remoteTask.feedbackLink ||
            task.lesson.id != remoteTask.lesson.id ||
            task.solutionHidden != remoteTask.solutionHidden
   }

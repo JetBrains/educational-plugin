@@ -89,11 +89,11 @@ class CourseraTaskChecker : RemoteTaskChecker {
   }
 
   private fun getLinkToSubmission(task: Task): String {
-    return task.feedbackLink.link?.replace("/discussions", "/submission") ?: "https://www.coursera.org/"
+    return task.feedbackLink?.replace("/discussions", "/submission") ?: "https://www.coursera.org/"
   }
 
   private fun getLinkToToken(task: Task): String {
-    return task.feedbackLink.link?.removeSuffix("/discussions") ?: "https://www.coursera.org/"
+    return task.feedbackLink?.removeSuffix("/discussions") ?: "https://www.coursera.org/"
   }
 
   @VisibleForTesting

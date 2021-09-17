@@ -8,7 +8,10 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -204,14 +207,6 @@ class StepikAnswerPlaceholderDependencyMixin {
 
   @JsonProperty(IS_VISIBLE)
   var myIsVisible = true
-}
-
-class StepikFeedbackLinkMixin {
-  @JsonProperty(LINK_TYPE)
-  lateinit var myType: FeedbackLink.LinkType
-
-  @JsonProperty(LINK)
-  lateinit var myLink: String
 }
 
 open class StepikTaskMixin {

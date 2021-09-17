@@ -103,7 +103,7 @@ object YamlDeepLoader {
   private fun HyperskillCourse.reconnectHyperskillProject() {
     LOG.info("Current project is disconnected from Hyperskill")
     val firstTask = getProjectLesson()?.taskList?.firstOrNull() ?: return
-    val link = firstTask.feedbackLink.link ?: return
+    val link = firstTask.feedbackLink ?: return
     val matchResult = HYPERSKILL_PROJECT_REGEX.matchEntire(link) ?: return
     val projectId = matchResult.groupValues[1].toInt()
 

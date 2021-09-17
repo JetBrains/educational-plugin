@@ -4,7 +4,10 @@ import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -59,9 +62,7 @@ class CourseFormatTest : EduTestCase() {
 
   fun testFeedbackLinks() {
     val eduTask = firstEduTask
-    val feedbackLink = eduTask.feedbackLink
-    assertEquals(FeedbackLink.LinkType.CUSTOM, feedbackLink.type)
-    assertEquals("https://www.jetbrains.com/", feedbackLink.link)
+    assertEquals("https://www.jetbrains.com/", eduTask.feedbackLink)
   }
 
   fun testPlaceholderText() {

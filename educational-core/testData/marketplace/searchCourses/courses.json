@@ -22,7 +22,8 @@
           },
           "organization" : {
             "name" : "JetBrains s.r.o."
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "id" : "2",
@@ -41,7 +42,8 @@
             "programmingLanguage" : "JAVA",
             "language" : "ru",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "id": "3",
@@ -60,7 +62,8 @@
             "programmingLanguage": "Scala",
             "language": "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         }
       ]
     }

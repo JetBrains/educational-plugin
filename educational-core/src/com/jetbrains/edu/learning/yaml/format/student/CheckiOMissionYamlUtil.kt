@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.stepik.FEEDBACK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CODE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
@@ -16,7 +15,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, STATUS, FEEDBACK, CODE, SECONDS_FROM_CHANGE)
 abstract class CheckiOMissionYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
-  override lateinit var myFeedbackLink: FeedbackLink
+  override lateinit var myFeedbackLink: String
 
   @JsonIgnore
   override var myRecord: Int = -1

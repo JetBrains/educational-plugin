@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
@@ -18,4 +19,7 @@ import java.time.ZonedDateTime
 abstract class CodeforcesCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(END_DATE_TIME)
   private var endDateTime: ZonedDateTime? = null
+
+  @JsonIgnore
+  override lateinit var myFeedbackLink: String
 }

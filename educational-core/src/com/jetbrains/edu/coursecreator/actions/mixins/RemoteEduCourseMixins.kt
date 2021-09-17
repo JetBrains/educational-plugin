@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter
 import com.fasterxml.jackson.databind.util.Annotations
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_PRIVATE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
@@ -49,7 +50,7 @@ import java.util.*
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
-                   PLUGIN_VERSION, VENDOR, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, ID, UPDATE_DATE)
+                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, ID, UPDATE_DATE)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class),
   JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
@@ -73,6 +74,10 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(UPDATE_DATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private lateinit var myUpdateDate: Date
+
+  @JsonProperty(FEEDBACK_LINK)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private lateinit var myFeedbackLink: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

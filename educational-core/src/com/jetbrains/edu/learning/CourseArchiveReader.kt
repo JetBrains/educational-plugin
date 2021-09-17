@@ -68,8 +68,7 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       8 -> converter = To9VersionLocalCourseConverter()
       9 -> converter = To10VersionLocalCourseConverter()
       10 -> converter = To11VersionLocalCourseConverter()
-      // We don't convert jsonObject with jsonVersion 11 to 12, because we use jsonVersion directly from jsonText in isArchiveEncrypted
-      // function, as we need to know if archive is encrypted before courseNode is created to configure courseMapper properly
+      11 -> converter = To12VersionLocalCourseConverter()
     }
     if (converter != null) {
       jsonObject = converter.convert(jsonObject)
@@ -97,7 +96,6 @@ fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
   configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
   addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-  addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
   addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
   addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
   disable(MapperFeature.AUTO_DETECT_FIELDS)

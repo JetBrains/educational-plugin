@@ -431,70 +431,70 @@
 
 ### JSON format version
 
-4.  Skipped. 
+4. Skipped. 
 
     Name of additional materials was changed from `PyCharm additional materials` to `Edu additional materials`.
     We created the corresponding migration but only for local json representation (for Stepik we convert it into `PyCharm additional materials` again).
     So version wasn't really changed. Skip it to keep migration code in consistency.
     
-5.  Drop `AnswerPlaceholderSubtaskInfo` and move all info into `AnswerPlaceholder` object.
+5. Drop `AnswerPlaceholderSubtaskInfo` and move all info into `AnswerPlaceholder` object.
 
     Previous format of `AnswerPlaceholder` in task object:
     ```json
-	{
-	  "offset": 1,
-	  "length": 10,
-	  "subtask_infos": [
-	    {
-	      "hints": [
-	        "hint 1",
-	        "hint 2"
-	      ],
-	      "possible_answer": "answer1",
-	      "placeholder_text": "type here",
-	      "has_frame": true,
-	      "need_insert_text": false,
-	      "index": 0
-	    }
-	  ]
-	}
+    {
+      "offset": 1,
+      "length": 10,
+      "subtask_infos": [
+        {
+          "hints": [
+            "hint 1",
+            "hint 2"
+          ],
+          "possible_answer": "answer1",
+          "placeholder_text": "type here",
+          "has_frame": true,
+          "need_insert_text": false,
+          "index": 0
+        }
+      ]
+    }
     ```
     or in submission reply object:
     ```json
-	{
-	  "offset": 1,
-	  "length": 10,
-	  "subtask_infos": {
-	    "0": {
-	      "hints": [
-	        "hint 1",
-	        "hint 2"
-	      ],
-	      "possible_answer": "answer1",
-	      "placeholder_text": "type here",
-	      "has_frame": true,
-	      "need_insert_text": false,
-	      "selected": false,
-	      "status": "Solved"
-	    }
-	  }
-	}
+    {
+      "offset": 1,
+      "length": 10,
+      "subtask_infos": {
+        "0": {
+          "hints": [
+            "hint 1",
+            "hint 2"
+          ],
+          "possible_answer": "answer1",
+          "placeholder_text": "type here",
+          "has_frame": true,
+          "need_insert_text": false,
+          "selected": false,
+          "status": "Solved"
+        }
+      }
+    }
     ```
 
     Current format of `AnswerPlaceholder`:
     ```json
-	{
-	  "offset": 1,
-	  "length": 10,
-	  "hints": [
-	    "hint 1",
-	    "hint 2"
-	  ],
-	  "possible_answer": "answer1",
-	  "placeholder_text": "type here",
-	  "selected": false,
-	  "status": "Solved"
-	}
+    {
+      "offset": 1,
+      "length": 10,
+      "hints": [
+        "hint 1",
+        "hint 2"
+      ],
+      "possible_answer": "answer1",
+      "placeholder_text": "type here",
+      "selected": false,
+      "status": "Solved"
+    }
     ```
     
     Replace `text` (`task_texts` for local courses) map in `option` (`task` for local courses) object by `description_text` field 
@@ -523,7 +523,7 @@
     }
     ```
 
-6.  Convert `additional_files` list to map and add `is_visible` property to each element
+6. Convert `additional_files` list to map and add `is_visible` property to each element
 
     Before:
     ```json
@@ -786,10 +786,39 @@
     ```
 11. For Android courses replaced `Android` course type with `Pycharm` course type + `Android` environment
 
-12. Unified Marketplace and Edu archives now all generated course archives are encrypted.
+12. a) Unified Marketplace and Edu archives now all generated course archives are encrypted.
     Before: 
     Only archives with "course_type" : "Marketplace" were encrypted and needed EncryptionModule to be added to the ObjectMapper for 
     proper deserialization.
     After:
     All generated archives, regardless course type, are encrypted and needed EncryptionModule to be added to the ObjectMapper for
     proper deserialization.
+
+    b) Feedback link format changed in task object
+
+    Before:
+    ```json
+    {
+      // other properties
+      "feedback_link" : {
+            "link" : "https://www.customLinkExample.org",
+            "link_type" : "CUSTOM"
+          }
+    }
+    ```
+
+    After:
+    ```json
+    {
+      // other properties
+      "feedback_link" : "https://www.customLinkExample.org"
+    }
+    ```
+
+    c) Feedback link added to course object
+    ```json
+    {
+      // other properties
+      "feedback_link" : "https://plugins.jetbrains.com/plugin/16628-kotlin-koans/reviews"
+    }
+    ```

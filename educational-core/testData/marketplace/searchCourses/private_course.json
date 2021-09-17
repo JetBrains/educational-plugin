@@ -18,7 +18,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": true
-          }
+          },
+          "link" : "courseLink"
         }
       ]
     }

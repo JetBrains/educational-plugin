@@ -8,10 +8,7 @@
           "name": "task1",
           "description_text": "First task description",
           "description_format": "html",
-          "feedback_link": {
-            "link_type": "CUSTOM",
-            "link": "https://www.jetbrains.com/"
-          },
+          "feedback_link": "https://www.jetbrains.com/",
           "stepic_id": 0,
           "task_type": "edu",
           "files": {

@@ -1,14 +1,13 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
 class StudentChangeApplierTest() : YamlTestCase() {
@@ -21,7 +20,7 @@ class StudentChangeApplierTest() : YamlTestCase() {
     }.lessons.first().taskList.first()
     val deserializedItem = EduTask("task1")
     deserializedItem.customPresentableName = "custom name"
-    deserializedItem.feedbackLink = FeedbackLink("test")
+    deserializedItem.feedbackLink = "test"
 
     getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)
 
@@ -71,7 +70,7 @@ class StudentChangeApplierTest() : YamlTestCase() {
     }.lessons.first().taskList.first()
     val deserializedItem = EduTask("task1")
     deserializedItem.customPresentableName = "custom name"
-    deserializedItem.feedbackLink = FeedbackLink("test")
+    deserializedItem.feedbackLink = "test"
     deserializedItem.taskFiles = mapOf("taskFile.txt" to TaskFile("taskFile.txt", "new code"))
 
     getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)

@@ -78,7 +78,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("H. Longest Saw", tasks[7].name)
     assertEquals("I. Good Subsets", tasks[8].name)
 
-    assertEquals("https://codeforces.com/contest/1170/problem/H?locale=en", tasks[7].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1170/problem/H?locale=en", tasks[7].feedbackLink)
     assertEquals("https://codeforces.com/contest/1170/submit?locale=en&programTypeId=48&submittedProblemIndex=H",
                  codeforcesSubmitLink(tasks[7]))
   }
@@ -88,7 +88,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val task = contest.lessons.first().taskList[0] as CodeforcesTask
 
     assertEquals("A. Three Integers Again", task.name)
-    assertEquals("https://codeforces.com/contest/1170/problem/A?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1170/problem/A?locale=en", task.feedbackLink)
     task.checkTaskDescription(1170, 'A')
   }
 
@@ -97,7 +97,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val task = contest.lessons.first().taskList[4] as CodeforcesTask
 
     assertEquals("E. Sliding Doors", task.name)
-    assertEquals("https://codeforces.com/contest/1170/problem/E?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1170/problem/E?locale=en", task.feedbackLink)
     task.checkTaskDescription(1170, 'E')
   }
 
@@ -106,7 +106,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val task = contest.lessons.first().taskList[6] as CodeforcesTask
 
     assertEquals("G. Graph Decomposition", task.name)
-    assertEquals("https://codeforces.com/contest/1170/problem/G?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1170/problem/G?locale=en", task.feedbackLink)
     task.checkTaskDescription(1170, 'G')
   }
 
@@ -137,7 +137,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     assertEquals("E. Nearest Opposite Parity", tasks[4].name)
     assertEquals("F. Two Bracket Sequences", tasks[5].name)
 
-    assertEquals("https://codeforces.com/contest/1272/problem/D?locale=en", tasks[3].feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1272/problem/D?locale=en", tasks[3].feedbackLink)
     assertEquals("https://codeforces.com/contest/1272/submit?locale=en&submittedProblemIndex=D", codeforcesSubmitLink(tasks[3]))
   }
 
@@ -146,7 +146,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val task = contest.lessons.first().taskList[0] as CodeforcesTask
 
     assertEquals("A. Three Friends", task.name)
-    assertEquals("https://codeforces.com/contest/1272/problem/A?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1272/problem/A?locale=en", task.feedbackLink)
     task.checkTaskDescription(1272, 'A')
   }
 
@@ -155,7 +155,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
     val task = contest.lessons.first().taskList[1] as CodeforcesTask
 
     assertEquals("B. Snow Walking Robot", task.name)
-    assertEquals("https://codeforces.com/contest/1272/problem/B?locale=en", task.feedbackLink.link)
+    assertEquals("https://codeforces.com/contest/1272/problem/B?locale=en", task.feedbackLink)
     task.checkTaskDescription(1272, 'B')
   }
 

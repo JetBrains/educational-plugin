@@ -38,8 +38,6 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LINK_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MAX_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
@@ -217,7 +215,8 @@ abstract class LocalTaskMixin {
   private lateinit var descriptionFormat: DescriptionFormat
 
   @JsonProperty(FEEDBACK_LINK)
-  private lateinit var myFeedbackLink: FeedbackLink
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private lateinit var myFeedbackLink: String
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -314,16 +313,6 @@ abstract class AnswerPlaceholderDependencyMixin {
 
   @JsonProperty("is_visible")
   private var myIsVisible = true
-}
-
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonInclude(JsonInclude.Include.NON_NULL)
-abstract class FeedbackLinkMixin {
-  @JsonProperty(LINK_TYPE)
-  private lateinit var myType: FeedbackLink.LinkType
-
-  @JsonProperty(LINK)
-  private var myLink: String? = null
 }
 
 class VersionPropertyWriter : VirtualBeanPropertyWriter {

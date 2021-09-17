@@ -15,7 +15,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 2",
@@ -29,7 +30,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 3",
@@ -43,7 +45,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 4",
@@ -57,7 +60,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 5",
@@ -71,7 +75,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 6",
@@ -85,7 +90,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 7",
@@ -99,7 +105,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 8",
@@ -113,7 +120,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 9",
@@ -127,7 +135,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         },
         {
           "name" : "Introduction to Python 10",
@@ -141,7 +150,8 @@
             "programmingLanguage" : "Python",
             "language" : "en",
             "isPrivate": false
-          }
+          },
+          "link" : "courseLink"
         }
       ]
     }

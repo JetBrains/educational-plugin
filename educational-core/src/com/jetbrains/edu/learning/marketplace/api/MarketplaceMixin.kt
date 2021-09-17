@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
+import com.jetbrains.edu.learning.marketplace.REVIEWS
 import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 import java.util.*
 
@@ -29,6 +31,9 @@ abstract class MarketplaceEduCourseMixin {
 
   @JsonProperty(DEVELOPERS)
   var developers: List<String> = emptyList()
+
+  @JsonProperty(LINK)
+  var myFeedbackLink: String = ""
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -44,6 +49,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
   @JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
   @JsonProperty(CREATE_DATE) val courseCreateDate: Long,
+  @JsonProperty(LINK) val courseLink: String,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -64,6 +70,7 @@ private class MarketplaceCourseBuilder(
       isMarketplacePrivate = fields.isPrivate
       updateDate = Date(lastUpdateDate)
       createDate = Date(courseCreateDate)
+      feedbackLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
       setMarketplaceAuthorsAsString(developers)
     }
 

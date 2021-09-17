@@ -13,8 +13,8 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -49,7 +49,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashSet
 
 class CourseArchiveCreator(
   private val project: Project,
@@ -161,7 +160,6 @@ class CourseArchiveCreator(
       }
       mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-      mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
       mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)

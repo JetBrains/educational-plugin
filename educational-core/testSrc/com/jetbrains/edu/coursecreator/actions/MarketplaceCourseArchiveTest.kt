@@ -121,6 +121,23 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test course link`() {
+    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "another text")
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 5
+      feedbackLink = "https://course_link.com"
+    }
+
+    doTest()
+  }
+
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/marketplaceCourseArchive"
   }
