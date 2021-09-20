@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
-import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
 class CheckiOCoursesPanel(
@@ -18,32 +17,36 @@ class CheckiOCoursesPanel(
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
-  private val loginComponent = CheckiOLoginPanel()
 
   override fun processSelectionChanged() {
     super.processSelectionChanged()
     if (selectedCourse != null) {
       val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider
       if (checkiOConnectorProvider == null) {
-        loginComponent.isVisible = false
+        hideLoginPanel()
         return
       }
 
       val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
       val isLoggedIn = checkiOAccount == null
-      loginComponent.isVisible = isLoggedIn
+      if (isLoggedIn) {
+        hideLoginPanel()
+      }
     }
   }
 
-  override fun tabInfo(): TabInfo {
+  override fun getLoginComponent(): LoginPanel {
+    return CheckiOLoginPanel()
+  }
+
+  override fun tabDescription(): String {
     val linkText = """<a href="$CHECKIO_HELP">${CheckiONames.CHECKIO}</a>"""
-    val infoText = EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
-    return TabInfo(infoText, loginComponent)
+    return EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
   }
 
   private inner class CheckiOLoginPanel : LoginPanel(true,
+                                                     CheckiONames.CHECKIO,
                                                      EduCoreBundle.message("course.dialog.log.in.label.before.link"),
-                                                     EduCoreBundle.message("course.dialog.log.in.to", CheckiONames.CHECKIO),
                                                      {
                                                        val checkiOConnectorProvider = (selectedCourse?.configurator as CheckiOConnectorProvider?)!!
                                                        val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector

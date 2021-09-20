@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
@@ -52,9 +51,9 @@ class CodeforcesCoursesPanel(
     return EduCoreBundle.message("codeforces.search.placeholder")
   }
 
-  override fun tabInfo(): TabInfo {
+  override fun tabDescription(): String {
     val linkText = """<a href="${CodeforcesNames.CODEFORCES_URL}">${CodeforcesNames.CODEFORCES_TITLE}</a>"""
-    return TabInfo(EduCoreBundle.message("codeforces.courses.description", linkText))
+    return EduCoreBundle.message("codeforces.courses.description", linkText)
   }
 
   override fun createCoursesListPanel(): CoursesListWithResetFilters {

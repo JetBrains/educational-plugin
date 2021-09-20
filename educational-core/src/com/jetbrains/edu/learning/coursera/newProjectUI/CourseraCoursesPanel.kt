@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.coursera.CourseraNames.COURSERA_HELP
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
 class CourseraCoursesPanel(
@@ -15,9 +14,8 @@ class CourseraCoursesPanel(
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
 
-  override fun tabInfo(): TabInfo {
+  override fun tabDescription(): String {
     val linkText = """<a href="$COURSERA_HELP">$COURSERA</a>"""
-    val infoText = EduCoreBundle.message("coursera.courses.explanation", linkText, COURSERA)
-    return TabInfo(infoText)
+    return EduCoreBundle.message("coursera.courses.explanation", linkText, COURSERA)
   }
 }

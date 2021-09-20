@@ -50,7 +50,9 @@ abstract class CoursesPanel(
   protected val coursesSearchComponent: CoursesSearchComponent = CoursesSearchComponent(getEmptySearchText(),
                                                                                         { coursesGroups },
                                                                                         { groups -> updateModel(groups, selectedCourse) })
-  private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
+
+  private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabDescription(), this.toolbarAction())
+  private val loginPanel: LoginPanel? by lazy { getLoginComponent() }
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
@@ -84,13 +86,23 @@ abstract class CoursesPanel(
 
   open fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
 
-  fun hideLoginPanel() = coursesListDecorator.hideLoginPanel()
+  fun hideLoginPanel() {
+    loginPanel?.isVisible = false
+  }
 
   private fun createContentPanel(): JPanel {
-    val mainPanel = JPanel(BorderLayout())
-    mainPanel.add(coursesSearchComponent, BorderLayout.NORTH)
-    mainPanel.add(createSplitPane(), BorderLayout.CENTER)
-    mainPanel.background = MAIN_BG_COLOR
+    val searchAndLoginPanel = NonOpaquePanel()
+    searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
+    loginPanel?.apply {
+      searchAndLoginPanel.add(this, BorderLayout.SOUTH)
+    }
+
+    val mainPanel = JPanel(BorderLayout()).apply {
+      add(searchAndLoginPanel, BorderLayout.PAGE_START)
+      add(createSplitPane(), BorderLayout.CENTER)
+      background = MAIN_BG_COLOR
+    }
+
     return mainPanel
   }
 
@@ -131,7 +143,9 @@ abstract class CoursesPanel(
 
   protected open fun toolbarAction(): ToolbarActionWrapper? = null
 
-  protected open fun tabInfo(): TabInfo? = null
+  protected open fun tabDescription(): String? = null
+
+  protected open fun getLoginComponent(): LoginPanel? = null
 
   private fun createLoadingPanel() = JPanel(BorderLayout()).apply {
     add(CenteredIcon(), BorderLayout.CENTER)

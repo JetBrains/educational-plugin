@@ -15,15 +15,17 @@ private const val TOOLBAR_TOP_OFFSET = 10
 private const val TOOLBAR_BOTTOM_OFFSET = 8
 private const val TOOLBAR_LEFT_OFFSET = 13
 
-class CoursesListDecorator(private val mainPanel: CoursesListPanel, tabInfo: TabInfo?, toolbarAction: ToolbarActionWrapper?) : NonOpaquePanel() {
-  private var tabInfoPanel: TabInfoPanel? = null
+class CoursesListDecorator(private val mainPanel: CoursesListPanel,
+                           tabDescription: String?,
+                           toolbarAction: ToolbarActionWrapper?) : NonOpaquePanel() {
+  private var myTabDescriptionPanel: TabDescriptionPanel? = null
 
   init {
     val listWithTabInfo = NonOpaquePanel()
     listWithTabInfo.add(mainPanel, BorderLayout.CENTER)
 
-    if (tabInfo != null) {
-      tabInfoPanel = TabInfoPanel(tabInfo).apply {
+    if (tabDescription != null) {
+      myTabDescriptionPanel = TabDescriptionPanel(tabDescription).apply {
         listWithTabInfo.add(this, BorderLayout.NORTH)
       }
     }
@@ -45,10 +47,6 @@ class CoursesListDecorator(private val mainPanel: CoursesListPanel, tabInfo: Tab
       add(toolbarPanel, BorderLayout.SOUTH)
       scrollPane.border = JBUI.Borders.customLine(CoursePanel.DIVIDER_COLOR, 0, 0, 1, 0)
     }
-  }
-
-  fun hideLoginPanel() {
-    tabInfoPanel?.hideLoginPanel()
   }
 
   fun setSelectionListener(processSelectionChanged: () -> Unit) {

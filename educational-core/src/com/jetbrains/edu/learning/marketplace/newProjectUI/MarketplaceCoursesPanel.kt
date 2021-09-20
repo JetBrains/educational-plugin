@@ -5,7 +5,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_COURSES_HELP
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.EduCourseCard
 import kotlinx.coroutines.CoroutineScope
 
 class MarketplaceCoursesPanel(
@@ -14,10 +17,9 @@ class MarketplaceCoursesPanel(
   disposable: Disposable
 ) : CoursesPanel(coursesPlatformProvider, scope, disposable) {
 
-  override fun tabInfo(): TabInfo {
+  override fun tabDescription(): String {
     val linkText = """<a href="$MARKETPLACE_COURSES_HELP">$MARKETPLACE</a>"""
-    val infoText = EduCoreBundle.message("marketplace.courses.explanation", linkText)
-    return TabInfo(infoText, null)
+    return EduCoreBundle.message("marketplace.courses.explanation", linkText)
   }
 
   override fun createCoursesListPanel() = MarketplaceCoursesListPanel()

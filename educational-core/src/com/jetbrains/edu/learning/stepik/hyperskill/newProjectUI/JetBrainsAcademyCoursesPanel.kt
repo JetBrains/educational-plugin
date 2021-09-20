@@ -9,15 +9,12 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
-import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.awt.Color
 
 class JetBrainsAcademyCoursesPanel(
   private val platformProvider: JetBrainsAcademyPlatformProvider,
@@ -25,10 +22,9 @@ class JetBrainsAcademyCoursesPanel(
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
 
-  override fun tabInfo(): TabInfo {
+  override fun tabDescription(): String {
     val linkText = """<a href="${JBA_HELP}">${EduNames.JBA}</a>"""
-    val infoText = EduCoreBundle.message("hyperskill.courses.explanation", linkText)
-    return TabInfo(infoText, JetBrainsAcademyLoginPanel())
+    return EduCoreBundle.message("hyperskill.courses.explanation", linkText)
   }
 
   override fun updateModelAfterCourseDeletedFromStorage(deletedCourse: Course) {
@@ -49,6 +45,10 @@ class JetBrainsAcademyCoursesPanel(
 
   override fun createCoursesListPanel() = JetBrainsAcademyCoursesListPanel()
 
+  override fun getLoginComponent(): LoginPanel {
+    return JetBrainsAcademyLoginPanel()
+  }
+
   inner class JetBrainsAcademyCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
       return JetBrainsAcademyCourseCard(course)
@@ -56,12 +56,9 @@ class JetBrainsAcademyCoursesPanel(
   }
 
   private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),
+                                                              EduNames.JBA,
                                                               EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
-                                                              EduCoreBundle.message("course.dialog.log.in.to", EduNames.JBA),
-                                                              { handleLogin() }) {
-    override val beforeLinkForeground: Color
-      get() = EduColors.warningTextForeground
-  }
+                                                              { handleLogin() })
 
   override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null
 

@@ -38,11 +38,9 @@ class StepikCoursesPanel(
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("stepik.courses.open.by.link", StepikNames.STEPIK), OpenStepikCourseByLink())
   }
 
-  override fun tabInfo(): TabInfo {
+  override fun tabDescription(): String {
     val linkText = """<a href="$STEPIK_HELP">${StepikNames.STEPIK}</a>"""
-    val infoText = EduCoreBundle.message("stepik.courses.explanation", linkText)
-    val loginComponent = StepikLoginPanel()
-    return TabInfo(infoText, loginComponent)
+    return EduCoreBundle.message("stepik.courses.explanation", linkText)
   }
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
@@ -54,9 +52,13 @@ class StepikCoursesPanel(
     super.updateCoursesAfterLogin(preserveSelection)
   }
 
+  override fun getLoginComponent(): LoginPanel {
+    return StepikLoginPanel()
+  }
+
   private inner class StepikLoginPanel : LoginPanel(isLoginNeeded(),
+                                                    StepikNames.STEPIK,
                                                     EduCoreBundle.message("course.dialog.log.in.label.before.link"),
-                                                    EduCoreBundle.message("course.dialog.log.in.to", StepikNames.STEPIK).toLowerCase(),
                                                     { handleLogin() })
 
   private fun handleLogin() {
