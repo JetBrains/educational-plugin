@@ -20,7 +20,9 @@ import kotlinx.coroutines.withContext
 import java.awt.Color
 
 class JetBrainsAcademyCoursesPanel(
-  private val platformProvider: JetBrainsAcademyPlatformProvider, scope: CoroutineScope, disposable: Disposable
+  private val platformProvider: JetBrainsAcademyPlatformProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
 
   override fun tabInfo(): TabInfo {

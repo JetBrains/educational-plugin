@@ -13,9 +13,11 @@ import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
-class CheckiOCoursesPanel(platformProvider: CoursesPlatformProvider,
-                          scope: CoroutineScope,
-                          disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
+class CheckiOCoursesPanel(
+  platformProvider: CoursesPlatformProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(platformProvider, scope, disposable) {
   private val loginComponent = CheckiOLoginPanel()
 
   override fun processSelectionChanged() {

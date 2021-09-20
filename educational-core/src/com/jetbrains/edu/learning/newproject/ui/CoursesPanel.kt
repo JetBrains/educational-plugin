@@ -36,20 +36,25 @@ private const val CONTENT_CARD_NAME = "CONTENT"
 private const val LOADING_CARD_NAME = "PROGRESS"
 private const val NO_COURSES = "NO_COURSES"
 
-abstract class CoursesPanel(private val coursesProvider: CoursesPlatformProvider,
-                            private val scope: CoroutineScope,
-                            disposable: Disposable) : JPanel() {
+abstract class CoursesPanel(
+  private val coursesProvider: CoursesPlatformProvider,
+  private val scope: CoroutineScope,
+  disposable: Disposable
+) : JPanel() {
+
   @VisibleForTesting
   @Suppress("LeakingThis")
   var coursePanel: CoursePanel = createCoursePanel(disposable)
+
   @Suppress("LeakingThis")
-  protected val coursesSearchComponent : CoursesSearchComponent = CoursesSearchComponent(getEmptySearchText(),
-                                                                                         { coursesGroups },
-                                                                                         { groups -> updateModel(groups, selectedCourse) })
+  protected val coursesSearchComponent: CoursesSearchComponent = CoursesSearchComponent(getEmptySearchText(),
+                                                                                        { coursesGroups },
+                                                                                        { groups -> updateModel(groups, selectedCourse) })
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabInfo(), this.toolbarAction())
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
+
   @Volatile
   private var loadingFinished = false
 

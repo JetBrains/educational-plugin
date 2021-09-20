@@ -9,9 +9,11 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.TabInfo
 import kotlinx.coroutines.CoroutineScope
 
-class CourseraCoursesPanel(platformProvider: CourseraPlatformProvider,
-                           scope: CoroutineScope,
-                           disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
+class CourseraCoursesPanel(
+  platformProvider: CourseraPlatformProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(platformProvider, scope, disposable) {
 
   override fun tabInfo(): TabInfo {
     val linkText = """<a href="$COURSERA_HELP">$COURSERA</a>"""

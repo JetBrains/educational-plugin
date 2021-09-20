@@ -19,9 +19,11 @@ import javax.swing.JPanel
 
 private const val ACTION_PLACE = "MyCoursesPanel"
 
-class MyCoursesPanel(myCoursesProvider: CoursesPlatformProvider,
-                     scope: CoroutineScope,
-                     disposable: Disposable) : CoursesPanel(myCoursesProvider, scope, disposable) {
+class MyCoursesPanel(
+  myCoursesProvider: CoursesPlatformProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(myCoursesProvider, scope, disposable) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
     val importCourseAction = EduActionUtils.getAction(ImportLocalCourseAction.ACTION_ID)

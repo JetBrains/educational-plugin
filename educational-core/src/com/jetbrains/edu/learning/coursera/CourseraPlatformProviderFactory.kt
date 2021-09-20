@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.coursera
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
@@ -30,7 +29,6 @@ class CourseraPlatformProviderFactory : CoursesPlatformProviderFactory {
   override fun getProviders(): List<CoursesPlatformProvider> = listOf(CourseraPlatformProvider())
 }
 
-@VisibleForTesting
 class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val name: String = CourseraNames.COURSERA

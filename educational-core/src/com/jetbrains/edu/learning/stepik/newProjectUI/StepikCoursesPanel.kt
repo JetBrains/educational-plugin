@@ -26,10 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class StepikCoursesPanel(platformProvider: CoursesPlatformProvider,
-                         private val coursesProvider: StepikCoursesProvider,
-                         scope: CoroutineScope,
-                         disposable: Disposable) : CoursesPanel(platformProvider, scope, disposable) {
+class StepikCoursesPanel(
+  platformProvider: CoursesPlatformProvider,
+  private val coursesProvider: StepikCoursesProvider,
+  scope: CoroutineScope,
+  disposable: Disposable
+) : CoursesPanel(platformProvider, scope, disposable) {
   private var busConnection: MessageBusConnection? = null
 
   override fun toolbarAction(): ToolbarActionWrapper {
