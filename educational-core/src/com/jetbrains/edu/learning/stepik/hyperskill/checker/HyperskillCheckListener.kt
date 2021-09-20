@@ -17,11 +17,18 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    if (task !is EduTask) {
+      /**
+       * Solution must be sent after local tests check are made for Edu tasks.
+       * Opposite to Edu tasks, e.g., there are no local tests check for Code tasks and code is submitted directly to JBA.
+       */
+      return
+    }
+
     val course = task.lesson.course as? HyperskillCourse ?: return
     if (!course.isStudy) {
       return
     }
-    if (!course.isTaskInProject(task)) return
 
     if (HyperskillSettings.INSTANCE.account == null) {
       Notification(
