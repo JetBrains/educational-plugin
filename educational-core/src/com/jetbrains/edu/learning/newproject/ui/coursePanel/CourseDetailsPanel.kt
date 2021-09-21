@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
-import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
+import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
@@ -127,9 +127,9 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
       return this is EduCourse
              && isStepikRemote
              && isStepikPublic
-             && !ListedCoursesIdsProvider.featuredCommunityCourses.contains(id)
+             && !StepikListedCoursesIdsLoader.featuredCommunityCourses.contains(id)
              && this !is StepikCourse
-             && !ListedCoursesIdsProvider.inProgressCourses.contains(id)
+             && !StepikListedCoursesIdsLoader.inProgressCourses.contains(id)
     }
 }
 

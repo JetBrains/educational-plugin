@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
+import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 import kotlinx.coroutines.*
@@ -72,14 +72,14 @@ class StepikCoursesProvider : CoroutineScope {
   suspend fun getFeaturedCourses(): List<Course> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
-      .filter { it.isStepikPublic && it.id in ListedCoursesIdsProvider.featuredCommunityCourses }
+      .filter { it.isStepikPublic && it.id in StepikListedCoursesIdsLoader.featuredCommunityCourses }
       .sortedByDescending { it.reviewScore }
   }
 
   suspend fun getAllOtherCourses(): List<EduCourse> {
     return loadedCourses.await()
       .filterNot { it is StepikCourse }
-      .filter { it.isStepikPublic && it.id !in ListedCoursesIdsProvider.featuredCommunityCourses }
+      .filter { it.isStepikPublic && it.id !in StepikListedCoursesIdsLoader.featuredCommunityCourses }
   }
 
   suspend fun getPrivateCourses(): List<Course> {
@@ -135,17 +135,17 @@ class StepikCoursesProvider : CoroutineScope {
   }
 
   private fun loadListedStepikCourses(): List<StepikCourse> {
-    val listedCoursesIds = ListedCoursesIdsProvider.featuredStepikCourses.keys + ListedCoursesIdsProvider.inProgressCourses
+    val listedCoursesIds = StepikListedCoursesIdsLoader.featuredStepikCourses.keys + StepikListedCoursesIdsLoader.inProgressCourses
     val courses = StepikConnector.getInstance().getCourses(listedCoursesIds) ?: return emptyList()
     val result = mutableListOf<StepikCourse>()
     courses.forEach { course ->
       val courseId = course.id
-      val languages = ListedCoursesIdsProvider.featuredStepikCourses[courseId]
+      val languages = StepikListedCoursesIdsLoader.featuredStepikCourses[courseId]
 
       fun addCourse() {
         val remoteCourse = stepikCourseFromRemote(course) ?: return
-        if (ListedCoursesIdsProvider.inProgressCourses.contains(courseId)) {
-          remoteCourse.visibility = CourseVisibility.InProgressVisibility(ListedCoursesIdsProvider.inProgressCourses.indexOf(courseId))
+        if (StepikListedCoursesIdsLoader.inProgressCourses.contains(courseId)) {
+          remoteCourse.visibility = CourseVisibility.InProgressVisibility(StepikListedCoursesIdsLoader.inProgressCourses.indexOf(courseId))
         }
         remoteCourse.let { result.add(it) }
       }
