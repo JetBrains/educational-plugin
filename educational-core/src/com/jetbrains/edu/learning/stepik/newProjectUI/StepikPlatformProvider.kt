@@ -4,7 +4,7 @@ import com.intellij.openapi.Disposable
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.stepikMarketplaceIdsMap
+import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -41,7 +41,7 @@ class StepikPlatformProvider : CoursesPlatformProvider() {
 
       // we don't duplicate courses uploaded to marketplace if they were not started already
       val featuredCourses = coursesProvider.getFeaturedCourses().filter {
-        CoursesStorage.getInstance().hasCourse(it) || it.id !in stepikMarketplaceIdsMap
+        CoursesStorage.getInstance().hasCourse(it) || !MarketplaceListedCoursesIdsLoader.isUploadedToMarketplace(it.id)
       }
 
       val stepikAndEduCourses = (coursesProvider.getStepikCourses() + coursesProvider.getAllOtherCourses())

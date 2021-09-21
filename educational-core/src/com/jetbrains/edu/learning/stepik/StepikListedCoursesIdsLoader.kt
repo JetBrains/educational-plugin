@@ -1,18 +1,20 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.checkIsBackgroundThread
 import java.io.IOException
 
 
-private const val LISTED_COURSES_LINK ="https://raw.githubusercontent.com/JetBrains/educational-plugin/master/listedCourses.txt"
+private const val LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/stepikListedCourses.txt"
 
-object ListedCoursesIdsProvider {
-  private val LOG = Logger.getInstance(ListedCoursesIdsProvider::class.java)
+object StepikListedCoursesIdsLoader {
+  private val LOG = Logger.getInstance(StepikListedCoursesIdsLoader::class.java)
   val featuredCommunityCourses: List<Int>
   val inProgressCourses: List<Int>
   val featuredStepikCourses: Map<Int, MutableList<String>>
 
   init {
+    checkIsBackgroundThread()
     val url = java.net.URL(LISTED_COURSES_LINK)
     val listedCoursesTexts: Map<CoursesListName, String> = try {
       val text = url.readText()

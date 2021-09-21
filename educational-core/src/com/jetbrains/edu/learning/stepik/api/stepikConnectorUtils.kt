@@ -11,7 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.ListedCoursesIdsProvider
+import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -54,7 +54,7 @@ private fun AtomicInteger.compareAndUpdateValue(newPage: Int) {
 }
 
 private fun getVisibility(course: EduCourse): CourseVisibility {
-  val communityCourses = ListedCoursesIdsProvider.featuredCommunityCourses
+  val communityCourses = StepikListedCoursesIdsLoader.featuredCommunityCourses
   return when {
     !course.isStepikPublic -> CourseVisibility.PrivateVisibility
     communityCourses.contains(course.id) -> CourseVisibility.FeaturedVisibility(communityCourses.indexOf(course.id))
