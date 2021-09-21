@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Vendor
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -97,7 +96,7 @@ fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish:
 }
 
 fun EduCourse.updateFeaturedStatus() {
-  if (!isUnitTestMode && course.id in MarketplaceListedCoursesIdsLoader.featuredCoursesIds) {
+  if (course.id in MarketplaceListedCoursesIdsLoader.featuredCoursesIds) {
     course.visibility = CourseVisibility.FeaturedVisibility(MARKETPLACE_GROUP_ID)
   }
 }
