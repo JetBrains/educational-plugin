@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEvent
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillFrontendEventType
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTimeSpentEvent
@@ -24,9 +23,11 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   private val lock = Object()
 
+  @VisibleForTesting
   fun viewEvent(task: Task?) {
     val hyperskillCourse = task?.course as? HyperskillCourse ?: return
-    if (!hyperskillCourse.isStudy || isUnitTestMode) return
+    if (!hyperskillCourse.isStudy) return
+    if (task.id == 0) return
 
     doAddViewEvent(hyperskillCourse, task)
     taskStarted(task.id)

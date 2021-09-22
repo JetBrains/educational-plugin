@@ -81,6 +81,7 @@ class HyperskillMetricsTest : EduTestCase() {
 
     metricsService.taskStarted(id1)
     metricsService.taskStarted(id2)
+    metricsService.taskStopped()
 
     metricsService.allTimeSpentEvents(reset = false).find { it.step == id1 } ?: error("No time spent event for $id1")
   }
@@ -220,6 +221,25 @@ class HyperskillMetricsTest : EduTestCase() {
 
     val pendingFrontendEvents = metricsService.allFrontendEvents(false)
     compareFrontendEvents(addedFrontendEvents.subList(0, HyperskillMetricsService.FRONTEND_EVENTS_LIMIT), pendingFrontendEvents)
+  }
+
+  fun `test no events sent for corrupted task with id = 0`() {
+    val course = hyperskillCourseWithFiles {
+      frameworkLesson("lesson1") {
+        eduTask("task0", stepId = 0) {
+          taskFile("src/Task.kt", "stage corrupted")
+          taskFile("test/Tests1.kt", "stage corrupted test")
+        }
+      }
+    }
+    val task = course.findTask("lesson1", "task0")
+    metricsService.viewEvent(task)
+    metricsService.taskStopped()
+
+    HyperskillMetricsScheduler.sendFrontendEvents()
+
+    val pendingEvents = metricsService.allTimeSpentEvents(reset = false)
+    assertEmpty(pendingEvents)
   }
 
   private fun createHyperskillCourse() = hyperskillCourseWithFiles {
