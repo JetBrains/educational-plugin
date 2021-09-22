@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.checkIsBackgroundThread
 import java.io.IOException
 
 
-private const val LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/stepikListedCourses.txt"
+private const val LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/listedCourses.txt"
 
 object StepikListedCoursesIdsLoader {
   private val LOG = Logger.getInstance(StepikListedCoursesIdsLoader::class.java)
