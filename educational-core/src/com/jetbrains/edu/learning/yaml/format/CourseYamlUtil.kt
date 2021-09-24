@@ -291,6 +291,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
     existingItem.feedbackLink = deserializedItem.feedbackLink
+    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"

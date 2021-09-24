@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
@@ -32,9 +33,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import okhttp3.ConnectionPool
-import org.apache.http.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
+import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -269,16 +270,39 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
     if (!isUserAuthorized()) return
     LOG.info("Uploading course update from ${file.absolutePath}")
-    val response = repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id).executeHandlingExceptions()
-    val responseCode = response?.code()
-    if (responseCode == null || responseCode == HttpStatus.SC_FORBIDDEN) {
-      showNoRightsToUpdateNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
+
+    repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id).executeCall().flatMap {
+      val errorBody = it.errorBody()?.string() ?: return@flatMap Ok(it)
+      val errorMessage = "$errorBody Code ${it.code()}"
+      return@flatMap when(it.code()) {
+        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(it)
+        HttpURLConnection.HTTP_FORBIDDEN -> {
+          showNoRightsToUpdateNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
+          Err(errorMessage) // 403
+        }
+        HttpURLConnection.HTTP_NOT_FOUND -> {
+          showFailedToFindMarketplaceCourseOnRemoteNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
+          Err(errorMessage) //404
+        }
+        HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
+          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
+          Err("${message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
+        }
+        in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
+          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
+          Err("${message("error.service.down")}\n\n$errorMessage") // 500x
+        }
+        else -> {
+          LOG.warn("Code ${it.code()} is not handled")
+          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
+          Err(message("error.unexpected.error", errorMessage))
+        }
+      }
+    }.onError {
+      LOG.error("Failed to upload course update for course ${course.id}: ${it}")
       return
     }
-    if (responseCode != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
-      return
-    }
+
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
     showNotification(project, message, openOnMarketplaceAction(course.id))
     LOG.info(message)

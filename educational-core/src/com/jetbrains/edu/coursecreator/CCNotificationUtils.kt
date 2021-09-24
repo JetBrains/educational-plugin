@@ -68,6 +68,17 @@ object CCNotificationUtils {
                           })
   }
 
+  fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, course: EduCourse, action: () -> Unit) {
+    showErrorNotification(project,
+                          EduCoreBundle.message("error.failed.to.update"),
+                          EduCoreBundle.message("marketplace.failed.to.update.no.course"),
+                          NotificationAction.createSimpleExpiring(
+                            EduCoreBundle.message("notification.course.creator.access.denied.action")) {
+                            course.convertToLocal()
+                            action()
+                          })
+  }
+
   fun createPostCourseNotificationListener(course: EduCourse, action: () -> Unit): NotificationListener.Adapter {
     return object : NotificationListener.Adapter() {
       override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {

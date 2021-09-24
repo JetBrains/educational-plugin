@@ -124,12 +124,7 @@ fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Resul
   }
 }
 
-fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
-  fun log(title: String, message: String?, optional: Boolean) {
-    val fullText = "$title. $message"
-    if (optional) LOG.warn(fullText) else LOG.error(fullText)
-  }
-
+fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, String> {
   return try {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
@@ -141,28 +136,7 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
     }
 
     ProgressManager.checkCanceled()
-
-    val error = response.errorBody()?.string() ?: return Ok(response)
-    log(error, "Code ${response.code()}", omitErrors)
-
-    when (response.code()) {
-      HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
-      HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
-        Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
-      in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
-        Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
-      HttpURLConnection.HTTP_FORBIDDEN -> {
-        val errorMessage = processForbiddenErrorMessage(error) ?:
-                           EduCoreBundle.message("error.access.denied")
-        Err(errorMessage)
-      }
-      in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
-        Err(EduCoreBundle.message("error.unexpected.error", error)) // 400x
-      else -> {
-        LOG.warn("Code ${response.code()} is not handled")
-        Err(EduCoreBundle.message("error.unexpected.error", error))
-      }
-    }
+    Ok(response)
   }
   catch (e: InterruptedIOException) {
     log("Connection to server was interrupted", e.message, omitErrors)
@@ -179,6 +153,36 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)
     Err("${EduCoreBundle.message("error.failed.to.connect")}\n\n${e.message}")
+  }
+}
+
+private fun log(title: String, message: String?, optional: Boolean) {
+  val fullText = "$title. $message"
+  if (optional) LOG.warn(fullText) else LOG.error(fullText)
+}
+
+fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
+  val response = executeCall(omitErrors).onError { return Err(it) }
+
+  val error = response.errorBody()?.string() ?: return Ok(response)
+  log(error, "Code ${response.code()}", omitErrors)
+
+  return when (response.code()) {
+    HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
+    HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
+      Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
+    in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
+      Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
+    HttpURLConnection.HTTP_FORBIDDEN -> {
+      val errorMessage = processForbiddenErrorMessage(error) ?: EduCoreBundle.message("error.access.denied")
+      Err(errorMessage)
+    }
+    in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
+      Err(EduCoreBundle.message("error.unexpected.error", error)) // 400x
+    else -> {
+      LOG.warn("Code ${response.code()} is not handled")
+      Err(EduCoreBundle.message("error.unexpected.error", error))
+    }
   }
 }
 

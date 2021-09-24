@@ -1,7 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.marketplace
 
-import com.intellij.notification.NotificationType
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -78,31 +76,12 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
 
   private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
     if (course.isMarketplaceRemote) {
-      val courseOnRemote = connector.searchCourse(course.id, course.isMarketplacePrivate)
-      // courseOnRemote can be null if it was not validated yet
-      if (courseOnRemote == null) {
-        CCNotificationUtils.showNotification(project,
-                                             uploadNewCourseAction(project, course, connector, tempFile),
-                                             message("error.failed.to.update"),
-                                             message("marketplace.failed.to.update.no.course"),
-                                             NotificationType.ERROR)
-        return
-      }
-
       connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.updateCourse()
     }
     else {
       connector.uploadNewCourseUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.uploadCourse()
-    }
-  }
-
-  private fun uploadNewCourseAction(project: Project, course: EduCourse, connector: MarketplaceConnector, tempFile: File): AnAction {
-    return object : AnAction(message("item.upload.to.0.course.title", MARKETPLACE)) {
-      override fun actionPerformed(e: AnActionEvent) {
-        connector.uploadNewCourseUnderProgress(project, course, tempFile)
-      }
     }
   }
 

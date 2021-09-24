@@ -156,13 +156,18 @@ public class EduCourse extends Course {
   }
 
   public void convertToLocal() {
-    isStepikPublic = false;
-    isCompatible = true;
+    if (isMarketplace()) {
+      setMarketplaceCourseVersion(1);
+    }
+    else {
+      isStepikPublic = false;
+      isCompatible = true;
+      sectionIds = new ArrayList<>();
+      instructors = new ArrayList<>();
+    }
+    myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
     setId(0);
     setUpdateDate(new Date(0));
-    sectionIds = new ArrayList<>();
-    instructors = new ArrayList<>();
-    myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
   }
 
   @Transient
