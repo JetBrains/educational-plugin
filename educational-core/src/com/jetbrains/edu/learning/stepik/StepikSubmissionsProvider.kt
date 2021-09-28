@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.submissions
+package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
@@ -11,10 +11,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class StepikSubmissionsProvider : SubmissionsProvider {
 
@@ -27,19 +26,15 @@ class StepikSubmissionsProvider : SubmissionsProvider {
           submissionsById[task.id] = mutableListOf()
         }
         else if (task is CodeTask || task is EduTask) {
-          submissionsById.putAll(loadSubmissions(setOf(task.id)))
+          submissionsById.putAll(loadSubmissions(listOf(task), course.id))
         }
       }
     }
     return submissionsById
   }
 
-  override fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>> {
-    val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
-    for (stepId in stepIds) {
-      submissionsById[stepId] = StepikConnector.getInstance().getSubmissions(stepId).toMutableList()
-    }
-    return submissionsById
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, MutableList<Submission>> {
+    return tasks.associate { Pair(it.id, StepikConnector.getInstance().getSubmissions(it.id).toMutableList()) }
   }
 
   override fun areSubmissionsAvailable(course: Course): Boolean {

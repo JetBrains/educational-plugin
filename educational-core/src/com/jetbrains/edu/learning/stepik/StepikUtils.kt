@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
 private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
 
@@ -66,7 +66,7 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
  */
 fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
   StepikCourseUpdater(project, course).updateCourse(courseFromStepik)
-  SubmissionsManager.getInstance(project).getSubmissions(course.allTasks.map { it.id }.toSet())
+  SubmissionsManager.getInstance(project).getSubmissions(course.allTasks)
   StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }
 

@@ -17,8 +17,7 @@ import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker;
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
-import one.util.streamex.StreamEx;
+import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +54,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
     StepikUpdateChecker.getInstance(project).queueNextCheck();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     if (submissionsManager.submissionsSupported()) {
-      submissionsManager.getSubmissions(StreamEx.of(CourseExt.getAllTasks(course)).map(task -> task.getId()).toSet());
+      submissionsManager.getSubmissions(CourseExt.getAllTasks(course));
       StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
     }
   }

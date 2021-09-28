@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.api
 
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnAction
@@ -337,16 +337,8 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   private fun createMapper(module: SimpleModule): ObjectMapper {
-    val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+    val objectMapper = MarketplaceSubmissionsConnector.createMapper(module)
     objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
-    objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-    objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-    objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-    objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-    objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-    objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
-    objectMapper.registerModule(module)
     return objectMapper
   }
 

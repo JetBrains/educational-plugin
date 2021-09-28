@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
+import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

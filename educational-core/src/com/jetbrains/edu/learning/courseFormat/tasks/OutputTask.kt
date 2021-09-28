@@ -19,7 +19,7 @@ class OutputTask : Task {
 
   override fun getItemType() = OUTPUT_TASK_TYPE
 
-  override fun isToSubmitToStepik(): Boolean {
+  override fun isToSubmitToRemote(): Boolean {
     return myStatus != CheckStatus.Unchecked
   }
 

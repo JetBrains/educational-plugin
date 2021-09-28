@@ -21,10 +21,13 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.marketplace.MarketplaceUtils;
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -32,8 +35,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-
-import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt.markTheoryTaskAsCompleted;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
 
@@ -83,7 +84,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         showTaskDescriptionToolWindow(project, taskFile, true);
 
         Task task = taskFile.getTask();
-        markViewed(project, task);
+        markTheoryTaskAsCompleted(project, task);
 
         boolean isStudyProject = course.isStudy();
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
@@ -123,16 +124,22 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
   }
 
-  private static void markViewed(@NotNull Project project, @NotNull Task task) {
+  private static void markTheoryTaskAsCompleted(@NotNull Project project, @NotNull Task task) {
     if (!(task instanceof TheoryTask)) return;
     TheoryTask theoryTask = (TheoryTask) task;
     Course course = theoryTask.getCourse();
     if (course.isStudy() && theoryTask.postSubmissionOnOpen && theoryTask.getStatus() != CheckStatus.Solved) {
       if (course instanceof HyperskillCourse) {
-        markTheoryTaskAsCompleted(project, theoryTask);
+        HyperskillUtilsKt.markTheoryTaskAsCompleted(project, theoryTask);
       }
-      else if (course instanceof EduCourse && ((EduCourse)course).isStepikRemote() && EduSettings.isLoggedIn()) {
-        StepikConnectorUtils.postTheory(theoryTask, project);
+      else if (course instanceof EduCourse) {
+        EduCourse eduCourse = (EduCourse)course;
+        if (eduCourse.isStepikRemote() && EduSettings.isLoggedIn()) {
+          StepikConnectorUtils.markTheoryTaskAsCompleted(theoryTask, project);
+        }
+        else if (eduCourse.isMarketplaceRemote() && MarketplaceSubmissionsConnector.Companion.isUserAuthorizedWithJwtToken()) {
+          MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask);
+        }
       }
 
       theoryTask.setStatus(CheckStatus.Solved);

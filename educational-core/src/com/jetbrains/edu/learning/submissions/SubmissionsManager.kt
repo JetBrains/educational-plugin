@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.submissions
+package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
@@ -20,7 +20,7 @@ import java.util.stream.Collectors
  * Stores and returns submissions for courses with submissions support if they are already loaded or delegates loading
  * to SubmissionsProvider.
  *
- * @see com.jetbrains.edu.learning.stepik.submissions.SubmissionsProvider
+ * @see com.jetbrains.edu.learning.submissions.SubmissionsProvider
  */
 @Service
 class SubmissionsManager(private val project: Project) {
@@ -37,14 +37,15 @@ class SubmissionsManager(private val project: Project) {
     return submissionsFromMemory.sortedByDescending { it.time }.toList()
   }
 
-  fun getSubmissions(stepIds: Set<Int>): List<Submission>? {
+  fun getSubmissions(tasks: List<Task>): List<Submission>? {
     val course = this.course
+    val stepIds = tasks.stream().map { task -> task.id}.collect(Collectors.toSet())
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
       if (course == null) return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
-      val submissionsById = submissionsProvider.loadSubmissions(stepIds)
+      val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)
       updateSubmissionsTab()
       submissionsById.values.stream()
@@ -53,25 +54,26 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun getSubmissions(stepId: Int): List<Submission> {
-    return getOrLoadSubmissions(stepId)
+  fun getSubmissions(task: Task): List<Submission> {
+    return getOrLoadSubmissions(task)
   }
 
-  fun getSubmission(stepId: Int, submissionId: Int): Submission? {
-    return getOrLoadSubmissions(stepId).find { it.id == submissionId }
+  fun getSubmission(task: Task, submissionId: Int): Submission? {
+    return getOrLoadSubmissions(task).find { it.id == submissionId }
   }
 
-  private fun getOrLoadSubmissions(stepId: Int): List<Submission> {
-    val submissionsProvider = course?.getSubmissionsProvider() ?: return emptyList()
-    val submissionsList = submissions[stepId]
+  private fun getOrLoadSubmissions(task: Task): List<Submission> {
+    val course = this.course ?: return emptyList()
+    val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
+    val submissionsList = submissions[task.id]
     return if (submissionsList != null) {
       submissionsList
     }
     else {
-      val loadedSubmissions = submissionsProvider.loadSubmissions(setOf(stepId))
+      val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course.id)
       submissions.putAll(loadedSubmissions)
       updateSubmissionsTab()
-      return loadedSubmissions[stepId] ?: emptyList()
+      return loadedSubmissions[task.id] ?: emptyList()
     }
   }
 

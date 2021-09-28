@@ -11,9 +11,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -37,7 +35,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
+import com.jetbrains.edu.learning.submissions.Submission;
+import com.jetbrains.edu.learning.submissions.SubmissionsManager;
+import com.jetbrains.edu.learning.submissions.UtilsKt;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -95,34 +95,11 @@ public class StepikSolutionsLoader implements Disposable {
       LOG.warn("Failed to post an attempt " + task.getId());
       return null;
     }
-    final ArrayList<SolutionFile> files = new ArrayList<>();
-    final VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
-    if (taskDir == null) {
-      LOG.error("Failed to find task directory " + task.getName());
-      return null;
+    final List<SolutionFile> files = UtilsKt.getSolutionFiles(project, task, LOG);
+    if (files != null) {
+      return StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
     }
-    for (TaskFile taskFile : task.getTaskFiles().values()) {
-      final String fileName = taskFile.getName();
-      final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile != null) {
-        ApplicationManager.getApplication().runReadAction(() -> {
-          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-          if (document != null) {
-            String text = document.getText();
-            int insertedTextLength = 0;
-            StringBuilder builder = new StringBuilder(text);
-            for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-              builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
-              builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
-                             CLOSE_PLACEHOLDER_TAG);
-              insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
-            }
-            files.add(new SolutionFile(fileName, builder.toString(), taskFile.isVisible()));
-          }
-        });
-      }
-    }
-    return StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
+    return null;
   }
 
   public void loadSolutionsInBackground() {
@@ -327,7 +304,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static boolean isToUpdate(Task task, @NotNull SubmissionsManager submissionsManager) {
     if (task instanceof EduTask) {
-      Submission submission = getLastSubmission(submissionsManager, task.getId());
+      Submission submission = getLastSubmission(submissionsManager, task);
       if (submission != null) {
         Reply reply = submission.getReply();
         if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
@@ -357,7 +334,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions loadSolutionTexts(@NotNull Project project, @NotNull Task task) {
-    if (task.isToSubmitToStepik()) {
+    if (task.isToSubmitToRemote()) {
       return getEduTaskSolutions(project, task);
     }
     else {
@@ -371,7 +348,7 @@ public class StepikSolutionsLoader implements Disposable {
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
     String solution = getSolutionTextForStepikAssignment(task, submissionsManager);
     if (solution != null && taskFileName != null) {
-      task.setStatus(getCheckStatus(getLastSubmission(submissionsManager, task.getId())));
+      task.setStatus(getCheckStatus(getLastSubmission(submissionsManager, task)));
       YamlFormatSynchronizer.saveItem(task);
       return new TaskSolutions(Collections.singletonMap(taskFileName, solution));
     }
@@ -381,7 +358,7 @@ public class StepikSolutionsLoader implements Disposable {
   private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task) {
     String language = task.getCourse().getLanguageID();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    Submission submission = getLastSubmission(submissionsManager, task.getId());
+    Submission submission = getLastSubmission(submissionsManager, task);
     if (submission == null) {
       return TaskSolutions.EMPTY;
     }
@@ -445,15 +422,15 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   @Nullable
-  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, int taskId) {
-    List<Submission> submissions = submissionsManager.getSubmissions(taskId);
-    if (submissions == null || submissions.isEmpty()) return null;
+  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, Task task) {
+    List<Submission> submissions = submissionsManager.getSubmissions(task);
+    if (submissions.isEmpty()) return null;
     return submissions.get(0);
   }
 
   private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task) {
     if (task instanceof TheoryTask || task instanceof IdeTask) return true;
-    Submission submission = getLastSubmission(submissionsManager, task.getId());
+    Submission submission = getLastSubmission(submissionsManager, task);
     if (submission != null) {
       Date submissionTime = submission.getTime();
       if (submissionTime != null) {
@@ -563,8 +540,8 @@ public class StepikSolutionsLoader implements Disposable {
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task,
                                                    @NotNull SubmissionsManager submissionsManager) {
-    final List<Submission> submissions = submissionsManager.getSubmissions(task.getId());
-    if (submissions == null || submissions.isEmpty()) {
+    final List<Submission> submissions = submissionsManager.getSubmissions(task);
+    if (submissions.isEmpty()) {
       return null;
     }
 

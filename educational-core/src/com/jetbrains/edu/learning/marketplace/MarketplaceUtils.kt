@@ -1,15 +1,21 @@
+@file:JvmName("MarketplaceUtils")
+
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
@@ -98,5 +104,12 @@ fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish:
 fun EduCourse.updateFeaturedStatus() {
   if (course.id in MarketplaceListedCoursesIdsLoader.featuredCoursesIds) {
     course.visibility = CourseVisibility.FeaturedVisibility(MARKETPLACE_GROUP_ID)
+  }
+}
+
+fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
+  if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
+  runInBackground(project, EduCoreBundle.message("marketplace.posting.theory"), false) {
+    MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(project, task)
   }
 }

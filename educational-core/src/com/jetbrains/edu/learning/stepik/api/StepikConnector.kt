@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -247,7 +249,7 @@ abstract class StepikConnector {
   }
 
   fun postSubmission(passed: Boolean, attempt: Attempt,
-                     files: ArrayList<SolutionFile>, task: Task): Submission? {
+                     files: List<SolutionFile>, task: Task): Submission? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
 

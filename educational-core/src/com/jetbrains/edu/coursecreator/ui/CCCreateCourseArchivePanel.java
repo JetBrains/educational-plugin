@@ -19,7 +19,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 
-import static com.jetbrains.edu.learning.marketplace.UtilsKt.addVendor;
+import static com.jetbrains.edu.learning.marketplace.MarketplaceUtils.addVendor;
 
 public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;

@@ -4,7 +4,6 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import org.jetbrains.annotations.TestOnly
 import java.util.*
@@ -26,7 +26,6 @@ const val PROGRESSES = "progresses"
 const val ATTEMPTS = "attempts"
 const val ASSIGNMENTS = "assignments"
 const val ENROLLMENT = "enrollment"
-const val SUBMISSION = "submission"
 const val ATTEMPT = "attempt"
 const val VIEW = "view"
 const val UNIT = "unit"
@@ -144,18 +143,6 @@ class CourseReviewSummariesList {
 class EnrollmentData(courseId: Int) {
   @JsonProperty(ENROLLMENT)
   var enrollment: Enrollment = Enrollment(courseId.toString())
-}
-
-class SubmissionData() {
-  @JsonProperty(SUBMISSION)
-  lateinit var submission: Submission
-
-  constructor(attemptId: Int, score: String, files: ArrayList<SolutionFile>, task: Task) : this() {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-
-    submission = Submission(score, attemptId, files, serializedTask)
-  }
 }
 
 class AttemptData(step: Int) {
@@ -322,39 +309,6 @@ class Feedback {
 
   constructor(feedback: String) {
     message = feedback
-  }
-}
-
-class Submission {
-  @JsonProperty(ATTEMPT)
-  var attempt: Int = 0
-
-  @JsonProperty(REPLY)
-  var reply: Reply? = null
-
-  @JsonProperty(STEP)
-  var step: Int = -1
-
-  @JsonProperty(ID)
-  var id: Int? = null
-
-  @JsonProperty(STATUS)
-  var status: String? = null
-
-  @JsonProperty(HINT)
-  var hint: String? = null
-
-  @JsonProperty(FEEDBACK)
-  var feedback: Feedback? = null
-
-  @JsonProperty(TIME)
-  var time: Date? = null
-
-  constructor()
-
-  constructor(score: String, attemptId: Int, files: List<SolutionFile>, serializedTask: String?, feedback: String? = null) {
-    reply = Reply(files, score, serializedTask, feedback)
-    this.attempt = attemptId
   }
 }
 

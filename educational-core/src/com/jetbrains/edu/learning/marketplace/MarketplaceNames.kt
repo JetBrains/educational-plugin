@@ -17,6 +17,7 @@ const val MARKETPLACE_PLUGIN_URL = "$PLUGINS_REPOSITORY_URL/plugin"
 const val MARKETPLACE_COURSES_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-edutools/docs/courses-at-marketplace.html"
 const val JB_VENDOR_NAME = "JetBrains"
 const val REVIEWS = "/reviews"
+const val GRAZIE_STAGING_URL = "https://stgn.draft.grazie.ai"
 
 var MARKETPLACE_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceHubClientId")
 var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("eduHubClientId")

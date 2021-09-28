@@ -4,22 +4,26 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.Submission
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
-class PostSolutionCheckListener : CheckListener {
+abstract class PostSolutionCheckListener : CheckListener {
+
+  protected abstract fun isUpToDate(course: EduCourse, task: Task): Boolean
+  protected abstract fun postSubmission(project: Project, task: Task): Submission?
+  protected abstract fun updateCourseAction(project: Project, course: EduCourse)
+  protected abstract fun EduCourse.isToPostSubmissions(): Boolean
+
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.lesson.course
-    if (course is EduCourse && course.isStepikRemote && course.isStudy && EduSettings.isLoggedIn() && task.isToSubmitToStepik) {
-      if (task.isUpToDate) {
+    if (course is EduCourse && course.isStudy && course.isToPostSubmissions() && task.isToSubmitToRemote) {
+      if (isUpToDate(course, task)) {
         if (!isUnitTestMode) {
           ApplicationManager.getApplication().executeOnPooledThread {
             addSubmissionToSubmissionsManager(project, task)
@@ -36,16 +40,16 @@ class PostSolutionCheckListener : CheckListener {
   }
 
   private fun addSubmissionToSubmissionsManager(project: Project, task: Task) {
-    val submission: Submission? = StepikSolutionsLoader.postSolution(task, task.status == CheckStatus.Solved, project)
+    val submission = postSubmission(project, task) ?: return
     SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, submission)
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
     val notification = Notification("EduTools",
                                     EduCoreBundle.message("error.solution.not.posted"),
-                                    EduCoreBundle.message("stepik.task.was.updated", StepikNames.STEPIK, taskName),
+                                    EduCoreBundle.message("notification.content.task.was.updated", taskName),
                                     NotificationType.INFORMATION,
-                                    notificationListener(project) { updateCourseOnStepik(project, course) })
+                                    notificationListener(project) { updateCourseAction(project, course) })
     notification.notify(project)
   }
 }

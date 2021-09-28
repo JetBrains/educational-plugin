@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.submissions
+package com.jetbrains.edu.learning.submissions
 
 import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
@@ -11,6 +11,7 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -21,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
@@ -66,8 +66,9 @@ class SubmissionsTab private constructor(
       if (submissionsManager.isLoggedIn()) {
         val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
         if (submissionsList != null) {
+          val course = task.course
           when {
-            task is ChoiceTask -> descriptionText.addViewOnStepikLink(task)
+            task is ChoiceTask && course is EduCourse && course.isStepikRemote -> descriptionText.addViewOnStepikLink(task)
             submissionsList.isEmpty() -> descriptionText.addEmptySubmissionsMessage()
             else -> {
               descriptionText.addSubmissions(submissionsList)
@@ -108,7 +109,7 @@ class SubmissionsTab private constructor(
         if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
 
         val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
-        val submission = submissionsManager.getSubmission(task.id, submissionId) ?: return true
+        val submission = submissionsManager.getSubmission(task, submissionId) ?: return true
         val reply = submission.reply ?: return true
         runInEdt {
           showDiff(project, task, reply)
@@ -119,9 +120,9 @@ class SubmissionsTab private constructor(
 
     private fun StringBuilder.addViewOnStepikLink(task: ChoiceTask) {
       append(
-        "<a ${textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
+        "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
         "href=https://stepik.org/submissions/${task.id}?unit=${task.lesson.unitId}\">" +
-        EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a ${textStyleHeader}>") + "</a>")
+        EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a $textStyleHeader>") + "</a>")
     }
 
     private fun StringBuilder.addEmptySubmissionsMessage() {
@@ -137,8 +138,8 @@ class SubmissionsTab private constructor(
     }
 
     private fun StringBuilder.addLoginText(submissionsManager: SubmissionsManager) {
-      append("<a ${textStyleHeader};color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=${SUBMISSION_LOGIN_URL}>" +
-                             EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
+      append("<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
+             EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
     }
 
     private fun showDiff(project: Project, task: Task, reply: Reply) {
@@ -180,7 +181,7 @@ class SubmissionsTab private constructor(
       val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
       val text = formatDate(time)
       return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
-             "<a $textStyleHeader;color:${getLinkColor(submission)} href=${SUBMISSION_DIFF_URL}${submission.id}> ${text}</a></li>"
+             "<a $textStyleHeader;color:${getLinkColor(submission)} href=$SUBMISSION_DIFF_URL${submission.id}> ${text}</a></li>"
     }
 
     private fun formatDate(time: Date): String {

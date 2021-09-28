@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.TheoryTab
 import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.getRelatedTheoryTask
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsTab
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.*
 import org.jetbrains.annotations.PropertyKey
 

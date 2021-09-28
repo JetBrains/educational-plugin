@@ -1,20 +1,20 @@
-package com.jetbrains.edu.learning.stepik.submissions
+package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 /**
  * Base class for loading submissions, should be called only from SubmissionsManager.
  *
- * @see com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+ * @see com.jetbrains.edu.learning.submissions.SubmissionsManager
  */
 interface SubmissionsProvider {
 
   fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>>
 
-  fun loadSubmissions(stepIds: Set<Int>): Map<Int, MutableList<Submission>>
+  fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, MutableList<Submission>>
 
   fun areSubmissionsAvailable(course: Course): Boolean
 

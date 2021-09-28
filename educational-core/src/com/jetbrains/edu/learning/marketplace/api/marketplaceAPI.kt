@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.credentialStore.Credentials
+import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.UserInfo
@@ -10,9 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import org.jetbrains.annotations.TestOnly
 
+const val CONTENT = "content"
 const val CREATE_DATE = "cdate"
 const val DATA = "data"
 const val DESCRIPTION = "description"
+const val DESCRIPTORS = "descriptors"
 const val DEVELOPERS = "developers"
 const val DOWNLOADS = "downloads"
 const val ENVIRONMENT = "environment"
@@ -26,14 +31,17 @@ const val LINK = "link"
 const val MARKETPLACE_COURSE_VERSION = "course_version"
 const val NAME = "name"
 const val ORGANIZATION = "organization"
+const val PATH = "path"
 const val PLUGINS = "plugins"
 const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 const val QUERY = "query"
 const val RATING = "rating"
 const val TOTAL = "total"
+const val TIMESTAMP = "timestamp"
 const val TYPE = "type"
 const val UPDATES = "updates"
 const val VERSION = "version"
+const val VERSIONS = "versions"
 
 class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
   @TestOnly
@@ -41,11 +49,26 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
 
   constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
 
+  private val serviceNameForJwtToken @NlsSafe get() = "$servicePrefix jwt token"
+
   @NlsSafe
   override val servicePrefix: String = MARKETPLACE
 
   override fun getUserName(): String {
     return userInfo.getFullName()
+  }
+
+  fun saveJwtToken(jwtToken: String) {
+    val userName = getUserName()
+    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForJwtToken), Credentials(userName, jwtToken))
+  }
+
+  fun getJwtToken(): String? {
+    return getSecret(getUserName(), serviceNameForJwtToken)
+  }
+
+  fun isJwtTokenProvided(): Boolean {
+    return !getJwtToken().isNullOrEmpty()
   }
 }
 
@@ -95,7 +118,6 @@ class CoursesData {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Courses {
-
   @JsonProperty(PLUGINS)
   lateinit var coursesList: CoursesList
 }
@@ -156,4 +178,83 @@ class CourseBean {
 
   @JsonProperty(NAME)
   var name: String = ""
+}
+
+class Document() {
+  @JsonProperty(ID)
+  var id: String = ""
+
+  constructor(documentId: String): this() {
+    id = documentId
+  }
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Descriptors {
+  @JsonProperty(DESCRIPTORS)
+  var descriptorsList: List<Descriptor> = emptyList()
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Descriptor() {
+  @JsonProperty(ID)
+  var id: String = ""
+
+  @JsonProperty(PATH)
+  var path: String = ""
+
+  constructor(documentId: String, documentPath: String): this() {
+    id = documentId
+    path = documentPath
+  }
+}
+
+class DocumentPath(documentPath: String) {
+  @JsonProperty(PATH)
+  var path: String = documentPath
+}
+
+class SubmissionDocument() {
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonProperty(ID)
+  var id: String? = null
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonProperty(VERSION)
+  var version: String? = null
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonProperty(CONTENT)
+  var content: String? = null
+
+  constructor(docId: String?, versionId: String? = null, submissionContent: String? = null) : this() {
+    id = docId
+    version = versionId
+    content = submissionContent
+  }
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Content {
+  @JsonProperty(CONTENT)
+  lateinit var content: String
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Versions {
+  @JsonProperty(VERSIONS)
+  var versionsList: List<Version> = emptyList()
+}
+
+class Version() {
+  @JsonProperty(ID)
+  var id: String = ""
+
+  @JsonProperty(TIMESTAMP)
+  var timestamp: Long = -1
+
+  constructor(versionId: String, versionTimestamp: Long): this() {
+    id = versionId
+    timestamp = versionTimestamp
+  }
 }

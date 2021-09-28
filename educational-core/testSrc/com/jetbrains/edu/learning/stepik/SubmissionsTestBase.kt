@@ -4,7 +4,7 @@ import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.testAction
 
 abstract class SubmissionsTestBase : EduTestCase() {

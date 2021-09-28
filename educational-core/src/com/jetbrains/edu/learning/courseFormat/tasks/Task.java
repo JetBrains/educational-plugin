@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager;
+import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.yaml.YamlDeserializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +66,10 @@ public abstract class Task extends StudyItem {
   private int myRecord = -1;
   @Transient private Lesson myLesson;
   private boolean isUpToDate = true;
+  // Used for marketplace courses. We need to store a meta-entity id (corresponding to list of submissions) to correctly process submissions
+  // storage on grazie platform
+  @Nullable
+  private String submissionsId;
 
   public Task() {} //use only for deserialization
 
@@ -258,7 +262,7 @@ public abstract class Task extends StudyItem {
     return true;
   }
 
-  public boolean isToSubmitToStepik() {
+  public boolean isToSubmitToRemote() {
     return false;
   }
 
@@ -368,5 +372,14 @@ public abstract class Task extends StudyItem {
   @NotNull
   public CheckAction getCheckAction() {
     return getCourse().getCheckAction();
+  }
+
+  @Nullable
+  public String getSubmissionsId() {
+    return submissionsId;
+  }
+
+  public void setSubmissionsId(@Nullable String submissionsId) {
+    this.submissionsId = submissionsId;
   }
 }

@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
+import com.jetbrains.edu.learning.submissions.Submission
 import okhttp3.mockwebserver.MockResponse
 import java.net.HttpURLConnection.*
 

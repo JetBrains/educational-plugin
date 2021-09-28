@@ -4,17 +4,24 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector"
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
     <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory" order="before positionWidget"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.marketplace.MarketplaceStartupActivity"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader"/>
     <experimentalFeature id="edu.course.marketplace.show.private" percentOfUsers="0">
       <description>Enables displaying private courses in browse courses dialog</description>
+    </experimentalFeature>
+    <experimentalFeature id="edu.course.marketplace.submissions" percentOfUsers="0">
+      <description>Enables submissions support for marketplace courses</description>
     </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
+    <checkListener implementation="com.jetbrains.edu.learning.marketplace.MarketplaceCheckListener"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsProvider"/>-->
   </extensions>
 
   <actions>
@@ -25,5 +32,6 @@
     </action>
     <action id="Educational.Marketplace.UpdateCourse" class="com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction"/>
     <action id="Educational.StartMarketplaceCourse" class="com.jetbrains.edu.learning.marketplace.course.StartMarketplaceCourseAction"/>
+    <action id="Educational.InsertJwtToken" class="com.jetbrains.edu.learning.marketplace.InsertJwtToken" internal="true"/>
   </actions>
 </idea-plugin>

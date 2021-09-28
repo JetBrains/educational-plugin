@@ -63,7 +63,7 @@ private fun getVisibility(course: EduCourse): CourseVisibility {
   }
 }
 
-fun postTheory(task: Task, project: Project) {
+fun markTheoryTaskAsCompleted(task: Task, project: Project) {
   ProgressManager.getInstance().run(
     object : Backgroundable(project, "Posting Theory to Stepik", false) {
       override fun run(progressIndicator: ProgressIndicator) {

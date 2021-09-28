@@ -29,7 +29,7 @@ public class EduTask extends Task {
   }
 
   @Override
-  public boolean isToSubmitToStepik() {
+  public boolean isToSubmitToRemote() {
     return myStatus != CheckStatus.Unchecked;
   }
 

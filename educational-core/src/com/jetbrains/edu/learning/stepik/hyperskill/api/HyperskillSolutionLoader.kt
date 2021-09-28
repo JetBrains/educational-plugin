@@ -16,12 +16,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Reply
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
-import com.jetbrains.edu.learning.stepik.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.Submission
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
@@ -40,10 +39,6 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
     return if (files.isEmpty()) TaskSolutions.EMPTY
     else TaskSolutions(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
-  }
-
-  override fun loadSubmissions(tasks: List<Task>): List<Submission>? {
-    return SubmissionsManager.getInstance(project).getSubmissions(tasks.map { it.id }.toSet())
   }
 
   private val Reply.eduTaskFiles: Map<String, Solution>

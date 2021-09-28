@@ -90,7 +90,7 @@ public class CheckiOMission extends EduTask {
   }
 
   @Override
-  public boolean isToSubmitToStepik() {
+  public boolean isToSubmitToRemote() {
     return false;
   }
 
