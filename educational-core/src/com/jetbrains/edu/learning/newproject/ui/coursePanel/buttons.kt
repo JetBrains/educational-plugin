@@ -164,8 +164,6 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
   }
 
   override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
-                                           && CoursesStorage.getInstance().getCourseMetaInfo(course) == null
-                                           && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) != true
 }
 
 /**
