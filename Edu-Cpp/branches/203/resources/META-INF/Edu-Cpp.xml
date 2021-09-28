@@ -1,6 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>com.intellij.clion</depends>
-  <depends>com.intellij.cidr.lang</depends>
-
-  <xi:include href="/META-INF/Edu-Cpp-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>

@@ -1,6 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>JavaScript</depends>
-  <depends>NodeJS</depends>
-
-  <xi:include href="/META-INF/Edu-JavaScript-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>
