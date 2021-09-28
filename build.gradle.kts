@@ -577,14 +577,18 @@ project(":Edu-Scala") {
 project(":Edu-Android") {
   intellij {
     localPath.set(studioPath)
-    val pluginsList = listOf(
-      "android",
+    val pluginsList = mutableListOf(
+      "android"
+    )
+    pluginsList += jvmPlugins
+
+    if (!isAtLeast211) {
       // Looks like `android-layoutlib` is semantically mandatory dependency of android plugin
       // because we get `NoClassDefFoundError` without it.
       // But it's marked as optional one so gradle-intellij-plugin doesn't load it automatically.
       // So we have to add it manually
-      "android-layoutlib"
-    ) + jvmPlugins
+      pluginsList += "android-layoutlib"
+    }
     plugins.set(pluginsList)
   }
 
