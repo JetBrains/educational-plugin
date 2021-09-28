@@ -32,9 +32,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
 
   init {
-    // BACKCOMPAT: 2020.3: error page is disable by default in 211 branch
-    taskInfoJBCefBrowser.disableErrorPage()
-
     val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
     val taskInfoRequestHandler = JCEFToolWindowRequestHandler(jcefLinkInToolWindowHandler)
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)

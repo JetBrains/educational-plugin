@@ -19,9 +19,6 @@ class JCEFTextPanel(project: Project) : TabTextPanel(project) {
     get() = jcefBrowser.component
 
   init {
-    // BACKCOMPAT: 2020.3: error page is disabled by default in 211 branch
-    jcefBrowser.disableErrorPage()
-
     val toolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     val requestHandler = JCEFToolWindowRequestHandler(toolWindowLinkHandler)
     jcefBrowser.jbCefClient.addRequestHandler(requestHandler, jcefBrowser.cefBrowser)
