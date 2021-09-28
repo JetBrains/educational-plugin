@@ -2,9 +2,12 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.checkIsBackgroundThread
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 
-private const val LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/marketplaceListedCourses.txt"
+// link and file name should not be changed for the backwards compatibility
+@VisibleForTesting
+const val MARKETPLACE_LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/marketplaceListedCourses.txt"
 
 object MarketplaceListedCoursesIdsLoader {
   private val LOG = Logger.getInstance(MarketplaceListedCoursesIdsLoader::class.java)
@@ -16,12 +19,12 @@ object MarketplaceListedCoursesIdsLoader {
 
   init {
     checkIsBackgroundThread()
-    val url = java.net.URL(LISTED_COURSES_LINK)
+    val url = java.net.URL(MARKETPLACE_LISTED_COURSES_LINK)
     val listedCoursesText = try {
       url.readText()
     }
     catch (e: IOException) {
-      val message = "Failed to retrieve content of '$LISTED_COURSES_LINK'"
+      val message = "Failed to retrieve content of '$MARKETPLACE_LISTED_COURSES_LINK'"
       LOG.warn(message, e)
       error(message)
     }

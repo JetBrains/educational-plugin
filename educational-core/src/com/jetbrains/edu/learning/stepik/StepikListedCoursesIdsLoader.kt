@@ -2,10 +2,12 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.checkIsBackgroundThread
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 
-
-private const val LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/listedCourses.txt"
+// link and file name should not be changed for the backwards compatibility
+@VisibleForTesting
+const val STEPIK_LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/listedCourses.txt"
 
 object StepikListedCoursesIdsLoader {
   private val LOG = Logger.getInstance(StepikListedCoursesIdsLoader::class.java)
@@ -15,7 +17,7 @@ object StepikListedCoursesIdsLoader {
 
   init {
     checkIsBackgroundThread()
-    val url = java.net.URL(LISTED_COURSES_LINK)
+    val url = java.net.URL(STEPIK_LISTED_COURSES_LINK)
     val listedCoursesTexts: Map<CoursesListName, String> = try {
       val text = url.readText()
       val coursesListsChunks = text.split("##").filter { it.isNotEmpty() }
@@ -25,7 +27,7 @@ object StepikListedCoursesIdsLoader {
       }
     }
     catch (e: IOException) {
-      LOG.warn("Failed to retrieve content of '$LISTED_COURSES_LINK'", e)
+      LOG.warn("Failed to retrieve content of '$STEPIK_LISTED_COURSES_LINK'", e)
       emptyMap()
     }
 
