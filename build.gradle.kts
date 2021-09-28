@@ -478,6 +478,15 @@ project(":code-insight:markdown") {
     plugins.set(pluginList)
   }
 
+  tasks {
+    prepareTestingSandbox {
+      // Set custom plugin directory name for tests.
+      // Otherwise, `prepareTestingSandbox` merge directories of `markdown` plugin and `markdown` modules
+      // into single one
+      pluginName.set("edu-markdown")
+    }
+  }
+
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":code-insight"))
