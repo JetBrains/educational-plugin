@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.ide.plugins.DisabledPluginsState
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
@@ -65,13 +65,11 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
 
     val disablePluginListener = Runnable { ApplicationManager.getApplication().invokeLater { panel.doValidation() } }
     Disposer.register(disposable, Disposable {
-      // BACKCOMPAT: 2020.3
-      @Suppress("UnstableApiUsage", "DEPRECATION")
-      PluginManager.getInstance().removeDisablePluginListener(disablePluginListener)
+      @Suppress("UnstableApiUsage")
+      DisabledPluginsState.removeDisablePluginListener(disablePluginListener)
     })
-    // BACKCOMPAT: 2020.3
-    @Suppress("UnstableApiUsage", "DEPRECATION")
-    PluginManager.getInstance().addDisablePluginListener(disablePluginListener)
+    @Suppress("UnstableApiUsage")
+    DisabledPluginsState.addDisablePluginListener(disablePluginListener)
   }
 
 

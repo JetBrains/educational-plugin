@@ -197,7 +197,8 @@ public abstract class CourseProjectGenerator<S> {
     boolean isNewCourseCreatorCourse = CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty();
 
     if (isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
-      markTrusted(project);
+      //noinspection UnstableApiUsage
+      TrustedProjects.setTrusted(project, true);
     }
 
     if (isNewCourseCreatorCourse) {
@@ -280,21 +281,5 @@ public abstract class CourseProjectGenerator<S> {
     if (course.getVisibility() instanceof CourseVisibility.FeaturedVisibility) return true;
     if (course.getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == Boolean.TRUE) return true;
     return false;
-  }
-
-  @SuppressWarnings("UnstableApiUsage")
-  private static void markTrusted(@NotNull Project project) {
-    // BACKCOMPAT: 2020.3. Just drop this try and inline the method.
-    // Try to load `TrustedProjects` class to ensure that IDE already has the corresponding API
-    // and do nothing if API doesn't exist.
-    // The API is available only since 2020.3.3
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      TrustedProjects.class.getName();
-    } catch (LinkageError e) {
-      return;
-    }
-
-    TrustedProjects.setTrusted(project, true);
   }
 }

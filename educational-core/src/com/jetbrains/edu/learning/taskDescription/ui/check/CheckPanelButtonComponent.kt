@@ -62,16 +62,19 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     }
     if (isEnabled) {
       button.addActionListener { e ->
+        val dataContext = DataManager.getInstance().getDataContext(this)
         val event = AnActionEvent(
           null,
-          DataManager.getInstance().getDataContext(this),
+          dataContext,
           CheckPanel.ACTION_PLACE,
           PresentationFactory().getPresentation(action),
           ActionManager.getInstance(),
           e.modifiers
         )
-        // BACKCOMPAT: 2020.3. Replace with `performActionDumbAwareWithCallbacks`
-        ActionUtil.performActionDumbAware(action, event)
+
+        // BACKCOMPAT: 2021.1
+        @Suppress("DEPRECATION")
+        ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
       }
     }
     return button

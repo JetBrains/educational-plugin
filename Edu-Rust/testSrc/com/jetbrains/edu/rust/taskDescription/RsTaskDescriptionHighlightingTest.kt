@@ -1,9 +1,6 @@
 package com.jetbrains.edu.rust.taskDescription
 
 import com.intellij.lang.Language
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.lang.RsLanguage
@@ -11,12 +8,6 @@ import org.rust.lang.RsLanguage
 class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = RsLanguage
   override val settings: Any = RsProjectSettings(null)
-
-  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-    // BACKCOMPAT: 2020.3
-    if (ApplicationInfo.getInstance().build < BUILD_211) return
-    super.runTestRunnable(testRunnable)
-  }
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
@@ -87,9 +78,4 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      </body>
     </html>
   """)
-
-  companion object {
-    // BACKCOMPAT: 2020.3
-    private val BUILD_211 = BuildNumber.fromString("211")!!
-  }
 }
