@@ -5,6 +5,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
@@ -17,7 +18,9 @@ class CCNewCourseAction(
   constructor(@Nls(capitalization = Nls.Capitalization.Title) title: String) : this(Supplier { title })
 
   override fun actionPerformed(e: AnActionEvent) {
-    CCNewCourseDialog(EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create"), onOKAction = onOKAction).show()
+    EduCounterUsageCollector.createNewCourseClicked(e.place)
+    CCNewCourseDialog(EduCoreBundle.message("dialog.title.create.course"), EduCoreBundle.message("button.create"),
+                      onOKAction = onOKAction).show()
   }
 
   override fun getHelpRelativePath(): String = "education/educator-start-guide.html"

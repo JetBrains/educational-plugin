@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 import kotlin.coroutines.CoroutineContext
 
@@ -77,4 +78,9 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.languageSettings })
 
   override fun createCenterPanel(): JComponent = panel
+
+  companion object {
+    @NonNls
+    const val ACTION_PLACE = "COURSE_SELECTION_DIALOG"
+  }
 }

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
@@ -60,12 +61,18 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   }
 
   @Suppress("unused") //enum values are not mentioned explicitly
-  private enum class CourseSelectionViewSource(private val actionPlace: String? = null) {
-    WELCOME_SCREEN(ActionPlaces.WELCOME_SCREEN), MAIN_MENU(ActionPlaces.MAIN_MENU), FIND_ACTION(ActionPlaces.ACTION_SEARCH), UNKNOWN;
+  private enum class CourseActionSource(private val actionPlace: String? = null) {
+    WELCOME_SCREEN(ActionPlaces.WELCOME_SCREEN),
+    MAIN_MENU(ActionPlaces.MAIN_MENU),
+    FIND_ACTION(ActionPlaces.ACTION_SEARCH),
+    COURSE_SELECTION_DIALOG(BrowseCoursesDialog.ACTION_PLACE),
+    UNKNOWN;
 
     companion object {
-      fun fromActionPlace(actionPlace: String): CourseSelectionViewSource {
-        return values().firstOrNull { it.actionPlace == actionPlace } ?: UNKNOWN
+      fun fromActionPlace(actionPlace: String): CourseActionSource {
+        // it is possible to have action place like "popup@WelcomScreen"
+        val actionPlaceParsed = actionPlace.split("@").last()
+        return values().firstOrNull { it.actionPlace == actionPlaceParsed } ?: UNKNOWN
       }
     }
   }
@@ -104,7 +111,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 5)
+    private val GROUP = EventLogGroup("educational.counters", 6)
 
     private val COURSE_MODE_FIELD = EventFields.String(MODE,
                                                        listOf(EduNames.STUDY, CCUtils.COURSE_MODE))
@@ -154,10 +161,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val CODEFORCES_SUBMIT_SOLUTION_EVENT = GROUP.registerEvent("codeforces.submit.solution")
     private val TWITTER_DIALOG_SHOWN_EVENT = GROUP.registerEvent("twitter.dialog.shown", ITEM_TYPE_FIELD, LANGUAGE_FIELD)
     private val COURSE_SELECTION_VIEW_OPENED_EVENT = GROUP.registerEvent("open.course.selection.view",
-                                                                         enumField<CourseSelectionViewSource>(SOURCE))
+                                                                         enumField<CourseActionSource>(SOURCE))
     private val COURSE_SELECTION_TAB_SELECTED_EVENT = GROUP.registerEvent("select.tab.course.selection.view",
                                                                           enumField<CourseSelectionViewTab>(EDU_TAB))
     private val VIEW_EVENT = GROUP.registerEvent("open.task", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
+    private val CREATE_NEW_COURSE_CLICK_EVENT = GROUP.registerEvent("create.new.course.clicked",
+                                                                    enumField<CourseActionSource>(SOURCE))
 
 
     @JvmStatic
@@ -234,12 +243,16 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     @JvmStatic
     fun courseSelectionViewOpened(actionPlace: String) {
-      COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseSelectionViewSource.fromActionPlace(actionPlace))
+      COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
     }
 
     @JvmStatic
     fun courseSelectionTabSelected(provider: CoursesPlatformProvider) {
       COURSE_SELECTION_TAB_SELECTED_EVENT.log(CourseSelectionViewTab.fromProvider(provider))
+    }
+
+    fun createNewCourseClicked(actionPlace: String) {
+      CREATE_NEW_COURSE_CLICK_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
     }
 
     @JvmStatic
