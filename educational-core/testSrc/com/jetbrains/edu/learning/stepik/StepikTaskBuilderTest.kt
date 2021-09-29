@@ -87,8 +87,8 @@ class StepikTaskBuilderTest : EduTestCase() {
     val options = block!!.options
 
     assertInstanceOf(options, PyCharmStepOptions::class.java)
-    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)));
-    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 8)));
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)))
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 8)))
   }
 
   fun `test code task no language specific limits`() {
@@ -100,8 +100,8 @@ class StepikTaskBuilderTest : EduTestCase() {
     val options = block!!.options
 
     assertInstanceOf(options, PyCharmStepOptions::class.java)
-    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)));
-    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 5)));
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.memory.limit", 256)))
+    assertTrue(task.descriptionText.contains(EduCoreBundle.message("stepik.time.limit", 5)))
   }
 
   private inline fun <reified T : Task> doTest(language: Language, postSubmissionOnOpen: Boolean = true) {
