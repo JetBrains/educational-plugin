@@ -68,7 +68,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   fun `test custom check interval for ongoing contest`() {
-    val secondsToEnd = 1000L
+    val secondsToEnd = 3L
     val course = createCodeforcesCourse().apply {
       startDate = ZonedDateTime.now().minusSeconds(secondsToEnd)
       endDateTime = ZonedDateTime.now().plusSeconds(secondsToEnd)
