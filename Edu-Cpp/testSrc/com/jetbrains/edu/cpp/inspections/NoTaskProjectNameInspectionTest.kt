@@ -93,7 +93,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
     val cMakeListsFile = findFile("$taskPath/${CMakeListsFileType.FILE_NAME}")
 
     val document = FileDocumentManager.getInstance().getDocument(cMakeListsFile)
-    kotlin.test.assertNotNull(document, "CMakeLists file document is null")
+    checkNotNull(document) { "CMakeLists file document is null" }
 
     myFixture.openFileInEditor(cMakeListsFile)
 

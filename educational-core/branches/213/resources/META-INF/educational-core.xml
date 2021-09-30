@@ -1,0 +1,9 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+
+  <!-- BACKCOMPAT: 2021.1. Inline it -->
+  <xi:include href="/META-INF/educational-core-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>

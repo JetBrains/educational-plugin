@@ -1,0 +1,10 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!-- BACKCOMPAT: 2021.1. Inline it -->
+  <xi:include href="/META-INF/android-plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <content>
+    <module name="jvm-core"/>
+    <module name="Edu-Android"/>
+  </content>
+</idea-plugin>

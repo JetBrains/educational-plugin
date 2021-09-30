@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
 class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) :
@@ -43,7 +42,7 @@ class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
     val testClasses: List<String> = testDirs.flatMap { testDir ->
       testDir.children.mapNotNull {
         val psiFile = PsiManager.getInstance(project).findFile(it) ?: return@mapNotNull null
-        KotlinJUnitRunConfigurationProducer.getTestClass(psiFile)?.qualifiedName
+        getTestClass(psiFile)?.qualifiedName
       }
     }
 

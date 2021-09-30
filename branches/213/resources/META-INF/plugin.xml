@@ -1,0 +1,28 @@
+<idea-plugin package="com.jetbrains.edu" xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
+  <!-- BACKCOMPAT: 2021.1. Inline it -->
+  <xi:include href="/META-INF/plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <!--update description in description.html file instead-->
+  <!--suppress PluginXmlValidity -->
+  <description/>
+
+  <!--update changes in changes.html file instead-->
+  <change-notes/>
+
+  <!--suppress PluginXmlValidity -->
+  <content>
+    <module name="edu-html"/>
+    <module name="edu-markdown"/>
+    <module name="edu-yaml"/>
+    <module name="jvm-core"/>
+    <module name="Edu-Java"/>
+    <module name="Edu-Kotlin"/>
+    <module name="Edu-Scala"/>
+    <module name="Edu-Android"/>
+    <module name="Edu-Python"/>
+    <module name="Edu-JavaScript"/>
+    <module name="Edu-Rust"/>
+    <module name="Edu-Cpp"/>
+    <module name="Edu-Go"/>
+  </content>
+</idea-plugin>
