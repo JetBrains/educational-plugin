@@ -93,12 +93,15 @@ val jvmPlugins = listOf(
 
 val changesFile = "changes.html"
 
+val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
+
 plugins {
   idea
   kotlin("jvm") version "1.5.0"
   id("org.jetbrains.intellij") version "1.1.4"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
+  id("org.gradle.test-retry") version "1.3.1"
 }
 
 idea {
@@ -120,6 +123,7 @@ allprojects {
     plugin("java")
     plugin("kotlin")
     plugin("net.saliman.properties")
+    plugin("org.gradle.test-retry")
   }
 
   repositories {
@@ -189,6 +193,12 @@ allprojects {
       ignoreFailures = true
       filter {
         isFailOnNoMatchingTests = false
+      }
+      if (isTeamCity) {
+        retry {
+          maxRetries.set(3)
+          maxFailures.set(5)
+        }
       }
     }
 
