@@ -18,6 +18,10 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
+import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -129,7 +133,15 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       updateCheckButtonWrapper(task)
       return
     }
-    val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = true)
+    val optionalActions = if (task is CodeforcesTask && CodeforcesSettings.getInstance().isLoggedIn()) {
+      listOf(SubmitCodeforcesSolutionAction.ACTION_ID, CodeforcesCopyAndSubmitAction.ACTION_ID).map {
+        ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
+      }
+    }
+    else {
+      null
+    }
+    val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = optionalActions == null, optionalActions = optionalActions)
     checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 

@@ -121,7 +121,7 @@ open class CodeforcesTask : Task() {
       return "${course.getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${course.languageCode}"
     }
 
-    private fun codeforcesProgramTypeId(course: CodeforcesCourse): Int? {
+    fun codeforcesProgramTypeId(course: CodeforcesCourse): Int? {
       val languageID = course.languageID
       val languageVersion = course.languageVersion
       return when {

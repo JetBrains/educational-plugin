@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
-class LoginDialog : DialogWrapper(false) {
-  val loginField = JBTextField()
+class LoginDialog(handle: String) : DialogWrapper(false) {
+  val loginField = JBTextField(handle)
   val passwordField = JBPasswordField()
 
   init {

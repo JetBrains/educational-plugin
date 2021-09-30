@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.MouseInfo
@@ -45,7 +46,8 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   private fun ToolWindow.initTitleActions() {
-    val actions = arrayOf(CCEditTaskDescription.ACTION_ID, PreviousTaskAction.ACTION_ID, NextTaskAction.ACTION_ID).map {
+    val actions = arrayOf(CCEditTaskDescription.ACTION_ID, PreviousTaskAction.ACTION_ID, NextTaskAction.ACTION_ID,
+                          CodeforcesShowLoginStatusAction.ACTION_ID).map {
       ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
     }
     setTitleActions(actions)

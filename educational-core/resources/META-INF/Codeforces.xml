@@ -35,6 +35,9 @@
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction"/>
     <action id="Educational.Codeforces.UpdateContest"
             class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
+    <action id="Codeforces.CodeforcesShowLoginStatus" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction"/>
+    <action id="Codeforces.CodeforcesLoginAction" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesLoginAction"/>
+    <action id="Codeforces.SubmitSolution" class="com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction"/>
     <action id="Educational.Codeforces.CreateTestSample"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.CODEFORCES_SMALL">

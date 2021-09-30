@@ -44,6 +44,26 @@ interface CodeforcesService {
     @Field("remember") remember: String = "on",
     @Header("Cookie") cookie: String): Call<ResponseBody>
 
+  @GET("/contest/{id}/submit")
+  fun getSubmissionPage(@Path("id") contestId: Int,
+                        @Query("locale") languageCode: String,
+                        @Query("programTypeId") programTypeId: String?,
+                        @Query("submittedProblemIndex") submittedProblemIndex: String,
+                        @Header("Cookie") cookie: String): Call<ResponseBody>
+
+  @POST("/contest/{id}/submit")
+  @FormUrlEncoded
+  fun postSolution(@Field("csrf_token") csrfToken: String,
+                   @Field("action") action: String = "submitSolutionFormSubmitted",
+                   @Field("ftaa") ftaa: String = "n/a",
+                   @Field("bfaa") bfaa: String = "n/a",
+                   @Field("submittedProblemIndex") submittedProblemIndex: String,
+                   @Field("source") source: String,
+                   @Field("programTypeId") programTypeId: String?,
+                   @Path("id") contestId: Int,
+                   @Query("csrf_token") csrf_token: String?,
+                   @Header("Cookie") cookie: String): Call<ResponseBody>
+
   @GET("/profile")
   fun profile(@Header("Cookie") jSessionId: String): Call<ResponseBody>
 

@@ -12,11 +12,13 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -83,6 +85,17 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     if (task == null) return
     val checkPanel = uiContent?.checkPanel ?: return
     readyToCheck()
+
+    ApplicationManager.getApplication().messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
+      override fun userLoggedIn() {
+        checkPanel.updateCheckPanel(task)
+      }
+
+      override fun userLoggedOut() {
+        checkPanel.updateCheckPanel(task)
+      }
+
+    })
     checkPanel.updateCheckPanel(task)
     UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
   }

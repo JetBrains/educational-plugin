@@ -1,13 +1,16 @@
 package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
@@ -25,6 +28,15 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: CodeforcesAccount? = null
+    set(value) {
+      field = value
+      if (value == null) {
+        ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()
+      }
+      else {
+        ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedIn()
+      }
+    }
 
   override fun getState(): Element? {
     val mainElement = Element(serviceName)
@@ -49,5 +61,6 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   companion object {
     @JvmStatic
     fun getInstance(): CodeforcesSettings = service()
+    val AUTHENTICATION_TOPIC = Topic.create("Codeforces.Authentication", EduLogInListener::class.java)
   }
 }

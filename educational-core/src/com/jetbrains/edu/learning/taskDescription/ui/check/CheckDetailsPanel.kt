@@ -4,14 +4,17 @@ import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.requests.SimpleDiffRequest
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
+import com.intellij.util.messages.Topic
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
@@ -19,7 +22,10 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesSubmissionErrorListener
+import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
@@ -29,21 +35,42 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
+import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
+import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.xmlUnescaped
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
+import java.awt.FlowLayout
 import javax.swing.BoxLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.SwingConstants
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
   init {
     val feedbackPanel = CheckFeedbackPanel(task, checkResult, alarm)
     val linksPanel = createLinksPanel(project, checkResult, task)
     val messagePanel = createMessagePanel(project, checkResult, linksPanel)
+
+    ApplicationManager.getApplication().messageBus.connect().subscribe(SubmitCodeforcesSolutionAction.ERROR_TOPIC,
+                                                                       object : CodeforcesSubmissionErrorListener {
+      override fun error(errorMessage: String) {
+        val label = JLabel(EduCoreBundle.message("codeforces.failed.to.submit.solution"), AllIcons.General.BalloonError, SwingConstants.LEFT).apply {
+          foreground = EduColors.wrongLabelForeground
+          toolTipText = errorMessage
+          border = JBUI.Borders.empty(9, 0, 0, 0)
+        }
+        val createActionLink = createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID)
+        val errorPanel = JPanel(BorderLayout()).apply {
+          add(label, BorderLayout.WEST)
+          add(createActionLink, BorderLayout.CENTER)
+        }
+        feedbackPanel.add(errorPanel, BorderLayout.NORTH)
+      }
+    })
 
     if (feedbackPanel.isVisible) {
       add(feedbackPanel, BorderLayout.NORTH)

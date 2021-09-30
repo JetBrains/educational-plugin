@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
@@ -19,6 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.HttpURLConnection
 
 abstract class CodeforcesConnector {
   @VisibleForTesting
@@ -144,6 +146,38 @@ abstract class CodeforcesConnector {
                                  handle = handle,
                                  password = password,
                                  cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
+  }
+
+  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<Boolean, String> {
+
+    if (!account.isUpToDate() && !getInstance().updateJSessionID(account)) {
+      return Err(EduCoreBundle.message("error.failed.to.refresh.session.id"))
+    }
+
+    val jSessionID = account.getSessionId()
+    val contestId = task.course.id
+    val languageCode = task.course.languageCode
+    val programTypeId = CodeforcesTask.codeforcesProgramTypeId(task.course as CodeforcesCourse)?.toString()
+    val submittedProblemIndex = task.presentableName.substringBefore(".")
+
+    val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, submittedProblemIndex,
+                                               "JSESSIONID=$jSessionID").executeParsingErrors().onError {
+      return Err(EduCoreBundle.message("error.failed.to.load.submission.page"))
+    }
+    val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("error.failed.to.parse.submission.page"))
+    val body = Jsoup.parse(htmlPage)
+    val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
+
+    val response = service.postSolution(csrfToken = csrfToken,
+                                        submittedProblemIndex = submittedProblemIndex,
+                                        source = solution,
+                                        contestId = contestId,
+                                        programTypeId = programTypeId,
+                                        csrf_token = csrfToken,
+                                        cookie = "JSESSIONID=$jSessionID").executeParsingErrors().onError {
+      return Err(EduCoreBundle.message("error.unknown.error"))
+    }
+    return Ok(response.isSuccessful && response.raw().priorResponse()?.code() == HttpURLConnection.HTTP_MOVED_TEMP)
   }
 
   fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {

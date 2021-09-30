@@ -14,8 +14,9 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -227,8 +228,10 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
     is CodeforcesCourse -> {
       linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
                                      OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)
-      linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
-                                     CodeforcesCopyAndSubmitAction.ACTION_ID, topMargin, leftMargin), BorderLayout.CENTER)
+      if (!CodeforcesSettings.getInstance().isLoggedIn()) {
+        linkPanel.add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"),
+                                       CodeforcesCopyAndSubmitAction.ACTION_ID, topMargin, leftMargin), BorderLayout.CENTER)
+      }
     }
   }
 }
