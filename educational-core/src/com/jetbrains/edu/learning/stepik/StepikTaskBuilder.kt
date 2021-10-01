@@ -370,13 +370,6 @@ open class StepikTaskBuilder(
     }
 
     @VisibleForTesting
-    fun String.prepareSample(): String {
-      val replaceBr = replace("\n", "<br>")
-      // text inside of a valid html
-      val wholeText = Jsoup.parse(replaceBr).wholeText()
-      // if it equals to source text, then it was not a valid html
-      val isValidHtml = wholeText != replaceBr
-      return if (isValidHtml) replaceBr.xmlEscaped else replaceBr
-    }
+    fun String.prepareSample(): String = xmlEscaped.replace("\n", "<br>")
   }
 }
