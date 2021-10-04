@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import javax.swing.Icon
 
 class KtCodeforcesLanguageProvider : CodeforcesLanguageProvider {
-  override val codeforcesLanguageNamings: List<String> = listOf("Kotlin")
+  override val codeforcesLanguageNamings: List<String> = listOf("Kotlin 1.4")
   override val configurator: EduConfigurator<JdkProjectSettings> = KtConfigurator()
   override val languageId: String = EduNames.KOTLIN
   override val templateFileName: String = "codeforces.Kotlin Main.kt"
