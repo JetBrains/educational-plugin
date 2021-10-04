@@ -181,7 +181,8 @@ public class EduCourse extends Course {
 
   @Override
   public boolean isViewAsEducatorEnabled() {
-    return getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != Boolean.TRUE;
+    return super.isViewAsEducatorEnabled() &&
+           getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != Boolean.TRUE;
   }
 
   public int getLearnersCount() {
