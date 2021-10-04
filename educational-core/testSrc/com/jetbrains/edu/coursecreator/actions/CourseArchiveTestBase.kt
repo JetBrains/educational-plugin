@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduUtils
@@ -30,17 +29,9 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       }
     }
 
-    //BACKCOMPAT: 203 use assertThrows
-    @Suppress("DEPRECATION")
-    assertException(object : AbstractExceptionCase<HugeBinaryFileException>() {
-      override fun getExpectedExceptionClass(): Class<HugeBinaryFileException> {
-        return HugeBinaryFileException::class.java
-      }
-
-      override fun tryClosure() {
-        generateJson()
-      }
-    }, null)
+    assertThrows(HugeBinaryFileException::class.java) {
+      generateJson()
+    }
   }
 
   protected fun doTest() {

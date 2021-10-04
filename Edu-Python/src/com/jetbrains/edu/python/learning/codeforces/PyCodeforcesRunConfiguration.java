@@ -25,30 +25,4 @@ public class PyCodeforcesRunConfiguration extends PythonRunConfiguration impleme
   public void setExecutableFile(@NotNull VirtualFile file) {
     setScriptName(file.getPath());
   }
-
-  // BACKCOMPAT: 2020.3: get rid of it when 203 branch will not be supported, it is implemented on pycharm side
-  @Override
-  public @NotNull InputRedirectOptions getInputRedirectOptions() {
-    return new InputRedirectOptions() {
-      @Override
-      public boolean isRedirectInput() {
-        return PyCodeforcesRunConfiguration.this.isRedirectInput();
-      }
-
-      @Override
-      public void setRedirectInput(boolean value) {
-        PyCodeforcesRunConfiguration.this.setRedirectInput(value);
-      }
-
-      @Override
-      public @NotNull String getRedirectInputPath() {
-        return getInputFile();
-      }
-
-      @Override
-      public void setRedirectInputPath(String value) {
-        setInputFile(value);
-      }
-    };
-  }
 }

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.StreamUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.taskDescription.IMG_TAG
@@ -13,7 +12,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.apache.commons.lang.text.StrSubstitutor
 import org.jsoup.Jsoup
 import java.io.File
-import java.nio.charset.StandardCharsets
 
 const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
 const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
@@ -31,9 +29,8 @@ fun loadText(filePath: String): String? {
     return null
   }
 
-  // BACKCOMPAT 2020.2
-  stream.use {
-    return StreamUtil.readText(stream, StandardCharsets.UTF_8)
+  return stream.use {
+    it.bufferedReader().readText()
   }
 }
 
