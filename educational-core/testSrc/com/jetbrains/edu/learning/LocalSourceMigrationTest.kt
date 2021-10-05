@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.junit.internal.runners.JUnit38ClassRunner
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit38ClassRunner::class) // TODO: drop the annotation when issue with Gradle test scanning go away
 class LocalSourceMigrationTest : BasePlatformTestCase() {
 
   private val beforeFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"

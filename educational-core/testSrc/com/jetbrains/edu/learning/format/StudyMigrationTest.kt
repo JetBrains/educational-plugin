@@ -7,8 +7,11 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import junit.framework.ComparisonFailure
 import org.jdom.Element
+import org.junit.internal.runners.JUnit38ClassRunner
+import org.junit.runner.RunWith
 import java.nio.file.Paths
 
+@RunWith(JUnit38ClassRunner::class) // TODO: drop the annotation when issue with Gradle test scanning go away
 class StudyMigrationTest : BasePlatformTestCase() {
 
   fun testFromThirdToForth() = doTest(3)
