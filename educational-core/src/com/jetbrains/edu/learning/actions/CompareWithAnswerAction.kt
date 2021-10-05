@@ -55,7 +55,7 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.lazyMessage("
     val requests = taskFiles.mapNotNull {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
-      val solution = getSolution(it) ?: return@mapNotNull null
+      val solution = getSolution(it)
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
       SimpleDiffRequest(EduCoreBundle.message("compare.with.answer.description"), studentFileContent, solutionFileContent, virtualFile.name,
                         "${virtualFile.name} Answer")
