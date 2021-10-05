@@ -17,10 +17,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeOAuthAccount;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
@@ -30,10 +26,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   @Nullable
   private StepikUser myUser;
-  private long myLastTimeChecked;
   @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
-
-  private Set<Integer> myShownCourseIds;
 
   public EduSettings() {
     init();
@@ -41,24 +34,6 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   @VisibleForTesting
   public void init() {
-    myLastTimeChecked = System.currentTimeMillis();
-    myShownCourseIds = Collections.emptySet();
-  }
-
-  public long getLastTimeChecked() {
-    return myLastTimeChecked;
-  }
-
-  public void setLastTimeChecked(long timeChecked) {
-    myLastTimeChecked = timeChecked;
-  }
-
-  public Set<Integer> getShownCourseIds() {
-    return new HashSet<>(myShownCourseIds);
-  }
-
-  public void setShownCourseIds(@NotNull Set<Integer> shownCourseIds) {
-    myShownCourseIds = new HashSet<>(shownCourseIds);
   }
 
   @Nullable
