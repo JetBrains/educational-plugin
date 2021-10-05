@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
 public abstract class Course extends LessonContainer {
-  transient private List<UserInfo> authors = new ArrayList<>();
+  transient private List<UserInfo> authors = Collections.emptyList();
   private String description;
 
   private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
@@ -118,7 +118,7 @@ public abstract class Course extends LessonContainer {
 
   @NotNull
   public List<UserInfo> getAuthors() {
-    return authors;
+    return Collections.unmodifiableList(authors);
   }
 
   @NotNull
@@ -203,7 +203,7 @@ public abstract class Course extends LessonContainer {
   }
 
   public void setAuthors(List<UserInfo> authors) {
-    this.authors = authors;
+    this.authors = Collections.unmodifiableList(new ArrayList<>(authors));
   }
 
   @NotNull

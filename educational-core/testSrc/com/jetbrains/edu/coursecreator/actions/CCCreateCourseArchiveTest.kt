@@ -20,8 +20,8 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import com.jetbrains.edu.learning.setStepikAuthorsAsString
 import com.jetbrains.edu.learning.setUpPluginDependencies
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.yaml.configFileName
 import java.text.SimpleDateFormat
 import java.util.*
@@ -96,7 +96,8 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.description = "my summary"
-    course.setStepikAuthorsAsString(arrayOf("EduTools Dev", "EduTools QA", "EduTools"))
+    course.authors = listOf(StepikUserInfo("EduTools Dev"), StepikUserInfo("EduTools QA"),
+                            StepikUserInfo("EduTools"))
     doTest()
   }
 
