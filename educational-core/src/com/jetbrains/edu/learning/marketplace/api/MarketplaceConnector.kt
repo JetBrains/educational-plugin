@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
+import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
@@ -14,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.messages.Topic
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
@@ -29,10 +31,13 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import okhttp3.ConnectionPool
+import retrofit2.Call
+import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
 import java.net.HttpURLConnection
@@ -232,33 +237,77 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
     if (!isUserAuthorized()) return
     LOG.info("Uploading new course from ${file.absolutePath}")
-    val courseBean = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody()).executeParsingErrors(true)
-      .flatMap {
-        val resultResponse = it.body()
-        return@flatMap if (resultResponse == null) Err(message("notification.course.creator.failed.to.upload.course.title"))
-        else Ok(resultResponse)
-      }
+
+    val response = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody())
+      .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.upload.course.title"),
+                                  showLogAction,
+                                  {
+                                    showAcceptDeveloperAgreementNotification(project) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
+                                  }, {})
       .onError {
-        showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
-        return
+        LOG.error("Failed to upload course ${course.name}: $it")
+        null
       }
 
+    val courseBean = response?.body()
+    if (courseBean == null) {
+      showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
+      return
+    }
     course.id = courseBean.id
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
 
     val message = message("marketplace.push.course.successfully.uploaded", courseBean.name)
     showNotification(project,
-                     openOnMarketplaceAction(course.id),
+                     openOnMarketplaceAction(course.getMarketplaceUrl()),
                      message,
                      message("marketplace.push.course.successfully.uploaded.message"))
     LOG.info("$message with id ${courseBean.id}")
   }
 
-  private fun openOnMarketplaceAction(courseId: Int): AnAction {
+  fun <T> Call<T>.executeUploadParsingErrors(project: Project,
+                                             failedActionMessage: String,
+                                             onErrorAction: AnAction,
+                                             showOnForbiddenCodeNotification: () -> Unit,
+                                             showOnNotFoundCodeNotification: () -> Unit
+  ): Result<Response<T>, String> {
+    val response = executeCall().onError { return Err(it) }
+    val responseCode = response.code()
+    val errorBody = response.errorBody()?.string() ?: return Ok(response)
+    val errorMessage = "$errorBody Code $responseCode"
+    return when (responseCode) {
+      HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response)
+      HttpURLConnection.HTTP_FORBIDDEN -> {
+        showOnForbiddenCodeNotification()
+        Err(errorMessage) // 403
+      }
+      HttpURLConnection.HTTP_NOT_FOUND -> {
+          showOnNotFoundCodeNotification()
+          Err(errorMessage) //404
+        }
+      HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
+        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        Err("${message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
+      }
+      in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
+        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        Err("${message("error.service.down")}\n\n$errorMessage") // 500x
+      }
+      else -> {
+        LOG.warn("Code $responseCode is not handled")
+        showErrorNotification(project, failedActionMessage, action = onErrorAction)
+        Err(message("error.unexpected.error", errorMessage))
+      }
+    }
+  }
+
+  private fun EduCourse.getMarketplaceUrl() = "$MARKETPLACE_PLUGIN_URL/${this.id}"
+
+  private fun openOnMarketplaceAction(link: String): AnAction {
     return object : AnAction(message("action.open.on.text", MARKETPLACE)) {
       override fun actionPerformed(e: AnActionEvent) {
-        EduBrowser.getInstance().browse("$MARKETPLACE_PLUGIN_URL/$courseId")
+        EduBrowser.getInstance().browse(link)
       }
     }
   }
@@ -270,41 +319,30 @@ abstract class MarketplaceConnector : CourseConnector {
   private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
     if (!isUserAuthorized()) return
     LOG.info("Uploading course update from ${file.absolutePath}")
-
-    repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id).executeCall().flatMap {
-      val errorBody = it.errorBody()?.string() ?: return@flatMap Ok(it)
-      val errorMessage = "$errorBody Code ${it.code()}"
-      return@flatMap when(it.code()) {
-        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(it)
-        HttpURLConnection.HTTP_FORBIDDEN -> {
-          showNoRightsToUpdateNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
-          Err(errorMessage) // 403
-        }
-        HttpURLConnection.HTTP_NOT_FOUND -> {
-          showFailedToFindMarketplaceCourseOnRemoteNotification(project, course) { uploadNewCourseUnderProgress(project, course, file) }
-          Err(errorMessage) //404
-        }
-        HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
-          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
-          Err("${message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
-        }
-        in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
-          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
-          Err("${message("error.service.down")}\n\n$errorMessage") // 500x
-        }
-        else -> {
-          LOG.warn("Code ${it.code()} is not handled")
-          showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
-          Err(message("error.unexpected.error", errorMessage))
-        }
-      }
-    }.onError {
-      LOG.error("Failed to upload course update for course ${course.id}: ${it}")
-      return
+    val uploadAsNewCourseAction: AnAction = NotificationAction.createSimpleExpiring(
+      EduCoreBundle.message("notification.course.creator.access.denied.action")) {
+      course.convertToLocal()
+      uploadNewCourseUnderProgress(project, course, file)
     }
 
+    repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id)
+      .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.update.course.title"),
+                                  uploadAsNewCourseAction,
+                                  {
+                                    showNoRightsToUpdateNotification(project, course) {
+                                      uploadNewCourseUnderProgress(project, course, file)
+                                    }
+                                  },
+                                  {
+                                    showFailedToFindMarketplaceCourseOnRemoteNotification(project, uploadAsNewCourseAction)
+                                  })
+      .onError {
+        LOG.error("Failed to upload course update for course ${course.id}: ${it}")
+        return
+      }
+
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
-    showNotification(project, message, openOnMarketplaceAction(course.id))
+    showNotification(project, message, openOnMarketplaceAction(course.getMarketplaceUrl()))
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
   }

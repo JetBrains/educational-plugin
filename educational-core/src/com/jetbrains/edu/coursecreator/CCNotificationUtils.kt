@@ -68,15 +68,19 @@ object CCNotificationUtils {
                           })
   }
 
-  fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, course: EduCourse, action: () -> Unit) {
+  fun showAcceptDeveloperAgreementNotification(project: Project, action: () -> AnAction) {
+    showErrorNotification(project,
+                          EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
+                          EduCoreBundle.message("marketplace.plugin.development.agreement.not.accepted"),
+                          action()
+    )
+  }
+
+  fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
     showErrorNotification(project,
                           EduCoreBundle.message("error.failed.to.update"),
                           EduCoreBundle.message("marketplace.failed.to.update.no.course"),
-                          NotificationAction.createSimpleExpiring(
-                            EduCoreBundle.message("notification.course.creator.access.denied.action")) {
-                            course.convertToLocal()
-                            action()
-                          })
+                          action)
   }
 
   fun createPostCourseNotificationListener(course: EduCourse, action: () -> Unit): NotificationListener.Adapter {
