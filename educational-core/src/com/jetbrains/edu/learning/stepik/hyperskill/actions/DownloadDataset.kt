@@ -90,6 +90,9 @@ class DownloadDataset(
     if (isDatasetNewlyCreated) {
       showDatasetFilePathNotification(project, EduCoreBundle.message("hyperskill.dataset.downloaded.successfully"),
                                       dataset.presentableUrl)
+      if (!isUnitTestMode) {
+        showTooltipForDataset(project, dataset)
+      }
     }
     TaskDescriptionView.getInstance(project).updateCheckPanel(task)
   }
