@@ -246,10 +246,10 @@ abstract class MarketplaceConnector : CourseConnector {
                                   }, {})
       .onError {
         LOG.error("Failed to upload course ${course.name}: $it")
-        null
+        return
       }
 
-    val courseBean = response?.body()
+    val courseBean = response.body()
     if (courseBean == null) {
       showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
       return
