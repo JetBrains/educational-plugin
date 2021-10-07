@@ -65,6 +65,8 @@ val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 
 // BACKCOMPAT: 2021.1
 val isAtLeast212 = environmentName.toInt() >= 212
+// BACKCOMPAT: 2021.2
+val isAtLeast213 = environmentName.toInt() >= 213
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -612,7 +614,9 @@ project(":Edu-Python") {
   intellij {
     val pluginList = listOfNotNull(
       pythonPlugin,
-      if (isJvmCenteredIDE) "java" else null
+      if (isJvmCenteredIDE) "java" else null,
+      // needed only for tests, actually
+      if (isAtLeast213) "platform-images" else null
     )
     plugins.set(pluginList)
   }
