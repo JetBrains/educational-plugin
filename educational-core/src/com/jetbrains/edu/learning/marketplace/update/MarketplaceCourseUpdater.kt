@@ -69,12 +69,11 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
   }
 
   private fun placeholderChanged(newPlaceholder: AnswerPlaceholder, placeholder: AnswerPlaceholder): Boolean =
-    newPlaceholder.length != placeholder.length
+    newPlaceholder.length != placeholder.initialState.length
+    || newPlaceholder.offset != placeholder.initialState.offset
     || newPlaceholder.placeholderText != placeholder.placeholderText
-    || newPlaceholder.offset != placeholder.offset
     || newPlaceholder.possibleAnswer != placeholder.possibleAnswer
     || newPlaceholder.placeholderDependency.toString() != placeholder.placeholderDependency.toString()
-    || newPlaceholder.index != placeholder.index
 
   // we keep CheckStatus.Solved for task even if it was updated
   // we keep CheckStatus.Failed for task only if it was not updated
