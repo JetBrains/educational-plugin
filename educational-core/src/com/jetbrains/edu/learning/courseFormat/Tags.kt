@@ -1,8 +1,15 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.ide.plugins.newui.TagComponent
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.util.*
 import javax.swing.JComponent
+
+@NonNls
+private const val PROGRAMMING_LANGUAGE_TAG_SEARCH_OPTION = "programming_language"
+@NonNls
+private const val LANGUAGE_TAG_SEARCH_OPTION = "language"
 
 open class Tag @JvmOverloads constructor(val text: String, private val searchOption: String = "tag") {
   fun getSearchText(): String = "$searchOption:$text".toLowerCase()
@@ -19,10 +26,10 @@ open class Tag @JvmOverloads constructor(val text: String, private val searchOpt
   fun createComponent(): JComponent = TagComponent(text)
 }
 
-class ProgrammingLanguageTag(language: String) : Tag(language, "programming_language")
+class ProgrammingLanguageTag(language: String) : Tag(language, PROGRAMMING_LANGUAGE_TAG_SEARCH_OPTION)
 
-class HumanLanguageTag(languageName: String) : Tag(languageName, searchOption = "language")
+class HumanLanguageTag(languageName: String) : Tag(languageName, LANGUAGE_TAG_SEARCH_OPTION)
 
-class FeaturedTag : Tag("Featured")
+class FeaturedTag : Tag(EduCoreBundle.message("course.dialog.tags.featured"))
 
-class InProgressTag : Tag("In Progress")
+class InProgressTag : Tag(EduCoreBundle.message("course.dialog.tags.in.progress"))

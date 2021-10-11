@@ -40,14 +40,6 @@ val Course.project: Project? get() {
   return null
 }
 
-val Course.tooltipText: String? get() {
-  return if (compatibility != CourseCompatibility.Compatible) {
-    "Course version is incompatible with plugin version"
-  } else {
-    visibility.tooltipText
-  }
-}
-
 fun Course.getDecoratedLogo(icon: Icon?): Icon? {
   if (icon == null) return null
   return if (compatibility != CourseCompatibility.Compatible) {

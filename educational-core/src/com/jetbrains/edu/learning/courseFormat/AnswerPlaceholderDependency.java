@@ -7,6 +7,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,13 +104,13 @@ public class AnswerPlaceholderDependency {
       AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, file, placeholderIndex, isVisible);
       AnswerPlaceholder targetPlaceholder = dependency.resolve(course);
       if (targetPlaceholder == null) {
-        throw new InvalidDependencyException(text, "non existing answer placeholder");
+        throw new InvalidDependencyException(text, EduCoreBundle.message("exception.placeholder.non.existing"));
       }
       if (targetPlaceholder.getTaskFile().getTask() == task) {
-        throw new InvalidDependencyException(text, "dependencies should refer to tasks other than source one");
+        throw new InvalidDependencyException(text, EduCoreBundle.message("exception.placeholder.wrong.reference.to.source"));
       }
       if (refersToNextTask(task, targetPlaceholder.getTaskFile().getTask())) {
-        throw new InvalidDependencyException(text, "dependencies should refer to previous tasks, not next ones");
+        throw new InvalidDependencyException(text, EduCoreBundle.message("exception.placeholder.wrong.reference.to.next"));
       }
       return dependency;
     }
@@ -195,12 +196,12 @@ public class AnswerPlaceholderDependency {
     private final String myCustomMessage;
 
     public InvalidDependencyException(String dependencyText) {
-      super("'" + dependencyText + "'" + " is not a valid placeholder dependency");
-      myCustomMessage = "invalid dependency";
+      super(EduCoreBundle.message("exception.placeholder.invalid.dependency.detailed", dependencyText));
+      myCustomMessage = EduCoreBundle.message("exception.placeholder.invalid.dependency");
     }
 
     public InvalidDependencyException(String dependencyText, String customMessage) {
-      super("'" + dependencyText + "'" + " is not a valid placeholder dependency\n" + customMessage);
+      super(EduCoreBundle.message("exception.placeholder.invalid.dependency.detailed.with.custom.message", dependencyText, customMessage));
       myCustomMessage = customMessage;
     }
 

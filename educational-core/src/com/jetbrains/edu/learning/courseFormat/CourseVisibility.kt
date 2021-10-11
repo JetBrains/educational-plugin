@@ -5,6 +5,7 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.LayeredIcon
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.Icon
 
 sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibility> {
@@ -15,7 +16,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
   open fun getDecoratedLogo(icon: Icon?): Icon? = icon
 
   object PrivateVisibility : CourseVisibility(0) {
-    override val tooltipText = "Course is private"
+    override val tooltipText = EduCoreBundle.message("course.visibility.private")
 
     override fun getDecoratedLogo(icon: Icon?): Icon {
       val layeredIcon = LayeredIcon(2)
@@ -28,7 +29,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
   object LocalVisibility : CourseVisibility(3)
 
   object PublicVisibility : CourseVisibility(4) {
-    override val tooltipText = "Course has not been approved by JetBrains yet"
+    override val tooltipText = EduCoreBundle.message("course.visibility.public.not.approved")
     override val textAttributes: SimpleTextAttributes = SimpleTextAttributes.GRAYED_ATTRIBUTES
 
     override fun getDecoratedLogo(icon: Icon?) = icon?.let { IconLoader.getTransparentIcon(it) }
