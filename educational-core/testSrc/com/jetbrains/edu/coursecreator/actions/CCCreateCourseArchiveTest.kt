@@ -100,6 +100,19 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test local course with content tags`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    course.contentTags = listOf("kotlin", "cycles")
+    doTest()
+  }
+
   fun `test framework lesson archive`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       frameworkLesson("my lesson") {
@@ -114,6 +127,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test framework lesson with content tags`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson("my lesson") {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    course.lessons[0].contentTags = listOf("kotlin", "cycles")
+    doTest()
+  }
+
   fun `test sections`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
@@ -125,6 +153,22 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.description = "my summary"
+    doTest()
+  }
+
+  fun `test section with content tags`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("taskFile1.txt")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    val section = course.sections[0]
+    section.contentTags = listOf("kotlin", "cycles")
     doTest()
   }
 
@@ -330,6 +374,20 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     course.description = "my summary"
     val task = course.lessons.first().taskList.first()
     task.customPresentableName = "custom name"
+    doTest()
+  }
+
+  fun `test task with content tags`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    val task = course.lessons.first().taskList.first()
+    task.contentTags = listOf("kotlin", "cycles")
     doTest()
   }
 

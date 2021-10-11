@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
@@ -23,7 +24,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
  * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(CUSTOM_NAME, CONTENT)
+@JsonPropertyOrder(CUSTOM_NAME, CONTENT, TAGS)
 @JsonDeserialize(builder = LessonBuilder::class)
 abstract class LessonYamlMixin {
   @JsonProperty(CUSTOM_NAME)
@@ -33,11 +34,17 @@ abstract class LessonYamlMixin {
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   private lateinit var items: List<StudyItem>
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  protected open lateinit var contentTags: List<String>
 }
 
 @JsonPOJOBuilder(withPrefix = "")
 open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList(),
-                         @JsonProperty(CUSTOM_NAME) val customName: String? = null) {
+                         @JsonProperty(CUSTOM_NAME) val customName: String? = null,
+                         @JsonProperty(TAGS) val contentTags: List<String> = emptyList()
+) {
   @Suppress("unused") //used for deserialization
   private fun build(): Lesson {
     val lesson = createLesson()
@@ -52,6 +59,7 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
 
     lesson.items = taskList
     lesson.customPresentableName = customName
+    lesson.contentTags = contentTags
     return lesson
   }
 

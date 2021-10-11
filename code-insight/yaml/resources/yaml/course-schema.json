@@ -87,6 +87,11 @@
         "name"
       ],
       "additionalProperties": false
+    },
+    "tags": {
+      "description": "Tags for content",
+      "type": "array",
+      "uniqueItems": true
     }
   },
   "required": [

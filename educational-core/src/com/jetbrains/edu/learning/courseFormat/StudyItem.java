@@ -34,6 +34,7 @@ public abstract class StudyItem {
   protected int myId;
   private Date myUpdateDate = new Date(0);
   private final UserDataHolder myDataHolder = new UserDataHolderBase();
+  private List<String> contentTags = new ArrayList<>();
 
   @Transient
   public UserDataHolder getDataHolder() {
@@ -139,5 +140,14 @@ public abstract class StudyItem {
       return getName();
     }
     return parentsLine + VfsUtilCore.VFS_SEPARATOR + getName();
+  }
+
+  @NotNull
+  public List<String> getContentTags() {
+    return contentTags;
+  }
+
+  public void setContentTags(@NotNull List<String> tags) {
+    this.contentTags = tags;
   }
 }

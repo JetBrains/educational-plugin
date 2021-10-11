@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.EduNames.PYCHARM
@@ -65,7 +66,7 @@ import java.util.*
  */
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
-                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK)
+                   PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
   @JsonSerialize(converter = CourseTypeSerializationConverter::class)
@@ -116,6 +117,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   protected open lateinit var myFeedbackLink: String
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  protected open lateinit var contentTags: List<String>
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
@@ -126,6 +131,9 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
 
   @JsonIgnore
   override lateinit var myFeedbackLink: String
+
+  @JsonIgnore
+  override lateinit var contentTags: List<String>
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
@@ -200,7 +208,8 @@ private class CourseBuilder(
   @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
   @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
-  @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?
+  @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?,
+  @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList()
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -236,6 +245,7 @@ private class CourseBuilder(
       marketplaceCourseVersion = yamlCourseVersion ?: 1
       feedbackLink = yamlFeedbackLink
       solutionsHidden = areSolutionsHidden ?: false
+      contentTags = yamlContentTags
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()

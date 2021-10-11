@@ -29,6 +29,11 @@
     "solution_hidden": {
       "description": "If solution is available for learners to peek and compare with their answer",
       "type": "boolean"
+    },
+    "tags": {
+      "description": "Tags for content",
+      "type": "array",
+      "uniqueItems": true
     }
   },
   "additionalProperties": false,

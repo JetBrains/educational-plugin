@@ -6,6 +6,7 @@ object JsonMixinNames {
   const val NAME = "name"
   const val TITLE = "title"
   const val ITEMS = "items"
+  const val TAGS = "tags"
 
   // course
   const val AUTHORS = "authors"

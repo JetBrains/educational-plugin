@@ -27,6 +27,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_VERS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VENDOR
@@ -50,7 +51,7 @@ import java.util.*
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
-                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, ID, UPDATE_DATE)
+                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, TAGS, ID, UPDATE_DATE)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class),
   JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {

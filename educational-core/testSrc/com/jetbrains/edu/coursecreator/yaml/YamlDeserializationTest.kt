@@ -180,6 +180,24 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(link, course.feedbackLink)
   }
 
+  fun `test course with content tags`() {
+    val name = "Test Course"
+    val language = "Russian"
+    val programmingLanguage = "Plain text"
+    val contentTags = listOf("kotlin", "cycles")
+    val yamlContent = """
+      |title: $name
+      |language: $language
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |tags: $contentTags
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertEquals(contentTags, course.contentTags)
+  }
+
   fun `test section`() {
     val firstLesson = "Introduction Lesson"
     val secondLesson = "Advanced Lesson"
@@ -206,6 +224,22 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
     @Suppress("DEPRECATION")
     assertEquals(customSectionName, section.customPresentableName)
+  }
+
+  fun `test section with content tags`() {
+    val firstLesson = "Introduction Lesson"
+    val secondLesson = "Advanced Lesson"
+    val contentTags = listOf("kotlin", "cycles")
+    val yamlContent = """
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+      |tags: $contentTags
+    """.trimMargin()
+    val section = MAPPER.deserializeSection(yamlContent)
+    assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
+    @Suppress("DEPRECATION")
+    assertEquals(contentTags, section.contentTags)
   }
 
   fun `test lesson`() {
@@ -249,6 +283,22 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
 
+  fun `test lesson with content tags`() {
+    val lessonCustomName = "first lesson"
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val contentTags = listOf("kotlin", "cycles")
+    val yamlContent = """
+      |custom_name: $lessonCustomName
+      |content:
+      |- $firstTask
+      |- $secondTask
+      |tags: $contentTags
+    """.trimMargin()
+    val lesson = MAPPER.deserializeLesson(yamlContent)
+    assertEquals(contentTags, lesson.contentTags)
+  }
+
   fun `test framework lesson`() {
     val firstTask = "Introduction Task"
     val secondTask = "Advanced Task"
@@ -262,6 +312,22 @@ class YamlDeserializationTest : YamlTestCase() {
     check(lesson is FrameworkLesson)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
     assertTrue(lesson.isTemplateBased)
+  }
+
+  fun `test framework lesson with content tags`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val contentTags = listOf("kotlin", "cycles")
+    val yamlContent = """
+      |type: framework
+      |content:
+      |- $firstTask
+      |- $secondTask
+      |tags: $contentTags
+    """.trimMargin()
+    val lesson = MAPPER.deserializeLesson(yamlContent)
+    check(lesson is FrameworkLesson)
+    assertEquals(contentTags, lesson.contentTags)
   }
 
   fun `test empty framework lesson`() {
@@ -507,6 +573,31 @@ class YamlDeserializationTest : YamlTestCase() {
     val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
     assertEquals(3, answerPlaceholder.length)
     assertEquals("type here", answerPlaceholder.placeholderText)
+  }
+
+  fun `test edu task with content tags`() {
+    val contentTags = listOf("kotlin", "cycles")
+    val yamlContent = """
+    |type: edu
+    |custom_name: custom Name
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: type here
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |tags: $contentTags
+    |""".trimMargin()
+    val task = MAPPER.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    @Suppress("DEPRECATION")
+    assertEquals(contentTags, task.contentTags)
   }
 
   fun `test feedback link`() {

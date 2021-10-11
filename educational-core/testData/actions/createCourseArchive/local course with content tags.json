@@ -1,0 +1,35 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "taskFile1.txt" : {
+              "name" : "taskFile1.txt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "tags" : [
+    "kotlin",
+    "cycles"
+  ],
+  "version" : 12,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}

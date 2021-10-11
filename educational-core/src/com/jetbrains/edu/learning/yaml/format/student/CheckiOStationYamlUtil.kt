@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format.student
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -20,6 +21,9 @@ class CheckiOStationYamlMixin : LessonYamlMixin() {
   private fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+
+  @JsonIgnore
+  override lateinit var contentTags: List<String>
 }
 
 @JsonPOJOBuilder(withPrefix = "")

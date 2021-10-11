@@ -40,6 +40,71 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
+  fun `test codeforces task`() {
+    val course = course(courseProducer = ::CodeforcesCourse) {
+      lesson {
+        codeforcesTask("first task", "") { }
+      }
+    }
+
+    val task = course.lessons.first().taskList.first().apply {
+      record = 23
+      contentTags = listOf("kotlin", "cycles")
+    }
+    doTest(task, """
+          |type: codeforces
+          |status: Unchecked
+          |
+        """.trimMargin())
+  }
+
+  fun `test checkiO mission`() {
+    val course = course(courseProducer = ::CheckiOCourse) {
+      lesson {
+        mission ("mission") { }
+      }
+    }
+
+    val task = course.lessons.first().taskList.first().apply {
+      record = 23
+      contentTags = listOf("kotlin", "cycles")
+    }
+    doTest(task, """
+          |type: checkiO
+          |status: Unchecked
+          |seconds_from_change: 0
+          |
+        """.trimMargin())
+  }
+
+  fun `test edu task with content tags`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>42 is the answer</p>") {
+            placeholder(0, placeholderText = "type here\nand here")
+          }
+        }
+      }
+    }.findTask("lesson1", "task1")
+    task.contentTags = listOf("kotlin", "cycles")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  visible: true
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: |-
+    |      type here
+    |      and here
+    |tags:
+    |- kotlin
+    |- cycles
+    |""".trimMargin())
+  }
+
   fun `test empty placeholder`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -311,6 +376,26 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  fun `test lesson with content tags`() {
+    val lesson = course {
+      lesson {
+        eduTask("Introduction Task")
+        eduTask("Advanced Task")
+      }
+    }.items[0]
+    lesson.contentTags = listOf("kotlin", "cycles")
+    @Suppress("DEPRECATION") // using `customPresentableName` here is ok
+    doTest(lesson, """
+      |content:
+      |- Introduction Task
+      |- Advanced Task
+      |tags:
+      |- kotlin
+      |- cycles
+      |
+    """.trimMargin())
+  }
+
   fun `test use dir name for lesson with custom name`() {
     val course = course(courseMode = CCUtils.COURSE_MODE) {
       section {
@@ -343,6 +428,26 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- Introduction Task
       |- Advanced Task
+      |
+    """.trimMargin())
+  }
+
+  fun `test framework lesson with content tags`() {
+    val lesson = course(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson {
+        eduTask("Introduction Task")
+        eduTask("Advanced Task")
+      }
+    }.items[0]
+    lesson.contentTags = listOf("kotlin", "cycles")
+    doTest(lesson, """
+      |type: framework
+      |content:
+      |- Introduction Task
+      |- Advanced Task
+      |tags:
+      |- kotlin
+      |- cycles
       |
     """.trimMargin())
   }
@@ -393,6 +498,26 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  fun `test section with content tags`() {
+    val section = course(courseMode = CCUtils.COURSE_MODE) {
+      section {
+        lesson("Introduction Lesson")
+        lesson("Advanced Lesson")
+      }
+    }.items[0]
+
+    section.contentTags = listOf("kotlin", "cycles")
+    doTest(section, """
+      |content:
+      |- Introduction Lesson
+      |- Advanced Lesson
+      |tags:
+      |- kotlin
+      |- cycles
+      |
+    """.trimMargin())
+  }
+
   fun `test task feedback link`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
@@ -420,7 +545,7 @@ class YamlSerializationTest : YamlTestCase() {
     |""".trimMargin())
   }
 
-  fun `test with custom presentable name`() {
+  fun `test task with custom presentable name`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask { }
@@ -603,6 +728,21 @@ class YamlSerializationTest : YamlTestCase() {
       |summary: sum
       |programming_language: Plain text
       |programming_language_version: 1.42
+      |
+    """.trimMargin())
+  }
+
+  fun `test course with content tags`() {
+    val course = course(courseMode = CCUtils.COURSE_MODE) {}
+    course.contentTags = listOf("kotlin", "cycles")
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |tags:
+      |- kotlin
+      |- cycles
       |
     """.trimMargin())
   }

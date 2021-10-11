@@ -49,6 +49,11 @@
     "message_incorrect": {
       "type": "string",
       "description": "Custom message to be shown to learner in case of incorrect solution (ex. Review how to define a function to solve this task)"
+    },
+    "tags": {
+      "description": "Tags for content",
+      "type": "array",
+      "uniqueItems": true
     }
   },
   "additionalProperties": false,

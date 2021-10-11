@@ -22,6 +22,11 @@
       "description" : "If tasks text should be based on educator templates or not",
       "type" : "boolean",
       "default" : false
+    },
+    "tags": {
+      "description": "Tags for content",
+      "type": "array",
+      "uniqueItems": true
     }
   },
   "additionalProperties": false

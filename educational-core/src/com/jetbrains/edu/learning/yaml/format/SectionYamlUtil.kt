@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
@@ -20,7 +21,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
  * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(CUSTOM_NAME, CONTENT)
+@JsonPropertyOrder(CUSTOM_NAME, CONTENT, TAGS)
 @JsonDeserialize(builder = SectionBuilder::class)
 abstract class SectionYamlMixin {
   @JsonProperty(CUSTOM_NAME)
@@ -30,11 +31,17 @@ abstract class SectionYamlMixin {
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   private lateinit var items: List<StudyItem>
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var contentTags: List<String>
 }
 
 @JsonPOJOBuilder(withPrefix = "")
 private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList(),
-                             @JsonProperty(CUSTOM_NAME) val customName: String? = null) {
+                             @JsonProperty(CUSTOM_NAME) val customName: String? = null,
+                             @JsonProperty(TAGS) val contentTags: List<String> = emptyList()
+) {
   @Suppress("unused") //used for deserialization
   private fun build(): Section {
     val section = Section()
@@ -48,6 +55,7 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> =
     }
     section.items = items
     section.customPresentableName = customName
+    section.contentTags = contentTags
     return section
   }
 }

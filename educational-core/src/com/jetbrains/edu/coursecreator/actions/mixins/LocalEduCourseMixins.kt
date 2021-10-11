@@ -53,6 +53,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_H
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
@@ -81,7 +82,7 @@ import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
-                   ITEMS)
+                   ITEMS, TAGS)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -125,6 +126,10 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var solutionsHidden: Boolean = false
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var contentTags: List<String>
 }
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -177,6 +182,10 @@ abstract class LocalSectionMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var contentTags: List<String>
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -191,6 +200,10 @@ abstract class LocalLessonMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var contentTags: List<String>
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -230,6 +243,10 @@ abstract class LocalTaskMixin {
   fun getItemType(): String {
     throw NotImplementedInMixin()
   }
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var contentTags: List<String>
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

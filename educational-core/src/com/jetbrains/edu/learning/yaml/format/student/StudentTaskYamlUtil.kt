@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -30,7 +31,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import java.util.*
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD, TAGS)
 abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(STATUS)

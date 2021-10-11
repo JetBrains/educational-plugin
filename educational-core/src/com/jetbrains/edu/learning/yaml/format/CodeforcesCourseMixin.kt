@@ -22,4 +22,7 @@ abstract class CodeforcesCourseYamlMixin : CourseYamlMixin() {
 
   @JsonIgnore
   override lateinit var myFeedbackLink: String
+
+  @JsonIgnore
+  override lateinit var contentTags: List<String>
 }

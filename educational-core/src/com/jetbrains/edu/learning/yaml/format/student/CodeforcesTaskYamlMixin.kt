@@ -9,9 +9,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
+@Suppress("unused", "UNUSED_PARAMETER", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK)
 abstract class CodeforcesTaskYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
   override var myRecord: Int = -1
+
+  @JsonIgnore
+  override lateinit var contentTags: List<String>
 }

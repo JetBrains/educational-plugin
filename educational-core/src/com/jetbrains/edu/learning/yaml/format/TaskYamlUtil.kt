@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -28,7 +29,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)
 abstract class TaskYamlMixin {
   @JsonProperty(TYPE)
   private fun getItemType(): String {
@@ -56,6 +57,10 @@ abstract class TaskYamlMixin {
   @JsonProperty(SOLUTION_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var solutionHidden: Boolean? = null
+
+  @JsonProperty(TAGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  protected open lateinit var contentTags: List<String>
 }
 
 open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
@@ -68,6 +73,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     existingItem.feedbackLink = deserializedItem.feedbackLink
     @Suppress("DEPRECATION") // it's ok as we just copy value of deprecated field
     existingItem.customPresentableName = deserializedItem.customPresentableName
+    existingItem.contentTags = deserializedItem.contentTags
     existingItem.solutionHidden = deserializedItem.solutionHidden
     if (deserializedItem is TheoryTask && existingItem is TheoryTask) {
       existingItem.postSubmissionOnOpen = deserializedItem.postSubmissionOnOpen
