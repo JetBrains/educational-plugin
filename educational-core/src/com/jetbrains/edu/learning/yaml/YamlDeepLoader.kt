@@ -5,20 +5,18 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.notFoundMessage
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
@@ -154,12 +152,6 @@ object YamlDeepLoader {
         it.descriptionText = VfsUtil.loadText(taskDescriptionFile)
       }
     }
-  }
-
-  private fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-    val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, EduNames.TASK))
-    val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
-    return file ?: error("No task description file for $name")
   }
 
   private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {

@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -201,4 +202,10 @@ fun Task.shouldBeEmpty(path: String): Boolean {
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {
   val course = lesson?.course ?: return false
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
+}
+
+fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
+  val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, EduNames.TASK))
+  val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
+  return file ?: error("No task description file for $name")
 }
