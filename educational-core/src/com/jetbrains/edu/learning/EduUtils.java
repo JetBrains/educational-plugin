@@ -179,7 +179,7 @@ public class EduUtils {
   }
 
   @Nullable
-  private static String getTextFromTaskTextFile(@Nullable VirtualFile taskTextFile) {
+  public static String getTextFromTaskTextFile(@Nullable VirtualFile taskTextFile) {
     if (taskTextFile != null) {
       Document document = FileDocumentManager.getInstance().getDocument(taskTextFile);
       return document == null ? null : document.getText();

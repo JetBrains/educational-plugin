@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduCourseUpdater
+import com.jetbrains.edu.learning.EduUtils.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -39,7 +39,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
   override fun taskChanged(newTask: Task, task: Task): Boolean {
     val newTaskFiles = newTask.taskFiles
     val taskFiles = task.taskFiles
-    val taskDescriptionText = task.descriptionText.ifEmpty { VfsUtil.loadText(task.findTaskDescriptionFile(project)) }
+    val taskDescriptionText = task.descriptionText.ifEmpty { getTextFromTaskTextFile(task.findTaskDescriptionFile(project)) ?: "" }
     val isChanged = when {
       newTask.name != task.name -> true
       newTask.itemType != task.itemType -> true
