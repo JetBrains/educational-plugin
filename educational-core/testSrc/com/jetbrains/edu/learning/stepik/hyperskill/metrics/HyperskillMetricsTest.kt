@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
 import java.awt.Rectangle
 import java.nio.file.Paths
 import java.util.*
@@ -230,16 +231,23 @@ class HyperskillMetricsTest : EduTestCase() {
           taskFile("src/Task.kt", "stage corrupted")
           taskFile("test/Tests1.kt", "stage corrupted test")
         }
+        eduTask("task1", stepId = 1) {
+          taskFile("src/Task.kt", "regular stage")
+          taskFile("test/Tests1.kt", "stage regular test")
+        }
       }
     }
-    val task = course.findTask("lesson1", "task0")
-    metricsService.viewEvent(task)
+    val task0 = course.findTask("lesson1", "task0")
+    val task1 = course.findTask("lesson1", "task1")
+    metricsService.viewEvent(task0)
+    metricsService.viewEvent(task1)
     metricsService.taskStopped()
 
-    HyperskillMetricsScheduler.sendFrontendEvents()
+    val pendingTimeEvents = metricsService.allTimeSpentEvents(reset = false)
+    assertNull(pendingTimeEvents.find { it.step == 0 })
 
-    val pendingEvents = metricsService.allTimeSpentEvents(reset = false)
-    assertEmpty(pendingEvents)
+    val pendingFrontendEvents = metricsService.allFrontendEvents(emptyQueue = false)
+    assertNull(pendingFrontendEvents.find { it.route == task0.getRoute() })
   }
 
   private fun createHyperskillCourse() = hyperskillCourseWithFiles {

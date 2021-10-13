@@ -27,7 +27,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
   fun viewEvent(task: Task?) {
     val hyperskillCourse = task?.course as? HyperskillCourse ?: return
     if (!hyperskillCourse.isStudy) return
-    if (task.id == 0) return
 
     doAddViewEvent(hyperskillCourse, task)
     taskStarted(task.id)
@@ -35,8 +34,13 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   fun taskStarted(id: Int) {
     synchronized(lock) {
+      // Stop tracking of previous task
       taskStopped()
-      taskInProgress = id to System.currentTimeMillis()
+
+      // There is no need to track task with corrupted 0 id
+      if (id != 0) {
+        taskInProgress = id to System.currentTimeMillis()
+      }
     }
   }
 
@@ -56,8 +60,10 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   @VisibleForTesting
   fun doAddViewEvent(course: HyperskillCourse, task: Task) {
+    if (task.id == 0) return
+
     val event = HyperskillFrontendEvent().apply {
-      route = if (course.isTaskInProject(task)) stagePath(task) else stepPath(task)
+      route = task.getRoute()
       action = HyperskillFrontendEventType.VIEW
     }
 
@@ -66,17 +72,6 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   fun addAllFrontendEvents(pendingEvents: List<HyperskillFrontendEvent>) {
     pendingEvents.subList(0, min(FRONTEND_EVENTS_LIMIT, pendingEvents.size)).asReversed().forEach { frontendEvents.addFirst(it) }
-  }
-
-  private fun stagePath(task: Task): String {
-    val course = task.course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
-    val projectId = course.hyperskillProject?.id ?: error("Course doesn't have Hyperskill project")
-    val stageId = course.stages[task.index - 1].id
-    return "/projects/$projectId/stages/$stageId/implement"
-  }
-
-  private fun stepPath(task: Task): String {
-    return "/learn/step/${task.id}"
   }
 
   fun allFrontendEvents(emptyQueue: Boolean = true): List<HyperskillFrontendEvent> {
@@ -162,5 +157,18 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     // time spent events are limited by the number of steps
     @VisibleForTesting
     const val FRONTEND_EVENTS_LIMIT: Int = 10000
+
+    @VisibleForTesting
+    fun Task.getRoute(): String {
+      val course = course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
+      return if (course.isTaskInProject(this)) {
+        val projectId = course.hyperskillProject?.id ?: error("Course doesn't have Hyperskill project")
+        val stageId = course.stages[index - 1].id
+        "/projects/$projectId/stages/$stageId/implement"
+      }
+      else {
+        "/learn/step/$id"
+      }
+    }
   }
 }
