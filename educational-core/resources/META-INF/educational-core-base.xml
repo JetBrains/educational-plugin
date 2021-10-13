@@ -305,9 +305,6 @@
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.codeforces.current.upcoming" percentOfUsers="0">
-      <description>Enables Codeforces current and upcoming courses</description>
-    </experimentalFeature>
     <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContextType"/>
     <defaultLiveTemplates file="liveTemplates/hint.xml"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider"/>

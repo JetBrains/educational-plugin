@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -54,11 +53,9 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
     }
 
     val contestsGroups = mutableListOf<CoursesGroup>()
-    if (isFeatureEnabled(com.jetbrains.edu.learning.EduExperimentalFeatures.CODEFORCES_CURRENT_UPCOMING) || isUnitTestMode) {
-      val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
-      val upcomingGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.upcoming"), upcomingContests)
-      contestsGroups.add(upcomingGroup)
-    }
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+    val upcomingGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.upcoming"), upcomingContests)
+    contestsGroups.add(upcomingGroup)
     val recentContests = CodeforcesContestConnector.getRecentContests(document)
     val recentGroup = CoursesGroup(EduCoreBundle.message("course.dialog.codeforces.recent"), recentContests)
     contestsGroups.add(recentGroup)
