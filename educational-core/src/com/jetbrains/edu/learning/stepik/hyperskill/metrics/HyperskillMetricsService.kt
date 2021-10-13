@@ -17,7 +17,6 @@ import kotlin.math.min
 @State(name = "HyperskillMetrics", storages = [Storage("hyperskill.xml", roamingType = RoamingType.DISABLED)])
 open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetricsService.State>, Disposable {
   private val frontendEvents: Deque<HyperskillFrontendEvent> = ConcurrentLinkedDeque()
-
   private val timeSpentEvents: MutableMap<Int, DoubleAdder> = mutableMapOf()
   private var taskInProgress: Pair<Int, Long>? = null
 
@@ -28,7 +27,7 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
     val hyperskillCourse = task?.course as? HyperskillCourse ?: return
     if (!hyperskillCourse.isStudy) return
 
-    doAddViewEvent(hyperskillCourse, task)
+    doAddViewEvent(task)
     taskStarted(task.id)
   }
 
@@ -46,9 +45,7 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
 
   fun taskStopped() {
     synchronized(lock) {
-      val curTask = taskInProgress ?: return
-
-      val (id, start) = curTask
+      val (id, start) = taskInProgress ?: return
       val duration = toDuration(start)
       timeSpentEvents.computeIfAbsent(id) { DoubleAdder() }.add(duration)
 
@@ -59,7 +56,7 @@ open class HyperskillMetricsService : PersistentStateComponent<HyperskillMetrics
   protected open fun toDuration(start: Long): Double = (System.currentTimeMillis() - start).toDouble() / 1000
 
   @VisibleForTesting
-  fun doAddViewEvent(course: HyperskillCourse, task: Task) {
+  fun doAddViewEvent(task: Task) {
     if (task.id == 0) return
 
     val event = HyperskillFrontendEvent().apply {

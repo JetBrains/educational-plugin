@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
 import java.awt.Rectangle
@@ -36,9 +35,9 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test current serialization format`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
-    val addedEvents = addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
+    val addedEvents = addViewEvents(listOf(findTask(0, 0), findTask(1, 0)))
 
     val firstStepId = 123
     metricsService.taskStarted(firstStepId)
@@ -111,9 +110,9 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test frontend events serialization limit respected`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
-    val addedFrontendEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
+    val addedFrontendEvents = addViewEvents(List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
     assertEquals(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1, addedFrontendEvents.size)
 
     serializeAndDeserializeBack()
@@ -123,9 +122,9 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test all frontend events sent`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
-    addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
+    addViewEvents(listOf(findTask(0, 0), findTask(1, 0)))
 
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
@@ -164,9 +163,9 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test no frontend events sent`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
-    val viewEvents = addViewEvents(hyperskillCourse, listOf(findTask(0, 0), findTask(1, 0)))
+    val viewEvents = addViewEvents(listOf(findTask(0, 0), findTask(1, 0)))
     HyperskillMetricsScheduler.sendFrontendEvents()
 
     val pendingFrontendEvents = metricsService.allFrontendEvents(false)
@@ -185,7 +184,7 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test frontend events sent in chunks`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
     val eventsCount = 5000
 
@@ -193,7 +192,7 @@ class HyperskillMetricsTest : EduTestCase() {
                          (if (eventsCount % HyperskillMetricsScheduler.EVENTS_PER_REQUEST == 0) 0 else 1)
 
     var chunksCount = 0
-    addViewEvents(hyperskillCourse, List(eventsCount) { findTask(0, 0) })
+    addViewEvents(List(eventsCount) { findTask(0, 0) })
 
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
@@ -215,9 +214,9 @@ class HyperskillMetricsTest : EduTestCase() {
   }
 
   fun `test pending frontend events limit respected`() {
-    val hyperskillCourse = createHyperskillCourse()
+    createHyperskillCourse()
 
-    val addedFrontendEvents = addViewEvents(hyperskillCourse, List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
+    val addedFrontendEvents = addViewEvents(List(HyperskillMetricsService.FRONTEND_EVENTS_LIMIT + 1) { findTask(0, 0) })
     HyperskillMetricsScheduler.sendFrontendEvents()
 
     val pendingFrontendEvents = metricsService.allFrontendEvents(false)
@@ -286,8 +285,8 @@ class HyperskillMetricsTest : EduTestCase() {
     metricsService.loadState(XmlSerializer.deserialize(serialized, HyperskillMetricsService.State::class.java))
   }
 
-  private fun addViewEvents(hyperskillCourse: HyperskillCourse, tasks: List<Task>): List<HyperskillFrontendEvent> {
-    tasks.forEach { metricsService.doAddViewEvent(hyperskillCourse, it) }
+  private fun addViewEvents(tasks: List<Task>): List<HyperskillFrontendEvent> {
+    tasks.forEach { metricsService.doAddViewEvent(it) }
     return metricsService.allFrontendEvents(emptyQueue = false)
   }
 
