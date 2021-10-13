@@ -12,10 +12,11 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
   private CCSettings.State myState = new CCSettings.State();
 
   public static class State {
-    public boolean isHtmlDefault = true;
+    public boolean isHtmlDefault = false;
     public boolean showSplitEditor = false;
     public boolean copyTestsInFrameworkLessons = false;
   }
+
   @Nullable
   @Override
   public State getState() {
@@ -26,11 +27,11 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
   public void loadState(@NotNull State state) {
     myState = state;
   }
-  
+
   public boolean useHtmlAsDefaultTaskFormat() {
     return myState.isHtmlDefault;
   }
-  
+
   public void setUseHtmlAsDefaultTaskFormat(final boolean useHtml) {
     myState.isHtmlDefault = useHtml;
   }
