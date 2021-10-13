@@ -92,7 +92,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
       val codeforcesCourse = courseInfo.course as? CodeforcesCourse ?: return
       hyperlinkLabel.apply {
-        isVisible = codeforcesCourse.isRegistrationOpen == true
+        isVisible = codeforcesCourse.isRegistrationOpen == true && codeforcesCourse.isOngoing
         setListener(LinkListener { _, course ->
           val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
           BrowserUtil.browse(registrationLink)
