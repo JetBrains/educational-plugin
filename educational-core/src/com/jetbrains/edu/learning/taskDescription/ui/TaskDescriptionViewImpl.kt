@@ -86,16 +86,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val checkPanel = uiContent?.checkPanel ?: return
     readyToCheck()
 
-    ApplicationManager.getApplication().messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
-      override fun userLoggedIn() {
-        checkPanel.updateCheckPanel(task)
-      }
-
-      override fun userLoggedOut() {
-        checkPanel.updateCheckPanel(task)
-      }
-
-    })
     checkPanel.updateCheckPanel(task)
     UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
   }
@@ -180,6 +170,21 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     })
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
+    connection.subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
+      override fun userLoggedIn() {
+        val task = EduUtils.getCurrentTask(project)
+        if (task != null) {
+          checkPanel.updateCheckPanel(task)
+        }
+      }
+
+      override fun userLoggedOut() {
+        val task = EduUtils.getCurrentTask(project)
+        if (task != null) {
+          checkPanel.updateCheckPanel(task)
+        }
+      }
+    })
   }
 
   override fun checkStarted(task: Task) {

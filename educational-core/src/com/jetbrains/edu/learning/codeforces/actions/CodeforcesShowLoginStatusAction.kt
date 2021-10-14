@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.ui.ClickableLabel
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
@@ -66,23 +67,20 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
     val contentPanel = JBUI.Panels.simplePanel(0, 10)
 
     val accountActionLabel = if (account != null) {
-      EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
+      ClickableLabel(EduCoreBundle.message("account.widget.logout")) {
         popup.closeOk(null)
         CodeforcesSettings.getInstance().account = null
       }
     }
     else {
-      EduHyperlinkLabel(EduCoreBundle.message("notification.content.authorization.action"), true) {
+      ClickableLabel(EduCoreBundle.message("notification.content.authorization.action")) {
         popup.closeOk(null)
-
         val loginAction = ActionManager.getInstance().getAction(CodeforcesLoginAction.ACTION_ID)
         val actionEvent = AnActionEvent.createFromAnAction(loginAction,
                                                            null,
                                                            CheckPanel.ACTION_PLACE,
                                                            DataManager.getInstance().getDataContext(contentPanel))
-
         loginAction.actionPerformed(actionEvent)
-
       }
     }
 

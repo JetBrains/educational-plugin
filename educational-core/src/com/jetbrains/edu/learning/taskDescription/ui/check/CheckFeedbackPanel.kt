@@ -8,10 +8,13 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
@@ -22,11 +25,15 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
   init {
     if (checkResult.status != CheckStatus.Unchecked) {
       add(ResultLabel(task, checkResult), BorderLayout.WEST)
+      if (checkResult.status == CheckStatus.RemoteFailed) {
+        add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID, top = 0))
+      }
     }
     val checkTime = task.feedback?.time
     if (checkTime != null) {
       add(TimeLabel(checkTime, alarm), BorderLayout.CENTER)
     }
+    border = JBUI.Borders.emptyTop(16)
   }
 
   override fun isVisible(): Boolean = componentCount > 0
@@ -35,15 +42,18 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
     init {
       val status = checkResult.status
 
-      iconTextGap = JBUI.scale(4)
       icon = when (status) {
         CheckStatus.Failed -> AllIcons.General.BalloonError
         CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
+        CheckStatus.RemoteSubmitted -> AllIcons.General.BalloonInformation
+        CheckStatus.RemoteFailed -> AllIcons.General.BalloonError
         else -> null
       }
       foreground = when (status) {
         CheckStatus.Failed -> EduColors.wrongLabelForeground
         CheckStatus.Solved -> EduColors.correctLabelForeground
+        CheckStatus.RemoteFailed -> EduColors.wrongLabelForeground
+        CheckStatus.RemoteSubmitted -> foreground
         else -> foreground
       }
 
@@ -53,15 +63,21 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
           is IdeTask, is TheoryTask -> "Done"
           else -> "Correct"
         }
+        CheckStatus.RemoteFailed, CheckStatus.RemoteSubmitted -> {
+          setCopyable(true)
+          checkResult.message
+        }
         else -> ""
       }
-      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
+
+      iconTextGap = JBUI.scale(4)
+      border = JBUI.Borders.empty(0, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
     }
   }
 
   private class TimeLabel(private val time: Date, private val alarm: Alarm) : JBLabel() {
     init {
-      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 0)
+      border = JBUI.Borders.empty(0, FOCUS_BORDER_WIDTH, 0, 0)
       foreground = UIUtil.getLabelDisabledForeground()
 
       val timeUpdater = object : Runnable {

@@ -8,6 +8,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import org.jetbrains.annotations.VisibleForTesting
@@ -93,6 +94,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
+      if (checkResult.status == CheckStatus.RemoteSubmitted || checkResult.status == CheckStatus.RemoteFailed) return messagePanel
       messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
       if (checkResult.diff != null) {

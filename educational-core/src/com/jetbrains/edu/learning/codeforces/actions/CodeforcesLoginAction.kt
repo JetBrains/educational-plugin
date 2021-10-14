@@ -13,17 +13,16 @@ import org.jetbrains.annotations.NonNls
 class CodeforcesLoginAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.codeforces.login")) {
   override fun actionPerformed(e: AnActionEvent) {
     var handle = ""
-    while (true) {
+    do {
       val loginDialog = LoginDialog(handle)
       if (loginDialog.showAndGet()) {
         handle = loginDialog.loginField.text
-        if (CodeforcesConnector.getInstance().login(handle, String(loginDialog.passwordField.password))) {
-          break
-        }
-      } else {
+      }
+      else {
         break
       }
     }
+    while (!CodeforcesConnector.getInstance().login(handle, String(loginDialog.passwordField.password)))
   }
 
   override fun update(e: AnActionEvent) {

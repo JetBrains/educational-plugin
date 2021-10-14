@@ -6,6 +6,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.openapi.ui.Messages
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jdom.Element
 import javax.swing.Icon
 
@@ -29,11 +31,19 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   @set:Transient
   var account: CodeforcesAccount? = null
     set(value) {
-      field = value
       if (value == null) {
-        ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()
+        if (Messages.showOkCancelDialog(
+            EduCoreBundle.message("dialog.message.are.you.sure"),
+            EduCoreBundle.message("dialog.title.confirm.logout"),
+            EduCoreBundle.message("dialog.ok"),
+            EduCoreBundle.message("dialog.cancel"),
+            AllIcons.General.QuestionDialog) == Messages.OK) {
+          field = value
+          ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()
+        }
       }
       else {
+        field = value
         ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedIn()
       }
     }
