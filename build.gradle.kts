@@ -11,6 +11,7 @@ import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
@@ -256,6 +257,10 @@ allprojects {
       excludeKotlinDeps()
     }
 
+    // The same as `testImplementation(kotlin("test"))` but with excluding kotlin stdlib dependencies
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${getKotlinPluginVersion()}") {
+      excludeKotlinDeps()
+    }
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     testImplementation("io.mockk:mockk:1.12.0") {
       excludeKotlinDeps()
