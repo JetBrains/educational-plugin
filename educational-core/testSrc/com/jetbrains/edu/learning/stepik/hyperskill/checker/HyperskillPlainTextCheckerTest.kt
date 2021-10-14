@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.TaskBuilder
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -22,22 +20,16 @@ class HyperskillPlainTextCheckerTest : CheckersTestBase<Unit>() {
     val course = course(courseProducer = ::HyperskillCourse) {
       frameworkLesson {
         eduTask(stepId = 1) {
-          okResultTaskFile()
+          checkResultFile(CheckStatus.Solved)
         }
         eduTask(stepId = 2) {
-          okResultTaskFile()
+          checkResultFile(CheckStatus.Solved)
         }
       }
     } as HyperskillCourse
     course.stages = listOf(HyperskillStage(1, "", 1), HyperskillStage(2, "", 2))
     course.hyperskillProject = HyperskillProject()
     return course
-  }
-
-  private fun TaskBuilder.okResultTaskFile() {
-    taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
-      withText("OK!\n")
-    }
   }
 
   fun `test course`() {

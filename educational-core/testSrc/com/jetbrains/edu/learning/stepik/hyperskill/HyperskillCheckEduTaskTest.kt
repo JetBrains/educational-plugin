@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -21,14 +20,10 @@ class HyperskillCheckEduTaskTest : CheckersTestBase<Unit>() {
     section("Topics") {
       lesson("Topic name") {
         eduTask("Problem name 1") {
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
-            withText(CheckStatus.Solved.toString())
-          }
+          checkResultFile(CheckStatus.Solved)
         }
         eduTask("Problem name 2") {
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
-            withText(CheckStatus.Failed.toString())
-          }
+          checkResultFile(CheckStatus.Failed)
         }
       }
     }
@@ -43,12 +38,12 @@ class HyperskillCheckEduTaskTest : CheckersTestBase<Unit>() {
   fun `test solved edu task`() {
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
-    checkTask(myCourse.allTasks[0])
+    checkTask(myCourse.allTasks[0]).apply { assertEmpty(this) }
   }
 
   fun `test failed edu task`() {
     CheckActionListener.shouldFail()
-    checkTask(myCourse.allTasks[1])
+    checkTask(myCourse.allTasks[1]).apply { assertEmpty(this) }
   }
 
   private fun configureResponse() {
