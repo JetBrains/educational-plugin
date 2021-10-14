@@ -26,14 +26,19 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
         val checkResult = checker.check(indicator)
         val course = task.course as HyperskillCourse
         val resultingStatus = checkResult.status
+
         if (resultingStatus == CheckStatus.Solved) {
-          val projectLesson = course.getProjectLesson() ?: return CheckResult(resultingStatus, CheckUtils.CONGRATULATIONS)
-          val otherUnsolvedTasks = projectLesson.taskList.filter { it != task && it.status != CheckStatus.Solved }
-          return if (otherUnsolvedTasks.isEmpty())
-            CheckResult(resultingStatus,
-                        EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL),
-                        hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
-          else CheckResult(resultingStatus, CheckUtils.CONGRATULATIONS)
+          if (course.isTaskInProject(task)) {
+            val projectLesson = course.getProjectLesson() ?: error("Unable to get project lesson")
+            val otherUnsolvedTasks = projectLesson.taskList.filter { it != task && it.status != CheckStatus.Solved }
+            if (otherUnsolvedTasks.isEmpty()) {
+              return CheckResult(resultingStatus,
+                                 EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL),
+                                 hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
+            }
+          }
+
+          return CheckResult(resultingStatus, CheckUtils.CONGRATULATIONS)
         }
         return checkResult
       }
