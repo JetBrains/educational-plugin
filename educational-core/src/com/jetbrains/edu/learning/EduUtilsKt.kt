@@ -3,8 +3,10 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 
@@ -22,5 +24,26 @@ object EduUtilsKt {
 
     val tooltipRelativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this)
     balloon.show(tooltipRelativePoint, position)
+  }
+}
+
+class NumericInputValidator(val emptyInputMessage: String, val notNumericMessage: String) : InputValidatorEx {
+  override fun getErrorText(inputString: String): String? {
+    val input = inputString.trim()
+    return when {
+      input.isEmpty() -> emptyInputMessage
+      !isNumeric(input) -> notNumericMessage
+      else -> null
+    }
+  }
+
+  override fun checkInput(inputString: String): Boolean {
+    return getErrorText(inputString) == null
+  }
+
+  override fun canClose(inputString: String): Boolean = true
+
+  private fun isNumeric(string: String): Boolean {
+    return string.all { StringUtil.isDecimalDigit(it) }
   }
 }

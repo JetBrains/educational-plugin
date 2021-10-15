@@ -242,8 +242,8 @@ private class CourseBuilder(
       environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
       vendor = yamlVendor
       isMarketplacePrivate = yamlIsPrivate ?: false
-      marketplaceCourseVersion = yamlCourseVersion ?: 1
       feedbackLink = yamlFeedbackLink
+      if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
 
@@ -301,7 +301,6 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
     existingItem.feedbackLink = deserializedItem.feedbackLink
-    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
       existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
@@ -322,9 +321,7 @@ class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
   override fun applyChanges(existingItem: EduCourse, deserializedItem: EduCourse) {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
-    if (existingItem.courseMode == EduNames.STUDY) {
-      existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
-    }
+    existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
   }
 }
 

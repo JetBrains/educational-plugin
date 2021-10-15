@@ -14,14 +14,13 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.io.exists
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.NumericInputValidator
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -118,34 +117,15 @@ object TwitterUtils {
     CredentialAttributes(generateServiceName(SERVICE_DISPLAY_NAME, userId))
 
   private fun createAndShowPinDialog(project: Project): String? {
-    return Messages.showInputDialog(project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"), null, "", TwitterPinValidator())
+    return Messages.showInputDialog(project, EduCoreBundle.message("twitter.enter.pin"), EduCoreBundle.message("twitter.authorization"),
+                                    null, "", NumericInputValidator(EduCoreBundle.message("twitter.validation.empty.pin"),
+                                                                    EduCoreBundle.message("twitter.validation.not.numeric.pin")))
   }
 
   private class TweetInfo(
     val message: String,
     val mediaPath: Path?
   )
-
-  private class TwitterPinValidator : InputValidatorEx {
-    override fun getErrorText(inputString: String): String? {
-      val input = inputString.trim()
-      return when {
-        input.isEmpty() -> EduCoreBundle.message("twitter.validation.empty.pin")
-        !isNumeric(input) -> EduCoreBundle.message("twitter.validation.not.numeric.pin")
-        else -> null
-      }
-    }
-
-    override fun checkInput(inputString: String): Boolean {
-      return getErrorText(inputString) == null
-    }
-
-    override fun canClose(inputString: String): Boolean = true
-
-    private fun isNumeric(string: String): Boolean {
-      return string.all { StringUtil.isDecimalDigit(it) }
-    }
-  }
 
   fun pluginRelativePath(path: String): Path? {
     require(!FileUtil.isAbsolute(path)) { "`$path` shouldn't be absolute" }

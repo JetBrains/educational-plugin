@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
 import java.io.File
 
 @Suppress("ComponentNotRegistered") // Marketplace.xml
@@ -71,10 +72,10 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       if (result != Messages.OK) return
     }
 
-    doPush(project, connector, course, tempFile)
+    doPush(project, connector, course, tempFile, e.presentation.text)
   }
 
-  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
+  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File, actionTitle: String) {
     if (course.isMarketplaceRemote) {
       connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.updateCourse()
@@ -106,6 +107,8 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
                                            message("marketplace.not.possible.to.post.updates.to.stepik"))
     }
 
+    if (course.marketplaceCourseVersion == 0) course.marketplaceCourseVersion = 1
+
     if (!isUnitTestMode) {
       course.updateCourseItems()
     }
@@ -117,5 +120,10 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     }
 
     YamlFormatSynchronizer.saveItem(course)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID: String = "Educational.Educator.MarketplacePushCourse"
   }
 }

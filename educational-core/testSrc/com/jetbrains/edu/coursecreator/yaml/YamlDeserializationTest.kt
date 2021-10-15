@@ -669,23 +669,6 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(course.isMarketplace)
   }
 
-  fun `test marketplace course version`() {
-    val marketplaceCourseVersion = 5
-    val yamlContent = """
-      |type: marketplace
-      |title: Test Course
-      |language: Russian
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |programming_language: Plain text
-      |course_version: $marketplaceCourseVersion
-      |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
-    assertTrue(course is EduCourse)
-    assertEquals(marketplaceCourseVersion, course.marketplaceCourseVersion)
-  }
-
   fun `test private course`() {
     val yamlContent = """
       |title: Test Course
@@ -713,22 +696,6 @@ class YamlDeserializationTest : YamlTestCase() {
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
     assertFalse(course.isMarketplacePrivate)
-  }
-
-  fun `test courseVersion`() {
-    val yamlContent = """
-      |type: marketplace
-      |title: Test Course
-      |language: Russian
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |course_version: 5
-      |programming_language: Plain text
-      |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
-    assertTrue(course is EduCourse)
-    assertEquals(5, course.marketplaceCourseVersion)
   }
 
   fun `test default courseVersion`() {

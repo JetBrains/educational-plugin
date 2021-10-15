@@ -4,14 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationAction
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.messages.Topic
@@ -22,6 +25,7 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
+import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
@@ -31,7 +35,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -239,7 +242,8 @@ abstract class MarketplaceConnector : CourseConnector {
     LOG.info("Uploading new course from ${file.absolutePath}")
 
     val response = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody())
-      .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.upload.course.title"),
+      .executeUploadParsingErrors(project,
+                                  message("notification.course.creator.failed.to.upload.course.title"),
                                   showLogAction,
                                   {
                                     showAcceptDeveloperAgreementNotification(project) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
@@ -278,6 +282,9 @@ abstract class MarketplaceConnector : CourseConnector {
     val errorMessage = "$errorBody Code $responseCode"
     return when (responseCode) {
       HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response)
+      HttpURLConnection.HTTP_BAD_REQUEST -> {
+        Err(errorMessage) // 400
+      }
       HttpURLConnection.HTTP_FORBIDDEN -> {
         showOnForbiddenCodeNotification()
         Err(errorMessage) // 403
@@ -313,20 +320,36 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File) {
-    uploadUnderProgress(message("action.push.course.updating")) { uploadCourseUpdate(project, course, file) }
+    var courseVersionMismatch = false
+    invokeAndWaitIfNeeded {
+      uploadUnderProgress(message("action.push.course.updating")) {
+        courseVersionMismatch = uploadCourseUpdate(project, course, file)
+      }
+    }
+    if (courseVersionMismatch) {
+      val updateActionTitle = message("item.update.on.0.course.title", MARKETPLACE)
+      val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, updateActionTitle)
+                                  ?: return
+      course.marketplaceCourseVersion = insertedCourseVersion
+      YamlFormatSynchronizer.saveRemoteInfo(course)
+      val pushAction = ActionManager.getInstance().getAction(MarketplacePushCourse.ACTION_ID)
+      pushAction.templatePresentation.text = updateActionTitle
+      showNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), pushAction)
+    }
   }
 
-  private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
-    if (!isUserAuthorized()) return
+  private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File): Boolean {
+    if (!isUserAuthorized()) return false
     LOG.info("Uploading course update from ${file.absolutePath}")
     val uploadAsNewCourseAction: AnAction = NotificationAction.createSimpleExpiring(
-      EduCoreBundle.message("notification.course.creator.access.denied.action")) {
+      message("notification.course.creator.access.denied.action")) {
       course.convertToLocal()
       uploadNewCourseUnderProgress(project, course, file)
     }
 
     repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id)
-      .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.update.course.title"),
+      .executeUploadParsingErrors(project,
+                                  message("notification.course.creator.failed.to.update.course.title"),
                                   uploadAsNewCourseAction,
                                   {
                                     showNoRightsToUpdateNotification(project, course) {
@@ -338,13 +361,14 @@ abstract class MarketplaceConnector : CourseConnector {
                                   })
       .onError {
         LOG.error("Failed to upload course update for course ${course.id}: ${it}")
-        return
+        return it.contains(PLUGIN_CONTAINS_VERSION_ERROR_TEXT)
       }
 
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
     showNotification(project, message, openOnMarketplaceAction(course.getMarketplaceUrl()))
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
+    return false
   }
 
   private fun isUserAuthorized(): Boolean {
@@ -429,10 +453,28 @@ abstract class MarketplaceConnector : CourseConnector {
     }
   }
 
+
+  @Suppress("DialogTitleCapitalization")
+  fun createAndShowCourseVersionDialog(project: Project, course: EduCourse, failedActionTitle: String): Int? {
+    val currentCourseVersion = course.marketplaceCourseVersion
+    val suggestedCourseVersion = currentCourseVersion + 1
+
+    return invokeAndWaitIfNeeded {
+      Messages.showInputDialog(project,
+                               message("marketplace.insert.course.version.dialog", currentCourseVersion, course.name, failedActionTitle),
+                               message("marketplace.insert.course.version.dialog.title"),
+                               null,
+                               suggestedCourseVersion.toString(),
+                               NumericInputValidator(message("marketplace.insert.course.version.validation.empty"),
+                                                     message("marketplace.insert.course.version.validation.not.numeric")))?.toIntOrNull()
+    }
+  }
+
   companion object {
     private val LOG = logger<MarketplaceConnector>()
 
     private val XML_ID = "\\d{5,}-.*".toRegex()
+    private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
     @JvmStatic
     val AUTHORIZATION_TOPIC = Topic.create("Edu.marketplaceLoggedIn", EduLogInListener::class.java)

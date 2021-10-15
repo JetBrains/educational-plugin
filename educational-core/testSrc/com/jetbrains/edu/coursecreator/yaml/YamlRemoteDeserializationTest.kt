@@ -36,6 +36,20 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(listOf(1), course.sectionIds)
   }
 
+  fun `test marketplace course`() {
+    val id = 1
+    val yamlText = """
+    |id: $id
+    |course_version: 5
+    |default_section: $id
+    |""".trimMargin()
+
+    val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
+    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    assertEquals(1, course.id)
+    assertEquals(5, course.marketplaceCourseVersion)
+  }
+
   fun `test hyperskill project`() {
     val id = 15
     val ideFiles = "ideFiles"
