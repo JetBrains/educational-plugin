@@ -151,7 +151,7 @@ abstract class CodeforcesConnector {
   fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<Boolean, String> {
 
     if (!account.isUpToDate() && !getInstance().updateJSessionID(account)) {
-      return Err(EduCoreBundle.message("error.failed.to.refresh.session.id"))
+      return Err(EduCoreBundle.message("codeforces.failed.to.submit.solution"))
     }
 
     val jSessionID = account.getSessionId()
@@ -164,7 +164,7 @@ abstract class CodeforcesConnector {
                                                "JSESSIONID=$jSessionID").executeParsingErrors().onError {
       return Err(EduCoreBundle.message("error.failed.to.load.submission.page"))
     }
-    val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("error.failed.to.parse.submission.page"))
+    val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("codeforces.failed.to.submit.solution"))
     val body = Jsoup.parse(htmlPage)
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 

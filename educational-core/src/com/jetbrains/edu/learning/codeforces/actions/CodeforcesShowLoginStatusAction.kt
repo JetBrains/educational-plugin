@@ -10,7 +10,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.InternalDecoratorImpl
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.popup.AbstractPopup
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
@@ -24,22 +23,24 @@ import com.jetbrains.edu.learning.ui.ClickableLabel
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
+import java.awt.Dimension
 import java.awt.Point
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
 class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessage("codeforces.account")) {
 
+  private val POPUP_WIDTH = 280
+  private val POPUP_HEIGHT = 115
+  private val POPUP_OFFSET = 200
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
     val headerToolbarComponent = (toolWindow.component.parent as InternalDecoratorImpl).headerToolbar.component
-    val toolWindowLocation = toolWindow.component.location
 
     val popup = createPopup()
-    popup.show(
-      RelativePoint(headerToolbarComponent,
-                    Point(toolWindowLocation.x - (popup as AbstractPopup).headerPreferredSize.width, toolWindowLocation.y)))
+    popup.show(RelativePoint(headerToolbarComponent, Point(-POPUP_OFFSET, headerToolbarComponent.height)))
   }
 
   private fun createPopup(): JBPopup {
@@ -47,6 +48,7 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
       .setTitle(EduCoreBundle.message("codeforces.account"))
+      .setMinSize(Dimension(POPUP_WIDTH, POPUP_HEIGHT))
       .createPopup()
 
     wrapperPanel.add(fillPopupContent(popup), BorderLayout.CENTER)

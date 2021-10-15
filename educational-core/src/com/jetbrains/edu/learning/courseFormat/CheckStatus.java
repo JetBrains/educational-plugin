@@ -1,5 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 public enum CheckStatus {
-  Unchecked, Solved, Failed, RemoteSubmitted, RemoteFailed
+  Unchecked, Solved, Failed, RemoteSubmitted, SubmissionFailed
 }

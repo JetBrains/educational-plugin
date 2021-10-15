@@ -94,7 +94,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
-      if (checkResult.status == CheckStatus.RemoteSubmitted || checkResult.status == CheckStatus.RemoteFailed) return messagePanel
+      if (checkResult.status == CheckStatus.RemoteSubmitted || checkResult.status == CheckStatus.SubmissionFailed) return messagePanel
       messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
       if (checkResult.diff != null) {

@@ -6,9 +6,13 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.ui.GotItTooltip
 import com.intellij.ui.components.JBOptionButton
 import com.intellij.util.containers.headTail
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.*
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
@@ -28,7 +32,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
    */
   constructor(action: ActionWithProgressIcon, isDefault: Boolean = false, isEnabled: Boolean = true) : this() {
-    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, null)
+    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, null, null)
     add(buttonPanel, BorderLayout.WEST)
 
     val processPanel = action.processPanel
@@ -42,30 +46,40 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
    * @param[isEnabled] parameter for enabling/disabling button. `true` by default.
    */
-  constructor(action: AnAction, isDefault: Boolean = false, isEnabled: Boolean = true, optionalActions: List<AnAction>? = null) : this() {
-    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, optionalActions)
+  constructor(action: AnAction,
+              isDefault: Boolean = false,
+              optionalActions: List<AnAction>? = null,
+              project: Project? = null,
+              isEnabled: Boolean = true) : this() {
+    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, optionalActions, project)
     add(buttonPanel)
   }
 
   private fun createButtonPanel(action: AnAction,
                                 isDefault: Boolean = false,
                                 isEnabled: Boolean = true,
-                                optionalActions: List<AnAction>?): JPanel {
+                                optionalActions: List<AnAction>?,
+                                project: Project?): JPanel {
     val cols = if (optionalActions == null) 1 else 2
     val buttonPanel = JPanel(GridLayout(1, cols, 5, 0))
     val button = createButton(action, isDefault = isDefault, isEnabled = isEnabled)
     buttonPanel.add(button)
 
-    if (!optionalActions.isNullOrEmpty()) {
+    if (!optionalActions.isNullOrEmpty() && project != null) {
       val (mainAction, otherActions) = optionalActions.headTail()
       val optionButton = object : JBOptionButton(null, null) {
         init {
           this.action = AnActionWrapper(mainAction, this)
           setOptions(otherActions)
         }
-
-        override fun isDefaultButton() = !isDefault
+        override fun isDefaultButton() = true
       }
+      val gotItTooltip = GotItTooltip("codeforces.submit.solution.button", EduCoreBundle.message("codeforces.you.can.suubmit.solution.from.ide"), project)
+        .withPosition(Balloon.Position.above)
+      if (gotItTooltip.canShow()) {
+        gotItTooltip.show(optionButton, GotItTooltip.TOP_MIDDLE)
+      }
+
       buttonPanel.add(optionButton)
     }
 
@@ -86,7 +100,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     if (isEnabled) {
       button.addActionListener { e ->
         performAnAction(e, this, action)
-        }
+      }
     }
     return button
   }

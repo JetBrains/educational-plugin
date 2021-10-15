@@ -31,7 +31,7 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
                                                            ActionPlaces.UNKNOWN,
                                                            DataManager.getInstance().getDataContext())
 
-        loginAction.actionPerformed(actionEvent).apply {
+        loginAction.actionPerformed(actionEvent).let {
           if (CodeforcesSettings.getInstance().isLoggedIn()) {
             lastSavedAccount = getCurrentAccount()
             updateLoginLabels()

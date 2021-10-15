@@ -31,7 +31,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction(EduCoreBundle.lazyMessag
       var checkStatus = CheckStatus.RemoteSubmitted
       var message = EduCoreBundle.message("codeforces.message.solution.submitted", CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
       CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError {
-        checkStatus = CheckStatus.RemoteFailed
+        checkStatus = CheckStatus.SubmissionFailed
         message = EduCoreBundle.message("codeforces.failed.to.submit.solution")
       }
       val checkResult = CheckResult(checkStatus, message)

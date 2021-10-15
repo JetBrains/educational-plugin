@@ -81,7 +81,7 @@ class CodeforcesCoursesPanel(
                                                        null,
                                                        PLACE,
                                                        DataManager.getInstance().getDataContext())
-    loginAction.actionPerformed(actionEvent).apply {
+    loginAction.actionPerformed(actionEvent).let {
       if (CodeforcesSettings.getInstance().isLoggedIn()) {
         hideLoginPanel()
       }

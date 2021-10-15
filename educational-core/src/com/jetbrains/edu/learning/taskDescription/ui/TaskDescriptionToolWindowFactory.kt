@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.options.FontSize
 import com.intellij.openapi.project.DumbAware
@@ -14,16 +15,20 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
+import com.intellij.ui.GotItTooltip
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.MouseInfo
 import java.awt.Point
@@ -41,6 +46,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
+    addGotItTooltip(project)
     taskDescriptionToolWindow.init(toolWindow)
     (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
@@ -51,6 +57,16 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
     }
     setTitleActions(actions)
+  }
+
+  private fun addGotItTooltip(project: Project) {
+    val action = EduActionUtils.getAction(CodeforcesShowLoginStatusAction.ACTION_ID)
+    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"), project)
+    gotItTooltip.assignTo(action.templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
+    val jComponent = action.templatePresentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
+    if (jComponent != null && gotItTooltip.canShow() && !CodeforcesSettings.getInstance().isLoggedIn()) {
+      gotItTooltip.show(jComponent, GotItTooltip.BOTTOM_LEFT)
+    }
   }
 
   /**

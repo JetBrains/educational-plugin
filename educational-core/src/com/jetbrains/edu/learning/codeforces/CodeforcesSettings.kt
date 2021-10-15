@@ -35,8 +35,8 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
         if (Messages.showOkCancelDialog(
             EduCoreBundle.message("dialog.message.are.you.sure"),
             EduCoreBundle.message("dialog.title.confirm.logout"),
-            EduCoreBundle.message("dialog.ok"),
-            EduCoreBundle.message("dialog.cancel"),
+            Messages.getOkButton(),
+            Messages.getCancelButton(),
             AllIcons.General.QuestionDialog) == Messages.OK) {
           field = value
           ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()

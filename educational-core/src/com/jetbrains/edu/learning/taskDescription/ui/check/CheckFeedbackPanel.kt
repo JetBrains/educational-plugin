@@ -25,7 +25,7 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
   init {
     if (checkResult.status != CheckStatus.Unchecked) {
       add(ResultLabel(task, checkResult), BorderLayout.WEST)
-      if (checkResult.status == CheckStatus.RemoteFailed) {
+      if (checkResult.status == CheckStatus.SubmissionFailed) {
         add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID, top = 0))
       }
     }
@@ -46,13 +46,13 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
         CheckStatus.Failed -> AllIcons.General.BalloonError
         CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
         CheckStatus.RemoteSubmitted -> AllIcons.General.BalloonInformation
-        CheckStatus.RemoteFailed -> AllIcons.General.BalloonError
+        CheckStatus.SubmissionFailed -> AllIcons.General.BalloonError
         else -> null
       }
       foreground = when (status) {
         CheckStatus.Failed -> EduColors.wrongLabelForeground
         CheckStatus.Solved -> EduColors.correctLabelForeground
-        CheckStatus.RemoteFailed -> EduColors.wrongLabelForeground
+        CheckStatus.SubmissionFailed -> EduColors.wrongLabelForeground
         CheckStatus.RemoteSubmitted -> foreground
         else -> foreground
       }
@@ -63,7 +63,7 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
           is IdeTask, is TheoryTask -> "Done"
           else -> "Correct"
         }
-        CheckStatus.RemoteFailed, CheckStatus.RemoteSubmitted -> {
+        CheckStatus.SubmissionFailed, CheckStatus.RemoteSubmitted -> {
           setCopyable(true)
           checkResult.message
         }
