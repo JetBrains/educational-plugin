@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckersTestBase
@@ -21,7 +20,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
-import com.jetbrains.edu.learning.withFeature
 import org.intellij.lang.annotations.Language
 import java.util.*
 
@@ -66,17 +64,9 @@ class HyperskillCheckDataTask : CheckersTestBase<Unit>() {
   }
 
   override fun checkTask(task: Task): List<AssertionError> {
-    val assertions = withFeature(HYPERSKILL_DATA_TASKS_SUPPORT, true) {
-      super.checkTask(task)
-    }
+    val assertions = super.checkTask(task)
     assertEmpty(assertions)
     return assertions
-  }
-
-  override fun doTest() {
-    withFeature(HYPERSKILL_DATA_TASKS_SUPPORT, true) {
-      super.doTest()
-    }
   }
 
   fun `test solved data task`() {

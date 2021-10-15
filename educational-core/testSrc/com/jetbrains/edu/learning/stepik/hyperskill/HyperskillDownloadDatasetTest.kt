@@ -2,19 +2,21 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames.TASK_HTML
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATASET_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
 import java.text.SimpleDateFormat
 import java.util.*
@@ -152,12 +154,10 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
   }
 
   private fun runAction(course: HyperskillCourse, taskName: String) {
-    withFeature(HYPERSKILL_DATA_TASKS_SUPPORT, true) {
-      val task = course.getLesson(HYPERSKILL_TOPICS, TOPIC_NAME)?.getTask(taskName) ?: error("Can't find `$taskName` file")
-      NavigationUtils.navigateToTask(project, task, showDialogIfConflict = false)
-      val taskFile = findFile("$HYPERSKILL_TOPICS/$TOPIC_NAME/$taskName/$SOME_FILE_TXT")
-      testAction(DownloadDatasetAction.ACTION_ID, dataContext(taskFile))
-    }
+    val task = course.getLesson(HYPERSKILL_TOPICS, TOPIC_NAME)?.getTask(taskName) ?: error("Can't find `$taskName` file")
+    NavigationUtils.navigateToTask(project, task, showDialogIfConflict = false)
+    val taskFile = findFile("$HYPERSKILL_TOPICS/$TOPIC_NAME/$taskName/$SOME_FILE_TXT")
+    testAction(DownloadDatasetAction.ACTION_ID, dataContext(taskFile))
   }
 
   @Language("JSON")

@@ -6,6 +6,5 @@ object EduExperimentalFeatures {
   const val CC_HYPERSKILL = "edu.course.hyperskill"
   const val PROBLEMS_BY_TOPIC = "edu.course.hyperskill.problems.by.topic"
   const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
-  const val HYPERSKILL_DATA_TASKS_SUPPORT = "edu.course.hyperskill.data.tasks"
   const val MARKETPLACE_SUBMISSIONS = "edu.course.marketplace.submissions"
 }

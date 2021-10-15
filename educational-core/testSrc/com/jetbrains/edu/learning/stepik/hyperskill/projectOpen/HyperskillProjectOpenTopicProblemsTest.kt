@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -22,9 +21,7 @@ import com.jetbrains.edu.learning.withFeature
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     withFeature(PROBLEMS_BY_TOPIC, true) {
-      withFeature(HYPERSKILL_DATA_TASKS_SUPPORT, true) {
-        super.runTestRunnable(context)
-      }
+      super.runTestRunnable(context)
     }
   }
 

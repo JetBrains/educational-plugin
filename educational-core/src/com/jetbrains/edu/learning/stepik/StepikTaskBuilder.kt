@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -30,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -104,12 +102,7 @@ open class StepikTaskBuilder(
     return stepikTaskBuilders[type]?.invoke(taskName)
   }
 
-  fun isSupported(type: String): Boolean {
-    if (type == DATA_TASK_TYPE && !isFeatureEnabled(HYPERSKILL_DATA_TASKS_SUPPORT)) {
-      return false
-    }
-    return stepikTaskBuilders.containsKey(type)
-  }
+  fun isSupported(type: String): Boolean = stepikTaskBuilders.containsKey(type)
 
   private fun Step.pycharmOptions(): PyCharmStepOptions {
     return options as PyCharmStepOptions

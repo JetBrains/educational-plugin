@@ -10,7 +10,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.nullize
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -27,8 +26,8 @@ import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
+import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import java.net.MalformedURLException
 import java.net.URL
@@ -198,11 +197,6 @@ object HyperskillCheckConnector {
   }
 
   fun checkDataTask(project: Project, task: DataTask, indicator: ProgressIndicator): CheckResult {
-    if (!isFeatureEnabled(HYPERSKILL_DATA_TASKS_SUPPORT)) {
-      // TODO Temporary message, so I didn't put it to bundle
-      return "Not supported yet".toCheckResult()
-    }
-
     val checkIdResult = task.checkId()
     if (checkIdResult != null) {
       return checkIdResult

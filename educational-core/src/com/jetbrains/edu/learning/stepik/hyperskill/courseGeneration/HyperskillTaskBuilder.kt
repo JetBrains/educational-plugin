@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_DATA_TASKS_SUPPORT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -10,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -43,9 +41,6 @@ class HyperskillTaskBuilder(
   }
 
   override fun createTask(type: String): Task? {
-    if (type == DataTask.DATA_TASK_TYPE && !isFeatureEnabled(HYPERSKILL_DATA_TASKS_SUPPORT)) {
-      return null
-    }
     val task = super.createTask(type) ?: return null
     task.apply {
       if (stepSource.isCompleted) {
