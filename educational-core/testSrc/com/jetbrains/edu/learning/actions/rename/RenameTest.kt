@@ -89,10 +89,10 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "lesson1/task1/${EduNames.TASK_HTML}", EduNames.TASK_MD, shouldBeInvoked = false)
-    assertEquals(DescriptionFormat.HTML, course.lessons[0].taskList[0].descriptionFormat)
-    assertNull(findDescriptionFile(EduNames.TASK_MD))
-    assertNotNull(findDescriptionFile(EduNames.TASK_HTML))
+    doRenameAction(course, "lesson1/task1/${EduNames.TASK_MD}", EduNames.TASK_HTML, shouldBeInvoked = false)
+    assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
+    assertNull(findDescriptionFile(EduNames.TASK_HTML))
+    assertNotNull(findDescriptionFile(EduNames.TASK_MD))
   }
 
   fun `test forbid task file renaming in student mode`() {
@@ -247,10 +247,10 @@ class RenameTest : RenameTestBase() {
       }
     }
 
-    doRenameAction(course, "lesson1/task1/${EduNames.TASK_HTML}", EduNames.TASK_MD)
-    assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
-    assertNull(findDescriptionFile(EduNames.TASK_HTML))
-    assertNotNull(findDescriptionFile(EduNames.TASK_MD))
+    doRenameAction(course, "lesson1/task1/${EduNames.TASK_MD}", EduNames.TASK_HTML)
+    assertEquals(DescriptionFormat.HTML, course.lessons[0].taskList[0].descriptionFormat)
+    assertNull(findDescriptionFile(EduNames.TASK_MD))
+    assertNotNull(findDescriptionFile(EduNames.TASK_HTML))
   }
 
   fun `test wrong new task description file name in CC mode`() {
@@ -263,10 +263,10 @@ class RenameTest : RenameTestBase() {
     }
 
     val newFileName = "incorrectFileName.txt"
-    doRenameAction(course, "lesson1/task1/${EduNames.TASK_HTML}", newFileName, shouldBeInvoked = false)
-    assertEquals(DescriptionFormat.HTML, course.lessons[0].taskList[0].descriptionFormat)
+    doRenameAction(course, "lesson1/task1/${EduNames.TASK_MD}", newFileName, shouldBeInvoked = false)
+    assertEquals(DescriptionFormat.MD, course.lessons[0].taskList[0].descriptionFormat)
     assertNull(findDescriptionFile(newFileName))
-    assertNotNull(findDescriptionFile(EduNames.TASK_HTML))
+    assertNotNull(findDescriptionFile(EduNames.TASK_MD))
   }
 
   fun `test rename task file in CC mode`() {

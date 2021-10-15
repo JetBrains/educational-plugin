@@ -68,7 +68,7 @@ class RefreshTaskTest : EduTestCase() {
     fileTree {
       file("taskFile1.txt", "TaskFile1")
       file("taskFile2.txt", "TaskFile2")
-      file("task.html")
+      file("task.md")
       file("task-info.yaml")
     }.assertEquals(taskDir, myFixture)
   }

@@ -52,7 +52,7 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
           dir("test") {
             file("Test.scala")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")

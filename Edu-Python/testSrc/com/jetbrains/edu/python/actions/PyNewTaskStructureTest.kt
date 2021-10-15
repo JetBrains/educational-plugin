@@ -11,55 +11,55 @@ class PyNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("task.py")
       file("tests.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       file("tests.py")
     }
   )
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("main.py")
       file("output.txt")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       file("output.txt")
     }
   )
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

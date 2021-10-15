@@ -70,7 +70,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("test") {
             file("Tests.kt")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")

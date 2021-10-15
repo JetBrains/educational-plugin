@@ -19,7 +19,7 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file(CMAKE_LISTS_TXT, defaultTestTaskCMakeList.getText("global-lesson1-task1", settings.languageStandard))
       dir("src") {
         file(TASK_CPP)
@@ -29,7 +29,7 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file(TEST_CPP)
       }
@@ -38,7 +38,7 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file(CMAKE_LISTS_TXT, defaultExecutableTaskCMakeList.getText("global-lesson1-task1", settings.languageStandard))
       dir("src") {
         file(MAIN_CPP)
@@ -48,7 +48,7 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file("output.txt")
       }
@@ -57,40 +57,40 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file(CMAKE_LISTS_TXT, defaultExecutableTaskCMakeList.getText("global-lesson1-task1", settings.languageStandard))
       dir("src") {
         file(MAIN_CPP)
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file(CMAKE_LISTS_TXT, defaultExecutableTaskCMakeList.getText("global-lesson1-task1", settings.languageStandard))
       dir("src") {
         file(MAIN_CPP)
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file(CMAKE_LISTS_TXT, defaultExecutableTaskCMakeList.getText("global-lesson1-task1", settings.languageStandard))
       dir("src") {
         file(MAIN_CPP)
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

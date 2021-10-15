@@ -46,7 +46,7 @@ class ScalaSbtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>()
           dir("test") {
             file("TestSpec.scala")
           }
-          file("task.html")
+          file("task.md")
           file("build.sbt")
         }
       }

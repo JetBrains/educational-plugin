@@ -61,7 +61,7 @@ class TaskDescriptionTest : EduTestCase() {
 
     courseWithFiles(courseProducer = courseProducer) {
       lesson {
-        eduTask(taskDescription = taskText) {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile("taskFile1.txt")
         }
       }

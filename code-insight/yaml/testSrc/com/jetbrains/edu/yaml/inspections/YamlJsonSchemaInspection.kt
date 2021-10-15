@@ -80,14 +80,14 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
-            placeholder(0, "test")
+            placeholder(index = 0, possibleAnswer = "test")
           }
         }
       }
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
-            placeholder(0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
+            placeholder(index = 0, placeholderText = "type here", dependency = "lesson1#task1#Test.java#1")
           }
         }
       }

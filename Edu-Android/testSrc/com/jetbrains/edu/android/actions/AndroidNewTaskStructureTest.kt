@@ -16,7 +16,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.gradle")
       dir("src") {
         dir("main") {
@@ -45,7 +45,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("src") {
         dir("test/java/com/example") {
           file("ExampleUnitTest.kt")
@@ -62,7 +62,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
   //   because they have no sense
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.gradle")
       dir("src") {
         dir("main") {
@@ -87,7 +87,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("src/test") {
         file("output.txt")
       }
@@ -96,7 +96,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.gradle")
       dir("src") {
         dir("main") {
@@ -118,13 +118,13 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.gradle")
       dir("src") {
         dir("main") {
@@ -146,13 +146,13 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.gradle")
       dir("src") {
         dir("main") {
@@ -174,7 +174,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

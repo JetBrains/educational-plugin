@@ -27,7 +27,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson1-task1"))
       }
@@ -56,7 +56,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson1-task1"))
       }
@@ -92,7 +92,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt")
       }
       file("CMakeLists.txt.in")
@@ -126,7 +126,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt")
       }
       file("CMakeLists.txt.in")
@@ -167,7 +167,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt")
       }
       dir("top_level_lesson/task") {
@@ -177,7 +177,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("test") {
           file("test.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt")
       }
       file("CMakeLists.txt.in")
@@ -220,7 +220,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
           dir("test") {
             file("test.cpp")
           }
-          file("task.html")
+          file("task.md")
           file("CMakeLists.txt")
         }
         dir("output") {
@@ -228,14 +228,14 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
             file("task.cpp")
           }
           file("output.txt")
-          file("task.html")
+          file("task.md")
           file("CMakeLists.txt")
         }
         dir("theory") {
           dir("src") {
             file("task.cpp")
           }
-          file("task.html")
+          file("task.md")
           file("CMakeLists.txt")
         }
       }
@@ -271,7 +271,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "section1-lesson1-task1"))
       }
@@ -279,7 +279,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson2-task1"))
       }
@@ -316,7 +316,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "section1-lesson1-task1"))
       }
@@ -324,7 +324,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         dir("src") {
           file("task.cpp")
         }
-        file("task.html")
+        file("task.md")
         file("CMakeLists.txt",
              getExpectedTaskCMakeText(course, defaultSettings, "global-lesson2-task1"))
       }

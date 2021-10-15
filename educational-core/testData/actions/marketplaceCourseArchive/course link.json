@@ -17,7 +17,7 @@
           "name" : "task1",
           "files" : { },
           "description_text" : "solve task",
-          "description_format" : "HTML",
+          "description_format" : "MD",
           "task_type" : "edu"
         }
       ],

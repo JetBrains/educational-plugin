@@ -245,7 +245,7 @@ class CCCreateTaskTest : EduActionTestCase() {
           dir("test") {
             file("Tests1.kt")
           }
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           dir("src") {
@@ -261,7 +261,7 @@ class CCCreateTaskTest : EduActionTestCase() {
               file("Tests.kt")
             }
           }
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")

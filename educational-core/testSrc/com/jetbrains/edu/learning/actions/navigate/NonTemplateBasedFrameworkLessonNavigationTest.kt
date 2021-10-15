@@ -48,13 +48,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -93,13 +93,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -147,13 +147,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -201,13 +201,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -255,13 +255,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -304,13 +304,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -352,13 +352,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -398,13 +398,13 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -475,10 +475,10 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }

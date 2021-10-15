@@ -49,7 +49,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
         dir("task1") {
           file("task.py")
           file("tests.py")
-          file("task.html")
+          file("task.md")
         }
       }
       file("test_helper.py")

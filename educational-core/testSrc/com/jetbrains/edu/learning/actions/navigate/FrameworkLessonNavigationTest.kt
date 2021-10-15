@@ -38,13 +38,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -82,10 +82,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -127,10 +127,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -162,13 +162,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -196,13 +196,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -251,10 +251,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -299,13 +299,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -322,13 +322,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -369,13 +369,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -413,13 +413,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -451,13 +451,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -485,13 +485,13 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -528,10 +528,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           }
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -565,10 +565,10 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           file("file.txt", "a\nb")
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }

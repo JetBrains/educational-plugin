@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -85,7 +86,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected fun <T : Lesson> lesson(name: String? = null, lesson: T, buildLesson: LessonBuilder<T>.() -> Unit) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
-    lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
+    lessonBuilder.withName(name ?: (EduNames.LESSON + nextLessonIndex))
     addLesson(lesson)
     lessonBuilder.buildLesson()
   }
@@ -117,7 +118,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     val section = sectionBuilder.section
     section.index = course.items.size + 1
     val nextSectionIndex = course.items.size + 1
-    sectionBuilder.withName(name ?: EduNames.SECTION + nextSectionIndex)
+    sectionBuilder.withName(name ?: (EduNames.SECTION + nextSectionIndex))
     course.addSection(section)
     sectionBuilder.buildSection()
   }
@@ -172,8 +173,9 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
-    taskBuilder.withName(name ?: EduNames.TASK + nextTaskIndex)
-    taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
+    taskBuilder.withName(name ?: (EduNames.TASK + nextTaskIndex))
+    val descriptionFormat = if (task.course is HyperskillCourse) DescriptionFormat.HTML else taskDescriptionFormat
+    taskBuilder.withTaskDescription(taskDescription ?: "solve task", descriptionFormat)
     taskBuilder.withStepId(stepId)
     taskBuilder.withUpdateDate(updateDate)
     taskBuilder.buildTask()
@@ -309,13 +311,14 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   init {
     task.lesson = lesson
   }
+
   fun withName(name: String) {
     task.name = name
   }
 
   fun withTaskDescription(text: String, format: DescriptionFormat? = null) {
     task.descriptionText = text
-    task.descriptionFormat = format ?: DescriptionFormat.HTML
+    task.descriptionFormat = format ?: DescriptionFormat.MD
   }
 
   fun withUpdateDate(date: Date) {
@@ -486,6 +489,7 @@ class TaskFileBuilder(val task: Task? = null) {
   init {
     taskFile.task = task
   }
+
   fun withName(name: String) {
     taskFile.name = name
   }
@@ -502,7 +506,7 @@ class TaskFileBuilder(val task: Task? = null) {
   }
 
   fun placeholder(index: Int, possibleAnswer: String? = null, placeholderText: String? = null,
-                  dependency: String = "", isVisible: Boolean = true, hints: List<String> = emptyList()) {
+                  dependency: String = "", isVisible: Boolean = true) {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
     if (possibleAnswer != null) {
       answerPlaceholder.possibleAnswer = possibleAnswer

@@ -25,7 +25,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
           file("tests.rs")
         }
         file("Cargo.toml")
-        file("task.html")
+        file("task.md")
       }
       file("Cargo.toml", """
           [workspace]
@@ -63,7 +63,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
           file("tests.rs")
         }
         file("Cargo.toml")
-        file("task.html")
+        file("task.md")
       }
     }.assertEquals(rootDir)
   }
@@ -89,7 +89,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         dir("tests") {
           file("tests.rs")
         }
-        file("task.html")
+        file("task.md")
         file("Cargo.toml")
       }
     }.assertEquals(rootDir)

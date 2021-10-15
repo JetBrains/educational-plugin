@@ -27,7 +27,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     fileTree {
       dir("lesson1") {
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
@@ -67,11 +67,11 @@ class CCDeleteActionTest : EduActionTestCase() {
       dir("lesson1") {
         dir("task2") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
@@ -98,7 +98,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     fileTree {
       dir("lesson2") {
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
@@ -146,11 +146,11 @@ class CCDeleteActionTest : EduActionTestCase() {
       dir("lesson2") {
         dir("task3") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task4") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
@@ -181,7 +181,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     fileTree {
       dir("lesson2") {
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
@@ -247,22 +247,22 @@ class CCDeleteActionTest : EduActionTestCase() {
         dir("lesson2") {
           dir("task3") {
             file("Task.kt")
-            file("task.html")
+            file("task.md")
           }
           dir("task4") {
             file("Task.kt")
-            file("task.html")
+            file("task.md")
           }
         }
       }
       dir("lesson3") {
         dir("task5") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task6") {
           file("Task.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())

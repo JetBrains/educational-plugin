@@ -56,7 +56,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
           fun bar(): Int = 0
           fun baz(): Boolean = false
         """)
-        file("task.html")
+        file("task.md")
       }
     }.assertEquals(rootDir)
   }
@@ -86,7 +86,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
           fun bar(): Int = 0
           fun baz(): Boolean = false
         """)
-        file("task.html")
+        file("task.md")
       }
     }.assertEquals(rootDir)
 

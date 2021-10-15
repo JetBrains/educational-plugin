@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import org.intellij.lang.annotations.Language
 
 class TaskDescriptionLiveTemplateTest : EduTestCase() {
@@ -58,8 +59,8 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
   private fun createCourse(courseMode: String) {
     courseWithFiles(courseMode = courseMode) {
       lesson("lesson") {
-        eduTask("task") {
-          taskFile("taskFile.html")
+        eduTask("task", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("taskFile.html",)
         }
       }
     }

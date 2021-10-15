@@ -39,7 +39,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
           dir("tests") {
             file("Tests.txt")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(root)
@@ -75,12 +75,12 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
         dir("task1") {
           file("Task.kt", "fun foo(): String = \"Foo\"")
           file("build.gradle")
-          file("task.html")
+          file("task.md")
         }
         dir(newTaskName) {
           file("Task.kt", "fun foo(): String = \"Foo\"")
           file("build.gradle")
-          file("task.html")
+          file("task.md")
           dir("tests") {
             file("Tests.txt")
           }
@@ -176,12 +176,12 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
         dir("task1") {
           file("Task.kt")
           file(imageName)
-          file("task.html")
+          file("task.md")
         }
         dir(newTaskName) {
           file("Task.kt")
           file(imageName)
-          file("task.html")
+          file("task.md")
           dir("tests") {
             file("Tests.txt")
           }
@@ -231,7 +231,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
             apply plugin: "kotlin"
             apply plugin: "java"
           """)
-          file("task.html")
+          file("task.md")
         }
         dir(newTaskName) {
           file("Task.kt", """
@@ -242,7 +242,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
             apply plugin: "kotlin"
             apply plugin: "java"
           """)
-          file("task.html")
+          file("task.md")
           dir("tests") {
             file("Tests.txt")
           }

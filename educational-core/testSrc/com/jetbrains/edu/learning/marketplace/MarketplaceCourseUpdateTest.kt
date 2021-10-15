@@ -31,11 +31,11 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2Renamed.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -62,11 +62,11 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2Renamed.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -93,11 +93,11 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2Renamed.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -124,11 +124,11 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1Renamed.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -155,11 +155,11 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1Renamed.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -194,7 +194,7 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("Buzz.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -231,7 +231,7 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("Buzz.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -288,15 +288,15 @@ class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task3") {
           file("Buzz.kt")
-          file("task.html")
+          file("task.md")
         }
       }
     }

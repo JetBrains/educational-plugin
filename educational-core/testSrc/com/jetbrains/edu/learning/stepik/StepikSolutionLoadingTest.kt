@@ -75,7 +75,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           dir("test") {
             file("Tests1.kt")
           }
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           dir("src") {
@@ -84,7 +84,7 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           dir("test") {
             file("Tests2.kt")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -154,10 +154,10 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -176,10 +176,10 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
       file("build.gradle")
@@ -220,10 +220,10 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(rootDir, myFixture)
@@ -240,10 +240,10 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
           """)
         }
         dir("task1") {
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
-          file("task.html")
+          file("task.md")
         }
       }
     }.assertEquals(rootDir, myFixture)

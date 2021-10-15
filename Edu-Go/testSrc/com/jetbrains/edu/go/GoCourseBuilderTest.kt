@@ -66,7 +66,7 @@ class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
             """)
         }
         file("task.go")
-        file("task.html")
+        file("task.md")
         file("go.mod")
       }
     }.assertEquals(rootDir)
@@ -93,7 +93,7 @@ class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
           file("task_test.go")
         }
         file("task.go")
-        file("task.html")
+        file("task.md")
       }
     }.assertEquals(rootDir)
   }

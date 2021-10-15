@@ -51,7 +51,7 @@ class CppCreateTaskTest : EduActionTestCase() {
           })
         }
         file(CMAKE_LISTS_TXT, getExpectedTaskCMakeText(course, defaultSettings, "global-lesson-task1"))
-        file("task.html")
+        file("task.md")
       }
       dir("cmake") {
         when (environment) {
@@ -147,7 +147,7 @@ class CppCreateTaskTest : EduActionTestCase() {
             CMAKE_LISTS_TXT,
             cMakeListsTextGenerator("global-lesson-task1")
           )
-          file("task.html")
+          file("task.md")
         }
 
         dir("task2") {
@@ -161,7 +161,7 @@ class CppCreateTaskTest : EduActionTestCase() {
             CMAKE_LISTS_TXT,
             cMakeListsTextGenerator("global-lesson-task2")
           )
-          file("task.html")
+          file("task.md")
         }
       }
       dir("cmake") {

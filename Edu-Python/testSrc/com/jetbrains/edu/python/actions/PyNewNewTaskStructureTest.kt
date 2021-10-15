@@ -12,7 +12,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("__init__.py")
       file("task.py")
       dir("tests") {
@@ -21,7 +21,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("tests") {
         file("__init__.py")
         file("test_task.py")
@@ -31,7 +31,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("__init__.py")
       file("main.py")
       dir("tests") {
@@ -39,7 +39,7 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("tests") {
         file("output.txt")
       }
@@ -48,34 +48,34 @@ class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("__init__.py")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("__init__.py")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("__init__.py")
       file("main.py")
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

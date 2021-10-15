@@ -19,7 +19,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("lesson2") {
@@ -30,7 +30,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -48,7 +48,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("lesson1") {
@@ -59,7 +59,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -78,7 +78,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
         dir("lesson1") {
@@ -89,7 +89,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -109,7 +109,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -126,7 +126,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           dir("src") {
@@ -135,7 +135,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -153,7 +153,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
         dir("Theory") {
           dir("src") {
@@ -162,7 +162,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -180,7 +180,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
         dir("Theory") {
           dir("src") {
@@ -189,7 +189,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -209,7 +209,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
           dir("task2") {
             dir("src") {
@@ -218,7 +218,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -238,7 +238,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -256,7 +256,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -274,7 +274,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -292,7 +292,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -310,7 +310,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -336,7 +336,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -355,7 +355,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -375,7 +375,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("section1") {
@@ -387,7 +387,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -407,7 +407,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -420,7 +420,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -439,7 +439,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("section1") {
@@ -451,7 +451,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
         dir("lesson2") {
@@ -462,7 +462,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
 
@@ -482,7 +482,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("section1_renamed") {
@@ -494,7 +494,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -513,7 +513,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
       dir("section1") {
@@ -525,7 +525,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -544,7 +544,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -562,7 +562,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
           dir("test") {
             file("Tests.java")
           }
-          file("task.html")
+          file("task.md")
         }
       }
     }
@@ -581,7 +581,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }
@@ -601,7 +601,7 @@ open class StudentCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             dir("test") {
               file("Tests.java")
             }
-            file("task.html")
+            file("task.md")
           }
         }
       }

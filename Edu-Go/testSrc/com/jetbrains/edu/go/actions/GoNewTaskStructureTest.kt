@@ -13,7 +13,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("go.mod")
       dir("main") {
         file("main.go", """
@@ -36,7 +36,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file("task_test.go")
       }
@@ -45,7 +45,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("go.mod")
       file("main.go", """
         package main
@@ -65,7 +65,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file("output.txt")
       }
@@ -74,7 +74,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("go.mod")
       file("main.go", """
         package main
@@ -91,13 +91,13 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
       """)
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("go.mod")
       file("main.go", """
         package main
@@ -114,13 +114,13 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
       """)
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("go.mod")
       file("main.go", """
         package main
@@ -137,7 +137,7 @@ class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
       """)
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

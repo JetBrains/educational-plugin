@@ -12,7 +12,7 @@ class ScalaSbtNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.sbt")
       dir("src") {
         file("Task.scala")
@@ -22,7 +22,7 @@ class ScalaSbtNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file("TestSpec.scala")
       }
@@ -31,7 +31,7 @@ class ScalaSbtNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.sbt")
       dir("src") {
         file("Main.scala")
@@ -41,7 +41,7 @@ class ScalaSbtNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
       dir("test") {
         file("output.txt")
       }
@@ -50,40 +50,40 @@ class ScalaSbtNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.sbt")
       dir("src") {
         file("Main.scala")
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.sbt")
       dir("src") {
         file("Main.scala")
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
-      file("task.html")
+      file("task.md")
       file("build.sbt")
       dir("src") {
         file("Main.scala")
       }
     },
     taskStructureWithoutSources = {
-      file("task.html")
+      file("task.md")
     }
   )
 }

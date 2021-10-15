@@ -30,7 +30,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
         dir("test") {
           file("test.js")
         }
-        file("task.html")
+        file("task.md")
       }
       file("package.json")
     }.assertEquals(rootDir)
@@ -56,7 +56,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
         dir("test") {
           file("test.js")
         }
-        file("task.html")
+        file("task.md")
       }
       file("package.json")
     }.assertEquals(rootDir)

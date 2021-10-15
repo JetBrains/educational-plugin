@@ -49,7 +49,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     findTask(0, 0).descriptionText = ""
     doOpenTaskDescription()
 
-    val defaultTaskDescriptionText = getInternalTemplateText(EduNames.TASK_HTML)
+    val defaultTaskDescriptionText = getInternalTemplateText(EduNames.TASK_MD)
     assertEquals(defaultTaskDescriptionText, getCurrentlyOpenedText())
   }
 
@@ -81,6 +81,6 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertFalse("Task Description file wasn't deleted", descriptionFile.exists())
   }
 
-  private fun findTaskDescriptionFile() = findTask(0, 0).getDir(project.courseDir)?.findChild(EduNames.TASK_HTML)
+  private fun findTaskDescriptionFile() = findTask(0, 0).getDir(project.courseDir)?.findChild(EduNames.TASK_MD)
                                           ?: error("Task description file not found")
 }

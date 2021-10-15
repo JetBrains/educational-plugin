@@ -41,7 +41,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase<Unit>() {
       dir("lesson1") {
         dir("task1") {
           file("TaskFile1.kt")
-          file("task.html")
+          file("task.md")
         }
         dir("task2") {
           file("TaskFile2.kt", """
@@ -49,7 +49,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase<Unit>() {
             fun bar(): Int = 0
             fun baz(): Boolean = false
           """)
-          file("task.html")
+          file("task.md")
         }
       }
     }

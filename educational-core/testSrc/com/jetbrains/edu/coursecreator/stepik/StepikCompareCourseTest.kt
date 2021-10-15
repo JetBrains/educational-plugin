@@ -3,7 +3,10 @@ package com.jetbrains.edu.coursecreator.stepik
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -364,7 +367,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val changedTask = localCourse.lessons.single().taskList[0]
 
-    val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(EduNames.TASK_HTML)
+    val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(EduNames.TASK_MD)
                               ?: error("Failed to find task description file")
 
     runWriteAction {
