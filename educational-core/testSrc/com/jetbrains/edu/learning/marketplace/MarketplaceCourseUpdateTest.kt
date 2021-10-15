@@ -6,11 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
-import com.jetbrains.edu.learning.update.StudentCourseUpdateTest
+import com.jetbrains.edu.learning.update.CourseUpdateTestBase
 import com.jetbrains.rd.util.firstOrNull
 import java.util.*
 
-class MarketplaceCourseUpdateTest : StudentCourseUpdateTest() {
+class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test update date updated` () {

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import java.util.*
 
-abstract class CourseUpdateTestBase<Settings> : CourseGenerationTestBase<Settings>() {
+abstract class CourseUpdateTestBase : CourseGenerationTestBase<Unit>() {
 
   open fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit = {}) {
     val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)

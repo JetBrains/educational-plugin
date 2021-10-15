@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
 
-class CCStepikCourseUpdateTest : CourseUpdateTestBase<Unit>() {
+class CCStepikCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test task with placeholders added`() {
