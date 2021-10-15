@@ -5,10 +5,6 @@ import com.intellij.execution.testframework.TestConsoleProperties
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter
 import com.intellij.execution.testframework.sm.runner.events.TreeNodeEvent
-import com.intellij.ide.IdeBundle
-import com.intellij.ide.IdeCoreBundle
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
@@ -123,16 +119,8 @@ class PyCCTestEventsConverter(
     private const val ACTUAL: String = "actual"
     private const val EXPECTED: String = "expected"
 
-    // BACKCOMPAT: 2021.2
-    private val BUILD_213: BuildNumber = BuildNumber.fromString("213")!!
-
     private fun getProcessFinishedMessage(): Regex {
-      val message = if (ApplicationInfo.getInstance().build < BUILD_213) {
-        IdeBundle.message("finished.with.exit.code.text.message", "\\d+")
-      } else {
-        IdeCoreBundle.message("finished.with.exit.code.text.message", "\\d+")
-      }
-      return message.toRegex()
+      return IdeCoreBundle.message("finished.with.exit.code.text.message", "\\d+").toRegex()
     }
   }
 }
