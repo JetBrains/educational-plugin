@@ -2,6 +2,7 @@ package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.kotlin.KtCourseBuilder.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
@@ -16,9 +17,16 @@ import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 
 class KtHyperskillCourseGenerationTest : EduTestCase() {
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = KotlinLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
-                    settings = JdkProjectSettings.emptySettings()) {}
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
 
+      courseWithFiles(courseProducer = ::HyperskillCourse, language = KotlinLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
+                      settings = JdkProjectSettings.emptySettings()) {}
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
     checkFileTree {
       dir("lesson1/task1") {
         dir("src") {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.hyperskill
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileTreeBuilder
@@ -25,9 +26,16 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
-                    settings = PyNewProjectSettings()) {}
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
 
+      courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
+                      settings = PyNewProjectSettings()) {}
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
     checkFileTree {
       dir("lesson1/task1") {
         file(TASK_PY)

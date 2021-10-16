@@ -3,6 +3,7 @@ package com.jetbrains.edu.javascript.hyperskill
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.javascript.learning.JsConfigurator.Companion.TASK_JS
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
@@ -13,9 +14,16 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 
 class JsHyperskillCourseGenerationTest : EduTestCase() {
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = JavascriptLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
-                    settings = JsNewProjectSettings()) {}
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
 
+      courseWithFiles(courseProducer = ::HyperskillCourse, language = JavascriptLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
+                      settings = JsNewProjectSettings()) {}
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
     checkFileTree {
       dir("lesson1/task1") {
         dir(HYPERSKILL_TEST_DIR) {

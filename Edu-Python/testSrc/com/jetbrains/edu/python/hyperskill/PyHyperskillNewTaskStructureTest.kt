@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.hyperskill
 import com.intellij.lang.Language
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -21,65 +22,115 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   }
 
-  fun `test create edu task`() = checkEduTaskCreation(
-    fullTaskStructure = {
-      file("task.html")
-      file("task.py")
-      dir("hstest") {
-        file("tests.py")
-      }
-    },
-    taskStructureWithoutSources = {
-      file("task.html")
-      dir("hstest") {
-        file("tests.py")
-      }
-    }
-  )
+  fun `test create edu task`() {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
 
-  fun `test create output task`() = checkOutputTaskCreation(
-    fullTaskStructure = {
-      file("task.html")
-      file("main.py")
-      dir("hstest") {
-        file("output.txt")
-      }
-    },
-    taskStructureWithoutSources = {
-      file("task.html")
-      dir("hstest") {
-        file("output.txt")
-      }
+      checkEduTaskCreation(
+        fullTaskStructure = {
+          file("task.html")
+          file("task.py")
+          dir("hstest") {
+            file("tests.py")
+          }
+        },
+        taskStructureWithoutSources = {
+          file("task.html")
+          dir("hstest") {
+            file("tests.py")
+          }
+        }
+      )
     }
-  )
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
+  }
 
-  fun `test create theory task`() = checkTheoryTaskCreation(
-    fullTaskStructure = {
-      file("task.html")
-      file("main.py")
-    },
-    taskStructureWithoutSources = {
-      file("task.html")
-    }
-  )
+  fun `test create output task`() {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
 
-  fun `test create IDE task`() = checkIdeTaskCreation(
-    fullTaskStructure = {
-      file("task.html")
-      file("main.py")
-    },
-    taskStructureWithoutSources = {
-      file("task.html")
+      checkOutputTaskCreation(
+        fullTaskStructure = {
+          file("task.html")
+          file("main.py")
+          dir("hstest") {
+            file("output.txt")
+          }
+        },
+        taskStructureWithoutSources = {
+          file("task.html")
+          dir("hstest") {
+            file("output.txt")
+          }
+        }
+      )
     }
-  )
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
+  }
 
-  fun `test create choice task`() = checkChoiceTaskCreation(
-    fullTaskStructure = {
-      file("task.html")
-      file("main.py")
-    },
-    taskStructureWithoutSources = {
-      file("task.html")
+  fun `test create theory task`() {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+
+      checkTheoryTaskCreation(
+        fullTaskStructure = {
+          file("task.html")
+          file("main.py")
+        },
+        taskStructureWithoutSources = {
+          file("task.html")
+        }
+      )
     }
-  )
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
+  }
+
+  fun `test create IDE task`() {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+
+      checkIdeTaskCreation(
+        fullTaskStructure = {
+          file("task.html")
+          file("main.py")
+        },
+        taskStructureWithoutSources = {
+          file("task.html")
+        }
+      )
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
+  }
+
+  fun `test create choice task`() {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    try {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+
+      checkChoiceTaskCreation(
+        fullTaskStructure = {
+          file("task.html")
+          file("main.py")
+        },
+        taskStructureWithoutSources = {
+          file("task.html")
+        }
+      )
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+    }
+  }
 }

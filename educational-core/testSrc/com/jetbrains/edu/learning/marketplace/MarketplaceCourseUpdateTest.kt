@@ -13,7 +13,7 @@ import java.util.*
 class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
-  fun `test update date updated` () {
+  fun `test update date updated`() {
     val course = createCourse(CheckStatus.Solved).apply { updateDate = Date(1619697473000) }
 
     val serverCourse = course {
@@ -252,12 +252,12 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
         }
         eduTask(stepId = 2, name = "task2") {
           taskFile("TaskFile2.kt", "fn foo() = <p>TODO()</p>") {
-          placeholder(0, "123")
-        }
+            placeholder(0, "123")
+          }
         }
         eduTask(stepId = 3, name = "task3") {
           taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
-            placeholder(0, "123",  dependency = "lesson1#task1#TaskFile1.kt#1")
+            placeholder(0, "123", dependency = "lesson1#task1#TaskFile1.kt#1")
           }
         }
       }
@@ -266,22 +266,22 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
 
     val serverCourse = course {
       lesson {
-      eduTask(stepId = 1, name = "task1") {
-        taskFile("TaskFile1.kt", "fn foo() = <p>TODO()</p>") {
-          placeholder(0, "123")
+        eduTask(stepId = 1, name = "task1") {
+          taskFile("TaskFile1.kt", "fn foo() = <p>TODO()</p>") {
+            placeholder(0, "123")
+          }
+        }
+        eduTask(stepId = 2, name = "task2") {
+          taskFile("TaskFile2.kt", "fn foo() = <p>TODO()</p>") {
+            placeholder(0, "123")
+          }
+        }
+        eduTask(stepId = 3, name = "task3") {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "123", dependency = "lesson1#task2#TaskFile2.kt#1")
+          }
         }
       }
-      eduTask(stepId = 2, name = "task2") {
-        taskFile("TaskFile2.kt", "fn foo() = <p>TODO()</p>") {
-          placeholder(0, "123")
-        }
-      }
-      eduTask(stepId = 3, name = "task3") {
-        taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
-          placeholder(0, "123",  dependency = "lesson1#task2#TaskFile2.kt#1")
-        }
-      }
-    }
     } as EduCourse
 
     val expectedStructure = fileTree {
@@ -304,7 +304,7 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
     doTest(course, serverCourse, expectedStructure, 2)
     val placeholder = course.allTasks[2].taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
     checkNotNull(placeholder)
-    assertEquals( "lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
+    assertEquals("lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
   }
 
   private fun createCourse(firstTaskStatus: CheckStatus): EduCourse {
