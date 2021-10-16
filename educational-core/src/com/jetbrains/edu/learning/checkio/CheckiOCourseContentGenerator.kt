@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getSolutionsLink
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getTaskLink
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.*
@@ -47,6 +48,7 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
     val taskLink = getTaskLink(apiConnector.languageId, locale.language, mission.slug)
     val task = "<p><a href=\"$taskLink\">${EduCoreBundle.message("checkio.open.task.on.site")}</a></p>"
 
+    mission.descriptionFormat = DescriptionFormat.HTML
     mission.descriptionText = buildString {
       appendLine("<h2>${mission.name}</h2>")
       appendLine(mission.descriptionText)

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -51,11 +52,17 @@ class HyperskillTaskBuilder(
         is CodeTask -> {
           name = stepSource.title
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
+          task.descriptionFormat = DescriptionFormat.HTML
         }
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
+          task.descriptionFormat = DescriptionFormat.HTML
         }
-        is EduTask, is DataTask -> {
+        is DataTask -> {
+          task.descriptionFormat = DescriptionFormat.HTML
+          name = stepSource.title
+        }
+        is EduTask -> {
           name = stepSource.title
         }
       }

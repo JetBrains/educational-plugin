@@ -8,10 +8,7 @@ import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.EDU_TASK_TYPE
@@ -114,6 +111,7 @@ open class StepikTaskBuilder(
     val options = step.pycharmOptions()
     val samples = options.samples
 
+    descriptionFormat = DescriptionFormat.HTML
     descriptionText = buildString {
       append(clearCodeBlockFromTags())
 
@@ -167,6 +165,7 @@ open class StepikTaskBuilder(
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
+    task.descriptionFormat = DescriptionFormat.HTML
 
     val choiceStep: ChoiceStep? = if (courseMode == CCUtils.COURSE_MODE && stepId > 0)
       StepikConnector.getInstance().getChoiceStepSource(stepId)
@@ -206,6 +205,7 @@ open class StepikTaskBuilder(
   private fun theoryTask(name: String): TheoryTask {
     val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
+    task.descriptionFormat = DescriptionFormat.HTML
 
     initTaskFiles(task)
     return task
@@ -231,6 +231,7 @@ open class StepikTaskBuilder(
     }
 
     task.descriptionText = descriptionText
+    task.descriptionFormat = DescriptionFormat.HTML
     initTaskFiles(task)
     return task
   }
@@ -265,6 +266,7 @@ open class StepikTaskBuilder(
     val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
+    task.descriptionFormat = DescriptionFormat.HTML
     task.postSubmissionOnOpen = false
 
     initTaskFiles(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
