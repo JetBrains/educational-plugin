@@ -398,6 +398,8 @@ project(":") {
   task<RunIdeTask>("buildEventsScheme") {
     dependsOn(tasks.prepareSandbox)
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
+    // Force headless mode to be able to run command on CI
+    systemProperty("java.awt.headless", "true")
 
     // BACKCOMPAT: 2021.2
     doFirst {
