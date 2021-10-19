@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -13,7 +12,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,12 +20,6 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
 
   @NonNls
   public static final String ACTION_ID = "Educational.RefreshAnswerPlaceholder";
-
-  public RefreshAnswerPlaceholder() {
-    super(EduCoreBundle.lazyMessage("action.refresh.answer.placeholder.text"),
-          EduCoreBundle.lazyMessage("action.refresh.answer.placeholder.description"),
-          AllIcons.Actions.Refresh);
-  }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {

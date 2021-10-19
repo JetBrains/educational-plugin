@@ -10,12 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.ui.EditorNotifications
 import com.intellij.util.ui.EmptyIcon
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.revertTask
@@ -24,13 +22,11 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
-class RevertTaskAction : DumbAwareAction(lazyMessage("action.reset.request"),
-                                         lazyMessage("action.reset.to.initial.state"),
-                                         EducationalCoreIcons.ResetTask), RightAlignedToolbarAction {
+class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val result = MessageDialogBuilder.yesNo(EduCoreBundle.message("action.reset.request"),
-                                            EduCoreBundle.message("action.reset.progress.dropped")).ask(project)
+    val result = MessageDialogBuilder.yesNo(EduCoreBundle.message("action.Educational.RefreshTask.text"),
+                                            EduCoreBundle.message("action.Educational.RefreshTask.progress.dropped")).ask(project)
     if (!result) return
     revert(project)
     revertTask()
@@ -48,7 +44,8 @@ class RevertTaskAction : DumbAwareAction(lazyMessage("action.reset.request"),
   }
 
   companion object {
-    const val ACTION_ID: @NonNls String = "Educational.RefreshTask"
+    @NonNls
+    const val ACTION_ID: String = "Educational.RefreshTask"
 
     @VisibleForTesting
     fun revert(project: Project) {
@@ -61,7 +58,7 @@ class RevertTaskAction : DumbAwareAction(lazyMessage("action.reset.request"),
 
       updateDependentPlaceholders(project, task)
       EditorNotifications.getInstance(project).updateAllNotifications()
-      Notification("EduTools", EmptyIcon.ICON_16, "", "", EduCoreBundle.message("action.reset.result"),
+      Notification("EduTools", EmptyIcon.ICON_16, "", "", EduCoreBundle.message("action.Educational.RefreshTask.result"),
                    NotificationType.INFORMATION, null).notify(project)
       ProjectView.getInstance(project).refresh()
       TaskDescriptionView.getInstance(project).updateTaskSpecificPanel()

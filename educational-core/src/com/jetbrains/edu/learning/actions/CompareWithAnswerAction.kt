@@ -5,7 +5,6 @@ import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -28,9 +27,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.NonNls
 
-open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.lazyMessage("compare.with.answer.title"),
-                                                     EduCoreBundle.lazyMessage("compare.with.answer.description"),
-                                                     AllIcons.Actions.Diff) {
+open class CompareWithAnswerAction : DumbAwareAction() {
   companion object {
     @NonNls
     const val ACTION_ID = "Educational.CompareWithAnswer"
@@ -57,12 +54,12 @@ open class CompareWithAnswerAction : DumbAwareAction(EduCoreBundle.lazyMessage("
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it)
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
-      SimpleDiffRequest(EduCoreBundle.message("compare.with.answer.description"), studentFileContent, solutionFileContent, virtualFile.name,
+      SimpleDiffRequest(EduCoreBundle.message("action.Educational.CompareWithAnswer.description"), studentFileContent, solutionFileContent, virtualFile.name,
                         "${virtualFile.name} Answer")
     }
     if (requests.isEmpty()) {
       val message = JBPopupFactory.getInstance()
-        .createHtmlTextBalloonBuilder(EduCoreBundle.message("popup.content.no.solution.provided.for.step"), MessageType.INFO, null)
+        .createHtmlTextBalloonBuilder(EduCoreBundle.message("action.Educational.CompareWithAnswer.popup.content.no.solution.provided"), MessageType.INFO, null)
       message.createBalloon().show(JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext), Balloon.Position.above)
       return
     }

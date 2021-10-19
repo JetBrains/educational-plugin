@@ -72,16 +72,17 @@
     <action id="Educational.NextTask"
             class="com.jetbrains.edu.learning.actions.NextTaskAction"
             icon="AllIcons.Actions.Forward"/>
-    <action id="Educational.RefreshTask" class="com.jetbrains.edu.learning.actions.RevertTaskAction"
-            text="Reset Task"
-            description="Revert current task to the initial state"/>
+    <action id="Educational.RefreshTask"
+            class="com.jetbrains.edu.learning.actions.RevertTaskAction"
+            icon="com.jetbrains.edu.EducationalCoreIcons.ResetTask"/>
     <action id="Educational.LeaveCommentAction" class="com.jetbrains.edu.learning.actions.LeaveCommentAction"/>
     <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
-    <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
-            text="Compare with Answer"
-            description="Compare your solution with answer"/>
-    <action id="Educational.RefreshAnswerPlaceholder" class="com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder"
-            text="Refresh Answer Placeholder">
+    <action id="Educational.CompareWithAnswer"
+            class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
+            icon="AllIcons.Actions.Diff"/>
+    <action id="Educational.RefreshAnswerPlaceholder"
+            class="com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder"
+            icon="AllIcons.Actions.Refresh">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
     <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction">
