@@ -260,10 +260,11 @@ fun Submission.toCheckResult(): CheckResult {
 }
 
 enum class HyperskillLanguages(val id: String?, val langName: String?) {
+  GO(EduNames.GO, "go"),
+  JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
   JAVA(EduNames.JAVA, "java11"),
   KOTLIN(EduNames.KOTLIN, "kotlin"),
   PYTHON(EduNames.PYTHON, "python3"),
-  JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
   SCALA(EduNames.SCALA, "scala"),
   PLAINTEXT("TEXT", "TEXT"),
   INVALID(null, null);
