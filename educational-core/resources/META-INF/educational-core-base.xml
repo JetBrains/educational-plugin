@@ -66,11 +66,12 @@
     <action id="Educational.NextPlaceholder"
             class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
             icon="AllIcons.Actions.Forward"/>
-    <action id="Educational.PreviousTask" class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
-            text="Previous Task"
-            description="Navigate to the previous task"/>
-    <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction"
-            description="Navigate to the next task"/>
+    <action id="Educational.PreviousTask"
+            class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
+            icon="AllIcons.Actions.Back"/>
+    <action id="Educational.NextTask"
+            class="com.jetbrains.edu.learning.actions.NextTaskAction"
+            icon="AllIcons.Actions.Forward"/>
     <action id="Educational.RefreshTask" class="com.jetbrains.edu.learning.actions.RevertTaskAction"
             text="Reset Task"
             description="Revert current task to the initial state"/>
