@@ -61,8 +61,8 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
     val course = courseInfo.course
     courseDetailsHeader.isVisible = !course.description.isNullOrEmpty()
     if (course is EduCourse) {
-      courseStatisticsPanel.setStatistics(course)
-      courseStatisticsPanel.isVisible = true
+      val hasStatistics = courseStatisticsPanel.setStatistics(course)
+      courseStatisticsPanel.isVisible = hasStatistics
     }
     else {
       courseStatisticsPanel.isVisible = false
@@ -165,16 +165,21 @@ private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
     }
   }
 
-  fun setStatistics(course: EduCourse) {
+  fun setStatistics(course: EduCourse): Boolean {
+    var hasStatistics = false
     rating.icon = AllIcons.Plugins.Rating
     if (course.reviewScore != 0.0) {
       rating.text = "%.${1}f".format(course.reviewScore)
+      hasStatistics = true
     }
     else {
       rating.text = EduCoreBundle.message("course.dialog.card.not.rated")
     }
 
     learners.isVisible = course.learnersCount != 0
+    if (learners.isVisible) {
+      hasStatistics = true
+    }
     learners.text = if (course.learnersCount == 1) {
       EduCoreBundle.message("course.dialog.course.stats.one.learner")
     }
@@ -187,6 +192,11 @@ private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
     date.isVisible = course.updateDate != Date(0)
     date.text = EduCoreBundle.message("course.dialog.updated",
                                       SimpleDateFormat(CourseDetailsPanel.DATE_PATTERN, Locale.US).format(course.updateDate))
+    if (date.isVisible) {
+      hasStatistics = true
+    }
+
+    return hasStatistics
   }
 }
 

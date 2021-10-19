@@ -143,7 +143,7 @@ class CCCreateCoursePreviewDialog(
     private val LOG: Logger = logger<CCCreateCoursePreviewDialog>()
 
     private const val WIDTH: Int = 450
-    private const val HEIGHT: Int = 330
+    private const val HEIGHT: Int = 500
     private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview"
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
