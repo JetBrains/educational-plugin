@@ -7,18 +7,16 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult.Companion.SOLVED
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
 import java.util.*
 
-class CodeforcesMarkAsCompletedAction : CodeforcesAction(
-  EduCoreBundle.lazyMessage("codeforces.label.mark.codeforces.task.as.completed", CodeforcesNames.CODEFORCES_TITLE)
-) {
+class CodeforcesMarkAsCompletedAction : CodeforcesAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
@@ -44,6 +42,7 @@ class CodeforcesMarkAsCompletedAction : CodeforcesAction(
   }
 
   companion object {
-    const val ACTION_ID = "Codeforces.MarkAsCompleted"
+    @NonNls
+    const val ACTION_ID = "Educational.Codeforces.MarkAsCompleted"
   }
 }

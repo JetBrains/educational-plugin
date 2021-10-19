@@ -11,9 +11,10 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CONTEST
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
-class CodeforcesUpdateContestAction : DumbAwareAction(EduCoreBundle.message("codeforces.label.update.contest")) {
+class CodeforcesUpdateContestAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
@@ -47,5 +48,10 @@ class CodeforcesUpdateContestAction : DumbAwareAction(EduCoreBundle.message("cod
       NotificationType.INFORMATION
     )
     notification.notify(project)
+  }
+
+  companion object {
+    @NonNls
+    const val ACTION_ID = "Educational.Codeforces.UpdateContest"
   }
 }

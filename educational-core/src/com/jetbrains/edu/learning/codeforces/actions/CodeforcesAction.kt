@@ -4,9 +4,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import java.util.function.Supplier
 
-abstract class CodeforcesAction(actionText: Supplier<String>): DumbAwareAction(actionText) {
+abstract class CodeforcesAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation

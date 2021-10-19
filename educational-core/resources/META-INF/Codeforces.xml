@@ -26,12 +26,16 @@
   </extensionPoints>
 
   <actions>
-    <action id="Educational.StartCodeforcesContest" class="com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction">
+    <action id="Educational.Codeforces.StartContest"
+            class="com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction">
     </action>
-    <action id="Codeforces.MarkAsCompleted" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction"/>
-    <action id="Codeforces.CopyAndSubmit" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction"/>
-    <action id="Codeforces.UpdateContest" class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
-    <action id="Codeforces.CreateTestSample"
+    <action id="Educational.Codeforces.MarkAsCompleted"
+            class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction"/>
+    <action id="Educational.Codeforces.CopyAndSubmit"
+            class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction"/>
+    <action id="Educational.Codeforces.UpdateContest"
+            class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
+    <action id="Educational.Codeforces.CreateTestSample"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.CODEFORCES_SMALL">
       <add-to-group group-id="NewGroup" anchor="first"/>

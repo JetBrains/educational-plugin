@@ -17,11 +17,8 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
-import java.util.function.Supplier
 
-class StartCodeforcesContestAction(
-  title: Supplier<String> = EduCoreBundle.lazyMessage("codeforces.start.contest"),
-) : DumbAwareAction(title) {
+class StartCodeforcesContestAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val showViewAllLabel = e.place != CodeforcesCoursesPanel.PLACE
@@ -45,7 +42,7 @@ class StartCodeforcesContestAction(
   companion object {
 
     @NonNls
-    const val ACTION_ID = "Educational.StartCodeforcesContest"
+    const val ACTION_ID = "Educational.Codeforces.StartContest"
 
     @VisibleForTesting
     fun getContestUnderProgress(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =

@@ -4,16 +4,15 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ide.CopyPasteManager
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesSubmitLink
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.awt.datatransfer.StringSelection
 
 @Suppress("ComponentNotRegistered") // Codeforces.xml
-class CodeforcesCopyAndSubmitAction : CodeforcesAction(EduCoreBundle.lazyMessage("codeforces.copy.and.submit")) {
+class CodeforcesCopyAndSubmitAction : CodeforcesAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
@@ -27,6 +26,7 @@ class CodeforcesCopyAndSubmitAction : CodeforcesAction(EduCoreBundle.lazyMessage
   }
 
   companion object {
-    const val ACTION_ID = "Codeforces.CopyAndSubmit"
+    @NonNls
+    const val ACTION_ID = "Educational.Codeforces.CopyAndSubmit"
   }
 }

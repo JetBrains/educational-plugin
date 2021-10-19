@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NonNls
 import javax.swing.SwingConstants
 
 
-class CodeforcesCreateTestAction : DumbAwareAction(EduCoreBundle.lazyMessage("codeforces.create.test")) {
+class CodeforcesCreateTestAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
 
     val project = e.project ?: return
@@ -93,6 +93,6 @@ class CodeforcesCreateTestAction : DumbAwareAction(EduCoreBundle.lazyMessage("co
 
   companion object {
     @NonNls
-    const val ACTION_ID = "Codeforces.CreateTestSample"
+    const val ACTION_ID = "Educational.Codeforces.CreateTestSample"
   }
 }
