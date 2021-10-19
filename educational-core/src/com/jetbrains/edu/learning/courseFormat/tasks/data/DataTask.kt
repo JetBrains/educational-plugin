@@ -36,6 +36,8 @@ class DataTask : Task {
 
   override fun getCheckAction(): CheckAction = CheckAction(lazyMessage("send.answer"))
 
+  override fun supportSubmissions(): Boolean = false
+
   fun isRunning(): Boolean {
     if (status != CheckStatus.Unchecked) return false
     return attempt?.isRunning ?: false
