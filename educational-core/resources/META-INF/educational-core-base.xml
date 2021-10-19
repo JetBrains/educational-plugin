@@ -60,14 +60,12 @@
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
-    <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
-            text="Previous Answer Placeholder"
-            description="Navigate to the previous answer placeholder">
-    </action>
-    <action id="Educational.NextPlaceholder" class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
-            text="Next Answer Placeholder"
-            description="Navigate to the next answer holder">
-    </action>
+    <action id="Educational.PrevPlaceholder"
+            class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
+            icon="AllIcons.Actions.Back"/>
+    <action id="Educational.NextPlaceholder"
+            class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
+            icon="AllIcons.Actions.Forward"/>
     <action id="Educational.PreviousTask" class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
             text="Previous Task"
             description="Navigate to the previous task"/>

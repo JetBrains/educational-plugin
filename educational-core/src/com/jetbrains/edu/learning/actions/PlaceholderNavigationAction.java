@@ -15,14 +15,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.function.Supplier;
-
 abstract public class PlaceholderNavigationAction extends DumbAwareAction {
-
-  protected PlaceholderNavigationAction(Supplier<String> actionId, Supplier<String> description, Icon icon) {
-    super(actionId, description, icon);
-  }
 
   private void navigateToPlaceholder(@NotNull final Project project) {
     final Editor selectedEditor = OpenApiExtKt.getSelectedEditor(project);
