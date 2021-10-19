@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
@@ -13,7 +14,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
-import java.io.IOException
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -35,8 +35,9 @@ abstract class CoursesPlatformProvider {
     val courseGroups = try {
       doLoadCourses()
     }
-    catch (e: IOException) {
-      emptyList()
+    catch (e: Exception) {
+      Logger.getInstance(CoursesPlatformProvider::class.java).warn(e.message)
+      return emptyList()
     }
     return courseGroups.mapNotNull { courseGroup ->
       val filteredCourses = courseGroup.courses.filter {
