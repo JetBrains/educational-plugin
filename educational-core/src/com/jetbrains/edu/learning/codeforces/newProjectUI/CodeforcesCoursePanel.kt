@@ -172,13 +172,28 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
     }
 
     val registrationCountdown = course.registrationCountdown ?: error("registration countdown is null for '${course.id}'")
+    val daysPart = registrationCountdown.toDaysPart()
     val hoursPart = registrationCountdown.toHoursPart()
     val minutesPart = registrationCountdown.toMinutesPart()
-    val registrationOpensIn = if (hoursPart > 0) {
-      EduCoreBundle.message("codeforces.course.selection.duration.value.hours", hoursPart, minutesPart)
-    }
-    else {
-      EduCoreBundle.message("codeforces.course.selection.duration.value.min", minutesPart)
+    val registrationOpensIn = when {
+      daysPart == 1L -> {
+        if (hoursPart > 0) {
+          EduCoreBundle.message("codeforces.course.selection.duration.value.day.hour", hoursPart)
+        }
+        else {
+          EduCoreBundle.message("codeforces.course.selection.duration.value.day")
+        }
+      }
+      daysPart > 1 -> {
+        if (hoursPart > 0) {
+          EduCoreBundle.message("codeforces.course.selection.duration.value.days.hours", daysPart, hoursPart)
+        }
+        else {
+          EduCoreBundle.message("codeforces.course.selection.duration.value.days", daysPart)
+        }
+      }
+      hoursPart > 0 -> EduCoreBundle.message("codeforces.course.selection.duration.value.hours", hoursPart, minutesPart)
+      else -> EduCoreBundle.message("codeforces.course.selection.duration.value.min", minutesPart)
     }
     val validationMessage = ValidationMessage(
       EduCoreBundle.message("codeforces.course.selection.registration.opens.in", registrationOpensIn),

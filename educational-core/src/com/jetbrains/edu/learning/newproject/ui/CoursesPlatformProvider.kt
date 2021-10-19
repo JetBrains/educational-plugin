@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
+import java.io.IOException
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -31,7 +32,12 @@ abstract class CoursesPlatformProvider {
   }
 
   suspend fun loadCourses(): List<CoursesGroup> {
-    val courseGroups = doLoadCourses()
+    val courseGroups = try {
+      doLoadCourses()
+    }
+    catch (e: IOException) {
+      emptyList()
+    }
     return courseGroups.mapNotNull { courseGroup ->
       val filteredCourses = courseGroup.courses.filter {
         val compatibility = it.compatibility
