@@ -99,8 +99,7 @@ class CCCreateCoursePreviewDialog(
       val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
       val archiveLocation = "${folder.path}/$archiveName.zip"
       close(OK_EXIT_CODE)
-      val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(
-        CourseArchiveCreator(project, archiveLocation))
+      val errorMessage = ApplicationManager.getApplication().runWriteAction<String>(CourseArchiveCreator(project, archiveLocation))
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
