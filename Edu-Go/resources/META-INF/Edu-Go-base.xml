@@ -6,4 +6,10 @@
     <!-- Hyperskill -->
     <configurator implementationClass="com.jetbrains.edu.go.stepik.hyperskill.GoHyperskillConfigurator" language="go" courseType="Hyperskill"/>
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.course.hyperskill.go.support" percentOfUsers="0">
+      <!--suppress PluginXmlCapitalization -->
+      <description>Enables Go language support for JetBrains Academy</description>
+    </experimentalFeature>
+  </extensions>
 </idea-plugin>
