@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpenRequest>() {
+object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
   private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("hyperskill.loading.project")
 
@@ -244,12 +244,7 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
   }
 
   private fun HyperskillStepSource.getTopicAndRelatedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
-    val connector = HyperskillConnector.getInstance()
-    val topicId = topic ?: return Err("Topic must not be null")
-
-    val stepSources = connector.getStepsForTopic(topicId)
-      .onError { return Err(it) }
-      .filter { it.isRecommended || it.id == id }
+    val stepSources = getRecommendedSteps(topic, id).onError { return Err(it) }
 
     val theoryTitle = stepSources.find { it.block?.name == TEXT.type }?.title
     if (theoryTitle != null) {
@@ -259,6 +254,30 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
     LOG.warn("Can't get theory step title for ${id} step")
     val problemTitle = title ?: return Err("Can't get title of ${id} step")
     return Ok(Pair(problemTitle, stepSources))
+  }
+
+  fun getRecommendedSteps(
+    topic: Int?,
+    currentTaskId: Int
+  ): Result<List<HyperskillStepSource>, String> {
+    val topicId = topic ?: return Err("Topic must not be null")
+
+    val stepSources = HyperskillConnector.getInstance().getStepsForTopic(topicId)
+      .onError { return Err(it) }
+      .filter { it.isRecommended || it.id == currentTaskId }
+    return Ok(stepSources)
+  }
+
+  fun getRecommendedAndCompletedSteps(
+    topic: Int?,
+    currentTaskId: Int
+  ): Result<List<HyperskillStepSource>, String> {
+    val topicId = topic ?: return Err("Topic must not be null")
+
+    val stepSources = HyperskillConnector.getInstance().getStepsForTopic(topicId)
+      .onError { return Err(it) }
+      .filter { it.isRecommended || it.id == currentTaskId || it.isCompleted }
+    return Ok(stepSources)
   }
 
   /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]

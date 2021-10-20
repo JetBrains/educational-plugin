@@ -69,6 +69,7 @@ class HyperskillNextActivityTest : EduTestCase() {
         topic = topic1.id
         id = step5.id
         block!!.name = ChoiceTask.CHOICE_TASK_TYPE
+        isRecommended = true
       }
     )
 
