@@ -102,8 +102,13 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     val eduEnvironment = hyperskillProject.eduEnvironment ?: return Err("Unsupported environment ${hyperskillProject.environment}")
 
-    if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
-      return Err(EduCoreBundle.message("rest.service.android.not.supported"))
+    if (eduEnvironment == EduNames.ANDROID) {
+      if (request is HyperskillOpenStepRequest) {
+        return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+      }
+      else if (!EduUtils.isAndroidStudio()) {
+        return Err(EduCoreBundle.message("rest.service.android.not.supported"))
+      }
     }
 
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
