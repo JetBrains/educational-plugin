@@ -46,8 +46,12 @@ class CCCreateCoursePreviewDialog(
     setOKButtonText(EduCoreBundle.message("course.creator.create.course.preview.button"))
     panel.preferredSize = JBUI.size(WIDTH, HEIGHT)
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
-    val courseCopy = course.copy()
-    courseCopy.dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
+    val courseCopy = course.copy().apply {
+      // is set not to show "Edit" button for course preview
+      dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
+      // is set to show "Start" button for course preview
+      courseMode = EduNames.STUDY
+    }
     panel.bindCourse(courseCopy)
     init()
   }
