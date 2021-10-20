@@ -54,6 +54,7 @@ open class ImportLocalCourseAction(
                                              Messages.OK,
                                              Messages.getErrorIcon())
             if (result == Messages.NO) {
+              course.name = createUnusedName(course.name)
               doImportNewCourse(course, component)
             }
             else if (result == Messages.OK) {
@@ -68,6 +69,18 @@ open class ImportLocalCourseAction(
         doImportNewCourse(course, component)
       }
     }
+  }
+
+  private fun createUnusedName(initialName: String): String {
+    val existingNames = CoursesStorage.getInstance().state.courses.map { it.name }.filter { it.startsWith(initialName) }
+    var copyNumber = 1
+    var newName = initialName
+    while (existingNames.contains(newName)) {
+      copyNumber++
+      newName = "$initialName ($copyNumber)"
+    }
+
+    return newName
   }
 
   private fun doImportNewCourse(course: Course, component: Component?) {
