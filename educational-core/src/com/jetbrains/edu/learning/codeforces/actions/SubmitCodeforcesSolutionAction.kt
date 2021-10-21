@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -29,16 +30,18 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction(EduCoreBundle.lazyMessag
     TaskDescriptionView.getInstance(project).checkStarted(task)
     CodeforcesSettings.getInstance().account?.let {
       var checkStatus = CheckStatus.RemoteSubmitted
-      var message = EduCoreBundle.message("codeforces.message.solution.submitted", CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
-      CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError {
+      var message = EduCoreBundle.message("codeforces.message.solution.submitted",
+                                          CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
+      CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError { errorMessage ->
         checkStatus = CheckStatus.SubmissionFailed
-        message = EduCoreBundle.message("codeforces.failed.to.submit.solution")
+        message = EduCoreBundle.message("codeforces.failed.to.submit.solution", errorMessage)
       }
       val checkResult = CheckResult(checkStatus, message)
 
       task.feedback = CheckFeedback(Date(), checkResult)
       task.status = checkStatus
 
+      ProjectView.getInstance(project).refresh()
       YamlFormatSynchronizer.saveItem(task)
       TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
     }

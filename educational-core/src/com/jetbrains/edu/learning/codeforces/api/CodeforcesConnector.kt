@@ -149,9 +149,8 @@ abstract class CodeforcesConnector {
   }
 
   fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<Boolean, String> {
-
     if (!account.isUpToDate() && !getInstance().updateJSessionID(account)) {
-      return Err(EduCoreBundle.message("codeforces.failed.to.submit.solution"))
+      return Err(EduCoreBundle.message("error.unknown.error"))
     }
 
     val jSessionID = account.getSessionId()
@@ -164,7 +163,7 @@ abstract class CodeforcesConnector {
                                                "JSESSIONID=$jSessionID").executeParsingErrors().onError {
       return Err(EduCoreBundle.message("error.failed.to.load.submission.page"))
     }
-    val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("codeforces.failed.to.submit.solution"))
+    val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("error.unknown.error"))
     val body = Jsoup.parse(htmlPage)
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 
@@ -177,6 +176,13 @@ abstract class CodeforcesConnector {
                                         cookie = "JSESSIONID=$jSessionID").executeParsingErrors().onError {
       return Err(EduCoreBundle.message("error.unknown.error"))
     }
+
+    val responseBody = Jsoup.parse(response.body()?.string())
+
+    if (responseBody.html().contains("You have submitted exactly the same code before")) {
+      return Err(EduCoreBundle.message("codeforces.error.you.have.submitted.code.before"))
+    }
+
     return Ok(response.isSuccessful && response.raw().priorResponse()?.code() == HttpURLConnection.HTTP_MOVED_TEMP)
   }
 
