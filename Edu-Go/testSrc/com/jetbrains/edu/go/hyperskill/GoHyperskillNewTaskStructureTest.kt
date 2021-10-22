@@ -20,7 +20,9 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     withFeature(HYPERSKILL_GO_SUPPORT, true) {
-      super.runTestRunnable(context)
+      withDefaultHtmlTaskDescription {
+        super.runTestRunnable(context)
+      }
     }
   }
 

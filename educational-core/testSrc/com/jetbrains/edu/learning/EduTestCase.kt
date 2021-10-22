@@ -25,6 +25,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -385,6 +386,17 @@ abstract class EduTestCase : BasePlatformTestCase() {
         }
         placeholders
       }
+    }
+  }
+
+  fun <T> withDefaultHtmlTaskDescription(action: () -> T): T {
+    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
+    CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+    return try {
+      action()
+    }
+    finally {
+      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
     }
   }
 }

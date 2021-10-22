@@ -3,7 +3,6 @@ package com.jetbrains.edu.python.hyperskill
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileTreeBuilder
@@ -21,21 +20,16 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     // Hyperskill python support is not available in Android Studio
     if (!EduUtils.isAndroidStudio()) {
-      super.runTestRunnable(context)
+      withDefaultHtmlTaskDescription {
+        super.runTestRunnable(context)
+      }
     }
   }
 
   fun `test course structure creation`() {
-    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
-    try {
-      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
+                    settings = PyNewProjectSettings()) {}
 
-      courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE,
-                      settings = PyNewProjectSettings()) {}
-    }
-    finally {
-      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
-    }
     checkFileTree {
       dir("lesson1/task1") {
         file(TASK_PY)
