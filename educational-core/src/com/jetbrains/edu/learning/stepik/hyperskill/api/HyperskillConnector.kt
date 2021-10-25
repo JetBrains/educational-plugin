@@ -398,18 +398,15 @@ abstract class HyperskillConnector {
     @JvmStatic
     fun getInstance(): HyperskillConnector = service()
 
+    /**
+     * Create new tasks in lesson. Tasks get from stepSources
+     */
     fun getTasks(course: Course, lesson: Lesson, stepSources: List<HyperskillStepSource>): List<Task> {
-      val tasks = ArrayList<Task>()
-      for (step in stepSources) {
-        val builder = HyperskillTaskBuilder(course, lesson, step, step.id)
-        if (!builder.isSupported(step.block!!.name)) continue
-        val task = builder.createTask(step.block!!.name)
-        if (task != null) {
-          tasks.add(task)
-          (course as HyperskillCourse).updateAdditionalFiles(step)
-        }
+      val hyperskillCourse = course as HyperskillCourse
+      return stepSources.mapNotNull { step ->
+        HyperskillTaskBuilder(course, lesson, step).build()
+          ?.also { hyperskillCourse.updateAdditionalFiles(step) }
       }
-      return tasks
     }
 
     fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {

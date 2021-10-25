@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpenRequest>() {
+object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
   private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("hyperskill.loading.project")
 
@@ -312,56 +312,26 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
 
   private fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project, stepSource: HyperskillStepSource): Result<Unit, String> {
     return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
-      var topicsSection = getTopicsSection()
-      var createSectionDir = false
-      if (topicsSection == null) {
-        topicsSection = createTopicsSection()
-        createSectionDir = true
+      var localTopicsSection = getTopicsSection()
+      val createSectionDir = localTopicsSection == null
+      if (localTopicsSection == null) {
+        localTopicsSection = createTopicsSection()
       }
 
-      val (topicName, stepSources) = stepSource.getTopicAndRelatedSteps().onError {
-        return@computeUnderProgress Err(it)
+      val (topicNameSource, stepSources) = stepSource.getTopicAndRelatedSteps().onError { return@computeUnderProgress Err(it) }
+      var localTopicLesson = localTopicsSection.getLesson { it.presentableName == topicNameSource }
+      val createLessonDir = localTopicLesson == null
+      if (localTopicLesson == null) {
+        localTopicLesson = localTopicsSection.createTopicLesson(topicNameSource)
       }
 
-      var topicLesson = topicsSection.getLesson { it.presentableName == topicName }
-      var createLessonDir = false
-      if (topicLesson == null) {
-        topicLesson = topicsSection.createTopicLesson(topicName)
-        createLessonDir = true
-      }
-
-      val tasks = topicLesson.addProblems(stepSources).onError {
-        return@computeUnderProgress Err(it)
-      }
-
-      topicsSection.init(course, null, false)
+      val tasks = localTopicLesson.addProblems(stepSources).onError { return@computeUnderProgress Err(it) }
+      localTopicsSection.init(course, null, false)
 
       when {
-        createSectionDir -> {
-          GeneratorUtils.createSection(project, topicsSection, course.getDir(project.courseDir))
-          tasks.forEach { task ->
-            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
-          }
-          YamlFormatSynchronizer.saveItem(topicLesson)
-          YamlFormatSynchronizer.saveItem(topicsSection)
-          YamlFormatSynchronizer.saveItem(course)
-        }
-        createLessonDir -> {
-          val parentDir = topicsSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
-          GeneratorUtils.createLesson(project, topicLesson, parentDir)
-          tasks.forEach { task ->
-            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
-          }
-          YamlFormatSynchronizer.saveItem(topicLesson)
-          YamlFormatSynchronizer.saveItem(topicsSection)
-        }
-        else -> {
-          tasks.forEach { task ->
-            GeneratorUtils.createTask(project, task, topicLesson.getDir(project.courseDir)!!)
-            YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
-          }
-          YamlFormatSynchronizer.saveItem(topicLesson)
-        }
+        createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
+        createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
+        else -> saveTasks(project, localTopicLesson, tasks)
       }
 
       if (tasks.isNotEmpty()) {
@@ -369,6 +339,47 @@ object HyperskillOpenInIdeRequestHandler: OpenInIdeRequestHandler<HyperskillOpen
       }
       Ok(Unit)
     }
+  }
+
+  private fun saveSectionDir(
+    project: Project,
+    course: Course,
+    topicsSection: Section,
+    topicLesson: Lesson,
+    tasks: List<Task>
+  ) {
+    GeneratorUtils.createSection(project, topicsSection, course.getDir(project.courseDir))
+    tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
+    YamlFormatSynchronizer.saveItem(topicLesson)
+    YamlFormatSynchronizer.saveItem(topicsSection)
+    YamlFormatSynchronizer.saveItem(course)
+  }
+
+  private fun saveLessonDir(
+    project: Project,
+    topicSection: Section,
+    topicLesson: Lesson,
+    tasks: List<Task>
+  ) {
+    val parentDir = topicSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
+    tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
+    GeneratorUtils.createLesson(project, topicLesson, parentDir)
+    YamlFormatSynchronizer.saveItem(topicLesson)
+    YamlFormatSynchronizer.saveItem(topicSection)
+  }
+
+  private fun saveTasks(
+    project: Project,
+    topicLesson: Lesson,
+    tasks: List<Task>,
+  ) {
+    tasks.forEach { task ->
+      topicLesson.getDir(project.courseDir)?.let { lessonDir ->
+        GeneratorUtils.createTask(project, task, lessonDir)
+        YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+      }
+    }
+    YamlFormatSynchronizer.saveItem(topicLesson)
   }
 
   private fun synchronizeProjectOnStepOpening(project: Project, course: HyperskillCourse, stepId: Int) {

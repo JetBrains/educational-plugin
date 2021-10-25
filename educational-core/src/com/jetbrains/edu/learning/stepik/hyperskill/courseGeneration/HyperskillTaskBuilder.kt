@@ -22,9 +22,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 class HyperskillTaskBuilder(
   private val course: Course,
   lesson: Lesson,
-  private val stepSource: HyperskillStepSource,
-  private val stepId: Int
-) : StepikTaskBuilder(course, lesson, stepSource, stepId, -1) {
+  private val stepSource: HyperskillStepSource
+) : StepikTaskBuilder(course, lesson, stepSource, stepSource.id, -1) {
   override fun getLanguageName(language: Language): String? {
     return HyperskillLanguages.langOfId(language.id).langName
   }
@@ -39,6 +38,11 @@ class HyperskillTaskBuilder(
       appendLine(EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")))
       appendLine("<br><br>")
     }
+  }
+
+  fun build(): Task? {
+    val type = stepSource.block?.name ?: return null
+    return if (isSupported(type)) createTask(type) else null
   }
 
   override fun createTask(type: String): Task? {
@@ -67,7 +71,7 @@ class HyperskillTaskBuilder(
         }
       }
 
-      feedbackLink = "${stepLink(stepId)}$HYPERSKILL_COMMENT_ANCHOR"
+      feedbackLink = "${stepLink(stepSource.id)}$HYPERSKILL_COMMENT_ANCHOR"
     }
     return task
   }
