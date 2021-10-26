@@ -365,8 +365,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     tasks: List<Task>
   ) {
     val parentDir = topicSection.getDir(project.courseDir) ?: error("Can't get directory of Topics section")
-    tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
     GeneratorUtils.createLesson(project, topicLesson, parentDir)
+    tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
     YamlFormatSynchronizer.saveItem(topicLesson)
     YamlFormatSynchronizer.saveItem(topicSection)
   }
