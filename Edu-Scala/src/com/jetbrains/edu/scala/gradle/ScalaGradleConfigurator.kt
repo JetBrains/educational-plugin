@@ -7,6 +7,7 @@ import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.scala.isScalaPluginCompatible
 import org.jetbrains.plugins.scala.ScalaLanguage
 import javax.swing.Icon
 
@@ -18,7 +19,7 @@ class ScalaGradleConfigurator : GradleConfiguratorBase() {
     get() = TEST_SCALA
 
   override val isEnabled: Boolean
-    get() = !EduUtils.isAndroidStudio()
+    get() = !EduUtils.isAndroidStudio() && isScalaPluginCompatible
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = GradleTaskCheckerProvider()
