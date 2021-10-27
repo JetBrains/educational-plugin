@@ -1,9 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -11,24 +8,20 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.InternalDecoratorImpl
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
-import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.ClickableLabel
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import org.jetbrains.annotations.NonNls
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.Point
+import java.awt.*
+import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessage("codeforces.account")) {
+class CodeforcesShowLoginStatusAction : CodeforcesAction(EduCoreBundle.lazyMessage("codeforces.account")) {
 
   private val POPUP_WIDTH = 280
   private val POPUP_HEIGHT = 115
@@ -51,11 +44,11 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
       .setMinSize(Dimension(POPUP_WIDTH, POPUP_HEIGHT))
       .createPopup()
 
-    wrapperPanel.add(fillPopupContent(popup), BorderLayout.CENTER)
+    wrapperPanel.add(popupContent(popup), BorderLayout.CENTER)
     return popup
   }
 
-  private fun fillPopupContent(popup: JBPopup): JPanel {
+  private fun popupContent(popup: JBPopup): JPanel {
     val account = CodeforcesSettings.getInstance().account
     val accountInfoText = if (account != null) {
       val handle = account.userInfo.handle
@@ -65,8 +58,12 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
     else {
       EduCoreBundle.message("account.widget.no.login.message")
     }
+    val accountInfoLabel = JPanel(FlowLayout(FlowLayout.LEFT))
+    accountInfoLabel.add(EduHyperlinkLabel(accountInfoText))
+    accountInfoLabel.alignmentX = Component.LEFT_ALIGNMENT
 
-    val contentPanel = JBUI.Panels.simplePanel(0, 10)
+    val contentPanel = JPanel()
+    contentPanel.layout = BoxLayout(contentPanel, BoxLayout.Y_AXIS)
 
     val accountActionLabel = if (account != null) {
       ClickableLabel(EduCoreBundle.message("account.widget.logout")) {
@@ -77,18 +74,15 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
     else {
       ClickableLabel(EduCoreBundle.message("notification.content.authorization.action")) {
         popup.closeOk(null)
-        val loginAction = ActionManager.getInstance().getAction(CodeforcesLoginAction.ACTION_ID)
-        val actionEvent = AnActionEvent.createFromAnAction(loginAction,
-                                                           null,
-                                                           CheckPanel.ACTION_PLACE,
-                                                           DataManager.getInstance().getDataContext(contentPanel))
-        loginAction.actionPerformed(actionEvent)
+        LoginDialog().show()
       }
     }
+    accountActionLabel.alignmentX = Component.LEFT_ALIGNMENT
+    accountActionLabel.border = JBUI.Borders.emptyLeft(5)
 
-    contentPanel.addToTop(EduHyperlinkLabel(accountInfoText))
-    contentPanel.addToCenter(JSeparator())
-    contentPanel.addToBottom(accountActionLabel)
+    contentPanel.add(accountInfoLabel)
+    contentPanel.add(JSeparator())
+    contentPanel.add(accountActionLabel)
 
     return contentPanel
   }
@@ -98,14 +92,7 @@ class CodeforcesShowLoginStatusAction : DumbAwareAction(EduCoreBundle.lazyMessag
   }
 
   override fun update(e: AnActionEvent) {
-    val presentation = e.presentation
-    presentation.isEnabledAndVisible = false
-
-    val project = e.project ?: return
-    if (!EduUtils.isStudentProject(project)) return
-    if (project.course !is CodeforcesCourse) return
-
-    presentation.isEnabledAndVisible = true
+    super.update(e)
     updateIcon(e)
   }
 

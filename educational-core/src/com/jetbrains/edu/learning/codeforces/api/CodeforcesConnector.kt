@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
-import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -83,22 +82,22 @@ abstract class CodeforcesConnector {
     }
   }
 
-  fun login(userName: String, password: String): Boolean {
+  fun login(userName: String, password: String): Result<Boolean, String> {
     if (userName.isEmpty() || password.isEmpty()) {
-      return loginErrorMessage(EduCoreBundle.message("error.empty.handle.or.password"))
+      return Err(EduCoreBundle.message("error.empty.handle.or.password"))
     }
 
     val (token, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError {
-      return loginErrorMessage(it)
+      return Err(it)
     }
     val loginResponse = getInstance().postLoginForm(userName, password, jSessionId, token).onError {
-      return loginErrorMessage(it)
+      return Err(it)
     }
 
-    val htmlResponse = loginResponse.body()?.string() ?: return false
+    val htmlResponse = loginResponse.body()?.string() ?: return Err(EduCoreBundle.message("error.unknown.error"))
 
     if (htmlResponse.contains("Invalid handle/email or password")) {
-      return loginErrorMessage(EduCoreBundle.message("error.invalid.handle.or.password"))
+      return Err(EduCoreBundle.message("error.invalid.handle.or.password"))
     }
 
     if (loginResponse.isSuccessful) {
@@ -107,7 +106,7 @@ abstract class CodeforcesConnector {
         .map { handleRegex.find(it.data())?.destructured?.toList()?.firstOrNull() }
         .firstOrNull()
 
-      if (handle == null) handle = getInstance().getProfile(jSessionId) ?: return false
+      if (handle == null) handle = getInstance().getProfile(jSessionId) ?: return Err(EduCoreBundle.message("error.unknown.error"))
 
       val userInfo = CodeforcesUserInfo()
       userInfo.handle = handle
@@ -115,14 +114,9 @@ abstract class CodeforcesConnector {
       account.saveSessionId(jSessionId)
       account.savePassword(password)
       CodeforcesSettings.getInstance().account = account
-      return true
+      return Ok(true)
     }
-    return loginErrorMessage(EduCoreBundle.message("error.unknown.error"))
-  }
-
-  private fun loginErrorMessage(message: String): Boolean {
-    Messages.showErrorDialog(message, EduCoreBundle.message("error.login.error.title"))
-    return false
+    return Err(EduCoreBundle.message("error.unknown.error"))
   }
 
   fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {

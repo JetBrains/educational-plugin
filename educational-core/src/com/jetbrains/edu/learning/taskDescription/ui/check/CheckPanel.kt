@@ -133,23 +133,22 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       updateCheckButtonWrapper(task)
       return
     }
-    val (isDefault, optionalActions) = getOptionalActions(task)
+    val isDefault = task !is CodeforcesTask
+    val optionalActions = getOptionalActions(task)
     val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault, optionalActions, project = project)
     checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
-  private fun getOptionalActions(task: Task): Pair<Boolean, List<AnAction>?> {
-    var isDefault = true
+  private fun getOptionalActions(task: Task): List<AnAction>? {
     var optionalActions: List<AnAction>? = null
     if (task is CodeforcesTask) {
-      isDefault = false
       if (CodeforcesSettings.getInstance().isLoggedIn()) {
         optionalActions = listOf(SubmitCodeforcesSolutionAction.ACTION_ID, CodeforcesCopyAndSubmitAction.ACTION_ID).map {
           ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
         }
       }
     }
-    return isDefault to optionalActions
+    return optionalActions
   }
 
   private fun updateCheckButtonWrapper(task: DataTask) {

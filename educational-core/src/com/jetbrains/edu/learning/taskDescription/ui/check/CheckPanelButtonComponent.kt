@@ -72,9 +72,11 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
           this.action = AnActionWrapper(mainAction, this)
           setOptions(otherActions)
         }
+
         override fun isDefaultButton() = true
       }
-      val gotItTooltip = GotItTooltip("codeforces.submit.solution.button", EduCoreBundle.message("codeforces.you.can.submit.solution.from.ide"), project)
+      val gotItTooltip = GotItTooltip("codeforces.submit.solution.button",
+                                      EduCoreBundle.message("codeforces.you.can.submit.solution.from.ide"), project)
         .withPosition(Balloon.Position.above)
       if (gotItTooltip.canShow()) {
         gotItTooltip.show(optionButton, GotItTooltip.TOP_MIDDLE)

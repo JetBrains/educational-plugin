@@ -53,7 +53,6 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
         CheckStatus.Failed -> EduColors.wrongLabelForeground
         CheckStatus.Solved -> EduColors.correctLabelForeground
         CheckStatus.SubmissionFailed -> EduColors.wrongLabelForeground
-        CheckStatus.RemoteSubmitted -> foreground
         else -> foreground
       }
 

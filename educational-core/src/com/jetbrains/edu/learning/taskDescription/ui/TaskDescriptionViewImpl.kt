@@ -174,14 +174,14 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       override fun userLoggedIn() {
         val task = EduUtils.getCurrentTask(project)
         if (task != null) {
-          checkPanel.updateCheckPanel(task)
+          ApplicationManager.getApplication().invokeLater { checkPanel.updateCheckPanel(task) }
         }
       }
 
       override fun userLoggedOut() {
         val task = EduUtils.getCurrentTask(project)
         if (task != null) {
-          checkPanel.updateCheckPanel(task)
+          ApplicationManager.getApplication().invokeLater { checkPanel.updateCheckPanel(task) }
         }
       }
     })

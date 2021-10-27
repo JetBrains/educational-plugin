@@ -9,8 +9,8 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesLoginAction
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -76,18 +76,9 @@ class CodeforcesCoursesPanel(
                                                         { handleLogin() })
 
   private fun handleLogin() {
-    val loginAction = ActionManager.getInstance().getAction(CodeforcesLoginAction.ACTION_ID)
-    val actionEvent = AnActionEvent.createFromAnAction(loginAction,
-                                                       null,
-                                                       PLACE,
-                                                       DataManager.getInstance().getDataContext())
-    loginAction.actionPerformed(actionEvent).let {
-      if (CodeforcesSettings.getInstance().isLoggedIn()) {
+      if (LoginDialog().showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
         hideLoginPanel()
       }
-    }
-
-
   }
 
   override fun isLoginNeeded(): Boolean = !CodeforcesSettings.getInstance().isLoggedIn()
