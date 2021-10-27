@@ -25,22 +25,17 @@ object StepikTestUtils {
 
   fun login(disposable: Disposable): StepikUser {
     val tokenInfo = getTokens() ?: error("Failed to get auth token")
-    val user = login(tokenInfo)
+    val user = StepikUser(tokenInfo)
+    val userInfo = StepikConnector.getInstance().getCurrentUserInfo(user, tokenInfo.accessToken)
+    if (userInfo != null) {
+      user.userInfo = userInfo
+    }
     EduSettings.getInstance().user = user
+    user.saveTokens(tokenInfo)
     Disposer.register(disposable, Disposable {
       EduSettings.getInstance().user = null
     })
     println("Logged in as ${user.firstName} ${user.lastName}")
-    return user
-  }
-
-  private fun login(tokenInfo: TokenInfo): StepikUser {
-    val user = StepikUser(tokenInfo)
-
-    val currentUser = StepikConnector.getInstance().getCurrentUserInfo(user, tokenInfo.accessToken)
-    if (currentUser != null) {
-      user.userInfo = currentUser
-    }
     return user
   }
 

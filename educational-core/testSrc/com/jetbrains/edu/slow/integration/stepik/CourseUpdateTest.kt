@@ -28,8 +28,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val courseFromStepik = StepikConnector.getInstance().getCourseInfo(localCourse.id, true)
@@ -50,8 +49,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     addNewLesson("lesson3", 3, localCourse, localCourse)
@@ -75,8 +73,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val lesson1 = localCourse.getLesson("lesson1")!!
@@ -110,8 +107,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val section1 = localCourse.getSection("section1")
@@ -145,8 +141,7 @@ class CourseUpdateTest : StepikTestCase() {
     }
     courseToPost.init(null, null, false)
     StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course!! as EduCourse
 
@@ -204,7 +199,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -217,6 +212,11 @@ class CourseUpdateTest : StepikTestCase() {
     checkSections(courseFromStepik, localCourse)
   }
 
+  private fun pushCourse(courseToPost: Course) {
+    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
+
+  }
+
   fun `test post new section after top-level lesson`() {
     val courseToPost = courseWithFiles {
       lesson("lesson1")
@@ -227,7 +227,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -251,7 +251,7 @@ class CourseUpdateTest : StepikTestCase() {
       }
     }
     StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as EduCourse
 
@@ -276,7 +276,7 @@ class CourseUpdateTest : StepikTestCase() {
 
     StudyTaskManager.getInstance(project).course = courseToPost
     courseToPost.init(null, null, false)
-    CCPushCourse.doPush(project, courseToPost.asEduCourse())
+    pushCourse(courseToPost)
     val localCourse = StudyTaskManager.getInstance(project).course
     CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
     CCPushCourse.doPush(project, localCourse.asEduCourse())
