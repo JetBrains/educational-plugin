@@ -9,17 +9,20 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.TOPICS_TAB
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 
-class TopicsTab(project: Project,
-                course: HyperskillCourse,
-                task: Task
-) : AdditionalTab(project, TOPICS_TAB) {
+class TopicsTab(project: Project) : AdditionalTab(project, TOPICS_TAB) {
+  override val plainText: Boolean = false
 
   init {
     init()
+  }
+
+  override fun update(task: Task) {
+    val course = task.course as? HyperskillCourse
+                 ?: error("Topics tab is designed for Hyperskill course, but task is located in different course")
     val topics = course.taskToTopics[task.index - 1]
     val descriptionText = buildString {
       val textStyleHeader = StyleManager().textStyleHeader
@@ -35,7 +38,7 @@ class TopicsTab(project: Project,
         appendLine("<a $textStyleHeader>${EduCoreBundle.message("hyperskill.topics.not.found")}")
       }
     }
-    setText(descriptionText, plain = false)
+    setText(descriptionText)
   }
 
   override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)

@@ -5,24 +5,33 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow.Companion.getTaskDescriptionWithCodeHighlighting
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.THEORY_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.THEORY_TAB
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class TheoryTab(project: Project, theoryTask: TheoryTask) : AdditionalTab(project, THEORY_TAB) {
+class TheoryTab(project: Project) : AdditionalTab(project, THEORY_TAB) {
+  override val plainText: Boolean = false
 
   init {
     init()
-    val text = getTaskDescriptionWithCodeHighlighting(project, theoryTask)
-    setText(text, plain = false)
     add(createBottomPanel(), BorderLayout.SOUTH)
+  }
+
+  override fun update(task: Task) {
+    if (task !is TheoryTask) {
+      error("Selected task isn't Theory task")
+    }
+
+    val text = getTaskDescriptionWithCodeHighlighting(project, task)
+    setText(text)
   }
 
   private fun createBottomPanel(): JPanel {

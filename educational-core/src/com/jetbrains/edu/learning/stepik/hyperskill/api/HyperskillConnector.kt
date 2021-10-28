@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillT
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.TOPICS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import okhttp3.*
 import retrofit2.Call
 import retrofit2.converter.jackson.JacksonConverterFactory

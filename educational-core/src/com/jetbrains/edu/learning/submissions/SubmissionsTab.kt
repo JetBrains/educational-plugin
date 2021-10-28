@@ -28,8 +28,8 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResource
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskDescriptionBundle
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
 import java.text.DateFormat
@@ -37,18 +37,44 @@ import java.util.*
 import java.util.stream.Collectors
 import kotlin.math.roundToInt
 
-class SubmissionsTab private constructor(
-  project: Project,
-  private val linkHandler: SwingToolWindowLinkHandler?,
-  description: String
-) : AdditionalTab(project, SUBMISSIONS_TAB) {
+class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
+  override val plainText: Boolean = true
 
   init {
     init()
-    setText(description, plain = true)
   }
 
-  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project, linkHandler)
+  override fun update(task: Task) {
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    val descriptionText = StringBuilder()
+    var customLinkHandler: SwingToolWindowLinkHandler? = null
+
+    if (submissionsManager.isLoggedIn()) {
+      val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
+      if (submissionsList == null || submissionsList.isEmpty()) {
+        descriptionText.addEmptySubmissionsMessage()
+      }
+      else {
+        val course = task.course
+        if (task is ChoiceTask && course is EduCourse && course.isStepikRemote) {
+          descriptionText.addViewOnStepikLink(task)
+        }
+        else {
+          descriptionText.addSubmissions(submissionsList)
+          customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+        }
+      }
+    }
+    else {
+      descriptionText.addLoginText(submissionsManager)
+      customLinkHandler = LoginLinkHandler(project, submissionsManager)
+    }
+
+    (innerTextPanel as SwingTextPanel).updateLinkHandler(customLinkHandler)
+    setText(descriptionText.toString())
+  }
+
+  override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"
@@ -57,36 +83,6 @@ class SubmissionsTab private constructor(
 
     private val textStyleHeader: String
       get() = StyleManager().textStyleHeader
-
-    fun create(project: Project, task: Task): SubmissionsTab {
-      val submissionsManager = SubmissionsManager.getInstance(project)
-      val descriptionText = StringBuilder()
-      var linkHandler: SwingToolWindowLinkHandler? = null
-
-      if (submissionsManager.isLoggedIn()) {
-        val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
-        if (submissionsList != null) {
-          val course = task.course
-          when {
-            task is ChoiceTask && course is EduCourse && course.isStepikRemote -> descriptionText.addViewOnStepikLink(task)
-            submissionsList.isEmpty() -> descriptionText.addEmptySubmissionsMessage()
-            else -> {
-              descriptionText.addSubmissions(submissionsList)
-              linkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
-            }
-          }
-        }
-        else {
-          descriptionText.addEmptySubmissionsMessage()
-        }
-      }
-      else {
-        descriptionText.addLoginText(submissionsManager)
-        linkHandler = LoginLinkHandler(project, submissionsManager)
-      }
-
-      return SubmissionsTab(project, linkHandler, descriptionText.toString())
-    }
 
     private class LoginLinkHandler(
       project: Project,

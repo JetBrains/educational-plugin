@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class HyperskillStartupActivity : StartupActivity {

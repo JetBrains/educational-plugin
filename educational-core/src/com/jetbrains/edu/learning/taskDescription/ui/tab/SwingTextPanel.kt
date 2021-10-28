@@ -16,11 +16,11 @@ import java.awt.FlowLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextPane
-import javax.swing.event.HyperlinkListener
 
 
-class SwingTextPanel(project: Project, hyperlinkListener: HyperlinkListener? = null) : TabTextPanel(project) {
+class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? = null) : TabTextPanel(project) {
   private val textPane: JTextPane = createTextPane()
+  private var currentLinkHandler: SwingToolWindowLinkHandler? = null
 
   override val component: JComponent = textPane
 
@@ -28,8 +28,7 @@ class SwingTextPanel(project: Project, hyperlinkListener: HyperlinkListener? = n
     val scrollPane = JBScrollPane(textPane)
     scrollPane.border = JBUI.Borders.empty()
     add(scrollPane, BorderLayout.CENTER)
-
-    textPane.addHyperlinkListener(hyperlinkListener ?: SwingToolWindowLinkHandler(project))
+    updateLinkHandler(linkHandler)
   }
 
   override fun setText(text: String) {
@@ -40,13 +39,20 @@ class SwingTextPanel(project: Project, hyperlinkListener: HyperlinkListener? = n
     return SwingToolWindow.wrapHint(project, hintElement, displayedHintNumber)
   }
 
+  fun updateLinkHandler(newHyperlinkListener: SwingToolWindowLinkHandler?) {
+    textPane.removeHyperlinkListener(currentLinkHandler)
+    val linkHandler = newHyperlinkListener ?: SwingToolWindowLinkHandler(project)
+    textPane.addHyperlinkListener(linkHandler)
+    currentLinkHandler = linkHandler
+  }
+
   fun addLoadingSubmissionsPanel(platformName: String) {
     removeAll()
     val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
     val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
     iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
     iconPanel.add(asyncProcessIcon)
-    setTabText("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}", plain = true)
+    setTabText("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}")
     iconPanel.add(textPane)
     add(iconPanel, BorderLayout.CENTER)
     revalidate()

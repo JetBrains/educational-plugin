@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 
 class MarketplaceStartupActivity : StartupActivity {
 
@@ -44,7 +44,7 @@ class MarketplaceStartupActivity : StartupActivity {
         }
 
         override fun userLoggedOut() {
-          TaskDescriptionView.getInstance(project).updateTab(TabManager.TabType.SUBMISSIONS_TAB)
+          TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
         }
       })
     }

@@ -12,7 +12,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 
-class JCEFTextPanel(project: Project) : TabTextPanel(project) {
+class JCEFTextPanel(project: Project, plainText: Boolean) : TabTextPanel(project, plainText) {
   private val jcefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
 
   override val component: JComponent

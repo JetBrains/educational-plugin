@@ -4,7 +4,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
 import java.awt.Point
 
 class MockTaskDescriptionView : TaskDescriptionView() {

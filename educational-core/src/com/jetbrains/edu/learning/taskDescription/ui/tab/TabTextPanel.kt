@@ -12,7 +12,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 
 
-abstract class TabTextPanel(val project: Project) : JPanel(BorderLayout()), Disposable {
+abstract class TabTextPanel(val project: Project, val plainText: Boolean = true) : JPanel(BorderLayout()), Disposable {
   abstract val component: JComponent
 
   init {
@@ -22,8 +22,8 @@ abstract class TabTextPanel(val project: Project) : JPanel(BorderLayout()), Disp
 
   abstract fun setText(text: String)
 
-  fun setTabText(text: String, plain: Boolean) {
-    val textToSet = if (plain) {
+  fun setTabText(text: String) {
+    val textToSet = if (plainText) {
       text
     }
     else {

@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
-import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -29,14 +27,16 @@ import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsSer
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.SwingTextPanel
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType
-import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManager.TabType.SUBMISSIONS_TAB
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabManagerImpl
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
+import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
 class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider {
   private var uiContent: UiContent? = null
+  private lateinit var tabManager: TabManager
 
   override var currentTask: Task? = null
     // TODO: move it in some separate method
@@ -59,21 +59,20 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun updateAdditionalTaskTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
-    uiContent?.tabContentManager?.updateTabs(taskToUpdate)
+    tabManager.updateTabs(taskToUpdate)
   }
 
   override fun updateTab(tabType: TabType) {
-    uiContent?.tabContentManager?.updateTab(tabType, currentTask)
+    tabManager.updateTab(tabType, currentTask)
   }
 
   override fun showTab(tabType: TabType) {
-    uiContent?.tabContentManager?.selectTab(tabType)
+    tabManager.selectTab(tabType)
   }
 
   override fun addLoadingPanel(platformName: String) {
     if (currentTask == null) return
-    val contentManager = uiContent?.tabContentManager ?: return
-    val submissionsContent = contentManager.getContent(SUBMISSIONS_TAB) ?: return
+    val submissionsContent = tabManager.getTab(SUBMISSIONS_TAB).content
     val panel = submissionsContent.component
     if (panel is SwingTextPanel) {
       ApplicationManager.getApplication().invokeLater { panel.addLoadingSubmissionsPanel(platformName) }
@@ -118,6 +117,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun init(toolWindow: ToolWindow) {
     val contentManager = toolWindow.contentManager
+    tabManager = TabManagerImpl(project, contentManager)
+    Disposer.register(contentManager, tabManager)
+
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
@@ -150,7 +152,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
 
-    uiContent = UiContent(project, contentManager, topPanel, taskTextTW, checkPanel, separator)
+    uiContent = UiContent(topPanel, taskTextTW, checkPanel, separator)
 
     val content = ContentFactory.SERVICE.getInstance()
       .createContent(panel, EduCoreBundle.message("label.description"), false)
@@ -175,9 +177,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
     uiContent?.checkPanel?.updateCheckDetails(task, checkResult)
-    if (task is DataTask) {
-      updateCheckPanel(task)
-    }
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
     }
@@ -203,13 +202,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   }
 
   class UiContent(
-    project: Project,
-    contentManager: ContentManager,
     val topPanel: JPanel,
     val taskTextTW: TaskDescriptionToolWindow,
     val checkPanel: CheckPanel,
     val separator: JSeparator
-  ) {
-    val tabContentManager = TabManager(project, contentManager)
-  }
+  )
 }

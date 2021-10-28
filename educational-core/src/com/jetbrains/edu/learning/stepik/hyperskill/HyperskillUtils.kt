@@ -191,9 +191,10 @@ fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
 }
 
 fun Task.getRelatedTheoryTask(): TheoryTask? {
-  course as? HyperskillCourse ?: error("Course is not a Hyperskill course")
+  if (course !is HyperskillCourse) return null
   if (this is TheoryTask) {
-    error("Function is called for Theory task itself")
+    LOG.warn("Function is called for Theory task itself")
+    return null
   }
   return lesson.taskList.find { it is TheoryTask } as? TheoryTask
 }
