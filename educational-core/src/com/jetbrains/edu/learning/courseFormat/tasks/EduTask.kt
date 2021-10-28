@@ -1,40 +1,30 @@
-package com.jetbrains.edu.learning.courseFormat.tasks;
+package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Date;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import java.util.*
 
 /**
  * Original Edu plugin tasks with local tests and answer placeholders
  */
-public class EduTask extends Task {
-  public static final String EDU_TASK_TYPE = "edu";
-  public static final String PYCHARM_TASK_TYPE = "pycharm";
+open class EduTask : Task {
+  constructor()
+  constructor(name: String) : super(name)
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) :
+    super(name, id, position, updateDate, status)
 
-  public EduTask() {
+  override fun getItemType(): String = EDU_TASK_TYPE
+
+  override fun isToSubmitToRemote(): Boolean {
+    return myStatus != CheckStatus.Unchecked
   }
 
-  public EduTask(@NotNull final String name) {
-    super(name);
-  }
+  override fun supportSubmissions(): Boolean = true
 
-  public EduTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
-    super(name, id, position, updateDate, status);
-  }
+  companion object {
+    @NonNls
+    const val EDU_TASK_TYPE: String = "edu"
 
-  @Override
-  public String getItemType() {
-    return EDU_TASK_TYPE;
-  }
-
-  @Override
-  public boolean isToSubmitToRemote() {
-    return myStatus != CheckStatus.Unchecked;
-  }
-
-  @Override
-  public boolean supportSubmissions() {
-    return true;
+    @NonNls
+    const val PYCHARM_TASK_TYPE: String = "pycharm"
   }
 }
