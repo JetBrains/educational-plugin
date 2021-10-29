@@ -7,7 +7,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -33,7 +34,10 @@ import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
+import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -58,6 +62,7 @@ open class StepikTaskBuilder(
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
     EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
+    REMOTE_EDU_TASK_TYPE to { name: String -> RemoteEduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
@@ -71,6 +76,7 @@ open class StepikTaskBuilder(
         StepikTaskType.CHOICE -> this::choiceTask
         StepikTaskType.CODE -> this::codeTask
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
+        StepikTaskType.REMOTE_EDU  -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
         StepikTaskType.DATASET -> this::dataTask
@@ -82,6 +88,7 @@ open class StepikTaskBuilder(
     CHOICE(CHOICE_TASK_TYPE, "Quiz"),
     CODE(CODE_TASK_TYPE, "Programming"),
     PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
+    REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
     TEXT("text", "Theory"),
     VIDEO(VIDEO_TASK_TYPE, "Video"),
     NUMBER("number", "Number"),
@@ -292,11 +299,12 @@ open class StepikTaskBuilder(
     return task
   }
 
-  private fun pycharmTask(): Task {
+  private fun pycharmTask(type: String? = null): Task {
     val stepOptions = step.pycharmOptions()
     val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
 
-    val task = pluginTaskTypes[stepOptions.taskType]?.invoke(taskName)
+    val taskType = type ?: stepOptions.taskType
+    val task = pluginTaskTypes[taskType]?.invoke(taskName)
                ?: EduTask(taskName, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import org.jetbrains.annotations.NonNls
 import java.util.*
 
 /**

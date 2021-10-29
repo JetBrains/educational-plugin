@@ -28,8 +28,11 @@ import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createEduSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createRemoteEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import java.net.MalformedURLException
@@ -48,10 +51,7 @@ object HyperskillCheckConnector {
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
         postEduSubmission(attemptResponse.value, project, task, feedback)
-        val course = task.course as HyperskillCourse
-        if (course.isTaskInProject(task) && task.status == CheckStatus.Solved) {
-          markStageAsCompleted(task)
-        }
+        checkStageToBeCompleted(task)
       }
     }
   }
@@ -96,11 +96,6 @@ object HyperskillCheckConnector {
       showErrorDetails(project, EduCoreBundle.message("error.failed.to.collect.files", task.name))
     }
     return files
-  }
-
-  private fun createEduSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): Submission {
-    val score = if (task.status == CheckStatus.Solved) "1" else "0"
-    return Submission(score, attempt.id, files, null, feedback)
   }
 
   private fun String.toCheckResult(): CheckResult {
@@ -226,6 +221,39 @@ object HyperskillCheckConnector {
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
+  fun checkRemoteEduTask(project: Project, task: RemoteEduTask): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+
+    val files = getSolutionFiles(task, project).nullize()
+    if (files == null) {
+      LOG.error("Unable to create submission: files with code is not found for the task ${task.name}")
+      return CheckResult.failedToCheck
+    }
+    val attempt = HyperskillConnector.getInstance().postAttempt(task.id).onError { error ->
+      showErrorDetails(project, error)
+      return CheckResult.failedToCheck
+    }
+    val taskSubmission = createRemoteEduTaskSubmission(task.checkProfile, attempt, files)
+    val submission = HyperskillConnector.getInstance().postSubmission(taskSubmission).onError { message ->
+      showErrorDetails(project, message)
+      return CheckResult.failedToCheck
+    }
+
+    val result = periodicallyCheckSubmissionResult(project, submission, task)
+    checkStageToBeCompleted(task)
+    return result
+  }
+
+  private fun checkStageToBeCompleted(task: Task) {
+    val course = task.course as HyperskillCourse
+    if (course.isTaskInProject(task) && task.status == CheckStatus.Solved) {
+      markStageAsCompleted(task)
+    }
+  }
+
   private fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
     require(task.isRemotelyChecked()) { "Task is not checked remotely" }
 
@@ -275,7 +303,8 @@ object HyperskillCheckConnector {
     return connector.postSubmission(submission)
   }
 
-  fun createChoiceSubmission(task: ChoiceTask, attempt: Attempt): Submission {
+  // TODO move to [com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider]
+  private fun createChoiceSubmission(task: ChoiceTask, attempt: Attempt): Submission {
     val answerArray = createChoiceTaskAnswerArray(task, attempt)
     val reply = Reply()
     reply.choices = answerArray

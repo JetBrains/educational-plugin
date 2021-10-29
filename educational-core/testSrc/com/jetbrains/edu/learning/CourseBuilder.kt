@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import org.intellij.lang.annotations.Language
 import java.io.File
 import java.util.*
@@ -194,6 +195,20 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+
+  fun remoteEduTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    checkProfile: String = "",
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val remoteEduTask = RemoteEduTask()
+    task(remoteEduTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    remoteEduTask.checkProfile = checkProfile
+  }
 
   fun theoryTask(
     name: String? = null,

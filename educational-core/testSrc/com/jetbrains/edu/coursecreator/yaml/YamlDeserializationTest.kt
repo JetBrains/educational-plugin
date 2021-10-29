@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeSection
@@ -442,6 +443,19 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals("type here", answerPlaceholder.placeholderText)
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
     assertNull(task.solutionHidden)
+  }
+
+  fun `test remote edu task with check profile`() {
+    val checkProfile = "hyperskill_go"
+    val yamlContent = """
+    |type: remote_edu
+    |files:
+    |- name: Test.java
+    |check_profile: $checkProfile
+    |""".trimMargin()
+    val task = MAPPER.deserializeTask(yamlContent)
+    assertTrue(task is RemoteEduTask)
+    assertEquals((task as RemoteEduTask).checkProfile, checkProfile)
   }
 
   fun `test with custom presentable name`() {

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.api.CHECK_PROFILE
 import com.jetbrains.edu.learning.stepik.api.FILES
 import com.jetbrains.edu.learning.stepik.api.REPLY
 import com.jetbrains.edu.learning.stepik.api.STEPS
@@ -39,6 +40,7 @@ const val IDE_VERSION = "ide_version"
 const val IS_COMPLETED = "is_completed"
 const val IS_GUEST = "is_guest"
 const val IS_RECOMMENDED = "is_recommended"
+const val IS_REMOTE_TESTED = "is_remote_tested"
 const val IS_TEMPLATE_BASED = "is_template_based"
 const val LANGUAGE = "language"
 const val META = "meta"
@@ -175,11 +177,17 @@ class HyperskillAdditionalInfo {
 }
 
 class HyperskillStepSource : StepSource() {
+  @JsonProperty(CHECK_PROFILE)
+  var checkProfile: String = ""
+
   @JsonProperty(IS_COMPLETED)
   var isCompleted: Boolean = false
 
   @JsonProperty(IS_RECOMMENDED)
   var isRecommended: Boolean = false
+
+  @JsonProperty(IS_REMOTE_TESTED)
+  var isRemoteTested: Boolean = false
 
   @JsonProperty(TITLE)
   var title: String? = null

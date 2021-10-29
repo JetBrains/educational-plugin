@@ -2,12 +2,13 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
+import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_GO_SUPPORT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -20,6 +21,8 @@ import com.jetbrains.edu.learning.stepik.hasHeaderOrFooter
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 
 class HyperskillTaskBuilder(
@@ -44,10 +47,21 @@ class HyperskillTaskBuilder(
   }
 
   fun build(): Task? {
-    val type = stepSource.block?.name ?: return null
-
-    if (type == ChoiceTask.CHOICE_TASK_TYPE && !isFeatureEnabled(HYPERSKILL_CHOICE_TASK_SUPPORT)) {
+    val blockName = stepSource.block?.name ?: return null
+    if (blockName == ChoiceTask.CHOICE_TASK_TYPE && !isFeatureEnabled(HYPERSKILL_CHOICE_TASK_SUPPORT)) {
       return null
+    }
+
+    // TODO There should be no Go related things, probably you've to do something in
+    //  [com.jetbrains.edu.go.stepik.hyperskill.GoHyperskillConfigurator]
+    val type = if (blockName == PYCHARM_TASK_TYPE && stepSource.isRemoteTested) {
+      if (!isFeatureEnabled(HYPERSKILL_GO_SUPPORT)) {
+        return null
+      }
+      REMOTE_EDU_TASK_TYPE
+    }
+    else {
+      blockName
     }
 
     return if (isSupported(type)) createTask(type) else null
@@ -55,6 +69,7 @@ class HyperskillTaskBuilder(
 
   override fun createTask(type: String): Task? {
     val task = super.createTask(type) ?: return null
+
     task.apply {
       if (stepSource.isCompleted) {
         status = CheckStatus.Solved
@@ -64,18 +79,16 @@ class HyperskillTaskBuilder(
         is CodeTask -> {
           name = stepSource.title
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
-          task.descriptionFormat = DescriptionFormat.HTML
+        }
+        is DataTask, is EduTask -> {
+          name = stepSource.title
+        }
+        is RemoteEduTask -> {
+          (task as RemoteEduTask).checkProfile = stepSource.checkProfile
+          name = stepSource.title
         }
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
-          task.descriptionFormat = DescriptionFormat.HTML
-        }
-        is DataTask -> {
-          task.descriptionFormat = DescriptionFormat.HTML
-          name = stepSource.title
-        }
-        is EduTask -> {
-          name = stepSource.title
         }
         is ChoiceTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title ?: name)

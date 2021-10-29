@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
@@ -50,6 +51,7 @@ const val CODE = "code"
 private const val FILE = "file"
 const val EDU_TASK = "edu_task"
 const val VERSION = "version"
+const val CHECK_PROFILE = "check_profile"
 const val ATTACHMENTS = "attachments"
 const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
 const val ADDITIONAL_FILES = "additional_files"
@@ -317,7 +319,7 @@ class Reply {
   var choices: BooleanArray? = null
 
   @JsonProperty(SCORE)
-  var score: String? = null
+  var score: String = ""
 
   @JsonProperty(SOLUTION)
   var solution: List<SolutionFile>? = null
@@ -339,6 +341,10 @@ class Reply {
 
   @JsonProperty(FEEDBACK)
   var feedback: Feedback? = null
+
+  @JsonProperty(CHECK_PROFILE)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  var checkProfile: String? = null
 
   constructor()
 

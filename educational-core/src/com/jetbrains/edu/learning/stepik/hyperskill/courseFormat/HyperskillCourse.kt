@@ -129,7 +129,8 @@ class HyperskillCourse : Course {
     private val REMOTELY_CHECKED_TASKS: Set<Class<out Task>> = setOf(
       ChoiceTask::class.java,
       CodeTask::class.java,
-      DataTask::class.java
+      DataTask::class.java,
+      RemoteEduTask::class.java
     )
 
     fun Task.isRemotelyChecked(): Boolean = javaClass in REMOTELY_CHECKED_TASKS

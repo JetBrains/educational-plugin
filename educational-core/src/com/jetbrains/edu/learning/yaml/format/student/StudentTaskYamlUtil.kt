@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
@@ -80,6 +81,10 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
         existingItem.selectedVariants = (deserializedItem as ChoiceTask).selectedVariants
       }
       is EduTask -> {
+        existingItem.record = deserializedItem.record
+      }
+      is RemoteEduTask -> {
+        existingItem.checkProfile = (deserializedItem as RemoteEduTask).checkProfile
         existingItem.record = deserializedItem.record
       }
     }
