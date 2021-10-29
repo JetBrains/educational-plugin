@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -66,4 +67,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
 
   override fun getIdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask> =
     baseProvider.getIdeTaskChecker(task, project)
+
+  override fun getDataTaskChecker(task: DataTask, project: Project): TaskChecker<DataTask>? =
+    baseProvider.getDataTaskChecker(task, project)
 }
