@@ -39,12 +39,12 @@ object CodeforcesContestConnector {
       getContestIdFromLink(text)
     }
 
-  fun getLanguages(contest: Document): List<String>? {
+  fun getLanguages(contest: Document): List<String> {
     val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
     return contest.selectFirst("#programTypeForInvoker")
-      ?.select("option")
-      ?.map { it.text() }
-      ?.filter { language ->
+      .select("option")
+      .map { it.text() }
+      .filter { language ->
         language in supportedLanguages
       }
   }
@@ -59,7 +59,7 @@ object CodeforcesContestConnector {
     val contestElements = getContestsElements(upcomingContests)
 
     return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
-      parseContestInformation(it, FORMAT_TIME_CLASS, FORMAT_DATE_CLASS)
+      parseContestInformation(it, FORMAT_TIME_CLASS)
     }
   }
 
@@ -68,23 +68,23 @@ object CodeforcesContestConnector {
    * See the page format [com.jetbrains.edu.learning.codeforces.api.CodeforcesService.contestsPage]
    */
   fun getRecentContests(document: Document): List<CodeforcesCourse> {
-    val recentContestsParent = document.body().getElementsByClass(CONTEST_TABLE_CLASS).first() ?: return emptyList()
-    val recentContests = recentContestsParent.getElementsByClass(DATATABLE_CLASS)?.first() ?: return emptyList()
+    val recentContestsParent = document.body().getElementsByClass(CONTEST_TABLE_CLASS).firstOrNull() ?: return emptyList()
+    val recentContests = recentContestsParent.getElementsByClass(DATATABLE_CLASS).firstOrNull() ?: return emptyList()
 
     val contestElements = getContestsElements(recentContests)
 
     return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
-      parseContestInformation(it, FORMAT_DATE_CLASS, FORMAT_DATE_CLASS)
+      parseContestInformation(it, FORMAT_DATE_CLASS)
     }
   }
 
-  private fun parseContestInformation(element: Element, dateClass: String, anotherDateClass: String): CodeforcesCourse? {
+  private fun parseContestInformation(element: Element, dateClass: String): CodeforcesCourse? {
     return try {
       val contestId = element.attr(DATA_CONTEST_ID_ATTR).toInt()
       val tableRow = element.getElementsByTag(TD_TAG)
 
       val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
-      val startDate = parseDate(tableRow, dateClass, anotherDateClass)
+      val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
       val standings = parseStandings(tableRow[4])
       val remainingTime = parseRemainingTime(tableRow[4])
@@ -124,8 +124,8 @@ object CodeforcesContestConnector {
   }
 
   private fun parseCountdown(tableRow: Element): Duration? {
-    val countdownElement = tableRow.getElementsByClass("countdown").first() ?: return null
-    val countdownTitle = countdownElement.getElementsByAttribute("title").first()
+    val countdownElement = tableRow.getElementsByClass("countdown").firstOrNull() ?: return null
+    val countdownTitle = countdownElement.getElementsByAttribute("title").firstOrNull()
     val countdownValue = if (countdownTitle != null) {
       countdownTitle.attr("title")
     }
@@ -156,8 +156,8 @@ object CodeforcesContestConnector {
     return participantsTextNode.text().trimStart(' ', 'x').toInt()
   }
 
-  private fun parseDate(tableRow: Elements, dateClass: String, anotherDateClass: String): ZonedDateTime {
-    val dateElement = tableRow[2].getElementsByClass(dateClass).firstOrNull() ?: tableRow[2].getElementsByClass(anotherDateClass).first()
+  private fun parseDate(tableRow: Elements, dateClass: String): ZonedDateTime {
+    val dateElement = tableRow[2].getElementsByClass(dateClass).firstOrNull() ?: tableRow[2].getElementsByClass(FORMAT_DATE_CLASS).first()
     val dateLocaleString = tableRow[2].getElementsByClass(dateClass).attr("data-locale")
     val dateLocale = Locale.Builder().setLanguage(dateLocaleString).build()
     val startDateString = dateElement.text()
