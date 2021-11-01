@@ -21,7 +21,7 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class CodeforcesShowLoginStatusAction : CodeforcesAction(EduCoreBundle.lazyMessage("codeforces.account")) {
+class CodeforcesShowLoginStatusAction : CodeforcesAction() {
 
   private val POPUP_WIDTH = 280
   private val POPUP_HEIGHT = 115
@@ -40,7 +40,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction(EduCoreBundle.lazyMessa
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
-      .setTitle(EduCoreBundle.message("codeforces.account"))
+      .setTitle(EduCoreBundle.message("action.Educational.Codeforces.Account.text"))
       .setMinSize(Dimension(POPUP_WIDTH, POPUP_HEIGHT))
       .createPopup()
 
@@ -98,6 +98,6 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction(EduCoreBundle.lazyMessa
 
   companion object {
     @NonNls
-    const val ACTION_ID = "Codeforces.CodeforcesShowLoginStatus"
+    const val ACTION_ID = "Educational.Codeforces.Account"
   }
 }

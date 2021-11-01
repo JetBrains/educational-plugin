@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
-class SubmitCodeforcesSolutionAction : CodeforcesAction(EduCoreBundle.lazyMessage("action.codeforces.submit.solution")) {
+class SubmitCodeforcesSolutionAction : CodeforcesAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -49,7 +49,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction(EduCoreBundle.lazyMessag
 
   companion object {
     @NonNls
-    const val ACTION_ID = "Codeforces.SubmitSolution"
+    const val ACTION_ID = "Educational.Codeforces.Submit.Solution"
   }
 
 }
