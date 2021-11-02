@@ -56,7 +56,9 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   @Suppress("LeakingThis")
   protected val courseDetailsPanel = createCourseDetailsPanel()
-  protected val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(isLocationFieldNeeded).apply { background = MAIN_BG_COLOR }
+  protected val settingsPanel: CourseSettingsPanel = CourseSettingsPanel(parentDisposable, isLocationFieldNeeded).apply {
+    background = MAIN_BG_COLOR
+  }
   protected val content = ContentPanel()
 
   var errorState: ErrorState = ErrorState.NothingSelected

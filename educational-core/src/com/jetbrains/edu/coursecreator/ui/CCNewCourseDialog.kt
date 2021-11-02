@@ -15,7 +15,7 @@ class CCNewCourseDialog(
   private val onOKAction: () -> Unit = {}
 ) : DialogWrapper(true) {
 
-  private val panel: CCNewCoursePanel = CCNewCoursePanel(course, courseProducer)
+  private val panel: CCNewCoursePanel = CCNewCoursePanel(disposable, course, courseProducer)
 
   init {
     setTitle(title)

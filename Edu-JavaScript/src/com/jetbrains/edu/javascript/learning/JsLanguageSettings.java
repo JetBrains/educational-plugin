@@ -1,6 +1,7 @@
 package com.jetbrains.edu.javascript.learning;
 
 import com.intellij.javascript.nodejs.interpreter.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -46,7 +47,9 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
 
   @NotNull
   @Override
-  public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course, @Nullable UserDataHolder context) {
+  public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course,
+                                                                          @NotNull Disposable disposable,
+                                                                          @Nullable UserDataHolder context) {
     return Collections.singletonList(LabeledComponent.create(myInterpreterField, EduJavaScriptBundle.message("node.interpreter"), BorderLayout.WEST));
   }
 

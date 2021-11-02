@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,7 +24,11 @@ abstract class LanguageSettings<Settings : Any> {
    *
    * @see PyLanguageSettings
    */
-  open fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  open fun getLanguageSettingsComponents(
+    course: Course,
+    disposable: Disposable,
+    context: UserDataHolder?
+  ): List<LabeledComponent<JComponent>> {
     return emptyList()
   }
 

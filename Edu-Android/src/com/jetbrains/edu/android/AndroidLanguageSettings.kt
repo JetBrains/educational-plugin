@@ -37,9 +37,9 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     locationField.addActionListener(this)
   }
 
-  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val androidSdkLocation = LabeledComponent.create<JComponent>(locationField, EduAndroidBundle.message("android.sdk.location"), BorderLayout.WEST)
-    return super.getLanguageSettingsComponents(course, context) + androidSdkLocation
+    return super.getLanguageSettingsComponents(course, disposable, context) + androidSdkLocation
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {

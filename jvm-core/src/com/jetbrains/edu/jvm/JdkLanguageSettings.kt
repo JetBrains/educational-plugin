@@ -1,5 +1,6 @@
 package com.jetbrains.edu.jvm
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -33,7 +34,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected open fun setupProjectSdksModel(model: ProjectSdksModel) {}
 
-  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(null, myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)

@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.newproject.ui.courseSettings
 
 import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
@@ -33,6 +35,7 @@ import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
 class CourseSettingsPanel(
+  private val parentDisposable: Disposable,
   isLocationFieldNeeded: Boolean = false,
   panelTitle: String = EduCoreBundle.message("course.dialog.settings")
 ) : NonOpaquePanel(), CourseSelectionListener {
@@ -44,6 +47,8 @@ class CourseSettingsPanel(
   private val context: UserDataHolder = UserDataHolderBase()
   val settingsPanel = JPanel()
   private var decorator: HideableNoLineDecorator
+
+  private var languageSettingsDisposable: Disposable? = null
 
   init {
     border = JBUI.Borders.empty(DESCRIPTION_AND_SETTINGS_TOP_OFFSET, HORIZONTAL_MARGIN, 0, 0)
@@ -91,6 +96,10 @@ class CourseSettingsPanel(
   }
 
   override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+    languageSettingsDisposable?.let(Disposer::dispose)
+    val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
+    languageSettingsDisposable = settingsDisposable
+
     val course = courseInfo.course
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
@@ -102,7 +111,7 @@ class CourseSettingsPanel(
     if (configurator != null) {
       languageSettings = configurator.courseBuilder.getLanguageSettings().apply {
         if (courseDisplaySettings.showLanguageSettings) {
-          val components = getLanguageSettingsComponents(course, context)
+          val components = getLanguageSettingsComponents(course, settingsDisposable, context)
           settingsComponents.addAll(components)
         }
       }

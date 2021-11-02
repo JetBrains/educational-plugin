@@ -2,12 +2,14 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
@@ -45,12 +47,16 @@ import javax.swing.event.HyperlinkListener
 import javax.swing.text.AttributeSet
 import javax.swing.text.PlainDocument
 
-class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::EduCourse) : JPanel() {
+class CCNewCoursePanel(
+  private val parentDisposable: Disposable,
+  course: Course? = null,
+  courseProducer: () -> Course = ::EduCourse
+) : JPanel() {
   private val courseDataComboBox: ComboBox<CourseData> = ComboBox()
   private val titleField: CourseTitleField = CourseTitleField()
   private val descriptionTextArea: JTextArea = JTextArea()
 
-  private val settings: CourseSettingsPanel = CourseSettingsPanel()
+  private val settings: CourseSettingsPanel = CourseSettingsPanel(parentDisposable)
   private val pathField: PathField = PathField()
   private val locationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
   private lateinit var languageSettings: LanguageSettings<*>
@@ -60,6 +66,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   private val errorComponent = ErrorComponent(getHyperlinkListener()) { doValidation() }
 
   private val context: UserDataHolder = UserDataHolderBase()
+  private var languageSettingsDisposable: Disposable? = null
 
   private val _course: Course
   val course: Course
@@ -217,6 +224,10 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
   }
 
   private fun onCourseDataSelected(courseData: CourseData) {
+    languageSettingsDisposable?.let(Disposer::dispose)
+    val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
+    languageSettingsDisposable = settingsDisposable
+
     val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} ${
       EduCoreBundle.message("item.course.title")
     }"
@@ -236,7 +247,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     languageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(locationField)
-    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, context))
+    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, settingsDisposable, context))
     this.settings.setSettingsComponents(settings)
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)

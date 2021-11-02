@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning.newproject
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
@@ -24,7 +25,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
-  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     val fakeSdk = createFakeSdk(course, context)
 

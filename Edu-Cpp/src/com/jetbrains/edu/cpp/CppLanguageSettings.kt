@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
@@ -23,7 +24,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
-  override fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val standards = when (course) {
       is StepikCourse -> arrayOf(CPP11.standard, CPP14.standard)
       is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard)
