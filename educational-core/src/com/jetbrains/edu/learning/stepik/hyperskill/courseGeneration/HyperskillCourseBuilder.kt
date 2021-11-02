@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-open class HyperskillCourseBuilder<T>(private val baseCourseBuilder: EduCourseBuilder<T>) : EduCourseBuilder<T> {
+open class HyperskillCourseBuilder<T : Any>(private val baseCourseBuilder: EduCourseBuilder<T>) : EduCourseBuilder<T> {
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<T>? {
     if (course !is HyperskillCourse) return null
     val generatorBase = baseCourseBuilder.getCourseProjectGenerator(course) ?: return null

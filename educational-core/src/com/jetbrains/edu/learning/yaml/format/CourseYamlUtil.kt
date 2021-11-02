@@ -264,7 +264,7 @@ private class CourseBuilder(
       val languageSettings = configurator?.courseBuilder?.getLanguageSettings()
                              ?: formatError("Unsupported language $programmingLanguage")
       if (programmingLanguageVersion != null) {
-        if (!languageSettings.languageVersions.contains(programmingLanguageVersion)) {
+        if (!languageSettings.getLanguageVersions().contains(programmingLanguageVersion)) {
           formatError("Unsupported $programmingLanguage version: $programmingLanguageVersion")
         }
         else {

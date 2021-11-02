@@ -27,7 +27,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     val standards = when (course) {
       is StepikCourse -> arrayOf(CPP11.standard, CPP14.standard)
       is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard)
-      else -> languageVersions.toTypedArray()
+      else -> getLanguageVersions().toTypedArray()
     }
 
     val langStandardComboBox = ComboBox(standards)
@@ -43,10 +43,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     }
 
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, CPP_STANDARD_PREFIX, BorderLayout.WEST))
-  }
-
-  override fun getLanguageVersions(): List<String> {
-    return values().map { it.standard }
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {

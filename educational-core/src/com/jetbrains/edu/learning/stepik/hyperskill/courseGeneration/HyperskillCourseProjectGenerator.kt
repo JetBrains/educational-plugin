@@ -6,8 +6,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-open class HyperskillCourseProjectGenerator<T>(private val base: CourseProjectGenerator<T>, builder: HyperskillCourseBuilder<T>,
-                                               course: HyperskillCourse) : CourseProjectGenerator<T>(builder, course) {
+open class HyperskillCourseProjectGenerator<T : Any>(
+  private val base: CourseProjectGenerator<T>,
+  builder: HyperskillCourseBuilder<T>,
+  course: HyperskillCourse
+) : CourseProjectGenerator<T>(builder, course) {
   override fun beforeProjectGenerated(): Boolean {
     return true
   }

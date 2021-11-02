@@ -20,7 +20,7 @@ import javax.swing.Icon
  *
  * @see com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
  */
-abstract class HyperskillConfigurator<T>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> {
+abstract class HyperskillConfigurator<T : Any>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = HyperskillTaskCheckerProvider(baseConfigurator.taskCheckerProvider)

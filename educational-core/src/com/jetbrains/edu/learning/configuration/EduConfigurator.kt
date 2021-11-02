@@ -42,7 +42,7 @@ import javax.swing.Icon
  * If you add any new methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
  */
-interface EduConfigurator<Settings> {
+interface EduConfigurator<Settings : Any> {
   val courseBuilder: EduCourseBuilder<Settings>
   val testFileName: String
   val taskCheckerProvider: TaskCheckerProvider

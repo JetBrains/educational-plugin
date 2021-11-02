@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 
-abstract class GradleHyperskillConfigurator<T>(baseConfigurator: EduConfigurator<T>) : HyperskillConfigurator<T>(baseConfigurator) {
+abstract class GradleHyperskillConfigurator<T : Any>(baseConfigurator: EduConfigurator<T>) : HyperskillConfigurator<T>(baseConfigurator) {
   override fun getCodeTaskFile(project: Project, task: Task): TaskFile? {
     val language = task.course.languageById ?: return super.getCodeTaskFile(project, task)
     return runReadAction {

@@ -6,5 +6,5 @@ import com.jetbrains.edu.learning.courseFormat.Course
 data class CourseInfo(val course: Course,
                       val location: () -> String? = { null },
                       val languageSettings: () -> LanguageSettings<*>? = { null }) {
-  val projectSettings get() = languageSettings()?.settings
+  val projectSettings: Any? get() = languageSettings()?.getSettings()
 }

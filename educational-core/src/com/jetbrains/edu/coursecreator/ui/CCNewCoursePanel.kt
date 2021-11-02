@@ -72,7 +72,7 @@ class CCNewCoursePanel(course: Course? = null, courseProducer: () -> Course = ::
     }
 
 
-  val projectSettings: Any get() = languageSettings.settings
+  val projectSettings: Any get() = languageSettings.getSettings()
   val locationString: String get() = locationField.component.text
 
   init {

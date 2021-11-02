@@ -28,7 +28,7 @@ import java.io.IOException
  * If you add any new methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseBuilder
  */
-interface EduCourseBuilder<Settings> {
+interface EduCourseBuilder<Settings : Any> {
   /**
    * Shows UI for new study item creation
    *

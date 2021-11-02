@@ -120,7 +120,7 @@ class CourseSettingsPanel(
     }
   }
 
-  fun getProjectSettings(): Any? = languageSettings?.settings
+  fun getProjectSettings(): Any? = languageSettings?.getSettings()
 
   fun validateSettings(course: Course?): ValidationMessage? {
     val validationMessage = languageSettings?.validate(course, locationString) ?: return null
@@ -146,6 +146,6 @@ class CourseSettingsPanel(
       return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
     }
 
-    fun getLanguageSettings(course: Course): LanguageSettings<out Any?>? = course.configurator?.courseBuilder?.getLanguageSettings()
+    fun getLanguageSettings(course: Course): LanguageSettings<*>? = course.configurator?.courseBuilder?.getLanguageSettings()
   }
 }

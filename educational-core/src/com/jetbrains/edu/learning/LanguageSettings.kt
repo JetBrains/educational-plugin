@@ -1,25 +1,18 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning
 
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.UserDataHolder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.UserDataHolder
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import javax.swing.JComponent
 
 /**
  * Main interface responsible for course project language settings such as JDK or interpreter
  *
- * @param <Settings> container type holds project settings state
+ * @param Settings container type holds project settings state
  */
-public abstract class LanguageSettings<Settings> {
-
-  protected List<SettingsChangeListener> myListeners = new ArrayList<>();
+abstract class LanguageSettings<Settings : Any> {
+  protected val listeners: MutableList<SettingsChangeListener> = mutableListOf()
 
   /**
    * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
@@ -30,18 +23,16 @@ public abstract class LanguageSettings<Settings> {
    *
    * @see PyLanguageSettings
    */
-  @NotNull
-  public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course, @Nullable UserDataHolder context) {
-    return Collections.emptyList();
+  open fun getLanguageSettingsComponents(course: Course, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+    return emptyList()
   }
 
-  public void addSettingsChangeListener(@NotNull SettingsChangeListener listener) {
-    myListeners.add(listener);
+  fun addSettingsChangeListener(listener: SettingsChangeListener) {
+    listeners.add(listener)
   }
 
-  @Nullable
-  public ValidationMessage validate(@Nullable Course course, @Nullable String courseLocation) {
-    return null;
+  open fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+    return null
   }
 
   /**
@@ -50,24 +41,20 @@ public abstract class LanguageSettings<Settings> {
    *
    * @return project settings object
    */
-  @NotNull
-  public abstract Settings getSettings();
+  abstract fun getSettings(): Settings
 
   /**
    * Returns string representations of all possible language versions to be shown to a user
    */
-  @NotNull
-  public List<String> getLanguageVersions() {
-    return Collections.emptyList();
-  }
+  open fun getLanguageVersions(): List<String> = emptyList()
 
-  protected void notifyListeners() {
-    for (SettingsChangeListener listener : myListeners) {
-      listener.settingsChanged();
+  protected fun notifyListeners() {
+    for (listener in listeners) {
+      listener.settingsChanged()
     }
   }
 
-  public interface SettingsChangeListener {
-    void settingsChanged();
+  fun interface SettingsChangeListener {
+    fun settingsChanged()
   }
 }

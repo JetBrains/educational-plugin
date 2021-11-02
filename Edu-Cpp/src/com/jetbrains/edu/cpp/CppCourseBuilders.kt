@@ -56,7 +56,7 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
     super.initNewTask(project, course, task, info, withSources)
     if (withSources) {
       val cMakeProjectName = getCMakeProjectName(task)
-      task.addCMakeList(cMakeProjectName, getLanguageSettings().settings.languageStandard)
+      task.addCMakeList(cMakeProjectName, getLanguageSettings().getSettings().languageStandard)
     }
   }
 
