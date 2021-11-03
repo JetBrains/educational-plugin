@@ -202,7 +202,7 @@ abstract class MarketplaceConnector : CourseConnector {
     //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
     val uuid = UUIDProvider.getUUID()
 
-    val link = "$repositoryUrl/plugin/${course.id}/update/${course.getLatestUpdateId()}/download?uuid=$uuid&build=$buildNumber"
+    val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$buildNumber"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
