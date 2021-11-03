@@ -17,7 +17,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
   private val comboBoxesWidth: Int = JBUI.scale(130)
 
   init {
-    title = EduCoreBundle.message("dialog.title.codeforces.choose.contest.languages")
+    title = EduCoreBundle.message("dialog.title.codeforces.contest.settings")
     initTextLanguageComboBox()
     initLanguageComboBox()
     init()
