@@ -24,19 +24,11 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
   }
 
   override fun createCenterPanel(): JComponent = panel {
-    row {
-      label("${EduCoreBundle.message("label.codeforces.contest")}: ${codeforcesCourse.name}")
+    row("${EduCoreBundle.message("label.codeforces.programming.language")}:") {
+      languageComboBox()
     }
-    row {
-      row("${EduCoreBundle.message("label.codeforces.language")}:") {
-        textLanguageComboBox()
-      }
-      row("${EduCoreBundle.message("label.codeforces.programming.language")}:") {
-        languageComboBox()
-      }
-      row {
-        doNotShowLanguageDialogCheckBox()
-      }
+    row("${EduCoreBundle.message("label.codeforces.display.in")}:") {
+      textLanguageComboBox()
     }
   }
 
