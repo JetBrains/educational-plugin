@@ -11,7 +11,6 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -45,6 +44,8 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
   }
 
   override fun update(task: Task) {
+    if (!task.supportSubmissions()) return
+
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
     var customLinkHandler: SwingToolWindowLinkHandler? = null
@@ -55,14 +56,8 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
         descriptionText.addEmptySubmissionsMessage()
       }
       else {
-        val course = task.course
-        if (task is ChoiceTask && course is EduCourse && course.isStepikRemote) {
-          descriptionText.addViewOnStepikLink(task)
-        }
-        else {
-          descriptionText.addSubmissions(submissionsList)
-          customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
-        }
+        descriptionText.addSubmissions(submissionsList)
+        customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
     }
     else {
@@ -112,13 +107,6 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
         }
         return true
       }
-    }
-
-    private fun StringBuilder.addViewOnStepikLink(task: ChoiceTask) {
-      append(
-        "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} " +
-        "href=https://stepik.org/submissions/${task.id}?unit=${task.lesson.unitId}\">" +
-        EduCoreBundle.message("submissions.view.quiz.on.stepik", StepikNames.STEPIK, "</a><a $textStyleHeader>") + "</a>")
     }
 
     private fun StringBuilder.addEmptySubmissionsMessage() {

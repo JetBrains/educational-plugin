@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType
@@ -121,10 +122,15 @@ class HyperskillCourse : Course {
       StepikTaskType.CODE.type,
       StepikTaskType.TEXT.type,
       StepikTaskType.PYCHARM.type,
-      StepikTaskType.DATASET.type
+      StepikTaskType.DATASET.type,
+      StepikTaskType.CHOICE.type
     )
 
-    private val REMOTELY_CHECKED_TASKS: Set<Class<out Task>> = setOf(CodeTask::class.java, DataTask::class.java)
+    private val REMOTELY_CHECKED_TASKS: Set<Class<out Task>> = setOf(
+      ChoiceTask::class.java,
+      CodeTask::class.java,
+      DataTask::class.java
+    )
 
     fun Task.isRemotelyChecked(): Boolean = javaClass in REMOTELY_CHECKED_TASKS
   }

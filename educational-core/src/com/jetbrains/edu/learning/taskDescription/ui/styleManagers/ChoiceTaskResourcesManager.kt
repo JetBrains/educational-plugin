@@ -3,10 +3,15 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 import com.google.gson.Gson
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.getStepikLink
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskDescription.ui.MULTIPLE_CHOICE_LABEL
 import com.jetbrains.edu.learning.taskDescription.ui.SINGLE_CHOICE_LABEL
 import kotlinx.css.*
@@ -38,7 +43,10 @@ class ChoiceTaskResourcesManager {
     GeneratorUtils.getInternalTemplateText(CHOICE_TASK_TEMPLATE, getResources(task))
   }
   else {
-    "View this step on <a href=" + getStepikLink(task, task.lesson) + ">Stepik</a>."
+    when (task.course) {
+      is HyperskillCourse -> EduCoreBundle.message("ui.task.specific.panel", stepLink(task.id), EduNames.JBA)
+      else -> EduCoreBundle.message("ui.task.specific.panel", getStepikLink(task, task.lesson), StepikNames.STEPIK)
+    }
   }
 
   private fun choiceOptionsStylesheet(): String {

@@ -250,7 +250,7 @@ class HyperskillDownloadDatasetTest : EduActionTestCase() {
     private const val TASK_3_NEW_DATASET_TEXT: String = "new dataset for task 3 text"
     private const val TOPIC_NAME: String = "Topic"
 
-    private fun Date.format(): String {
+    fun Date.format(): String {
       val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
       return formatter.format(this)
     }

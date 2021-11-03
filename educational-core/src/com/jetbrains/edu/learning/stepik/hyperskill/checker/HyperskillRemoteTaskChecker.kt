@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkCodeTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkDataTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -26,6 +28,7 @@ class HyperskillRemoteTaskChecker : RemoteTaskChecker {
     return when (task) {
       is DataTask -> checkDataTask(project, task, indicator)
       is CodeTask -> checkCodeTask(project, task)
+      is ChoiceTask -> checkChoiceTask(project, task)
       else -> error("Can't check ${task.itemType} on ${EduNames.JBA}")
     }
   }

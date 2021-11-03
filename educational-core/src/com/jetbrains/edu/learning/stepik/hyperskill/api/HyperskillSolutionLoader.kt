@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
@@ -31,6 +32,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     val files: Map<String, Solution> = when (task) {
       is EduTask -> reply.eduTaskFiles
       is CodeTask -> reply.codeTaskFiles(task)
+      is ChoiceTask -> emptyMap()
       else -> {
         LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
         emptyMap()

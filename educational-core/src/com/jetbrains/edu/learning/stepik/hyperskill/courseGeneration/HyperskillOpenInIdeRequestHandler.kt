@@ -192,7 +192,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         topicsSection = createTopicsSection()
       }
 
-      val (topicName, stepSources) = stepSource.getTopicAndRelatedSteps().onError {
+      val (topicName, stepSources) = stepSource.getTopicWithRecommendedSteps().onError {
         return@computeUnderProgress Err(it)
       }
 
@@ -220,9 +220,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
     val existingTasksIds = items.map { it.id }
-    val filteredStepSources = stepSources.filter { it.block!!.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds }
+    val stepsSourceForAdding = stepSources.filter { it.block?.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds }
 
-    val tasks = HyperskillConnector.getTasks(course, this, filteredStepSources)
+    val tasks = HyperskillConnector.getTasks(course, this, stepsSourceForAdding)
     tasks.forEach(this::addTask)
     return Ok(tasks)
   }
@@ -246,7 +246,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     return lesson
   }
 
-  private fun HyperskillStepSource.getTopicAndRelatedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
+  private fun HyperskillStepSource.getTopicWithRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {
     val connector = HyperskillConnector.getInstance()
     val topicId = topic ?: return Err("Topic must not be null")
 
@@ -321,7 +321,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         localTopicsSection = createTopicsSection()
       }
 
-      val (topicNameSource, stepSources) = stepSource.getTopicAndRelatedSteps().onError { return@computeUnderProgress Err(it) }
+      val (topicNameSource, stepSources) = stepSource.getTopicWithRecommendedSteps().onError { return@computeUnderProgress Err(it) }
       var localTopicLesson = localTopicsSection.getLesson { it.presentableName == topicNameSource }
       val createLessonDir = localTopicLesson == null
       if (localTopicLesson == null) {

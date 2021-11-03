@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -68,7 +69,7 @@ class HyperskillNextActivityTest : EduTestCase() {
       StepMockResponse(topic1.path, ChoiceTask()) {
         topic = topic1.id
         id = step5.id
-        block!!.name = ChoiceTask.CHOICE_TASK_TYPE
+        block!!.name = StepikTaskBuilder.StepikTaskType.TABLE.type
       }
     )
 

@@ -261,6 +261,14 @@ abstract class HyperskillConnector {
     return service.user(userId).executeAndExtractFirst(UsersList::users)
   }
 
+  fun getActiveAttemptOrPostNew(stepId: Int): Result<Attempt, String> {
+    val activeAttempt = getActiveAttempt(stepId)
+    if (activeAttempt is Ok && activeAttempt.value != null) {
+      return Ok(activeAttempt.value)
+    }
+    return postAttempt(stepId)
+  }
+
   fun getActiveAttempt(step: Int): Result<Attempt?, String> {
     return withTokenRefreshIfNeeded {
       val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id
@@ -410,7 +418,7 @@ abstract class HyperskillConnector {
     }
 
     fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
-      val files = (stepSource.block?.options as PyCharmStepOptions).hyperskill?.files ?: return
+      val files = (stepSource.block?.options as? PyCharmStepOptions)?.hyperskill?.files ?: return
       additionalFiles.addAll(files.filter { taskFile ->
         taskFile.name !in additionalFiles.map { it.name }
       })

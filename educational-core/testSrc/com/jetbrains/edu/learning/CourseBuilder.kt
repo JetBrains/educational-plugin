@@ -221,12 +221,14 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     updateDate: Date = Date(0),
     choiceOptions: Map<String, ChoiceOptionStatus>,
     isMultipleChoice: Boolean = false,
+    selectedVariants: MutableList<Int> = mutableListOf(),
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
+    choiceTask.selectedVariants = selectedVariants
   }
 
   fun mission(

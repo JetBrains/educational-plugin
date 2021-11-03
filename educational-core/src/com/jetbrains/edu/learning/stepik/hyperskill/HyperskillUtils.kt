@@ -118,6 +118,9 @@ fun stageLink(projectId: Int, stageId: Int) = "$HYPERSKILL_PROJECTS_URL/$project
 
 fun stepLink(stepId: Int) = "${HYPERSKILL_URL}learn/step/$stepId"
 
+/**
+ * If lesson is not complete when next step appear
+ */
 fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
 
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
@@ -224,6 +227,7 @@ fun openNextActivity(project: Project, task: Task) {
   }
 
   if (nextStep == null) {
+    LOG.warn("Next step is null: current task: ${task.id}")
     Notification(
       "EduTools",
       EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
@@ -240,6 +244,7 @@ fun openNextActivity(project: Project, task: Task) {
   else {
     val topic = nextStep.topic
     val link = if (nextStep.isCompleted && topic != null) topicCompletedLink(topic) else stepLink(nextStep.id)
+    LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task.id} topic: ${topic} ")
     EduBrowser.getInstance().browse(link)
   }
 }

@@ -18,9 +18,11 @@ import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.Dataset;
 import com.jetbrains.edu.learning.stepik.api.Reply;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.submissions.Submission;
 import com.jetbrains.edu.learning.submissions.SubmissionData;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +60,7 @@ public class StepikCheckerConnector {
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
         .allMatch(index -> options.get(index).equals(task.getChoiceOptions().get(index).getText()));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
+      final SubmissionData submissionData = createChoiceSubmissionData(task, attempt);
 
       final CheckResult result = doCheck(submissionData, project, attemptId, user.getId(), task);
       if (result.getStatus() == CheckStatus.Failed) {
@@ -87,12 +89,12 @@ public class StepikCheckerConnector {
   }
 
   @NotNull
-  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, int attemptId) {
+  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, @NotNull Attempt attempt) {
     final SubmissionData submissionData = new SubmissionData();
     submissionData.submission = new Submission();
-    submissionData.submission.setAttempt(attemptId);
+    submissionData.submission.setAttempt(attempt.getId());
     final Reply reply = new Reply();
-    reply.setChoices(createChoiceTaskAnswerArray(task));
+    reply.setChoices(createChoiceTaskAnswerArray(task, attempt));
     submissionData.submission.setReply(reply);
     return submissionData;
   }
@@ -124,12 +126,27 @@ public class StepikCheckerConnector {
     return submission;
   }
 
-  private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
-    final List<Integer> selectedVariants = task.getSelectedVariants();
+  public static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task, @NotNull Attempt attempt) {
+    final Dataset dataset = attempt.getDataset();
     final boolean[] answer = new boolean[task.getChoiceOptions().size()];
-    for (Integer index : selectedVariants) {
-      answer[index] = true;
+
+    if (task.getCourse() instanceof HyperskillCourse) {
+      if (dataset != null && CollectionUtils.isNotEmpty(dataset.getOptions())) {
+        // Every attempt of choiceTask can return options in different order
+        task.getSelectedVariants().stream()
+          .map(selectedIndex -> task.getChoiceOptions().get(selectedIndex))
+          .map(ChoiceOption::getText)
+          .map(selectedText -> dataset.getOptions().indexOf(selectedText))
+          .forEach(index -> answer[index] = true);
+      }
     }
+    else {
+      final List<Integer> selectedVariants = task.getSelectedVariants();
+      for (Integer index : selectedVariants) {
+        answer[index] = true;
+      }
+    }
+
     return answer;
   }
 

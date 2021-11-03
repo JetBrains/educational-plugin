@@ -18,10 +18,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
+import com.jetbrains.edu.learning.stepik.StepikCheckerConnector.createChoiceTaskAnswerArray
 import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -246,6 +249,40 @@ object HyperskillCheckConnector {
     }
 
     return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.get.check.result.from", EduNames.JBA))
+  }
+
+  fun checkChoiceTask(project: Project, task: ChoiceTask): CheckResult {
+    if (!task.isMultipleChoice && task.selectedVariants.isEmpty()) {
+      return CheckResult(CheckStatus.Failed, EduCoreBundle.message("hyperskill.choice.task.empty.variant"))
+    }
+
+    val checkId = task.checkId()
+    if (checkId != null) {
+      return checkId
+    }
+    val submission = submitChoiceTask(task).onError { return it.toCheckResult() }
+    return periodicallyCheckSubmissionResult(project, submission, task)
+  }
+
+  fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
+    val connector = HyperskillConnector.getInstance()
+    val attempt = when (val attemptResponse = connector.getActiveAttemptOrPostNew(task.id)) {
+      is Err -> return attemptResponse
+      is Ok -> attemptResponse.value
+    }
+
+    val submission = createChoiceSubmission(task, attempt)
+    return connector.postSubmission(submission)
+  }
+
+  fun createChoiceSubmission(task: ChoiceTask, attempt: Attempt): Submission {
+    val answerArray = createChoiceTaskAnswerArray(task, attempt)
+    val reply = Reply()
+    reply.choices = answerArray
+    val submission = Submission()
+    submission.attempt = attempt.id
+    submission.reply = reply
+    return submission
   }
 }
 

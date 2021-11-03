@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -28,10 +29,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INP
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
-import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -167,39 +169,56 @@ open class StepikTaskBuilder(
     task.descriptionText = clearCodeBlockFromTags()
     task.descriptionFormat = DescriptionFormat.HTML
 
-    val choiceStep: ChoiceStep? = if (courseMode == CCUtils.COURSE_MODE && stepId > 0)
-      StepikConnector.getInstance().getChoiceStepSource(stepId)
-    else null
-
-    if (choiceStep != null) {
-      val choiceStepOptions = choiceStep.source
-      if (choiceStepOptions != null) {
-        task.isMultipleChoice = choiceStepOptions.isMultipleChoice
-        task.choiceOptions = choiceStepOptions.options.map { ChoiceOption(it.text, it.choiceStatus) }
+    when (courseType) {
+      HYPERSKILL_TYPE -> {
+        when (val result = HyperskillConnector.getInstance().getActiveAttemptOrPostNew(stepId)) {
+          is Ok -> fillChoiceTask(result.value, task)
+          is Err -> LOG.warn("Can't post attempts for $courseType ${result.error}")
+        }
       }
-      if (choiceStep.feedbackCorrect.isNotEmpty()) {
-        task.messageCorrect = choiceStep.feedbackCorrect
-      }
-      if (choiceStep.feedbackWrong.isNotEmpty()) {
-        task.messageIncorrect = choiceStep.feedbackWrong
-      }
-    }
-    else if (!isUnitTestMode) {
-      val attempt = StepikCheckerConnector.getAttemptForStep(stepId, userId)
-      if (attempt != null) {
-        val dataset = attempt.dataset
-        if (dataset?.options != null) {
-          task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
-          task.isMultipleChoice = dataset.isMultipleChoice
+      else -> {
+        val choiceStep: ChoiceStep? = if (courseMode == CCUtils.COURSE_MODE && stepId > 0) {
+          StepikConnector.getInstance().getChoiceStepSource(stepId)
         }
         else {
-          LOG.warn("Dataset for step $stepId is null")
+          null
+        }
+        if (choiceStep != null) {
+          fillChoiceTask(choiceStep, task)
+        }
+        else if (!isUnitTestMode) {
+          StepikCheckerConnector.getAttemptForStep(stepId, userId)?.let { fillChoiceTask(it, task) }
         }
       }
     }
 
     initTaskFiles(task)
     return task
+  }
+
+  private fun fillChoiceTask(choiceStep: ChoiceStep, task: ChoiceTask) {
+    choiceStep.source?.let { choiceStepOptions ->
+      task.isMultipleChoice = choiceStepOptions.isMultipleChoice
+      task.choiceOptions = choiceStepOptions.options.map { ChoiceOption(it.text, it.choiceStatus) }
+    }
+    if (choiceStep.feedbackCorrect.isNotEmpty()) {
+      task.messageCorrect = choiceStep.feedbackCorrect
+    }
+    if (choiceStep.feedbackWrong.isNotEmpty()) {
+      task.messageIncorrect = choiceStep.feedbackWrong
+    }
+  }
+
+  private fun fillChoiceTask(attempt: Attempt, task: ChoiceTask) {
+    val dataset = attempt.dataset
+    LOG.warn("There is my dataset: $dataset for attemptId: ${attempt.id}")
+    if (dataset?.options != null) {
+      task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
+      task.isMultipleChoice = dataset.isMultipleChoice
+    }
+    else {
+      LOG.warn("Dataset for step $stepId is null for course $courseType")
+    }
   }
 
   private fun theoryTask(name: String): TheoryTask {

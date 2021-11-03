@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
+import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
 import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -21,7 +22,9 @@ import com.jetbrains.edu.learning.withFeature
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
     withFeature(PROBLEMS_BY_TOPIC, true) {
-      super.runTestRunnable(context)
+      withFeature(HYPERSKILL_CHOICE_TASK_SUPPORT, true) {
+        super.runTestRunnable(context)
+      }
     }
   }
 
@@ -42,7 +45,15 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step2645.title) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2641.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step2638.title) {
             file("Task.txt")
             file("task.html")
           }
@@ -65,6 +76,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step13296.title) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step10960.title) {
             dir("src") {
               dir("calculator") {
@@ -80,6 +95,26 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
             file("build.gradle")
+          }
+          dir(step13293.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step13294.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step13295.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step7018.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step13299.title) {
+            file("Task.txt")
+            file("task.html")
           }
         }
       }
@@ -176,7 +211,15 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step2645.title) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2641.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step2638.title) {
             file("Task.txt")
             file("task.html")
           }
@@ -220,7 +263,15 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step2645.title) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step2641.title) {
+            file("Task.txt")
+            file("task.html")
+          }
+          dir(step2638.title) {
             file("Task.txt")
             file("task.html")
           }
@@ -281,7 +332,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -358,7 +421,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -443,7 +518,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -493,7 +580,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -569,7 +668,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step2645.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
           dir(step2641.title) {
+            dir("src") {
+              file("Task.kt")
+            }
+            file("task.html")
+          }
+          dir(step2638.title) {
             dir("src") {
               file("Task.kt")
             }
@@ -642,8 +753,17 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private const val TOPIC_NAME = "topicName"
 
     private val step9455 = StepInfo(9455, "Wildcards")
+    private val step2638 = StepInfo(2638, "The result of the code")
     private val step2640 = StepInfo(2640, "Packing bakeries")
     private val step2641 = StepInfo(2641, "List multiplicator")
+    private val step2645 = StepInfo(2645, "Find an equivalent")
+    private val step13296 = StepInfo(13296, "Post mapping")
+    private val step13293 = StepInfo(13293, "Passing parameters")
+    private val step13294 = StepInfo(13294, "Complete the method")
+    private val step13295 = StepInfo(13295, "DeleteMapping request")
+    private val step7018 = StepInfo(7018, "@GetMapping and @PostMapping")
+    private val step13299 = StepInfo(13299, "Complete the handler description")
+
     @Suppress("unused") // not recommended step
     private val step9886 = StepInfo(9886, "Pets in boxes")
     private val topic85 = TopicInfo(85)

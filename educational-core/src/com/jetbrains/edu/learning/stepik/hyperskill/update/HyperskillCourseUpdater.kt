@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -94,12 +95,33 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
 
   private fun Lesson.getProblemsUpdates(): List<TaskUpdate> {
     val tasksFromServer = HyperskillConnector.getInstance().getProblems(this.course, this, taskList.map { it.id })
+    val localTasks = taskList.associateBy { it.id }
+
     val result = mutableListOf<TaskUpdate>()
-    for (taskFromServer in tasksFromServer) {
-      val localTask = getTask(taskFromServer.id) ?: continue
-      if (taskFromServer.updateDate.isSignificantlyAfter(localTask.updateDate)) {
-        result.add(TaskUpdate(localTask, taskFromServer))
+    for (serverTask in tasksFromServer) {
+      val localTask = localTasks[serverTask.id]
+      if (localTask != null) {
+        val localTaskIsExpired = serverTask.updateDate.isSignificantlyAfter(localTask.updateDate)
+        val serverTaskIsDifferent = taskIsDifferent(localTask, serverTask)
+        if (localTaskIsExpired || serverTaskIsDifferent) {
+          result.add(TaskUpdate(localTask, serverTask))
+        }
       }
+    }
+    return result
+  }
+
+  /**
+   * Tasks can be different when tasks have different description.
+   * It can happen because of bugs
+   */
+  private fun taskIsDifferent(first: Task, second: Task): Boolean {
+    var result = first.descriptionText != second.descriptionText ||
+                 first.feedbackLink != second.feedbackLink ||
+                 first.name != second.name
+
+    if (first is ChoiceTask && second is ChoiceTask) {
+      result = result || first.choiceOptions != second.choiceOptions
     }
     return result
   }
@@ -135,6 +157,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       problemsUpdates.forEach {
         val localTask = it.localTask
         if (localTask.status != CheckStatus.Solved) {
+          // if name of remote task changes name of dir local task will not
           GeneratorUtils.createTaskContent(project, it.taskFromServer, localTask.getDir(project.courseDir)!!)
         }
         updateTaskDescription(localTask, it.taskFromServer)

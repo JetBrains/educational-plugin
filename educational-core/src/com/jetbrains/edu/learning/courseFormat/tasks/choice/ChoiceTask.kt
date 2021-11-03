@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.util.*
 
 class ChoiceTask : Task {
@@ -20,6 +21,7 @@ class ChoiceTask : Task {
       if (choiceOptions.any { it.status == ChoiceOptionStatus.UNKNOWN }) {
         return false
       }
+      if (course is HyperskillCourse) return false
       return !(course is EduCourse && (course as EduCourse).isStepikRemote && course.isStudy)
     }
 
@@ -32,8 +34,6 @@ class ChoiceTask : Task {
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
   override fun getItemType(): String = CHOICE_TASK_TYPE
-
-  override fun supportSubmissions(): Boolean = true
 
   override fun isPluginTaskType() = false
 

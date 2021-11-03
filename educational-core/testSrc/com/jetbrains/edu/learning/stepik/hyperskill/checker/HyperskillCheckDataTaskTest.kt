@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckDataTask : CheckersTestBase<Unit>() {
+class HyperskillCheckDataTaskTest : CheckersTestBase<Unit>() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
