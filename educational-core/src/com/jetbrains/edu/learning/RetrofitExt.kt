@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -215,6 +216,8 @@ private fun processForbiddenErrorMessage(jsonText: String): String? {
     courseNode.get("message")?.asText()
   }
   catch (e: ClassCastException) {
+    null
+  } catch (e: JsonParseException) {
     null
   }
 }

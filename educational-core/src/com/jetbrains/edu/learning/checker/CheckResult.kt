@@ -11,6 +11,7 @@ data class CheckResult @JvmOverloads constructor(
   val message: String,
   val details: String? = null,
   val diff: CheckResultDiff? = null,
+  val isWarning: Boolean = false,
   val hyperlinkListener: HyperlinkListener? = null
 ) {
 

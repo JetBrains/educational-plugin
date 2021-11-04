@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
-import java.util.*
 
 class SubmitCodeforcesSolutionAction : CodeforcesAction() {
 
@@ -29,20 +28,26 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
     val solution = task.getCodeTaskFile(project)?.getDocument(project)?.text ?: return
     TaskDescriptionView.getInstance(project).checkStarted(task)
     CodeforcesSettings.getInstance().account?.let {
-      var checkStatus = CheckStatus.RemoteSubmitted
+      var checkStatus = CheckStatus.Unchecked
       var message = EduCoreBundle.message("codeforces.message.solution.submitted",
                                           CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
-      CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError { errorMessage ->
-        checkStatus = CheckStatus.SubmissionFailed
-        message = EduCoreBundle.message("codeforces.failed.to.submit.solution", errorMessage)
+      var isWarning = false
+      val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError { errorMessage ->
+        checkStatus = CheckStatus.Failed
+        errorMessage
       }
-      val checkResult = CheckResult(checkStatus, message)
+      if (responseMessage.isNotBlank()) {
+        message = responseMessage
+        isWarning = true
+      }
+      val checkResult = CheckResult(checkStatus, message, isWarning = isWarning)
 
-      task.feedback = CheckFeedback(Date(), checkResult)
+      task.feedback = CheckFeedback(message)
       task.status = checkStatus
 
       ProjectView.getInstance(project).refresh()
       YamlFormatSynchronizer.saveItem(task)
+
       TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
     }
   }

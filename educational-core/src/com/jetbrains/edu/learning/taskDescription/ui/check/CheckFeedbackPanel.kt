@@ -8,13 +8,10 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
@@ -23,11 +20,8 @@ import javax.swing.JPanel
 
 class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
   init {
-    if (checkResult.status != CheckStatus.Unchecked) {
+    if (checkResult.status != CheckStatus.Unchecked && !checkResult.isWarning) {
       add(ResultLabel(task, checkResult), BorderLayout.WEST)
-      if (checkResult.status == CheckStatus.SubmissionFailed) {
-        add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID, top = 0))
-      }
     }
     val checkTime = task.feedback?.time
     if (checkTime != null) {
@@ -45,14 +39,11 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
       icon = when (status) {
         CheckStatus.Failed -> AllIcons.General.BalloonError
         CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
-        CheckStatus.RemoteSubmitted -> AllIcons.General.BalloonInformation
-        CheckStatus.SubmissionFailed -> AllIcons.General.BalloonError
         else -> null
       }
       foreground = when (status) {
         CheckStatus.Failed -> EduColors.wrongLabelForeground
         CheckStatus.Solved -> EduColors.correctLabelForeground
-        CheckStatus.SubmissionFailed -> EduColors.wrongLabelForeground
         else -> foreground
       }
 
@@ -62,13 +53,8 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
           is IdeTask, is TheoryTask -> "Done"
           else -> "Correct"
         }
-        CheckStatus.SubmissionFailed, CheckStatus.RemoteSubmitted -> {
-          setCopyable(true)
-          checkResult.message
-        }
         else -> ""
       }
-
       iconTextGap = JBUI.scale(4)
       border = JBUI.Borders.empty(0, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
     }

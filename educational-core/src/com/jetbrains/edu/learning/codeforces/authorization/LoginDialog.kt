@@ -56,6 +56,6 @@ class LoginDialog : DialogWrapper(false) {
         if (success != null && success) {
           ApplicationManager.getApplication().invokeLater { super.doOKAction() }
         }
-      }, "Authorizing on Codeforces...", true, null)
+      }, EduCoreBundle.message("codeforces.authorizing.on.codeforces"), true, null)
   }
 }

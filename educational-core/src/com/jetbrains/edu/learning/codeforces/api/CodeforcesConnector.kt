@@ -19,7 +19,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.net.HttpURLConnection
 
 abstract class CodeforcesConnector {
   @VisibleForTesting
@@ -142,9 +141,9 @@ abstract class CodeforcesConnector {
                                  cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
   }
 
-  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<Boolean, String> {
+  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<String, String> {
     if (!account.isUpToDate() && !getInstance().updateJSessionID(account)) {
-      return Err(EduCoreBundle.message("error.unknown.error"))
+      return Err(EduCoreBundle.message("error.access.denied"))
     }
 
     val jSessionID = account.getSessionId()
@@ -155,7 +154,7 @@ abstract class CodeforcesConnector {
 
     val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, submittedProblemIndex,
                                                "JSESSIONID=$jSessionID").executeParsingErrors().onError {
-      return Err(EduCoreBundle.message("error.failed.to.load.submission.page"))
+      return Err(it)
     }
     val htmlPage = submitPage.body()?.string() ?: return Err(EduCoreBundle.message("error.unknown.error"))
     val body = Jsoup.parse(htmlPage)
@@ -168,16 +167,18 @@ abstract class CodeforcesConnector {
                                         programTypeId = programTypeId,
                                         csrf_token = csrfToken,
                                         cookie = "JSESSIONID=$jSessionID").executeParsingErrors().onError {
-      return Err(EduCoreBundle.message("error.unknown.error"))
+      return Err(it)
     }
 
     val responseBody = Jsoup.parse(response.body()?.string())
 
-    if (responseBody.html().contains("You have submitted exactly the same code before")) {
-      return Err(EduCoreBundle.message("codeforces.error.you.have.submitted.code.before"))
+    responseBody.getElementsByClass("error for__source").forEach {
+      if (it.text().contains("You have submitted exactly the same code before"))
+        return Ok(EduCoreBundle.message("codeforces.error.you.have.submitted.code.before"))
+      return Ok(it.text())
     }
 
-    return Ok(response.isSuccessful && response.raw().priorResponse()?.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+    return Ok("")
   }
 
   fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {

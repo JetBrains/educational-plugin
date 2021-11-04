@@ -8,12 +8,12 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import org.jetbrains.annotations.VisibleForTesting
 import org.jsoup.Jsoup
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Font
 import javax.swing.*
 import javax.swing.event.HyperlinkListener
@@ -36,6 +36,10 @@ class CheckMessagePanel private constructor() : JPanel() {
 
   override fun isVisible(): Boolean =
     componentCount > 1 || messagePane.document.getText(0, messagePane.document.length).isNotEmpty()
+
+  fun setMessageForeground(fg: Color) {
+    messagePane.foreground = fg
+  }
 
   private fun setMessage(message: String) {
     val lines = message.lines()
@@ -94,7 +98,6 @@ class CheckMessagePanel private constructor() : JPanel() {
     @JvmStatic
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
-      if (checkResult.status == CheckStatus.RemoteSubmitted || checkResult.status == CheckStatus.SubmissionFailed) return messagePanel
       messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
       if (checkResult.diff != null) {

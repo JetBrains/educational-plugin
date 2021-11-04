@@ -56,7 +56,7 @@ class CodeforcesAccount : Account<CodeforcesUserInfo> {
   private fun getPasswordCredentialAttributes() = credentialAttributes(getUserName(), serviceNameForPassword)
 
   fun updateExpiresAt() {
-    this.userInfo.sessionExpiresAt = Instant.now().plus(27, ChronoUnit.DAYS).toEpochMilli()
+    this.userInfo.sessionExpiresAt = Instant.now().plus(7, ChronoUnit.DAYS).toEpochMilli()
   }
 }
 
