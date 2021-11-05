@@ -20,14 +20,13 @@ import javax.swing.JPanel
 
 class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : JPanel(BorderLayout()) {
   init {
-    if (checkResult.status != CheckStatus.Unchecked && !checkResult.isWarning) {
+    if (checkResult.status != CheckStatus.Unchecked) {
       add(ResultLabel(task, checkResult), BorderLayout.WEST)
     }
     val checkTime = task.feedback?.time
     if (checkTime != null) {
       add(TimeLabel(checkTime, alarm), BorderLayout.CENTER)
     }
-    border = JBUI.Borders.emptyTop(16)
   }
 
   override fun isVisible(): Boolean = componentCount > 0
@@ -36,6 +35,7 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
     init {
       val status = checkResult.status
 
+      iconTextGap = JBUI.scale(4)
       icon = when (status) {
         CheckStatus.Failed -> AllIcons.General.BalloonError
         CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
@@ -55,14 +55,13 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
         }
         else -> ""
       }
-      iconTextGap = JBUI.scale(4)
-      border = JBUI.Borders.empty(0, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
+      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 16 - FOCUS_BORDER_WIDTH)
     }
   }
 
   private class TimeLabel(private val time: Date, private val alarm: Alarm) : JBLabel() {
     init {
-      border = JBUI.Borders.empty(0, FOCUS_BORDER_WIDTH, 0, 0)
+      border = JBUI.Borders.empty(16, FOCUS_BORDER_WIDTH, 0, 0)
       foreground = UIUtil.getLabelDisabledForeground()
 
       val timeUpdater = object : Runnable {
