@@ -119,8 +119,7 @@ abstract class CodeforcesConnector {
   }
 
   fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {
-    val loginPage = service.getLoginPage().executeParsingErrors()
-      .onError { return Err(it) }
+    val loginPage = service.getLoginPage().executeParsingErrors().onError { return Err(it) }
     loginPage.body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
 
     val body = Jsoup.parse(loginPage.body()?.string())
@@ -130,7 +129,7 @@ abstract class CodeforcesConnector {
                        ?.filter { it.contains("JSESSIONID") }
                        ?.joinToString("; ") { it.split(";")[0] }
                        ?.split("=")?.get(1) ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
-    return Ok(Pair(csrfToken, jSessionId))
+    return Ok(csrfToken to jSessionId)
   }
 
 
@@ -142,7 +141,7 @@ abstract class CodeforcesConnector {
   }
 
   fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<String, String> {
-    if (!account.isUpToDate() && !getInstance().updateJSessionID(account)) {
+    if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
       return Err(EduCoreBundle.message("error.access.denied"))
     }
 
@@ -179,6 +178,11 @@ abstract class CodeforcesConnector {
     }
 
     return Ok("")
+  }
+
+  private fun isLoggedIn(): Boolean {
+    CodeforcesSettings.getInstance().account?.getSessionId()?.let { getProfile(it) } ?: return false
+    return true
   }
 
   fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {

@@ -198,7 +198,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     private void onStarted(@NotNull ProgressIndicator indicator) {
       processStarted();
       ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
-      TaskDescriptionView.getInstance(myProject).checkStarted(myTask);
+      TaskDescriptionView.getInstance(myProject).checkStarted(myTask, false);
     }
 
     @Override

@@ -22,7 +22,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun addLoadingPanel(platformName: String) {}
 
   override fun readyToCheck() {}
-  override fun checkStarted(task: Task) {}
+  override fun checkStarted(task: Task, startSpinner: Boolean) {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
   override fun checkTooltipPosition(): RelativePoint = RelativePoint(Point(0, 0))
 }

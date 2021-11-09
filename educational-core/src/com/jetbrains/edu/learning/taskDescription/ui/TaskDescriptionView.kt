@@ -28,7 +28,7 @@ abstract class TaskDescriptionView {
   abstract fun addLoadingPanel(platformName: String)
 
   abstract fun readyToCheck()
-  abstract fun checkStarted(task: Task)
+  abstract fun checkStarted(task: Task, startSpinner: Boolean = false)
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun checkTooltipPosition(): RelativePoint?
 

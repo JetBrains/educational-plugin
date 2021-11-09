@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.Alarm
+import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.EduActionUtils
@@ -46,6 +47,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   private val rightActionsToolbar = JPanel(HorizontalLayout(10))
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
+  private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
 
   init {
     checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
@@ -54,6 +56,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     checkActionsPanel.add(linkPanel, BorderLayout.SOUTH)
     add(checkActionsPanel, BorderLayout.CENTER)
     add(checkDetailsPlaceholder, BorderLayout.SOUTH)
+    asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
   }
 
   private fun createRightActionsToolbar(): JPanel {
@@ -86,9 +89,12 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     checkTimeAlarm.cancelAllRequests()
   }
 
-  fun checkStarted() {
+  fun checkStarted(startSpinner: Boolean) {
     readyToCheck()
     updateBackground()
+    if (startSpinner) {
+      checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
+    }
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {

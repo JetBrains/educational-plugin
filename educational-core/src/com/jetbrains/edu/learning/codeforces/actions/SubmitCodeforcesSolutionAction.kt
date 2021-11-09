@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.codeforces.actions
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_CONTEST_SUBMISSIONS_URL
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
@@ -26,29 +28,40 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
 
     val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
     val solution = task.getCodeTaskFile(project)?.getDocument(project)?.text ?: return
-    TaskDescriptionView.getInstance(project).checkStarted(task)
-    CodeforcesSettings.getInstance().account?.let {
+
+    val taskDescriptionView = TaskDescriptionView.getInstance(project)
+    taskDescriptionView.checkStarted(task, true)
+
+    ApplicationManager.getApplication().executeOnPooledThread {
       var checkStatus = CheckStatus.Unchecked
       var message = EduCoreBundle.message("codeforces.message.solution.submitted",
                                           CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
       var isWarning = false
-      val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError { errorMessage ->
-        checkStatus = CheckStatus.Failed
-        errorMessage
+      var checkResult = CheckResult(checkStatus, message, isWarning = isWarning)
+      try {
+        CodeforcesSettings.getInstance().account?.let {
+          val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it).onError { errorMessage ->
+            checkStatus = CheckStatus.Failed
+            errorMessage
+          }
+          if (responseMessage.isNotBlank()) {
+            message = responseMessage
+            isWarning = true
+          }
+          checkResult = CheckResult(checkStatus, message, isWarning = isWarning)
+        }
       }
-      if (responseMessage.isNotBlank()) {
-        message = responseMessage
-        isWarning = true
+      catch (e: Exception) {
+        checkResult = failedToCheck
       }
-      val checkResult = CheckResult(checkStatus, message, isWarning = isWarning)
+      finally {
+        task.feedback = CheckFeedback(checkResult.message)
+        task.status = checkResult.status
 
-      task.feedback = CheckFeedback(message)
-      task.status = checkStatus
-
-      ProjectView.getInstance(project).refresh()
-      YamlFormatSynchronizer.saveItem(task)
-
-      TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
+        ProjectView.getInstance(project).refresh()
+        YamlFormatSynchronizer.saveItem(task)
+        taskDescriptionView.checkFinished(task, checkResult)
+      }
     }
   }
 

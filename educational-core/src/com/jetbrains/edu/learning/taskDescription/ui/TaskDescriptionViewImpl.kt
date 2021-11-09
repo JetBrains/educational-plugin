@@ -187,9 +187,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     })
   }
 
-  override fun checkStarted(task: Task) {
+  override fun checkStarted(task: Task, startSpinner: Boolean) {
     if (task != currentTask) return
-    uiContent?.checkPanel?.checkStarted()
+    uiContent?.checkPanel?.checkStarted(startSpinner)
   }
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
