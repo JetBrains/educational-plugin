@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
@@ -11,6 +10,8 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import org.jetbrains.annotations.VisibleForTesting
+import org.jsoup.Jsoup
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
@@ -47,7 +48,7 @@ class CheckMessagePanel private constructor() : JPanel() {
       messageShortened = false
       message
     }
-    messagePane.text = StringUtil.replace(displayMessage, listOf(" ", "\n"), listOf("&nbsp;", "<br>"))
+    messagePane.text = prepareHtmlText(displayMessage)
   }
 
   private fun setHyperlinkListener(listener: HyperlinkListener) {
@@ -99,6 +100,9 @@ class CheckMessagePanel private constructor() : JPanel() {
       }
       return messagePanel
     }
+
+    @VisibleForTesting
+    fun prepareHtmlText(text: String): String = Jsoup.parse(text).text()
   }
 }
 
