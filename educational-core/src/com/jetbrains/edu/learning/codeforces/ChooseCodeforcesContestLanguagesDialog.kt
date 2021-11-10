@@ -21,7 +21,8 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
   private val languageComboBox: ComboBox<String> = ComboBox<String>()
   private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox(EduCoreBundle.message("codeforces.prefer.selected.languages"))
   private val comboBoxesWidth: Int = JBUI.scale(300)
-  private val courseSettingsPanel: CourseSettingsPanel = CourseSettingsPanel(true)
+  private val courseSettingsPanel: CourseSettingsPanel = CourseSettingsPanel(true,
+                                                                             EduCoreBundle.message("codeforces.project.settings"))
 
   init {
     title = EduCoreBundle.message("dialog.title.codeforces.contest.settings")

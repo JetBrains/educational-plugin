@@ -32,7 +32,10 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
 
-class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePanel(), CourseSelectionListener {
+class CourseSettingsPanel(
+  isLocationFieldNeeded: Boolean = false,
+  panelTitle: String = EduCoreBundle.message("course.dialog.settings")
+) : NonOpaquePanel(), CourseSelectionListener {
   var languageSettings: LanguageSettings<*>? = null
   val locationString: String?
     get() = locationField?.component?.text
@@ -47,7 +50,7 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePan
     settingsPanel.layout = BoxLayout(settingsPanel, BoxLayout.Y_AXIS)
     settingsPanel.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
     add(settingsPanel, BorderLayout.CENTER)
-    decorator = HideableNoLineDecorator(this, EduCoreBundle.message("course.dialog.settings"))
+    decorator = HideableNoLineDecorator(this, panelTitle)
     decorator.setContentComponent(settingsPanel)
 
     if (isLocationFieldNeeded) {
