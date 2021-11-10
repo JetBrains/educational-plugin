@@ -56,7 +56,7 @@ abstract class CoursesPlatformProvider {
   companion object {
     fun joinCourse(courseInfo: CourseInfo,
                    courseMode: CourseMode,
-                   component: JPanel,
+                   component: JPanel?,
                    errorHandler: (ErrorState) -> Unit
     ) {
       val (course, getLocation, _) = courseInfo
@@ -75,8 +75,10 @@ abstract class CoursesPlatformProvider {
         try {
           configurator.beforeCourseStarted(course)
 
-          val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
-          dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+          if (component != null) {
+            val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
+            dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+          }
           course.courseMode = courseMode.toString()
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
           val project = projectGenerator?.doCreateCourseProject(location, projectSettings)

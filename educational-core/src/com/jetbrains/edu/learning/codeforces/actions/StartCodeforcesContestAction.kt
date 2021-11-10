@@ -13,9 +13,11 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
 
@@ -23,13 +25,10 @@ class StartCodeforcesContestAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val showViewAllLabel = e.place != CodeforcesCoursesPanel.PLACE
-    val course = importCodeforcesContest(showViewAllLabel) ?: return
-    showCourseInfo(course)
-  }
+    val contestId = showDialogAndGetContestId(showViewAllLabel) ?: return
+    val codeforcesCourseInfo = getContest(contestId) ?: error("Cannot load course ${contestId}")
 
-  private fun importCodeforcesContest(showViewAllLabel: Boolean): CodeforcesCourse? {
-    val contestId = showDialogAndGetContestId(showViewAllLabel) ?: return null
-    return getContest(contestId)?.course as CodeforcesCourse
+    CoursesPlatformProvider.joinCourse(codeforcesCourseInfo, CourseMode.STUDY, null) {}
   }
 
   private fun showDialogAndGetContestId(showViewAllLabel: Boolean): Int? {
@@ -55,7 +54,6 @@ class StartCodeforcesContestAction : DumbAwareAction() {
           }
         }, EduCoreBundle.message("codeforces.getting.contest.information"), true, null
       )
-
 
 
     private fun showFailedToGetContestInfoNotification(contestId: Int, error: String) {
@@ -138,10 +136,10 @@ class StartCodeforcesContestAction : DumbAwareAction() {
 
       object : JoinCourseDialog(
         course, CourseDisplaySettings(
-          showTagsPanel = false,
-          showInstructorField = false,
-          showLanguageSettings = showLanguageSettings
-        )
+        showTagsPanel = false,
+        showInstructorField = false,
+        showLanguageSettings = showLanguageSettings
+      )
       ) {
         init {
           init()
