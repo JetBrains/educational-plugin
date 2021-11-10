@@ -65,7 +65,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     gotItTooltip.assignTo(action.templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
     val jComponent = action.templatePresentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
     if (jComponent != null && gotItTooltip.canShow() && !CodeforcesSettings.getInstance().isLoggedIn()) {
-      gotItTooltip.show(jComponent, GotItTooltip.BOTTOM_LEFT)
+      gotItTooltip.show(jComponent, getPointProvider())
     }
   }
 
