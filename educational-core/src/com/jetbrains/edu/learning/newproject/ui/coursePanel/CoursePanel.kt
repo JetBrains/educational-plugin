@@ -124,7 +124,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     setButtonsEnabled(errorState.courseCanBeStarted)
   }
 
-  fun validateSettings(it: Course) = settingsPanel.validateSettings(it)
+  open fun validateSettings(it: Course) = settingsPanel.validateSettings(it)
 
   fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
     (layout as CardLayout).show(this, CONTENT)

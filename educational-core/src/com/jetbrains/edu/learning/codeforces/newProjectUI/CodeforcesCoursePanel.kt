@@ -62,6 +62,8 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
   override val openButtonText: String
     get() = EduCoreBundle.message("course.dialog.start.button.codeforces.open.contest")
 
+  override fun validateSettings(it: Course): ValidationMessage? = null
+
   override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
     if (codeforcesCourse.isRegistrationOpen && !codeforcesCourse.isOngoing) {
