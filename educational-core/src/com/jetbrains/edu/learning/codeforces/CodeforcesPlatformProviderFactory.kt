@@ -2,9 +2,6 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.DialogWrapperDialog
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
@@ -35,11 +32,10 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CodeforcesCoursesPanel(this, scope, disposable)
 
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
-    val codeforcesCourse = StartCodeforcesContestAction.startContest(courseInfo.course.id) ?: error("Cannot load course ${courseInfo.course.name} ${courseInfo.course.id}")
-    StartCodeforcesContestAction.showCourseInfo(codeforcesCourse)
+    val codeforcesCourseInfo = StartCodeforcesContestAction.getContest(courseInfo.course.id) ?: error(
+      "Cannot load course ${courseInfo.course.name} ${courseInfo.course.id}")
 
-    val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, coursePanel)
-    dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
+    joinCourse(codeforcesCourseInfo, CourseMode.STUDY, coursePanel) {}
   }
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {

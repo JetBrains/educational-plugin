@@ -16,7 +16,6 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_LOCAL_COURSE_KEY
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
@@ -38,9 +37,9 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePan
   val locationString: String?
     get() = locationField?.component?.text
 
-  private var locationField: LabeledComponent<TextFieldWithBrowseButton>? = null
+  var locationField: LabeledComponent<TextFieldWithBrowseButton>? = null
   private val context: UserDataHolder = UserDataHolderBase()
-  private val settingsPanel = JPanel()
+  val settingsPanel = JPanel()
   private var decorator: HideableNoLineDecorator
 
   init {
@@ -108,7 +107,6 @@ class CourseSettingsPanel(isLocationFieldNeeded: Boolean = false) : NonOpaquePan
 
     if (settingsComponents.isNotEmpty()
         && course !is JetBrainsAcademyCourse
-        && course !is CodeforcesCourse
         && (!CoursesStorage.getInstance().hasCourse(course))
         || course.dataHolder.getUserData(IS_LOCAL_COURSE_KEY) == true) {
       isVisible = true
