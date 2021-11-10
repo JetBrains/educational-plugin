@@ -21,7 +21,6 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
     val codeforcesSettings = CodeforcesSettings.getInstance()
     initTextLanguageComboBox(codeforcesSettings)
     initLanguageComboBox(codeforcesSettings)
-    initLanguagePreferencesCheckBox(codeforcesSettings)
     state = State(getTaskTextLanguage(), getLanguage(), getDoNotShowLanguageDialog())
   }
 
@@ -60,10 +59,6 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
     languageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
-  private fun initLanguagePreferencesCheckBox(codeforcesSettings: CodeforcesSettings) {
-    doNotShowLanguageDialogCheckBox.isSelected = codeforcesSettings.doNotShowLanguageDialog
-  }
-
   override fun getDependencies(): Collection<BaseExtensionPointName<*>> {
     return listOf(CodeforcesLanguageProvider.EP_NAME)
   }
@@ -78,7 +73,6 @@ class CodeforcesOptions : Configurable, Configurable.WithEpDependencies {
     val codeforcesSettings = CodeforcesSettings.getInstance()
     codeforcesSettings.preferableTaskTextLanguage = textLanguage
     codeforcesSettings.preferableLanguage = language
-    codeforcesSettings.doNotShowLanguageDialog = doNotShowLanguageDialog
 
     state.textLanguage = textLanguage
     state.language = language

@@ -25,7 +25,6 @@ private const val serviceName = "CodeforcesSettings"
 class CodeforcesSettings : PersistentStateComponent<Element> {
   var preferableTaskTextLanguage: TaskTextLanguage? = null
   var preferableLanguage: String? = null
-  var doNotShowLanguageDialog: Boolean = false
 
   @get:Transient
   @set:Transient
