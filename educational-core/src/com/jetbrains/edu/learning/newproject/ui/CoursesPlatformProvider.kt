@@ -79,8 +79,12 @@ abstract class CoursesPlatformProvider {
           dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
           course.courseMode = courseMode.toString()
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
-          projectGenerator?.doCreateCourseProject(location, projectSettings)
-          CoursesStorage.getInstance().addCourse(course, location)
+          val project = projectGenerator?.doCreateCourseProject(location, projectSettings)
+          // null project means that user hasn't created course project at all.
+          // For example, he/she may choose `Don't Open` option in `Trust and Open Project` dialog
+          if (project != null) {
+            CoursesStorage.getInstance().addCourse(course, location)
+          }
         }
         catch (e: CourseCantBeStartedException) {
           errorHandler(e.error)
