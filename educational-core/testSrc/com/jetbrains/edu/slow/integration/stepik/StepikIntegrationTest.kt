@@ -240,7 +240,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val newName = "renamed"
     localCourse.lessons[0].customPresentableName = newName
 
-    CCPushCourse.doPush(project, localCourse.asEduCourse())
+    pushCourse(localCourse)
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
     val lesson = StepikCourseLoader.getLessonsFromUnits(courseFromStepik, section.units, false)[0]
@@ -301,7 +301,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     setText("lesson1/task1/test/Tests.kt", testText)
     setText("lesson1/task1/build.gradle", additionalText)
 
-    CCPushCourse.doPush(project, localCourse.asEduCourse())
+    pushCourse(localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
@@ -326,7 +326,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val taskText = "// task text"
     setText("lesson1/Quiz/src/Task.kt", taskText)
-    CCPushCourse.doPush(project, localCourse.asEduCourse())
+    pushCourse(localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
@@ -354,7 +354,7 @@ open class StepikIntegrationTest : StepikTestCase() {
       placeholderText = "TODO()"
     }
 
-    CCPushCourse.doPush(project, localCourse.asEduCourse())
+    pushCourse(localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getInstance().getSection(courseFromStepik.sectionIds[0])!!
@@ -369,7 +369,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
     course.language = course.language + " 2"
     val expectedLanguage = course.language
-    CCPushCourse.doPush(project, course.asEduCourse())
+    pushCourse(course)
     val uploadedCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val remoteCourse = getCourseFromStepik(uploadedCourse.id)
     assertEquals(expectedLanguage, remoteCourse.language)
@@ -493,8 +493,12 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun initCourse(course: Course): EduCourse {
-    CCPushCourse.doPush(project, course.asEduCourse())
+    pushCourse(course)
     return StudyTaskManager.getInstance(project).course as EduCourse
+  }
+
+  private fun pushCourse(courseToPost: Course) {
+    CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =

@@ -214,7 +214,6 @@ class CourseUpdateTest : StepikTestCase() {
 
   private fun pushCourse(courseToPost: Course) {
     CCStepikConnector.postCourse(project, courseToPost.asEduCourse())
-
   }
 
   fun `test post new section after top-level lesson`() {
