@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
+import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.addVendor
@@ -137,6 +138,21 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test task feedback link`() {
+    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = FakeGradleBasedLanguage, courseVendor = vendor) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+      additionalFile("test.txt", "another text")
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 5
+    }
+    val firstTask = getFirstTask(course) ?: return
+    firstTask.feedbackLink = "https://task_link.com"
+    doTest()
+  }
 
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/marketplaceCourseArchive"

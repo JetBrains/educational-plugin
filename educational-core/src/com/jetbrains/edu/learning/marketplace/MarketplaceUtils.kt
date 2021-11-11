@@ -45,7 +45,6 @@ fun Course.updateCourseItems() {
   visitLessons { lesson ->
     lesson.visitTasks { task ->
       task.generateId()
-      task.feedbackLink = null
     }
     lesson.generateId()
   }
