@@ -61,7 +61,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
+import static com.jetbrains.edu.coursecreator.CCUtils.COURSE_MODE;
 import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
+import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.isNewTrustedProjectApiAvailable;
+import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.setProjectPathTrusted;
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -172,6 +175,11 @@ public abstract class CourseProjectGenerator<S> {
     baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
     baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.getLanguageID());
 
+    boolean isNewCourseCreatorCourse = isNewCourseCreatorCourse();
+    if (isNewTrustedProjectApiAvailable() && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+      setProjectPathTrusted(location.toPath());
+    }
+
     ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);
     Project project = OpenProjectUtils.openNewProject(location.toPath(), callback);
     if (project != null) {
@@ -194,9 +202,10 @@ public abstract class CourseProjectGenerator<S> {
                                     @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
-    boolean isNewCourseCreatorCourse = CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty();
+    boolean isNewCourseCreatorCourse = isNewCourseCreatorCourse();
 
-    if (isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+    // BACKCOMPAT: 2021.3. Drop it because project is marked as trusted in `createProject`
+    if (!isNewTrustedProjectApiAvailable() && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
       //noinspection UnstableApiUsage
       TrustedProjects.setTrusted(project, true);
     }
@@ -272,6 +281,10 @@ public abstract class CourseProjectGenerator<S> {
   public void createAdditionalFiles(@NotNull Project project,
                                     @NotNull VirtualFile baseDir,
                                     boolean isNewCourse) throws IOException {}
+
+  private boolean isNewCourseCreatorCourse() {
+    return myCourse.getCourseMode().equals(COURSE_MODE) && myCourse.getItems().isEmpty();
+  }
 
   // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
   // See https://youtrack.jetbrains.com/issue/EDU-4182
