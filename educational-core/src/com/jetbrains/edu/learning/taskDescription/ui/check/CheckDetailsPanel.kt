@@ -4,13 +4,11 @@ import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.requests.SimpleDiffRequest
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
@@ -21,8 +19,6 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
-import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesMarkAsCompletedAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -33,11 +29,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
-import com.jetbrains.edu.learning.taskDescription.createActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
-import com.jetbrains.edu.learning.ui.EduColors
 import com.jetbrains.edu.learning.xmlUnescaped
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
@@ -56,31 +50,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
     if (messagePanel.isVisible) {
       add(messagePanel, BorderLayout.CENTER)
-      if (task is CodeforcesTask
-          && CodeforcesSettings.getInstance().isLoggedIn()
-          && (checkResult.isWarning || (checkResult.status == CheckStatus.Unchecked && checkResult.message.isNotBlank()))) {
-        val icon = when (checkResult.status) {
-          CheckStatus.Unchecked -> {
-            if (checkResult.isWarning) {
-              messagePanel.setMessageForeground(EduColors.warningTextForeground)
-              AllIcons.General.BalloonWarning
-            }
-            else {
-              AllIcons.General.BalloonInformation
-            }
-          }
-          CheckStatus.Failed -> {
-            messagePanel.setMessageForeground(EduColors.errorTextForeground)
-            add(createActionLink(EduCoreBundle.message("codeforces.copy.and.submit"), CodeforcesCopyAndSubmitAction.ACTION_ID, 16, 0),
-                BorderLayout.EAST)
-            AllIcons.General.BalloonError
-          }
-          else -> null
-        }
-        val iconLabel = JBLabel(icon)
-        iconLabel.border = JBUI.Borders.emptyTop(16)
-        add(iconLabel, BorderLayout.WEST)
-      }
     }
     // TODO rewrite this piece: create separate LinksPanel class, try to get rid of dependencies in messagePanel
     if (linksPanel.componentCount > 0) {

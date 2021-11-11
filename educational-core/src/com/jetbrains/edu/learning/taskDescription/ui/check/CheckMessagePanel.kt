@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.check
 
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
@@ -10,10 +11,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
-import org.jetbrains.annotations.VisibleForTesting
-import org.jsoup.Jsoup
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Font
 import javax.swing.*
 import javax.swing.event.HyperlinkListener
@@ -36,10 +34,6 @@ class CheckMessagePanel private constructor() : JPanel() {
 
   override fun isVisible(): Boolean =
     componentCount > 1 || messagePane.document.getText(0, messagePane.document.length).isNotEmpty()
-
-  fun setMessageForeground(fg: Color) {
-    messagePane.foreground = fg
-  }
 
   private fun setMessage(message: String) {
     val lines = message.lines()
@@ -89,6 +83,29 @@ class CheckMessagePanel private constructor() : JPanel() {
     return labeledComponent
   }
 
+  private fun adjustView(checkResult: CheckResult) {
+    if (!checkResult.severity.isInfo() || (checkResult.status == CheckStatus.Unchecked && checkResult.message.isNotBlank())) {
+      remove(messagePane)
+      val messagePaneWrapper = JPanel(BorderLayout())
+      messagePaneWrapper.add(messagePane, BorderLayout.CENTER)
+
+      val icon = when (checkResult.status) {
+        CheckStatus.Unchecked -> if (checkResult.severity.isWaring()) AllIcons.General.BalloonWarning else AllIcons.General.BalloonInformation
+        CheckStatus.Failed -> AllIcons.General.BalloonError
+        else -> null
+      }
+      messagePane.foreground = when (checkResult.status) {
+        CheckStatus.Unchecked -> if (checkResult.severity.isWaring()) EduColors.warningTextForeground else messagePane.foreground
+        CheckStatus.Failed -> EduColors.errorTextForeground
+        else -> messagePane.foreground
+      }
+      val iconLabel = JBLabel(icon)
+      iconLabel.border = JBUI.Borders.empty(16, 0, 0, 4)
+      messagePaneWrapper.add(iconLabel, BorderLayout.WEST)
+      add(messagePaneWrapper)
+    }
+  }
+
   companion object {
     val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
 
@@ -100,6 +117,7 @@ class CheckMessagePanel private constructor() : JPanel() {
       val messagePanel = CheckMessagePanel()
       messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
+      messagePanel.adjustView(checkResult)
       if (checkResult.diff != null) {
         messagePanel.setDiff(checkResult.diff)
       }
