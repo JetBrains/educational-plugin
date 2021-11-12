@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_GO_SUPPORT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -52,12 +51,7 @@ class HyperskillTaskBuilder(
       return null
     }
 
-    // TODO There should be no Go related things, probably you've to do something in
-    //  [com.jetbrains.edu.go.stepik.hyperskill.GoHyperskillConfigurator]
     val type = if (blockName == PYCHARM_TASK_TYPE && stepSource.isRemoteTested) {
-      if (!isFeatureEnabled(HYPERSKILL_GO_SUPPORT)) {
-        return null
-      }
       REMOTE_EDU_TASK_TYPE
     }
     else {
