@@ -360,8 +360,13 @@ abstract class MarketplaceConnector : CourseConnector {
                                     showFailedToFindMarketplaceCourseOnRemoteNotification(project, uploadAsNewCourseAction)
                                   })
       .onError {
-        LOG.error("Failed to upload course update for course ${course.id}: ${it}")
-        return it.contains(PLUGIN_CONTAINS_VERSION_ERROR_TEXT)
+        val message = "Failed to upload course update for course ${course.id}: ${it}"
+        if (it.contains(PLUGIN_CONTAINS_VERSION_ERROR_TEXT)) {
+          LOG.info(message)
+          return true
+        }
+        LOG.error(message)
+        return false
       }
 
     val message = message("marketplace.push.course.successfully.updated", course.name, course.marketplaceCourseVersion)
