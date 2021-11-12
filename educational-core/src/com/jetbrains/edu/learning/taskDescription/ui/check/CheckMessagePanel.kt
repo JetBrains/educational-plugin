@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.ui.EduColors
-import org.jsoup.Jsoup
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
@@ -34,7 +33,6 @@ class CheckMessagePanel private constructor() : JPanel() {
   init {
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
     border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
-
 
     val messagePanel = JPanel(BorderLayout())
     messagePanel.add(messagePane, BorderLayout.CENTER)
@@ -131,7 +129,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     }
 
     @VisibleForTesting
-    fun prepareHtmlText(text: String): String = Jsoup.parse(text).text()
+    fun prepareHtmlText(text: String): String = "<html><head></head><body>$text</body></html>"
   }
 }
 

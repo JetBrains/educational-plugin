@@ -66,7 +66,10 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     buttonPanel.add(button)
 
     if (!optionalActions.isNullOrEmpty() && project != null) {
-      val optionButton = createOptionalButtons(project, optionalActions)
+      val (mainAction, otherActions) = optionalActions.headTail()
+
+      val optionButton = DefaultOptionalButton(mainAction, otherActions)
+      addGotItTooltip(optionButton, project)
       buttonPanel.add(optionButton)
     }
 
@@ -90,14 +93,6 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
       }
     }
     return button
-  }
-
-  private fun createOptionalButtons(project: Project, optionalActions: List<AnAction>): JBOptionButton {
-    val (mainAction, otherActions) = optionalActions.headTail()
-
-    val optionButton = DefaultOptionalButton(mainAction, otherActions)
-    addGotItTooltip(optionButton, project)
-    return optionButton
   }
 
   private fun addGotItTooltip(option: JBOptionButton, project: Project) {
