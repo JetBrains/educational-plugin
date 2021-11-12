@@ -94,22 +94,33 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
 
   private fun createOptionalButtons(project: Project, optionalActions: List<AnAction>): JBOptionButton {
     val (mainAction, otherActions) = optionalActions.headTail()
-    val optionButton = object : JBOptionButton(null, null) {
-      init {
-        this.action = AnActionWrapper(mainAction, this)
-        setOptions(otherActions)
-      }
 
-      override fun isDefaultButton() = true
-    }
-    val gotItTooltip = GotItTooltip("codeforces.submit.solution.button",
-                                    EduCoreBundle.message("codeforces.you.can.submit.solution.from.ide"), project)
-      .withPosition(Balloon.Position.above)
-    if (gotItTooltip.canShow()) {
-      gotItTooltip.show(optionButton, GotItTooltip.TOP_MIDDLE)
-    }
+    val optionButton = DefaultOptionalButton(mainAction, otherActions)
+    addGotItTooltip(optionButton, project)
     return optionButton
   }
+
+  private fun addGotItTooltip(option: JBOptionButton, project: Project) {
+    val gotItTooltip = GotItTooltip("codeforces.submit.solution.button",
+                                    EduCoreBundle.message("codeforces.you.can.submit.solution.from.ide"), project).withPosition(
+      Balloon.Position.above)
+    if (gotItTooltip.canShow()) {
+      gotItTooltip.show(option, GotItTooltip.TOP_MIDDLE)
+    }
+  }
+
+  private inner class DefaultOptionalButton(
+    mainAction: AnAction,
+    otherActions: List<AnAction>)
+    : JBOptionButton(AnActionWrapper(mainAction, this@CheckPanelButtonComponent), null) {
+
+    init {
+      setOptions(otherActions)
+    }
+
+    override fun isDefaultButton() = true
+  }
+
 }
 
 private class AnActionWrapper(

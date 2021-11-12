@@ -74,7 +74,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
         checkResult = failedToCheck
       }
       finally {
-        if (severity != CheckResultSeverity.Warning) {
+        if (!severity.isWaring()) {
           task.feedback = CheckFeedback(checkResult.message)
           task.status = checkResult.status
 

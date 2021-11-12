@@ -24,10 +24,17 @@ class CheckMessagePanel private constructor() : JPanel() {
     border = JBUI.Borders.emptyTop(16)
   }
 
+  private val messageIconLabel: JBLabel = JBLabel()
+
   init {
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
     border = JBUI.Borders.emptyLeft(FOCUS_BORDER_WIDTH)
-    add(messagePane)
+
+
+    val messagePanel = JPanel(BorderLayout())
+    messagePanel.add(messagePane, BorderLayout.CENTER)
+    messagePanel.add(messageIconLabel, BorderLayout.WEST)
+    add(messagePanel)
   }
 
   var messageShortened: Boolean = false
@@ -85,10 +92,6 @@ class CheckMessagePanel private constructor() : JPanel() {
 
   private fun adjustView(checkResult: CheckResult) {
     if (!checkResult.severity.isInfo() || (checkResult.status == CheckStatus.Unchecked && checkResult.message.isNotBlank())) {
-      remove(messagePane)
-      val messagePaneWrapper = JPanel(BorderLayout())
-      messagePaneWrapper.add(messagePane, BorderLayout.CENTER)
-
       val icon = when (checkResult.status) {
         CheckStatus.Unchecked -> if (checkResult.severity.isWaring()) AllIcons.General.BalloonWarning else AllIcons.General.BalloonInformation
         CheckStatus.Failed -> AllIcons.General.BalloonError
@@ -99,10 +102,8 @@ class CheckMessagePanel private constructor() : JPanel() {
         CheckStatus.Failed -> EduColors.errorTextForeground
         else -> messagePane.foreground
       }
-      val iconLabel = JBLabel(icon)
-      iconLabel.border = JBUI.Borders.empty(16, 0, 0, 4)
-      messagePaneWrapper.add(iconLabel, BorderLayout.WEST)
-      add(messagePaneWrapper)
+      messageIconLabel.icon = icon
+      messageIconLabel.border = JBUI.Borders.empty(16, 0, 0, 4)
     }
   }
 
