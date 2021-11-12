@@ -7,8 +7,11 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
+import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
+import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
 import com.jetbrains.edu.go.GoProjectSettings
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_GO_SUPPORT
+import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.withFeature
@@ -26,16 +29,26 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
     }
   }
 
-//  fun `test create edu task`() = checkEduTaskCreation(
-//    fullTaskStructure = {
-//      file(GO_MOD)
-//      file(MAIN_GO)
-//      file("task.html")
-//    },
-//    taskStructureWithoutSources = {
-//      file("task.html")
-//    }
-//  )
+  /** [com.jetbrains.edu.go.GoCourseBuilder.getTestTaskTemplates] */
+  fun `test create edu task`() = checkEduTaskCreation(
+    fullTaskStructure = {
+      file("task.html")
+      file(GO_MOD)
+      dir("main") {
+        file(MAIN_GO)
+      }
+      file(TASK_GO)
+      dir(TEST) {
+        file(TEST_GO)
+      }
+    },
+    taskStructureWithoutSources = {
+      dir(TEST) {
+        file(TEST_GO)
+      }
+      file("task.html")
+    }
+  )
 
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
