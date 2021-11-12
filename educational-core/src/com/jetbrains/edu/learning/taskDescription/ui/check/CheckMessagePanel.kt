@@ -1,16 +1,21 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
+import com.google.common.annotations.VisibleForTesting
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import com.jetbrains.edu.learning.ui.EduColors
+import org.jsoup.Jsoup
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
