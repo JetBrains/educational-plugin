@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -49,8 +50,7 @@ open class StepikTaskBuilder(
   course: Course,
   private val lesson: Lesson,
   private val stepSource: StepSource,
-  private val stepId: Int,
-  private val userId: Int
+  private val stepId: Int
 ) {
   private val courseType: String = course.itemType
   private val courseMode: String = course.courseMode
@@ -197,7 +197,11 @@ open class StepikTaskBuilder(
           fillChoiceTask(choiceStep, task)
         }
         else {
-          StepikCheckerConnector.getAttemptForStep(stepId, userId)?.let { fillChoiceTask(it, task) }
+          // TODO Temporary bad solution, will be removed after another refactoring will be merged
+          val stepikUser = EduSettings.getInstance().user
+          if (stepikUser != null) {
+            StepikCheckerConnector.getAttemptForStep(stepId, stepikUser.id)?.let { fillChoiceTask(it, task) }
+          }
         }
       }
     }

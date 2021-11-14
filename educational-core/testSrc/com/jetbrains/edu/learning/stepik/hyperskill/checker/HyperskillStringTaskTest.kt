@@ -2,9 +2,11 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.CheckersTestBase
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
+import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
@@ -99,7 +101,7 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
       }
     }
 
-    val createdTask = StepikTaskBuilder(myCourse, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
+    val createdTask = StepikTaskBuilder(myCourse, lesson, stepSource, -1).createTask(stepSource.block?.name!!) ?: error("")
     assertEquals(1, createdTask.taskFiles.size)
     assertEquals(1, createdTask.getTaskFile(StringTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(EduCoreBundle.message("string.task.comment.file"),

@@ -2,12 +2,10 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.progress.ProgressManager
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeAllWithProgress
 import com.jetbrains.edu.learning.stepik.*
-import java.util.*
 import java.util.concurrent.Executors
 
 object StepikCourseLoader {
@@ -164,10 +162,9 @@ object StepikCourseLoader {
   }
 
   fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
-    val user = EduSettings.getInstance().user
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {
-      val builder = StepikTaskBuilder(course, lesson, step, step.id, user?.id ?: -1)
+      val builder = StepikTaskBuilder(course, lesson, step, step.id)
       if (!builder.isSupported(step.block!!.name)) continue
       val task = builder.createTask(step.block!!.name)
       if (task != null) {

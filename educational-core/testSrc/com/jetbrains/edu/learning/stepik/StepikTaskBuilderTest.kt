@@ -151,7 +151,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   private fun buildTask(stepSource: StepSource, language: Language, course: Course = EduCourse()): Task {
     course.language = language.id
     val lesson = Lesson()
-    return StepikTaskBuilder(course, lesson, stepSource, -1, -1).createTask(stepSource.block?.name!!) ?: error("")
+    return StepikTaskBuilder(course, lesson, stepSource, -1).createTask(stepSource.block?.name!!) ?: error("")
   }
 
   private fun createPathMatcher(basePath: String, language: Language): Matcher<String> {
