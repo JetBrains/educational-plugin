@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -178,7 +177,7 @@ open class StepikTaskBuilder(course: Course, private val lesson: Lesson, stepSou
 
     when (courseType) {
       HYPERSKILL_TYPE -> {
-        when (val result = HyperskillConnector.getInstance().getActiveAttemptOrPostNew(stepId)) {
+        when (val result = HyperskillConnector.getInstance().getActiveAttemptOrPostNew(task)) {
           is Ok -> fillChoiceTask(result.value, task)
           is Err -> LOG.warn("Can't post attempts for $courseType ${result.error}")
         }
@@ -194,10 +193,9 @@ open class StepikTaskBuilder(course: Course, private val lesson: Lesson, stepSou
           fillChoiceTask(choiceStep, task)
         }
         else {
-          // TODO Temporary bad solution, will be removed after another refactoring will be merged
-          val stepikUser = EduSettings.getInstance().user
-          if (stepikUser != null) {
-            StepikCheckerConnector.getAttemptForStep(stepId, stepikUser.id)?.let { fillChoiceTask(it, task) }
+          when (val result = StepikConnector.getInstance().getActiveAttemptOrPostNew(task)) {
+            is Ok -> fillChoiceTask(result.value, task)
+            is Err -> LOG.warn("Can't post attempts for $courseType ${result.error}")
           }
         }
       }

@@ -34,7 +34,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-abstract class HyperskillConnector {
+abstract class HyperskillConnector : StepikBaseConnector {
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
@@ -261,19 +261,11 @@ abstract class HyperskillConnector {
     return service.user(userId).executeAndExtractFirst(UsersList::users)
   }
 
-  fun getActiveAttemptOrPostNew(stepId: Int): Result<Attempt, String> {
-    val activeAttempt = getActiveAttempt(stepId)
-    if (activeAttempt is Ok && activeAttempt.value != null) {
-      return Ok(activeAttempt.value)
-    }
-    return postAttempt(stepId)
-  }
-
-  fun getActiveAttempt(step: Int): Result<Attempt?, String> {
+  override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
     return withTokenRefreshIfNeeded {
       val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id
                    ?: return@withTokenRefreshIfNeeded Err("Attempt to get list of attempts for unauthorized user")
-      val attempts = service.attempts(step, userId).executeParsingErrors(true).flatMap {
+      val attempts = service.attempts(task.id, userId).executeParsingErrors(true).flatMap {
         val result = it.body()?.attempts
         if (result == null) Err(it.message()) else Ok(result)
       }.onError { return@withTokenRefreshIfNeeded Err(it) }
@@ -296,8 +288,8 @@ abstract class HyperskillConnector {
     return withTokenRefreshIfNeeded { service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
-  fun postAttempt(step: Int): Result<Attempt, String> {
-    return withTokenRefreshIfNeeded { service.attempt(Attempt(step)).executeAndExtractFirst(AttemptsList::attempts) }
+  override fun postAttempt(task: Task): Result<Attempt, String> {
+    return withTokenRefreshIfNeeded { service.attempt(Attempt(task.id)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
   fun markTheoryCompleted(step: Int): Result<Any, String> =

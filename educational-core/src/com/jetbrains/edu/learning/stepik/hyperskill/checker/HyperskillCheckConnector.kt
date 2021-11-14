@@ -46,7 +46,7 @@ object HyperskillCheckConnector {
   const val EVALUATION_STATUS = "evaluation"
 
   fun postEduTaskSolution(task: Task, project: Project, result: CheckResult) {
-    when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
+    when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task)) {
       is Err -> showErrorDetails(project, attemptResponse.error)
       is Ok -> {
         val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
@@ -120,7 +120,7 @@ object HyperskillCheckConnector {
 
   fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
     val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
+    val attempt = when (val attemptResponse = connector.postAttempt(task)) {
       is Err -> return attemptResponse
       is Ok -> attemptResponse.value
     }
@@ -239,7 +239,7 @@ object HyperskillCheckConnector {
 
   fun submitStringTask(task: StringTask, project: Project): Result<Submission, String> {
     val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
+    val attempt = when (val attemptResponse = connector.postAttempt(task)) {
       is Err -> return attemptResponse
       is Ok -> attemptResponse.value
     }
@@ -259,7 +259,7 @@ object HyperskillCheckConnector {
       LOG.error("Unable to create submission: files with code is not found for the task ${task.name}")
       return CheckResult.failedToCheck
     }
-    val attempt = HyperskillConnector.getInstance().postAttempt(task.id).onError { error ->
+    val attempt = HyperskillConnector.getInstance().postAttempt(task).onError { error ->
       showErrorDetails(project, error)
       return CheckResult.failedToCheck
     }
@@ -321,7 +321,7 @@ object HyperskillCheckConnector {
 
   private fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
     val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.getActiveAttemptOrPostNew(task.id)) {
+    val attempt = when (val attemptResponse = connector.getActiveAttemptOrPostNew(task)) {
       is Err -> return attemptResponse
       is Ok -> attemptResponse.value
     }
@@ -331,7 +331,7 @@ object HyperskillCheckConnector {
   }
 
   fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {
-    val attempt = when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
+    val attempt = when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task)) {
       is Err -> return attemptResponse
       is Ok -> attemptResponse.value
     }

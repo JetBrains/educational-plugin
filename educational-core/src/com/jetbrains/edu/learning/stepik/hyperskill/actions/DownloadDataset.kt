@@ -111,14 +111,14 @@ class DownloadDataset(
   private fun getAttempt(project: Project, task: DataTask): Result<Attempt, String>? {
     return execCancelable {
       if (!submitNewAttempt) {
-        val existingActiveAttempt = HyperskillConnector.getInstance().getActiveAttempt(task.id)
+        val existingActiveAttempt = HyperskillConnector.getInstance().getActiveAttempt(task)
 
         if (existingActiveAttempt is Ok && existingActiveAttempt.value != null) {
           return@execCancelable Ok(existingActiveAttempt.value)
         }
       }
 
-      val newAttempt = HyperskillConnector.getInstance().postAttempt(task.id).onError { error ->
+      val newAttempt = HyperskillConnector.getInstance().postAttempt(task).onError { error ->
         processError(project, "Unable to create new attempt for task with ${task.id} id: $error")
         return@execCancelable Err(error)
       }

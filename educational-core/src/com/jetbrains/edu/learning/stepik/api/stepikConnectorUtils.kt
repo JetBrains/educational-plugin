@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
@@ -87,8 +88,11 @@ private fun markStepAsSolved(lessonId: Int, task: Task) {
     .filter { it.step == task.id }
     .forEach { StepikConnector.getInstance().postView(it.id, task.id) }
 
-  val attempt = StepikConnector.getInstance().postAttempt(task.id, true)
-  val submission = attempt?.let { StepikConnector.getInstance().postSubmission(true, attempt, ArrayList(), task) }
+  val attempt = StepikConnector.getInstance().postAttempt(task).onError {
+    LOG.warn("Failed to make attempt ${task.id}")
+    return
+  }
+  val submission = StepikConnector.getInstance().postSubmission(true, attempt, ArrayList(), task)
   if (submission == null) {
     LOG.warn("Post submission failed for task ${task.name} (id=${task.id})")
   }

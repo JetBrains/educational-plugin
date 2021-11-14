@@ -27,7 +27,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
 
-abstract class StepikConnector {
+abstract class StepikConnector : StepikBaseConnector {
 
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
@@ -192,6 +192,19 @@ abstract class StepikConnector {
   fun getSubmissionById(id: Int): Result<Submission, String> =
     service.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
 
+  override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
+    val userId = EduSettings.getInstance().user?.id ?: return Err("Attempt to get list of attempts for unauthorized user")
+    val attempts = service.attempts(task.id, userId)
+      .executeParsingErrors(true)
+      .flatMap {
+        val result = it.body()?.attempts
+        if (result == null) Err(it.message()) else Ok(result)
+      }
+      .onError { return Err(it) }
+    val activeAttempt = attempts.firstOrNull { it.isActive }
+    return Ok(activeAttempt)
+  }
+
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
     val response = service.attempts(stepId, userId).executeHandlingExceptions()
     return response?.body()?.attempts
@@ -266,15 +279,14 @@ abstract class StepikConnector {
     return submissions.firstOrNull()
   }
 
-  @JvmOverloads
-  fun postAttempt(id: Int, omitErrors: Boolean = false): Attempt? {
-    val response = service.attempt(AttemptData(id)).executeHandlingExceptions(omitErrors)
+  override fun postAttempt(task: Task): Result<Attempt, String> {
+    val stepId = task.id
+    val response = service.attempt(AttemptData(stepId)).executeHandlingExceptions(true)
     val attempt = response?.body()?.attempts?.firstOrNull()
-    if (response?.code() != HttpStatus.SC_CREATED) {
-      LOG.warn("Failed to make attempt $id")
-      return null
+    if (response?.code() != HttpStatus.SC_CREATED || attempt == null) {
+      return Err("Failed to make attempt $stepId")
     }
-    return attempt
+    return Ok(attempt)
   }
 
   fun postView(assignmentId: Int, stepId: Int) {

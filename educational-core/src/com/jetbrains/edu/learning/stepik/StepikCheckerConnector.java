@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.submissions.SubmissionData;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,25 +34,14 @@ public class StepikCheckerConnector {
   // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
-  @Nullable
-  public static Attempt getAttemptForStep(int stepId, int userId) {
-    final List<Attempt> attempts = StepikConnector.getInstance().getAttempts(stepId, userId);
-    if (attempts != null && attempts.size() > 0) {
-      final Attempt attempt = attempts.get(0);
-      return attempt.isActive() ? attempt : StepikConnector.getInstance().postAttempt(stepId);
-    }
-    else {
-      return StepikConnector.getInstance().postAttempt(stepId);
-    }
-  }
-
   @SuppressWarnings("unchecked")
   public static Result<Boolean, String> retryChoiceTask(@NotNull ChoiceTask task) {
-    final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
-    if (attempt == null) {
+    final Result<Attempt, String> resultAttempt = StepikConnector.getInstance().postAttempt(task);
+    if (resultAttempt instanceof Err) {
       LOG.warn("New attempt is null for " + task.getId());
       return new Err<String>(EduCoreBundle.message("stepik.choice.task.failed.getting.attempt", task.getId()));
     }
+    final Attempt attempt = ((Ok<Attempt>)resultAttempt).component1();
 
     final Dataset dataset = attempt.getDataset();
     if (dataset == null) {
@@ -75,25 +63,36 @@ public class StepikCheckerConnector {
     return new Ok<Boolean>(true);
   }
 
-  public static CheckResult checkChoiceTask(Project project, @NotNull ChoiceTask task, @NotNull StepikUser user) {
+  public static @NotNull CheckResult checkChoiceTask(Project project, @NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final Attempt attempt = getAttemptForStep(task.getId(), user.getId());
+    final StepikConnector stepikConnector = StepikConnector.getInstance();
+    final Result<Attempt, String> resultAttempt = stepikConnector.getActiveAttemptOrPostNew(task, false);
 
-    if (attempt != null) {
-      final int attemptId = attempt.getId();
-      final Dataset dataset = attempt.getDataset();
-      if (dataset == null) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final List<String> options = dataset.getOptions();
-      if (options == null) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final boolean isActiveAttempt = task.getSelectedVariants().stream()
-        .allMatch(index -> options.get(index).equals(task.getChoiceOptions().get(index).getText()));
-      if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
+    if (resultAttempt instanceof Err) {
+      LOG.warn(((Err<String>)resultAttempt).getError());
+      return CheckResult.getFailedToCheck();
+    }
+    final Attempt attempt = ((Ok<Attempt>)resultAttempt).component1();
 
-      return doCheck(submissionData, project, attemptId, user.getId(), task);
+    final Dataset dataset = attempt.getDataset();
+    if (dataset == null) {
+      return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
     }
 
-    return CheckResult.getFailedToCheck();
+    final List<String> options = dataset.getOptions();
+    if (options == null) {
+      return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
+    }
+
+    final boolean isActiveAttempt = task.getSelectedVariants().stream()
+      .allMatch(index -> options.get(index).equals(task.getChoiceOptions().get(index).getText()));
+    if (!isActiveAttempt) {
+      return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
+    }
+
+    final int attemptId = attempt.getId();
+    final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
+    return doCheck(submissionData, project, attemptId, user.getId(), task);
   }
 
   @NotNull
@@ -144,10 +143,16 @@ public class StepikCheckerConnector {
   }
 
   public static CheckResult checkCodeTask(@NotNull Project project, @NotNull Task task, @NotNull StepikUser user) {
-    int attemptId = getAttemptId(task);
-    if (attemptId != -1) {
-      Course course = task.getLesson().getCourse();
-      Language courseLanguage = course.getLanguageById();
+    final Result<Attempt, String> postedAttempt = StepikConnector.getInstance().postAttempt(task);
+    if (postedAttempt instanceof Err) {
+      LOG.warn(((Err<String>)postedAttempt).getError());
+      return CheckResult.getFailedToCheck();
+    }
+    int attemptId = ((Ok<Attempt>)postedAttempt).component1().getId();
+
+    final Course course = task.getLesson().getCourse();
+    final Language courseLanguage = course.getLanguageById();
+    if (courseLanguage != null) {
       final Editor editor = OpenApiExtKt.getSelectedEditor(project);
       if (editor != null) {
         final String answer = editor.getDocument().getText();
@@ -157,9 +162,6 @@ public class StepikCheckerConnector {
         final SubmissionData submissionData = createCodeSubmissionData(attemptId, defaultLanguage, answer);
         return doCheck(submissionData, project, attemptId, user.getId(), task);
       }
-    }
-    else {
-      LOG.warn("Got an incorrect attempt id: " + attemptId);
     }
     return CheckResult.getFailedToCheck();
   }
@@ -205,10 +207,5 @@ public class StepikCheckerConnector {
       LOG.warn(e.getMessage());
     }
     return submission;
-  }
-
-  private static int getAttemptId(@NotNull Task task) {
-    final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
-    return attempt != null ? attempt.getId() : -1;
   }
 }

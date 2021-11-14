@@ -90,11 +90,12 @@ public class StepikSolutionsLoader implements Disposable {
       return null;
     }
 
-    final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
-    if (attempt == null) {
+    final Result<Attempt, String> postedAttempt = StepikConnector.getInstance().postAttempt(task);
+    if (postedAttempt instanceof Err) {
       LOG.warn("Failed to post an attempt " + task.getId());
       return null;
     }
+    final Attempt attempt = ((Ok<Attempt>)postedAttempt).component1();
     final List<SolutionFile> files = UtilsKt.getSolutionFiles(project, task, LOG);
     if (files != null) {
       return StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
