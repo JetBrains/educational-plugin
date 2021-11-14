@@ -141,7 +141,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     }
     val isDefault = task !is CodeforcesTask
     val optionalActions = getOptionalActions(task)
-    val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault, optionalActions, project = project)
+    val checkComponent = CheckPanelButtonComponent(project, task.checkAction, isDefault, optionalActions = optionalActions)
     checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
@@ -193,7 +193,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     }
 
     if (NavigationUtils.nextTask(task) != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
-      val nextButton = CheckPanelButtonComponent(ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
+      val nextButton = CheckPanelButtonComponent(action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
       add(nextButton, BorderLayout.WEST)
     }
   }

@@ -32,7 +32,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
    */
   constructor(action: ActionWithProgressIcon, isDefault: Boolean = false, isEnabled: Boolean = true) : this() {
-    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, null, null)
+    val buttonPanel = createButtonPanel(null, action, isDefault, isEnabled, null)
     add(buttonPanel, BorderLayout.WEST)
 
     val processPanel = action.processPanel
@@ -46,20 +46,24 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
    * @param[isEnabled] parameter for enabling/disabling button. `true` by default.
    */
-  constructor(action: AnAction,
-              isDefault: Boolean = false,
-              optionalActions: List<AnAction>? = null,
-              project: Project? = null,
-              isEnabled: Boolean = true) : this() {
-    val buttonPanel = createButtonPanel(action, isDefault, isEnabled, optionalActions, project)
+  constructor(
+    project: Project? = null,
+    action: AnAction,
+    isDefault: Boolean = false,
+    isEnabled: Boolean = true,
+    optionalActions: List<AnAction>? = null
+  ) : this() {
+    val buttonPanel = createButtonPanel(project, action, isDefault, isEnabled, optionalActions)
     add(buttonPanel)
   }
 
-  private fun createButtonPanel(action: AnAction,
-                                isDefault: Boolean = false,
-                                isEnabled: Boolean = true,
-                                optionalActions: List<AnAction>?,
-                                project: Project?): JPanel {
+  private fun createButtonPanel(
+    project: Project?,
+    action: AnAction,
+    isDefault: Boolean = false,
+    isEnabled: Boolean = true,
+    optionalActions: List<AnAction>?
+  ): JPanel {
     val cols = if (optionalActions == null) 1 else 2
     val buttonPanel = JPanel(GridLayout(1, cols, 5, 0))
     val button = createButton(action, isDefault = isDefault, isEnabled = isEnabled)
@@ -69,7 +73,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
       val (mainAction, otherActions) = optionalActions.headTail()
 
       val optionButton = DefaultOptionalButton(mainAction, otherActions)
-      addGotItTooltip(optionButton, project)
+      addGotItTooltip(project, optionButton)
       buttonPanel.add(optionButton)
     }
 
@@ -95,7 +99,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     return button
   }
 
-  private fun addGotItTooltip(option: JBOptionButton, project: Project) {
+  private fun addGotItTooltip(project: Project, option: JBOptionButton) {
     val gotItTooltip = GotItTooltip("codeforces.submit.solution.button",
                                     EduCoreBundle.message("codeforces.you.can.submit.solution.from.ide"), project).withPosition(
       Balloon.Position.above)
@@ -104,10 +108,8 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     }
   }
 
-  private inner class DefaultOptionalButton(
-    mainAction: AnAction,
-    otherActions: List<AnAction>)
-    : JBOptionButton(AnActionWrapper(mainAction, this@CheckPanelButtonComponent), null) {
+  private inner class DefaultOptionalButton(mainAction: AnAction, otherActions: List<AnAction>) :
+    JBOptionButton(AnActionWrapper(mainAction, this@CheckPanelButtonComponent), null) {
 
     init {
       setOptions(otherActions)
@@ -115,13 +117,10 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
 
     override fun isDefaultButton() = true
   }
-
 }
 
-private class AnActionWrapper(
-  private val action: AnAction,
-  private val component: JComponent
-) : AbstractAction(action.templatePresentation.text) {
+private class AnActionWrapper(private val action: AnAction, private val component: JComponent) :
+  AbstractAction(action.templatePresentation.text) {
   override fun actionPerformed(e: ActionEvent) {
     performAnAction(e, component, action)
   }
@@ -141,5 +140,4 @@ private fun performAnAction(actionEvent: ActionEvent, component: JComponent, act
   // BACKCOMPAT: 2021.1
   @Suppress("DEPRECATION")
   ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
-
 }
