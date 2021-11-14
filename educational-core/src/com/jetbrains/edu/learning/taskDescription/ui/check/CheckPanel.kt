@@ -135,26 +135,25 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   private fun updateCheckButtonWrapper(task: Task) {
     checkButtonWrapper.removeAll()
-    if (task is DataTask) {
-      updateCheckButtonWrapper(task)
-      return
-    }
-    val isDefault = task !is CodeforcesTask
-    val optionalActions = getOptionalActions(task)
-    val checkComponent = CheckPanelButtonComponent(project, task.checkAction, isDefault, optionalActions = optionalActions)
-    checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
-  }
-
-  private fun getOptionalActions(task: Task): List<AnAction>? {
-    var optionalActions: List<AnAction>? = null
-    if (task is CodeforcesTask) {
-      if (CodeforcesSettings.getInstance().isLoggedIn()) {
-        optionalActions = listOf(SubmitCodeforcesSolutionAction.ACTION_ID, CodeforcesCopyAndSubmitAction.ACTION_ID).map {
-          ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
-        }
+    when (task) {
+      is CodeforcesTask -> updateCheckButtonWrapper(task)
+      is DataTask -> updateCheckButtonWrapper(task)
+      else -> {
+        val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = true)
+        checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
-    return optionalActions
+  }
+
+  private fun updateCheckButtonWrapper(task: CodeforcesTask) {
+    var optionalActions: List<AnAction>? = null
+    if (CodeforcesSettings.getInstance().isLoggedIn()) {
+      optionalActions = listOf(SubmitCodeforcesSolutionAction.ACTION_ID, CodeforcesCopyAndSubmitAction.ACTION_ID).map {
+        ActionManager.getInstance().getAction(it) ?: error("Action $it is not found")
+      }
+    }
+    val checkComponent = CheckPanelButtonComponent(project, task.checkAction, isDefault = false, optionalActions = optionalActions)
+    checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
   private fun updateCheckButtonWrapper(task: DataTask) {
