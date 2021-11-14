@@ -2,7 +2,11 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 interface StepikBaseConnector {
   fun getActiveAttempt(task: Task): Result<Attempt?, String>
@@ -18,4 +22,14 @@ interface StepikBaseConnector {
   }
 
   fun postAttempt(task: Task): Result<Attempt, String>
+
+  companion object {
+    fun Course.getConnector(): StepikBaseConnector {
+      return when(this) {
+        is EduCourse  -> StepikConnector.getInstance()
+        is HyperskillCourse -> HyperskillConnector.getInstance()
+        else -> error("Wrong course type: ${course.itemType}")
+      }
+    }
+  }
 }

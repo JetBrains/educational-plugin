@@ -31,9 +31,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INP
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
@@ -45,7 +45,7 @@ import org.jsoup.safety.Whitelist
 import java.util.*
 import java.util.Collections.unmodifiableList
 
-open class StepikTaskBuilder(course: Course, private val lesson: Lesson, stepSource: StepSource) {
+open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
   private val courseType: String = course.itemType
   private val courseMode: String = course.courseMode
   private val courseEnvironment: String = course.environment
@@ -175,47 +175,35 @@ open class StepikTaskBuilder(course: Course, private val lesson: Lesson, stepSou
     task.descriptionText = clearCodeBlockFromTags()
     task.descriptionFormat = DescriptionFormat.HTML
 
-    when (courseType) {
-      HYPERSKILL_TYPE -> {
-        when (val result = HyperskillConnector.getInstance().getActiveAttemptOrPostNew(task)) {
-          is Ok -> fillChoiceTask(result.value, task)
-          is Err -> LOG.warn("Can't post attempts for $courseType ${result.error}")
-        }
-      }
-      else -> {
-        val choiceStep: ChoiceStep? = if (courseMode == CCUtils.COURSE_MODE && stepId > 0) {
-          StepikConnector.getInstance().getChoiceStepSource(stepId)
-        }
-        else {
-          null
-        }
-        if (choiceStep != null) {
-          fillChoiceTask(choiceStep, task)
-        }
-        else {
-          when (val result = StepikConnector.getInstance().getActiveAttemptOrPostNew(task)) {
-            is Ok -> fillChoiceTask(result.value, task)
-            is Err -> LOG.warn("Can't post attempts for $courseType ${result.error}")
-          }
-        }
-      }
+    if (course is EduCourse && courseMode == CCUtils.COURSE_MODE && stepId > 0) {
+      return task.apply { fillForCourseCreatorMode() }
+    }
+
+    val connector = course.getConnector()
+    when (val result = connector.getActiveAttemptOrPostNew(task)) {
+      is Ok -> fillChoiceTask(result.value, task)
+      is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
     }
 
     initTaskFiles(task)
     return task
   }
 
-  private fun fillChoiceTask(choiceStep: ChoiceStep, task: ChoiceTask) {
-    choiceStep.source?.let { choiceStepOptions ->
-      task.isMultipleChoice = choiceStepOptions.isMultipleChoice
-      task.choiceOptions = choiceStepOptions.options.map { ChoiceOption(it.text, it.choiceStatus) }
+  private fun ChoiceTask.fillForCourseCreatorMode() {
+    val choiceStep = StepikConnector.getInstance().getChoiceStepSource(stepId)
+    if (choiceStep != null) {
+      choiceStep.source?.let { choiceStepOptions ->
+        isMultipleChoice = choiceStepOptions.isMultipleChoice
+        choiceOptions = choiceStepOptions.options.map { ChoiceOption(it.text, it.choiceStatus) }
+      }
+      if (choiceStep.feedbackCorrect.isNotEmpty()) {
+        messageCorrect = choiceStep.feedbackCorrect
+      }
+      if (choiceStep.feedbackWrong.isNotEmpty()) {
+        messageIncorrect = choiceStep.feedbackWrong
+      }
     }
-    if (choiceStep.feedbackCorrect.isNotEmpty()) {
-      task.messageCorrect = choiceStep.feedbackCorrect
-    }
-    if (choiceStep.feedbackWrong.isNotEmpty()) {
-      task.messageIncorrect = choiceStep.feedbackWrong
-    }
+    initTaskFiles(this)
   }
 
   private fun stringTask(name: String): StringTask {
