@@ -16,14 +16,17 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtils.execCancelable
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.document
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.toPsiFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.awt.datatransfer.StringSelection
 import java.io.IOException
@@ -56,13 +59,14 @@ class DownloadDataset(
       return
     }
 
-    val retrievedAttempt = getAttempt(project, task)?.onError { error ->
+    val connector = HyperskillConnector.getInstance()
+    val retrievedAttempt = connector.getActiveAttemptOrPostNew(task, submitNewAttempt).onError { error ->
       processError(project, "Error getting attempt for task with ${task.id} id: $error")
-      null
-    } ?: return
+      return
+    }
     ProgressManager.checkCanceled()
 
-    val dataset = execCancelable { HyperskillConnector.getInstance().getDataset(retrievedAttempt.id) }?.onError { error ->
+    val dataset = execCancelable { connector.getDataset(retrievedAttempt.id) }?.onError { error ->
       processError(project, "Error getting dataset for attempt with ${retrievedAttempt.id} id: $error")
       null
     } ?: return
@@ -106,24 +110,6 @@ class DownloadDataset(
     FileEditorManager.getInstance(project).openFile(dataset, false)
     val psiElement = dataset.document.toPsiFile(project) ?: return
     ProjectView.getInstance(project).selectPsiElement(psiElement, true)
-  }
-
-  private fun getAttempt(project: Project, task: DataTask): Result<Attempt, String>? {
-    return execCancelable {
-      if (!submitNewAttempt) {
-        val existingActiveAttempt = HyperskillConnector.getInstance().getActiveAttempt(task)
-
-        if (existingActiveAttempt is Ok && existingActiveAttempt.value != null) {
-          return@execCancelable Ok(existingActiveAttempt.value)
-        }
-      }
-
-      val newAttempt = HyperskillConnector.getInstance().postAttempt(task).onError { error ->
-        processError(project, "Unable to create new attempt for task with ${task.id} id: $error")
-        return@execCancelable Err(error)
-      }
-      return@execCancelable Ok(newAttempt)
-    }
   }
 
   @Suppress("UnstableApiUsage")
