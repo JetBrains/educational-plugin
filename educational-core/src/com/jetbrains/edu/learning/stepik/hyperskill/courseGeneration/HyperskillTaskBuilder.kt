@@ -74,11 +74,13 @@ class HyperskillTaskBuilder(
           name = stepSource.title
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
         }
-        is DataTask, is EduTask -> {
+        is DataTask -> {
           name = stepSource.title
         }
-        is RemoteEduTask -> {
-          (task as RemoteEduTask).checkProfile = stepSource.checkProfile
+        is EduTask -> {
+          if (task is RemoteEduTask) {
+            task.checkProfile = stepSource.checkProfile
+          }
           name = stepSource.title
         }
         is TheoryTask -> {
