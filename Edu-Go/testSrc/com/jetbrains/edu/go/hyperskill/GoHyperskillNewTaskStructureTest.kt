@@ -7,12 +7,12 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
-import com.jetbrains.edu.go.GoProjectSettings
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
+import com.jetbrains.edu.go.GoProjectSettings
 import com.jetbrains.edu.learning.EduNames.TEST
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = GoLanguage.INSTANCE
@@ -51,11 +51,15 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file(GO_MOD)
       file(MAIN_GO)
       file("task.html")
-      file("output.txt")
+      dir(TEST) {
+        file("output.txt")
+      }
     },
     taskStructureWithoutSources = {
       file("task.html")
-      file("output.txt")
+      dir(TEST) {
+        file("output.txt")
+      }
     }
   )
 
