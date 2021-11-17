@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
- * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
  */
 open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val project: Project) {
   open fun onTaskSolved() {
