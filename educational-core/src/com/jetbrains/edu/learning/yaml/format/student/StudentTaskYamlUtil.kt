@@ -81,10 +81,9 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
         existingItem.selectedVariants = (deserializedItem as ChoiceTask).selectedVariants
       }
       is EduTask -> {
-        existingItem.record = deserializedItem.record
-      }
-      is RemoteEduTask -> {
-        existingItem.checkProfile = (deserializedItem as RemoteEduTask).checkProfile
+        if (existingItem is RemoteEduTask) {
+          existingItem.checkProfile = (deserializedItem as RemoteEduTask).checkProfile
+        }
         existingItem.record = deserializedItem.record
       }
     }
