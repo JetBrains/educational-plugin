@@ -108,8 +108,10 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     }
   }
 
-  private inner class DefaultOptionalButton(mainAction: AnAction, otherActions: List<AnAction>) :
-    JBOptionButton(AnActionWrapper(mainAction, this@CheckPanelButtonComponent), null) {
+  private inner class DefaultOptionalButton(
+    mainAction: AnAction,
+    otherActions: List<AnAction>
+  ) : JBOptionButton(AnActionWrapper(mainAction, this@CheckPanelButtonComponent), null) {
 
     init {
       setOptions(otherActions)
@@ -119,8 +121,10 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
   }
 }
 
-private class AnActionWrapper(private val action: AnAction, private val component: JComponent) :
-  AbstractAction(action.templatePresentation.text) {
+private class AnActionWrapper(
+  private val action: AnAction,
+  private val component: JComponent
+) : AbstractAction(action.templatePresentation.text) {
   override fun actionPerformed(e: ActionEvent) {
     performAnAction(e, component, action)
   }
