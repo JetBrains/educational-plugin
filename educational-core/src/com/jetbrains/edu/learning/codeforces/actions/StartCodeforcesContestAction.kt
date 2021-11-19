@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
@@ -14,11 +13,8 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
 
 class StartCodeforcesContestAction : DumbAwareAction() {
@@ -126,26 +122,6 @@ class StartCodeforcesContestAction : DumbAwareAction() {
         EduCoreBundle.message("codeforces.error.no.supported.languages", contestName),
         EduCoreBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
       )
-    }
-
-    fun showCourseInfo(course: CodeforcesCourse) {
-      // EDU-2664
-      // We don't provide language settings for CPP due to mess with standards
-      // Decided to do it well by adding toolchain select field
-      val showLanguageSettings = course.languageID != EduNames.CPP
-
-      object : JoinCourseDialog(
-        course, CourseDisplaySettings(
-        showTagsPanel = false,
-        showInstructorField = false,
-        showLanguageSettings = showLanguageSettings
-      )
-      ) {
-        init {
-          init()
-          UIUtil.setBackgroundRecursively(rootPane, TaskDescriptionView.getTaskDescriptionBackgroundColor())
-        }
-      }.show()
     }
   }
 }
