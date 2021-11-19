@@ -95,10 +95,6 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
       textLanguageComboBox.addItem(it)
     }
 
-    val preferableTaskTextLanguage = CodeforcesSettings.getInstance().preferableTaskTextLanguage
-    if (preferableTaskTextLanguage != null && preferableTaskTextLanguage in TaskTextLanguage.values()) {
-      textLanguageComboBox.selectedItem = preferableTaskTextLanguage
-    }
 
     textLanguageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
@@ -108,15 +104,9 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
       languageComboBox.addItem(it)
     }
 
-    val preferableLanguage = CodeforcesSettings.getInstance().preferableLanguage
-    if (preferableLanguage != null && preferableLanguage in codeforcesCourse.availableLanguages) {
-      languageComboBox.selectedItem = preferableLanguage
-    }
-    else {
-      val defaultLanguageId = getDefaultLanguageId()
-      if (defaultLanguageId != null) {
-        languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
-      }
+    val defaultLanguageId = getDefaultLanguageId()
+    if (defaultLanguageId != null) {
+      languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
     }
 
     languageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)

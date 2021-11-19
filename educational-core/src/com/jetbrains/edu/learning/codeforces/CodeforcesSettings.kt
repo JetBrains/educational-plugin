@@ -23,8 +23,6 @@ private const val serviceName = "CodeforcesSettings"
 
 @State(name = serviceName, storages = [Storage("other.xml")])
 class CodeforcesSettings : PersistentStateComponent<Element> {
-  var preferableTaskTextLanguage: TaskTextLanguage? = null
-  var preferableLanguage: String? = null
 
   @get:Transient
   @set:Transient
@@ -61,8 +59,6 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
     val user = settings.getChild(accountClass.simpleName)
     account = deserializeAccount(user, accountClass, CodeforcesUserInfo::class.java)
   }
-
-  fun isSet(): Boolean = preferableLanguage != null && preferableTaskTextLanguage != null
 
   fun isLoggedIn(): Boolean = account != null
   fun getLoginIcon(): Icon = if (isLoggedIn()) EducationalCoreIcons.LOGGED_IN_USER else AllIcons.General.User
