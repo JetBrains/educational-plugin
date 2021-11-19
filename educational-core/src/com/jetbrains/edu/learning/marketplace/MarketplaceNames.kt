@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.util.io.URLUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.pluginVersion
 import org.jetbrains.ide.BuiltInServerManager
 
 const val MARKETPLACE = "Marketplace"
@@ -36,6 +38,9 @@ val REDIRECT_URI: String
   else {
     REDIRECT_URI_DEFAULT
   }
+
+val EDU_PLUGIN_BUILD: String
+  get() = "EDU-${pluginVersion(EduNames.PLUGIN_ID)}"
 
 private fun getCustomServer(): CustomAuthorizationServer {
   val startedServer = CustomAuthorizationServer.getServerIfStarted(MARKETPLACE)
