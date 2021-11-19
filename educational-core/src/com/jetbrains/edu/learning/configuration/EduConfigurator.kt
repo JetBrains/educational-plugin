@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
@@ -73,7 +72,9 @@ interface EduConfigurator<Settings : Any> {
   /**
    * @return true for all the test files
    */
-  fun isTestFile(task: Task, path: String) = task.testDirs.any { VfsUtilCore.isEqualOrAncestor(it, path) }
+  fun isTestFile(task: Task, path: String): Boolean {
+    return path == testFileName || testDirs.any { testDir -> VfsUtilCore.isEqualOrAncestor(testDir, path) }
+  }
 
   /**
    * Provides directory path where task files should be placed in task folder.

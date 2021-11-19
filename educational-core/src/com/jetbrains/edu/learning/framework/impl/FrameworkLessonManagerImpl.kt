@@ -14,7 +14,6 @@ import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isToEncodeContent
@@ -326,19 +325,17 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
   private fun Map<String, String>.split(task: Task): Pair<Map<String, String>, Map<String, String>> {
-    val course = task.course
-    val testDirs = course.testDirs
-    val defaultTestName = course.configurator?.testFileName ?: ""
+    val configurator = task.course.configurator
+    if (configurator == null) {
+      return this to emptyMap()
+    }
+
     val taskFiles = HashMap<String, String>()
     val testFiles = HashMap<String, String>()
 
     for ((path, text) in this) {
-      val state = if (path == defaultTestName || testDirs.any { path.startsWith(it) }) {
-        testFiles
-      }
-      else {
-        taskFiles
-      }
+      val isTestFile = configurator.isTestFile(task, path)
+      val state = if (isTestFile) testFiles else taskFiles
       state[path] = text
     }
 
