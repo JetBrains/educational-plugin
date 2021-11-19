@@ -14,16 +14,12 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
-import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
+import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
 import java.awt.BorderLayout
 import java.awt.Font
 import java.net.URL
-import java.time.Duration
 import java.time.format.DateTimeFormatter
 import javax.swing.SwingConstants
 
@@ -174,29 +170,7 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
     }
 
     val registrationCountdown = course.registrationCountdown ?: error("registration countdown is null for '${course.id}'")
-    val daysPart = registrationCountdown.toDaysPart()
-    val hoursPart = registrationCountdown.toHoursPart()
-    val minutesPart = registrationCountdown.toMinutesPart()
-    val registrationOpensIn = when {
-      daysPart == 1L -> {
-        if (hoursPart > 0) {
-          EduCoreBundle.message("codeforces.course.selection.duration.value.day.hour", hoursPart)
-        }
-        else {
-          EduCoreBundle.message("codeforces.course.selection.duration.value.day")
-        }
-      }
-      daysPart > 1 -> {
-        if (hoursPart > 0) {
-          EduCoreBundle.message("codeforces.course.selection.duration.value.days.hours", daysPart, hoursPart)
-        }
-        else {
-          EduCoreBundle.message("codeforces.course.selection.duration.value.days", daysPart)
-        }
-      }
-      hoursPart > 0 -> EduCoreBundle.message("codeforces.course.selection.duration.value.hours", hoursPart, minutesPart)
-      else -> EduCoreBundle.message("codeforces.course.selection.duration.value.min", minutesPart)
-    }
+    val registrationOpensIn = humanReadableDuration(registrationCountdown)
     val validationMessage = ValidationMessage(
       EduCoreBundle.message("codeforces.course.selection.registration.opens.in", registrationOpensIn),
       type = ValidationMessageType.INFO)
@@ -214,7 +188,7 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
 
     val dateTimeFormatter = DateTimeFormatter.ofPattern(CourseDetailsPanel.DATE_TIME_PATTERN)
     startsLabel.text = codeforcesCourse.startDate?.format(dateTimeFormatter)
-    durationLabel.text = humanReadableLength(codeforcesCourse.length)
+    durationLabel.text = humanReadableDuration(codeforcesCourse.length)
     finishedLabel.text = codeforcesCourse.endDateTime?.format(dateTimeFormatter)
 
     val remainingTime = codeforcesCourse.remainingTime
@@ -242,20 +216,6 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
     informationComponent.onCourseSelectionChanged(courseInfo, courseDisplaySettings)
 
     updateVisibility(codeforcesCourse)
-  }
-
-  private fun humanReadableLength(length: Duration): String {
-    if (length.toDaysPart() > 0) {
-      val days = length.toDaysPart().toInt()
-      return if (days == 1) {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.day")
-      }
-      else {
-        EduCoreBundle.message("codeforces.course.selection.duration.value.days", days)
-      }
-    }
-
-    return EduCoreBundle.message("codeforces.course.selection.duration.value.hours", length.toHoursPart(), length.toMinutesPart())
   }
 
   private fun updateVisibility(codeforcesCourse: CodeforcesCourse) {

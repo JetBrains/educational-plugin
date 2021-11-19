@@ -4,16 +4,12 @@ import com.intellij.icons.AllIcons
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.Font
 import javax.swing.JPanel
-
-private const val H_GAP = 10
-private const val INFO_HGAP = 0
 
 class EduCourseCard(course: Course) : CourseCardComponent(course) {
 
@@ -22,7 +18,7 @@ class EduCourseCard(course: Course) : CourseCardComponent(course) {
   }
 }
 
-private class EduCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayout(INFO_HGAP)) {
+private class EduCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayout(0)) {
 
   init {
     border = JBUI.Borders.emptyBottom(5)
@@ -31,7 +27,7 @@ private class EduCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayou
 
     val rating = JBLabel().apply {
       foreground = GRAY_COLOR
-      border = JBUI.Borders.emptyRight(H_GAP)
+      border = JBUI.Borders.emptyRight(COURSE_CARD_BOTTOM_LABEL_H_GAP)
       if (course.reviewScore != 0.0) {
         icon = AllIcons.Plugins.Rating
         text = "%.${1}f".format(course.reviewScore)
@@ -42,13 +38,7 @@ private class EduCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayou
       font = componentsFont
     }
 
-    val downloads = JBLabel().apply {
-      foreground = GRAY_COLOR
-      icon = EducationalCoreIcons.User
-      text = course.learnersCount.toString()
-      border = JBUI.Borders.emptyRight(H_GAP)
-      font = componentsFont
-    }
+    val downloads = createUsersNumberLabel(course.learnersCount)
 
     val authorComponent = JBLabel().apply {
       val authors = course.authorFullNames.joinToString()

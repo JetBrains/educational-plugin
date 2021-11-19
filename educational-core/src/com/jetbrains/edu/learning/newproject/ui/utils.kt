@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBLabel
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
@@ -17,8 +18,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import kotlinx.css.CSSBuilder
 import kotlinx.css.body
 import kotlinx.css.properties.lh
@@ -28,13 +31,18 @@ import org.jetbrains.annotations.NonNls
 import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
+import java.awt.Font
+import java.time.Duration
 import javax.swing.Icon
 import javax.swing.JPanel
 import javax.swing.UIManager
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
+
 @NonNls
 private const val CONTEXT_HELP_ACTION_PLACE = "ContextHelp"
+const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
+val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
 val Course.logo: Icon?
   get() {
@@ -140,4 +148,46 @@ fun getColorFromScheme(colorId: String, default: Color): JBColor {
     LOG.warn("Cannot find $colorId for ${lookAndFeel.name}")
   }
   return JBColor { UIManager.getColor(colorId) ?: default }
+}
+
+fun createUsersNumberLabel(usersCount: Int): JBLabel {
+  return JBLabel().apply {
+    icon = EducationalCoreIcons.User
+    text = usersCount.toString()
+    addCourseCardInfoStyle()
+  }
+}
+
+fun JBLabel.addCourseCardInfoStyle() {
+  foreground = GRAY_COLOR
+  font = courseCardComponentFont
+  border = JBUI.Borders.emptyRight(COURSE_CARD_BOTTOM_LABEL_H_GAP)
+}
+
+fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = true): String {
+  val daysPart = duration.toDaysPart()
+  val hoursPart = duration.toHoursPart()
+  val minutesPart = duration.toMinutesPart()
+  val registrationOpensIn = when {
+    daysPart == 1L -> {
+      if (hoursPart > 0 && showHoursPartForDays) {
+        EduCoreBundle.message("codeforces.course.selection.duration.value.day.hour", hoursPart)
+      }
+      else {
+        EduCoreBundle.message("codeforces.course.selection.duration.value.day")
+      }
+    }
+    daysPart > 1 -> {
+      if (hoursPart > 0 && showHoursPartForDays) {
+        EduCoreBundle.message("codeforces.course.selection.duration.value.days.hours", daysPart, hoursPart)
+      }
+      else {
+        EduCoreBundle.message("codeforces.course.selection.duration.value.days", daysPart)
+      }
+    }
+    hoursPart > 0 -> EduCoreBundle.message("codeforces.course.selection.duration.value.hours", hoursPart, minutesPart)
+    else -> EduCoreBundle.message("codeforces.course.selection.duration.value.min", minutesPart)
+  }
+
+  return registrationOpensIn
 }
