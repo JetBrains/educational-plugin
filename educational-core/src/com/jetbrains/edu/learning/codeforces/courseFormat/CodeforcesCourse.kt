@@ -80,7 +80,7 @@ open class CodeforcesCourse : Course {
     val problems = doc.select(".problem-statement") ?: error("$error problem-statement")
 
     description = problems.joinToString("\n") {
-      it.select("div.header")?.select("div.title")?.text() ?: error("$error div.header, div.title")
+      it.select("div.header").select("div.title").text() ?: error("$error div.header, div.title")
     }
 
     val lesson = Lesson()
