@@ -178,6 +178,17 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  fun `test open non dataset problem with language chosen by user`() {
+    loginFakeUser()
+    configureMockResponsesForStages()
+    configureMockResponsesForProblems()
+
+    val request = HyperskillOpenStepRequest(1, step10960.id, "TEXT", true)
+    assertThrows(IllegalStateException::class.java) {
+      mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, request)
+    }
+  }
+
   fun `test open problem with same topic in existing problems project`() {
     loginFakeUser()
     configureMockResponsesForStages()

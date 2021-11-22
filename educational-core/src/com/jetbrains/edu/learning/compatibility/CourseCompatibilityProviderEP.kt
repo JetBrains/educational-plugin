@@ -25,6 +25,11 @@ class CourseCompatibilityProviderEP : BaseKeyedLazyInstance<CourseCompatibilityP
     val EP_NAME: ExtensionPointName<CourseCompatibilityProviderEP> = ExtensionPointName.create("Educational.compatibilityProvider")
 
     @JvmStatic
+    fun find(languageId: String): CourseCompatibilityProvider? {
+      return EP_NAME.extensions.find { it.language == languageId }?.instance
+    }
+
+    @JvmStatic
     fun find(languageId: String, environment: String): CourseCompatibilityProvider? {
       return EP_NAME.extensions.find { it.language == languageId && it.environment == environment }?.instance
     }

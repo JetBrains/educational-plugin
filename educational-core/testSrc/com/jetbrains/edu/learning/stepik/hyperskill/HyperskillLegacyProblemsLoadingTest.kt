@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.withFeature
 
 
@@ -55,7 +56,7 @@ class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
     course.stages = listOf(HyperskillStage(1, "", 1))
-    course.addProblem(4894)
+    course.addProblem(HyperskillOpenStepRequest(1,4894, "TEXT"))
     return course
   }
 

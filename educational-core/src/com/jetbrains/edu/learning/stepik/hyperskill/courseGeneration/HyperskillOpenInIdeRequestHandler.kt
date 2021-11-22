@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.isDataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -35,9 +36,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
       is HyperskillOpenStepRequest -> {
+        hyperskillCourse.addProblemWithFiles(project, request)
         val stepId = request.stepId
-        hyperskillCourse.addProblemWithFiles(project, stepId)
-        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
+        hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, stepId)
         runInEdt {
           requestFocus()
           EduUtils.navigateToStep(project, hyperskillCourse, stepId)
@@ -127,7 +128,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     when (request) {
       is HyperskillOpenStepRequest -> {
-        hyperskillCourse.addProblem(request.stepId)
+        hyperskillCourse.addProblem(request)
         hyperskillCourse.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, request.stepId)
       }
       is HyperskillOpenStageRequest -> {
@@ -144,14 +145,13 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
    * Replace with [addProblemsWithTopicWithFiles] after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature becomes enabled by default
    * */
   @VisibleForTesting
-  fun HyperskillCourse.addProblem(stepId: Int) {
+  fun HyperskillCourse.addProblem(request: HyperskillOpenStepRequest) {
+    val stepId = request.stepId
     if (getProblem(stepId) != null) {
       LOG.info("Task with $stepId already exists in the course")
       return
     }
-
-    val connector = HyperskillConnector.getInstance()
-    val stepSource = connector.getStepSource(stepId).onError { error(it) }
+    val stepSource = getStepSource(request)
 
     if (stepSource.canBeAddedWithTopic()) {
       return addProblemsWithTopic(stepSource).onError { error(it) }
@@ -166,6 +166,17 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     if (task == null) {
       lesson.addProblem(stepSource)
     }
+  }
+
+  private fun getStepSource(request: HyperskillOpenStepRequest): HyperskillStepSource {
+    val connector = HyperskillConnector.getInstance()
+    val stepSource = connector.getStepSource(request.stepId).onError { error(it) }
+
+    // Choosing language by user is allowed only for Data tasks, see EDU-4718
+    if (request.isLanguageSelectedByUser && !stepSource.isDataTask()) {
+      error("Language has been selected by user not for data task, but it must be specified for other tasks in request")
+    }
+    return stepSource
   }
 
   private fun HyperskillStepSource.canBeAddedWithTopic(): Boolean {
@@ -266,16 +277,13 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]
    * after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
-  private fun HyperskillCourse.addProblemWithFiles(project: Project, stepId: Int) {
+  private fun HyperskillCourse.addProblemWithFiles(project: Project, request: HyperskillOpenStepRequest) {
+    val stepId = request.stepId
     if (getProblem(stepId) != null) {
       LOG.info("Task with $stepId already exists in the course")
       return
     }
-
-    val connector = HyperskillConnector.getInstance()
-    val stepSource = connector.getStepSource(stepId).onError {
-      error(it)
-    }
+    val stepSource = getStepSource(request)
 
     if (stepSource.canBeAddedWithTopic()) {
       return addProblemsWithTopicWithFiles(project, stepSource).onError { error(it) }

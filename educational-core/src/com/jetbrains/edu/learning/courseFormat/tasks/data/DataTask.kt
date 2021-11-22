@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
 import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.*
@@ -83,5 +84,7 @@ class DataTask : Task {
     const val INPUT_FILE_NAME: String = "input.txt"
 
     private val datasetFilePath: String = GeneratorUtils.joinPaths(DATA_FOLDER_NAME, DATASET_FOLDER_NAME, INPUT_FILE_NAME)
+
+    fun HyperskillStepSource.isDataTask(): Boolean = block?.name == DATA_TASK_TYPE
   }
 }

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
@@ -130,14 +131,33 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter(STEP_ID, urlDecoder)
-    val language = getStringParameter("language", urlDecoder) ?: error("No language for open step request")
+    val languageParameter = getStringParameter("language", urlDecoder)
+    val language = languageParameter ?: getLanguageSelectedByUser()
+    if (language == null) {
+      error("No language for open step request")
+    }
+    val isLanguageSelectedByUser = languageParameter == null
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account)
     if (projectId == null) {
       showError(SELECT_PROJECT)
       return SELECT_PROJECT
     }
-    return openInIDE(HyperskillOpenStepRequest(projectId, stepId, language), request, context)
+    return openInIDE(HyperskillOpenStepRequest(projectId, stepId, language, isLanguageSelectedByUser), request, context)
+  }
+
+  private fun getLanguageSelectedByUser(): String? {
+    return invokeAndWaitIfNeeded {
+      val dialog = HyperskillChooseLanguageDialog()
+      if (!dialog.areLanguagesAvailable()) {
+        showError(EduCoreBundle.message("hyperskill.error.no.supported.languages"))
+        return@invokeAndWaitIfNeeded null
+      }
+      if (!dialog.showAndGet()) {
+        return@invokeAndWaitIfNeeded null
+      }
+      dialog.selectedLanguage().requestLanguage
+    }
   }
 
   private fun openStage(decoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
