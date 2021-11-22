@@ -216,7 +216,7 @@ fun openNextActivity(project: Project, task: Task) {
     return
   }
   val course = task.course
-  val language = HYPERSKILL_LANGUAGES.entries.find { it.value == course.language }?.key ?: return
+  val language = HyperskillLanguages.getRequestLanguage(course.language) ?: return
 
   val nextStep = computeUnderProgress(project, EduCoreBundle.message("hyperskill.next.activity"), true) {
     val stepSource = HyperskillConnector.getInstance().getStepSource(task.id)

@@ -192,7 +192,7 @@ open class PyCharmStepOptions : StepOptions {
 }
 
 fun PyCharmStepOptions.hasHeaderOrFooter(langId: String): Boolean {
-  val lang = HyperskillLanguages.langOfId(langId).langName ?: return false
+  val lang = HyperskillLanguages.getLanguageName(langId) ?: return false
   val header = codeTemplatesHeader?.get(lang) ?: return false
   val footer = codeTemplatesFooter?.get(lang) ?: return false
   return header > 0 || footer > 0

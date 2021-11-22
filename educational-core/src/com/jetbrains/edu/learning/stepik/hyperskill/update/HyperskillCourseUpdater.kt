@@ -6,7 +6,10 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
@@ -15,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_LANGUAGES
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -35,7 +38,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       is Err -> return null
       is Ok -> response.value
     }
-    val languageId = HYPERSKILL_LANGUAGES[hyperskillProject.language] ?: return null
+    val languageId = HyperskillLanguages.getEduLanguage(hyperskillProject.language) ?: return null
     val eduEnvironment = eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null
     return HyperskillCourse(hyperskillProject, languageId, eduEnvironment).apply {

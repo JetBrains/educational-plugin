@@ -72,7 +72,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
       is HyperskillOpenStepRequest -> {
         val hyperskillLanguage = request.language
-        val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage] ?: return null
+        val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage) ?: return null
 
         findProject { it.matchesById(projectId) && it.language == eduLanguage }
         ?: findProject { course -> course.isHyperskillProblemsCourse(hyperskillLanguage) }
@@ -89,7 +89,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   fun createHyperskillCourse(request: HyperskillOpenRequest,
                              hyperskillLanguage: String,
                              hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
-    val eduLanguage = HYPERSKILL_LANGUAGES[hyperskillLanguage]
+    val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage)
                       ?: return Err(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage))
 
     if (request is HyperskillOpenStepRequest && hyperskillLanguage != hyperskillProject.language) {

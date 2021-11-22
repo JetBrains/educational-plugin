@@ -110,7 +110,7 @@ object HyperskillCheckConnector {
 
   fun getLanguage(task: Task): Result<String, String> {
     val course = task.course
-    val defaultLanguage = HyperskillLanguages.langOfId(course.languageID).langName
+    val defaultLanguage = HyperskillLanguages.getLanguageName(course.languageID)
     if (defaultLanguage == null) {
       val languageDisplayName = course.languageDisplayName
       return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")

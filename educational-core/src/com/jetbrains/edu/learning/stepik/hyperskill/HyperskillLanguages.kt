@@ -3,21 +3,51 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.jetbrains.edu.learning.EduNames
 
 
-enum class HyperskillLanguages(val id: String?, val langName: String?) {
+enum class HyperskillLanguages(private val id: String, private val languageName: String) {
   GO(EduNames.GO, "go"),
   JAVASCRIPT(EduNames.JAVASCRIPT, "javascript"),
-  JAVA(EduNames.JAVA, "java11"),
+  JAVA(EduNames.JAVA, "java11") {
+    override val eduLanguage: String = "${EduNames.JAVA} 11"
+    override val requestLanguage: String = "java"
+  },
   KOTLIN(EduNames.KOTLIN, "kotlin"),
-  PYTHON(EduNames.PYTHON, "python3"),
+  PYTHON(EduNames.PYTHON, "python3") {
+    override val requestLanguage: String = "python"
+  },
   SCALA(EduNames.SCALA, "scala"),
+
+  // last three needed for tests
   PLAINTEXT("TEXT", "TEXT"),
-  INVALID(null, null);
+  @Suppress("unused")
+  FAKE_GRADLE_BASE("FakeGradleBasedLanguage", "FakeGradleBasedLanguage"),
+  UNSUPPORTED("Unsupported", "Unsupported");
+
+  /**
+   * Edu language is language used for Course
+   * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguage]
+   */
+  open val eduLanguage: String = id
+
+  /**
+   * Request language is language plugin received from JBA in requests
+   * @see [com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest]
+   */
+  open val requestLanguage: String = languageName
 
   companion object {
-    private val titleMap: Map<String?, HyperskillLanguages> by lazy {
-      values().associateBy { it.id }
+    @JvmStatic
+    fun getEduLanguage(hyperskillLanguage: String): String? {
+      return values().find { it.requestLanguage == hyperskillLanguage }?.eduLanguage
     }
 
-    fun langOfId(lang: String) = titleMap.getOrElse(lang) { INVALID }
+    @JvmStatic
+    fun getRequestLanguage(eduLanguage: String): String? {
+      return values().find {it.eduLanguage == eduLanguage}?.requestLanguage
+    }
+
+    @JvmStatic
+    fun getLanguageName(languageId: String): String? {
+      return values().find { it.id == languageId }?.languageName
+    }
   }
 }

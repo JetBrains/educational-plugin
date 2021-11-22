@@ -33,18 +33,6 @@ const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported 
 const val SELECT_PROJECT = "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}"
 const val SYNCHRONIZE_JBA_ACCOUNT = "Synchronizing ${EduNames.JBA} Account"
 
-val HYPERSKILL_LANGUAGES = mapOf(
-  "go" to EduNames.GO,
-  "java" to "${EduNames.JAVA} 11",
-  "javascript" to EduNames.JAVASCRIPT,
-  "kotlin" to EduNames.KOTLIN,
-  "python" to EduNames.PYTHON,
-  "scala" to EduNames.SCALA,
-  "FakeGradleBasedLanguage" to "FakeGradleBasedLanguage",
-  "TEXT" to "TEXT", // last three needed for tests
-  "Unsupported" to "Unsupported"
-)
-
 val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID, "unittest" to EduNames.UNITTEST)
 
 val HYPERSKILL_URL: String
