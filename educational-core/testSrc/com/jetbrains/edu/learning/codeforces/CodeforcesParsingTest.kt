@@ -204,6 +204,18 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals(29, remainingTime.toMinutesPart())
   }
 
+  fun testCodeforcesAuthors() {
+    val htmlText = getHtmlText()
+    val document = Jsoup.parse(htmlText)
+    val upcomingContests = CodeforcesContestConnector.getUpcomingContests(document)
+
+    // countdown elements format: <span class="countdown" cdid="i3">40:15:33</span>
+    val firstContest = upcomingContests[1]
+    val authors = firstContest.authors
+    assertNotNull(authors)
+    assertEquals(7, authors.size)
+  }
+
   private fun getHtmlText(): String = java.io.File("$testDataPath/$testFile").readText()
 
   private val testFile: String get() = "${getTestName(true)}.html"

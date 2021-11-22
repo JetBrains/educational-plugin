@@ -64,6 +64,7 @@ open class CodeforcesCourse : Course {
     participantsNumber = contestParameters.participantsNumber
     standingsLink = contestParameters.standingsLink
     remainingTime = contestParameters.remainingTime
+    authors = contestParameters.authors
   }
 
   override fun getIcon(): Icon = EducationalCoreIcons.CODEFORCES_SMALL

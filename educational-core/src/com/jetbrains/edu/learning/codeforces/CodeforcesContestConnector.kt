@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_URL
+import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -13,6 +14,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.swing.text.html.HTML
 
 object CodeforcesContestConnector {
   private const val TD_TAG = "td"
@@ -23,6 +25,8 @@ object CodeforcesContestConnector {
   private const val DATATABLE_CLASS = "datatable"
   private const val CONTEST_LIST_CLASS = "contestList"
   private const val CONTEST_TABLE_CLASS = "contests-table"
+
+  private val logger = Logger.getInstance(CodeforcesUserInfo::class.java)
 
   fun getContestIdFromLink(link: String): Int {
     val match = Regex("codeforces.com/contest/(\\d*)").find(link) ?: return -1
@@ -84,6 +88,7 @@ object CodeforcesContestConnector {
       val tableRow = element.getElementsByTag(TD_TAG)
 
       val contestName = (tableRow[0].childNodes().first() as TextNode).text().trim()
+      val authors = getAuthors(tableRow[1])
       val startDate = parseDate(tableRow, dateClass)
       val contestLength = tableRow[3].text().split(":").map { it.toLong() }
       val standings = parseStandings(tableRow[4])
@@ -103,12 +108,26 @@ object CodeforcesContestConnector {
                                                 registrationCountdown = registrationCountdown,
                                                 participantsNumber = participantsNumber,
                                                 standingsLink = standings,
-                                                remainingTime = remainingTime)
+                                                remainingTime = remainingTime,
+                                                authors = authors)
       CodeforcesCourse(contestParameters)
     }
     catch (e: Exception) {
-      Logger.getInstance(this::class.java).warn(e.message)
+      logger.warn(e.message)
       null
+    }
+  }
+
+  private fun getAuthors(element: Element?): List<CodeforcesUserInfo> {
+    if (element == null) {
+      logger.warn("Authors element is null")
+      return emptyList()
+    }
+    val authorsElementsList = element.getElementsByTag(HTML.Tag.A.toString())
+    return authorsElementsList.map {
+      CodeforcesUserInfo().apply {
+        handle = it.text()
+      }
     }
   }
 
