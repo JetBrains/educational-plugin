@@ -23,9 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
 import com.jetbrains.edu.learning.toStudentFile
