@@ -28,6 +28,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
     title = EduCoreBundle.message("dialog.title.codeforces.contest.settings")
     initTextLanguageComboBox()
     initLanguageComboBox()
+    setOKButtonText(EduCoreBundle.message("course.dialog.start.button.codeforces.start.contest"))
 
     init()
 
