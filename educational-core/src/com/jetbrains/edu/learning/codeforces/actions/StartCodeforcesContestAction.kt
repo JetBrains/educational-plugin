@@ -13,8 +13,13 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
+import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
 
 class StartCodeforcesContestAction : DumbAwareAction() {
@@ -22,9 +27,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val showViewAllLabel = e.place != CodeforcesCoursesPanel.PLACE
     val contestId = showDialogAndGetContestId(showViewAllLabel) ?: return
-    val codeforcesCourseInfo = getContest(contestId) ?: error("Cannot load course ${contestId}")
-
-    CoursesPlatformProvider.joinCourse(codeforcesCourseInfo, CourseMode.STUDY, null) {}
+    joinContests(contestId, null)
   }
 
   private fun showDialogAndGetContestId(showViewAllLabel: Boolean): Int? {
@@ -65,27 +68,27 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       )
     }
 
-    fun getContest(contestId: Int): CourseInfo? {
+    fun joinContests(contestId: Int, coursePanel: CoursePanel?) {
       val codeforcesCourse = getContestInfoUnderProgress(contestId).onError {
         showFailedToGetContestInfoNotification(contestId, it)
-        return null
+        error("Failed to get contest info for contest with id=$contestId")
       }
       val contestName = codeforcesCourse.name
       val contestLanguages = codeforcesCourse.availableLanguages
 
       if (contestLanguages.isEmpty()) {
         showNoSupportedLanguagesForContestNotification(contestName)
-        return null
+        error("Cannot load available languages: $contestId")
       }
 
       val dialog = ChooseCodeforcesContestLanguagesDialog(codeforcesCourse)
       if (!dialog.showAndGet()) {
-        return null
+        return
       }
 
       val taskTextLanguage = dialog.selectedTaskTextLanguage()
       val language = dialog.selectedLanguage()
-      val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return null
+      val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return
 
       val contestParameters = ContestParameters(
         codeforcesCourse.id,
@@ -95,14 +98,15 @@ class StartCodeforcesContestAction : DumbAwareAction() {
         language
       )
 
-      return when (val contestResult = getContestUnderProgress(contestParameters)) {
+      when (val contestResult = getContestUnderProgress(contestParameters)) {
         is Err -> {
           showFailedToGetContestInfoNotification(codeforcesCourse.id, contestResult.error)
-          null
+          error("Error whe getting contest with id=$contestId: ${contestResult.error}")
         }
         is Ok -> {
           val contest = contestResult.value
-          CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
+          val courseInfo = CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
+          joinCourse(courseInfo, CourseMode.STUDY, coursePanel) {}
         }
       }
     }
