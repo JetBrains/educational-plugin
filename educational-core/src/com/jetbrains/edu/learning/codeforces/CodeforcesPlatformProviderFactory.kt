@@ -32,7 +32,7 @@ class CodeforcesPlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = CodeforcesCoursesPanel(this, scope, disposable)
 
   override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
-    StartCodeforcesContestAction.joinContests(courseInfo.course.id, coursePanel)
+    StartCodeforcesContestAction.joinContest(courseInfo.course.id, coursePanel)
   }
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {

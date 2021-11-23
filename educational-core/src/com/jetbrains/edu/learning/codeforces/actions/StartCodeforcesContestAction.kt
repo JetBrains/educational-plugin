@@ -12,30 +12,20 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
+import javax.swing.JPanel
 
 class StartCodeforcesContestAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val showViewAllLabel = e.place != CodeforcesCoursesPanel.PLACE
-    val contestId = showDialogAndGetContestId(showViewAllLabel) ?: return
-    joinContests(contestId, null)
-  }
-
-  private fun showDialogAndGetContestId(showViewAllLabel: Boolean): Int? {
     val dialog = ImportCodeforcesContestDialog(showViewAllLabel)
-    if (!dialog.showAndGet()) {
-      return null
+    if (dialog.showAndGet()) {
+      return joinContest(dialog.getContestId(), null)
     }
-    return dialog.getContestId()
   }
 
   companion object {
@@ -68,64 +58,68 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       )
     }
 
-    fun joinContests(contestId: Int, coursePanel: CoursePanel?) {
-      val codeforcesCourse = getContestInfoUnderProgress(contestId).onError {
-        showFailedToGetContestInfoNotification(contestId, it)
-        error("Failed to get contest info for contest with id=$contestId")
-      }
-      val contestName = codeforcesCourse.name
-      val contestLanguages = codeforcesCourse.availableLanguages
-
-      if (contestLanguages.isEmpty()) {
-        showNoSupportedLanguagesForContestNotification(contestName)
-        error("Cannot load available languages: $contestId")
-      }
+    fun joinContest(contestId: Int, component: JPanel?) {
+      val codeforcesCourse = getCodeforcesCourseInfo(contestId)
 
       val dialog = ChooseCodeforcesContestLanguagesDialog(codeforcesCourse)
       if (!dialog.showAndGet()) {
         return
       }
 
-      val taskTextLanguage = dialog.selectedTaskTextLanguage()
-      val language = dialog.selectedLanguage()
-      val languageIdAndVersion = getLanguageIdAndVersion(language) ?: return
+      val languageIdAndVersion = getLanguageIdAndVersion(dialog.selectedLanguage())
+      if (languageIdAndVersion == null) {
+        error("Failed to get language and id for contest with id=$contestId")
+      }
 
       val contestParameters = ContestParameters(
         codeforcesCourse.id,
         languageIdAndVersion,
-        taskTextLanguage.locale,
+        dialog.selectedTaskTextLanguage().locale,
         codeforcesCourse.endDateTime,
-        language
+        dialog.selectedLanguage()
       )
 
-      when (val contestResult = getContestUnderProgress(contestParameters)) {
+      val contest = loadContestAndProcessErrors(contestParameters)
+      val contestInfo = CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
+
+      joinCourse(contestInfo, CourseMode.STUDY, component) {}
+    }
+
+    private fun loadContestAndProcessErrors(contestParameters: ContestParameters): CodeforcesCourse {
+      return when (val contestResult = getContestUnderProgress(contestParameters)) {
         is Err -> {
-          showFailedToGetContestInfoNotification(codeforcesCourse.id, contestResult.error)
+          val contestId = contestParameters.id
+          showFailedToGetContestInfoNotification(contestId, contestResult.error)
           error("Error whe getting contest with id=$contestId: ${contestResult.error}")
         }
         is Ok -> {
-          val contest = contestResult.value
-          val courseInfo = CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
-          joinCourse(courseInfo, CourseMode.STUDY, coursePanel) {}
+          contestResult.value
         }
       }
     }
 
-    private fun getContestInfoUnderProgress(contestId: Int): Result<CodeforcesCourse, String> =
-      ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
+    private fun getCodeforcesCourseInfo(contestId: Int): CodeforcesCourse {
+      val codeforcesCourse = ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<CodeforcesCourse, String>, RuntimeException>(
         {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
           EduUtils.execCancelable {
             CodeforcesConnector.getInstance().getContestInformation(contestId)
           }
         }, EduCoreBundle.message("codeforces.getting.available.languages"), true, null
-      )
+      ).onError {
+        showFailedToGetContestInfoNotification(contestId, it)
+        error("Failed to get contest info for contest with id=$contestId")
+      }
 
-    private fun showNoSupportedLanguagesForContestNotification(contestName: String) {
-      Messages.showErrorDialog(
-        EduCoreBundle.message("codeforces.error.no.supported.languages", contestName),
-        EduCoreBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
-      )
+      if (codeforcesCourse.availableLanguages.isEmpty()) {
+        Messages.showErrorDialog(
+          EduCoreBundle.message("codeforces.error.no.supported.languages", codeforcesCourse.name),
+          EduCoreBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)
+        )
+        error("Cannot load available languages: $contestId")
+      }
+
+      return codeforcesCourse
     }
   }
 }
