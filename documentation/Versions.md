@@ -822,3 +822,23 @@
       "feedback_link" : "https://plugins.jetbrains.com/plugin/16628-kotlin-koans/reviews"
     }
     ```
+
+13. Task file can be non-editable. For this the optional flag `is_editable` has been added to "files" block. To prevent the file from being
+    changed, `is_editable` property should be set to "false". If the file can be changed, the flag may be absent or equals "true".
+
+    Example:
+    ```json
+    {
+    "id": 1,
+    "name": "Lesson name",
+    "files": {
+        "src/html.kt": {
+            "name": "src/html.kt",
+            "placeholders": [],
+            "is_visible": true,
+            "text": "some text",
+            "is_editable": false
+        }
+      }
+    }
+    ```

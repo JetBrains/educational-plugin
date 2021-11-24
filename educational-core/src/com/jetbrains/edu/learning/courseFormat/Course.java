@@ -48,6 +48,8 @@ public abstract class Course extends LessonContainer {
   private Date myCreateDate = new Date(0);
   @Nullable private String myFeedbackLink;
 
+  transient private final Set<String> nonEditableFiles = new HashSet<>();
+
   transient protected List<TaskFile> additionalFiles = new ArrayList<>();
 
   transient private List<PluginInfo> myPluginDependencies = new ArrayList<>();
@@ -371,5 +373,15 @@ public abstract class Course extends LessonContainer {
 
   public void setFeedbackLink(@Nullable String feedbackLink) {
     myFeedbackLink = feedbackLink;
+  }
+
+  public boolean isEditableFile(String path) {
+    return !nonEditableFiles.contains(path);
+  }
+
+  public void addNonEditableFile(String path) {
+    if (path != null) {
+      nonEditableFiles.add(path);
+    }
   }
 }

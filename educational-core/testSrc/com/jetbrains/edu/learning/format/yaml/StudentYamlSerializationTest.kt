@@ -453,6 +453,28 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
+  fun `test no text for non-editable task file`() {
+    val task = courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("task.txt", "task text", visible = false, editable = false)
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: task.txt
+    |  visible: false
+    |  editable: false
+    |  text: task text
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |""".trimMargin())
+  }
+
   fun `test binary file text is saved in framework lesson`() {
     val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
     val gitObjectFilePath = "test/objects/b6/28add5fd4be3bdd2cdb776dfa035cc69956859"

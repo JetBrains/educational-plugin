@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -33,7 +34,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: 12
+      |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
       |step: -1
@@ -59,7 +60,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: 12
+      |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
       |step: -1
@@ -84,7 +85,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |    is_visible: true
       |  - name: src/Test.kt
       |    is_visible: false
-      |  version: 12
+      |  version: $JSON_FORMAT_VERSION
       |  check_profile: $checkProfile
       |step: -1
       |

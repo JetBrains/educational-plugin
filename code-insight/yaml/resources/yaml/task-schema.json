@@ -126,6 +126,10 @@
           "items": {
             "$ref": "#/definitions/placeholder"
           }
+        },
+        "editable": {
+          "type": "boolean",
+          "description": "False if learner can't change file, absent if can"
         }
       },
       "required": [

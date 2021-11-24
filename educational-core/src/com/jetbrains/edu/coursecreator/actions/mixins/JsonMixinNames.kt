@@ -47,6 +47,7 @@ object JsonMixinNames {
   const val TEXT = "text"
   const val IS_VISIBLE = "is_visible"
   const val PLACEHOLDERS = "placeholders"
+  const val IS_EDITABLE = "is_editable"
 
   // feedback
   const val FEEDBACK_LINK = "feedback_link"

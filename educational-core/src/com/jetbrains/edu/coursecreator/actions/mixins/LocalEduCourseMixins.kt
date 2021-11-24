@@ -33,6 +33,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_EDITABLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
@@ -269,7 +270,7 @@ abstract class ChoiceOptionLocalMixin {
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
 abstract class TaskFileMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
@@ -283,6 +284,10 @@ abstract class TaskFileMixin {
   @JsonProperty(TEXT)
   @Encrypt
   private lateinit var myText: String
+
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
+  @JsonProperty(IS_EDITABLE)
+  var myEditable: Boolean = true
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

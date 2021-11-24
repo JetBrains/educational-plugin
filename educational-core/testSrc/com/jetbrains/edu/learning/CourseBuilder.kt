@@ -357,6 +357,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun taskFile(
     name: String, text: String = "",
     visible: Boolean? = null,
+    editable: Boolean? = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) {
     val taskFileBuilder = TaskFileBuilder(task)
@@ -371,6 +372,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
       _explicitVisibility[name] = visible
     }
     taskFile.task = task
+    taskFile.isEditable = editable ?: true
     task.addTaskFile(taskFile)
   }
 
@@ -383,56 +385,56 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     @Language("kotlin") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun javaTaskFile(
     name: String,
     @Language("JAVA") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun pythonTaskFile(
     name: String,
     @Language("Python") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun scalaTaskFile(
     name: String,
     @Language("Scala") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun rustTaskFile(
     name: String,
     @Language("Rust") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun goTaskFile(
     name: String,
     @Language("Go") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun cppTaskFile(
     name: String,
     @Language("ObjectiveC") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun xmlTaskFile(
     name: String,
     @Language("XML") text: String = "",
     visible: Boolean? = null,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, visible, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
   fun taskFileFromResources(
     disposable: Disposable,
@@ -445,7 +447,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     VfsRootAccess.allowRootAccess(disposable, ioFile.absolutePath)
     val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
     val text = file.loadEncodedContent()
-    taskFile(name, text, visible, buildTaskFile)
+    taskFile(name, text, visible, buildTaskFile = buildTaskFile)
   }
 
   fun dir(dirName: String, buildTask: TaskBuilder.() -> Unit) {

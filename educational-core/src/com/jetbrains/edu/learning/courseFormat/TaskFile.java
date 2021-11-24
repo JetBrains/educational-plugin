@@ -30,6 +30,7 @@ public class TaskFile {
   private boolean myVisible = true;
   // Should be used only in student mode
   private boolean myLearnerCreated = false;
+  private boolean myEditable = true;
 
   private String myText = "";
 
@@ -129,6 +130,14 @@ public class TaskFile {
 
   public boolean isVisible() {
     return myVisible;
+  }
+
+  public boolean isEditable() {
+    return myEditable;
+  }
+
+  public void setEditable(boolean editable) {
+    myEditable = editable;
   }
 
   public void setVisible(boolean visible) {

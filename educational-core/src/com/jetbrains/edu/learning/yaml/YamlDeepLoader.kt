@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -48,12 +50,11 @@ object YamlDeepLoader {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.course = deserializedCourse
           deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList, mapper)
-
+          addNonEditableFilesToCourse(deserializedItem, deserializedCourse, project)
           deserializedItem.removeNonExistingTaskFiles(project)
         }
       }
     }
-
 
     // we init course before setting description and remote info, as we have to set parent item
     // to obtain description/remote config file to set info from
@@ -63,6 +64,21 @@ object YamlDeepLoader {
       deserializedCourse.setDescriptionInfo(project)
     }
     return deserializedCourse
+  }
+
+  @JvmStatic
+  private fun addNonEditableFilesToCourse(taskContainer: ItemContainer, course: Course, project: Project) {
+    taskContainer.items.filterIsInstance<Task>().forEach { task ->
+      for (taskFile in task.taskFiles.values) {
+        if (!taskFile.isEditable) {
+          project.courseDir
+            .findChild(taskContainer.name)
+            ?.findChild(task.name)
+            ?.findFileByRelativePath(taskFile.name)
+            ?.let { virtualTaskFile -> GeneratorUtils.addNonEditableFileToCourse(course, virtualTaskFile) }
+        }
+      }
+    }
   }
 
   /**

@@ -95,6 +95,7 @@ object YamlMixinNames {
   const val LEARNER_CREATED = "learner_created"
   const val TEXT = "text"
   const val ENCRYPTED_TEXT = "encrypted_text"
+  const val EDITABLE = "editable"
 
   // placeholder
   const val OFFSET = "offset"

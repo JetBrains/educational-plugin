@@ -2,10 +2,7 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.*
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
@@ -20,8 +17,8 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.intellij.util.io.ReadOnlyAttributeUtil
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
@@ -30,8 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
-import com.jetbrains.edu.learning.isToEncodeContent
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -126,11 +121,11 @@ object GeneratorUtils {
     val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
 
     for (file in taskFiles) {
-      createChildFile(project, taskDir, file.name, file.text)
+      createChildFile(project, taskDir, file.name, file.text, file.isEditable)
     }
 
     for (file in testFiles) {
-      createChildFile(project, taskDir, file.name, "")
+      createChildFile(project, taskDir, file.name, "", file.isEditable)
     }
   }
 
@@ -152,13 +147,19 @@ object GeneratorUtils {
   @Throws(IOException::class)
   fun createAdditionalFiles(project: Project, course: Course, courseDir: VirtualFile) {
     for (file in course.additionalFiles) {
-      createChildFile(project, courseDir, file.name, file.text)
+      createChildFile(project, courseDir, file.name, file.text, file.isEditable)
     }
   }
 
   @Throws(IOException::class)
   @JvmStatic
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+    return createChildFile(project, parentDir, path, text, true)
+  }
+
+  @Throws(IOException::class)
+  @JvmStatic
+  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
     return runInWriteActionAndWait(ThrowableComputable {
       var newDirectories: String? = null
       var fileName = path
@@ -179,12 +180,26 @@ object GeneratorUtils {
         else {
           VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandMacrosForFile(project, virtualTaskFile, text))
         }
+        val course = project.course
+        if (!isEditable && course != null) {
+          addNonEditableFileToCourse(course, virtualTaskFile)
+        }
         virtualTaskFile
       }
       else {
         null
       }
     })
+  }
+
+  @Throws(IOException::class)
+  fun addNonEditableFileToCourse(course: Course, virtualTaskFile: VirtualFile) {
+    course.addNonEditableFile(virtualTaskFile.path)
+    invokeLater {
+      WriteAction.run<IOException> {
+        ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
+      }
+    }
   }
 
   @Throws(IOException::class)
@@ -294,7 +309,11 @@ object GeneratorUtils {
    * Otherwise, substitutes all template variables in file text
    */
   @Throws(IOException::class)
-  fun createFileFromTemplate(project: Project, baseDir: VirtualFile, path: String, templateName: String, templateVariables: Map<String, Any>) {
+  fun createFileFromTemplate(project: Project,
+                             baseDir: VirtualFile,
+                             path: String,
+                             templateName: String,
+                             templateVariables: Map<String, Any>) {
     val file = baseDir.findFileByRelativePath(path)
     if (file == null) {
       val configText = getInternalTemplateText(templateName, templateVariables)

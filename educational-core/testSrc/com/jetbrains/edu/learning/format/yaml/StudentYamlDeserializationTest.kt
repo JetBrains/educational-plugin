@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
+import junit.framework.TestCase
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -476,6 +477,26 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val taskFile = task.taskFiles.values.first()
     val placeholder = taskFile.answerPlaceholders.first()
     assertEquals("student answer", placeholder.studentAnswer)
+  }
+
+  fun `test task file editable`() {
+    val taskFileName = "Task.java"
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: $taskFileName
+    |  visible: true
+    |  editable: false
+    |  text: text
+    |  learner_created: true
+    |""".trimMargin()
+
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val taskFile = task.taskFiles.values.first()
+    assertEquals("text", taskFile.text)
+    assertTrue(taskFile.isLearnerCreated)
+    TestCase.assertFalse(taskFile.isEditable)
   }
 
   private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)

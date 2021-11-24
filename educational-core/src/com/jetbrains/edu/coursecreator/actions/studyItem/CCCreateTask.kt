@@ -170,6 +170,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     val text = course()?.configurator?.courseBuilder?.getTextForNewTask(this, taskDir, newTask) ?: ""
     newTaskFile.setText(text)
     newTaskFile.isVisible = isVisible
+    newTaskFile.isEditable = isEditable
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile() }
     return newTaskFile
   }
