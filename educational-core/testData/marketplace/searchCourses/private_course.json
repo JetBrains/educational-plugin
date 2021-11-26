@@ -19,7 +19,8 @@
             "language" : "en",
             "isPrivate": true
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         }
       ]
     }

@@ -17,6 +17,10 @@ class GrayTextHtmlPanel(private val infoText: String, private val style: String 
     return infoText ?: ""
   }
 
+  /**
+   * Sets the text with the specific style applied. Do not set text with function setText().
+   * The text set with setText() will be set without grey color and other styles.
+   */
   override fun setBody(text: String) {
     if (text.isEmpty()) {
       setText("")

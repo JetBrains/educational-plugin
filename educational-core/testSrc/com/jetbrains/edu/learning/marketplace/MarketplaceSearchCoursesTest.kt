@@ -114,7 +114,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
                      expectedCreateDate: Date = Date(1623321716000),
                      expectedEnvironment: String = DEFAULT_ENVIRONMENT,
                      expectedIsPrivate: Boolean = false,
-                     expectedCourseLink: String = "${PLUGINS_REPOSITORY_URL}courseLink$REVIEWS") {
+                     expectedCourseLink: String = "${PLUGINS_REPOSITORY_URL}courseLink$REVIEWS",
+                     expectedLicense: String = "https://licenses/") {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
@@ -127,6 +128,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedCreateDate, course.createDate)
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertEquals(expectedCourseLink, course.feedbackLink)
+    assertEquals(expectedLicense, course.license)
     assertTrue(course.isMarketplace)
   }
 

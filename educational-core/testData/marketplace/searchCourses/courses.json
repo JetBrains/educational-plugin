@@ -23,7 +23,8 @@
           "organization" : {
             "name" : "JetBrains s.r.o."
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "id" : "2",
@@ -43,7 +44,8 @@
             "language" : "ru",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "id": "3",
@@ -63,7 +65,8 @@
             "language": "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         }
       ]
     }

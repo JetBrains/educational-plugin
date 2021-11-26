@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.EduCourseCard
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import kotlinx.coroutines.CoroutineScope
 
 class MarketplaceCoursesPanel(
@@ -16,6 +17,10 @@ class MarketplaceCoursesPanel(
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(coursesPlatformProvider, scope, disposable) {
+
+  override fun createCoursePanel(disposable: Disposable): CoursePanel {
+    return MarketplaceCoursePanel(disposable)
+  }
 
   override fun tabDescription(): String {
     val linkText = """<a href="$MARKETPLACE_COURSES_HELP">$MARKETPLACE</a>"""

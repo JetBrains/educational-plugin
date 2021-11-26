@@ -34,6 +34,9 @@ abstract class MarketplaceEduCourseMixin {
 
   @JsonProperty(LINK)
   var myFeedbackLink: String = ""
+
+  @JsonProperty(LICENSE)
+  var myLicense: String = ""
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -50,6 +53,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
   @JsonProperty(CREATE_DATE) val courseCreateDate: Long,
   @JsonProperty(LINK) val courseLink: String,
+  @JsonProperty(LICENSE) val courseLicense: String,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -71,6 +75,7 @@ private class MarketplaceCourseBuilder(
       updateDate = Date(lastUpdateDate)
       createDate = Date(courseCreateDate)
       feedbackLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
+      license = courseLicense
       setMarketplaceAuthorsAsString(developers)
     }
 

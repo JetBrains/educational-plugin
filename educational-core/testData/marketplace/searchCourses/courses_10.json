@@ -16,7 +16,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 2",
@@ -31,7 +32,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 3",
@@ -46,7 +48,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 4",
@@ -61,7 +64,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 5",
@@ -76,7 +80,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 6",
@@ -91,7 +96,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 7",
@@ -106,7 +112,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 8",
@@ -121,7 +128,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 9",
@@ -136,7 +144,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         },
         {
           "name" : "Introduction to Python 10",
@@ -151,7 +160,8 @@
             "language" : "en",
             "isPrivate": false
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         }
       ]
     }

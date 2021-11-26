@@ -47,6 +47,7 @@ public abstract class Course extends LessonContainer {
   private boolean isMarketplacePrivate = false;
   private Date myCreateDate = new Date(0);
   @Nullable private String myFeedbackLink;
+  @Nullable private String myLicense;
 
   transient private final Set<String> nonEditableFiles = new HashSet<>();
 
@@ -383,5 +384,14 @@ public abstract class Course extends LessonContainer {
     if (path != null) {
       nonEditableFiles.add(path);
     }
+  }
+
+  @Nullable
+  public String getLicense() {
+    return myLicense;
+  }
+
+  public void setLicense(@Nullable String license) {
+    myLicense = license;
   }
 }

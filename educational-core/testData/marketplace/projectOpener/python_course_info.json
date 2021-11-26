@@ -16,7 +16,8 @@
             "programmingLanguage" : "Python",
             "language" : "en"
           },
-          "link" : "courseLink"
+          "link" : "courseLink",
+          "license" : "https://licenses/"
         }
       ]
     }
