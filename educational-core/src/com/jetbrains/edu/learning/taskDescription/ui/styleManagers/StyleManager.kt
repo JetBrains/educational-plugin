@@ -63,8 +63,10 @@ class StyleManager {
       }
 
       ".code-block" {
+        backgroundColor = codeBackground
         fontSize = if (isJCEF()) bodyFontSize.px else bodyFontSize.pt
         lineHeight = codeLineHeight.px.lh
+        display = Display.block
       }
 
       a {
