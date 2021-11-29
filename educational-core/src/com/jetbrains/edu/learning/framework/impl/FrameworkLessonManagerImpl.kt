@@ -12,7 +12,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
@@ -54,8 +53,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    val taskFiles = task.allFiles.split(task.course).first
-    val externalTaskFiles = externalState.split(task.course).first
+    val taskFiles = task.allFiles.split(task).first
+    val externalTaskFiles = externalState.split(task).first
     val changes = calculateChanges(taskFiles, externalTaskFiles)
     val currentRecord = task.record
     task.record = try {
@@ -216,8 +215,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentTaskFilesState, currentTestFilesState) = currentState.split(targetTask.course)
-    val (targetTaskFiles, targetTestFiles) = targetState.split(targetTask.course)
+    val (currentTaskFilesState, currentTestFilesState) = currentState.split(currentTask)
+    val (targetTaskFiles, targetTestFiles) = targetState.split(targetTask)
 
     // Creates [Change]s to propagates all current changes of task files to target task.
     // Technically, we won't change text of task files, just add/remove user created/removed task files to/from target task
@@ -326,7 +325,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
-  private fun Map<String, String>.split(course: Course): Pair<Map<String, String>, Map<String, String>> {
+  private fun Map<String, String>.split(task: Task): Pair<Map<String, String>, Map<String, String>> {
+    val course = task.course
     val testDirs = course.testDirs
     val defaultTestName = course.configurator?.testFileName ?: ""
     val taskFiles = HashMap<String, String>()
