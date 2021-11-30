@@ -246,6 +246,18 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     choiceTask.selectedVariants = selectedVariants
   }
 
+  fun stringTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val stringTask = StringTask()
+    task(stringTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  }
+
   fun mission(
     name: String? = null,
     taskDescription: String? = null,

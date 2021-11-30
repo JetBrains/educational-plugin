@@ -7,13 +7,15 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkCodeTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkDataTask
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkRemoteEduTask
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.checkStringTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
@@ -29,6 +31,7 @@ class HyperskillRemoteTaskChecker : RemoteTaskChecker {
     return when (task) {
       is DataTask -> checkDataTask(project, task, indicator)
       is CodeTask -> checkCodeTask(project, task)
+      is StringTask -> checkStringTask(project, task)
       is ChoiceTask -> checkChoiceTask(project, task)
       is RemoteEduTask -> checkRemoteEduTask(project, task)
       else -> error("Can't check ${task.itemType} on ${EduNames.JBA}")

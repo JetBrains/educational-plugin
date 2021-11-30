@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -18,7 +19,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
 import java.util.concurrent.ConcurrentHashMap
 
 class HyperskillCourse : Course {
-  @Suppress("unused") constructor() // used for deserialization
+
+  constructor()
 
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
@@ -117,19 +119,22 @@ class HyperskillCourse : Course {
 
   override fun isViewAsEducatorEnabled(): Boolean = false
 
+  // lexicographical order
   companion object {
     val SUPPORTED_STEP_TYPES: Set<String> = setOf(
+      StepikTaskType.CHOICE.type,
       StepikTaskType.CODE.type,
-      StepikTaskType.TEXT.type,
-      StepikTaskType.PYCHARM.type,
       StepikTaskType.DATASET.type,
-      StepikTaskType.CHOICE.type
+      StepikTaskType.PYCHARM.type,
+      StepikTaskType.STRING.type,
+      StepikTaskType.TEXT.type
     )
 
     private val REMOTELY_CHECKED_TASKS: Set<Class<out Task>> = setOf(
       ChoiceTask::class.java,
       CodeTask::class.java,
       DataTask::class.java,
+      StringTask::class.java,
       RemoteEduTask::class.java
     )
 

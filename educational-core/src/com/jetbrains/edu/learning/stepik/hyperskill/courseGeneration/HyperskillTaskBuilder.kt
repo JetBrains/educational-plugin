@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
@@ -74,7 +75,7 @@ class HyperskillTaskBuilder(
           name = stepSource.title
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
         }
-        is DataTask -> {
+        is DataTask, is StringTask -> {
           name = stepSource.title
         }
         is EduTask -> {

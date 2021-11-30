@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -219,6 +220,33 @@ object HyperskillCheckConnector {
       return CheckResult.failedToCheck
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
+  }
+
+  fun checkStringTask(project: Project, task: StringTask): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+    if (task.getInputAnswer(project).isBlank()) {
+      return CheckResult(CheckStatus.Failed, EduCoreBundle.message("hyperskill.string.task.empty.text"))
+    }
+    val submissionResult = when (val submissionResponse = submitStringTask(task, project)) {
+      is Err -> return CheckResult(CheckStatus.Failed, EduCoreBundle.message("hyperskill.string.task.failed.text"))
+      is Ok -> submissionResponse.value
+    }
+
+    return periodicallyCheckSubmissionResult(project, submissionResult, task)
+  }
+
+  fun submitStringTask(task: StringTask, project: Project): Result<Submission, String> {
+    val connector = HyperskillConnector.getInstance()
+    val attempt = when (val attemptResponse = connector.postAttempt(task.id)) {
+      is Err -> return attemptResponse
+      is Ok -> attemptResponse.value
+    }
+
+    val submission = HyperskillSubmissionProvider.createStringSubmission(task, attempt.id, project)
+    return connector.postSubmission(submission)
   }
 
   fun checkRemoteEduTask(project: Project, task: RemoteEduTask): CheckResult {

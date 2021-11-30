@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -156,6 +157,7 @@ object YamlDeserializer {
       CHECK_IO_MISSION_TASK_TYPE -> CheckiOMission::class.java
       CODEFORCES_TASK_TYPE -> CodeforcesTask::class.java
       CODEFORCES_TASK_TYPE_WITH_FILE_IO -> CodeforcesTaskWithFileIO::class.java
+      STRING_TASK_TYPE -> StringTask::class.java
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.TASK))
     }
     return treeToValue(treeNode, clazz)

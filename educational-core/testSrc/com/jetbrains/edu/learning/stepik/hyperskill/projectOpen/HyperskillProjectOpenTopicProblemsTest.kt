@@ -7,6 +7,7 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
 import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -39,6 +40,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
         dir(step9455.title) {
           dir(THEORY) {
             file("Task.txt")
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -218,6 +223,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
+            file("task.html")
+          }
           dir(step2640.title) {
             file("Task.txt")
             file("task.html")
@@ -268,6 +277,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
         dir(step9455.title) {
           dir(THEORY) {
             file("Task.txt")
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -335,6 +348,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             dir("src") {
               file("Task.kt")
             }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -424,6 +441,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             dir("src") {
               file("Task.kt")
             }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -523,6 +544,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             }
             file("task.html")
           }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
+            file("task.html")
+          }
           dir(step2640.title) {
             dir("src") {
               file("Task.kt")
@@ -583,6 +608,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             dir("src") {
               file("Task.kt")
             }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -671,6 +700,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             dir("src") {
               file("Task.kt")
             }
+            file("task.html")
+          }
+          dir(step525047.title) {
+            file(StringTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -775,6 +808,8 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private val step7018 = StepInfo(7018, "@GetMapping and @PostMapping")
     private val step13299 = StepInfo(13299, "Complete the handler description")
 
+    private val step525047 = StepInfo(525047, "Fix signature")
+
     @Suppress("unused") // not recommended step
     private val step9886 = StepInfo(9886, "Pets in boxes")
     private val topic85 = TopicInfo(85)
@@ -784,6 +819,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private val topic515 = TopicInfo(515)
 
     private val step8139 = StepInfo(8139, "Reading files")
+
     @Suppress("unused") // not recommended step
     private val step8146 = StepInfo(8146, "Acronym")
     private val step8143 = StepInfo(8143, "First")

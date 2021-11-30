@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -73,34 +74,37 @@ open class StepikTaskBuilder(
     { it.type },
     {
       when (it) {
+        // lexicographical order
         StepikTaskType.CHOICE -> this::choiceTask
         StepikTaskType.CODE -> this::codeTask
+        StepikTaskType.DATASET -> this::dataTask
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
-        StepikTaskType.REMOTE_EDU  -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
+        StepikTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
+        StepikTaskType.STRING -> this::stringTask
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
-        StepikTaskType.DATASET -> this::dataTask
         else -> this::unsupportedTask
       }
     })
 
+  // lexicographical order
   enum class StepikTaskType(val type: String, val value: String) {
+    ADMIN("admin", "Linux"),
     CHOICE(CHOICE_TASK_TYPE, "Quiz"),
     CODE(CODE_TASK_TYPE, "Programming"),
+    DATASET(DATA_TASK_TYPE, "Data"),
+    FREE_ANSWER("free-answer", "Free Response"),
+    MANUAL_SCORE("manual-score", "Manual Score"),
+    MATCHING("matching", "Matching"),
+    MATH("math", "Math"),
+    NUMBER("number", "Number"),
     PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
     REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
-    TEXT("text", "Theory"),
-    VIDEO(VIDEO_TASK_TYPE, "Video"),
-    NUMBER("number", "Number"),
     SORTING("sorting", "Sorting"),
-    MATCHING("matching", "Matching"),
-    STRING("string", "Text"),
-    MATH("math", "Math"),
-    FREE_ANSWER("free-answer", "Free Response"),
+    STRING(STRING_TASK_TYPE, "Text"),
     TABLE("table", "Table"),
-    DATASET(DATA_TASK_TYPE, "Data"),
-    ADMIN("admin", "Linux"),
-    MANUAL_SCORE("manual-score", "Manual Score")
+    TEXT("text", "Theory"),
+    VIDEO(VIDEO_TASK_TYPE, "Video")
   }
 
   open fun createTask(type: String): Task? {
@@ -226,6 +230,17 @@ open class StepikTaskBuilder(
     else {
       LOG.warn("Dataset for step $stepId is null for course $courseType")
     }
+  }
+
+  private fun stringTask(name: String): StringTask {
+    val task = StringTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    task.descriptionText = clearCodeBlockFromTags()
+    task.descriptionFormat = DescriptionFormat.HTML
+    createTaskFileForStringTask(
+      task,
+      comment = EduCoreBundle.message("string.task.comment.file"),
+      fileName = StringTask.ANSWER_FILE_NAME)
+    return task
   }
 
   private fun theoryTask(name: String): TheoryTask {
@@ -364,6 +379,22 @@ open class StepikTaskBuilder(
     taskFile.setText(editorText)
     taskFile.name = taskFilePath
     task.addTaskFile(taskFile)
+  }
+
+  private fun createTaskFileForStringTask(task: Task, comment: String, fileName: String) {
+    val taskFile = TaskFile(fileName, comment)
+    val answerPlaceholder = createAnswerPlaceholder(taskFile, comment)
+    taskFile.addAnswerPlaceholder(answerPlaceholder)
+    task.addTaskFile(taskFile)
+  }
+
+  private fun createAnswerPlaceholder(taskFile: TaskFile, comment: String): AnswerPlaceholder {
+    val answerPlaceholder = AnswerPlaceholder()
+    answerPlaceholder.taskFile = taskFile
+    answerPlaceholder.offset = 0
+    answerPlaceholder.length = comment.length
+    answerPlaceholder.placeholderText = comment
+    return answerPlaceholder
   }
 
   private fun getCodeTemplateForTask(codeTemplates: Map<String, String>?): String? {

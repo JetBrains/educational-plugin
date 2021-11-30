@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -259,6 +260,7 @@ fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
         objectMapper.treeToValue(node, EduTask::class.java)
       }
       OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
+      STRING_TASK_TYPE -> objectMapper.treeToValue(node, StringTask::class.java)
       else -> {
         LOG.warn("Unsupported task type $taskType")
         null
