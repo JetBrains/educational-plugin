@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 
-class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, false) {
+class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, true) {
 
   init {
     courseDetailsPanel.border = JBUI.Borders.empty(10, HORIZONTAL_MARGIN, 0, 0)
