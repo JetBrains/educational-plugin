@@ -213,7 +213,7 @@ class CoursesStorageTest : EduTestCase() {
     val inProgressCourse = course(name="In Progress") {}
     coursesStorage.addCourse(inProgressCourse, "/in_progress", 1, 10)
 
-    val completedCourse = course(name="Completed") {}
+    val completedCourse = course(name = "Completed") {}
     coursesStorage.addCourse(completedCourse, "/completed", 10, 10)
 
     val coursesInGroups = coursesStorage.coursesInGroups()

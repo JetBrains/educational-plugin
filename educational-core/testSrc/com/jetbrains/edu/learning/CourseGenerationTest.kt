@@ -2,10 +2,13 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestVFiles
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
+import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
@@ -98,6 +101,26 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
     }
     assertContainsElements(openFiles.toList(), task.getAllTestVFiles(project))
     assertContainsElements(openFiles.toList(), task.getDescriptionFile(project))
+  }
+
+  fun testCoursePreviewNotAdded() {
+    val coursePreview = course {
+      lesson("lesson1") {
+        eduTask("task1") {
+        }
+      }
+    }.apply {
+      dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY, true)
+    }
+
+    createCourseStructure(coursePreview)
+
+    // wa have to call it here as it is called itself at time when course isn't set to StudyTaskManager
+    EduStartupActivity().runActivity(myProject)
+
+    assertFalse(CoursesStorage.getInstance().hasCourse(coursePreview))
+
+    ProjectManager.getInstance().closeAndDispose(myProject)
   }
 
 }

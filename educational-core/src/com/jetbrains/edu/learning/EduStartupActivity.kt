@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_COURSE_PREVIEW_KEY
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
@@ -62,7 +63,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
       val location = project.basePath
-      if (!coursesStorage.hasCourse(course) && location != null) {
+      if (!coursesStorage.hasCourse(course) && location != null && course.dataHolder.getUserData(IS_COURSE_PREVIEW_KEY) != true) {
         coursesStorage.addCourse(course, location)
       }
       ApplicationManager.getApplication().invokeLater {
