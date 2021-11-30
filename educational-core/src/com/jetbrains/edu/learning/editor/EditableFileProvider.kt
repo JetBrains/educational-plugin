@@ -1,20 +1,27 @@
 package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.extensions.InternalIgnoreDependencyViolation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.WritingAccessProvider
 import com.jetbrains.edu.learning.course
 
-@InternalIgnoreDependencyViolation
-class EditableFileProvider(private val myProject: Project) : WritingAccessProvider() {
+class EditableFileProvider(private val project: Project) : WritingAccessProvider() {
 
-  override fun requestWriting(files: MutableCollection<out VirtualFile>): MutableCollection<VirtualFile> {
-    val course = myProject.course ?: return mutableListOf()
-    return files.filter { !course.isEditableFile(it.path) }.toMutableList()
+  override fun requestWriting(files: Collection<VirtualFile>): Collection<VirtualFile> {
+    val course = project.course
+    // educators can modify all files
+    if (course == null || !course.isStudy) {
+      return listOf()
+    }
+    return files.filter { !course.isEditableFile(it.path) }
   }
 
   override fun isPotentiallyWritable(file: VirtualFile): Boolean {
-    return myProject.course?.isEditableFile(file.path) ?: true
+    val course = project.course
+    // educators can modify all files
+    if (course == null || !course.isStudy) {
+      return true
+    }
+    return course.isEditableFile(file.path)
   }
 }

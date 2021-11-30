@@ -381,7 +381,7 @@ public abstract class Course extends LessonContainer {
   }
 
   public void addNonEditableFile(String path) {
-    if (path != null) {
+    if (path != null && isStudy()) {
       nonEditableFiles.add(path);
     }
   }

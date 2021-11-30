@@ -12,7 +12,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="com.jetbrains.edu.jvm.gradle.GradleStartupActivity"/>
-    <writingAccessProvider implementation="com.jetbrains.edu.learning.editor.EditableFileProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

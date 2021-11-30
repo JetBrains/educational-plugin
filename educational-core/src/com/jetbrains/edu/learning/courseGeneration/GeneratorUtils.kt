@@ -194,10 +194,12 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   fun addNonEditableFileToCourse(course: Course, virtualTaskFile: VirtualFile) {
-    course.addNonEditableFile(virtualTaskFile.path)
-    invokeLater {
-      WriteAction.run<IOException> {
-        ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
+    if (course.isStudy) {
+      course.addNonEditableFile(virtualTaskFile.path)
+      invokeLater {
+        WriteAction.run<IOException> {
+          ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
+        }
       }
     }
   }
