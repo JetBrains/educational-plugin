@@ -45,5 +45,7 @@ open class PluginInfo {
     val GOOGLE_TEST: PluginInfo = PluginInfo("org.jetbrains.plugins.clion.test.google", "Google Test")
 
     val GO: PluginInfo = PluginInfo("org.jetbrains.plugins.go", "Go")
+
+    val SQL: PluginInfo = PluginInfo("com.intellij.database", "Database Tools and SQL")
   }
 }
