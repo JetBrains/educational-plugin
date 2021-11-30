@@ -1,2 +1,5 @@
 <idea-plugin>
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="SQL" implementationClass="com.jetbrains.edu.sql.SqlConfigurator"/>
+  </extensions>
 </idea-plugin>
