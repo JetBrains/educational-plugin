@@ -24,5 +24,6 @@
     <module name="Edu-Rust"/>
     <module name="Edu-Cpp"/>
     <module name="Edu-Go"/>
+    <module name="Edu-Sql"/>
   </content>
 </idea-plugin>

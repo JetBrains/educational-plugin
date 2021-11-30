@@ -1,0 +1,9 @@
+<idea-plugin package="com.jetbrains.edu.sql" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.database"/>
+  </dependencies>
+
+  <!-- BACKCOMPAT: 2021.1. Inline it -->
+  <xi:include href="/META-INF/Edu-Sql-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>
