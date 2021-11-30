@@ -83,6 +83,7 @@ val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
+val sqlPlugin = "com.intellij.database"
 val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 
@@ -321,6 +322,9 @@ project(":") {
     if (isIdeaIDE) {
       pluginsList += listOf("JavaScriptLanguage", "NodeJS", goPlugin)
     }
+    if (!(isStudioIDE || isPycharmIDE)) {
+      pluginsList += sqlPlugin
+    }
 
     plugins.set(pluginsList)
   }
@@ -343,6 +347,7 @@ project(":") {
     compileOnly(project(":Edu-Rust"))
     compileOnly(project(":Edu-Cpp"))
     compileOnly(project(":Edu-Go"))
+    compileOnly(project(":Edu-Sql"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -746,6 +751,21 @@ project(":Edu-Go") {
     localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(goPlugin))
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":Edu-Sql") {
+  intellij {
+    if (isStudioIDE || isPycharmIDE) {
+      localPath.set(null as String?)
+      version.set(ideaVersion)
+    }
+    plugins.set(listOf(sqlPlugin))
   }
 
   dependencies {

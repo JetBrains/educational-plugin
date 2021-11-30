@@ -21,7 +21,8 @@ include(
   "Edu-JavaScript",
   "Edu-Rust",
   "Edu-Cpp",
-  "Edu-Go"
+  "Edu-Go",
+  "Edu-Sql"
 )
 
 apply(from = "common.gradle.kts")
