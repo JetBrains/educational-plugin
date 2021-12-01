@@ -370,4 +370,11 @@ public abstract class Task extends StudyItem {
   public void setSubmissionsId(@Nullable String submissionsId) {
     this.submissionsId = submissionsId;
   }
+
+  /**
+   * If task description changes after failing, then method returns true. For retry button
+   */
+  public boolean isChangedOnFailed() {
+    return false;
+  }
 }

@@ -13,10 +13,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.actions.EduActionUtils
-import com.jetbrains.edu.learning.actions.LeaveCommentAction
-import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.actions.RevertTaskAction
+import com.jetbrains.edu.learning.actions.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -28,12 +25,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.RetryDataTaskAction
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.retry.RetryHyperlinkComponent
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -100,6 +99,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
+    checkFinishedPanel.addRetryButton(task)
 
     val checkResult = result ?: restoreSavedResult(task)
     if (checkResult != null) {
@@ -115,10 +115,19 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
      * @see com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.setStatus
      */
     if (task is CheckiOMission) return null
-    if (task.feedback == null && task.status == CheckStatus.Unchecked) return null
-
-    val feedback = task.feedback ?: return CheckResult(task.status, "")
-    return feedback.toCheckResult(task.status)
+    val feedback = task.feedback
+    if (feedback == null) {
+      if (task.status == CheckStatus.Unchecked) {
+        return null
+      }
+      return CheckResult(task.status)
+    }
+    else {
+      if (task.isChangedOnFailed && task.status == CheckStatus.Failed) {
+        feedback.message = EduCoreBundle.message("action.retry.shuffle.message")
+      }
+      return feedback.toCheckResult(task.status)
+    }
   }
 
   private fun updateBackground() {
@@ -128,7 +137,6 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
-    checkFinishedPanel.addNextTaskButton(task)
     updateRightActionsToolbar()
     updateCheckDetails(task)
   }
@@ -139,7 +147,8 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       is CodeforcesTask -> updateCheckButtonWrapper(task)
       is DataTask -> updateCheckButtonWrapper(task)
       else -> {
-        val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = true)
+        val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
+        val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = isDefault, isEnabled = isDefault)
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
@@ -194,6 +203,16 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     if (NavigationUtils.nextTask(task) != null || (task.status == CheckStatus.Solved && NavigationUtils.isLastHyperskillProblem(task))) {
       val nextButton = CheckPanelButtonComponent(action = ActionManager.getInstance().getAction(NextTaskAction.ACTION_ID))
       add(nextButton, BorderLayout.WEST)
+    }
+  }
+
+  private fun JPanel.addRetryButton(task: Task) {
+    if (!task.isChangedOnFailed) return
+
+    if (task.status == CheckStatus.Failed) {
+      val retryLink = RetryHyperlinkComponent(EduCoreBundle.message("action.retry.try.again"),
+                                              ActionManager.getInstance().getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon)
+      add(retryLink, BorderLayout.WEST)
     }
   }
 

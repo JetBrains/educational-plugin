@@ -23,9 +23,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
-import com.jetbrains.edu.learning.stepik.StepikCheckerConnector.createChoiceTaskAnswerArray
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -320,26 +319,28 @@ object HyperskillCheckConnector {
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
-  fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
+  private fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
     val connector = HyperskillConnector.getInstance()
     val attempt = when (val attemptResponse = connector.getActiveAttemptOrPostNew(task.id)) {
       is Err -> return attemptResponse
       is Ok -> attemptResponse.value
     }
 
-    val submission = createChoiceSubmission(task, attempt)
+    val submission = HyperskillSubmissionProvider.createChoiceSubmission(task, attempt)
     return connector.postSubmission(submission)
   }
 
-  // TODO move to [com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider]
-  private fun createChoiceSubmission(task: ChoiceTask, attempt: Attempt): Submission {
-    val answerArray = createChoiceTaskAnswerArray(task, attempt)
-    val reply = Reply()
-    reply.choices = answerArray
-    val submission = Submission()
-    submission.attempt = attempt.id
-    submission.reply = reply
-    return submission
+  fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {
+    val attempt = when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task.id)) {
+      is Err -> return attemptResponse
+      is Ok -> attemptResponse.value
+    }
+
+    if (StepikTaskBuilder.fillChoiceTask(attempt, task)) {
+      task.selectedVariants.clear()
+      return Ok(true)
+    }
+    return Err(EduCoreBundle.message("hyperskill.choice.task.dataset.empty"))
   }
 }
 

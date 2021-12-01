@@ -5,8 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -14,11 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption;
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.Dataset;
 import com.jetbrains.edu.learning.stepik.api.Reply;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.submissions.Submission;
 import com.jetbrains.edu.learning.submissions.SubmissionData;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
@@ -29,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class StepikCheckerConnector {
   private static final Logger LOG = Logger.getInstance(StepikCheckerConnector.class);
@@ -47,6 +47,34 @@ public class StepikCheckerConnector {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  public static Result<Boolean, String> retryChoiceTask(@NotNull ChoiceTask task) {
+    final Attempt attempt = StepikConnector.getInstance().postAttempt(task.getId());
+    if (attempt == null) {
+      LOG.warn("New attempt is null for " + task.getId());
+      return new Err<String>(EduCoreBundle.message("stepik.choice.task.failed.getting.attempt", task.getId()));
+    }
+
+    final Dataset dataset = attempt.getDataset();
+    if (dataset == null) {
+      LOG.warn("Dataset is null for " + task.getId());
+      return new Err<String>(EduCoreBundle.message("stepik.choice.task.failed.getting.attempt", task.getId()));
+    }
+    final List<String> options = dataset.getOptions();
+    if (CollectionUtils.isEmpty(options)) {
+      LOG.warn("Options is null or empty for " + task.getId());
+      return new Err<String>(EduCoreBundle.message("stepik.choice.task.failed.getting.attempt", task.getId()));
+    }
+
+    final List<ChoiceOption> choiceOptions = options.stream()
+      .map(ChoiceOption::new)
+      .collect(Collectors.toList());
+
+    task.setChoiceOptions(choiceOptions);
+    task.setSelectedVariants(new ArrayList<>());
+    return new Ok<Boolean>(true);
+  }
+
   public static CheckResult checkChoiceTask(Project project, @NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
     final Attempt attempt = getAttemptForStep(task.getId(), user.getId());
@@ -60,41 +88,21 @@ public class StepikCheckerConnector {
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
         .allMatch(index -> options.get(index).equals(task.getChoiceOptions().get(index).getText()));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final SubmissionData submissionData = createChoiceSubmissionData(task, attempt);
+      final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
 
-      final CheckResult result = doCheck(submissionData, project, attemptId, user.getId(), task);
-      if (result.getStatus() == CheckStatus.Failed) {
-        StepikConnector.getInstance().postAttempt(task.getId());
-        StepSource step = StepikConnector.getInstance().getStep(task.getId());
-        if (step == null) {
-          LOG.error("Failed to get step " + task.getId());
-          return result;
-        }
-        Course course = task.getLesson().getCourse();
-        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course, task.getLesson(), step, task.getId(), user.getId());
-        final Step block = step.getBlock();
-        if (block != null) {
-          final Task updatedTask = taskBuilder.createTask(block.getName());
-          if (updatedTask instanceof ChoiceTask) {
-            final List<ChoiceOption> choiceOptions = ((ChoiceTask)updatedTask).getChoiceOptions();
-            task.setChoiceOptions(choiceOptions);
-            task.setSelectedVariants(new ArrayList<>());
-          }
-        }
-      }
-      return result;
+      return doCheck(submissionData, project, attemptId, user.getId(), task);
     }
 
     return CheckResult.getFailedToCheck();
   }
 
   @NotNull
-  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, @NotNull Attempt attempt) {
+  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, int attemptId) {
     final SubmissionData submissionData = new SubmissionData();
     submissionData.submission = new Submission();
-    submissionData.submission.setAttempt(attempt.getId());
+    submissionData.submission.setAttempt(attemptId);
     final Reply reply = new Reply();
-    reply.setChoices(createChoiceTaskAnswerArray(task, attempt));
+    reply.setChoices(createChoiceTaskAnswerArray(task));
     submissionData.submission.setReply(reply);
     return submissionData;
   }
@@ -126,27 +134,12 @@ public class StepikCheckerConnector {
     return submission;
   }
 
-  public static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task, @NotNull Attempt attempt) {
-    final Dataset dataset = attempt.getDataset();
+  private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
+    final List<Integer> selectedVariants = task.getSelectedVariants();
     final boolean[] answer = new boolean[task.getChoiceOptions().size()];
-
-    if (task.getCourse() instanceof HyperskillCourse) {
-      if (dataset != null && CollectionUtils.isNotEmpty(dataset.getOptions())) {
-        // Every attempt of choiceTask can return options in different order
-        task.getSelectedVariants().stream()
-          .map(selectedIndex -> task.getChoiceOptions().get(selectedIndex))
-          .map(ChoiceOption::getText)
-          .map(selectedText -> dataset.getOptions().indexOf(selectedText))
-          .forEach(index -> answer[index] = true);
-      }
+    for (Integer index : selectedVariants) {
+      answer[index] = true;
     }
-    else {
-      final List<Integer> selectedVariants = task.getSelectedVariants();
-      for (Integer index : selectedVariants) {
-        answer[index] = true;
-      }
-    }
-
     return answer;
   }
 

@@ -237,6 +237,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     choiceOptions: Map<String, ChoiceOptionStatus>,
     isMultipleChoice: Boolean = false,
     selectedVariants: MutableList<Int> = mutableListOf(),
+    status: CheckStatus = CheckStatus.Unchecked,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
@@ -244,6 +245,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
     choiceTask.selectedVariants = selectedVariants
+    choiceTask.status = status
   }
 
   fun stringTask(

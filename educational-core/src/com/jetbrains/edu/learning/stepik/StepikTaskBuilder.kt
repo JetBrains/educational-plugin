@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -197,7 +196,7 @@ open class StepikTaskBuilder(
         if (choiceStep != null) {
           fillChoiceTask(choiceStep, task)
         }
-        else if (!isUnitTestMode) {
+        else {
           StepikCheckerConnector.getAttemptForStep(stepId, userId)?.let { fillChoiceTask(it, task) }
         }
       }
@@ -217,18 +216,6 @@ open class StepikTaskBuilder(
     }
     if (choiceStep.feedbackWrong.isNotEmpty()) {
       task.messageIncorrect = choiceStep.feedbackWrong
-    }
-  }
-
-  private fun fillChoiceTask(attempt: Attempt, task: ChoiceTask) {
-    val dataset = attempt.dataset
-    LOG.warn("There is my dataset: $dataset for attemptId: ${attempt.id}")
-    if (dataset?.options != null) {
-      task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
-      task.isMultipleChoice = dataset.isMultipleChoice
-    }
-    else {
-      LOG.warn("Dataset for step $stepId is null for course $courseType")
     }
   }
 
@@ -420,6 +407,17 @@ open class StepikTaskBuilder(
           placeholder.placeholderText = fileText.substring(offset, offset + length)
         }
       }
+    }
+
+    fun fillChoiceTask(attempt: Attempt, task: ChoiceTask): Boolean {
+      val dataset = attempt.dataset
+      if (dataset?.options == null) {
+        LOG.warn("Dataset for step ${task.id} is null")
+        return false
+      }
+      task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
+      task.isMultipleChoice = dataset.isMultipleChoice
+      return true
     }
 
     @VisibleForTesting

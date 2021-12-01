@@ -119,7 +119,7 @@ object StyleResourcesManager {
   )
     .plus(panelSpecificHintResources)
     .plus(VideoTaskResourcesManager().videoResources)
-    .plus(ChoiceTaskResourcesManager().choiceTaskResources)
+    .plus(ChoiceTaskResourcesManager.choiceTaskResources)
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 

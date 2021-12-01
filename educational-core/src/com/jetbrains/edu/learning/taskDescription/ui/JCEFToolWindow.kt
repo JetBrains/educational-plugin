@@ -99,7 +99,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     currentTask = task
 
     taskSpecificJBCefBrowser.component.preferredSize = JBUI.size(Int.MAX_VALUE, 250)
-    val html = htmlWithResources(project, ChoiceTaskResourcesManager().getText(task))
+    val html = htmlWithResources(project, ChoiceTaskResourcesManager.getText(task))
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
   }

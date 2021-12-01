@@ -82,7 +82,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
 
   public CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
     super(dynamicText, dynamicDescription);
-    setUpProcessPanel(PROCESS_MESSAGE);
+    setUpSpinnerPanel(PROCESS_MESSAGE);
   }
 
   @Override
@@ -197,7 +197,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
 
     private void onStarted(@NotNull ProgressIndicator indicator) {
       processStarted();
-      ApplicationManager.getApplication().executeOnPooledThread(() -> showFakeProgress(indicator));
+      ApplicationManager.getApplication().executeOnPooledThread(() -> EduActionUtils.showFakeProgress(indicator));
       TaskDescriptionView.getInstance(myProject).checkStarted(myTask, false);
     }
 
@@ -274,20 +274,6 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
                         !it.isVisible() &&
                         (myTask instanceof EduTask || myTask instanceof OutputTask))
           .collect(Collectors.toList());
-    }
-
-    private void showFakeProgress(ProgressIndicator indicator) {
-      indicator.setIndeterminate(false);
-      indicator.setFraction(0.01);
-      try {
-        while (indicator.isRunning()) {
-          Thread.sleep(1000);
-          double fraction = indicator.getFraction();
-          indicator.setFraction(fraction + (1 - fraction) * 0.2);
-        }
-      }
-      catch (InterruptedException ignore) {
-      }
     }
 
     @Override

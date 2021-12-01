@@ -17,6 +17,10 @@ object MockResponseFactory {
   fun fromString(data: String): MockResponse = fromStream(ByteArrayInputStream(data.toByteArray()))
 
   @JvmStatic
+  fun fromString(data: String, responseCode: Int = HttpStatus.SC_OK): MockResponse = fromStream(ByteArrayInputStream(data.toByteArray()),
+                                                                                                responseCode)
+
+  @JvmStatic
   fun fromStream(data: InputStream, responseCode: Int = HttpStatus.SC_OK): MockResponse {
     val buffer = Buffer().readFrom(data)
     return MockResponse()

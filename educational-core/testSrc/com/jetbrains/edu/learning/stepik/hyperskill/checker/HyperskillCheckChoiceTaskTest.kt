@@ -63,7 +63,7 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
         }
       )
     }
-
+    CheckActionListener.reset()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
     NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
     testAction(CheckAction.ACTION_ID)

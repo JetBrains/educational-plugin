@@ -5,6 +5,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -15,21 +16,21 @@ import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskDescription.ui.MULTIPLE_CHOICE_LABEL
 import com.jetbrains.edu.learning.taskDescription.ui.SINGLE_CHOICE_LABEL
 import kotlinx.css.*
-import kotlinx.css.properties.BoxShadow
-import kotlinx.css.properties.deg
-import kotlinx.css.properties.lh
-import kotlinx.css.properties.rotate
+import kotlinx.css.properties.*
 
-class ChoiceTaskResourcesManager {
+object ChoiceTaskResourcesManager {
+  private const val CHOICE_TASK_TEMPLATE = "choiceTask.html"
 
-  val choiceTaskResources = mapOf("choice_options_style" to choiceOptionsStylesheet())
+  val choiceTaskResources
+    get() = mapOf("choice_options_style" to choiceOptionsStylesheet())
 
   // because task object is inserted after html is loaded
-  private fun getResources(task: ChoiceTask) = mapOf(
+  private fun getResources(task: ChoiceTask): Map<String, Any> = mapOf(
     "text" to task.getChoiceLabel(),
     "selected_variants" to task.selectedVariants,
     "choice_options" to Gson().toJson(task.choiceOptions.map { it.text }),
-    "is_multiple_choice" to task.isMultipleChoice
+    "is_multiple_choice" to task.isMultipleChoice,
+    "is_disabled" to (task.status == CheckStatus.Failed && task.isChangedOnFailed)
   )
 
   private fun ChoiceTask.getChoiceLabel() = if (isMultipleChoice) {
@@ -124,6 +125,9 @@ class ChoiceTaskResourcesManager {
       "#choiceOptions .radio:focus, .radio:before, .radio:hover, .checkbox:focus, .checkbox:before, .checkbox:hover" {
         boxShadow += BoxShadow(false, 0.px, 0.px, 2.px, 2.px, getFocusColor())
       }
+      "#choiceOptions .disable:focus, .disable:before, .disable:hover" {
+        boxShadow = BoxShadows.none
+      }
     }.toString()
       .plus("#choiceOptions .checkbox, .radio { -webkit-appearance: none; }")
       .plus(getSystemSpecificCss())
@@ -163,9 +167,4 @@ class ChoiceTaskResourcesManager {
     }
     return ""
   }
-
-  companion object {
-    private const val CHOICE_TASK_TEMPLATE = "choiceTask.html"
-  }
-
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import java.awt.event.ItemEvent
@@ -28,14 +29,15 @@ private fun ChoiceTask.createSpecificPanel(): JPanel {
   val jPanel = NonOpaquePanel(VerticalFlowLayout())
   jPanel.border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
 
-  if (this.isMultipleChoice) {
+  val isEnabled = status != CheckStatus.Failed
+  if (isMultipleChoice) {
     val text = JLabel(MULTIPLE_CHOICE_LABEL, SwingConstants.LEFT).apply {
       isOpaque = false
     }
     jPanel.add(text)
 
-    for ((index, option) in this.choiceOptions.withIndex()) {
-      val checkBox = createCheckBox(option.text, index, this)
+    for ((index, option) in choiceOptions.withIndex()) {
+      val checkBox = createCheckBox(option.text, index, this, isEnabled)
       jPanel.add(checkBox)
     }
   }
@@ -46,25 +48,27 @@ private fun ChoiceTask.createSpecificPanel(): JPanel {
     jPanel.add(text)
 
     val group = ButtonGroup()
-    for ((index, option) in this.choiceOptions.withIndex()) {
-      val checkBox = createRadioButton(option.text, index, group, this)
+    for ((index, option) in choiceOptions.withIndex()) {
+      val checkBox = createRadioButton(option.text, index, group, this, isEnabled)
       jPanel.add(checkBox)
     }
   }
   return jPanel
 }
 
-private fun createCheckBox(variant: String?, index: Int, task: ChoiceTask): JCheckBox {
+private fun createCheckBox(variant: String?, index: Int, task: ChoiceTask, isEnabled: Boolean): JCheckBox {
   val checkBox = JCheckBox(variant).apply { isOpaque = false }
   checkBox.isSelected = task.selectedVariants.contains(index)
   checkBox.addItemListener(createListener(task, index))
+  checkBox.isEnabled = isEnabled
   return checkBox
 }
 
-private fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask): JRadioButton {
+private fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask, isEnabled: Boolean): JRadioButton {
   val button = JRadioButton(variant).apply { isOpaque = false }
   button.isSelected = task.selectedVariants.contains(index)
   button.addItemListener(createListener(task, index))
+  button.isEnabled = isEnabled
   group.add(button)
   return button
 }

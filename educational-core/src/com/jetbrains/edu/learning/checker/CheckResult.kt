@@ -8,7 +8,7 @@ import javax.swing.event.HyperlinkListener
 
 data class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
-  val message: String,
+  val message: String = "",
   val details: String? = null,
   val diff: CheckResultDiff? = null,
   val severity: CheckResultSeverity = CheckResultSeverity.Info,

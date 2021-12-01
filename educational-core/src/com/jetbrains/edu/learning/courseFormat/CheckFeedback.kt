@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.checker.CheckResultDiff
 import java.util.*
 
 data class CheckFeedback(
-  val message: String = "",
+  var message: String = "",
   val time: Date? = null,
   val expected: String? = null,
   val actual: String? = null

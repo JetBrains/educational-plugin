@@ -9,6 +9,7 @@
   var inputType = getInputType(${is_multiple_choice});
   var choice_options = ${choice_options};
   var selectedVariants = ${selected_variants};
+  var isDisabled = ${is_disabled}
   createCheckboxes(choice_options);
 
   function createCheckboxes(options) {
@@ -16,7 +17,6 @@
       let div = document.createElement('div');
       div.className = 'labeled_input'
       var inputElement = document.createElement('input');
-      inputElement.className = inputType
       inputElement.type = inputType;
       inputElement.name = inputType; //should be the same for radioButtons to be single choice
       inputElement.id = count; // need unique Ids
@@ -30,6 +30,15 @@
       var label = document.createElement('label')
       label.htmlFor = inputElement.id;
       label.innerHTML = options[count];
+
+      if (isDisabled) {
+        inputElement.className = inputType + " disable"
+        inputElement.disabled = true;
+        fade(label);
+      }
+      else {
+        inputElement.className = inputType
+      }
       div.appendChild(inputElement)
       div.appendChild(label)
       parentElement.appendChild(div);
@@ -69,6 +78,12 @@
       type = 'radio';
     }
     return type;
+  }
+
+  function fade(element) {
+    let opacity = 0.5;
+    element.style.opacity = opacity;
+    element.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
   }
 
   function getSelectedVariants() {

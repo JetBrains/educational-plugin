@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -12,23 +13,37 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepsList
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillDownloadDatasetTest.Companion.format
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
 import java.io.File
+import java.util.*
 
 class StepikTaskBuilderTest : EduTestCase() {
-
+  private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
   private val dataFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"
 
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
   fun `test unsupported task`() = doTest<TheoryTask>(FakeGradleBasedLanguage, false)
-  fun `test choice task`() = doTest<ChoiceTask>(FakeGradleBasedLanguage)
+  fun `test choice task`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      MockResponseFactory.fromString(
+        when (val path = request.path) {
+          "/api/attempts?step=-1&user=-1" -> attemptsGet
+          else -> error("Wrong path: ${path}")
+        }
+      )
+    }
+    doTest<ChoiceTask>(FakeGradleBasedLanguage)
+  }
+
   fun `test code task`() = doTest<CodeTask>(FakeGradleBasedLanguage)
   fun `test edu task`() = doTest<EduTask>(FakeGradleBasedLanguage)
   fun `test edu theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
@@ -152,4 +167,22 @@ class StepikTaskBuilderTest : EduTestCase() {
   companion object {
     private val TEST_FILE_PATTERN: Regex = Regex("""Tests?\.\w*""")
   }
+
+  @org.intellij.lang.annotations.Language("JSON")
+  private val attemptsGet = """{
+  "attempts": [
+    {
+        "dataset": {
+          "is_multiple_choice": true,
+          "options": [ "0", "1", "2" ]
+        },
+        "time": "${Date().format()}",
+        "status": "active",
+        "time_left": null,
+        "step": -1,
+        "user": -1
+      }
+    ]
+}
+  """
 }

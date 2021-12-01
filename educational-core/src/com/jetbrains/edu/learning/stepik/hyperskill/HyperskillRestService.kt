@@ -140,6 +140,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
     val projectId = getSelectedProjectIdUnderProgress(account)
     if (projectId == null) {
+      LOG.warn("Can't open project for step_id: $stepId language: $language account $account")
       showError(SELECT_PROJECT)
       return SELECT_PROJECT
     }

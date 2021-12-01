@@ -32,12 +32,12 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
    * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
    */
   constructor(action: ActionWithProgressIcon, isDefault: Boolean = false, isEnabled: Boolean = true) : this() {
-    val buttonPanel = createButtonPanel(null, action, isDefault, isEnabled, null)
+    val buttonPanel = createButtonPanel(action = action, isDefault = isDefault, isEnabled = isEnabled)
     add(buttonPanel, BorderLayout.WEST)
 
-    val processPanel = action.processPanel
-    if (processPanel != null) {
-      add(processPanel, BorderLayout.CENTER)
+    val spinnerPanel = action.spinnerPanel
+    if (spinnerPanel != null) {
+      add(spinnerPanel, BorderLayout.CENTER)
     }
   }
 
@@ -53,36 +53,20 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     isEnabled: Boolean = true,
     optionalActions: List<AnAction>? = null
   ) : this() {
-    val buttonPanel = createButtonPanel(project, action, isDefault, isEnabled, optionalActions)
+    val buttonPanel = createButtonPanel(project, action, isDefault = isDefault, isEnabled = isEnabled, optionalActions)
     add(buttonPanel)
   }
 
   private fun createButtonPanel(
-    project: Project?,
+    project: Project? = null,
     action: AnAction,
     isDefault: Boolean = false,
     isEnabled: Boolean = true,
-    optionalActions: List<AnAction>?
+    optionalActions: List<AnAction>? = null
   ): JPanel {
-    val cols = if (optionalActions == null) 1 else 2
-    val buttonPanel = JPanel(GridLayout(1, cols, 5, 0))
     val button = createButton(action, isDefault = isDefault, isEnabled = isEnabled)
-    buttonPanel.add(button)
-
-    if (!optionalActions.isNullOrEmpty() && project != null) {
-      val (mainAction, otherActions) = optionalActions.headTail()
-
-      val optionButton = DefaultOptionalButton(mainAction, otherActions)
-      addGotItTooltip(project, optionButton)
-      buttonPanel.add(optionButton)
-    }
-
-    val gridBagPanel = JPanel(GridBagLayout())
-    val buttonPanelGridBagConstraints = GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
-                                                           GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                                                           Insets(8, 0, 0, 0), 0, 0)
-    gridBagPanel.add(buttonPanel, buttonPanelGridBagConstraints)
-    return gridBagPanel
+    val optionButton = createDefaultOptionalButton(optionalActions, project)
+    return createButtonPanel(button, optionButton)
   }
 
   private fun createButton(action: AnAction, isDefault: Boolean = false, isEnabled: Boolean = true): JButton {
@@ -118,6 +102,52 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     }
 
     override fun isDefaultButton() = true
+  }
+
+  private fun createDefaultOptionalButton(optionalActions: List<AnAction>?,
+                                          project: Project?): DefaultOptionalButton? {
+    if (!optionalActions.isNullOrEmpty() && project != null) {
+      val (mainAction, otherActions) = optionalActions.headTail()
+
+      val optionButton = DefaultOptionalButton(mainAction, otherActions)
+      addGotItTooltip(project, optionButton)
+      return optionButton
+    }
+    return null
+  }
+
+  private fun createButtonPanel(button: JComponent,
+                                optionButton: DefaultOptionalButton? = null): JPanel {
+    val cols = if (optionButton == null) 1 else 2
+    val buttonPanel = createPanelAndAddButton(button, cols)
+    if (optionButton != null) {
+      buttonPanel.add(optionButton)
+    }
+    return createGridBagPanel(buttonPanel)
+  }
+
+  companion object {
+    fun createButtonPanel(component: JComponent): JPanel {
+      val buttonPanel = createPanelAndAddButton(component, 1)
+      return createGridBagPanel(buttonPanel)
+    }
+
+    private fun createPanelAndAddButton(button: JComponent,
+                                        cols: Int): JPanel {
+      val buttonPanel = JPanel(GridLayout(1, cols, 5, 0))
+      buttonPanel.add(button)
+      return buttonPanel
+    }
+
+    private fun createGridBagPanel(buttonPanel: JPanel): JPanel {
+      val gridBagPanel = JPanel(GridBagLayout())
+      val buttonPanelGridBagConstraints = GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
+                                                             GridBagConstraints.CENTER,
+                                                             GridBagConstraints.NONE,
+                                                             Insets(8, 0, 0, 0), 0, 0)
+      gridBagPanel.add(buttonPanel, buttonPanelGridBagConstraints)
+      return gridBagPanel
+    }
   }
 }
 

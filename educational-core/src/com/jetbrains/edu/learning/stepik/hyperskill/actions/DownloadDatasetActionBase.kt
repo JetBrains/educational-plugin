@@ -22,7 +22,7 @@ abstract class DownloadDatasetActionBase(
 ) : ActionWithProgressIcon(actionText), DumbAware {
 
   init {
-    setUpProcessPanel(processMessage)
+    setUpSpinnerPanel(processMessage)
   }
 
   override fun update(e: AnActionEvent) {
