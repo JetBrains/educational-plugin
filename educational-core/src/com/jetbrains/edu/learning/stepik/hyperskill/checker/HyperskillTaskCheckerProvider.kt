@@ -70,4 +70,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
 
   override fun getDataTaskChecker(task: DataTask, project: Project): TaskChecker<DataTask>? =
     baseProvider.getDataTaskChecker(task, project)
+
+  override fun getStringTaskChecker(task: StringTask, project: Project): TaskChecker<StringTask>? =
+    baseProvider.getStringTaskChecker(task, project)
 }
