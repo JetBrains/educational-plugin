@@ -1,41 +1,30 @@
-package com.jetbrains.edu.learning.courseFormat.tasks;
+package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
+import java.util.*
 
-import java.util.Date;
-
-public class TheoryTask extends Task {
-  public static final String THEORY_TASK_TYPE = "theory";
-
-  @SuppressWarnings("unused") //used for deserialization
-  public TheoryTask() {}
-
-  public TheoryTask(@NotNull final String name) {
-    super(name);
-  }
-
-  public TheoryTask(@NotNull final String name,
-                    int id,
-                    int position,
-                    @NotNull Date updateDate,
-                    @NotNull CheckStatus status) {
-    super(name, id, position, updateDate, status);
-  }
-
+open class TheoryTask : Task {
   // needed to prohibit post empty submission at unsupported tasks opening (sorting, matching, text, etc)
-  public boolean postSubmissionOnOpen = true;
+  @JvmField
+  var postSubmissionOnOpen = true
 
-  @Override
-  public String getItemType() {
-    return THEORY_TASK_TYPE;
+  //used for deserialization
+  constructor()
+
+  constructor(name: String) : super(name)
+
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) :
+    super(name, id, position, updateDate, status)
+
+  override fun getItemType(): String = THEORY_TASK_TYPE
+
+  override fun getCheckAction(): CheckAction {
+    return CheckAction(lazyMessage("action.check.run.text"), lazyMessage("action.check.run.description"))
   }
 
-  @Override
-  public @NotNull CheckAction getCheckAction() {
-    return new CheckAction(EduCoreBundle.lazyMessage("action.check.run.text"),
-                           EduCoreBundle.lazyMessage("action.check.run.description"));
+  companion object {
+    const val THEORY_TASK_TYPE: String = "theory"
   }
 }
