@@ -58,8 +58,10 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
   }
 
-  private fun createRightActionsToolbar(): JPanel {
-    rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+  private fun createRightActionsToolbar(task: Task? = null): JPanel {
+    if (task?.isChangedOnFailed != true) {
+      rightActionsToolbar.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
+    }
     rightActionsToolbar.add(createSingleActionToolbar(LeaveCommentAction.ACTION_ID))
     return rightActionsToolbar
   }
@@ -137,7 +139,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
 
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
-    updateRightActionsToolbar()
+    updateRightActionsToolbar(task)
     updateCheckDetails(task)
   }
 
@@ -190,9 +192,9 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     }
   }
 
-  private fun updateRightActionsToolbar() {
+  private fun updateRightActionsToolbar(task: Task) {
     rightActionsToolbar.removeAll()
-    createRightActionsToolbar()
+    createRightActionsToolbar(task)
   }
 
   private fun JPanel.addNextTaskButton(task: Task) {

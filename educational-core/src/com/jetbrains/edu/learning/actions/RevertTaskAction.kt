@@ -25,6 +25,10 @@ import org.jetbrains.annotations.VisibleForTesting
 class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+    val task = EduUtils.getCurrentTask(project) ?: return
+    if (task.isChangedOnFailed) {
+      return
+    }
     val result = MessageDialogBuilder.yesNo(EduCoreBundle.message("action.Educational.RefreshTask.text"),
                                             EduCoreBundle.message("action.Educational.RefreshTask.progress.dropped")).ask(project)
     if (!result) return
@@ -36,8 +40,10 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
     EduUtils.updateAction(e)
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
-
-    if (!task.course.isStudy) {
+    if (
+      !task.course.isStudy ||
+      task.isChangedOnFailed // we disable revert action for tasks with changing on error
+    ) {
       val presentation = e.presentation
       presentation.isEnabledAndVisible = false
     }
