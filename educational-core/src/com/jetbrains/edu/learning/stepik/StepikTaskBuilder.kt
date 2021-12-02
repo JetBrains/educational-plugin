@@ -46,7 +46,7 @@ import org.jsoup.safety.Whitelist
 import java.util.*
 import java.util.Collections.unmodifiableList
 
-open class StepikTaskBuilder(course: Course, private val lesson: Lesson, private val stepSource: StepSource) {
+open class StepikTaskBuilder(course: Course, private val lesson: Lesson, stepSource: StepSource) {
   private val courseType: String = course.itemType
   private val courseMode: String = course.courseMode
   private val courseEnvironment: String = course.environment
@@ -243,20 +243,14 @@ open class StepikTaskBuilder(course: Course, private val lesson: Lesson, private
   private fun videoTask(name: String): VideoTask {
     val task = VideoTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     var descriptionText = EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
-    val block = stepSource.block
-    if (block != null) {
-      val video = block.video
-      if (video != null) {
-        task.thumbnail = video.thumbnail
-        task.sources = unmodifiableList(video.listUrls?.map { VideoSource(it.url, it.quality) } ?: emptyList())
-        descriptionText = VideoTaskResourcesManager().getText(task, lesson)
-      }
-      else {
-        LOG.warn("Video for step $stepId is null")
-      }
+    val video = step.video
+    if (video != null) {
+      task.thumbnail = video.thumbnail
+      task.sources = unmodifiableList(video.listUrls?.map { VideoSource(it.url, it.quality) } ?: emptyList())
+      descriptionText = VideoTaskResourcesManager().getText(task, lesson)
     }
     else {
-      LOG.warn("Block for step $stepId is null")
+      LOG.warn("Video for step $stepId is null")
     }
 
     task.descriptionText = descriptionText
