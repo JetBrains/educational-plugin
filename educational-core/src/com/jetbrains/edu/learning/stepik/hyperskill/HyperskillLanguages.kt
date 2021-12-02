@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 
 
 enum class HyperskillLanguages(private val id: String, private val languageName: String) {
@@ -45,7 +45,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
 
     @JvmStatic
     fun getRequestLanguage(eduLanguage: String): String? {
-      return values().find {it.eduLanguage == eduLanguage}?.requestLanguage
+      return values().find { it.eduLanguage == eduLanguage }?.requestLanguage
     }
 
     @JvmStatic
@@ -55,7 +55,10 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
 
     @JvmStatic
     fun getAvailableLanguages(): Set<HyperskillLanguages> {
-      return values().filter { language -> CourseCompatibilityProviderEP.find(language.id) != null }.toSet()
+      val availableLanguages = EduConfiguratorManager.allExtensions()
+        .filter { it.courseType == HYPERSKILL_TYPE }
+        .mapTo(HashSet()) { it.language }
+      return values().filter { language -> language.id in availableLanguages }.toSet()
     }
   }
 }

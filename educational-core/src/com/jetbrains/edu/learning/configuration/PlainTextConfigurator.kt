@@ -33,6 +33,9 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
   override val testDirs: List<String>
     get() = listOf(TEST_DIR_NAME)
 
+  override val isEnabled: Boolean
+    get() = ApplicationManager.getApplication().isInternal || isUnitTestMode
+
   override val logo: Icon
     get() = AllIcons.FileTypes.Text
 
