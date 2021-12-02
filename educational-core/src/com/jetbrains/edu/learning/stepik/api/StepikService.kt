@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.jetbrains.edu.learning.stepik.api
 
 import com.jetbrains.edu.learning.submissions.SubmissionData

@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
@@ -11,7 +9,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-@Suppress("unused")
 interface HyperskillService {
 
   @POST("oauth2/token/")

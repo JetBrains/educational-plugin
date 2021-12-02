@@ -18,7 +18,6 @@ public class StepikUserInfo implements UserInfo {
   @JsonProperty("last_name")
   private String myLastName;
 
-  @SuppressWarnings("unused") //needed for deserialization
   private StepikUserInfo() {
     myFirstName = "";
     myLastName = "";

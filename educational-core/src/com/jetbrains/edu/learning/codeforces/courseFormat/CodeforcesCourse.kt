@@ -36,7 +36,7 @@ open class CodeforcesCourse : Course {
   val isOngoing: Boolean
     get() = (startDate != null && ZonedDateTime.now().isAfter(startDate)) && (endDateTime?.isAfter(ZonedDateTime.now()) == true)
 
-  @Suppress("unused") //used for deserialization
+  //used for deserialization
   constructor()
 
   constructor(contestParameters: ContestParameters, doc: Document) {

@@ -70,7 +70,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     }
   }
 
-  @Suppress("unused")
   private enum class CourseSelectionViewTab {
     MARKETPLACE,
     JBA,

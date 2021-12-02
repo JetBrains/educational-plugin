@@ -26,7 +26,6 @@ class ChoiceTask : Task {
     }
 
   //used for deserialization
-  @Suppress("unused")
   constructor()
 
   constructor(name: String) : super(name)

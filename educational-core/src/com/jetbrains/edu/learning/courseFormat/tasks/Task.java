@@ -66,7 +66,8 @@ public abstract class Task extends StudyItem {
   @Nullable
   private String submissionsId;
 
-  public Task() {} //use only for deserialization
+  //used for deserialization
+  public Task() {}
 
   public Task(@NotNull final String name) {
     super(name);

@@ -4,8 +4,7 @@ class ChoiceOption {
   var text: String = ""
   var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 
-  //used for deserialization
-  @Suppress("unused")
+  @Suppress("unused") //used for deserialization
   private constructor()
 
   constructor(text: String) {

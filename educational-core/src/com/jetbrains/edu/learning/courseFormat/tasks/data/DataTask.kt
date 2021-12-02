@@ -26,7 +26,7 @@ class DataTask : Task {
   val isTimeLimited: Boolean
     get() = attempt?.endDateTime != null
 
-  @Suppress("unused") //used for deserialization
+  //used for deserialization
   constructor() : super()
 
   constructor(name: String) : super(name)

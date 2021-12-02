@@ -9,7 +9,6 @@ class VideoTask : TheoryTask {
   var currentTime = 0
 
   //used for deserialization
-  @Suppress("unused")
   constructor()
 
   constructor(name: String) : super(name)
@@ -29,8 +28,6 @@ class VideoSource(var src: String, var res: String) {
   val type = "video/mp4"
   var label = "${res}p"
 
-  //used for deserialization
-  @Suppress("unused")
+  @Suppress("unused") //used for deserialization
   constructor() : this("", "")
-
 }

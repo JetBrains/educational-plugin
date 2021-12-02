@@ -7,7 +7,7 @@ import javax.swing.Icon
 
 class IdeTask : Task {
 
-  @Suppress("unused") //used for deserialization
+  //used for deserialization
   constructor() : super()
 
   constructor(name: String) : super(name)
