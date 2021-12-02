@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 
 /**
  * If you add any new methods here, please do not forget to add it also to
- * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskCheckerProvider
+ * @see com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
  */
 interface TaskCheckerProvider {
   val codeExecutor: CodeExecutor
