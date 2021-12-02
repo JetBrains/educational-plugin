@@ -164,7 +164,7 @@ object StepikCourseLoader {
   fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {
-      val builder = StepikTaskBuilder(course, lesson, step, step.id)
+      val builder = StepikTaskBuilder(course, lesson, step)
       if (!builder.isSupported(step.block!!.name)) continue
       val task = builder.createTask(step.block!!.name)
       if (task != null) {

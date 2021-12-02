@@ -101,7 +101,7 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
       }
     }
 
-    val createdTask = StepikTaskBuilder(myCourse, lesson, stepSource, -1).createTask(stepSource.block?.name!!) ?: error("")
+    val createdTask = StepikTaskBuilder(myCourse, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
     assertEquals(1, createdTask.taskFiles.size)
     assertEquals(1, createdTask.getTaskFile(StringTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(EduCoreBundle.message("string.task.comment.file"),

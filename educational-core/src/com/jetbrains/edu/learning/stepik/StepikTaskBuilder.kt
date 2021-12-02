@@ -46,27 +46,24 @@ import org.jsoup.safety.Whitelist
 import java.util.*
 import java.util.Collections.unmodifiableList
 
-open class StepikTaskBuilder(
-  course: Course,
-  private val lesson: Lesson,
-  private val stepSource: StepSource,
-  private val stepId: Int
-) {
+open class StepikTaskBuilder(course: Course, private val lesson: Lesson, private val stepSource: StepSource) {
   private val courseType: String = course.itemType
   private val courseMode: String = course.courseMode
   private val courseEnvironment: String = course.environment
   private val language: Language = course.languageById ?: Language.ANY
   private val languageVersion: String = course.languageVersion ?: ""
   private val step: Step = stepSource.block ?: error("Step is empty")
+  private val stepId: Int = stepSource.id
+  private val stepPosition: Int = stepSource.position
   private val updateDate = stepSource.updateDate ?: Date(0)
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
-    EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    REMOTE_EDU_TASK_TYPE to { name: String -> RemoteEduTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) },
-    DATA_TASK_TYPE to { name: String -> DataTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked) }
+    EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    REMOTE_EDU_TASK_TYPE to { name: String -> RemoteEduTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    DATA_TASK_TYPE to { name: String -> DataTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) }
   )
 
   private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskType.values().associateBy(
@@ -155,7 +152,7 @@ open class StepikTaskBuilder(
   }
 
   private fun codeTask(name: String): CodeTask {
-    val task = CodeTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = CodeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     val options = step.pycharmOptions()
 
     task.fillDescription()
@@ -175,7 +172,7 @@ open class StepikTaskBuilder(
   }
 
   private fun choiceTask(name: String): ChoiceTask {
-    val task = ChoiceTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = ChoiceTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
     task.descriptionFormat = DescriptionFormat.HTML
 
@@ -224,7 +221,7 @@ open class StepikTaskBuilder(
   }
 
   private fun stringTask(name: String): StringTask {
-    val task = StringTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = StringTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
     task.descriptionFormat = DescriptionFormat.HTML
     createTaskFileForStringTask(
@@ -235,7 +232,7 @@ open class StepikTaskBuilder(
   }
 
   private fun theoryTask(name: String): TheoryTask {
-    val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.descriptionText = clearCodeBlockFromTags()
     task.descriptionFormat = DescriptionFormat.HTML
 
@@ -244,7 +241,7 @@ open class StepikTaskBuilder(
   }
 
   private fun videoTask(name: String): VideoTask {
-    val task = VideoTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = VideoTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     var descriptionText = EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
     val block = stepSource.block
     if (block != null) {
@@ -269,7 +266,7 @@ open class StepikTaskBuilder(
   }
 
   private fun dataTask(name: String): DataTask {
-    val task = DataTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = DataTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     val options = step.pycharmOptions()
 
     task.fillDescription()
@@ -295,7 +292,7 @@ open class StepikTaskBuilder(
   }
 
   private fun unsupportedTask(@NonNls name: String): Task {
-    val task = TheoryTask(name, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
     task.descriptionFormat = DescriptionFormat.HTML
@@ -310,12 +307,16 @@ open class StepikTaskBuilder(
     val taskName: String = stepOptions.title ?: DEFAULT_EDU_TASK_NAME
 
     val taskType = type ?: stepOptions.taskType
-    val task = pluginTaskTypes[taskType]?.invoke(taskName)
-               ?: EduTask(taskName, stepId, stepSource.position, updateDate, CheckStatus.Unchecked)
+    val task = pluginTaskTypes[taskType]?.invoke(taskName) ?: EduTask(taskName, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.customPresentableName = stepOptions.customPresentableName
     task.solutionHidden = stepOptions.solutionHidden
 
-    task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty() && courseType != HYPERSKILL_TYPE) stepOptions.descriptionText.orEmpty() else step.text
+    task.descriptionText = if (!stepOptions.descriptionText.isNullOrEmpty() && courseType != HYPERSKILL_TYPE) {
+      stepOptions.descriptionText.orEmpty()
+    }
+    else {
+      step.text
+    }
     task.descriptionFormat = stepOptions.descriptionFormat
 
     initTaskFiles(task)
