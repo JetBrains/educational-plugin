@@ -1,36 +1,24 @@
-package com.jetbrains.edu.learning.courseFormat.tasks;
+package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import java.util.*
 
-import java.util.Date;
+class CodeTask : Task {
+  //used for deserialization
+  constructor()
 
-public class CodeTask extends Task {
-  public static final String CODE_TASK_TYPE = "code";
+  constructor(name: String) : super(name)
 
-  @SuppressWarnings("unused") //used for deserialization
-  public CodeTask() {}
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) :
+    super(name, id, position, updateDate, status)
 
-  public CodeTask(@NotNull final String name) {
-    super(name);
-  }
+  override fun getItemType(): String = CODE_TASK_TYPE
 
-  public CodeTask(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
-    super(name, id, position, updateDate, status);
-  }
+  override fun supportSubmissions(): Boolean = true
 
-  @Override
-  public String getItemType() {
-    return CODE_TASK_TYPE;
-  }
+  override fun isPluginTaskType(): Boolean = false
 
-  @Override
-  public boolean supportSubmissions() {
-    return true;
-  }
-
-  @Override
-  public boolean isPluginTaskType() {
-    return false;
+  companion object {
+    const val CODE_TASK_TYPE: String = "code"
   }
 }
