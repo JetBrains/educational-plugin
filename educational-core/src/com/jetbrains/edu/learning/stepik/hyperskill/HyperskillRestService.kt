@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.io.send
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -131,7 +132,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
   private fun openProblem(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val stepId = getIntParameter(STEP_ID, urlDecoder)
-    val languageParameter = getStringParameter("language", urlDecoder)
+    val languageParameter = getStringParameter(LANGUAGE, urlDecoder)
     val language = languageParameter ?: getLanguageSelectedByUser().onError { error -> return error }
     val isLanguageSelectedByUser = languageParameter == null
     val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
@@ -209,19 +210,32 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun showError(message: String) {
-    Notification("EduTools", EduNames.JBA, message, NotificationType.WARNING,
-                 HSHyperlinkListener(false)).notify(null)
+    Notification("EduTools", EduNames.JBA, message, NotificationType.WARNING)
+      .setListener(HSHyperlinkListener(false))
+      .notify(null)
   }
 
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()
 
   companion object {
     // Parameters
-    private const val CODE = "code"
-    private const val PROJECT_ID = "project_id"
-    private const val STAGE_ID = "stage_id"
-    private const val STEP_ID = "step_id"
-    private const val USER_ID = "user_id"
+    @NonNls
+    private const val CODE: String = "code"
+
+    @NonNls
+    private const val LANGUAGE: String = "language"
+
+    @NonNls
+    private const val PROJECT_ID: String = "project_id"
+
+    @NonNls
+    private const val STAGE_ID: String = "stage_id"
+
+    @NonNls
+    private const val STEP_ID: String = "step_id"
+
+    @NonNls
+    private const val USER_ID: String = "user_id"
 
     const val EDU_HYPERSKILL_SERVICE_NAME: String = "$EDU_PREFIX/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\?$CODE=(\w+)""")
