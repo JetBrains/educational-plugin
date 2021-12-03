@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getConnector
@@ -179,10 +180,11 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       return task.apply { fillForCourseCreatorMode() }
     }
 
-    val connector = course.getConnector()
-    when (val result = connector.getActiveAttemptOrPostNew(task)) {
-      is Ok -> fillChoiceTask(result.value, task)
-      is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+    if (!isUnitTestMode) {
+      when (val result = course.getConnector().getActiveAttemptOrPostNew(task)) {
+        is Ok -> fillChoiceTask(result.value, task)
+        is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+      }
     }
 
     initTaskFiles(task)
