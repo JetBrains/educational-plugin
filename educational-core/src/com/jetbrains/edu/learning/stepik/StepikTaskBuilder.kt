@@ -58,12 +58,13 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private val updateDate = stepSource.updateDate ?: Date(0)
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
+    // lexicographical order
+    DATA_TASK_TYPE to { name: String -> DataTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
     EDU_TASK_TYPE to { name: String -> EduTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
-    REMOTE_EDU_TASK_TYPE to { name: String -> RemoteEduTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
-    OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
     IDE_TASK_TYPE to { name: String -> IdeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    OUTPUT_TASK_TYPE to { name: String -> OutputTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
+    REMOTE_EDU_TASK_TYPE to { name: String -> RemoteEduTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
-    DATA_TASK_TYPE to { name: String -> DataTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) }
   )
 
   private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskType.values().associateBy(
