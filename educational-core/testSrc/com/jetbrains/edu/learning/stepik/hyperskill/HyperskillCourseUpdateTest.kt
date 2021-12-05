@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.testAction
@@ -503,10 +504,58 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
-  private fun Task.toTaskUpdate(changeTask: Task.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
-    val remoteTask = this.copy()
+  fun `test project with remote edu problems updated`() {
+    val taskFileName = "Task.txt"
+    val oldText = "old text"
+    val oldCheckProfile = "old check profile"
+    val newText = "new text"
+    val newCheckProfile = "new check profile"
+    val topic = "topic"
+
+    course = hyperskillCourseWithFiles(projectId = null) {
+      section(HYPERSKILL_TOPICS) {
+        lesson(topic) {
+          remoteEduTask(taskDescription = oldText, checkProfile = oldCheckProfile) {
+            taskFile(taskFileName, oldText)
+            taskFile("build.gradle")
+          }
+        }
+      }
+    }
+
+    val tasks = course.getTopicsSection()!!.getLesson(topic)!!.taskList
+    updateCourse(tasks.map {
+      (it as RemoteEduTask).toTaskUpdate {
+        descriptionText = newText
+        checkProfile = newCheckProfile
+        updateDate = Date(100)
+        getTaskFile(taskFileName)!!.setText(newText)
+      }
+    })
+
+    fileTree {
+      dir(HYPERSKILL_TOPICS) {
+        dir("topic") {
+          dir("task1") {
+            file(taskFileName, newText)
+            file("task.html", newText)
+            file("build.gradle")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+
+
+    val task = course.getTopicsSection()!!.getLesson(topic)!!.taskList[0] as RemoteEduTask
+    assertEquals(newCheckProfile, task.checkProfile)
+  }
+
+  private fun <T: Task> T.toTaskUpdate(changeTask: T.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
+    val remoteTask = copyAs(this::class.java)
     remoteTask.changeTask()
-    remoteTask.init(this.course, this.parent, false)
+    remoteTask.init(course, parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
   }
 

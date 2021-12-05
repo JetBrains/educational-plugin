@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
@@ -126,6 +127,9 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     if (first is ChoiceTask && second is ChoiceTask) {
       result = result || first.choiceOptions != second.choiceOptions
     }
+    if (first is RemoteEduTask && second is RemoteEduTask) {
+      result = result || first.checkProfile != second.checkProfile
+    }
     return result
   }
 
@@ -159,12 +163,16 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
 
       problemsUpdates.forEach {
         val localTask = it.localTask
+        val taskFromServer = it.taskFromServer
         if (localTask.status != CheckStatus.Solved) {
           // if name of remote task changes name of dir local task will not
-          GeneratorUtils.createTaskContent(project, it.taskFromServer, localTask.getDir(project.courseDir)!!)
+          GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
         }
-        updateTaskDescription(localTask, it.taskFromServer)
-        localTask.updateDate = it.taskFromServer.updateDate
+        updateTaskDescription(localTask, taskFromServer)
+        localTask.updateDate = taskFromServer.updateDate
+        if (localTask is RemoteEduTask && taskFromServer is RemoteEduTask) {
+          localTask.checkProfile = taskFromServer.checkProfile
+        }
         YamlFormatSynchronizer.saveItemWithRemoteInfo(localTask)
       }
     }
