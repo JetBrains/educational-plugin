@@ -197,11 +197,12 @@ abstract class MarketplaceConnector : CourseConnector {
 
   @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
+    val buildNumber = getBuildNumberForRequests()
 
     //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
     val uuid = UUIDProvider.getUUID()
 
-    val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$EDU_PLUGIN_BUILD"
+    val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$buildNumber"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
