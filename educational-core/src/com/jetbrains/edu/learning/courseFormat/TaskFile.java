@@ -62,7 +62,7 @@ public class TaskFile {
     for (AnswerPlaceholder answerPlaceholder : answerPlaceholders) {
       answerPlaceholder.initAnswerPlaceholder(this, isRestarted);
     }
-    answerPlaceholders.sort(new AnswerPlaceholderComparator());
+    answerPlaceholders.sort(AnswerPlaceholderComparator.INSTANCE);
     for (int i = 0; i < answerPlaceholders.size(); i++) {
       answerPlaceholders.get(i).setIndex(i);
     }
@@ -183,7 +183,7 @@ public class TaskFile {
   }
 
   public void sortAnswerPlaceholders() {
-    myAnswerPlaceholders.sort(new AnswerPlaceholderComparator());
+    myAnswerPlaceholders.sort(AnswerPlaceholderComparator.INSTANCE);
     for (int i = 0; i < myAnswerPlaceholders.size(); i++) {
       myAnswerPlaceholders.get(i).setIndex(i);
     }

@@ -1,15 +1,7 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import java.util.Comparator;
-
-public class AnswerPlaceholderComparator implements Comparator<AnswerPlaceholder> {
-  @Override
-  public int compare(AnswerPlaceholder o1, AnswerPlaceholder answerPlaceholder) {
-    return o1.getOffset() - answerPlaceholder.getOffset();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return false;
+object AnswerPlaceholderComparator : Comparator<AnswerPlaceholder> {
+  override fun compare(o1: AnswerPlaceholder, answerPlaceholder: AnswerPlaceholder): Int {
+    return o1.offset - answerPlaceholder.offset
   }
 }
