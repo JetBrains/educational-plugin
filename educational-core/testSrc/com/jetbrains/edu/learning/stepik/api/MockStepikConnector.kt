@@ -14,7 +14,7 @@ class MockStepikConnector : StepikConnector() {
 
   private val attachments: MutableMap<String, String> = mutableMapOf()
 
-  public override val baseUrl: String
+  override val baseUrl: String
     get() {
       return _baseUrl ?: helper.baseUrl
     }

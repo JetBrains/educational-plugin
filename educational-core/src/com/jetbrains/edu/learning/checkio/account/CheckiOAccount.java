@@ -16,10 +16,8 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
   @SuppressWarnings("unused") // used for deserialization
   private CheckiOAccount() { }
 
-  public CheckiOAccount(CheckiOUserInfo info, TokenInfo tokens) {
+  public CheckiOAccount(@NotNull TokenInfo tokens) {
     super(tokens.getExpiresIn());
-    setUserInfo(info);
-    saveTokens(tokens);
   }
 
   public Element serializeIntoService(@NotNull @NonNls String serviceName) {

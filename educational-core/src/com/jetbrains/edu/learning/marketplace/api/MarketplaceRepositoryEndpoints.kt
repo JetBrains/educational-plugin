@@ -9,7 +9,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface MarketplaceRepositoryService {
+interface MarketplaceRepositoryEndpoints {
 
   @POST("/api/search/graphql")
   fun search(@Body query: QueryData): Call<CoursesData>

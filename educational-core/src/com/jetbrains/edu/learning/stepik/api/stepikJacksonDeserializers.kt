@@ -41,7 +41,7 @@ private val LOG = Logger.getInstance(EduUtils::class.java)
 class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): PyCharmStepOptions {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
+    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
     val node: JsonNode = jp.codec.readTree(jp)
     val migratedNode = migrate(node as ObjectNode, JSON_FORMAT_VERSION)
     return objectMapper.treeToValue(migratedNode, PyCharmStepOptions::class.java)
@@ -86,7 +86,7 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
     val jsonObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION)
 
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
+    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
     val reply = objectMapper.treeToValue(jsonObject, Reply::class.java)
     // We need to save original version of reply object
     // to correct deserialize Reply#eduTask
@@ -213,7 +213,7 @@ private class StepikSubmissionAnswerPlaceholderDeserializer @JvmOverloads constr
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): AnswerPlaceholder? {
     val placeholderObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     placeholderObject.migrate(replyVersion, language)
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
+    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
     val placeholder = objectMapper.treeToValue(placeholderObject, AnswerPlaceholder::class.java)
 
     if (placeholderObject.has(SerializationUtils.Json.SELECTED)) {

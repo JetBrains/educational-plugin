@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
-import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.AttemptsList
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
@@ -9,25 +8,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-interface HyperskillService {
-
-  @POST("oauth2/token/")
-  @FormUrlEncoded
-  fun getTokens(@Field("client_id") clientId: String,
-                @Field("client_secret") clientSecret: String,
-                @Field("redirect_uri") redirectUri: String,
-                @Field("code") code: String,
-                @Field("grant_type") grantType: String): Call<TokenInfo>
-
-  @POST("oauth2/token/")
-  @FormUrlEncoded
-  fun refreshTokens(
-    @Field("grant_type") grantType: String,
-    @Field("client_id") clientId: String,
-    @Field("client_secret") clientSecret: String,
-    @Field("refresh_token") refreshToken: String
-  ): Call<TokenInfo>
-
+interface HyperskillEndpoints {
   @GET("api/profiles/current")
   fun getCurrentUserInfo(): Call<ProfilesList>
 

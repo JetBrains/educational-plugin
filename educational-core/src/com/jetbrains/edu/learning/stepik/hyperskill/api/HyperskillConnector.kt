@@ -9,9 +9,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -30,53 +30,33 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import okhttp3.*
 import retrofit2.Call
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-abstract class HyperskillConnector : StepikBaseConnector {
+abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount>(), StepikBaseConnector {
+  override val account: HyperskillAccount?
+    get() = HyperskillSettings.INSTANCE.account
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
-  private val connectionPool: ConnectionPool = ConnectionPool()
-  private val converterFactory: JacksonConverterFactory
-  val objectMapper: ObjectMapper
+  override val clientId: String = CLIENT_ID
 
-  init {
+  override val clientSecret: String = CLIENT_SECRET
+
+  override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
-    objectMapper = StepikConnector.createMapper(module)
-    converterFactory = JacksonConverterFactory.create(objectMapper)
+    StepikConnector.createObjectMapper(module)
   }
 
-  protected abstract val baseUrl: String
+  private val hyperskillEndpoints: HyperskillEndpoints
+    get() = hyperskillEndpoints(account)
 
-  private val authorizationService: HyperskillService
-    get() {
-      val retrofit = createRetrofitBuilder(baseUrl, connectionPool)
-        .addConverterFactory(converterFactory)
-        .build()
-
-      return retrofit.create(HyperskillService::class.java)
-    }
-
-  private val service: HyperskillService
-    get() {
-      val account = HyperskillSettings.INSTANCE.account
-      val accessToken = account?.getAccessToken()
-      return service(account, accessToken)
-    }
-
-  private fun service(account: HyperskillAccount?, accessToken: String?): HyperskillService {
-    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
-      account.refreshTokens()
-    }
-
-    val retrofit = createRetrofitBuilder(baseUrl, connectionPool, accessToken = accessToken)
-      .addConverterFactory(converterFactory)
-      .build()
-
-    return retrofit.create(HyperskillService::class.java)
+  private fun hyperskillEndpoints(
+    account: HyperskillAccount?,
+    accessToken: String? = account?.getAccessToken()
+  ): HyperskillEndpoints {
+    return getEndpoints(account, accessToken)
   }
 
   // Authorization requests:
@@ -89,9 +69,7 @@ abstract class HyperskillConnector : StepikBaseConnector {
   }
 
   fun login(code: String): Boolean {
-    val response = authorizationService.getTokens(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code,
-                                                  AUTHORIZATION_CODE).executeHandlingExceptions()
-    val tokenInfo = response?.body() ?: return false
+    val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
     val currentUser = getCurrentUser(account, tokenInfo.accessToken) ?: return false
     account.userInfo = currentUser
@@ -101,20 +79,10 @@ abstract class HyperskillConnector : StepikBaseConnector {
     return true
   }
 
-  private fun HyperskillAccount.refreshTokens() {
-    val refreshToken = getRefreshToken() ?: return
-    val response = authorizationService.refreshTokens(REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET, refreshToken).executeHandlingExceptions()
-    val tokens = response?.body()
-    if (tokens != null) {
-      tokenExpiresIn = tokens.expiresIn
-      saveTokens(tokens)
-    }
-  }
-
   // Get requests:
 
-  fun getCurrentUser(account: HyperskillAccount, accessToken: String?): HyperskillProfileInfo? {
-    val response = service(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
+  fun getCurrentUser(account: HyperskillAccount, accessToken: String? = account.getAccessToken()): HyperskillProfileInfo? {
+    val response = hyperskillEndpoints(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
     val userInfo = response?.body()?.profiles?.firstOrNull()
     if (userInfo?.isGuest == true) {
       // it means that session is broken and we should force user to relogin
@@ -126,25 +94,25 @@ abstract class HyperskillConnector : StepikBaseConnector {
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
-    val response = service.stages(projectId).executeHandlingExceptions()
+    val response = hyperskillEndpoints.stages(projectId).executeHandlingExceptions()
     return response?.body()?.stages
   }
 
   fun getProject(projectId: Int): Result<HyperskillProject, String> {
-    return service.project(projectId).executeParsingErrors(true).flatMap {
+    return hyperskillEndpoints.project(projectId).executeParsingErrors(true).flatMap {
       val result = it.body()?.projects?.firstOrNull()
       if (result == null) Err(it.message()) else Ok(result)
     }
   }
 
   private fun getStepSources(stepIds: List<Int>): Result<List<HyperskillStepSource>, String> =
-    service.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
+    hyperskillEndpoints.steps(stepIds.joinToString(separator = ",")).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
   fun getStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
-    service.steps(topic).executeAndExtractFromBody().flatMap { Ok(it.steps) }
+    hyperskillEndpoints.steps(topic).executeAndExtractFromBody().flatMap { Ok(it.steps) }
 
   fun getStepSource(stepId: Int): Result<HyperskillStepSource, String> =
-    service.steps(stepId.toString()).executeAndExtractFromBody().flatMap {
+    hyperskillEndpoints.steps(stepId.toString()).executeAndExtractFromBody().flatMap {
       val result = it.steps.firstOrNull()
       if (result == null) Err("Can't get step source with $stepId id") else Ok(result)
     }
@@ -166,7 +134,7 @@ abstract class HyperskillConnector : StepikBaseConnector {
     var page = 1
     val topics = mutableListOf<HyperskillTopic>()
     do {
-      val topicsList = service.topics(stage.id, page).executeHandlingExceptions(true)?.body() ?: break
+      val topicsList = hyperskillEndpoints.topics(stage.id, page).executeHandlingExceptions(true)?.body() ?: break
       topics.addAll(topicsList.topics.filter { it.theoryId != null })
       page += 1
     }
@@ -237,12 +205,12 @@ abstract class HyperskillConnector : StepikBaseConnector {
   }
 
   fun getSubmissions(stepIds: Set<Int>): List<Submission> {
-    val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id ?: return emptyList()
+    val userId = account?.userInfo?.id ?: return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     while (true) {
-      val submissionsList = service.submission(userId, stepIds.joinToString(separator = ","),
-                                               currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissionsList = hyperskillEndpoints.submission(userId, stepIds.joinToString(separator = ","),
+                                                           currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       if (submissions.isEmpty() || !submissionsList.meta.containsKey("has_next") || submissionsList.meta["has_next"] == false) {
@@ -254,18 +222,18 @@ abstract class HyperskillConnector : StepikBaseConnector {
   }
 
   fun getSubmissionById(submissionId: Int): Result<Submission, String> {
-    return withTokenRefreshIfNeeded { service.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions) }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   fun getUser(userId: Int): Result<User, String> {
-    return service.user(userId).executeAndExtractFirst(UsersList::users)
+    return hyperskillEndpoints.user(userId).executeAndExtractFirst(UsersList::users)
   }
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
     return withTokenRefreshIfNeeded {
-      val userId = HyperskillSettings.INSTANCE.account?.userInfo?.id
+      val userId = account?.userInfo?.id
                    ?: return@withTokenRefreshIfNeeded Err("Attempt to get list of attempts for unauthorized user")
-      val attempts = service.attempts(task.id, userId).executeParsingErrors(true).flatMap {
+      val attempts = hyperskillEndpoints.attempts(task.id, userId).executeParsingErrors(true).flatMap {
         val result = it.body()?.attempts
         if (result == null) Err(it.message()) else Ok(result)
       }.onError { return@withTokenRefreshIfNeeded Err(it) }
@@ -276,7 +244,7 @@ abstract class HyperskillConnector : StepikBaseConnector {
   }
 
   fun getDataset(attemptId: Int): Result<String, String> {
-    return service.dataset(attemptId).executeParsingErrors().flatMap {
+    return hyperskillEndpoints.dataset(attemptId).executeParsingErrors().flatMap {
       val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
       Ok(responseBody.string())
     }
@@ -285,26 +253,26 @@ abstract class HyperskillConnector : StepikBaseConnector {
   // Post requests:
 
   override fun postSubmission(submission: Submission): Result<Submission, String> {
-    return withTokenRefreshIfNeeded { service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   override fun postAttempt(task: Task): Result<Attempt, String> {
-    return withTokenRefreshIfNeeded { service.attempt(Attempt(task.id)).executeAndExtractFirst(AttemptsList::attempts) }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.attempt(Attempt(task.id)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
   fun markTheoryCompleted(step: Int): Result<Any, String> =
-    withTokenRefreshIfNeeded { service.completeStep(step).executeParsingErrors(true) }
+    withTokenRefreshIfNeeded { hyperskillEndpoints.completeStep(step).executeParsingErrors(true) }
 
   fun getWebSocketConfiguration(): Result<WebSocketConfiguration, String> {
-    return withTokenRefreshIfNeeded { service.websocket().executeAndExtractFromBody() }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.websocket().executeAndExtractFromBody() }
   }
 
   fun sendFrontendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
-    return withTokenRefreshIfNeeded { service.sendFrontendEvents(events).executeAndExtractFromBody() }.map { it.events }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.sendFrontendEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
   fun sendTimeSpentEvents(events: List<HyperskillTimeSpentEvent>): Result<List<HyperskillTimeSpentEvent>, String> {
-    return withTokenRefreshIfNeeded { service.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
@@ -318,7 +286,7 @@ abstract class HyperskillConnector : StepikBaseConnector {
     val result = call()
     if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
         && result is Err && result.error == EduCoreBundle.message("error.access.denied")) {
-      HyperskillSettings.INSTANCE.account?.refreshTokens()
+      refreshTokens()
       return call()
     }
     return result
@@ -394,6 +362,13 @@ abstract class HyperskillConnector : StepikBaseConnector {
 
     @JvmStatic
     val AUTHORIZATION_TOPIC = com.intellij.util.messages.Topic.create("Edu.hyperskillLoggedIn", EduLogInListener::class.java)
+
+    private val AUTHORISATION_CODE_URL: String
+      get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
+        URLUtil.encodeURIComponent(REDIRECT_URI)
+      }&grant_type=code&scope=read+write&response_type=code", "login")
+    private val CLIENT_ID: String = HyperskillOAuthBundle.value("hyperskillClientId")
+    private val CLIENT_SECRET: String = HyperskillOAuthBundle.value("hyperskillClientSecret")
 
     @JvmStatic
     fun getInstance(): HyperskillConnector = service()

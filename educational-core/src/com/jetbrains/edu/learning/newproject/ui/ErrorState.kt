@@ -140,8 +140,7 @@ sealed class ErrorState(
         return false
       }
       val checkiOConnectorProvider = selectedCourse.configurator as? CheckiOConnectorProvider ?: return false
-      val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
-      return checkiOAccount == null
+      return !checkiOConnectorProvider.oAuthConnector.isLoggedIn()
     }
   }
 }

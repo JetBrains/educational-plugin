@@ -54,7 +54,7 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
       assert code != null; // cannot be null because of pattern
 
       LOG.info(myPlatformName + ": OAuth code is handled");
-      final String errorMessage = myOAuthConnector.codeHandler(code);
+      final String errorMessage = myOAuthConnector.login(code);
 
       if (errorMessage == null) {
         return sendOkResponse(request, context);

@@ -10,12 +10,11 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
-import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthEndpoint
+import com.jetbrains.edu.learning.checkio.api.CheckiOEndpoints
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
@@ -23,31 +22,31 @@ import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredExcepti
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications.error
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST
-import com.jetbrains.edu.learning.createRetrofitBuilder
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import okhttp3.ConnectionPool
 import org.apache.http.client.utils.URIBuilder
-import org.jetbrains.builtInWebServer.BuiltInServerOptions
 import org.jetbrains.ide.BuiltInServerManager
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.net.URI
 
-abstract class CheckiOOAuthConnector protected constructor(private val clientId: String, private val clientSecret: String) {
+abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount>() {
 
   @get:Transient
   @set:Transient
-  abstract var account: CheckiOAccount?
+  abstract override var account: CheckiOAccount?
+
+  override val baseUrl: String = CheckiONames.CHECKIO_OAUTH_HOST
+
+  override val baseOAuthTokenUrl: String = "oauth/token/"
 
   protected abstract val oAuthServicePath: String
 
   protected abstract val platformName: String
 
-  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-  private val authorizationService: CheckiOOAuthEndpoint by lazy { authorizationService() }
+  override val objectMapper: ObjectMapper by lazy {
+    ConnectorUtils.createRegisteredMapper(SimpleModule())
+  }
 
-  private val connectionPool: ConnectionPool = ConnectionPool()
-  private val converterFactory: JacksonConverterFactory
-  private val objectMapper: ObjectMapper
+  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
   private val currentPort: Int
     get() = BuiltInServerManager.getInstance().port
@@ -59,47 +58,29 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
     }
 
   private val redirectUri: String
-    get() = """$CHECKIO_OAUTH_REDIRECT_HOST:${currentPort}$oAuthServicePath"""
-
-  init {
-    require(SPACES_SYMBOLS_REGEX !in clientId && SPACES_SYMBOLS_REGEX !in clientSecret) {
-      "Client properties are not provided"
+    get() = if (EduUtils.isAndroidStudio()) {
+      customServer.handlingUri
+    }
+    else {
+      """$CHECKIO_OAUTH_REDIRECT_HOST:${currentPort}$oAuthServicePath"""
     }
 
-    val module = SimpleModule()
-    objectMapper = ConnectorUtils.createRegisteredMapper(module)
-    converterFactory = JacksonConverterFactory.create(objectMapper)
-  }
-
-  private fun authorizationService(): CheckiOOAuthEndpoint =
-    createRetrofitBuilder(CheckiONames.CHECKIO_OAUTH_HOST, connectionPool)
-      .addConverterFactory(converterFactory)
-      .build()
-      .create(CheckiOOAuthEndpoint::class.java)
-
-  private fun getTokens(code: String, redirectUri: String): TokenInfo {
-    return authorizationService.getTokens(AUTHORIZATION_CODE, clientSecret, clientId, code, redirectUri).executeHandlingCheckiOExceptions()
-  }
-
-  private fun refreshTokens(refreshToken: String): TokenInfo {
-    return authorizationService.refreshTokens(REFRESH_TOKEN, clientSecret, clientId, refreshToken).executeHandlingCheckiOExceptions()
-  }
+  private val checkiOEndpoints: CheckiOEndpoints
+    get() = getEndpoints()
 
   open fun getAccessToken(): String {
     val currentAccount = account ?: throw CheckiOLoginRequiredException()
-    if (!currentAccount.isUpToDate()) {
-      val refreshToken = currentAccount.getRefreshToken() ?: error("Cannot get refresh token")
-      val newTokens = refreshTokens(refreshToken)
-      currentAccount.tokenExpiresIn = newTokens.expiresIn
-      currentAccount.saveTokens(newTokens)
+    if (!isUnitTestMode && !currentAccount.isUpToDate()) {
+      refreshTokens()
     }
     return currentAccount.getAccessToken() ?: error("Cannot get access token")
   }
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
     try {
-      val handlerUri = getOAuthHandlerUri()
-      val oauthLink = getOauthLink(handlerUri)
+      if (!OAuthUtils.checkBuiltinPortValid()) return
+
+      val oauthLink = getOauthLink(redirectUri)
       createAuthorizationListener(*postLoginActions)
       BrowserUtil.browse(oauthLink)
     }
@@ -113,18 +94,6 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
     }
   }
 
-  private fun getOAuthHandlerUri(): String {
-    if (EduUtils.isAndroidStudio()) {
-      return customServer.handlingUri
-    }
-    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
-    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
-    if (currentPort !in defaultPort..defaultPort + 20) {
-      error("No ports available")
-    }
-    return redirectUri
-  }
-
   private fun getOauthLink(oauthRedirectUri: String): URI {
     return URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
       .addParameter("redirect_uri", oauthRedirectUri)
@@ -136,7 +105,7 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(authorizationTopic, object : EduLogInListener {
+    authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
       override fun userLoggedIn() {
         for (action in postLoginActions) {
           action.run()
@@ -148,28 +117,25 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
   }
 
   private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, handlingPath: String ->
-      codeHandler(code, handlingPath)
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
+      login(code)
     }
   }
 
-  // In case of built-in server
-  fun codeHandler(code: String): String? {
-    return codeHandler(code, redirectUri)
-  }
-
-  // In case of Android Studio
   @Synchronized
-  private fun codeHandler(code: String, handlingPath: String): String? {
+  fun login(code: String): String? {
     return try {
       if (account != null) {
-        ApplicationManager.getApplication().messageBus.syncPublisher(authorizationTopic).userLoggedIn()
+        ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
         return "You're logged in already"
       }
-      val tokens = getTokens(code, handlingPath)
-      val userInfo = authorizationService.getUserInfo(tokens.accessToken).executeHandlingCheckiOExceptions()
-      account = CheckiOAccount(userInfo, tokens)
-      ApplicationManager.getApplication().messageBus.syncPublisher(authorizationTopic).userLoggedIn()
+      val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return null
+      val checkiOAccount = CheckiOAccount(tokenInfo)
+      val userInfo = checkiOEndpoints.getUserInfo(tokenInfo.accessToken).executeHandlingCheckiOExceptions()
+      checkiOAccount.userInfo = userInfo
+      checkiOAccount.saveTokens(tokenInfo)
+      account = checkiOAccount
+      ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
       null
     }
     catch (e: NetworkException) {
@@ -181,9 +147,7 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
   }
 
   companion object {
-    private val SPACES_SYMBOLS_REGEX: Regex = "[\\p{javaWhitespace}]+".toRegex()
-
     @JvmStatic
-    val authorizationTopic: Topic<EduLogInListener> = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener::class.java)
+    val AUTHORIZATION_TOPIC: Topic<EduLogInListener> = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener::class.java)
   }
 }

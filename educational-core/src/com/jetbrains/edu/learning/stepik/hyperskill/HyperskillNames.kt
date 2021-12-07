@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
@@ -26,8 +25,6 @@ private val port = BuiltInServerManager.getInstance().port
 val REDIRECT_URI_DEFAULT = "http://localhost:$port/api/edu/hyperskill/oauth"
 val HYPERSKILL_FAILOVER_PORTS = listOf(61904, 50605, 55795, 54687, 58511)
 
-var CLIENT_ID = HyperskillOAuthBundle.value("hyperskillClientId")
-var CLIENT_SECRET = HyperskillOAuthBundle.value("hyperskillClientSecret")
 const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
                                              "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
 const val SELECT_PROJECT = "Please <a href=\"$HYPERSKILL_PROJECTS_URL\">select a project</a> on ${EduNames.JBA}"
@@ -37,11 +34,6 @@ val HYPERSKILL_ENVIRONMENTS = mapOf("android" to EduNames.ANDROID, "unittest" to
 
 val HYPERSKILL_URL: String
   get() = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)
-
-val AUTHORISATION_CODE_URL: String
-  get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
-    URLUtil.encodeURIComponent(REDIRECT_URI)
-  }&grant_type=code&scope=read+write&response_type=code", "login")
 
 val REDIRECT_URI: String
   get() = if (EduUtils.isAndroidStudio()) {

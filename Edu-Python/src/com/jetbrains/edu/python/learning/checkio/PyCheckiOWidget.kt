@@ -30,6 +30,6 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     PyCheckiOSettings.INSTANCE.account = null
-    project.messageBus.syncPublisher(CheckiOOAuthConnector.authorizationTopic).userLoggedOut()
+    project.messageBus.syncPublisher(CheckiOOAuthConnector.AUTHORIZATION_TOPIC).userLoggedOut()
   }
 }

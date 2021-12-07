@@ -90,8 +90,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
 
   private fun getSelectedProject(): HyperskillProject? {
     val account = HyperskillSettings.INSTANCE.account ?: return null
-    val accessToken = account.getAccessToken()
-    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account, accessToken) ?: return null
+    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account) ?: return null
     account.userInfo = currentUser
     val projectId = account.userInfo.hyperskillProjectId ?: return null
 

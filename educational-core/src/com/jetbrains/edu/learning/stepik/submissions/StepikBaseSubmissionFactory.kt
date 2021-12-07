@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.submissions
 
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -36,7 +35,7 @@ object StepikBaseSubmissionFactory {
     files: List<SolutionFile> = emptyList(),
     passed: Boolean = task.status == CheckStatus.Solved
   ): SubmissionData {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
+    val objectMapper = StepikConnector.getInstance().objectMapper
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
 
     val reply = Reply()
@@ -58,7 +57,7 @@ object StepikBaseSubmissionFactory {
 
   @JvmStatic
   fun createStepikSubmission(task: Task, attempt: Attempt, files: List<SolutionFile> = emptyList()): Submission {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
+    val objectMapper = StepikConnector.getInstance().objectMapper
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
 
     val reply = Reply()

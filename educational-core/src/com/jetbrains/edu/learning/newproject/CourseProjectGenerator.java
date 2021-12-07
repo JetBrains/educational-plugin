@@ -96,10 +96,9 @@ public abstract class CourseProjectGenerator<S> {
 
         final StepikUser user = EduSettings.getInstance().getUser();
         if (user != null) {
-          String accessToken = user.getAccessToken();
-          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.getId(), user, accessToken);
+          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.getId());
           if (!alreadyEnrolled) {
-            StepikConnector.getInstance().enrollToCourse(remoteCourse.getId(), user, accessToken);
+            StepikConnector.getInstance().enrollToCourse(remoteCourse.getId());
           }
         }
         StepikCourseLoader.loadCourseStructure(remoteCourse);

@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -18,81 +19,43 @@ import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
-import okhttp3.ConnectionPool
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.apache.http.HttpStatus
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
 
-abstract class StepikConnector : StepikBaseConnector {
+abstract class StepikConnector : EduOAuthConnector<StepikUser>(), StepikBaseConnector {
+  override val account: StepikUser?
+    get() = EduSettings.getInstance().user
 
-  private val connectionPool: ConnectionPool = ConnectionPool()
-  private val converterFactory: JacksonConverterFactory
-  val objectMapper: ObjectMapper
+  override val clientId: String = getClientId()
 
-  init {
+  override val clientSecret: String = getClientSecret()
+
+  override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
-    objectMapper = createMapper(module)
-    converterFactory = JacksonConverterFactory.create(objectMapper)
+    createObjectMapper(module)
   }
 
-  protected abstract val baseUrl: String
+  private val stepikEndpoints: StepikEndpoints
+    get() = stepikEndpoints(account)
 
-  private val authorizationService: StepikOAuthService
-    get() = createRetrofitBuilder(baseUrl, connectionPool)
-      .addConverterFactory(converterFactory)
-      .build()
-      .create(StepikOAuthService::class.java)
-
-  private val service: StepikService
-    get() {
-      val stepikUser = EduSettings.getInstance().user
-      if (stepikUser != null) {
-        val accessToken = stepikUser.getAccessToken()
-        return service(stepikUser, accessToken)
-      }
-
-      return service(null, null)
-    }
-
-  private fun service(account: StepikUser?, accessToken: String?): StepikService {
-    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
-      account.refreshTokens()
-    }
-
-    return createRetrofitBuilder(baseUrl, connectionPool, accessToken)
-      .addConverterFactory(converterFactory)
-      .build()
-      .create(StepikService::class.java)
+  private fun stepikEndpoints(
+    account: StepikUser?,
+    accessToken: String? = account?.getAccessToken()
+  ): StepikEndpoints {
+    return getEndpoints(account, accessToken)
   }
 
   // Authorization requests:
 
-  private fun StepikUser.refreshTokens() {
-    val refreshToken = getRefreshToken() ?: error("Refresh token is null")
-    val response = authorizationService
-      .refreshTokens("refresh_token", getClientId(), getClientSecret(), refreshToken).executeHandlingExceptions()
-    val tokens = response?.body()
-    if (tokens != null) {
-      tokenExpiresIn = tokens.expiresIn
-      saveTokens(tokens)
-    }
-    else {
-      error("Failed to refresh tokens")
-    }
-  }
-
   fun login(code: String, redirectUri: String): Boolean {
-    val response = authorizationService.getTokens(
-      getClientId(), getClientSecret(), redirectUri, code, "authorization_code"
-    ).executeHandlingExceptions()
-    val tokenInfo = response?.body() ?: return false
+    val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val stepikUserInfo = getCurrentUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
     stepikUser.userInfo = stepikUserInfo
@@ -104,28 +67,28 @@ abstract class StepikConnector : StepikBaseConnector {
   // Get requests:
 
   fun getCurrentUserInfo(stepikUser: StepikUser, accessToken: String?): StepikUserInfo? {
-    val response = service(stepikUser, accessToken).getCurrentUser().executeHandlingExceptions()
+    val response = stepikEndpoints(stepikUser, accessToken).getCurrentUser().executeHandlingExceptions()
     return response?.body()?.users?.firstOrNull()
   }
 
-  fun isEnrolledToCourse(courseId: Int, stepikUser: StepikUser, accessToken: String?): Boolean {
-    val response = service(stepikUser, accessToken).enrollments(courseId).executeHandlingExceptions(true)
+  fun isEnrolledToCourse(courseId: Int): Boolean {
+    val response = stepikEndpoints.enrollments(courseId).executeHandlingExceptions(true)
     return response?.code() == HttpStatus.SC_OK
   }
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
-    val response = service.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
+    val response = stepikEndpoints.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
     return response?.body()?.apply { courses.withLanguageEnvironment() }
   }
 
   fun getCourses(ids: Set<Int>): List<EduCourse>? {
-    val response = service.courses(*ids.toIntArray()).executeHandlingExceptions()
+    val response = stepikEndpoints.courses(*ids.toIntArray()).executeHandlingExceptions()
     return response?.body()?.courses?.withLanguageEnvironment()
   }
 
   @JvmOverloads
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
-    val response = service.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
+    val response = stepikEndpoints.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
     return response?.body()?.courses?.withLanguageEnvironment()?.firstOrNull()
   }
 
@@ -138,32 +101,32 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun getSection(sectionId: Int): Section? {
-    val response = service.sections(sectionId).executeHandlingExceptions()
+    val response = stepikEndpoints.sections(sectionId).executeHandlingExceptions()
     return response?.body()?.sections?.firstOrNull()
   }
 
   fun getLesson(lessonId: Int): Lesson? {
-    val response = service.lessons(lessonId).executeHandlingExceptions()
+    val response = stepikEndpoints.lessons(lessonId).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
   }
 
   fun getUnit(unitId: Int): StepikUnit? {
-    val response = service.units(unitId).executeHandlingExceptions()
+    val response = stepikEndpoints.units(unitId).executeHandlingExceptions()
     return response?.body()?.units?.firstOrNull()
   }
 
   fun getLessonUnit(lessonId: Int): StepikUnit? {
-    val response = service.lessonUnit(lessonId).executeHandlingExceptions()
+    val response = stepikEndpoints.lessonUnit(lessonId).executeHandlingExceptions()
     return response?.body()?.units?.firstOrNull()
   }
 
   fun getStep(stepId: Int): StepSource? {
-    val response = service.steps(stepId).executeHandlingExceptions()
+    val response = stepikEndpoints.steps(stepId).executeHandlingExceptions()
     return response?.body()?.steps?.firstOrNull()
   }
 
   fun getChoiceStepSource(stepId: Int): ChoiceStep? {
-    val stepSource = service.choiceStepSource(stepId).executeHandlingExceptions(true)?.body()?.steps?.firstOrNull()
+    val stepSource = stepikEndpoints.choiceStepSource(stepId).executeHandlingExceptions(true)?.body()?.steps?.firstOrNull()
     return stepSource?.block
   }
 
@@ -172,7 +135,7 @@ abstract class StepikConnector : StepikBaseConnector {
     var currentPage = 1
     val allSubmissions = mutableListOf<Submission>()
     do {
-      val submissionsList = service.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissionsList = stepikEndpoints.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       currentPage += 1
@@ -182,7 +145,7 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun getSubmission(attemptId: Int, userId: Int): Submission? {
-    val response = service.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
+    val response = stepikEndpoints.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
     val submissions = response?.body()?.submissions ?: return null
     if (submissions.size != 1) {
       LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size)
@@ -191,11 +154,11 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun getSubmissionById(id: Int): Result<Submission, String> =
-    service.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
+    stepikEndpoints.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
-    val userId = EduSettings.getInstance().user?.id ?: return Err("Attempt to get list of attempts for unauthorized user")
-    val attempts = service.attempts(task.id, userId)
+    val userId = account?.id ?: return Err("Attempt to get list of attempts for unauthorized user")
+    val attempts = stepikEndpoints.attempts(task.id, userId)
       .executeParsingErrors(true)
       .flatMap {
         val result = it.body()?.attempts
@@ -207,7 +170,7 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
-    val response = service.attempts(stepId, userId).executeHandlingExceptions()
+    val response = stepikEndpoints.attempts(stepId, userId).executeHandlingExceptions()
     return response?.body()?.attempts
   }
 
@@ -216,7 +179,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val allReviewSummaries = mutableListOf<CourseReviewSummary>()
     courseIdsChunks
       .mapNotNull {
-        val response = service.courseReviewSummaries(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.courseReviewSummaries(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.courseReviewSummaries
       }
       .forEach { allReviewSummaries.addAll(it) }
@@ -226,22 +189,22 @@ abstract class StepikConnector : StepikBaseConnector {
   // Post requests:
 
   fun postCourse(course: EduCourse): EduCourse? {
-    val response = service.course(CourseData(course)).executeHandlingExceptions()
+    val response = stepikEndpoints.course(CourseData(course)).executeHandlingExceptions()
     return response?.body()?.courses?.firstOrNull()
   }
 
   fun postSection(section: Section): Section? {
-    val response = service.section(SectionData(section)).executeHandlingExceptions()
+    val response = stepikEndpoints.section(SectionData(section)).executeHandlingExceptions()
     return response?.body()?.sections?.firstOrNull()
   }
 
   fun postLesson(lesson: Lesson): Lesson? {
-    val response = service.lesson(LessonData(lesson)).executeHandlingExceptions()
+    val response = stepikEndpoints.lesson(LessonData(lesson)).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
   }
 
   fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
-    val response = service.unit(UnitData(lessonId, position, sectionId)).executeHandlingExceptions()
+    val response = stepikEndpoints.unit(UnitData(lessonId, position, sectionId)).executeHandlingExceptions()
     return response?.body()?.units?.firstOrNull()
   }
 
@@ -258,13 +221,13 @@ abstract class StepikConnector : StepikBaseConnector {
       LOG.info("${e.message}\n${cause?.placeholderInfo}")
       return null
     }
-    val response = service.stepSource(stepSourceData!!).executeHandlingExceptions()
+    val response = stepikEndpoints.stepSource(stepSourceData!!).executeHandlingExceptions()
     return response?.body()?.steps?.firstOrNull()
   }
 
   override fun postSubmission(submission: Submission): Result<Submission, String> {
     val submissionData = SubmissionData(submission)
-    val response = service.submission(submissionData).executeHandlingExceptions()
+    val response = stepikEndpoints.submission(submissionData).executeHandlingExceptions()
     val submissions = response?.body()?.submissions
     if (submissions.isNullOrEmpty() || response.code() != HttpStatus.SC_CREATED) {
       return Err("Failed to make submission $submissions")
@@ -277,7 +240,7 @@ abstract class StepikConnector : StepikBaseConnector {
 
   override fun postAttempt(task: Task): Result<Attempt, String> {
     val stepId = task.id
-    val response = service.attempt(AttemptData(stepId)).executeHandlingExceptions(true)
+    val response = stepikEndpoints.attempt(AttemptData(stepId)).executeHandlingExceptions(true)
     val attempt = response?.body()?.attempts?.firstOrNull()
     if (response?.code() != HttpStatus.SC_CREATED || attempt == null) {
       return Err("Failed to make attempt $stepId")
@@ -286,21 +249,21 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun postView(assignmentId: Int, stepId: Int) {
-    val response = service.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
+    val response = stepikEndpoints.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
     if (response?.code() != HttpStatus.SC_CREATED) {
       LOG.warn("Error while Views post, code: " + response?.code())
     }
   }
 
   fun postMember(userId: String, group: String): Int {
-    val response = service.members(MemberData(userId, group)).executeHandlingExceptions()
+    val response = stepikEndpoints.members(MemberData(userId, group)).executeHandlingExceptions()
     return response?.code() ?: -1
   }
 
-  fun enrollToCourse(courseId: Int, stepikUser: StepikUser, accessToken: String?) {
-    val response = service(stepikUser, accessToken).enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
+  fun enrollToCourse(courseId: Int) {
+    val response = stepikEndpoints.enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
     if (response?.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to enroll user ${stepikUser.id} to course $courseId")
+      LOG.error("Failed to enroll user ${account?.id} to course $courseId")
     }
   }
 
@@ -310,7 +273,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val courseBody = if (courseId != null) RequestBody.create(MediaType.parse("text/plain"), courseId.toString()) else null
     val lessonBody = if (lessonId != null) RequestBody.create(MediaType.parse("text/plain"), lessonId.toString()) else null
 
-    val response = service.attachment(fileData, courseBody, lessonBody).executeHandlingExceptions()
+    val response = stepikEndpoints.attachment(fileData, courseBody, lessonBody).executeHandlingExceptions()
     return response?.code() ?: -1
   }
 
@@ -321,7 +284,7 @@ abstract class StepikConnector : StepikBaseConnector {
   // Update requests:
 
   fun updateCourse(course: Course): Int {
-    val response = service.course(course.id, CourseData(course)).executeHandlingExceptions()
+    val response = stepikEndpoints.course(course.id, CourseData(course)).executeHandlingExceptions()
     val postedCourse = response?.body()?.courses?.firstOrNull()
     if (postedCourse != null) {
       course.updateDate = postedCourse.updateDate
@@ -330,7 +293,7 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun updateSection(section: Section): Section? {
-    val response = service.section(section.id, SectionData(section)).executeHandlingExceptions()
+    val response = stepikEndpoints.section(section.id, SectionData(section)).executeHandlingExceptions()
     val postedSection = response?.body()?.sections?.firstOrNull()
     if (postedSection != null) {
       section.updateDate = postedSection.updateDate
@@ -339,7 +302,7 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun updateLesson(lesson: Lesson): Lesson? {
-    val response = service.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
+    val response = stepikEndpoints.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
     val postedLesson = response?.body()?.lessons?.firstOrNull()
     if (postedLesson != null) {
       lesson.updateDate = postedLesson.updateDate
@@ -348,7 +311,7 @@ abstract class StepikConnector : StepikBaseConnector {
   }
 
   fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikUnit? {
-    val response = service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).executeHandlingExceptions()
+    val response = stepikEndpoints.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).executeHandlingExceptions()
     return response?.body()?.units?.firstOrNull()
   }
 
@@ -364,7 +327,7 @@ abstract class StepikConnector : StepikBaseConnector {
       LOG.error("${e.message}\n${cause?.placeholderInfo}")
       return -1
     }
-    val response = service.stepSource(task.id, stepSourceData).executeHandlingExceptions()
+    val response = stepikEndpoints.stepSource(task.id, stepSourceData).executeHandlingExceptions()
     val stepSource = response?.body()?.steps?.firstOrNull()
     if (stepSource != null) {
       task.updateDate = stepSource.updateDate
@@ -387,11 +350,11 @@ abstract class StepikConnector : StepikBaseConnector {
   fun deleteLessonAttachment(lessonId: Int) = deleteAttachment(null, lessonId)
 
   private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
-    val attachments = service.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
+    val attachments = stepikEndpoints.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {
       val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_INFO == it.name }?.id
       if (attachmentId != null) {
-        service.deleteAttachment(attachmentId).executeHandlingExceptions()
+        stepikEndpoints.deleteAttachment(attachmentId).executeHandlingExceptions()
       }
     }
   }
@@ -399,19 +362,19 @@ abstract class StepikConnector : StepikBaseConnector {
   // Delete requests:
 
   fun deleteSection(sectionId: Int) {
-    service.deleteSection(sectionId).executeHandlingExceptions(true)
+    stepikEndpoints.deleteSection(sectionId).executeHandlingExceptions(true)
   }
 
   fun deleteLesson(lessonId: Int) {
-    service.deleteLesson(lessonId).executeHandlingExceptions(true)
+    stepikEndpoints.deleteLesson(lessonId).executeHandlingExceptions(true)
   }
 
   fun deleteUnit(unitId: Int) {
-    service.deleteUnit(unitId).executeHandlingExceptions(true)
+    stepikEndpoints.deleteUnit(unitId).executeHandlingExceptions(true)
   }
 
   fun deleteTask(taskId: Int) {
-    service.deleteStepSource(taskId).executeHandlingExceptions(true)
+    stepikEndpoints.deleteStepSource(taskId).executeHandlingExceptions(true)
   }
 
   // Multiple requests:
@@ -421,7 +384,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
       .mapNotNull {
-        val response = service.users(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.users(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.users
       }
       .forEach { allUsers.addAll(it) }
@@ -433,7 +396,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val allSections = mutableListOf<Section>()
     sectionIdsChunks
       .mapNotNull {
-        val response = service.sections(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.sections(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.sections
       }
       .forEach { allSections.addAll(it) }
@@ -445,7 +408,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val allLessons = mutableListOf<Lesson>()
     lessonsIdsChunks
       .mapNotNull {
-        val response = service.lessons(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.lessons(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.lessons
       }
       .forEach { allLessons.addAll(it) }
@@ -457,7 +420,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val allUnits = mutableListOf<StepikUnit>()
     unitsIdsChunks
       .mapNotNull {
-        val response = service.units(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.units(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.units
       }
       .forEach { allUnits.addAll(it) }
@@ -469,7 +432,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val assignments = mutableListOf<Assignment>()
     idsChunks
       .mapNotNull {
-        val response = service.assignments(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.assignments(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.assignments
       }
       .forEach { assignments.addAll(it) }
@@ -482,7 +445,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val steps = mutableListOf<StepSource>()
     stepsIdsChunks
       .mapNotNull {
-        val response = service.steps(*it.toIntArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.steps(*it.toIntArray()).executeHandlingExceptions()
         response?.body()?.steps
       }
       .forEach { steps.addAll(it) }
@@ -494,7 +457,7 @@ abstract class StepikConnector : StepikBaseConnector {
     val progresses = mutableListOf<Progress>()
     idsChunks
       .mapNotNull {
-        val response = service.progresses(*it.toTypedArray()).executeHandlingExceptions()
+        val response = stepikEndpoints.progresses(*it.toTypedArray()).executeHandlingExceptions()
         response?.body()?.progresses
       }
       .forEach { progresses.addAll(it) }
@@ -522,7 +485,7 @@ abstract class StepikConnector : StepikBaseConnector {
     fun getInstance(): StepikConnector = service()
 
     @JvmStatic
-    fun createMapper(module: SimpleModule): ObjectMapper {
+    fun createObjectMapper(module: SimpleModule): ObjectMapper {
       val objectMapper = ConnectorUtils.createMapper()
       objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
       objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)

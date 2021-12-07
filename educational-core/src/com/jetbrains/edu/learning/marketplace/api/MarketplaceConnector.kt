@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
+import com.intellij.util.io.URLUtil
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
@@ -28,9 +29,9 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
+import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.*
@@ -39,56 +40,36 @@ import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import okhttp3.ConnectionPool
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-abstract class MarketplaceConnector : CourseConnector {
+abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount>(), CourseConnector {
+  override val account: MarketplaceAccount?
+    get() = MarketplaceSettings.INSTANCE.account
+
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
-  private val connectionPool: ConnectionPool = ConnectionPool()
-  private val converterFactory: JacksonConverterFactory
-  private val objectMapper: ObjectMapper
+  override val clientId: String = EDU_CLIENT_ID
 
-  protected abstract val authUrl: String
+  override val clientSecret: String = EDU_CLIENT_SECRET
+
+  override val objectMapper: ObjectMapper by lazy {
+    val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
+    objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
+    objectMapper
+  }
 
   protected abstract val repositoryUrl: String
 
-  init {
-    val module = SimpleModule()
-    objectMapper = createMapper(module)
-    converterFactory = JacksonConverterFactory.create(objectMapper)
-  }
+  private val marketplaceEndpoints: MarketplaceEndpoints
+    get() = getEndpoints()
 
-  private val authorizationService: MarketplaceAuthService
-    get() {
-      val retrofit = createRetrofitBuilder(authUrl, connectionPool)
-        .addConverterFactory(converterFactory)
-        .build()
-
-      return retrofit.create(MarketplaceAuthService::class.java)
-    }
-
-  private val repositoryService: MarketplaceRepositoryService
-    get() = repositoryService(MarketplaceSettings.INSTANCE.account)
-
-  private fun repositoryService(account: MarketplaceAccount?): MarketplaceRepositoryService {
-    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
-      account.refreshTokens()
-    }
-
-    val accessToken = account?.getAccessToken()
-    val retrofit = createRetrofitBuilder(repositoryUrl, connectionPool, accessToken = accessToken)
-      .addConverterFactory(converterFactory)
-      .build()
-
-    return retrofit.create(MarketplaceRepositoryService::class.java)
-  }
+  private val repositoryEndpoints: MarketplaceRepositoryEndpoints
+    get() = getEndpoints(baseUrl = repositoryUrl)
 
   // Authorization requests:
 
@@ -100,11 +81,7 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   fun login(code: String): Boolean {
-    val response = authorizationService.getTokens(EDU_CLIENT_ID,
-                                                  EDU_CLIENT_SECRET,
-                                                  REDIRECT_URI, code,
-                                                  AUTHORIZATION_CODE).executeHandlingExceptions()
-    val tokenInfo = response?.body() ?: return false
+    val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
     val userId = decodeHubToken(tokenInfo.accessToken) ?: return false
     val account = MarketplaceAccount(tokenInfo.expiresIn)
     val currentUser = getCurrentUser(userId) ?: return false
@@ -115,27 +92,22 @@ abstract class MarketplaceConnector : CourseConnector {
     return true
   }
 
-  private fun MarketplaceAccount.refreshTokens() {
-    val refreshToken = getRefreshToken() ?: error("Refresh token is null")
-    val response = authorizationService.refreshTokens(REFRESH_TOKEN,
-                                                      EDU_CLIENT_ID,
-                                                      EDU_CLIENT_SECRET,
-                                                      refreshToken).executeHandlingExceptions()
-    val tokens = response?.body() ?: return
-    // hub documentation https://www.jetbrains.com/help/hub/Refresh-Token.html#AccessTokenRequestError
-    // says that new refresh token may be issued by hub, but that's not obligatory,
-    // old refresh token should be used in this case
+  override fun getNewTokens(): TokenInfo {
+    val currentAccount = account ?: error("No logged in user")
+    val tokens = super.getNewTokens()
     if (tokens.refreshToken.isEmpty()) {
-      tokens.refreshToken = refreshToken
+      // hub documentation https://www.jetbrains.com/help/hub/Refresh-Token.html#AccessTokenRequestError
+      // says that new refresh token may be issued by hub, but that's not obligatory,
+      // old refresh token should be used in this case
+      tokens.refreshToken = currentAccount.getRefreshToken() ?: error("Refresh token is null")
     }
-    tokenExpiresIn = tokens.expiresIn
-    saveTokens(tokens)
+    return tokens
   }
 
   // Get requests:
 
   private fun getCurrentUser(userId: String): MarketplaceUserInfo? {
-    val response = authorizationService.getCurrentUserInfo(userId).executeHandlingExceptions()
+    val response = marketplaceEndpoints.getCurrentUserInfo(userId).executeHandlingExceptions()
     val userInfo = response?.body() ?: return null
     if (userInfo.guest) {
       // it means that session is broken and we should force user to relogin
@@ -173,20 +145,20 @@ abstract class MarketplaceConnector : CourseConnector {
 
   private fun getCourses(offset: Int, searchPrivate: Boolean): CoursesList? {
     val query = QueryData(GraphqlQuery.search(offset, searchPrivate))
-    val response = repositoryService.search(query).executeHandlingExceptions()
+    val response = repositoryEndpoints.search(query).executeHandlingExceptions()
     return response?.body()?.data?.coursesList
   }
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
     val query = QueryData(GraphqlQuery.searchById(courseId, searchPrivate))
-    val response = repositoryService.search(query).executeHandlingExceptions()
+    val response = repositoryEndpoints.search(query).executeHandlingExceptions()
     val course = response?.body()?.data?.coursesList?.courses?.firstOrNull()
     course?.id = courseId
     return course
   }
 
   fun getLatestCourseUpdateInfo(courseId: Int): UpdateInfo? {
-    val response = repositoryService.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(courseId))).executeHandlingExceptions()
+    val response = repositoryEndpoints.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(courseId))).executeHandlingExceptions()
     val updateInfoList = response?.body()?.data?.updates?.updateInfoList
     if (updateInfoList == null) {
       error("Update info list for course $courseId is null")
@@ -242,7 +214,7 @@ abstract class MarketplaceConnector : CourseConnector {
     if (!isUserAuthorized()) return
     LOG.info("Uploading new course from ${file.absolutePath}")
 
-    val response = repositoryService.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody())
+    val response = repositoryEndpoints.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody())
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.upload.course.title"),
                                   showLogAction,
@@ -348,7 +320,7 @@ abstract class MarketplaceConnector : CourseConnector {
       uploadNewCourseUnderProgress(project, course, file)
     }
 
-    repositoryService.uploadCourseUpdate(file.toMultipartBody(), course.id)
+    repositoryEndpoints.uploadCourseUpdate(file.toMultipartBody(), course.id)
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.update.course.title"),
                                   uploadAsNewCourseAction,
@@ -378,8 +350,7 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   private fun isUserAuthorized(): Boolean {
-    val user = MarketplaceSettings.INSTANCE.account
-    if (user == null) {
+    if (account == null) {
       // we check that user isn't null before `postCourse` call
       LOG.warn("User is null when posting the course")
       return false
@@ -398,16 +369,10 @@ abstract class MarketplaceConnector : CourseConnector {
           action.run()
         }
         runInEdt { requestFocus() }
-        val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.getFullName() ?: return
+        val userName = account?.userInfo?.getFullName() ?: return
         showLoginSuccessfulNotification(userName)
       }
     })
-  }
-
-  private fun createMapper(module: SimpleModule): ObjectMapper {
-    val objectMapper = ConnectorUtils.createRegisteredMapper(module)
-    objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
-    return objectMapper
   }
 
   /**
@@ -478,6 +443,14 @@ abstract class MarketplaceConnector : CourseConnector {
 
   companion object {
     private val LOG = logger<MarketplaceConnector>()
+
+    private val MARKETPLACE_CLIENT_ID: String = MarketplaceOAuthBundle.value("marketplaceHubClientId")
+    private val EDU_CLIENT_ID: String = MarketplaceOAuthBundle.value("eduHubClientId")
+    private val EDU_CLIENT_SECRET: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
+    private val HUB_AUTHORISATION_CODE_URL: String
+      get() = "${HUB_AUTH_URL}oauth2/auth?" +
+              "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +
+              "client_id=${EDU_CLIENT_ID}&scope=$0-0-0-0-0%20${EDU_CLIENT_ID}%20${MARKETPLACE_CLIENT_ID}&access_type=offline"
 
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"

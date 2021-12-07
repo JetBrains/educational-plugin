@@ -30,6 +30,6 @@ class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     JsCheckiOSettings.getInstance().account = null
-    project.messageBus.syncPublisher(CheckiOOAuthConnector.authorizationTopic).userLoggedOut()
+    project.messageBus.syncPublisher(CheckiOOAuthConnector.AUTHORIZATION_TOPIC).userLoggedOut()
   }
 }

@@ -1,16 +1,17 @@
-package com.jetbrains.edu.learning.stepik.api
+package com.jetbrains.edu.learning.api
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import retrofit2.http.Url
 
-interface StepikOAuthService {
-
-  @POST("oauth2/token/")
+interface EduOAuthEndpoints {
+  @POST
   @FormUrlEncoded
   fun getTokens(
+    @Url url: String,
     @Field("client_id") clientId: String,
     @Field("client_secret") clientSecret: String,
     @Field("redirect_uri") redirectUri: String,
@@ -18,9 +19,10 @@ interface StepikOAuthService {
     @Field("grant_type") grantType: String
   ): Call<TokenInfo>
 
-  @POST("oauth2/token/")
+  @POST
   @FormUrlEncoded
   fun refreshTokens(
+    @Url url: String,
     @Field("grant_type") grantType: String,
     @Field("client_id") clientId: String,
     @Field("client_secret") clientSecret: String,

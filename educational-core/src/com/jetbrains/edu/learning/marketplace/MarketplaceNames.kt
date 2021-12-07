@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -19,13 +18,6 @@ const val JB_VENDOR_NAME = "JetBrains"
 const val REVIEWS = "/reviews"
 const val GRAZIE_STAGING_URL = "https://stgn.draft.grazie.ai"
 
-var MARKETPLACE_CLIENT_ID = MarketplaceOAuthBundle.value("marketplaceHubClientId")
-var EDU_CLIENT_ID = MarketplaceOAuthBundle.value("eduHubClientId")
-var EDU_CLIENT_SECRET = MarketplaceOAuthBundle.value("eduHubClientSecret")
-val HUB_AUTHORISATION_CODE_URL: String
-  get() = "${HUB_AUTH_URL}oauth2/auth?" +
-          "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +
-          "client_id=$EDU_CLIENT_ID&scope=$0-0-0-0-0%20$EDU_CLIENT_ID%20$MARKETPLACE_CLIENT_ID&access_type=offline"
 private val port = BuiltInServerManager.getInstance().port
 private const val OAUTH_SERVICE_PATH = "/api/edu/marketplace/oauth"
 val REDIRECT_URI_DEFAULT = "http://localhost:$port$OAUTH_SERVICE_PATH"

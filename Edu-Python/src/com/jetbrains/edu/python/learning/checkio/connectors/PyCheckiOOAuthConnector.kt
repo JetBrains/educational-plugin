@@ -7,15 +7,16 @@ import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle
 
-private val CLIENT_ID: String = PyCheckiOOAuthBundle.value("pyCheckioClientId")
-private val CLIENT_SECRET: String = PyCheckiOOAuthBundle.value("pyCheckioClientSecret")
-
-object PyCheckiOOAuthConnector : CheckiOOAuthConnector(CLIENT_ID, CLIENT_SECRET) {
+object PyCheckiOOAuthConnector : CheckiOOAuthConnector() {
   override var account: CheckiOAccount?
     get() = PyCheckiOSettings.INSTANCE.account
     set(account) {
       PyCheckiOSettings.INSTANCE.account = account
     }
+
+  override val clientId: String = PyCheckiOOAuthBundle.value("pyCheckioClientId")
+
+  override val clientSecret: String = PyCheckiOOAuthBundle.value("pyCheckioClientSecret")
 
   override val oAuthServicePath: String = PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH
 

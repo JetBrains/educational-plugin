@@ -22,14 +22,7 @@ class CheckiOCoursesPanel(
     super.processSelectionChanged()
     if (selectedCourse != null) {
       val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider
-      if (checkiOConnectorProvider == null) {
-        hideLoginPanel()
-        return
-      }
-
-      val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
-      val isLoggedIn = checkiOAccount == null
-      if (isLoggedIn) {
+      if (checkiOConnectorProvider == null || checkiOConnectorProvider.oAuthConnector.isLoggedIn()) {
         hideLoginPanel()
       }
     }
