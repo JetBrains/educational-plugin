@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.stepik.api
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.invokeAllWithProgress
 import com.jetbrains.edu.learning.stepik.*
 import java.util.concurrent.Executors
@@ -165,11 +167,17 @@ object StepikCourseLoader {
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {
       val builder = StepikTaskBuilder(course, lesson, step)
-      if (!builder.isSupported(step.block!!.name)) continue
-      val task = builder.createTask(step.block!!.name)
-      if (task != null) {
-        tasks.add(task)
-      }
+
+      val type = step.block?.name ?: error("Can't get type from step source")
+      if (!builder.isSupported(type)
+          // TODO hack until EDU-4744 will be implemented
+          || type == DATA_TASK_TYPE
+          // TODO hack until EDU-4763 will be implemented
+          || type == STRING_TASK_TYPE
+      ) continue
+
+      val task = builder.createTask(type) ?: continue
+      tasks.add(task)
     }
     return tasks
   }
