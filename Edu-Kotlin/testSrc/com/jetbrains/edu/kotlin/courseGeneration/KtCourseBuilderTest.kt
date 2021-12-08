@@ -1,8 +1,8 @@
-package com.jetbrains.edu.kotlin
+package com.jetbrains.edu.kotlin.courseGeneration
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage

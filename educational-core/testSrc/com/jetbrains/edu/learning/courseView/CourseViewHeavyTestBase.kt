@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseView
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
-import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.projectView.CourseViewPane

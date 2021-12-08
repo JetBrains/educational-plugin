@@ -1,6 +1,6 @@
-package com.jetbrains.edu.python
+package com.jetbrains.edu.python.courseGeneration
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse

@@ -1,9 +1,9 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.java.courseGeneration
 
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 

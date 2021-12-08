@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import java.util.*

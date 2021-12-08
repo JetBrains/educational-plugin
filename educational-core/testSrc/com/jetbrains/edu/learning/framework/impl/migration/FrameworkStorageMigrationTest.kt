@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.framework.impl.migration
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage

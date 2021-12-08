@@ -1,10 +1,11 @@
-package com.jetbrains.edu.rust
+package com.jetbrains.edu.rust.courseGeneration
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
+import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.lang.RsLanguage
 
 class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {

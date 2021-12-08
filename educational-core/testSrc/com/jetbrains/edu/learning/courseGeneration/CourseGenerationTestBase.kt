@@ -1,10 +1,12 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
+import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.createCourseFromJson
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 

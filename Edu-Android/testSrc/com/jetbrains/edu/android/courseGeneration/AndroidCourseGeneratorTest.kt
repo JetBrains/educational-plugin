@@ -1,4 +1,4 @@
-package com.jetbrains.edu.android
+package com.jetbrains.edu.android.courseGeneration
 
 import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
 import com.android.tools.idea.startup.GradleSpecificInitializer
@@ -10,6 +10,7 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import org.hamcrest.CoreMatchers
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat

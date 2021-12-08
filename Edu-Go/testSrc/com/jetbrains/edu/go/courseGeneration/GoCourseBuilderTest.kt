@@ -1,9 +1,10 @@
-package com.jetbrains.edu.go
+package com.jetbrains.edu.go.courseGeneration
 
 import com.goide.GoLanguage
 import com.goide.sdk.GoSdk
-import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.go.GoProjectSettings
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 

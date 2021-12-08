@@ -1,46 +1,40 @@
-package com.jetbrains.edu.scala.gradle
+package com.jetbrains.edu.scala.courseGeneration
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.CourseGenerationTestBase
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
 
-class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
+class ScalaSbtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test study course structure`() {
-    generateCourseStructure("testData/newCourse/scala_course.json")
+    generateCourseStructure("testData/newCourse/scala_course_sbt.json")
     val expectedFileTree = fileTree {
       dir("lesson1") {
-        dir("my task 1") {
+        dir("task1") {
           dir("src") {
             file("Task.scala")
           }
           dir("test") {
-            file("Test.scala")
+            file("TestSpec.scala")
           }
           file("task.html")
-        }
-        dir("my task 2") {
-          dir("src") {
-            file("Task.scala")
-          }
-          dir("test") {
-            file("Test.scala")
-          }
-          file("task.html")
+          file("build.sbt")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
+      dir("project") {
+        file("build.properties")
+      }
+      file("build.sbt")
     }
     expectedFileTree.assertEquals(rootDir)
   }
 
   fun `test new course structure`() {
-    val course = newCourse(ScalaLanguage.INSTANCE, environment = "Gradle")
+    val course = newCourse(ScalaLanguage.INSTANCE, environment = "sbt")
     createCourseStructure(course)
 
     val expectedFileTree = fileTree {
@@ -50,13 +44,16 @@ class ScalaGradleCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings
             file("Task.scala")
           }
           dir("test") {
-            file("Test.scala")
+            file("TestSpec.scala")
           }
           file("task.md")
+          file("build.sbt")
         }
       }
-      file("build.gradle")
-      file("settings.gradle")
+      dir("project") {
+        file("build.properties")
+      }
+      file("build.sbt")
     }
 
     expectedFileTree.assertEquals(rootDir)

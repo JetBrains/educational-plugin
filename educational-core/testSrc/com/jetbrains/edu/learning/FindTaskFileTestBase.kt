@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 
 abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Settings>() {
 
