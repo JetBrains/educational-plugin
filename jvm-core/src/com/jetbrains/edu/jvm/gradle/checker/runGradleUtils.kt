@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -45,9 +45,9 @@ const val TESTS_ARG = "--tests"
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
-    "${sanitizeName(task.lesson.section!!.name)}-${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
+    "${gradleSanitizeName(task.lesson.section!!.name)}-${gradleSanitizeName(task.lesson.name)}-${gradleSanitizeName(task.dirName)}"
   else
-    "${sanitizeName(task.lesson.name)}-${sanitizeName(task.dirName)}"
+    "${gradleSanitizeName(task.lesson.name)}-${gradleSanitizeName(task.dirName)}"
 
 class GradleCommandLine private constructor(
   private val cmd: GeneralCommandLine,

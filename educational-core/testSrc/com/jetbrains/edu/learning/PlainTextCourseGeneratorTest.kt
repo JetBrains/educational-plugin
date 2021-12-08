@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 
 class PlainTextCourseGeneratorTest : EduTestCase() {
@@ -432,57 +430,5 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
         }
       }
     }
-  }
-
-  fun `test invalid symbols`() {
-    courseWithFiles {
-      lesson("lesson/name") {
-        eduTask("task?1")
-        eduTask("task:2")
-        eduTask("task;3")
-        eduTask("task&4")
-      }
-    }
-
-    if (SystemInfo.isWindows) {
-      checkFileTree {
-        dir("lesson name") {
-          dir("task 1") {
-            file("task.md")
-          }
-          dir("task 2") {
-            file("task.md")
-          }
-          dir("task 3") {
-            file("task.md")
-          }
-          dir("task 4") {
-            file("task.md")
-          }
-        }
-      }
-    }
-    else {
-      checkFileTree {
-        dir("lesson name") {
-          dir("task?1") {
-            file("task.md")
-          }
-          dir("task 2") {
-            file("task.md")
-          }
-          dir("task;3") {
-            file("task.md")
-          }
-          dir("task&4") {
-            file("task.md")
-          }
-        }
-      }
-    }
-  }
-
-  private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }

@@ -5,9 +5,6 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
@@ -336,6 +333,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   @Throws(IOException::class)
   protected fun loadText(fileName: String): String = FileUtil.loadFile(File(testDataPath, fileName))
+
+  protected fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
+    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
 
   companion object {
 

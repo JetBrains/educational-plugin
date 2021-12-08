@@ -26,7 +26,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
                   SETTINGS_FILE_NAME to settingGradleTemplateName)
 
   open fun templateVariables(project: Project): Map<String, Any> {
-    return mapOf(PROJECT_NAME to GeneratorUtils.sanitizeName(project.name))
+    return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(project.name))
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {

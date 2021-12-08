@@ -10,7 +10,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.sanitizeName
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import org.jetbrains.plugins.scala.project.Version
@@ -28,7 +28,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)
     val templateVariables = mapOf(
-      PROJECT_NAME to sanitizeName(project.name),
+      PROJECT_NAME to gradleSanitizeName(project.name),
       "SBT_VERSION" to sbtVersion.toString()
     )
 

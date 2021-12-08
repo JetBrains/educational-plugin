@@ -10,7 +10,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.modifyModules
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -36,8 +35,8 @@ object GeneratorUtils {
 
   private val LOG: Logger = Logger.getInstance(GeneratorUtils::class.java)
 
-  private val UNIX_INVALID_SYMBOLS: Regex = "[/:]".toRegex()
-  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|;&]".toRegex()
+  private val INVALID_SYMBOLS: Regex = """[/\\:<>"?*|;&]""".toRegex()
+  private val INVALID_TRAILING_SYMBOLS: CharArray = charArrayOf(' ', '.', '!')
 
   @Throws(IOException::class)
   @JvmStatic
@@ -251,16 +250,7 @@ object GeneratorUtils {
 
   @JvmStatic
   fun String.convertToValidName(): String {
-    val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
-    var validName = replace(invalidSymbols, " ").trim()
-    if (SystemInfo.isWindows && endsWith(".")) {
-      validName = validName.trim('.').trim()
-    }
-    // Small hack to avoid https://youtrack.jetbrains.com/issue/IDEA-253884
-    if (validName.endsWith("!")) {
-      validName = validName.replaceRange(validName.lastIndex, validName.lastIndex + 1, "_")
-    }
-    return validName
+    return replace(INVALID_SYMBOLS, " ").trimEnd(*INVALID_TRAILING_SYMBOLS)
   }
 
   private fun createUniqueDir(parentDir: VirtualFile,
@@ -356,7 +346,7 @@ object GeneratorUtils {
     }
   }
 
-  private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
+  private val GRADLE_INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
   private val LEADING_AND_TRAILING_DOTS = "(^[.]+)|([.]+\$)".toRegex()
 
   // Should be the same as `sanitizeName` in `resources/fileTemplates/internal/settings.gradle.ft`
@@ -364,7 +354,7 @@ object GeneratorUtils {
    * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|', '(', ')' symbols with '_' as they are invalid in gradle module names
    * Also removes leading and trailing dots, because gradle project name must not start or end with a '.'
    */
-  fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
+  fun gradleSanitizeName(name: String): String = name.replace(GRADLE_INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
 
   fun getDefaultName(item: StudyItem) = when (item) {
     is Section -> "${EduNames.SECTION}${item.index}"
