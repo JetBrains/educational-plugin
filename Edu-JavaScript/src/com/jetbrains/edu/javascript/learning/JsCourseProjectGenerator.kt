@@ -21,6 +21,13 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
   override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     val interpreter = projectSettings.selectedInterpreter
+    if (interpreter == null) {
+      // It's ok not to have NodeJS interpreter in tests
+      if (!isUnitTestMode) {
+        LOG.warn("NodeJS interpreter is not selected")
+      }
+      return
+    }
     NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef())
     val modalityState = ModalityState.current()
     interpreter.provideCachedVersionOrFetch { version ->
