@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
@@ -39,7 +39,7 @@ abstract class TaskDescriptionView {
       if (!EduUtils.isEduProject(project)) {
         error("Attempt to get TaskDescriptionView for non-edu project")
       }
-      return ServiceManager.getService(project, TaskDescriptionView::class.java)
+      return project.service()
     }
 
     @JvmStatic

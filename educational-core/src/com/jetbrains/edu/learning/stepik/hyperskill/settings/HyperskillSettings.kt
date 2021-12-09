@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
@@ -38,6 +38,6 @@ class HyperskillSettings : PersistentStateComponent<Element> {
 
   companion object {
     val INSTANCE: HyperskillSettings
-      get() = ServiceManager.getService(HyperskillSettings::class.java)
+      get() = service()
   }
 }

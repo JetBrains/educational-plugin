@@ -15,6 +15,6 @@ class CourseraSettings : PersistentStateComponent<CourseraSettings> {
 
   companion object {
     @JvmStatic
-    fun getInstance(): CourseraSettings = ServiceManager.getService(CourseraSettings::class.java)
+    fun getInstance(): CourseraSettings = service()
   }
 }

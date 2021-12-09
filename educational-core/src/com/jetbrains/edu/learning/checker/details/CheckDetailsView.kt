@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checker.details
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import javax.swing.JComponent
@@ -21,7 +21,7 @@ abstract class CheckDetailsView {
       if (!EduUtils.isEduProject(project)) {
         error("Attempt to get CheckDetailsViewImpl for non-edu project")
       }
-      return ServiceManager.getService(project, CheckDetailsView::class.java)
+      return project.service()
     }
   }
 }

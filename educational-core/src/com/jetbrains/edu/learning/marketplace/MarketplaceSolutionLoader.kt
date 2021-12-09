@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -46,7 +46,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
 
   companion object {
     @JvmStatic
-    fun getInstance(project: Project): MarketplaceSolutionLoader = ServiceManager.getService(project, MarketplaceSolutionLoader::class.java)
+    fun getInstance(project: Project): MarketplaceSolutionLoader = project.service()
 
     private val LOG = Logger.getInstance(MarketplaceSolutionLoader::class.java)
   }

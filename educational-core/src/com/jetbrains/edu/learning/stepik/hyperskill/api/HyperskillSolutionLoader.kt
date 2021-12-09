@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -90,7 +90,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   companion object {
     @JvmStatic
-    fun getInstance(project: Project): HyperskillSolutionLoader = ServiceManager.getService(project, HyperskillSolutionLoader::class.java)
+    fun getInstance(project: Project): HyperskillSolutionLoader = project.service()
 
     private val LOG = Logger.getInstance(HyperskillSolutionLoader::class.java)
   }
