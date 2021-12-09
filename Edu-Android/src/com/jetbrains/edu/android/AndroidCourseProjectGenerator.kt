@@ -3,6 +3,7 @@ package com.jetbrains.edu.android
 import com.android.SdkConstants
 import com.android.tools.idea.gradle.util.GradleWrapper
 import com.android.tools.idea.sdk.IdeSdks
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -24,7 +25,9 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     super.createAdditionalFiles(project, baseDir, isNewCourse)
 
-    GradleWrapper.create(baseDir, project)
+    invokeAndWaitIfNeeded {
+      GradleWrapper.create(baseDir, project)
+    }
     // We have to create property files manually
     // instead of `com.android.tools.idea.gradle.util.LocalProperties` and `com.android.tools.idea.gradle.util.LocalProperties`
     // because they work only with `java.io.File` but in tests we use in memory file system
