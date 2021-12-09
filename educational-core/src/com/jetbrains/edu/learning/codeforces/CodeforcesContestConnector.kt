@@ -43,12 +43,12 @@ object CodeforcesContestConnector {
       getContestIdFromLink(text)
     }
 
-  fun getLanguages(contest: Document): List<String> {
+  fun getLanguages(contest: Document): List<String>? {
     val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
     return contest.selectFirst("#programTypeForInvoker")
-      .select("option")
-      .map { it.text() }
-      .filter { language ->
+      ?.select("option")
+      ?.map { it.text() }
+      ?.filter { language ->
         language in supportedLanguages
       }
   }
@@ -179,7 +179,7 @@ object CodeforcesContestConnector {
     val dateElement = tableRow[2].getElementsByClass(dateClass).firstOrNull() ?: tableRow[2].getElementsByClass(FORMAT_DATE_CLASS).first()
     val dateLocaleString = tableRow[2].getElementsByClass(dateClass).attr("data-locale")
     val dateLocale = Locale.Builder().setLanguage(dateLocaleString).build()
-    val startDateString = dateElement.text()
+    val startDateString = dateElement?.text() ?: error("Date string is null")
     val formatter = DateTimeFormatter.ofPattern("MMM/dd/yyyy HH:mm", dateLocale)
     val startDateLocal = LocalDateTime.parse(startDateString, formatter)
     return ZonedDateTime.of(startDateLocal, ZoneId.of("GMT+3")).withZoneSameInstant(ZoneId.systemDefault())
