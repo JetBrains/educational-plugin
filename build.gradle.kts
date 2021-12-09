@@ -4,13 +4,11 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_1_8
-import org.gradle.api.internal.HasConvention
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.IntelliJInstrumentCodeTask
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
@@ -134,7 +132,7 @@ allprojects {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
   }
 
-  configure<JavaPluginConvention> {
+  configure<JavaPluginExtension> {
     sourceCompatibility = VERSION_1_8
     targetCompatibility = VERSION_1_8
   }
@@ -142,7 +140,6 @@ allprojects {
     main {
       if (project != rootProject) {
         java.srcDirs("src", "branches/$environmentName/src")
-        kotlin.srcDirs("src", "branches/$environmentName/src")
       }
       resources.srcDirs("resources", "branches/$environmentName/resources")
     }
@@ -150,12 +147,23 @@ allprojects {
     test {
       if (project != rootProject) {
         java.srcDirs("testSrc", "branches/$environmentName/testSrc")
-        kotlin.srcDirs("testSrc", "branches/$environmentName/testSrc")
         resources.srcDirs("testResources", "branches/$environmentName/testResources")
       }
     }
   }
 
+  kotlin {
+    sourceSets {
+      if (project != rootProject) {
+        main {
+          kotlin.srcDirs("src", "branches/$environmentName/src")
+        }
+        test {
+          kotlin.srcDirs("testSrc", "branches/$environmentName/testSrc")
+        }
+      }
+    }
+  }
 
   configurations {
     all {
@@ -812,6 +820,7 @@ fun studioArtifactDownloadPath(archiveType: String): String {
 fun studioPath(studioFolder: File): String {
   return if (osFamily == "mac") {
     val candidates = studioFolder.listFiles()
+      .orEmpty()
       .filter { it.isDirectory && it.name.matches(Regex("Android Studio.*\\.app")) }
     when (candidates.size) {
       0 -> error("Can't find any folder matching `Android Studio*.app` in `$studioFolder`")
@@ -831,15 +840,6 @@ val osFamily: String get() {
     else -> error("current os family is unsupported")
   }
 }
-
-val SourceSet.kotlin: SourceDirectorySet
-  get() = (this as HasConvention)
-      .convention
-      .getPlugin(KotlinSourceSet::class.java)
-      .kotlin
-
-
-fun SourceSet.kotlin(action: SourceDirectorySet.() -> Unit) = kotlin.action()
 
 fun hasProp(name: String): Boolean = extra.has(name)
 
