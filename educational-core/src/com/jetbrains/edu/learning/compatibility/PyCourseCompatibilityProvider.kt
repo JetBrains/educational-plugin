@@ -9,6 +9,7 @@ import javax.swing.Icon
 class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override fun requiredPlugins(): List<PluginInfo>? {
+    @Suppress("DEPRECATION", "UnstableApiUsage")
     return when {
       isPyCharmPro() -> listOf(PluginInfo.PYTHON_PRO)
       isPyCharm() -> listOf(PluginInfo.PYTHON_COMMUNITY)

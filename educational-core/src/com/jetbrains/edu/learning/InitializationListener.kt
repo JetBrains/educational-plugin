@@ -70,6 +70,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     }
 
     if (!CCPluginToggleAction.isCourseCreatorFeaturesPropertySet) {
+      @Suppress("UnstableApiUsage", "DEPRECATION")
       if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
         CCPluginToggleAction.isCourseCreatorFeaturesEnabled = true
       }
