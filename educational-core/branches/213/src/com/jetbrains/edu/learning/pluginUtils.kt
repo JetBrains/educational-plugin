@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 fun enablePlugins(pluginsId: List<PluginId>) {
   val descriptors = pluginsId.mapNotNull { pluginId -> PluginManagerCore.getPlugin(pluginId) }
-  PluginEnabler.HEADLESS.enablePlugins(descriptors)
+  @Suppress("UnstableApiUsage")
+  PluginEnabler.HEADLESS.enable(descriptors)
   restartIDE(EduCoreBundle.message("required.plugin.were.enabled"))
 }

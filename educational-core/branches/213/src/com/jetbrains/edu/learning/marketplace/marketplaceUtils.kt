@@ -7,4 +7,4 @@ import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.installAndE
 @Suppress("UnstableApiUsage")
 fun getBuildNumberForRequests(): String = ApplicationInfoImpl.getShadowInstanceImpl().pluginsCompatibleBuild
 
-fun installAndEnablePlugin(pluginIds: Set<PluginId>, onSuccess: Runnable) = installAndEnable(pluginIds, onSuccess)
+fun installAndEnablePlugin(pluginIds: Set<PluginId>, onSuccess: Runnable) = installAndEnable(null, pluginIds, true, onSuccess)
