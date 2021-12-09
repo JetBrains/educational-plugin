@@ -639,7 +639,7 @@ project(":Edu-Android") {
 
   // BACKCOMPAT: enable when 212 studio is available
   tasks.withType<Test> {
-    enabled = environmentName.toInt() < 212
+    enabled = environmentName.toInt() < 213
   }
 }
 
