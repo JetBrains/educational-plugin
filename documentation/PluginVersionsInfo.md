@@ -39,4 +39,4 @@
 | 2021.9   | PyCharm Edu 2021.2.2<br>IDEA Edu 2021.2.2                        | -   | 12   |
 | 2021.10  | PyCharm Edu 2021.2.3<br>IDEA Edu 2021.2.3                        | -   | 12   |
 | 2021.11  | PyCharm Edu 2021.3<br>IDEA Edu 2021.3                            | -   | 12   |
-| 2021.12  | PyCharm Edu 2021.3<br>IDEA Edu 2021.3                            | -   | 13   |
+| 2021.12  | PyCharm Edu 2021.3.1<br>IDEA Edu 2021.3.1                        | -   | 13   |
