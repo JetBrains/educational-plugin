@@ -117,7 +117,7 @@ class CheckiOMissionCheck(private val project: Project,
 
   private fun collectResources(): Map<String, String> = mapOf(
     "testFormTargetUrl" to testFormTargetUrl,
-    "accessToken" to oAuthConnector.accessToken,
+    "accessToken" to oAuthConnector.getAccessToken(),
     "taskId" to task.id.toString(),
     "interpreterName" to interpreterName,
     "code" to getCodeFromTask()

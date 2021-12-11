@@ -92,12 +92,10 @@ class CheckiOCourseGenerationTest : EduTestCase() {
   }
 
   private class MockCheckiOOAuthConnector : CheckiOOAuthConnector("", "") {
-    override fun setAccount(account: CheckiOAccount?) {}
+    override var account: CheckiOAccount? = null
 
-    override fun getOAuthServicePath(): String = ""
+    override val oAuthServicePath: String = ""
 
-    override fun getPlatformName(): String = ""
-
-    override fun getAccount(): CheckiOAccount? = null
+    override val platformName: String = ""
   }
 }

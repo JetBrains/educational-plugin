@@ -6,6 +6,6 @@ import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
  * It's thrown when an action is performed
  * that requires the user to be logged in, but the user is logged out.
  *
- * @see CheckiOOAuthConnector#requireUserLoggedIn()
+ * @see CheckiOOAuthConnector#getAccount()()
  * */
 public class CheckiOLoginRequiredException extends Exception { }

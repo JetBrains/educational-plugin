@@ -13,7 +13,7 @@ object CheckiONotifications {
   @JvmStatic
   fun error(
     title: @NotificationTitle String,
-    subtitle: @NotificationSubtitle String,
+    subtitle: @NotificationSubtitle String?,
     content: @NotificationContent String,
     listener: NotificationListener? = null
   ): Notification {
@@ -44,11 +44,18 @@ object CheckiONotifications {
 
   private fun notification(
     title: @NotificationTitle String,
-    subtitle: @NotificationSubtitle String,
+    subtitle: @NotificationSubtitle String?,
     content: @NotificationContent String,
     type: NotificationType,
     listener: NotificationListener?
   ): Notification {
-    return Notification("EduTools", EducationalCoreIcons.CheckiO, title, subtitle, content, type, listener)
+    val notification = Notification("EduTools", title, content, type).apply {
+      icon = EducationalCoreIcons.CheckiO
+      this.subtitle = subtitle
+    }
+    if (listener != null) {
+      notification.setListener(listener)
+    }
+    return notification
   }
 }

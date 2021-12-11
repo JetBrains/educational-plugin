@@ -1,248 +1,170 @@
-package com.jetbrains.edu.learning.checkio.connectors;
+package com.jetbrains.edu.learning.checkio.connectors
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.messages.Topic;
-import com.jetbrains.edu.learning.EduLogInListener;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
-import com.jetbrains.edu.learning.authUtils.OAuthUtils;
-import com.jetbrains.edu.learning.authUtils.TokenInfo;
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface;
-import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
-import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
-import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
-import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.apache.http.client.utils.URIBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.BuiltInServerManager;
+import com.intellij.ide.BrowserUtil
+import com.intellij.notification.Notifications
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.util.messages.Topic
+import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
+import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface
+import com.jetbrains.edu.learning.checkio.api.RetrofitUtils
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
+import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications.error
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import org.apache.http.client.utils.URIBuilder
+import org.jetbrains.builtInWebServer.BuiltInServerOptions
+import org.jetbrains.ide.BuiltInServerManager
+import java.net.URI
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.regex.Pattern;
+abstract class CheckiOOAuthConnector protected constructor(private val clientId: String, private val clientSecret: String) {
 
-public abstract class CheckiOOAuthConnector {
-  private static final Logger LOG = Logger.getInstance(CheckiOOAuthConnector.class);
-  private static final CheckiOOAuthInterface CHECKIO_OAUTH_INTERFACE = RetrofitUtils.createRetrofitOAuthInterface();
-  private static final Topic<EduLogInListener> myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener.class);
+  @get:Transient
+  @set:Transient
+  abstract var account: CheckiOAccount?
 
-  private final String myClientId;
-  private final String myClientSecret;
-  @NotNull private MessageBusConnection myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+  protected abstract val oAuthServicePath: String
 
-  protected CheckiOOAuthConnector(@NotNull String clientId, @NotNull String clientSecret) {
-    myClientId = clientId;
-    myClientSecret = clientSecret;
+  protected abstract val platformName: String
+
+  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
+
+  private val currentPort: Int
+    get() = BuiltInServerManager.getInstance().port
+
+  private val customServer: CustomAuthorizationServer
+    get() {
+      val startedServer = CustomAuthorizationServer.getServerIfStarted(platformName)
+      return startedServer ?: createCustomServer()
+    }
+
+  private val redirectUri: String
+    get() = """$CHECKIO_OAUTH_REDIRECT_HOST:${currentPort}$oAuthServicePath"""
+
+  init {
+    require(SPACES_SYMBOLS_REGEX !in clientId && SPACES_SYMBOLS_REGEX !in clientSecret) {
+      "Client properties are not provided"
+    }
   }
 
-  public static Topic<EduLogInListener> getAuthorizationTopic() {
-    return myAuthorizationTopic;
+  private fun getTokens(code: String, redirectUri: String): TokenInfo {
+    return CHECKIO_OAUTH_INTERFACE.getTokens(AUTHORIZATION_CODE, clientSecret, clientId, code, redirectUri).execute()
   }
 
-  @Nullable
-  public abstract CheckiOAccount getAccount();
-
-  public abstract void setAccount(@Nullable CheckiOAccount account);
-
-  @NotNull
-  protected abstract String getOAuthServicePath();
-
-  @NotNull
-  protected abstract String getPlatformName();
-
-  public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
-    final CheckiOAccount currentAccount = requireUserLoggedIn();
-    ensureTokensUpToDate();
-
-    return currentAccount.getAccessToken();
+  private fun refreshTokens(refreshToken: String): TokenInfo {
+    return CHECKIO_OAUTH_INTERFACE.refreshTokens(REFRESH_TOKEN, clientSecret, clientId, refreshToken).execute()
   }
 
-  @NotNull
-  private TokenInfo getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
-    requireClientPropertiesExist();
-
-    return CHECKIO_OAUTH_INTERFACE.getTokens(
-      OAuthUtils.GrantType.AUTHORIZATION_CODE,
-      myClientSecret,
-      myClientId,
-      code,
-      redirectUri
-    ).execute();
-  }
-
-  @NotNull
-  private static CheckiOUserInfo getUserInfo(@NotNull String accessToken) throws ApiException {
-    return CHECKIO_OAUTH_INTERFACE.getUserInfo(accessToken).execute();
-  }
-
-  @NotNull
-  private TokenInfo refreshTokens(@NotNull String refreshToken) throws ApiException {
-    requireClientPropertiesExist();
-
-    return CHECKIO_OAUTH_INTERFACE.refreshTokens(
-      OAuthUtils.GrantType.REFRESH_TOKEN,
-      myClientSecret,
-      myClientId,
-      refreshToken
-    ).execute();
-  }
-
-  private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
-    final CheckiOAccount currentAccount = requireUserLoggedIn();
-
+  fun getAccessToken(): String {
+    val currentAccount = account ?: throw CheckiOLoginRequiredException()
     if (!currentAccount.isUpToDate()) {
-      final String refreshToken = currentAccount.getRefreshToken();
-      if (refreshToken == null) {
-        LOG.error("Cannot get refresh token");
-        return;
-      }
-      final TokenInfo newTokens = refreshTokens(refreshToken);
-      currentAccount.setTokenExpiresIn(newTokens.getExpiresIn());
-      currentAccount.saveTokens(newTokens);
+      val refreshToken = currentAccount.getRefreshToken() ?: error("Cannot get refresh token")
+      val newTokens = refreshTokens(refreshToken)
+      currentAccount.tokenExpiresIn = newTokens.expiresIn
+      currentAccount.saveTokens(newTokens)
     }
+    return currentAccount.getAccessToken() ?: error("Cannot get access token")
   }
 
-  private void requireClientPropertiesExist() {
-    final Pattern spacesStringPattern = Pattern.compile("\\p{javaWhitespace}*");
-    if (spacesStringPattern.matcher(myClientId).matches() || spacesStringPattern.matcher(myClientSecret).matches()) {
-      final String errorMessage = "Client properties are not provided";
-      LOG.error(errorMessage);
-      throw new IllegalStateException(errorMessage);
-    }
-  }
-
-  @NotNull
-  private CheckiOAccount requireUserLoggedIn() throws CheckiOLoginRequiredException {
-    final CheckiOAccount currentAccount = getAccount();
-    if (currentAccount == null) {
-      throw new CheckiOLoginRequiredException();
-    }
-    return currentAccount;
-  }
-
-  public void doAuthorize(@NotNull Runnable... postLoginActions) {
-    requireClientPropertiesExist();
-
+  fun doAuthorize(vararg postLoginActions: Runnable) {
     try {
-      final String handlerUri = getOAuthHandlerUri();
-      final URI oauthLink = getOauthLink(handlerUri);
-
-      createAuthorizationListener(postLoginActions);
-      BrowserUtil.browse(oauthLink);
+      val handlerUri = getOAuthHandlerUri()
+      val oauthLink = getOauthLink(handlerUri)
+      createAuthorizationListener(*postLoginActions)
+      BrowserUtil.browse(oauthLink)
     }
-    catch (URISyntaxException | IOException e) {
+    catch (e: Exception) {
       // IOException is thrown when there're no available ports, in some cases restarting can fix this
-      Notifications.Bus.notify(CheckiONotifications.error(
-        EduCoreBundle.message("notification.title.failed.to.authorize"),
+      Notifications.Bus.notify(error(
+        message("notification.title.failed.to.authorize"),
         null,
-        EduCoreBundle.message("notification.content.try.to.restart.ide.and.log.in.again")
-      ));
+        message("notification.content.try.to.restart.ide.and.log.in.again")
+      ))
     }
   }
 
-  @NotNull
-  private String getOAuthHandlerUri() throws IOException {
+  private fun getOAuthHandlerUri(): String {
     if (EduUtils.isAndroidStudio()) {
-      return getCustomServer().getHandlingUri();
+      return customServer.handlingUri
     }
-    else {
-      final int port = BuiltInServerManager.getInstance().getPort();
-
-      if (port < 63342 || port > 63362) {
-        throw new IOException("No ports available");
-      }
-
-      return buildRedirectUri(port);
+    val defaultPort = BuiltInServerOptions.DEFAULT_PORT
+    // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
+    if (currentPort !in defaultPort..defaultPort + 20) {
+      error("No ports available")
     }
+    return redirectUri
   }
 
-  @NotNull
-  private URI getOauthLink(@NotNull String oauthRedirectUri) throws URISyntaxException {
-    //noinspection HardCodedStringLiteral
-    return new URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
+  private fun getOauthLink(oauthRedirectUri: String): URI {
+    return URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
       .addParameter("redirect_uri", oauthRedirectUri)
       .addParameter("response_type", "code")
-      .addParameter("client_id", myClientId)
-      .build();
+      .addParameter("client_id", clientId)
+      .build()
   }
 
-  private void createAuthorizationListener(@NotNull Runnable... postLoginActions) {
-    myAuthorizationBusConnection.disconnect();
-    myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myAuthorizationBusConnection.subscribe(myAuthorizationTopic, new EduLogInListener() {
-      @Override
-      public void userLoggedIn() {
-        for (Runnable action : postLoginActions) {
-          action.run();
+  private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
+    authorizationBusConnection.disconnect()
+    authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
+    authorizationBusConnection.subscribe(authorizationTopic, object : EduLogInListener {
+      override fun userLoggedIn() {
+        for (action in postLoginActions) {
+          action.run()
         }
       }
 
-      @Override
-      public void userLoggedOut() { }
-    });
+      override fun userLoggedOut() {}
+    })
   }
 
-  @NotNull
-  private String buildRedirectUri(int port) {
-    return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + getOAuthServicePath();
-  }
-
-  @NotNull
-  private CustomAuthorizationServer getCustomServer() throws IOException {
-    final CustomAuthorizationServer startedServer =
-      CustomAuthorizationServer.getServerIfStarted(getPlatformName());
-
-    if (startedServer != null) {
-      return startedServer;
+  private fun createCustomServer(): CustomAuthorizationServer {
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, handlingPath: String ->
+      codeHandler(code, handlingPath)
     }
-
-    return createCustomServer();
-  }
-
-  private CustomAuthorizationServer createCustomServer() throws IOException {
-    return CustomAuthorizationServer.create(
-      getPlatformName(),
-      getOAuthServicePath(),
-      this::codeHandler
-    );
   }
 
   // In case of built-in server
-  @Nullable
-  public String codeHandler(@NotNull String code) {
-    return codeHandler(code, buildRedirectUri(BuiltInServerManager.getInstance().getPort()));
+  fun codeHandler(code: String): String? {
+    return codeHandler(code, redirectUri)
   }
 
   // In case of Android Studio
-  @Nullable
-  private synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
-    try {
-      if (getAccount() != null) {
-        ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
-        return "You're logged in already";
+  @Synchronized
+  private fun codeHandler(code: String, handlingPath: String): String? {
+    return try {
+      if (account != null) {
+        ApplicationManager.getApplication().messageBus.syncPublisher(authorizationTopic).userLoggedIn()
+        return "You're logged in already"
       }
+      val tokens = getTokens(code, handlingPath)
+      val userInfo = CHECKIO_OAUTH_INTERFACE.getUserInfo(tokens.accessToken).execute()
+      account = CheckiOAccount(userInfo, tokens)
+      ApplicationManager.getApplication().messageBus.syncPublisher(authorizationTopic).userLoggedIn()
+      null
+    }
+    catch (e: NetworkException) {
+      "Connection failed"
+    }
+    catch (e: ApiException) {
+      "Couldn't get user info"
+    }
+  }
 
-      final TokenInfo tokens = getTokens(code, handlingPath);
-      final CheckiOUserInfo userInfo = getUserInfo(tokens.getAccessToken());
-      setAccount(new CheckiOAccount(userInfo, tokens));
-      ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
-      return null;
-    }
-    catch (NetworkException e) {
-      return "Connection failed";
-    }
-    catch (ApiException e) {
-      return "Couldn't get user info";
-    }
+  companion object {
+    private val CHECKIO_OAUTH_INTERFACE: CheckiOOAuthInterface = RetrofitUtils.createRetrofitOAuthInterface()
+
+    private val SPACES_SYMBOLS_REGEX: Regex = "[\\p{javaWhitespace}]+".toRegex()
+
+    @JvmStatic
+    val authorizationTopic: Topic<EduLogInListener> = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener::class.java)
   }
 }
