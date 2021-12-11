@@ -125,16 +125,10 @@ fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
 
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
 
-fun getSelectedProjectIdUnderProgress(account: HyperskillAccount): Int? {
+fun getSelectedProjectIdUnderProgress(): Int? {
   return computeUnderProgress(null, SYNCHRONIZE_JBA_ACCOUNT, false) {
-    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account)
-    if (currentUser == null) {
-      null
-    }
-    else {
-      account.userInfo = currentUser
-      account.userInfo.hyperskillProjectId
-    }
+    val currentUser = HyperskillConnector.getInstance().getCurrentUserInfo() ?: return@computeUnderProgress null
+    currentUser.hyperskillProjectId
   }
 }
 
@@ -169,7 +163,7 @@ object HyperskillLoginListener : HyperlinkAdapter() {
 
   fun doLogin() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
-      val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.fullname ?: return@Runnable
+      val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.getFullName() ?: return@Runnable
       showLoginSuccessfulNotification(fullName)
     })
   }

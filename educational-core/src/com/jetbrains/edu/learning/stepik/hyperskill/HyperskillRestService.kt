@@ -135,10 +135,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val languageParameter = getStringParameter(LANGUAGE, urlDecoder)
     val language = languageParameter ?: getLanguageSelectedByUser().onError { error -> return error }
     val isLanguageSelectedByUser = languageParameter == null
-    val account = HyperskillSettings.INSTANCE.account ?: error("Attempt to open step for unauthorized user")
-    val projectId = getSelectedProjectIdUnderProgress(account)
+    if (!HyperskillConnector.getInstance().isLoggedIn()) {
+      error("Attempt to open step for unauthorized user")
+    }
+    val projectId = getSelectedProjectIdUnderProgress()
     if (projectId == null) {
-      LOG.warn("Can't open project for step_id: $stepId language: $language account $account")
+      LOG.warn("Can't open project for step_id: $stepId language: $language")
       showError(SELECT_PROJECT)
       return SELECT_PROJECT
     }
@@ -175,12 +177,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       requestFocus()
 
       val dialogResult = Messages.showDialog(
-        "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.fullname,
+        "<html>${EduCoreBundle.message("hyperskill.accounts.are.different", localAccount.userInfo.getFullName(),
                                        browserAccount.fullname)}</html>",
         EduCoreBundle.message("hyperskill.accounts.are.different.title"),
         arrayOf(
           EduCoreBundle.message("hyperskill.accounts.are.different.re.login", browserAccount.fullname),
-          EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.fullname)
+          EduCoreBundle.message("hyperskill.accounts.are.different.continue", localAccount.userInfo.getFullName())
         ),
         0,
         null

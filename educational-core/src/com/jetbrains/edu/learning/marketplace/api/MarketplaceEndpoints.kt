@@ -6,5 +6,5 @@ import retrofit2.http.Path
 
 interface MarketplaceEndpoints {
   @GET("users/{id}?fields=name,guest,id")
-  fun getCurrentUserInfo(@Path(value = "id") userId: String): Call<MarketplaceUserInfo>
+  fun getUserInfo(@Path(value = "id") userId: String): Call<MarketplaceUserInfo>
 }

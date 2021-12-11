@@ -67,6 +67,8 @@ class CodeforcesUserInfo : UserInfo {
   @JsonProperty(SESSION_EXPIRES_AT)
   var sessionExpiresAt: Long = -1
 
+  override var isGuest: Boolean = false
+
   override fun getFullName(): String {
     return handle
   }

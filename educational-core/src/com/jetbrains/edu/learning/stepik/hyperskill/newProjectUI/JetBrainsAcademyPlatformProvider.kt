@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStageRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillProjectAction
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
@@ -55,9 +54,8 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
       super.joinAction(courseInfo, courseMode, coursePanel)
       return
     }
-    val account = HyperskillSettings.INSTANCE.account ?: return
 
-    val isOpened = HyperskillProjectAction.openHyperskillProject(account) { errorMessage ->
+    val isOpened = HyperskillProjectAction.openHyperskillProject { errorMessage ->
       Messages.showErrorDialog(errorMessage, EduCoreBundle.message("hyperskill.failed.to.open.project"))
     }
 
@@ -89,10 +87,8 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
     get() = HyperskillOpenInIdeRequestHandler.createHyperskillCourse((HyperskillOpenStageRequest(id, null)), language, this).onError { null }
 
   private fun getSelectedProject(): HyperskillProject? {
-    val account = HyperskillSettings.INSTANCE.account ?: return null
-    val currentUser = HyperskillConnector.getInstance().getCurrentUser(account) ?: return null
-    account.userInfo = currentUser
-    val projectId = account.userInfo.hyperskillProjectId ?: return null
+    val currentUserInfo = HyperskillConnector.getInstance().getCurrentUserInfo() ?: return null
+    val projectId = currentUserInfo.hyperskillProjectId ?: return null
 
     return HyperskillConnector.getInstance().getProject(projectId).onError {
       return null

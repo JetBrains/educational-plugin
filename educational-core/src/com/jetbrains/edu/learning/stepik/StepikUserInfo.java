@@ -8,19 +8,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.stepik.api.StepikAPIKt.*;
+import static com.jetbrains.edu.learning.stepik.api.StepikMixinsKt.ID;
+
 public class StepikUserInfo implements UserInfo {
-  @JsonProperty("id")
+  @JsonProperty(ID)
   private int id = -1;
 
-  @JsonProperty("first_name")
+  @JsonProperty(FIRST_NAME)
   private String myFirstName;
 
-  @JsonProperty("last_name")
+  @JsonProperty(LAST_NAME)
   private String myLastName;
+
+  @JsonProperty(IS_GUEST)
+  private Boolean myIsGuest;
+
+  @Override
+  public boolean isGuest() {
+    return myIsGuest;
+  }
+
+  @Override
+  public void setGuest(boolean isGuest) {
+    myIsGuest = isGuest;
+  }
 
   private StepikUserInfo() {
     myFirstName = "";
     myLastName = "";
+    myIsGuest = false;
   }
 
   public StepikUserInfo(String fullName) {

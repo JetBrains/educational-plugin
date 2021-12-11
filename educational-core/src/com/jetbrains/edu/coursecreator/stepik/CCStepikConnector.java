@@ -12,14 +12,16 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduBrowser;
+import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepSource;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
@@ -65,24 +67,24 @@ public class CCStepikConnector {
   }
 
   public static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
-    final StepikUser user = EduSettings.getInstance().getUser();
-    if (user == null) {
+    final StepikConnector stepikConnector = StepikConnector.getInstance();
+    if (!stepikConnector.isLoggedIn()) {
       // we check that user isn't null before `postCourse` call
       LOG.warn("User is null when posting the course");
       return;
     }
     updateProgress(EduCoreBundle.message("course.creator.stepik.upload.progress.title"));
-    final StepikUserInfo currentUser = StepikConnector.getInstance().getCurrentUserInfo(user, null);
-    if (currentUser != null) {
+    final StepikUserInfo currentUserInfo = stepikConnector.getCurrentUserInfo();
+    if (currentUserInfo != null) {
       final List<UserInfo> courseAuthors = course.getAuthors();
       for (final UserInfo courseAuthor : courseAuthors) {
         if (courseAuthor instanceof StepikUserInfo) {
           final StepikUserInfo stepikAuthor = (StepikUserInfo)courseAuthor;
-          currentUser.setFirstName(stepikAuthor.getFirstName());
-          currentUser.setLastName(stepikAuthor.getLastName());
+          currentUserInfo.setFirstName(stepikAuthor.getFirstName());
+          currentUserInfo.setLastName(stepikAuthor.getLastName());
         }
       }
-      course.setAuthors(Collections.singletonList(currentUser));
+      course.setAuthors(Collections.singletonList(currentUserInfo));
     }
 
     final EduCourse courseOnRemote = StepikConnector.getInstance().postCourse(course);
@@ -98,7 +100,7 @@ public class CCStepikConnector {
     courseOnRemote.setEnvironment(course.getEnvironment());
     courseOnRemote.setLanguage(course.getLanguage());
 
-    if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
+    if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUserInfo)) {
       addJetBrainsUserAsAdmin(courseOnRemote.getAdminsGroup());
     }
 

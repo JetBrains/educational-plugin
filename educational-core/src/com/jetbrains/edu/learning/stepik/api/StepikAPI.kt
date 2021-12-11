@@ -61,6 +61,9 @@ const val TIME = "time"
 const val TIME_LEFT = "time_left"
 const val MEMORY = "memory"
 const val AVERAGE = "average"
+const val FIRST_NAME = "first_name"
+const val LAST_NAME = "last_name"
+const val IS_GUEST = "is_guest"
 
 // List wrappers for GET requests:
 

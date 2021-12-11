@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProfileInfo
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import org.jdom.Element
 
 private const val serviceName = "HyperskillSettings"
@@ -33,7 +33,7 @@ class HyperskillSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = HyperskillAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeOAuthAccount(user, accountClass, HyperskillProfileInfo::class.java)
+    account = deserializeOAuthAccount(user, accountClass, HyperskillUserInfo::class.java)
   }
 
   companion object {

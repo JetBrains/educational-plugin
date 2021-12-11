@@ -5,6 +5,8 @@ import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 
 interface UserInfo {
+  var isGuest: Boolean
+
   fun getFullName(): String
 }
 

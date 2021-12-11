@@ -17,11 +17,9 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import java.net.URL
 import javax.swing.event.HyperlinkEvent
 
@@ -32,13 +30,11 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val account = HyperskillSettings.INSTANCE.account
-    val accessToken = account?.getAccessToken()
-    if (account == null || HyperskillConnector.getInstance().getCurrentUser(account, accessToken) == null) {
+    if (HyperskillConnector.getInstance().getCurrentUserInfo() == null) {
       showBalloon(e, "Please <a href=\"\">login to ${EduNames.JBA}</a> and select a project.", true)
     }
     else {
-      openHyperskillProject(account) { error -> showBalloon(e, error, false) }
+      openHyperskillProject { error -> showBalloon(e, error, false) }
     }
   }
 
@@ -58,8 +54,8 @@ class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") 
   }
 
   companion object {
-    fun openHyperskillProject(account: HyperskillAccount, showError: (String) -> Unit): Boolean {
-      val projectId = getSelectedProjectIdUnderProgress(account)
+    fun openHyperskillProject(showError: (String) -> Unit): Boolean {
+      val projectId = getSelectedProjectIdUnderProgress()
       if (projectId == null) {
         showError(SELECT_PROJECT)
         return false

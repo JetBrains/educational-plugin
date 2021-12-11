@@ -33,7 +33,7 @@ import retrofit2.Call
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount>(), StepikBaseConnector {
+abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBaseConnector {
   override val account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
 
@@ -71,7 +71,13 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount>(), Ste
   fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
-    val currentUser = getCurrentUser(account, tokenInfo.accessToken) ?: return false
+    val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false
+    if (currentUser.isGuest) {
+      // it means that session is broken, so we should force user to re-login
+      LOG.warn("User ${currentUser.getFullName()} ${currentUser.email} is anonymous")
+      HyperskillSettings.INSTANCE.account = null
+      return false
+    }
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
     account.saveTokens(tokenInfo)
@@ -81,16 +87,9 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount>(), Ste
 
   // Get requests:
 
-  fun getCurrentUser(account: HyperskillAccount, accessToken: String? = account.getAccessToken()): HyperskillProfileInfo? {
+  override fun getUserInfo(account: HyperskillAccount, accessToken: String?): HyperskillUserInfo? {
     val response = hyperskillEndpoints(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
-    val userInfo = response?.body()?.profiles?.firstOrNull()
-    if (userInfo?.isGuest == true) {
-      // it means that session is broken and we should force user to relogin
-      LOG.warn("User ${userInfo.fullname} ${userInfo.email} is anonymous")
-      HyperskillSettings.INSTANCE.account = null
-      return null
-    }
-    return userInfo
+    return response?.body()?.profiles?.firstOrNull()
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {

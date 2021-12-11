@@ -34,7 +34,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
 
   fun `test selected project added`() {
     loginFakeUser()
-    val profile = HyperskillProfileInfo().apply { hyperskillProjectId = 1 }
+    val profile = HyperskillUserInfo().apply { hyperskillProjectId = 1 }
     val hyperskillCourse = defaultHyperskillCourse()
 
     mockConnector.apply {

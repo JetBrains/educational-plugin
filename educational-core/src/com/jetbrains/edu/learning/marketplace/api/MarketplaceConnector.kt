@@ -47,7 +47,7 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount>(), CourseConnector {
+abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
   override val account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
 
@@ -82,9 +82,14 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount>(), C
 
   fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
-    val userId = decodeHubToken(tokenInfo.accessToken) ?: return false
     val account = MarketplaceAccount(tokenInfo.expiresIn)
-    val currentUser = getCurrentUser(userId) ?: return false
+    val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false
+    if (currentUser.isGuest) {
+      // it means that session is broken, so we should force user to re-login
+      LOG.warn("User ${currentUser.name} is anonymous")
+      MarketplaceSettings.INSTANCE.account = null
+      return false
+    }
     account.userInfo = currentUser
     MarketplaceSettings.INSTANCE.account = account
     account.saveTokens(tokenInfo)
@@ -106,16 +111,11 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount>(), C
 
   // Get requests:
 
-  private fun getCurrentUser(userId: String): MarketplaceUserInfo? {
-    val response = marketplaceEndpoints.getCurrentUserInfo(userId).executeHandlingExceptions()
-    val userInfo = response?.body() ?: return null
-    if (userInfo.guest) {
-      // it means that session is broken and we should force user to relogin
-      LOG.warn("User ${userInfo.name} is anonymous")
-      MarketplaceSettings.INSTANCE.account = null
-      return null
-    }
-    return userInfo
+  override fun getUserInfo(account: MarketplaceAccount, accessToken: String?): MarketplaceUserInfo? {
+    val token = accessToken ?: return null
+    val userId = decodeHubToken(token) ?: return null
+    val response = marketplaceEndpoints.getUserInfo(userId).executeHandlingExceptions()
+    return response?.body()
   }
 
   fun searchCourses(): List<EduCourse> {

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo
 import com.jetbrains.edu.learning.checkio.api.CheckiOEndpoints
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
@@ -28,7 +29,7 @@ import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
 import java.net.URI
 
-abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount>() {
+abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiOUserInfo>() {
 
   @get:Transient
   @set:Transient
@@ -74,6 +75,10 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount>() {
       refreshTokens()
     }
     return currentAccount.getAccessToken() ?: error("Cannot get access token")
+  }
+
+  override fun getUserInfo(account: CheckiOAccount, accessToken: String?): CheckiOUserInfo? {
+    return checkiOEndpoints.getUserInfo(accessToken).executeHandlingCheckiOExceptions()
   }
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
@@ -131,7 +136,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount>() {
       }
       val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return null
       val checkiOAccount = CheckiOAccount(tokenInfo)
-      val userInfo = checkiOEndpoints.getUserInfo(tokenInfo.accessToken).executeHandlingCheckiOExceptions()
+      val userInfo = getUserInfo(checkiOAccount, tokenInfo.accessToken)
       checkiOAccount.userInfo = userInfo
       checkiOAccount.saveTokens(tokenInfo)
       account = checkiOAccount

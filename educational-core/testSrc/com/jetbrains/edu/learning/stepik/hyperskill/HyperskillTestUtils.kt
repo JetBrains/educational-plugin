@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProfileInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
@@ -21,7 +21,7 @@ fun testStageName(index: Int): String = "Test Stage $index"
 fun loginFakeUser() {
   val fakeToken = TokenInfo().apply { accessToken = "faketoken" }
   HyperskillSettings.INSTANCE.account = HyperskillAccount().apply {
-    userInfo = HyperskillProfileInfo()
+    userInfo = HyperskillUserInfo()
     userInfo.id = 1
     saveTokens(fakeToken)
   }

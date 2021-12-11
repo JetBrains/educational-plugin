@@ -81,7 +81,7 @@ class MarketplaceUserInfo() : UserInfo {
   var name: String = ""
 
   @JsonProperty(GUEST)
-  var guest: Boolean = false
+  override var isGuest: Boolean = false
 
   @JsonProperty(TYPE)
   var type: String = ""

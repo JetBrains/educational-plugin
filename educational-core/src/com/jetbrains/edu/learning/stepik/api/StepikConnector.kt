@@ -27,7 +27,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
 
-abstract class StepikConnector : EduOAuthConnector<StepikUser>(), StepikBaseConnector {
+abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBaseConnector {
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
 
@@ -57,8 +57,14 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser>(), StepikBaseConn
   fun login(code: String, redirectUri: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return false
     val stepikUser = StepikUser(tokenInfo)
-    val stepikUserInfo = getCurrentUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
-    stepikUser.userInfo = stepikUserInfo
+    val currentUser = getUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
+    if (currentUser.isGuest) {
+      // it means that session is broken, so we should force user to re-login
+      LOG.warn("User ${currentUser.getFullName()} is anonymous")
+      EduSettings.getInstance().user = null
+      return false
+    }
+    stepikUser.userInfo = currentUser
     stepikUser.saveTokens(tokenInfo)
     EduSettings.getInstance().user = stepikUser
     return true
@@ -66,8 +72,8 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser>(), StepikBaseConn
 
   // Get requests:
 
-  fun getCurrentUserInfo(stepikUser: StepikUser, accessToken: String?): StepikUserInfo? {
-    val response = stepikEndpoints(stepikUser, accessToken).getCurrentUser().executeHandlingExceptions()
+  override fun getUserInfo(account: StepikUser, accessToken: String?): StepikUserInfo? {
+    val response = stepikEndpoints(account, accessToken).getCurrentUser().executeHandlingExceptions()
     return response?.body()?.users?.firstOrNull()
   }
 

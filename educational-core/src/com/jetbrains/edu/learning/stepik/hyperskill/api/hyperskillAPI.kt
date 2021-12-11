@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -63,7 +64,7 @@ const val URL = "url"
 const val USERS = "users"
 const val USE_IDE = "use_ide"
 
-class HyperskillAccount : OAuthAccount<HyperskillProfileInfo> {
+class HyperskillAccount : OAuthAccount<HyperskillUserInfo> {
   @TestOnly
   constructor() : super()
 
@@ -73,11 +74,11 @@ class HyperskillAccount : OAuthAccount<HyperskillProfileInfo> {
   override val servicePrefix: String = EduNames.JBA
 
   override fun getUserName(): String {
-    return userInfo.fullname
+    return userInfo.getFullName()
   }
 }
 
-class HyperskillProfileInfo {
+class HyperskillUserInfo : UserInfo {
   @JsonProperty(ID)
   var id: Int = -1
 
@@ -88,13 +89,17 @@ class HyperskillProfileInfo {
   var fullname: String = ""
 
   @JsonProperty(IS_GUEST)
-  var isGuest: Boolean = false
+  override var isGuest: Boolean = false
 
   @JsonProperty(PROJECT)
   var hyperskillProjectId: Int? = null
 
-  override fun toString(): String {
+  override fun getFullName(): String {
     return fullname
+  }
+
+  override fun toString(): String {
+    return getFullName()
   }
 }
 
@@ -223,7 +228,7 @@ class User {
 
 class ProfilesList {
   @JsonProperty(PROFILES)
-  lateinit var profiles: List<HyperskillProfileInfo>
+  lateinit var profiles: List<HyperskillUserInfo>
 }
 
 class StagesList {

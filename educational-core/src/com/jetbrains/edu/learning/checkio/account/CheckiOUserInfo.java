@@ -61,4 +61,12 @@ public class CheckiOUserInfo implements UserInfo {
   public String toString() {
     return myUsername;
   }
+
+  @Override
+  public boolean isGuest() {
+    return false;
+  }
+
+  @Override
+  public void setGuest(boolean isGuest) { }
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
@@ -11,7 +12,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-abstract class EduOAuthConnector<Account : OAuthAccount<*>> {
+abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
   protected abstract val account: Account?
 
   protected abstract val baseUrl: String
@@ -28,6 +29,13 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>> {
 
   protected val converterFactory: JacksonConverterFactory by lazy {
     JacksonConverterFactory.create(objectMapper)
+  }
+
+  abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
+
+  fun getCurrentUserInfo(): SpecificUserInfo? {
+    val currentAccount = account ?: return null
+    return getUserInfo(currentAccount, currentAccount.getAccessToken())
   }
 
   private fun getEduOAuthEndpoints(): EduOAuthEndpoints {
