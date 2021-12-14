@@ -8,7 +8,7 @@ import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createRetrofi
 
 public class JsCheckiOApiConnector extends CheckiOApiConnector {
   protected JsCheckiOApiConnector() {
-    super(createRetrofitApiInterface(JsCheckiONames.JS_CHECKIO_API_HOST), JsCheckiOOAuthConnector.getInstance());
+    super(createRetrofitApiInterface(JsCheckiONames.JS_CHECKIO_API_HOST), JsCheckiOOAuthConnector.INSTANCE);
   }
 
   @NotNull

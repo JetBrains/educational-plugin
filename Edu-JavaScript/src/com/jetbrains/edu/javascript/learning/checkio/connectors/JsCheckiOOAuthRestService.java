@@ -10,7 +10,7 @@ public class JsCheckiOOAuthRestService extends CheckiOOAuthRestService {
     super(
       CheckiONames.JS_CHECKIO,
       JsCheckiONames.JS_CHECKIO_OAUTH_SERVICE_PATH,
-      JsCheckiOOAuthConnector.getInstance()
+      JsCheckiOOAuthConnector.INSTANCE
     );
   }
 

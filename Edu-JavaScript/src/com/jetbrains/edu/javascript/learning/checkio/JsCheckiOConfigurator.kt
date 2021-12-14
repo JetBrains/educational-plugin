@@ -27,11 +27,11 @@ class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
       get() = JsEnvironmentChecker()
 
     override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> =
-      CheckiOTaskChecker(task, envChecker, project, JsCheckiOOAuthConnector.getInstance(),
+      CheckiOTaskChecker(task, envChecker, project, JsCheckiOOAuthConnector,
                          JS_CHECKIO_INTERPRETER, JS_CHECKIO_TEST_FORM_TARGET_URL)
   }
 
-  override fun getOAuthConnector(): CheckiOOAuthConnector = JsCheckiOOAuthConnector.getInstance()
+  override fun getOAuthConnector(): CheckiOOAuthConnector = JsCheckiOOAuthConnector
 
   override val logo: Icon
     get() = EducationalCoreIcons.JSCheckiO

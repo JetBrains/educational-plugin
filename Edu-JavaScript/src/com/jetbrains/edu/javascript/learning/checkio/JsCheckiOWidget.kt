@@ -25,7 +25,7 @@ class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
   override fun ID() = "JsCheckiOAccountWidget"
 
   override fun authorize() {
-    JsCheckiOOAuthConnector.getInstance().doAuthorize()
+    JsCheckiOOAuthConnector.doAuthorize()
   }
 
   override fun resetAccount() {

@@ -1,51 +1,23 @@
-package com.jetbrains.edu.javascript.learning.checkio.connectors;
+package com.jetbrains.edu.javascript.learning.checkio.connectors
 
-import com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings;
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiOOAuthBundle;
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiOOAuthBundle
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
-public class JsCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private static final String CLIENT_ID = JsCheckiOOAuthBundle.value("jsCheckioClientId");
-  private static final String CLIENT_SECRET = JsCheckiOOAuthBundle.value("jsCheckioClientSecret");
+private val CLIENT_ID: String = JsCheckiOOAuthBundle.value("jsCheckioClientId")
+private val CLIENT_SECRET: String = JsCheckiOOAuthBundle.value("jsCheckioClientSecret")
 
-  protected JsCheckiOOAuthConnector() {
-    super(CLIENT_ID, CLIENT_SECRET);
-  }
+object JsCheckiOOAuthConnector : CheckiOOAuthConnector(CLIENT_ID, CLIENT_SECRET) {
+  override var account: CheckiOAccount?
+    get() = JsCheckiOSettings.getInstance().account
+    set(account) {
+      JsCheckiOSettings.getInstance().account = account
+    }
 
-  @Nullable
-  @Override
-  public CheckiOAccount getAccount() {
-    return JsCheckiOSettings.getInstance().getAccount();
-  }
+  override val oAuthServicePath: String = JsCheckiONames.JS_CHECKIO_OAUTH_SERVICE_PATH
 
-  @Override
-  public void setAccount(@Nullable CheckiOAccount account) {
-    JsCheckiOSettings.getInstance().setAccount(account);
-  }
-
-  @NotNull
-  @Override
-  protected String getOAuthServicePath() {
-    return JsCheckiONames.JS_CHECKIO_OAUTH_SERVICE_PATH;
-  }
-
-  @NotNull
-  @Override
-  protected String getPlatformName() {
-    return CheckiONames.JS_CHECKIO;
-  }
-
-
-  private static class Holder {
-    private static final JsCheckiOOAuthConnector INSTANCE = new JsCheckiOOAuthConnector();
-  }
-
-  public static JsCheckiOOAuthConnector getInstance() {
-    return Holder.INSTANCE;
-  }
+  override val platformName: String = CheckiONames.JS_CHECKIO
 }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class JsCheckiOOptions extends CheckiOOptions {
   protected JsCheckiOOptions() {
-    super(JsCheckiOOAuthConnector.getInstance());
+    super(JsCheckiOOAuthConnector.INSTANCE);
   }
 
   @Nls
