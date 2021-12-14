@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PyCheckiOOptions extends CheckiOOptions {
   protected PyCheckiOOptions() {
-    super(PyCheckiOOAuthConnector.getInstance());
+    super(PyCheckiOOAuthConnector.INSTANCE);
   }
 
   @Nls

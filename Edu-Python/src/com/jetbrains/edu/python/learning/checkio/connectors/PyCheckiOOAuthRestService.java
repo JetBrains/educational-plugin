@@ -10,7 +10,7 @@ public final class PyCheckiOOAuthRestService extends CheckiOOAuthRestService {
     super(
       CheckiONames.PY_CHECKIO,
       PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH,
-      PyCheckiOOAuthConnector.getInstance()
+      PyCheckiOOAuthConnector.INSTANCE
     );
   }
 

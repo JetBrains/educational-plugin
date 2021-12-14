@@ -16,7 +16,7 @@ public class PyCheckiOCheckListener extends CheckiOCheckListener {
         PythonFileType.INSTANCE,
         PyCheckiOApiConnector.getInstance()
       ),
-      PyCheckiOOAuthConnector.getInstance()
+      PyCheckiOOAuthConnector.INSTANCE
     );
   }
 

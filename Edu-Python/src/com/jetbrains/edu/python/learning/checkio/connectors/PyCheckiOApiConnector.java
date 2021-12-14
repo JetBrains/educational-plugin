@@ -8,7 +8,7 @@ import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createRetrofi
 
 public final class PyCheckiOApiConnector extends CheckiOApiConnector {
   private PyCheckiOApiConnector() {
-    super(createRetrofitApiInterface(PyCheckiONames.PY_CHECKIO_API_HOST), PyCheckiOOAuthConnector.getInstance());
+    super(createRetrofitApiInterface(PyCheckiONames.PY_CHECKIO_API_HOST), PyCheckiOOAuthConnector.INSTANCE);
   }
 
   @NotNull

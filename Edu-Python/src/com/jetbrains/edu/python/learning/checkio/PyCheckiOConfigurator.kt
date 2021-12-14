@@ -33,12 +33,12 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
       get() = PyEnvironmentChecker()
 
     override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
-      return CheckiOTaskChecker(task, envChecker, project, PyCheckiOOAuthConnector.getInstance(), PY_CHECKIO_INTERPRETER,
+      return CheckiOTaskChecker(task, envChecker, project, PyCheckiOOAuthConnector, PY_CHECKIO_INTERPRETER,
                                 PY_CHECKIO_TEST_FORM_TARGET_URL)
     }
   }
 
-  override fun getOAuthConnector(): CheckiOOAuthConnector = PyCheckiOOAuthConnector.getInstance()
+  override fun getOAuthConnector(): CheckiOOAuthConnector = PyCheckiOOAuthConnector
 
   override val logo: Icon
     get() = EducationalCoreIcons.CheckiO

@@ -1,51 +1,23 @@
-package com.jetbrains.edu.python.learning.checkio.connectors;
+package com.jetbrains.edu.python.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings;
-import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
-import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
+import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle
 
-public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private final static String CLIENT_ID = PyCheckiOOAuthBundle.value("pyCheckioClientId");
-  private final static String CLIENT_SECRET = PyCheckiOOAuthBundle.value("pyCheckioClientSecret");
+private val CLIENT_ID: String = PyCheckiOOAuthBundle.value("pyCheckioClientId")
+private val CLIENT_SECRET: String = PyCheckiOOAuthBundle.value("pyCheckioClientSecret")
 
-  private PyCheckiOOAuthConnector() {
-    super(CLIENT_ID, CLIENT_SECRET);
-  }
+object PyCheckiOOAuthConnector : CheckiOOAuthConnector(CLIENT_ID, CLIENT_SECRET) {
+  override var account: CheckiOAccount?
+    get() = PyCheckiOSettings.INSTANCE.account
+    set(account) {
+      PyCheckiOSettings.INSTANCE.account = account
+    }
 
-  @Nullable
-  @Override
-  public CheckiOAccount getAccount() {
-    return PyCheckiOSettings.INSTANCE.getAccount();
-  }
+  override val oAuthServicePath: String = PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH
 
-  @Override
-  public void setAccount(@Nullable CheckiOAccount account) {
-    PyCheckiOSettings.INSTANCE.setAccount(account);
-  }
-
-  @NotNull
-  @Override
-  public String getOAuthServicePath() {
-    return PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH;
-  }
-
-  @NotNull
-  @Override
-  protected String getPlatformName() {
-    return CheckiONames.PY_CHECKIO;
-  }
-
-  private static class Holder {
-    private static final PyCheckiOOAuthConnector INSTANCE = new PyCheckiOOAuthConnector();
-  }
-
-  @NotNull
-  public static PyCheckiOOAuthConnector getInstance() {
-    return Holder.INSTANCE;
-  }
+  override val platformName: String = CheckiONames.PY_CHECKIO
 }

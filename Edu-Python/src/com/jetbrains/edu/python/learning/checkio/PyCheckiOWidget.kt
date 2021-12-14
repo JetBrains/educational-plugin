@@ -25,7 +25,7 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
   override fun ID() = "PyCheckiOAccountWidget"
 
   override fun authorize() {
-    PyCheckiOOAuthConnector.getInstance().doAuthorize()
+    PyCheckiOOAuthConnector.doAuthorize()
   }
 
   override fun resetAccount() {
