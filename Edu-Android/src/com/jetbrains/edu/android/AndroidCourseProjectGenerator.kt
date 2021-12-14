@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
@@ -25,8 +26,12 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     super.createAdditionalFiles(project, baseDir, isNewCourse)
 
-    invokeAndWaitIfNeeded {
-      GradleWrapper.create(baseDir, project)
+    // fileSystem can be different here in tests.
+    // But `GradleWrapper.create` works properly only for local file system
+    if (baseDir.fileSystem == LocalFileSystem.getInstance()) {
+      invokeAndWaitIfNeeded {
+        GradleWrapper.create(baseDir, project)
+      }
     }
     // We have to create property files manually
     // instead of `com.android.tools.idea.gradle.util.LocalProperties` and `com.android.tools.idea.gradle.util.LocalProperties`

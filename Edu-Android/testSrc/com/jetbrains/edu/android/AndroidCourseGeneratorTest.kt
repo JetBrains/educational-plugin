@@ -16,6 +16,36 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
     createCourseStructure(course)
 
     val expectedFileTree = fileTree {
+      dir("lesson1/task1") {
+        dir("src") {
+          dir("main") {
+            dir("java/com/example/android/course") {
+              file("MainActivity.kt")
+            }
+            dir("res") {
+              dir("layout") {
+                file("activity_main.xml")
+              }
+              dir("values") {
+                file("styles.xml")
+                file("strings.xml")
+                file("colors.xml")
+              }
+            }
+            file("AndroidManifest.xml")
+          }
+          dir("test/java/com/example/android/course") {
+            file("ExampleUnitTest.kt")
+          }
+          dir("androidTest/java/com/example/android/course") {
+            file("AndroidEduTestRunner.kt")
+            file("ExampleInstrumentedTest.kt")
+          }
+        }
+        file("task.md")
+        file("build.gradle")
+      }
+      gradleWrapperFiles()
       file("local.properties")
       file("gradle.properties")
       file("build.gradle")
@@ -42,10 +72,20 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
     createCourseStructure(course)
 
     fileTree {
+      gradleWrapperFiles()
       file("local.properties")
       file("gradle.properties", "some.awesome.property=true")
       file("build.gradle")
       file("settings.gradle")
     }.assertEquals(rootDir)
+  }
+
+  private fun FileTreeBuilder.gradleWrapperFiles() {
+    dir("gradle/wrapper") {
+      file("gradle-wrapper.jar")
+      file("gradle-wrapper.properties")
+    }
+    file("gradlew")
+    file("gradlew.bat")
   }
 }

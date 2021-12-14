@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class CreateTaskTest : EduActionTestCase() {
+class AndroidCreateTaskTest : EduActionTestCase() {
   fun `test create task in empty lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID,
                                  language = KotlinLanguage.INSTANCE, settings = JdkProjectSettings.emptySettings()) {
@@ -48,9 +48,10 @@ class CreateTaskTest : EduActionTestCase() {
           }
           dir("androidTest/java/com/edu/task1") {
             file("AndroidEduTestRunner.kt")
+            file("ExampleInstrumentedTest.kt")
           }
         }
-        file("task.html")
+        file("task.md")
         file("build.gradle")
       }
       file("local.properties")
