@@ -1,5 +1,12 @@
 package com.jetbrains.edu.android
 
+import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
+import com.android.tools.idea.startup.GradleSpecificInitializer
+import com.intellij.openapi.actionSystem.impl.ActionConfigurationCustomizer
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.ExtensionPoint
+import com.intellij.openapi.extensions.impl.ExtensionPointImpl
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.*
@@ -10,6 +17,32 @@ import org.junit.Assert.assertThat
 class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+
+  override fun setUp() {
+    super.setUp()
+    disableUnnecessaryExtensions()
+  }
+
+  // Disables some extensions provided by AS.
+  // They try to set up JAVA and Android JDK in test that we don't need in these tests.
+  // So let's unregister them. Otherwise, tests fail
+  private fun disableUnnecessaryExtensions() {
+    val extensionArea = ApplicationManager.getApplication().extensionArea
+
+    extensionArea
+      .getExtensionPoint<ActionConfigurationCustomizer>("com.intellij.actionConfigurationCustomizer")
+      .unregisterExtensionInTest(GradleSpecificInitializer::class.java)
+
+    extensionArea.getExtensionPoint(StartupActivity.POST_STARTUP_ACTIVITY)
+      .unregisterExtensionInTest(AndroidGradleProjectStartupActivity::class.java)
+  }
+
+  @Suppress("UnstableApiUsage")
+  private fun <T : Any, K : T> ExtensionPoint<T>.unregisterExtensionInTest(extensionClass: Class<K>) {
+    require(this is ExtensionPointImpl)
+    val filteredExtensions = extensionList.filter { !extensionClass.isInstance(it) }
+    maskAll(filteredExtensions, testRootDisposable, false)
+  }
 
   fun `test new course structure`() {
     val course = newCourse(KotlinLanguage.INSTANCE, environment = EduNames.ANDROID)
