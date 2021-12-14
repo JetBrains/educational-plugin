@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.api
 
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -33,7 +34,7 @@ class MarketplaceSubmissionsConnector {
 
   init {
     val module = SimpleModule()
-    objectMapper = createMapper(module)
+    objectMapper = ConnectorUtils.createRegisteredMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
@@ -236,19 +237,6 @@ class MarketplaceSubmissionsConnector {
 
     @JvmStatic
     fun getInstance(): MarketplaceSubmissionsConnector = service()
-
-    fun createMapper(module: SimpleModule): ObjectMapper {
-      val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-      objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-      objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
-      objectMapper.registerModule(module)
-      return objectMapper
-    }
 
     fun isUserAuthorizedWithJwtToken(): Boolean {
       val user = MarketplaceSettings.INSTANCE.account

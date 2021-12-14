@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.api
 
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -527,8 +528,7 @@ abstract class StepikConnector : StepikBaseConnector {
 
     @JvmStatic
     fun createMapper(module: SimpleModule): ObjectMapper {
-      val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+      val objectMapper = ConnectorUtils.createMapper()
       objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
       objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
       objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
@@ -537,12 +537,6 @@ abstract class StepikConnector : StepikBaseConnector {
       objectMapper.addMixIn(ChoiceTask::class.java, StepikChoiceTaskMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
-      objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-      objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
       objectMapper.registerModule(module)
       return objectMapper
     }

@@ -1,10 +1,11 @@
 package com.jetbrains.edu.learning.codeforces.api
 
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
@@ -29,7 +30,7 @@ abstract class CodeforcesConnector {
 
   init {
     val module = SimpleModule()
-    objectMapper = createMapper(module)
+    objectMapper = ConnectorUtils.createRegisteredMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
@@ -211,21 +212,5 @@ abstract class CodeforcesConnector {
   companion object {
     @JvmStatic
     fun getInstance(): CodeforcesConnector = service()
-
-    @JvmStatic
-    private fun createMapper(module: SimpleModule): ObjectMapper {
-      val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-
-      objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-      objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-      objectMapper.disable(MapperFeature.AUTO_DETECT_SETTERS)
-      objectMapper.registerModule(module)
-
-      return objectMapper
-    }
   }
 }

@@ -27,6 +27,7 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateN
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
@@ -404,7 +405,7 @@ abstract class MarketplaceConnector : CourseConnector {
   }
 
   private fun createMapper(module: SimpleModule): ObjectMapper {
-    val objectMapper = MarketplaceSubmissionsConnector.createMapper(module)
+    val objectMapper = ConnectorUtils.createRegisteredMapper(module)
     objectMapper.addMixIn(EduCourse::class.java, MarketplaceEduCourseMixin::class.java)
     return objectMapper
   }
