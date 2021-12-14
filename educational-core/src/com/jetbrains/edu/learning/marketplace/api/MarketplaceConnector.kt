@@ -53,7 +53,7 @@ abstract class MarketplaceConnector : CourseConnector {
 
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
-  val objectMapper: ObjectMapper
+  private val objectMapper: ObjectMapper
 
   protected abstract val authUrl: String
 
