@@ -1,27 +1,11 @@
-package com.jetbrains.edu.javascript.learning.checkio.connectors;
+package com.jetbrains.edu.javascript.learning.checkio.connectors
 
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames
+import com.jetbrains.edu.learning.checkio.api.RetrofitUtils
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 
-import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createRetrofitApiInterface;
+object JsCheckiOApiConnector :
+  CheckiOApiConnector(RetrofitUtils.createRetrofitApiInterface(JsCheckiONames.JS_CHECKIO_API_HOST), JsCheckiOOAuthConnector) {
 
-public class JsCheckiOApiConnector extends CheckiOApiConnector {
-  protected JsCheckiOApiConnector() {
-    super(createRetrofitApiInterface(JsCheckiONames.JS_CHECKIO_API_HOST), JsCheckiOOAuthConnector.INSTANCE);
-  }
-
-  @NotNull
-  @Override
-  public String getLanguageId() {
-    return "js";
-  }
-
-  private static class Holder {
-    private static final JsCheckiOApiConnector INSTANCE = new JsCheckiOApiConnector();
-  }
-
-  public static JsCheckiOApiConnector getInstance() {
-    return Holder.INSTANCE;
-  }
+  override fun getLanguageId(): String = "js"
 }

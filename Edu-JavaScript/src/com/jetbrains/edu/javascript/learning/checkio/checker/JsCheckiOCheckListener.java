@@ -14,7 +14,7 @@ public class JsCheckiOCheckListener extends CheckiOCheckListener {
     super(
       new CheckiOCourseContentGenerator(
         JavaScriptFileType.INSTANCE,
-        JsCheckiOApiConnector.getInstance()
+        JsCheckiOApiConnector.INSTANCE
       ),
       JsCheckiOOAuthConnector.INSTANCE
     );

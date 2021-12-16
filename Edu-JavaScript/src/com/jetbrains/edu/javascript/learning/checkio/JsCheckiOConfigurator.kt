@@ -40,7 +40,7 @@ class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
     get() = false
 
   override fun beforeCourseStarted(course: Course) {
-    val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance())
+    val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector)
     getCourseFromServerUnderProgress(contentGenerator, course as CheckiOCourse, JsCheckiOSettings.getInstance().account,
                                      JS_CHECKIO_API_HOST)
   }
