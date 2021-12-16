@@ -18,6 +18,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -46,6 +47,10 @@ fun checkIsBackgroundThread() {
   check(!ApplicationManager.getApplication().isDispatchThread) {
     "Long running operation invoked on UI thread"
   }
+}
+
+inline fun invokeLater(modalityState: ModalityState, condition: Condition<*>, crossinline runnable: () -> Unit) {
+  ApplicationManager.getApplication().invokeLater({ runnable() }, modalityState, condition)
 }
 
 /**

@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript.learning
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
@@ -13,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
+import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
@@ -24,7 +24,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef())
     val modalityState = ModalityState.current()
     interpreter.provideCachedVersionOrFetch { version ->
-      ApplicationManager.getApplication().invokeLater({
+      invokeLater(modalityState, project.disposed) {
         if (version != null) {
           configureAndAssociateWithProject(project, interpreter, version)
         }
@@ -36,7 +36,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
           @Suppress("DEPRECATION")
           ShowSettingsUtil.getInstance().editConfigurable(project, NodeSettingsConfigurable(project, requester, true))
         }
-      }, modalityState, project.disposed)
+      }
     }
   }
 
