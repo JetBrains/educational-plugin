@@ -1,12 +1,9 @@
 package com.jetbrains.edu.python.hyperskill
 
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.FileTreeBuilder
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
@@ -39,9 +36,5 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
         file("task.html")
       }
     }
-  }
-
-  private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -24,9 +23,5 @@ class HyperskillCourseGenerationTest : EduTestCase() {
         file("task.html")
       }
     }
-  }
-
-  private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }

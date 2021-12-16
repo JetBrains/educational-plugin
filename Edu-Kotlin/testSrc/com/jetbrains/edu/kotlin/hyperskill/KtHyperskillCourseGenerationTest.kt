@@ -1,16 +1,13 @@
 package com.jetbrains.edu.kotlin.hyperskill
 
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.kotlin.KtCourseBuilder.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.FileTreeBuilder
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
@@ -50,9 +47,5 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
                                                                             getKotlinTemplateVariables())
 
     assertEquals(expectedBuildGradleContent, actualBuildGradleContent)
-  }
-
-  private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }

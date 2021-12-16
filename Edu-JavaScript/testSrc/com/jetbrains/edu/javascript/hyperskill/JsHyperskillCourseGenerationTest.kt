@@ -1,14 +1,11 @@
 package com.jetbrains.edu.javascript.hyperskill
 
 import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.javascript.learning.JsConfigurator.Companion.TASK_JS
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.FileTreeBuilder
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -33,9 +30,5 @@ class JsHyperskillCourseGenerationTest : EduTestCase() {
       }
       file("package.json")
     }
-  }
-
-  private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }
