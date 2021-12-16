@@ -12,6 +12,7 @@ import com.intellij.util.NotNullProducer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
@@ -91,6 +92,11 @@ class OpenCourseButton : CourseButtonBase() {
               Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
             }
           }
+        }
+        course is CodeforcesCourse -> {
+          closeDialog()
+          val contestId = course.id
+          StartCodeforcesContestAction.joinContest(contestId, null)
         }
         else -> {
           closeDialog()
