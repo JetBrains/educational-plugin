@@ -47,7 +47,7 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
     get() = false
 
   override fun beforeCourseStarted(course: Course) {
-    val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector.getInstance())
+    val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector)
     getCourseFromServerUnderProgress(contentGenerator, (course as CheckiOCourse), PyCheckiOSettings.INSTANCE.account, PY_CHECKIO_API_HOST)
   }
 

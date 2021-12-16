@@ -14,7 +14,7 @@ public class PyCheckiOCheckListener extends CheckiOCheckListener {
     super(
       new CheckiOCourseContentGenerator(
         PythonFileType.INSTANCE,
-        PyCheckiOApiConnector.getInstance()
+        PyCheckiOApiConnector.INSTANCE
       ),
       PyCheckiOOAuthConnector.INSTANCE
     );
