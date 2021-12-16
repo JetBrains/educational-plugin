@@ -1,28 +1,16 @@
-package com.jetbrains.edu.learning.checkio.connectors;
+package com.jetbrains.edu.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.checkio.api.CheckiOApiInterface;
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
-import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.checkio.api.CheckiOApiInterface
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 
-import java.util.List;
+abstract class CheckiOApiConnector(
+  private val checkiOApiInterface: CheckiOApiInterface,
+  private val oauthConnector: CheckiOOAuthConnector
+) {
+  abstract val languageId: String
 
-public abstract class CheckiOApiConnector {
-  private final CheckiOApiInterface myCheckiOApiInterface;
-  private final CheckiOOAuthConnector myOauthConnector;
-
-  protected CheckiOApiConnector(@NotNull CheckiOApiInterface checkiOApiInterface, @NotNull CheckiOOAuthConnector oauthConnector) {
-    myCheckiOApiInterface = checkiOApiInterface;
-    myOauthConnector = oauthConnector;
+  open fun getMissionList(): List<CheckiOMission> {
+    val accessToken = oauthConnector.getAccessToken()
+    return checkiOApiInterface.getMissionList(accessToken).execute()
   }
-
-  @NotNull
-  public List<CheckiOMission> getMissionList() throws CheckiOLoginRequiredException, ApiException {
-    final String accessToken = myOauthConnector.getAccessToken();
-    return myCheckiOApiInterface.getMissionList(accessToken).execute();
-  }
-
-  @NotNull
-  abstract public String getLanguageId();
 }

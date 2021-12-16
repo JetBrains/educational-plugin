@@ -21,7 +21,7 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
   fun getStationsFromServer(): List<CheckiOStation> {
     val stations = mutableMapOf<Int, CheckiOStation>()
 
-    for (mission in apiConnector.missionList) {
+    for (mission in apiConnector.getMissionList()) {
       generateTaskFile(mission)
       addLinks(mission)
       val station = stations.computeIfAbsent(mission.station.id) { mission.station }

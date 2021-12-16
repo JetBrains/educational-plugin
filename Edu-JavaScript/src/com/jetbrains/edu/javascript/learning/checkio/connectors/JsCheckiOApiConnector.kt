@@ -7,5 +7,5 @@ import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 object JsCheckiOApiConnector :
   CheckiOApiConnector(RetrofitUtils.createRetrofitApiInterface(JsCheckiONames.JS_CHECKIO_API_HOST), JsCheckiOOAuthConnector) {
 
-  override fun getLanguageId(): String = "js"
+  override val languageId: String = "js"
 }

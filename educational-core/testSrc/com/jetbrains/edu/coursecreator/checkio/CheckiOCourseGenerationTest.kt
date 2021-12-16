@@ -68,7 +68,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     assertNull(simpleNamesMission.station.customPresentableName)
   }
 
-  private fun getSourceMissions() = MockCheckiOApiConnector().missionList
+  private fun getSourceMissions() = MockCheckiOApiConnector().getMissionList()
 
   private fun getProcessedMissions(): List<CheckiOMission> {
     val stations = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector()).getStationsFromServer()
@@ -80,11 +80,11 @@ class CheckiOCourseGenerationTest : EduTestCase() {
   }
 
   inner class MockCheckiOApiConnector : CheckiOApiConnector(MockCheckiOApiInterface(), MockCheckiOOAuthConnector()) {
+    override val languageId: String = "py"
+
     override fun getMissionList(): List<CheckiOMission> {
       return createApiGson().fromJson(missionsJson, object : TypeToken<MutableList<CheckiOMission>>() {}.type)
     }
-
-    override fun getLanguageId()= "py"
   }
 
   private class MockCheckiOApiInterface : CheckiOApiInterface {

@@ -7,5 +7,5 @@ import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames
 object PyCheckiOApiConnector :
   CheckiOApiConnector(RetrofitUtils.createRetrofitApiInterface(PyCheckiONames.PY_CHECKIO_API_HOST), PyCheckiOOAuthConnector) {
 
-  override fun getLanguageId(): String = "py"
+  override val languageId: String = "py"
 }
