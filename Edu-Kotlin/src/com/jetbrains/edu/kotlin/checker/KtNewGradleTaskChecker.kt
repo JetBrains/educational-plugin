@@ -7,7 +7,6 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.jvm.gradle.checker.GradleCommandLine
 import com.jetbrains.edu.jvm.gradle.checker.NewGradleEduTaskChecker
 import com.jetbrains.edu.jvm.gradle.checker.hasSeparateModule
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
@@ -27,8 +26,7 @@ class KtNewGradleTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val testConfigurations = super.createDefaultTestConfigurations()
-    // Android Studio produces configurations that correctly work even in one module project
-    if (EduUtils.isAndroidStudio() || task.hasSeparateModule(project) || testConfigurations.size != 1) {
+    if (task.hasSeparateModule(project) || testConfigurations.size != 1) {
       return testConfigurations
     }
 
