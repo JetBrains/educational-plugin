@@ -1,51 +1,36 @@
-package com.jetbrains.edu.learning.checkio.options;
+package com.jetbrains.edu.learning.checkio.options
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.messages.MessageBus;
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.settings.LoginOptions;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.application.ApplicationManager
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector.Companion.authorizationTopic
+import com.jetbrains.edu.learning.settings.LoginOptions
+import javax.swing.event.HyperlinkEvent
 
-import javax.swing.event.HyperlinkEvent;
-
-public abstract class CheckiOOptions extends LoginOptions<CheckiOAccount> {
-  private final CheckiOOAuthConnector myOAuthConnector;
-
-  protected CheckiOOptions(@NotNull CheckiOOAuthConnector oauthConnector) {
-    super();
-    myOAuthConnector = oauthConnector;
+abstract class CheckiOOptions protected constructor(private val myOAuthConnector: CheckiOOAuthConnector) : LoginOptions<CheckiOAccount>() {
+  override fun getCurrentAccount(): CheckiOAccount? {
+    return myOAuthConnector.account
   }
 
-  @Nullable
-  @Override
-  public CheckiOAccount getCurrentAccount() {
-    return myOAuthConnector.getAccount();
-  }
-
-  @Override
-  public void setCurrentAccount(@Nullable CheckiOAccount account) {
-    myOAuthConnector.setAccount(account);
-    MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
+  override fun setCurrentAccount(account: CheckiOAccount?) {
+    myOAuthConnector.account = account
+    val messageBus = ApplicationManager.getApplication().messageBus
     if (account != null) {
-      messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedIn();
+      messageBus.syncPublisher(authorizationTopic).userLoggedIn()
     }
     else {
-      messageBus.syncPublisher(CheckiOOAuthConnector.getAuthorizationTopic()).userLoggedOut();
+      messageBus.syncPublisher(authorizationTopic).userLoggedOut()
     }
   }
 
-  @NotNull
-  protected LoginListener createAuthorizeListener() {
-    return new LoginListener() {
-      @Override
-      protected void authorize(HyperlinkEvent event) {
-        myOAuthConnector.doAuthorize(() -> {
-          setLastSavedAccount(getCurrentAccount());
-          updateLoginLabels();
-        });
+  override fun createAuthorizeListener(): LoginListener {
+    return object : LoginListener() {
+      override fun authorize(e: HyperlinkEvent?) {
+        myOAuthConnector.doAuthorize(Runnable {
+          lastSavedAccount = getCurrentAccount()
+          updateLoginLabels()
+        })
       }
-    };
+    }
   }
 }
