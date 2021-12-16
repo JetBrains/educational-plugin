@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseSelection
 
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
@@ -48,6 +49,20 @@ class StartButtonsTest : EduTestCase() {
     val startButton = coursePanel.buttonsPanel.buttons.first()
     assertTrue(startButton.isVisible)
     assertTrue(startButton.isEnabled)
+  }
+
+  fun `test checkiO open button`() {
+    val scope = CoroutineScope(EmptyCoroutineContext)
+    val panel = CheckiOPlatformProvider().createPanel(scope, testRootDisposable)
+    val course = course { }
+    CoursesStorage.getInstance().addCourse(course, "test")
+
+    val coursePanel = panel.coursePanel
+    coursePanel.bindCourse(course)
+
+    val openButton = coursePanel.buttonsPanel.buttons[1]
+    assertTrue(openButton.isVisible)
+    assertTrue(openButton.isEnabled)
   }
 
   override fun tearDown() {
