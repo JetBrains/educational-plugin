@@ -82,6 +82,7 @@ public class EduNames {
   // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
   public static final String CPP = "ObjectiveC";
   public static final String GO = "go";
+  public static final String PHP = "PHP";
 
   // Language versions
   public static final String PYTHON_2_VERSION = "2.x";

@@ -383,6 +383,8 @@
                            implementationClass="com.jetbrains.edu.learning.compatibility.RsCourseCompatibilityProvider"/>
     <compatibilityProvider language="go"
                            implementationClass="com.jetbrains.edu.learning.compatibility.GoCourseCompatibilityProvider"/>
+    <compatibilityProvider language="PHP"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PhpCourseCompatibilityProvider"/>
     <compatibilityProvider language="SQL"
                            implementationClass="com.jetbrains.edu.learning.compatibility.SqlCourseCompatibilityProvider"/>
 

@@ -46,6 +46,8 @@ open class PluginInfo {
 
     val GO: PluginInfo = PluginInfo("org.jetbrains.plugins.go", "Go")
 
+    val PHP: PluginInfo = PluginInfo("com.jetbrains.php", "PHP")
+
     val SQL: PluginInfo = PluginInfo("com.intellij.database", "Database Tools and SQL")
   }
 }

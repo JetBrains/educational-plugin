@@ -61,6 +61,7 @@ val studioSandbox = "${project.buildDir.absolutePath}/studio-sandbox"
 val webStormSandbox = "${project.buildDir.absolutePath}/webstorm-sandbox"
 val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
+val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
 // BACKCOMPAT: 2021.1
 val isAtLeast212 = environmentName.toInt() >= 212
@@ -84,6 +85,7 @@ val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val sqlPlugin = "com.intellij.database"
 val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
+val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
 
 val jvmPlugins = listOf(
   "java",
@@ -328,7 +330,7 @@ project(":") {
       pluginsList += listOf("java", "junit", "Kotlin", scalaPlugin)
     }
     if (isIdeaIDE) {
-      pluginsList += listOf("JavaScriptLanguage", "NodeJS", goPlugin)
+      pluginsList += listOf("JavaScriptLanguage", "NodeJS", goPlugin, phpPlugin)
     }
     if (!(isStudioIDE || isPycharmIDE)) {
       pluginsList += sqlPlugin
@@ -355,6 +357,7 @@ project(":") {
     compileOnly(project(":Edu-Rust"))
     compileOnly(project(":Edu-Cpp"))
     compileOnly(project(":Edu-Go"))
+    compileOnly(project(":Edu-Php"))
     compileOnly(project(":Edu-Sql"))
   }
 
@@ -488,6 +491,19 @@ project(":") {
       intellij.sandboxDir.set(goLandSandbox)
       tasks.runIde {
         ideDir.set(file(prop("goLandPath")))
+      }
+    }
+  }
+
+  task("configurePhpStorm") {
+    doLast {
+      if (!hasProp("phpStormPath")) {
+        throw InvalidUserDataException("Path to PhpStorm installed locally is needed\nDefine \"phpStormPath\" property")
+      }
+
+      intellij.sandboxDir.set(phpStormSandbox)
+      tasks.runIde {
+        ideDir.set(file(prop("phpStormPath")))
       }
     }
   }
@@ -759,6 +775,19 @@ project(":Edu-Go") {
     localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(goPlugin))
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":Edu-Php") {
+  intellij {
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(phpPlugin))
   }
 
   dependencies {

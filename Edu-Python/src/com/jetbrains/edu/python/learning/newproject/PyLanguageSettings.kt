@@ -5,13 +5,11 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
@@ -23,14 +21,19 @@ import javax.swing.JComponent
 
 open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
-  protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
+  private val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
-  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  override fun getLanguageSettingsComponents(
+    course: Course,
+    disposable: Disposable,
+    context: UserDataHolder?
+  ): List<LabeledComponent<JComponent>> {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     val fakeSdk = createFakeSdk(course, context)
 
     val combo = getInterpreterComboBox(fakeSdk)
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, EduPythonBundle.message("python.interpreter"), BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(
+      LabeledComponent.create(combo, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))
   }
 
   override fun getSettings(): PyNewProjectSettings = mySettings
@@ -43,7 +46,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
-    val sdk = mySettings.sdk ?: return ValidationMessage(EduPythonBundle.message("error.no.interpreter"))
+    val sdk = mySettings.sdk ?: return ValidationMessage(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON))
     return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ValidationMessage(it) }
   }
 
@@ -53,7 +56,8 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         val pythonVersion = versionString
         if (pythonVersion == null) {
           LanguageLevel.getDefault()
-        } else {
+        }
+        else {
           LanguageLevel.fromPythonVersion(pythonVersion) ?: LanguageLevel.getDefault()
         }
       }
@@ -103,8 +107,11 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.version }
     }
 
-    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(EduPythonBundle.message("error.incorrect.python", requiredVersion))
-    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>(EduPythonBundle.message("error.old.python", requiredVersion))
+    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(
+      EduPythonBundle.message("error.incorrect.python", requiredVersion))
+
+    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>(
+      EduPythonBundle.message("error.old.python", requiredVersion))
 
     private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
       val baseSdk = getBaseSdk(course, context) ?: return null

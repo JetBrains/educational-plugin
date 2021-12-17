@@ -21,6 +21,7 @@
     <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
     <depends optional="true" config-file="Edu-Cpp.xml">com.intellij.modules.clion</depends>
     <depends optional="true" config-file="Edu-Go.xml">org.jetbrains.plugins.go</depends>
+    <depends optional="true" config-file="Edu-Php.xml">com.jetbrains.php</depends>
     <depends optional="true" config-file="Edu-Sql.xml">com.intellij.database</depends>
 
     <!-- Hack! -->

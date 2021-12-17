@@ -124,7 +124,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
                                                                   "output",
                                                                   "theory"))
     private val LANGUAGE_FIELD = EventFields.String(LANGUAGE,
-                                                    listOf("JAVA", "kotlin", "Python", "Scala", "JavaScript", "Rust", "ObjectiveC", "go"))
+                                                    listOf("JAVA", "kotlin", "Python", "Scala",
+                                                           "JavaScript", "Rust", "ObjectiveC", "go", "PHP"))
 
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))

@@ -18,6 +18,7 @@ public class EducationalCoreIcons {
   public static final Icon RustLogo = load("/icons/com/jetbrains/edu/learning/RustLogo.svg"); // 16x16
   public static final Icon CppLogo = load("/icons/com/jetbrains/edu/learning/CAndC++Logo.svg"); // 16x16
   public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg"); // 16x16
+  public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/PhpLogo.svg"); // 16x16
 
   public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
 

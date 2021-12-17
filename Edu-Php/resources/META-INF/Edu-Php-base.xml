@@ -1,0 +1,11 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.php.PhpConfigurator" language="PHP" displayName="PHP"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.course.php" percentOfUsers="100" internalFeature="true">
+      <description>Enables support for PHP courses</description>
+    </experimentalFeature>
+  </extensions>
+</idea-plugin>

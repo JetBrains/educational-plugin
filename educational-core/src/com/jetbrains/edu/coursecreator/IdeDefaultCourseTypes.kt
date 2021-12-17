@@ -16,6 +16,7 @@ fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isWebStorm() -> EduNames.JAVASCRIPT
   PlatformUtils.isCLion() -> EduNames.CPP
   PlatformUtils.isGoIde() -> EduNames.GO
+  PlatformUtils.isPhpStorm() -> EduNames.PHP
   else -> null
 }
 

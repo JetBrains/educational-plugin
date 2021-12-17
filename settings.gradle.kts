@@ -22,6 +22,7 @@ include(
   "Edu-Rust",
   "Edu-Cpp",
   "Edu-Go",
+  "Edu-Php",
   "Edu-Sql"
 )
 
