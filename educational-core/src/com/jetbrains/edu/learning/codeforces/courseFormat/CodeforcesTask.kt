@@ -62,6 +62,8 @@ open class CodeforcesTask : Task() {
     addTaskFile(TaskFile(path, text))
   }
 
+  override fun supportSubmissions(): Boolean = true
+
   companion object {
     private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)
 
@@ -78,6 +80,8 @@ open class CodeforcesTask : Task() {
       }
       task.lesson = lesson
       task.index = index
+      // We don't have original problems ids here, so we have to use index to bind them with solutions
+      task.id = index
       task.name = htmlElement.select("div.header").select("div.title").text()
 
       htmlElement.select("img").forEach {

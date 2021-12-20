@@ -1,17 +1,21 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.InternalDecoratorImpl
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
+import com.jetbrains.edu.learning.codeforces.submissions.CodeforcesSolutionLoader
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.ClickableLabel
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
@@ -29,14 +33,15 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+    if (project.isDisposed) return
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
     val headerToolbarComponent = (toolWindow.component.parent as InternalDecoratorImpl).headerToolbar.component
 
-    val popup = createPopup()
+    val popup = createPopup(project)
     popup.show(RelativePoint(headerToolbarComponent, Point(-POPUP_OFFSET, headerToolbarComponent.height)))
   }
 
-  private fun createPopup(): JBPopup {
+  private fun createPopup(project: Project): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
@@ -44,11 +49,11 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
       .setMinSize(Dimension(POPUP_WIDTH, POPUP_HEIGHT))
       .createPopup()
 
-    wrapperPanel.add(popupContent(popup), BorderLayout.CENTER)
+    wrapperPanel.add(popupContent(popup, project), BorderLayout.CENTER)
     return popup
   }
 
-  private fun popupContent(popup: JBPopup): JPanel {
+  private fun popupContent(popup: JBPopup, project: Project): JPanel {
     val account = CodeforcesSettings.getInstance().account
     val accountInfoText = if (account != null) {
       val handle = account.userInfo.handle
@@ -77,10 +82,20 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
         LoginDialog().show()
       }
     }
-    accountActionLabel.alignmentX = Component.LEFT_ALIGNMENT
-    accountActionLabel.border = JBUI.Borders.emptyLeft(5)
 
     contentPanel.add(accountInfoLabel)
+    if (CodeforcesSettings.getInstance().isLoggedIn()) {
+      contentPanel.add(ClickableLabel(EduCoreBundle.message("codeforces.reload.submissions")) {
+        popup.closeOk(null)
+        val course = project.course
+        val task = EduUtils.getCurrentTask(project)
+        if (course != null && task != null) {
+          SubmissionsManager.getInstance(project).prepareSubmissionsContent {
+            CodeforcesSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
+          }
+        }
+      })
+    }
     contentPanel.add(JSeparator())
     contentPanel.add(accountActionLabel)
 

@@ -48,7 +48,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
       var hyperlinkListener: HyperlinkListener? = null
       try {
         CodeforcesSettings.getInstance().account?.let {
-          val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it)
+          val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it, project)
             .onError { errorMessage ->
               checkStatus = CheckStatus.Failed
               severity = CheckResultSeverity.Error

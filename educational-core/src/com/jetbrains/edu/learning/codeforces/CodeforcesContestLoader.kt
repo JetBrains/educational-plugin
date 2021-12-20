@@ -16,7 +16,7 @@ object CodeforcesContestLoader {
     if (contestList.isOK) {
       val acceptablePhases = listOf(ContestPhase.CODING, ContestPhase.FINISHED)
       result.addAll(
-        contestList.contests.filter {
+        contestList.result.filter {
           acceptablePhases.contains(it.phase)
         }
       )

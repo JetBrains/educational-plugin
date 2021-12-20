@@ -3,12 +3,12 @@ package com.jetbrains.edu.learning.codeforces.api
 import com.fasterxml.jackson.annotation.JsonProperty
 
 
-class ContestsList {
+open class CodeforcesResponse<T : Any> {
   @JsonProperty(STATUS)
   lateinit var status: String
 
   @JsonProperty(RESULT)
-  lateinit var contests: List<ContestInfo>
+  lateinit var result: T
 
   val isOK: Boolean
     get() = status == "OK"
@@ -18,3 +18,6 @@ class ContestsList {
     private const val RESULT = "result"
   }
 }
+
+class ContestsResponse : CodeforcesResponse<List<ContestInfo>>()
+class SubmissionsResponse : CodeforcesResponse<List<SubmissionResult>>()

@@ -1,10 +1,17 @@
 package com.jetbrains.edu.learning.codeforces.api
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -13,19 +20,33 @@ import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
+import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import okhttp3.ConnectionPool
-import okhttp3.ResponseBody
+import com.jetbrains.edu.learning.stepik.api.Reply
+import com.jetbrains.edu.learning.stepik.api.SolutionFile
+import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import okhttp3.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.time.Instant
+import java.util.*
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 abstract class CodeforcesConnector {
   @VisibleForTesting
   val objectMapper: ObjectMapper
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
+  private val TIMEOUT_IN_SEC = TimeUnit.MINUTES.toSeconds(10)
   private val handleRegex = """var handle = "([\w\-]+)"""".toRegex()
 
   init {
@@ -44,7 +65,7 @@ abstract class CodeforcesConnector {
       .build()
       .create(CodeforcesService::class.java)
 
-  fun getContests(withTrainings: Boolean = false, locale: String = "en"): ContestsList? =
+  fun getContests(withTrainings: Boolean = false, locale: String = "en"): ContestsResponse? =
     service.contests(withTrainings, locale)
       .executeHandlingExceptions()
       ?.checkStatusCode()
@@ -59,7 +80,7 @@ abstract class CodeforcesConnector {
 
   fun getContestInformation(contestId: Int): Result<CodeforcesCourse, String> {
     val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contests.list"))
-    val contestInfo = contestsList.contests.find { it.id == contestId }
+    val contestInfo = contestsList.result.find { it.id == contestId }
                       ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
 
     val responseBody = service.status(contestId).executeParsingErrors()
@@ -141,12 +162,12 @@ abstract class CodeforcesConnector {
                                  cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
   }
 
-  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount): Result<String, String> {
+  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount, project: Project): Result<String, String> {
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
       return Err(EduCoreBundle.message("error.access.denied"))
     }
 
-    val jSessionID = account.getSessionId()
+    val jSessionID = account.getSessionId() ?: return Err(EduCoreBundle.message("error.access.denied"))
     val contestId = task.course.id
     val languageCode = task.course.languageCode
     val programTypeId = CodeforcesTask.codeforcesProgramTypeId(task.course as CodeforcesCourse)?.toString()
@@ -178,7 +199,101 @@ abstract class CodeforcesConnector {
       return Ok(it.text())
     }
 
+    val cc = responseBody.getElementsByAttributeValue("name", "cc").attr("content")
+    val pc = responseBody.getElementsByAttributeValue("name", "pc").attr("content")
+    val timeStamp = System.currentTimeMillis()
+
+    ApplicationManager.getApplication().executeOnPooledThread {
+      connectToWebSocketWithTimeout("wss://pubsub.codeforces.com/ws/s_$pc/s_$cc?_=$timeStamp&tag=&time=&eventid=",
+                                    "s_$cc",
+                                    csrfToken,
+                                    jSessionID,
+                                    project)
+    }
+
     return Ok("")
+  }
+
+  private fun connectToWebSocketWithTimeout(url: String, channel: String, csrfToken: String, jSessionID: String, project: Project) {
+    val client = OkHttpClient.Builder().readTimeout(1, TimeUnit.MINUTES).build()
+    val request = Request.Builder().url(url).build()
+    val latch = CountDownLatch(1)
+    val task = EduUtils.getCurrentTask(project) as? CodeforcesTask ?: return
+    val socket = client.newWebSocket(request, object : WebSocketListener() {
+
+      override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+        LOG.debug("WS connection failure. StackTrace: ${t.stackTrace.joinToString("\n")}")
+        latch.countDown()
+      }
+
+      override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        LOG.debug("WS connection closed. Reason: $reason")
+        latch.countDown()
+      }
+
+      override fun onMessage(webSocket: WebSocket, text: String) {
+        val wsResponse = objectMapper.readValue(text, object : TypeReference<CodeforcesWSResponse>() {})
+        if (channel == wsResponse.channel) {
+          TaskDescriptionView.getInstance(project).checkStarted(task)
+          val dataResponse = objectMapper.readValue(wsResponse.text, object : TypeReference<DataResponse>() {})
+
+          val verdict = dataResponse.verdict
+          val checkResult = CheckResult(verdict.toCheckStatus(), verdict.name.replace("_", " ").toLowerCase().capitalize())
+
+          task.feedback = CheckFeedback(Date(), checkResult)
+          task.status = verdict.toCheckStatus()
+          ProjectView.getInstance(project).refresh()
+          TaskDescriptionView.getInstance(project).checkFinished(task, checkResult)
+
+          if (verdict != CodeforcesVerdict.TESTING) {
+            YamlFormatSynchronizer.saveItem(task)
+            latch.countDown()
+          }
+        }
+      }
+    })
+
+    latch.await(TIMEOUT_IN_SEC, TimeUnit.SECONDS)
+    socket.close(1000, null)
+    client.dispatcher().executorService().shutdown()
+    val submission = getUserSubmissions(task.course.id, listOf(task), csrfToken, jSessionID)[task.id]?.get(0) ?: return
+    SubmissionsManager.getInstance(project).addToSubmissions(task.id, submission)
+  }
+
+  fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, MutableList<Submission>> {
+    if (CodeforcesSettings.getInstance().isLoggedIn()) {
+      val tasksByNames = tasks.associateBy { it.name }
+      val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
+        .executeParsingErrors().onError { return emptyMap() }.body()
+
+      val submissions = body?.result
+                          ?.filter { tasksByNames.contains("${it.problem.index}. ${it.problem.name}") }
+                          ?.map {
+                            val task = tasksByNames["${it.problem.index}. ${it.problem.name}"]
+                            val codeTaskFile = task!!.getCodeTaskFile(task.project!!)!!
+                            Submission().apply {
+                              this.id = it.id
+                              this.time = Date.from(Instant.ofEpochSecond(it.creationTimeSeconds.toLong()))
+                              this.status = it.verdict.stringVerdict
+                              this.step = task.id
+                              val submissionSource = getSubmissionSource(it.id, csrfToken, jSessionID)
+                              val solutionFile = SolutionFile(codeTaskFile.name, submissionSource, false)
+
+                              this.reply = Reply(listOf(solutionFile), "", null, null)
+                            }
+                          }?.toMutableList() ?: return emptyMap()
+
+      return tasks.associate { task ->
+        task.id to submissions.filter { it.step == task.id }.toMutableList()
+      }
+    }
+    return emptyMap()
+  }
+
+  fun getSubmissionSource(submissionId: Int, token: String, jSessionId: String): String {
+    val response = service.getSubmissionSource(token, submissionId,
+                                               "JSESSIONID=$jSessionId").executeParsingErrors().onError { return "" }.body()
+    return response?.source ?: ""
   }
 
   private fun isLoggedIn(): Boolean {
@@ -210,6 +325,9 @@ abstract class CodeforcesConnector {
   }
 
   companion object {
+
+    private val LOG = Logger.getInstance(CodeforcesConnector::class.java)
+
     @JvmStatic
     fun getInstance(): CodeforcesConnector = service()
   }

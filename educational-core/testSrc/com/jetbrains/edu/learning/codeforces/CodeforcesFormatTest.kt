@@ -9,10 +9,10 @@ class CodeforcesFormatTest : CodeforcesTestCase() {
   fun testAvailableContests() {
     val responseString = loadJsonText()
     val mapper = CodeforcesConnector.getInstance().objectMapper
-    val coursesList = mapper.readValue(responseString, ContestsList::class.java)
+    val coursesList = mapper.readValue(responseString,  ContestsResponse::class.java)
 
-    assertNotNull(coursesList.contests)
-    assertEquals("Incorrect number of contests", 12, coursesList.contests.size)
+    assertNotNull(coursesList.result)
+    assertEquals("Incorrect number of contests", 12, coursesList.result.size)
     assertTrue(coursesList.isOK)
   }
 

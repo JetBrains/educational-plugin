@@ -7,7 +7,13 @@ import retrofit2.http.*
 interface CodeforcesService {
   @GET("api/contest.list")
   fun contests(@Query("gym") trainings: Boolean,
-               @Query("locale") locale: String = "en"): Call<ContestsList>
+               @Query("locale") locale: String = "en"): Call<ContestsResponse>
+
+  @GET("api/contest.status")
+  fun getUserSolutions(@Query("handle") handle: String,
+                       @Query("contestId") contestId: Int,
+                       @Query("from") from: Int = 1,
+                       @Query("count") count: Int = 1000): Call<SubmissionsResponse>
 
   @GET("contest/{id}")
   fun contest(@Path("id") contestId: Int,
@@ -66,5 +72,11 @@ interface CodeforcesService {
 
   @GET("/profile")
   fun profile(@Header("Cookie") jSessionId: String): Call<ResponseBody>
+
+  @POST("/data/submitSource")
+  @FormUrlEncoded
+  fun getSubmissionSource(@Field("csrf_token") csrfToken: String,
+                          @Field("submissionId") submissionId: Int,
+                          @Header("Cookie") cookie: String): Call<SubmissionSource>
 
 }

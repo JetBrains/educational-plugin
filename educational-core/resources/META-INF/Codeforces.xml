@@ -11,10 +11,12 @@
     <runLineMarkerContributor language="TEXT"
                               implementationClass="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunLineMarkerContributor"/>
     <fileTemplateGroup implementation="com.jetbrains.edu.learning.codeforces.CodeforcesFileTemplateFactory"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.codeforces.submissions.CodeforcesSolutionLoader"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.codeforces.authorization.CodeforcesLoginOptions"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.codeforces.submissions.CodeforcesSubmissionsProvider"/>
   </extensions>
 
   <extensionPoints>
@@ -34,7 +36,8 @@
     <action id="Educational.Codeforces.UpdateContest"
             class="com.jetbrains.edu.learning.codeforces.update.CodeforcesUpdateContestAction"/>
     <action id="Educational.Codeforces.Account" class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction"/>
-    <action id="Educational.Codeforces.Submit.Solution" class="com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction"/>
+    <action id="Educational.Codeforces.Submit.Solution"
+            class="com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAction"/>
     <action id="Educational.Codeforces.CreateTestSample"
             class="com.jetbrains.edu.learning.codeforces.actions.CodeforcesCreateTestAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.CODEFORCES_SMALL">
