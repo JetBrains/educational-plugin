@@ -52,6 +52,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   val buttonsPanel: ButtonsPanel = ButtonsPanel().apply {
     setStartButtonText(startButtonText(null))
     setOpenButtonText(openButtonText)
+    border = JBUI.Borders.emptyTop(18)
   }
 
   @Suppress("LeakingThis")
