@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.api
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
@@ -11,8 +10,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
@@ -21,9 +20,10 @@ import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
-import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
@@ -256,35 +256,36 @@ abstract class CodeforcesConnector {
     latch.await(TIMEOUT_IN_SEC, TimeUnit.SECONDS)
     socket.close(1000, null)
     client.dispatcher().executorService().shutdown()
-    val submission = getUserSubmissions(task.course.id, listOf(task), csrfToken, jSessionID)[task.id]?.get(0) ?: return
-    SubmissionsManager.getInstance(project).addToSubmissions(task.id, submission)
+    val submissions = getUserSubmissions(task.course.id, listOf(task), csrfToken, jSessionID)[task.id] ?: return
+    if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
   fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, MutableList<Submission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
-      val tasksByNames = tasks.associateBy { it.name }
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
         .executeParsingErrors().onError { return emptyMap() }.body()
 
-      val submissions = body?.result
-                          ?.filter { tasksByNames.contains("${it.problem.index}. ${it.problem.name}") }
-                          ?.map {
-                            val task = tasksByNames["${it.problem.index}. ${it.problem.name}"]
-                            val codeTaskFile = task!!.getCodeTaskFile(task.project!!)!!
-                            Submission().apply {
-                              this.id = it.id
-                              this.time = Date.from(Instant.ofEpochSecond(it.creationTimeSeconds.toLong()))
-                              this.status = it.verdict.stringVerdict
-                              this.step = task.id
-                              val submissionSource = getSubmissionSource(it.id, csrfToken, jSessionID)
-                              val solutionFile = SolutionFile(codeTaskFile.name, submissionSource, false)
-
-                              this.reply = Reply(listOf(solutionFile), "", null, null)
-                            }
-                          }?.toMutableList() ?: return emptyMap()
+      val submissionsByNames = body?.result?.groupBy { "${it.problem.index}. ${it.problem.name}" }
 
       return tasks.associate { task ->
-        task.id to submissions.filter { it.step == task.id }.toMutableList()
+        val taskSubmissions = submissionsByNames?.get(task.name)?.map {
+          val mainFileName = task.course.configurator?.courseBuilder?.mainTemplateName
+          Submission().apply {
+            this.id = it.id
+            this.time = Date.from(Instant.ofEpochSecond(it.creationTimeSeconds.toLong()))
+            this.status = it.verdict.stringVerdict
+            this.step = task.id
+            val submissionSource = getSubmissionSource(it.id, csrfToken, jSessionID)
+
+            if (mainFileName != null) {
+              val solutionFile = SolutionFile(GeneratorUtils.joinPaths(task.sourceDir, mainFileName), submissionSource, true)
+              this.reply = Reply(listOf(solutionFile), "", null, null)
+            }
+
+          }
+        }?.toMutableList()
+        if (taskSubmissions == null) task.id to mutableListOf()
+        else task.id to taskSubmissions
       }
     }
     return emptyMap()

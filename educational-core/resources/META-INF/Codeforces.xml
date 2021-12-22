@@ -11,7 +11,6 @@
     <runLineMarkerContributor language="TEXT"
                               implementationClass="com.jetbrains.edu.learning.codeforces.run.CodeforcesRunLineMarkerContributor"/>
     <fileTemplateGroup implementation="com.jetbrains.edu.learning.codeforces.CodeforcesFileTemplateFactory"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.codeforces.submissions.CodeforcesSolutionLoader"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

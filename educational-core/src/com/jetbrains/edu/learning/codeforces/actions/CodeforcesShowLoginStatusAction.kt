@@ -8,12 +8,9 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.impl.InternalDecoratorImpl
 import com.intellij.ui.awt.RelativePoint
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
-import com.jetbrains.edu.learning.codeforces.submissions.CodeforcesSolutionLoader
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
@@ -87,13 +84,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       contentPanel.add(ClickableLabel(EduCoreBundle.message("codeforces.reload.submissions")) {
         popup.closeOk(null)
-        val course = project.course
-        val task = EduUtils.getCurrentTask(project)
-        if (course != null && task != null) {
-          SubmissionsManager.getInstance(project).prepareSubmissionsContent {
-            CodeforcesSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
-          }
-        }
+        SubmissionsManager.getInstance(project).prepareSubmissionsContent()
       })
     }
     contentPanel.add(JSeparator())
