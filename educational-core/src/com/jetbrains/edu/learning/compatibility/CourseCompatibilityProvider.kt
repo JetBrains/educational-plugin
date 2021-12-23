@@ -33,6 +33,5 @@ interface CourseCompatibilityProvider {
    */
   val technologyName: String
 
-  @JvmDefault
   val logo: Icon get() = EmptyIcon.ICON_16
 }

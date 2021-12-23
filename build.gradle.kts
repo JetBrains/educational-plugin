@@ -222,7 +222,7 @@ allprojects {
         // see https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
         // BACKCOMPAT: 2021.1. Use `1.5` apiVersion
         apiVersion = "1.4"
-        freeCompilerArgs = listOf("-Xjvm-default=enable")
+        freeCompilerArgs = listOf("-Xjvm-default=all")
       }
     }
 

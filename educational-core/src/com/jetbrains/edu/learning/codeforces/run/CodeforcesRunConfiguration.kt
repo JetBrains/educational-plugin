@@ -8,12 +8,10 @@ import com.intellij.util.text.nullize
 import java.nio.file.Path
 
 interface CodeforcesRunConfiguration : RunConfiguration, InputRedirectAware {
-  @JvmDefault
   fun getRedirectInputFile(): VirtualFile? {
     val path: String = inputRedirectOptions.redirectInputPath.nullize() ?: return null
     return VfsUtil.findFile(Path.of(path), true)
   }
 
-  @JvmDefault
   fun setExecutableFile(file: VirtualFile) {}
 }
