@@ -1,17 +1,16 @@
 package com.jetbrains.edu.learning.checkio.account;
 
-import com.google.gson.annotations.JsonAdapter;
-import com.intellij.util.xmlb.annotations.Tag;
-import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOUserInfoDeserializer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jetbrains.edu.learning.UserInfo;
 import org.jetbrains.annotations.NotNull;
 
-@JsonAdapter(CheckiOUserInfoDeserializer.class)
-public class CheckiOUserInfo {
+
+public class CheckiOUserInfo implements UserInfo {
   @NotNull
-  @Tag("Username")
+  @JsonProperty("username")
   private String myUsername;
 
-  @Tag("Id")
+  @JsonProperty("uid")
   private int myUid;
 
   @SuppressWarnings("unused") // used for deserialization
@@ -20,18 +19,27 @@ public class CheckiOUserInfo {
     myUid = -1;
   }
 
-  public CheckiOUserInfo(@NotNull String username, int uid) {
-    myUsername = username;
-    myUid = uid;
-  }
-
   @NotNull
   public String getUsername() {
     return myUsername;
   }
 
+  public void setUsername(@NotNull String username) {
+    myUsername = username;
+  }
+
   public int getUid() {
     return myUid;
+  }
+
+  public void setUid(int uid) {
+    myUid = uid;
+  }
+
+  @NotNull
+  @Override
+  public String getFullName() {
+    return myUsername;
   }
 
   @Override

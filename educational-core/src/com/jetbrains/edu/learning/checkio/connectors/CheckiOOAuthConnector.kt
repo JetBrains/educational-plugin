@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.checkio.connectors
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notifications
 import com.intellij.openapi.application.ApplicationManager
@@ -7,23 +9,27 @@ import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface
-import com.jetbrains.edu.learning.checkio.api.RetrofitUtils
+import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthEndpoint
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
+import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications.error
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST
+import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import okhttp3.ConnectionPool
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.builtInWebServer.BuiltInServerOptions
 import org.jetbrains.ide.BuiltInServerManager
+import retrofit2.converter.jackson.JacksonConverterFactory
 import java.net.URI
 
 abstract class CheckiOOAuthConnector protected constructor(private val clientId: String, private val clientSecret: String) {
@@ -37,6 +43,11 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
   protected abstract val platformName: String
 
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
+  private val authorizationService: CheckiOOAuthEndpoint by lazy { authorizationService() }
+
+  private val connectionPool: ConnectionPool = ConnectionPool()
+  private val converterFactory: JacksonConverterFactory
+  private val objectMapper: ObjectMapper
 
   private val currentPort: Int
     get() = BuiltInServerManager.getInstance().port
@@ -54,17 +65,27 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
     require(SPACES_SYMBOLS_REGEX !in clientId && SPACES_SYMBOLS_REGEX !in clientSecret) {
       "Client properties are not provided"
     }
+
+    val module = SimpleModule()
+    objectMapper = ConnectorUtils.createRegisteredMapper(module)
+    converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
+  private fun authorizationService(): CheckiOOAuthEndpoint =
+    createRetrofitBuilder(CheckiONames.CHECKIO_OAUTH_HOST, connectionPool)
+      .addConverterFactory(converterFactory)
+      .build()
+      .create(CheckiOOAuthEndpoint::class.java)
+
   private fun getTokens(code: String, redirectUri: String): TokenInfo {
-    return CHECKIO_OAUTH_INTERFACE.getTokens(AUTHORIZATION_CODE, clientSecret, clientId, code, redirectUri).execute()
+    return authorizationService.getTokens(AUTHORIZATION_CODE, clientSecret, clientId, code, redirectUri).executeHandlingCheckiOExceptions()
   }
 
   private fun refreshTokens(refreshToken: String): TokenInfo {
-    return CHECKIO_OAUTH_INTERFACE.refreshTokens(REFRESH_TOKEN, clientSecret, clientId, refreshToken).execute()
+    return authorizationService.refreshTokens(REFRESH_TOKEN, clientSecret, clientId, refreshToken).executeHandlingCheckiOExceptions()
   }
 
-  fun getAccessToken(): String {
+  open fun getAccessToken(): String {
     val currentAccount = account ?: throw CheckiOLoginRequiredException()
     if (!currentAccount.isUpToDate()) {
       val refreshToken = currentAccount.getRefreshToken() ?: error("Cannot get refresh token")
@@ -146,7 +167,7 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
         return "You're logged in already"
       }
       val tokens = getTokens(code, handlingPath)
-      val userInfo = CHECKIO_OAUTH_INTERFACE.getUserInfo(tokens.accessToken).execute()
+      val userInfo = authorizationService.getUserInfo(tokens.accessToken).executeHandlingCheckiOExceptions()
       account = CheckiOAccount(userInfo, tokens)
       ApplicationManager.getApplication().messageBus.syncPublisher(authorizationTopic).userLoggedIn()
       null
@@ -160,8 +181,6 @@ abstract class CheckiOOAuthConnector protected constructor(private val clientId:
   }
 
   companion object {
-    private val CHECKIO_OAUTH_INTERFACE: CheckiOOAuthInterface = RetrofitUtils.createRetrofitOAuthInterface()
-
     private val SPACES_SYMBOLS_REGEX: Regex = "[\\p{javaWhitespace}]+".toRegex()
 
     @JvmStatic

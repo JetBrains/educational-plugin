@@ -40,11 +40,19 @@ public class CheckiOAccount extends OAuthAccount<CheckiOUserInfo> {
   @NotNull
   @Override
   protected String getUserName() {
-    return userInfo.getUsername();
+    return userInfo.getFullName();
   }
 
   public static CheckiOAccount fromElement(@NotNull Element element) {
     Element user = element.getChild(CheckiOAccount.class.getSimpleName());
-    return deserializeOAuthAccount(user, CheckiOAccount.class, CheckiOUserInfo.class);
+    CheckiOAccount account = deserializeOAuthAccount(user, CheckiOAccount.class, CheckiOUserInfo.class);
+
+    // We've changed CheckiO deserialization in 2022.1 version. It causes invalid deserialization of already existed accounts,
+    // so we force user to do re-login.
+    if (account != null && account.getUserName().isEmpty()) {
+      return null;
+    }
+
+    return account;
   }
 }

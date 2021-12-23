@@ -1,23 +1,30 @@
 package com.jetbrains.edu.coursecreator.checkio
 
-import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.api.CheckiOApiInterface
-import com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createApiGson
-import com.jetbrains.edu.learning.checkio.call.CheckiOCall
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import java.io.File
 
 class CheckiOCourseGenerationTest : EduTestCase() {
-  private val missionsJson = FileUtil.loadFile(File(testDataPath, "missions.json"))
+  private val contentGenerator
+    get() = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector)
+
+  private val mockConnector: MockCheckiOApiConnector
+    get() = MockCheckiOApiConnector
+
+  override fun setUp() {
+    super.setUp()
+    configureResponse()
+  }
+
+  private fun configureResponse() {
+    mockConnector.withResponseHandler(testRootDisposable) {
+      MockResponseFactory.fromFile(getTestFile("missions.json"))
+    }
+  }
 
   fun `test deserialized missions list has correct size`() {
     assertEquals(6, getSourceMissions().size)
@@ -48,54 +55,43 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     assertEmpty(notSolved)
   }
 
-  @Suppress("deprecation")
   fun `test station and mission names are computed correctly`() {
-    // `:` was taken because it is forbidden both on Unix & Windows platforms
-    val missions = getSourceMissions()
-    missions.forEach {
-      assertFalse(it.name.contains(':'))
-      assertFalse(it.station.name.contains(':'))
+    val checkiOCourse = course(courseProducer = ::CheckiOCourse) {} as CheckiOCourse
+    val stations = contentGenerator.getStationsFromServer()
+    stations.forEach { checkiOCourse.addStation(it) }
+    checkiOCourse.createCourseFiles(project, module)
+
+    fun FileTreeBuilder.dirWithDefaultFiles(dirName: String) {
+      dir(dirName) {
+        file("task.html")
+        file("mission.txt")
+      }
     }
 
-    // Check if we set custom name for hard names
-    val hardNamesmission = missions.first { it.id == 520 }
-    assertNotNull(hardNamesmission.customPresentableName)
-    assertNotNull(hardNamesmission.station.customPresentableName)
-
-    // Check if we do not set custom name for simple names
-    val simpleNamesMission = missions.first { it.id == 566 }
-    assertNull(simpleNamesMission.customPresentableName)
-    assertNull(simpleNamesMission.station.customPresentableName)
+    checkFileTree {
+      dir("Home") {
+        dirWithDefaultFiles("All the Same")
+        dirWithDefaultFiles("The Warriors")
+      }
+      dir("SendGrid") {
+        dirWithDefaultFiles("Stressful Subject")
+      }
+      dir("Elementary") {
+        dirWithDefaultFiles("Multiply (Intro)")
+        dirWithDefaultFiles("Say Hi")
+        dirWithDefaultFiles("Easy Unpack")
+      }
+    }
   }
 
-  private fun getSourceMissions() = MockCheckiOApiConnector().getMissionList()
+  private fun getSourceMissions() = MockCheckiOApiConnector.getMissionList()
 
   private fun getProcessedMissions(): List<CheckiOMission> {
-    val stations = CheckiOCourseContentGenerator(PlainTextFileType.INSTANCE, MockCheckiOApiConnector()).getStationsFromServer()
+    val stations = contentGenerator.getStationsFromServer()
     return stations.flatMap { it.missions }
   }
 
   override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/checkio"
-  }
-
-  inner class MockCheckiOApiConnector : CheckiOApiConnector(MockCheckiOApiInterface(), MockCheckiOOAuthConnector()) {
-    override val languageId: String = "py"
-
-    override fun getMissionList(): List<CheckiOMission> {
-      return createApiGson().fromJson(missionsJson, object : TypeToken<MutableList<CheckiOMission>>() {}.type)
-    }
-  }
-
-  private class MockCheckiOApiInterface : CheckiOApiInterface {
-    override fun getMissionList(accessToken: String?): CheckiOCall<MutableList<CheckiOMission>> = error("unreachable code")
-  }
-
-  private class MockCheckiOOAuthConnector : CheckiOOAuthConnector("", "") {
-    override var account: CheckiOAccount? = null
-
-    override val oAuthServicePath: String = ""
-
-    override val platformName: String = ""
+    return super.getTestDataPath() + "/checkio/"
   }
 }
