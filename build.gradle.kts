@@ -99,7 +99,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 plugins {
   idea
-  kotlin("jvm") version "1.5.0"
+  kotlin("jvm") version "1.6.10"
   id("org.jetbrains.intellij") version "1.2.0"
   id("de.undercouch.download") version "4.0.4"
   id("net.saliman.properties") version "1.5.1"
@@ -218,7 +218,9 @@ allprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.5"
+        languageVersion = "1.6"
+        // see https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
+        // BACKCOMPAT: 2021.1. Use `1.5` apiVersion
         apiVersion = "1.4"
         freeCompilerArgs = listOf("-Xjvm-default=enable")
       }
