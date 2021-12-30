@@ -48,7 +48,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
     val isChanged = when {
       newTask.name != task.name -> true
       newTask.itemType != task.itemType -> true
-      newTask.taskDescription != taskDescriptionText -> true
+      newTask.descriptionText != taskDescriptionText -> true
       newTaskFiles.size != taskFiles.size -> true
       else -> {
         newTaskFiles.any { (newFileName, newTaskFile) ->

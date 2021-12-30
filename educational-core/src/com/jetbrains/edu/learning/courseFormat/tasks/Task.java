@@ -178,10 +178,6 @@ public abstract class Task extends StudyItem {
     myLesson = lesson;
   }
 
-  public String getTaskDescription() {
-    return descriptionText;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

@@ -44,3 +44,6 @@ To get such a link, right-click the class or method
 and select **Copy Reference**.
 Then press &shortcut:EditorPaste; to insert the link where appropriate.
 For example, a <a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.
+
+- You can add link to file using **full path** like this:
+  [file_link](file://lesson1/task1/file.txt).

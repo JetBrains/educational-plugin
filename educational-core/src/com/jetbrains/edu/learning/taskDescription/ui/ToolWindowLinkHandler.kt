@@ -6,9 +6,11 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.util.io.URLUtil
@@ -39,6 +41,7 @@ open class ToolWindowLinkHandler(val project: Project) {
         processInCourseLink(project, url)
         true
       }
+      url.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX) -> processFileLink(project, url)
       else -> processExternalLink(url)
     }
   }
@@ -115,6 +118,28 @@ open class ToolWindowLinkHandler(val project: Project) {
       }
     }
 
+    @JvmStatic
+    fun processFileLink(project: Project, url: String): Boolean {
+      val urlWithoutProtocol = url.substringAfter(StandardFileSystems.FILE_PROTOCOL_PREFIX)
+
+      val file = project.courseDir.findFileByRelativePath(urlWithoutProtocol)
+      if (file == null) {
+        LOG.warn("Can't find file for url $url")
+        return false
+      }
+      navigateToFile(project, file)
+      return true
+    }
+
+    private fun navigateToFile(project: Project, fileDir: VirtualFile) {
+      runInEdt {
+        runReadAction {
+          fileDir.let { FileEditorManager.getInstance(project).openFile(it, false) }
+        }
+      }
+      EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.FILE)
+    }
+
     private fun parseInCourseLink(project: Project, course: Course, url: String): ParsedInCourseLink? {
 
       fun parseNextItem(container: StudyItem, remainingPath: String?): ParsedInCourseLink? {
@@ -161,6 +186,7 @@ open class ToolWindowLinkHandler(val project: Project) {
       }
 
     }
+
     class TaskDirectory(val task: Task, file: VirtualFile) : ParsedInCourseLink(file) {
       override fun navigate(project: Project) {
         NavigationUtils.navigateToTask(project, task, closeOpenedFiles = false)

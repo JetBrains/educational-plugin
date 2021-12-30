@@ -162,7 +162,7 @@ public class EduUtils {
     if (taskDirectory == null) return null;
 
     VirtualFile taskTextFile = getTaskTextFile(taskDirectory);
-    String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getTaskDescription());
+    String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getDescriptionText());
     if (taskTextFile != null && EduNames.TASK_MD.equals(taskTextFile.getName())) {
       return convertToHtml(taskDescription);
     }
