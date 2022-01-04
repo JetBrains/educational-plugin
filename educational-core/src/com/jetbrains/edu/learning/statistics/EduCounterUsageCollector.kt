@@ -104,7 +104,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val LANGUAGE = "language"
     private const val EDU_TAB = "tab"
 
-    private val GROUP = EventLogGroup("educational.counters", 4)
+    private val GROUP = EventLogGroup("educational.counters", 5)
 
     private val COURSE_MODE_FIELD = EventFields.String(MODE,
                                                        listOf(EduNames.STUDY, CCUtils.COURSE_MODE))
