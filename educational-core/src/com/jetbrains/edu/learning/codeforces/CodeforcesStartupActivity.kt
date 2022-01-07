@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
 import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -18,14 +19,16 @@ class CodeforcesStartupActivity : StartupActivity {
 
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       submissionsManager.prepareSubmissionsContent {
-        submissionsManager.prepareSubmissionsContent()
+        updateCheckStatus(project)
       }
     }
     else {
       project.messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
         override fun userLoggedIn() {
           if (CodeforcesSettings.getInstance().isLoggedIn()) {
-            submissionsManager.prepareSubmissionsContent()
+            submissionsManager.prepareSubmissionsContent {
+              updateCheckStatus(project)
+            }
           }
         }
 

@@ -1,14 +1,11 @@
 package com.jetbrains.edu.learning.codeforces.submissions
 
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,14 +16,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 class CodeforcesSubmissionsProvider : SubmissionsProvider {
   override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
     if (!areSubmissionsAvailable(course) || !isLoggedIn()) return emptyMap()
-    val loadSubmissions = loadSubmissions(course.allTasks, course.id)
-    course.allTasks.forEach { task ->
-      if (loadSubmissions.flatMap { it.value }.any { it.step == task.id && it.status == EduNames.CORRECT }) {
-        task.status = CheckStatus.Solved
-        ProjectView.getInstance(project).refresh()
-      }
-    }
-    return loadSubmissions
+    return loadSubmissions(course.allTasks, course.id)
   }
 
   override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, MutableList<Submission>> {

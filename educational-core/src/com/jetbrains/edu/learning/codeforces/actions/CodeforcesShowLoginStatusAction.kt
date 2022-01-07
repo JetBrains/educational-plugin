@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.impl.InternalDecoratorImpl
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
+import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -84,7 +85,9 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       contentPanel.add(ClickableLabel(EduCoreBundle.message("codeforces.reload.submissions")) {
         popup.closeOk(null)
-        SubmissionsManager.getInstance(project).prepareSubmissionsContent()
+        SubmissionsManager.getInstance(project).prepareSubmissionsContent {
+          updateCheckStatus(project)
+        }
       })
     }
     contentPanel.add(JSeparator())
