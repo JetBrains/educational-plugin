@@ -6,13 +6,14 @@ import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createEduSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createRemoteEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class HyperskillCreateSubmissionTest : EduTestCase() {
@@ -21,7 +22,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
 
     val eduTask = course.allTasks[0].apply { status = CheckStatus.Solved }
     val attempt = Attempt().apply { id = 123 }
-    val solutionFiles = HyperskillCheckConnector.getSolutionFiles(eduTask, project)
+    val solutionFiles = getSolutionFiles(project, eduTask).onError { error(it) }
     val feedback = CONGRATULATIONS
     val submission = createEduSubmission(eduTask, attempt, solutionFiles, feedback)
 
@@ -47,7 +48,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
 
     val eduTask = course.allTasks[0].apply { status = CheckStatus.Failed }
     val attempt = Attempt().apply { id = 1234 }
-    val solutionFiles = HyperskillCheckConnector.getSolutionFiles(eduTask, project)
+    val solutionFiles = getSolutionFiles(project, eduTask).onError { error(it) }
     val feedback = "failed"
     val submission = createEduSubmission(eduTask, attempt, solutionFiles, feedback)
 
@@ -74,7 +75,7 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
     val remoteEduTask = course.allTasks[1] as RemoteEduTask
     val checkProfile = remoteEduTask.checkProfile
     val attempt = Attempt().apply { id = 12345 }
-    val solutionFiles = HyperskillCheckConnector.getSolutionFiles(remoteEduTask, project)
+    val solutionFiles = getSolutionFiles(project, remoteEduTask).onError { error(it) }
     val submission = createRemoteEduTaskSubmission(checkProfile, attempt, solutionFiles)
 
     doTest(submission, """

@@ -1,13 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.containers.nullize
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -25,7 +21,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createEduSubmission
@@ -35,13 +30,13 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
 object HyperskillCheckConnector {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
-  private const val MAX_FILE_SIZE_FOR_PUBLISH = 5 * 1024 * 1024 // 5 Mb
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
 
@@ -57,45 +52,15 @@ object HyperskillCheckConnector {
   }
 
   private fun postEduSubmission(attempt: Attempt, project: Project, task: Task, feedback: String) {
-    val files = getSolutionFiles(task, project).nullize()
-    if (files == null) {
-      LOG.error("Unable to create submission: files with code is not found for the task ${task.name}")
+    val files = getSolutionFiles(project, task).onError { error ->
+      showErrorDetails(project, EduCoreBundle.message("error.failed.to.collect.files", task.name))
+      LOG.error("Unable to create submission for the task ${task.name}: $error")
       return
     }
     when (val response = HyperskillConnector.getInstance().postSubmission(createEduSubmission(task, attempt, files, feedback))) {
       is Err -> showErrorDetails(project, response.error)
       is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
     }
-  }
-
-  @VisibleForTesting
-  fun getSolutionFiles(task: Task, project: Project): List<SolutionFile> {
-    val taskDir = task.getDir(project.courseDir)
-    if (taskDir == null) {
-      val error = EduCoreBundle.message("error.failed.to.find.dir", task.name)
-      LOG.error(error)
-      showErrorDetails(project, EduCoreBundle.message("error.unexpected.error", error))
-      return emptyList()
-    }
-
-    val files = ArrayList<SolutionFile>()
-    for (taskFile in task.taskFiles.values) {
-      val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-      if (virtualFile.length > MAX_FILE_SIZE_FOR_PUBLISH) {
-        LOG.warn("File ${virtualFile.path} is too big (${virtualFile.length} bytes), will be ignored for submitting to the server")
-        continue
-      }
-
-      runReadAction {
-        val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
-        files.add(SolutionFile(taskFile.name, document.text, taskFile.isVisible))
-      }
-    }
-    if (files.isEmpty()) {
-      LOG.warn("No files were collected to post solution")
-      showErrorDetails(project, EduCoreBundle.message("error.failed.to.collect.files", task.name))
-    }
-    return files
   }
 
   private fun String.toCheckResult(): CheckResult {
@@ -254,8 +219,7 @@ object HyperskillCheckConnector {
       return checkIdResult
     }
 
-    val files = getSolutionFiles(task, project).nullize()
-    if (files == null) {
+    val files = getSolutionFiles(project, task).onError {
       LOG.error("Unable to create submission: files with code is not found for the task ${task.name}")
       return CheckResult.failedToCheck
     }

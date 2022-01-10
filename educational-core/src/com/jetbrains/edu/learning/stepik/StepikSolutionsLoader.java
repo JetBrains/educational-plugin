@@ -37,7 +37,6 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.submissions.Submission;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
-import com.jetbrains.edu.learning.submissions.UtilsKt;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
@@ -51,6 +50,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.jetbrains.edu.learning.submissions.SubmissionUtils.getSolutionFiles;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -96,11 +97,13 @@ public class StepikSolutionsLoader implements Disposable {
       return null;
     }
     final Attempt attempt = ((Ok<Attempt>)postedAttempt).component1();
-    final List<SolutionFile> files = UtilsKt.getSolutionFiles(project, task, LOG);
-    if (files != null) {
-      return StepikConnector.getInstance().postSubmission(passed, attempt, files, task);
+    final Result<List<SolutionFile>, String> files = getSolutionFiles(project, task);
+    if (files instanceof Err) {
+      LOG.error(((Err<String>)files).getError());
+      return null;
     }
-    return null;
+    final List<SolutionFile> solutionFiles = ((Ok<List<SolutionFile>>)files).component1();
+    return StepikConnector.getInstance().postSubmission(passed, attempt, solutionFiles, task);
   }
 
   public void loadSolutionsInBackground() {

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.api.SubmissionDocument
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
@@ -40,7 +41,12 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
 
   private fun createSubmissionData(task: Task): SubmissionData? {
     val passed = task.status == CheckStatus.Solved
-    val solutionFiles = getSolutionFiles(project, task, LOG)?.filter { it.isVisible } ?: return null
+    val solutionFiles = getSolutionFiles(project, task)
+      .onError {
+        LOG.error(it)
+        return null
+      }
+      .filter { it.isVisible }
     return SubmissionData(passed, solutionFiles, task)
   }
 

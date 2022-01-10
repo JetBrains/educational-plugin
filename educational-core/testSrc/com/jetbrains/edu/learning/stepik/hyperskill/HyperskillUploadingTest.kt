@@ -2,16 +2,17 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.submissions.getSolutionFiles
 
 class HyperskillUploadingTest : EduTestCase() {
   fun `test collect solution files`() {
     val course = createHyperskillCourse()
     val task = course.findTask("lesson1", "task1")
-    val files = HyperskillCheckConnector.getSolutionFiles(task, project)
+    val files = getSolutionFiles(project, task).onError { error(it) }
     assertEquals(3, files.size)
     for (file in files) {
       assertEquals(mapOf("src/Task.kt" to true, "src/Baz.kt" to false, "test/Tests1.kt" to false)[file.name], file.isVisible)
