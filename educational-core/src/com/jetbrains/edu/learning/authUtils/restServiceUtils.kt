@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
-import com.intellij.openapi.util.io.StreamUtil
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.AppIcon
@@ -20,7 +18,6 @@ import io.netty.handler.codec.http.HttpResponse
 import org.jetbrains.io.addNoCache
 import org.jetbrains.io.response
 import org.jetbrains.io.send
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 
@@ -53,14 +50,10 @@ fun sendPluginInfoResponse(request: FullHttpRequest, context: ChannelHandlerCont
 
 @Throws(IOException::class)
 fun createResponse(template: String): HttpResponse {
-  BufferExposingByteArrayOutputStream().use { byteOut ->
-    byteOut.write(StreamUtil.loadFromStream(ByteArrayInputStream(template.toByteArray(StandardCharsets.UTF_8))))
-    val response: HttpResponse = response("text/html",
-                                          Unpooled.wrappedBuffer(byteOut.internalBuffer, 0, byteOut.size()))
-    response.addNoCache()
-    response.headers()["X-Frame-Options"] = "Deny"
-    return response
-  }
+  val response = response("text/html", Unpooled.wrappedBuffer(template.toByteArray(StandardCharsets.UTF_8)))
+  response.addNoCache()
+  response.headers()["X-Frame-Options"] = "Deny"
+  return response
 }
 
 private data class PluginInfo(val version: String?, val edutools: String?)
