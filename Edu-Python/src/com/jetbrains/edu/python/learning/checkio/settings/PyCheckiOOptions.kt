@@ -12,10 +12,10 @@ import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 
 class PyCheckiOOptions : LoginOptions<CheckiOAccount>() {
-  override fun getCurrentAccount(): CheckiOAccount? = PyCheckiOSettings.INSTANCE.account
+  override fun getCurrentAccount(): CheckiOAccount? = PyCheckiOSettings.getInstance().account
 
   override fun setCurrentAccount(account: CheckiOAccount?) {
-    PyCheckiOSettings.INSTANCE.account = account
+    PyCheckiOSettings.getInstance().account = account
     val messageBus = ApplicationManager.getApplication().messageBus
     if (account != null) {
       messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedIn()

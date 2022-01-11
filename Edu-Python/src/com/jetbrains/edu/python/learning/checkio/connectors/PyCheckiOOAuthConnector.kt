@@ -9,9 +9,9 @@ import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle
 
 object PyCheckiOOAuthConnector : CheckiOOAuthConnector() {
   override var account: CheckiOAccount?
-    get() = PyCheckiOSettings.INSTANCE.account
+    get() = PyCheckiOSettings.getInstance().account
     set(account) {
-      PyCheckiOSettings.INSTANCE.account = account
+      PyCheckiOSettings.getInstance().account = account
     }
 
   override val clientId: String = PyCheckiOOAuthBundle.value("pyCheckioClientId")

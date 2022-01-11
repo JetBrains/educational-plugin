@@ -15,7 +15,7 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
                                                                       EduPythonBundle.message("checkio.widget.tooltip"),
                                                                       EducationalCoreIcons.CheckiO) {
   override val account: CheckiOAccount?
-    get() = PyCheckiOSettings.INSTANCE.account
+    get() = PyCheckiOSettings.getInstance().account
 
   override val platformName: String
     get() = CheckiONames.PY_CHECKIO
@@ -29,7 +29,7 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
   }
 
   override fun resetAccount() {
-    PyCheckiOSettings.INSTANCE.account = null
+    PyCheckiOSettings.getInstance().account = null
     project.messageBus.syncPublisher(CheckiOOAuthConnector.AUTHORIZATION_TOPIC).userLoggedOut()
   }
 }

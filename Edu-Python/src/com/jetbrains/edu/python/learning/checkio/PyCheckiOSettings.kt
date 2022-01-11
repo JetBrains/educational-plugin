@@ -1,9 +1,9 @@
 package com.jetbrains.edu.python.learning.checkio
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import org.jdom.Element
@@ -24,6 +24,7 @@ class PyCheckiOSettings : PersistentStateComponent<Element> {
   }
 
   companion object {
-    @JvmField val INSTANCE: PyCheckiOSettings = ServiceManager.getService(PyCheckiOSettings::class.java)
+    @JvmStatic
+    fun getInstance(): PyCheckiOSettings = service()
   }
 }
