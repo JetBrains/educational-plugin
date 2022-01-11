@@ -77,19 +77,18 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
   private fun createFailedTasksNotification(failedTasks: MutableList<Task>, tasksNum: Int, project: Project): Notification {
     val notification = Notification(
       "EduTools",
-      null,
       EduCoreBundle.message("notification.title.check"),
-      EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum),
       failedTasks.withIndex().joinToString("<br>") { "<a href=\"${it.index}\">${it.value.fullName}</a>" },
-      NotificationType.WARNING,
-      object : NotificationListener.Adapter() {
+      NotificationType.WARNING
+    )
+      .setSubtitle(EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum))
+      .setListener(object : NotificationListener.Adapter() {
         override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
           notification.hideBalloon()
           NavigationUtils.navigateToTask(project, failedTasks[Integer.valueOf(e.description)])
           EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.CHECK_ALL_NOTIFICATION)
         }
-      }
-    )
+      })
 
     if (failedTasks.size > 1) {
       notification.addAction(object : AnAction(EduCoreBundle.lazyMessage("action.open.first.failed.task.text")) {

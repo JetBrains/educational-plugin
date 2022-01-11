@@ -45,7 +45,7 @@ object CCNotificationUtils {
                             action: AnAction? = null
   ) {
     LOG.info(message)
-    val notification = Notification("EduTools", null, title, null, message, NotificationType.ERROR, null)
+    val notification = Notification("EduTools", title, message.orEmpty(), NotificationType.ERROR)
     if (action != null) {
       notification.addAction(action)
     }

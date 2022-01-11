@@ -36,7 +36,7 @@ class HyperskillCheckListener : CheckListener {
         EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
         EduCoreBundle.message("error.login.required", EduNames.JBA),
         NotificationType.ERROR
-      ) { notification, e ->
+      ).setListener { notification, e ->
         notification.expire()
         HyperskillLoginListener.hyperlinkUpdate(e)
       }.notify(project)

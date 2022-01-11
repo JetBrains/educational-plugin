@@ -71,11 +71,12 @@ fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: 
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  val notification = Notification("EduTools", EduCoreBundle.message("update.content"),
-                                  EduCoreBundle.message("update.content.request"),
-                                  NotificationType.INFORMATION,
-                                  notificationListener(project, updateAction))
-  notification.notify(project)
+  Notification("EduTools",
+               EduCoreBundle.message("update.content"),
+               EduCoreBundle.message("update.content.request"),
+               NotificationType.INFORMATION)
+    .setListener(notificationListener(project, updateAction))
+    .notify(project)
 }
 
 fun notificationListener(project: Project,

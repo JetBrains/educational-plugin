@@ -20,8 +20,11 @@ class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause
   Notification("EduTools",
                EduCoreBundle.message("yaml.invalid.config.notification.title"),
                messageWithEditLink(project, configFile, cause),
-               NotificationType.ERROR,
-               GoToFileListener(project, configFile))
+               NotificationType.ERROR) {
+  init {
+    setListener(GoToFileListener(project, configFile))
+  }
+}
 
 private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause: String): String {
   val courseConfig = if (configFile.name == COURSE_CONFIG) {

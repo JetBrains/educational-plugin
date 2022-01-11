@@ -4,7 +4,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.util.PlatformUtils
@@ -16,15 +15,15 @@ class PyShowTutorialStartupActivity : StartupActivity {
   override fun runActivity(project: Project) {
     if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN) || !PlatformUtils.isPyCharmEducational()) return
 
-    val notification = Notification(
+    Notification(
       "EduTools",
       message("watch.tutorials.title"),
       XmlStringUtil.wrapInHtml(message("watch.tutorials.message.html")),
-      NotificationType.INFORMATION,
-      NotificationListener.UrlOpeningListener(true)
+      NotificationType.INFORMATION
     )
+      .setListener(NotificationListener.UrlOpeningListener(true))
+      .notify(null)
 
-    Notifications.Bus.notify(notification)
     PropertiesComponent.getInstance().setValue(POPUP_SHOWN, true)
   }
 

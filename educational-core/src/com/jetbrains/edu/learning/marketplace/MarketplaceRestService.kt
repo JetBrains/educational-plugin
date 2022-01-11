@@ -85,8 +85,9 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
       is Err -> {
         val message = result.error
         LOG.warn(message)
-        Notification("EduTools", EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest), message,
-                     NotificationType.WARNING, NotificationListener.UrlOpeningListener(false)).notify(null)
+        Notification("EduTools", EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest), message, NotificationType.WARNING)
+          .setListener(NotificationListener.UrlOpeningListener(false))
+          .notify(null)
         sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
         message
       }

@@ -32,14 +32,17 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
   notification.notify(project)
 }
 
-class MyNotification(content: String, feedbackUrl : String) :
-    Notification("EduTools",
-    "Congratulations", content, NotificationType.INFORMATION,
-        object : NotificationListener.Adapter() {
-          override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-            EduBrowser.getInstance().browse(feedbackUrl)
-          }
-        }), NotificationFullContent
+class MyNotification(content: String, feedbackUrl: String) :
+  Notification("EduTools", "Congratulations", content, NotificationType.INFORMATION),
+  NotificationFullContent {
+  init {
+    setListener(object : NotificationListener.Adapter() {
+      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+        EduBrowser.getInstance().browse(feedbackUrl)
+      }
+    })
+  }
+}
 
 fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(feedbackAsked)
 

@@ -139,7 +139,7 @@ fun showErrorDetails(project: Project, error: String) {
       EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
       EduCoreBundle.message("error.access.denied.with.link"),
       NotificationType.ERROR
-    ) { notification, e ->
+    ).setListener { notification, e ->
       notification.expire()
       HyperskillLoginListener.hyperlinkUpdate(e)
     }.notify(project)
@@ -151,9 +151,10 @@ fun showErrorDetails(project: Project, error: String) {
     "EduTools",
     EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
     EduCoreBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
-    NotificationType.ERROR,
-    NotificationListener.URL_OPENING_LISTENER
-  ).notify(project)
+    NotificationType.ERROR
+  )
+    .setListener(NotificationListener.URL_OPENING_LISTENER)
+    .notify(project)
 }
 
 object HyperskillLoginListener : HyperlinkAdapter() {
@@ -225,9 +226,10 @@ fun openNextActivity(project: Project, task: Task) {
       "EduTools",
       EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
       EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)),
-      NotificationType.ERROR,
-      NotificationListener.URL_OPENING_LISTENER
-    ).notify(project)
+      NotificationType.ERROR
+    )
+      .setListener(NotificationListener.URL_OPENING_LISTENER)
+      .notify(project)
     return
   }
 

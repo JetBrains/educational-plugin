@@ -45,11 +45,11 @@ abstract class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    val notification = Notification("EduTools",
-                                    EduCoreBundle.message("error.solution.not.posted"),
-                                    EduCoreBundle.message("notification.content.task.was.updated", taskName),
-                                    NotificationType.INFORMATION,
-                                    notificationListener(project) { updateCourseAction(project, course) })
-    notification.notify(project)
+    Notification("EduTools",
+                 EduCoreBundle.message("error.solution.not.posted"),
+                 EduCoreBundle.message("notification.content.task.was.updated", taskName),
+                 NotificationType.INFORMATION)
+      .setListener(notificationListener(project) { updateCourseAction(project, course) })
+      .notify(project)
   }
 }

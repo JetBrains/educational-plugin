@@ -8,8 +8,11 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
 import javax.swing.event.HyperlinkEvent
 
-class UpdateNotification(title: String, content: String) :
-  Notification("EduTools", title, content, NotificationType.WARNING, UpdateNotificationListener)
+class UpdateNotification(title: String, content: String) : Notification("EduTools", title, content, NotificationType.WARNING) {
+  init {
+    setListener(UpdateNotificationListener)
+  }
+}
 
 private object UpdateNotificationListener : NotificationListener.Adapter() {
   override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
