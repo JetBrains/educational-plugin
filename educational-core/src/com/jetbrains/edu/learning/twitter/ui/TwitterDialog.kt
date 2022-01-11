@@ -20,6 +20,8 @@ class TwitterDialog(
 
   init {
     title = EduCoreBundle.message("twitter.dialog.title")
+    // BACKCOMPAT: 2021.2
+    @Suppress("UnstableApiUsage", "DEPRECATION")
     setDoNotAskOption(DoNotAskOption())
     setOKButtonText(EduCoreBundle.message("twitter.dialog.ok.action"))
     setResizable(false)
@@ -34,6 +36,8 @@ class TwitterDialog(
   override fun createCenterPanel(): JComponent = panel
   override fun doValidate(): ValidationInfo? = panel.doValidate()
 
+  // BACKCOMPAT: 2021.2
+  @Suppress("UnstableApiUsage", "DEPRECATION")
   private class DoNotAskOption : DialogWrapper.DoNotAskOption {
     override fun setToBeShown(toBeShown: Boolean, exitCode: Int) {
       if (exitCode == CANCEL_EXIT_CODE || exitCode == OK_EXIT_CODE) {
