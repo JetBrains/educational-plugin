@@ -158,7 +158,7 @@ open class CodeforcesTask : Task() {
     private const val KOTLIN_TYPE_ID = 48
     private const val PYTHON_2_TYPE_ID = 7
     private const val PYTHON_3_TYPE_ID = 31
-    private const val RUST_TYPE_ID = 49
+    private const val RUST_TYPE_ID = 75
     private const val SCALA_TYPE_ID = 20
 
     private const val ESPRESSO_CODEFORCES_COM = "//espresso.codeforces.com/"
