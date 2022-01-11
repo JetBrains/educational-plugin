@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -824,12 +824,8 @@ class YamlDeserializationTest : YamlTestCase() {
       |- the second lesson
       |""".trimMargin()
 
-    assertNoException(object: AbstractExceptionCase<InvalidDefinitionException>() {
-      override fun getExpectedExceptionClass(): Class<InvalidDefinitionException> = InvalidDefinitionException::class.java
-
-      override fun tryClosure() {
-        deserializeNotNull(yamlContent)
-      }
+    assertNoException(InvalidDefinitionException::class.java, ThrowableRunnable {
+      deserializeNotNull(yamlContent)
     })
     Locale.setDefault(defaultLocale)
   }

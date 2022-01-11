@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
@@ -118,7 +118,7 @@ sealed class ErrorState(
     @JvmStatic
     fun errorMessage(disabledPluginIds: Collection<PluginId>): ValidationMessage {
       val pluginName = if (disabledPluginIds.size == 1) {
-        PluginManager.getPlugin(disabledPluginIds.first())?.name
+        PluginManagerCore.getPlugin(disabledPluginIds.first())?.name
       } else {
         null
       }

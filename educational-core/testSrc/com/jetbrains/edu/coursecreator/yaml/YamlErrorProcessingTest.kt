@@ -8,7 +8,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -163,8 +163,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     assertNotNull(Language.getRegisteredLanguages().find {it.displayName == programmingLanguage})
 
     // check exception as there's no configurator for this language
-    assertException(object : AbstractExceptionCase<ValueInstantiationException>() {
-      override fun tryClosure() {
+    assertThrows(ValueInstantiationException::class.java, ThrowableRunnable<ValueInstantiationException> {
         val yamlContent = """
       |title: $name
       |language: $language
@@ -177,9 +176,6 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |- $secondLesson
       |""".trimMargin()
         MAPPER.deserializeCourse(yamlContent)
-      }
-
-      override fun getExpectedExceptionClass(): Class<ValueInstantiationException> = ValueInstantiationException::class.java
     })
   }
 

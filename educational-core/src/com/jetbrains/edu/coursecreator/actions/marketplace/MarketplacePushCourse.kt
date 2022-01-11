@@ -73,10 +73,10 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
       if (result != Messages.OK) return
     }
 
-    doPush(project, connector, course, tempFile, e.presentation.text)
+    doPush(project, connector, course, tempFile)
   }
 
-  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File, actionTitle: String) {
+  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
     if (course.isMarketplaceRemote) {
       connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
       EduCounterUsageCollector.updateCourse()

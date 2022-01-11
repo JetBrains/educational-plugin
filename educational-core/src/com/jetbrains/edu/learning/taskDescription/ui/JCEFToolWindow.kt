@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
+import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
@@ -28,8 +29,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val taskSpecificJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
   private var currentTask: ChoiceTask? = null
 
-  private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser)
-  private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser)
+  private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser as JBCefBrowserBase)
+  private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser as JBCefBrowserBase)
 
   init {
     val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)

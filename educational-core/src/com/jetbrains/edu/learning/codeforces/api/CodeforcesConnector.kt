@@ -144,7 +144,7 @@ abstract class CodeforcesConnector {
     val loginPage = service.getLoginPage().executeParsingErrors().onError { return Err(it) }
     loginPage.body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
 
-    val body = Jsoup.parse(loginPage.body()?.string())
+    val body = Jsoup.parse(loginPage.body()?.string().orEmpty())
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 
     val jSessionId = loginPage.headers().toMultimap()["set-cookie"]
@@ -191,7 +191,7 @@ abstract class CodeforcesConnector {
       return Err(it)
     }
 
-    val responseBody = Jsoup.parse(response.body()?.string())
+    val responseBody = Jsoup.parse(response.body()?.string().orEmpty())
 
     responseBody.getElementsByClass("error for__source").forEach {
       if (it.text().contains("You have submitted exactly the same code before"))

@@ -26,7 +26,7 @@ class RecentPreviewCourseListener : ProjectManagerListener, AppLifecycleListener
     for (project in projects) {
       if (PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)) {
         // force closing project -> IDE will not try to reopen course preview in the next session
-        ProjectManager.getInstance().closeProject(project)
+        ProjectManager.getInstance().closeAndDispose(project)
         removeProjectFromRecentProjects(project)
       }
     }

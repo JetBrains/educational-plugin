@@ -4,8 +4,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.testFramework.EdtTestUtil
-import com.intellij.util.ThrowableRunnable
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
 import com.jetbrains.python.newProject.PyNewProjectSettings
@@ -23,11 +22,11 @@ class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
 
   override fun setUp() {
     val sdkLocation = sdkLocation ?: return
-    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+    runInEdtAndWait {
       val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkLocation)
       projectSettings.sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkLocation, versionString)
       VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
-    })
+    }
   }
 
   override fun tearDown() {

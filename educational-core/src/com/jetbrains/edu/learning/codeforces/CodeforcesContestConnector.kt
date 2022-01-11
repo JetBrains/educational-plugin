@@ -45,6 +45,7 @@ object CodeforcesContestConnector {
 
   fun getLanguages(contest: Document): List<String>? {
     val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
+    @Suppress("UNNECESSARY_SAFE_CALL")
     return contest.selectFirst("#programTypeForInvoker")
       ?.select("option")
       ?.map { it.text() }

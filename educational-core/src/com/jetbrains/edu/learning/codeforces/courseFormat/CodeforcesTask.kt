@@ -107,6 +107,7 @@ open class CodeforcesTask : Task() {
       }
 
       val sampleTests = htmlElement.selectFirst("div.sample-test")
+      @Suppress("SENSELESS_COMPARISON")
       if (sampleTests != null) {
         task.addSampleTests(sampleTests)
       }

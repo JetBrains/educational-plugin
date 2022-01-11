@@ -77,6 +77,7 @@ open class CodeforcesCourse : Course {
 
   private fun parseResponseToAddContent(doc: Document) {
     @NonNls val error = "Parsing failed. Unable to find CSS elements:"
+    @Suppress("UNNECESSARY_SAFE_CALL")
     name = doc.selectFirst(".caption")?.text() ?: error("$error caption")
     val problems = doc.select(".problem-statement") ?: error("$error problem-statement")
 

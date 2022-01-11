@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.builtInServer
 import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -57,7 +56,7 @@ object EduBuiltInServerUtils {
   private fun openProject(projectPath: String): Project? {
     var project: Project? = null
     ApplicationManager.getApplication().invokeAndWait {
-      TransactionGuard.getInstance().submitTransactionAndWait { project = ProjectUtil.openProject(projectPath, null, true) }
+      project = ProjectUtil.openProject(projectPath, null, true)
       project?.requestFocus()
     }
     return project
