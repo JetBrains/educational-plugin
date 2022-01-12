@@ -140,7 +140,7 @@ open class CodeforcesTask : Task() {
         RUST == languageID -> RUST_TYPE_ID
         SCALA == languageID -> SCALA_TYPE_ID
         else -> {
-          LOG.info("Programming language was not detected: $languageID $languageVersion")
+          LOG.warn("Programming language was not detected: $languageID $languageVersion")
           null
         }
       }

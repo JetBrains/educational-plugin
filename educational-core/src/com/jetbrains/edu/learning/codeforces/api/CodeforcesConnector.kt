@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
@@ -325,6 +326,46 @@ abstract class CodeforcesConnector {
       ?.find { it.startsWith("https://codeforces.com/profile/") }
       ?.split("/")
       ?.last()
+  }
+
+  /**
+   * Get mandatory data for contest registration
+   * returns a pair of CSRF token and TermsOfAgreement text
+   */
+  fun getRegistrationData(contestId: Int): Pair<String, String?> {
+    val account = CodeforcesSettings.getInstance().account ?: return "" to null
+    if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
+      return "" to null
+    }
+    val jSessionID = account.getSessionId() ?: return "" to null
+
+    val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID").executeParsingErrors().onError { return "" to null }
+    registrationPage.body() ?: return "" to null
+    val doc = Jsoup.parse(registrationPage.body()?.string())
+    val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
+    val text = doc.getElementsByClass("terms").firstOrNull()?.text()
+
+    return csrfToken to text
+  }
+
+  /**
+   * NB! Accepts CSRF token only from the registration page
+   */
+  fun registerToContest(contestId: Int, csrfToken: String): Boolean {
+    val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
+
+    val response = service.postRegistration(csrfToken, contestId, "JSESSIONID=$jSessionId").executeParsingErrors().onError { return false }
+    return response.raw().isSuccessful
+  }
+
+  fun isUserRegisteredForContest(contestId: Int): Boolean {
+    val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
+    val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionId").executeParsingErrors().onError { return false }
+    val redirectUrl = registrationPage.raw().priorResponse()?.headers("location") ?: return false
+    if (redirectUrl.isNotEmpty()) {
+      return redirectUrl[0].startsWith("${CodeforcesNames.CODEFORCES_URL}/profile")
+    }
+    return false
   }
 
   companion object {

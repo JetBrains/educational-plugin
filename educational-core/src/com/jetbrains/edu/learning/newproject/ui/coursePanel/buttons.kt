@@ -13,6 +13,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
+import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
@@ -131,7 +132,8 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
     }
 
     if (course is CodeforcesCourse) {
-      return (course.isRegistrationOpen && course.isUpcomingContest)
+      return (course.isRegistrationOpen && course.isUpcomingContest
+              && !CodeforcesConnector.getInstance().isUserRegisteredForContest(course.id))
              || course.isOngoing
              || course.isPastContest
     }

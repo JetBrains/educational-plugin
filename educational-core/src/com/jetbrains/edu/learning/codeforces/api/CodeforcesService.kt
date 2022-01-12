@@ -79,4 +79,17 @@ interface CodeforcesService {
                           @Field("submissionId") submissionId: Int,
                           @Header("Cookie") cookie: String): Call<SubmissionSource>
 
+
+  @GET("/contestRegistration/{id}")
+  fun getRegistrationPage(@Path("id") contestId: Int,
+                          @Header("Cookie") jSessionId: String): Call<ResponseBody>
+
+  @POST("/contestRegistration/{id}")
+  @FormUrlEncoded
+  fun postRegistration(
+    @Field("csrf_token") csrfToken: String,
+    @Path("id") contestId: Int,
+    @Header("Cookie") cookie: String,
+    @Field("action") action: String = "formSubmitted",
+    @Field("takePartAs") takePartAs: String = "personal"): Call<ResponseBody>
 }
