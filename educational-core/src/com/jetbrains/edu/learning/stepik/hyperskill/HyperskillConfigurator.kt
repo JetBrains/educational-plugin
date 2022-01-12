@@ -7,8 +7,6 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
@@ -68,8 +66,6 @@ abstract class HyperskillConfigurator<T : Any>(private val baseConfigurator: Edu
   override fun beforeCourseStarted(course: Course) {
     baseConfigurator.beforeCourseStarted(course)
   }
-
-  open fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
   companion object {
     const val HYPERSKILL_TEST_DIR = "hstest"

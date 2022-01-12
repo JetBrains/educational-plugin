@@ -34,6 +34,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBaseConnector {
+  override val platformName: String = EduNames.JBA
   override val account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
 
@@ -220,8 +221,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     return allSubmissions
   }
 
-  fun getSubmissionById(submissionId: Int): Result<Submission, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(submissionId).executeAndExtractFirst(SubmissionsList::submissions) }
+  override fun getSubmission(id: Int): Result<Submission, String> {
+    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(id).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   fun getUser(userId: Int): Result<User, String> {

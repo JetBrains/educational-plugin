@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
@@ -25,10 +24,10 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
     get() = this is CodeTask || (this is ChoiceTask && !canCheckLocally)
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
-    val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
+    EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
-      is ChoiceTask -> StepikCheckerConnector.checkChoiceTask(project, task, user)
-      is CodeTask -> StepikCheckerConnector.checkCodeTask(project, task, user)
+      is ChoiceTask -> StepikCheckConnector.checkChoiceTask(project, task)
+      is CodeTask -> StepikCheckConnector.checkCodeTask(project, task)
       else -> error("Can't check ${task.itemType} on ${StepikNames.STEPIK}")
     }
   }
@@ -36,7 +35,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun retry(task: Task): Result<Boolean, String> {
     EduSettings.getInstance().user ?: return Err(CheckUtils.LOGIN_NEEDED_MESSAGE)
     return when (task) {
-      is ChoiceTask -> StepikCheckerConnector.retryChoiceTask(task)
+      is ChoiceTask -> StepikCheckConnector.retryChoiceTask(task)
       else -> error("Can't retry ${task.itemType} on ${StepikNames.STEPIK}")
     }
   }

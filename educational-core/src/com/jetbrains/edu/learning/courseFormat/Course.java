@@ -314,6 +314,10 @@ public abstract class Course extends LessonContainer {
     myVendor = vendor;
   }
 
+  public boolean isStepikRemote() {
+    return false;
+  }
+
   public boolean isMarketplace() {
     return isMarketplace;
   }

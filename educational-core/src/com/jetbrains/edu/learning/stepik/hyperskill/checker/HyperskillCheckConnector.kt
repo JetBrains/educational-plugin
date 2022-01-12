@@ -3,36 +3,32 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getText
-import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
+import com.jetbrains.edu.learning.stepik.checker.StepikBaseCheckConnector
+import com.jetbrains.edu.learning.stepik.checker.StepikBaseSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-object HyperskillCheckConnector {
+object HyperskillCheckConnector : StepikBaseCheckConnector() {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
@@ -81,43 +77,6 @@ object HyperskillCheckConnector {
     else CheckResult(CheckStatus.Unchecked, this)
   }
 
-  fun getLanguage(task: Task): Result<String, String> {
-    val course = task.course
-    val defaultLanguage = HyperskillLanguages.getLanguageName(course.languageID)
-    if (defaultLanguage == null) {
-      val languageDisplayName = course.languageDisplayName
-      return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
-    }
-    return Ok(defaultLanguage)
-  }
-
-  fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
-    val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.postAttempt(task)) {
-      is Err -> return attemptResponse
-      is Ok -> attemptResponse.value
-    }
-    val defaultLanguage = getLanguage(task).onError {
-      return Err(it)
-    }
-
-    val configurator = task.course.configurator as? HyperskillConfigurator
-    val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
-    if (codeTaskText == null) {
-      LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
-      return Err(EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA))
-    }
-    val submission = StepikBaseSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, defaultLanguage)
-    return connector.postSubmission(submission)
-  }
-
-  private fun submitDataTask(task: DataTask, answer: String): Result<Submission, String> {
-    val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
-    val connector = HyperskillConnector.getInstance()
-    val submission = StepikBaseSubmissionFactory.createDataTaskSubmission(attempt, answer)
-    return connector.postSubmission(submission)
-  }
-
   private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<CheckResult, SubmissionError> {
     val connector = HyperskillConnector.getInstance()
     val webSocketConfiguration = connector.getWebSocketConfiguration().onError { error ->
@@ -141,16 +100,7 @@ object HyperskillCheckConnector {
     }
   }
 
-  private fun Task.checkId(): CheckResult? {
-    if (id == 0) {
-      val link = feedbackLink ?: return CheckResult.failedToCheck
-      val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
-      return CheckResult(CheckStatus.Unchecked, message)
-    }
-    return null
-  }
-
-  fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
+  override fun checkCodeTask(project: Project, task: CodeTask): CheckResult {
     val checkIdResult = task.checkId()
     if (checkIdResult != null) {
       return checkIdResult
@@ -159,7 +109,9 @@ object HyperskillCheckConnector {
     return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
       LOG.info(submissionError.error)
       val submission = when (submissionError) {
-        is SubmissionError.NoSubmission -> submitCodeTask(project, task).onError { return it.toCheckResult() }
+        is SubmissionError.NoSubmission -> StepikBaseSubmitConnector.submitCodeTask(project, task).onError { error ->
+          return failedToSubmit(project, task, error)
+        }
         is SubmissionError.WithSubmission -> submissionError.submission
       }
 
@@ -187,9 +139,8 @@ object HyperskillCheckConnector {
       return EduCoreBundle.message("error.no.output").toCheckResult()
     }
 
-    val submission = submitDataTask(task, answer).onError { error ->
-      showErrorDetails(project, error)
-      return CheckResult.failedToCheck
+    val submission = StepikBaseSubmitConnector.submitDataTask(task, answer).onError { error ->
+      return failedToSubmit(project, task, error)
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
@@ -204,26 +155,11 @@ object HyperskillCheckConnector {
       return@checkAnswerTask CheckResult(CheckStatus.Failed, it)
     }
 
-    val submissionResult = when (val submissionResponse = submitAnswerTask(project, task)) {
-      is Err -> return CheckResult(CheckStatus.Failed, EduCoreBundle.message("hyperskill.string.task.failed.text"))
-      is Ok -> submissionResponse.value
+    val submission = StepikBaseSubmitConnector.submitAnswerTask(project, task).onError { error ->
+      return failedToSubmit(project, task, error)
     }
 
-    return periodicallyCheckSubmissionResult(project, submissionResult, task)
-  }
-
-  private fun submitAnswerTask(project: Project, task: AnswerTask): Result<Submission, String> {
-    val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.postAttempt(task)) {
-      is Err -> return attemptResponse
-      is Ok -> attemptResponse.value
-    }
-
-    val submission = when (task) {
-      is StringTask -> StepikBaseSubmissionFactory.createStringTaskSubmission(attempt, task.getInputAnswer(project))
-      is NumberTask -> StepikBaseSubmissionFactory.createNumberTaskSubmission(attempt, task.getInputAnswer(project))
-    }
-    return connector.postSubmission(submission)
+    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   fun checkRemoteEduTask(project: Project, task: RemoteEduTask): CheckResult {
@@ -236,14 +172,9 @@ object HyperskillCheckConnector {
       LOG.error(it)
       return CheckResult.failedToCheck
     }
-    val attempt = HyperskillConnector.getInstance().postAttempt(task).onError { error ->
-      showErrorDetails(project, error)
-      return CheckResult.failedToCheck
-    }
-    val taskSubmission = StepikBaseSubmissionFactory.createRemoteEduTaskSubmission(task, attempt, files)
-    val submission = HyperskillConnector.getInstance().postSubmission(taskSubmission).onError { message ->
-      showErrorDetails(project, message)
-      return CheckResult.failedToCheck
+
+    val submission = StepikBaseSubmitConnector.submitRemoteEduTask(task, files).onError { error ->
+      return failedToSubmit(project, task, error)
     }
 
     val result = periodicallyCheckSubmissionResult(project, submission, task)
@@ -257,77 +188,5 @@ object HyperskillCheckConnector {
       markStageAsCompleted(task)
     }
   }
-
-  private fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
-    require(task.isRemotelyChecked()) { "Task is not checked remotely" }
-
-    val submissionId = submission.id!!
-    val connector = HyperskillConnector.getInstance()
-
-    var lastSubmission = submission
-    var delay = 1L
-    val timeout = if (isUnitTestMode) 5L else CODE_TASK_CHECK_TIMEOUT
-    while (delay < timeout && lastSubmission.status == EVALUATION_STATUS) {
-      TimeUnit.SECONDS.sleep(delay)
-      delay *= 2
-      lastSubmission = connector.getSubmissionById(submissionId).onError { return it.toCheckResult() }
-    }
-
-    if (lastSubmission.status != EVALUATION_STATUS) {
-      if (task.supportSubmissions()) {
-        SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
-      }
-      return lastSubmission.toCheckResult()
-    }
-
-    return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.get.check.result.from", EduNames.JBA))
-  }
-
-  fun checkChoiceTask(project: Project, task: ChoiceTask): CheckResult {
-    if (!task.isMultipleChoice && task.selectedVariants.isEmpty()) {
-      return CheckResult(CheckStatus.Failed, EduCoreBundle.message("hyperskill.choice.task.empty.variant"))
-    }
-
-    val checkId = task.checkId()
-    if (checkId != null) {
-      return checkId
-    }
-    val submission = submitChoiceTask(task).onError { return it.toCheckResult() }
-    return periodicallyCheckSubmissionResult(project, submission, task)
-  }
-
-  private fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
-    val connector = HyperskillConnector.getInstance()
-    val attempt = when (val attemptResponse = connector.getActiveAttemptOrPostNew(task)) {
-      is Err -> return attemptResponse
-      is Ok -> attemptResponse.value
-    }
-
-    val submission = StepikBaseSubmissionFactory.createChoiceTaskSubmission(task, attempt)
-    return connector.postSubmission(submission)
-  }
-
-  fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {
-    val attempt = when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task)) {
-      is Err -> return attemptResponse
-      is Ok -> attemptResponse.value
-    }
-
-    if (StepikTaskBuilder.fillChoiceTask(attempt, task)) {
-      task.selectedVariants.clear()
-      return Ok(true)
-    }
-    return Err(EduCoreBundle.message("hyperskill.choice.task.dataset.empty"))
-  }
-}
-
-fun Submission.toCheckResult(): CheckResult {
-  val status = status ?: return CheckResult.failedToCheck
-  val isSolved = status != "wrong"
-  var message = hint.nullize() ?: "${StringUtil.capitalize(status)} solution"
-  if (isSolved) {
-    message = "<html>$message</html>"
-  }
-  return CheckResult(if (isSolved) CheckStatus.Solved else CheckStatus.Failed, message)
 }
 

@@ -33,7 +33,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getConnector
+import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getStepikBaseConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
@@ -173,7 +173,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     }
 
     if (!isUnitTestMode) {
-      when (val result = course.getConnector().getActiveAttemptOrPostNew(task)) {
+      when (val result = course.getStepikBaseConnector().getActiveAttemptOrPostNew(task)) {
         is Ok -> fillChoiceTask(result.value, task)
         is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
       }

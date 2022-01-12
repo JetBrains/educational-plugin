@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
@@ -165,4 +167,6 @@ interface EduConfigurator<Settings : Any> {
 
   val defaultPlaceholderText: String
     get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
+
+  fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 }

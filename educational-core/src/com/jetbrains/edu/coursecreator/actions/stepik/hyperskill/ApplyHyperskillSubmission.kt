@@ -56,7 +56,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     val id = Integer.valueOf(idText) // valid int because of validator
 
     computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
-      val submission = StepikConnector.getInstance().getSubmissionById(id).onError {
+      val submission = StepikConnector.getInstance().getSubmission(id).onError {
         runInEdt {
           Messages.showErrorDialog(EduCoreBundle.message("error.submission.failed.to.retrieve", id),
                                    EduCoreBundle.message("error.submission.not.applied"))

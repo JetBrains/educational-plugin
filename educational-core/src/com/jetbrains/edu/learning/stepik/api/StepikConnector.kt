@@ -28,6 +28,7 @@ import java.io.IOException
 import java.net.URL
 
 abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBaseConnector {
+  override val platformName: String = StepikNames.STEPIK
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
 
@@ -150,16 +151,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return allSubmissions
   }
 
-  fun getSubmission(attemptId: Int, userId: Int): Submission? {
-    val response = stepikEndpoints.submissions(attempt = attemptId, user = userId).executeHandlingExceptions()
-    val submissions = response?.body()?.submissions ?: return null
-    if (submissions.size != 1) {
-      LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size)
-    }
-    return submissions.firstOrNull()
-  }
-
-  fun getSubmissionById(id: Int): Result<Submission, String> =
+  override fun getSubmission(id: Int): Result<Submission, String> =
     stepikEndpoints.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {

@@ -2,7 +2,10 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.checker.CheckersTestBase
+import com.jetbrains.edu.learning.checker.EduCheckerFixture
+import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -90,7 +93,7 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
 
   fun `test choice task nothing selected `() {
     CheckActionListener.shouldFail()
-    CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.choice.task.empty.variant") }
+    CheckActionListener.expectedMessage { EduCoreBundle.message("choice.task.empty.variant") }
     NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
     testAction(CheckAction.ACTION_ID)
   }

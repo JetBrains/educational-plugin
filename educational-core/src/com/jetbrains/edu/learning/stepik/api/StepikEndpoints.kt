@@ -53,17 +53,6 @@ interface StepikEndpoints {
 
   @GET("api/submissions")
   fun submissions(@Query("step") step: Int,
-                  @Query("status") status: String,
-                  @Query("page") page: Int = 1,
-                  @Query("order") order: String = "desc"): Call<SubmissionsList>
-
-  @GET("api/submissions")
-  fun submissions(@Query("order") order: String = "desc",
-                  @Query("attempt") attempt: Int = 1,
-                  @Query("user") user: Int): Call<SubmissionsList>
-
-  @GET("api/submissions")
-  fun submissions(@Query("step") step: Int,
                   @Query("page") page: Int,
                   @Query("order") order: String = "desc"): Call<SubmissionsList>
 
