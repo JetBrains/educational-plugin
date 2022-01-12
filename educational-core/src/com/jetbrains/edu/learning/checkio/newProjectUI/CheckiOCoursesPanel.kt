@@ -22,11 +22,21 @@ class CheckiOCoursesPanel(
     super.processSelectionChanged()
     if (selectedCourse != null) {
       val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider
-      if (checkiOConnectorProvider == null || checkiOConnectorProvider.oAuthConnector.isLoggedIn()) {
+      if (checkiOConnectorProvider == null) {
         hideLoginPanel()
+        return
+      }
+
+      if (checkiOConnectorProvider.oAuthConnector.isLoggedIn()) {
+        hideLoginPanel()
+      }
+      else {
+        showLoginPanel()
       }
     }
   }
+
+  override fun isLoginNeeded(): Boolean = true
 
   override fun getLoginComponent(): LoginPanel {
     return CheckiOLoginPanel()

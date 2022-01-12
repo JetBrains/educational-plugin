@@ -90,6 +90,10 @@ abstract class CoursesPanel(
     loginPanel?.isVisible = false
   }
 
+  fun showLoginPanel() {
+    loginPanel?.isVisible = true
+  }
+
   private fun createContentPanel(): JPanel {
     val searchAndLoginPanel = NonOpaquePanel()
     searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
