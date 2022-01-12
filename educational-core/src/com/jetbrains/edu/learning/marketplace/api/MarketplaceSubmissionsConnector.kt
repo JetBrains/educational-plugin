@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createMarketplaceSubmissionData
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.ConnectionPool
@@ -203,7 +204,7 @@ class MarketplaceSubmissionsConnector {
 
   fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
     if (task.submissionsId == null) {
-      val emptySubmissionData = SubmissionData(true, emptyList(), task)
+      val emptySubmissionData = createMarketplaceSubmissionData(task, passed = true)
       val submissionId = emptySubmissionData.submission.id ?: error("Submission id not generated at creation")
       val submissionDocument = SubmissionDocument(docId = task.submissionsId,
                                                   submissionContent = ObjectMapper().writeValueAsString(emptySubmissionData).trimIndent())

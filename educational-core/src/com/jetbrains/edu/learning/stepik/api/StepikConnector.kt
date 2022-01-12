@@ -262,22 +262,17 @@ abstract class StepikConnector : StepikBaseConnector {
     return response?.body()?.steps?.firstOrNull()
   }
 
-  fun postSubmission(passed: Boolean, attempt: Attempt,
-                     files: List<SolutionFile>, task: Task): Submission? {
-    return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
-  }
-
-  fun postSubmission(submissionData: SubmissionData): Submission? {
+  override fun postSubmission(submission: Submission): Result<Submission, String> {
+    val submissionData = SubmissionData(submission)
     val response = service.submission(submissionData).executeHandlingExceptions()
-    val submissions = response?.body()?.submissions ?: return null
-    if (response.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to make submission $submissions")
-      return null
+    val submissions = response?.body()?.submissions
+    if (submissions.isNullOrEmpty() || response.code() != HttpStatus.SC_CREATED) {
+      return Err("Failed to make submission $submissions")
     }
-    if (submissions.size != 1) {
-      LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size)
+    if (submissions.size > 1) {
+      LOG.warn("Got a submission wrapper with incorrect submissions number: ${submissions.size}")
     }
-    return submissions.firstOrNull()
+    return Ok(submissions.first())
   }
 
   override fun postAttempt(task: Task): Result<Attempt, String> {

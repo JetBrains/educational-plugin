@@ -279,7 +279,9 @@ abstract class CodeforcesConnector {
 
             if (mainFileName != null) {
               val solutionFile = SolutionFile(GeneratorUtils.joinPaths(task.sourceDir, mainFileName), submissionSource, true)
-              this.reply = Reply(listOf(solutionFile), "", null, null)
+              reply = Reply().apply {
+                solution = listOf(solutionFile)
+              }
             }
 
           }

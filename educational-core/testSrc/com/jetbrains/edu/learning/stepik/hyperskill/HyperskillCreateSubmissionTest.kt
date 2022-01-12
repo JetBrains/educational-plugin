@@ -6,25 +6,54 @@ import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createEduSubmission
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillSubmissionProvider.createRemoteEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.api.Dataset
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createChoiceTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createCodeTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createDataTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createRemoteEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createStringTaskSubmission
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.util.*
 
 class HyperskillCreateSubmissionTest : EduTestCase() {
-  fun `test creating submission for solved edu task`() {
-    val course = createHyperskillCourse()
+  private val hyperskillCourse: HyperskillCourse by lazy {
+    courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("Topic name") {
+          eduTask("Edu problem", stepId = 1) {
+            taskFile("src/Task.kt")
+            taskFile("src/Test.kt", visible = false)
+          }
+          remoteEduTask("Remote Edu problem", stepId = 2, checkProfile = "hyperskill_go") {
+            taskFile("src/Task.kt")
+            taskFile("src/Test.kt", visible = false)
+          }
+          choiceTask("Choice task", stepId = 3, isMultipleChoice = true,
+                     choiceOptions = mapOf("Correct" to ChoiceOptionStatus.CORRECT,
+                                           "Incorrect" to ChoiceOptionStatus.INCORRECT,
+                                           "Unknown" to ChoiceOptionStatus.UNKNOWN)) {
+            taskFile("Task.txt", "")
+          }
+        }
+      }
+    } as HyperskillCourse
+  }
 
-    val eduTask = course.allTasks[0].apply { status = CheckStatus.Solved }
+  fun `test creating submission for solved edu task`() {
+    val eduTask = hyperskillCourse.allTasks[0].apply { status = CheckStatus.Solved }
     val attempt = Attempt().apply { id = 123 }
-    val solutionFiles = getSolutionFiles(project, eduTask).onError { error(it) }
+    val solutionFiles = getSolutionFiles(project, eduTask)
     val feedback = CONGRATULATIONS
-    val submission = createEduSubmission(eduTask, attempt, solutionFiles, feedback)
+    val submission = createEduTaskSubmission(eduTask, attempt, solutionFiles, feedback)
 
     doTest(submission, """
       |attempt: 123
@@ -38,19 +67,16 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
-      |step: -1
       |
     """.trimMargin())
   }
 
   fun `test creating submission for failed edu task`() {
-    val course = createHyperskillCourse()
-
-    val eduTask = course.allTasks[0].apply { status = CheckStatus.Failed }
+    val eduTask = hyperskillCourse.allTasks[0].apply { status = CheckStatus.Failed }
     val attempt = Attempt().apply { id = 1234 }
-    val solutionFiles = getSolutionFiles(project, eduTask).onError { error(it) }
+    val solutionFiles = getSolutionFiles(project, eduTask)
     val feedback = "failed"
-    val submission = createEduSubmission(eduTask, attempt, solutionFiles, feedback)
+    val submission = createEduTaskSubmission(eduTask, attempt, solutionFiles, feedback)
 
     doTest(submission, """
       |attempt: 1234
@@ -64,19 +90,16 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |  version: $JSON_FORMAT_VERSION
       |  feedback:
       |    message: $feedback
-      |step: -1
       |
     """.trimMargin())
   }
 
   fun `test creating submission for remote edu task`() {
-    val course = createHyperskillCourse()
-
-    val remoteEduTask = course.allTasks[1] as RemoteEduTask
+    val remoteEduTask = hyperskillCourse.allTasks[1] as RemoteEduTask
     val checkProfile = remoteEduTask.checkProfile
     val attempt = Attempt().apply { id = 12345 }
-    val solutionFiles = getSolutionFiles(project, remoteEduTask).onError { error(it) }
-    val submission = createRemoteEduTaskSubmission(checkProfile, attempt, solutionFiles)
+    val solutionFiles = getSolutionFiles(project, remoteEduTask)
+    val submission = createRemoteEduTaskSubmission(remoteEduTask, attempt, solutionFiles)
 
     doTest(submission, """
       |attempt: 12345
@@ -88,26 +111,78 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |    is_visible: false
       |  version: $JSON_FORMAT_VERSION
       |  check_profile: $checkProfile
-      |step: -1
       |
     """.trimMargin()
     )
   }
 
-  private fun createHyperskillCourse() = courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("Topic name") {
-        eduTask("Edu problem", stepId = 1) {
-          taskFile("src/Task.kt")
-          taskFile("src/Test.kt", visible = false)
-        }
-        remoteEduTask("Remote Edu problem", stepId = 2, checkProfile = "hyperskill_go") {
-          taskFile("src/Task.kt")
-          taskFile("src/Test.kt", visible = false)
-        }
-      }
+  fun `test creating submission for code task`() {
+    val attempt = Attempt().apply { id = 123 }
+    val answer = "answer"
+    val language = "language"
+    val submission = createCodeTaskSubmission(attempt, answer, language)
+
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  language: $language
+      |  code: $answer
+      |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for choice task`() {
+    val task = hyperskillCourse.allTasks.find { it.id == 3 } as ChoiceTask
+    task.selectedVariants = mutableListOf(0)
+    val dataset = Dataset().apply {
+      options = task.choiceOptions.map { it.text }
     }
-  } as HyperskillCourse
+    val attempt = Attempt().apply {
+      id = 123
+      this.dataset = dataset
+    }
+
+    val submission = createChoiceTaskSubmission(task, attempt)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  choices:
+      |  - true
+      |  - false
+      |  - false
+      |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for string task`() {
+    val attempt = Attempt().apply { id = 123 }
+    val answer = "answer"
+
+    val submission = createStringTaskSubmission(attempt, answer)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  text: $answer
+      |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for data task`() {
+    val dataTaskAttempt = Attempt(123, Date(), 300).toDataTaskAttempt()
+    val answer = "answer"
+
+    val submission = createDataTaskSubmission(dataTaskAttempt, answer)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  file: $answer
+      |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
 
   private fun doTest(submission: Submission, expected: String) {
     val actual = YamlFormatSynchronizer.STUDENT_MAPPER.writeValueAsString(submission)

@@ -284,7 +284,7 @@ abstract class HyperskillConnector : StepikBaseConnector {
 
   // Post requests:
 
-  fun postSubmission(submission: Submission): Result<Submission, String> {
+  override fun postSubmission(submission: Submission): Result<Submission, String> {
     return withTokenRefreshIfNeeded { service.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 

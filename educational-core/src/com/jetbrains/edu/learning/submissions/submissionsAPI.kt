@@ -1,32 +1,21 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
+import com.jetbrains.edu.learning.courseFormat.AttemptBase
 import com.jetbrains.edu.learning.stepik.api.*
 import java.util.*
 
 const val SUBMISSION = "submission"
 
-class SubmissionData() {
+class SubmissionData {
   @JsonProperty(SUBMISSION)
   lateinit var submission: Submission
 
-  constructor(attemptId: Int, score: String, files: List<SolutionFile>, task: Task) : this() {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
+  constructor()
 
-    submission = Submission(score, attemptId, files, serializedTask)
-  }
-
-  // to be used for marketplace submissions creation
-  constructor(passed: Boolean, files: List<SolutionFile>, task: Task) : this() {
-    val objectMapper = StepikConnector.createMapper(SimpleModule())
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-
-    submission = Submission(task.id, if (passed) "1" else "0", files, serializedTask)
-    submission.time = Date()
-    submission.id = this.hashCode()
+  constructor(submission: Submission) {
+    this.submission = submission
   }
 }
 
@@ -37,7 +26,8 @@ class Submission {
   @JsonProperty(REPLY)
   var reply: Reply? = null
 
-  @JsonProperty(STEP)
+  // WRITE_ONLY because we don't need to send it
+  @JsonProperty(STEP, access = WRITE_ONLY)
   var step: Int = -1
 
   @JsonProperty(ID)
@@ -57,13 +47,8 @@ class Submission {
 
   constructor()
 
-  constructor(score: String, attemptId: Int, files: List<SolutionFile>, serializedTask: String?, feedback: String? = null) {
-    reply = Reply(files, score, serializedTask, feedback)
-    attempt = attemptId
-  }
-
-  constructor(taskId: Int, score: String, files: List<SolutionFile>, serializedTask: String?, feedback: String? = null) {
-    reply = Reply(files, score, serializedTask, feedback)
-    step = taskId
+  constructor(attempt: AttemptBase, reply: Reply) {
+    this.attempt = attempt.id
+    this.reply = reply
   }
 }

@@ -349,16 +349,8 @@ class Reply {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   var checkProfile: String? = null
 
+  @Suppress("ConvertSecondaryConstructorToPrimary") // used for deserialization
   constructor()
-
-  constructor(files: List<SolutionFile>, score: String, serializedTask: String?, feedback: String? = null) {
-    this.score = score
-    solution = files
-    eduTask = serializedTask
-    if (feedback != null) {
-      this.feedback = Feedback(feedback)
-    }
-  }
 }
 
 class SolutionFile {

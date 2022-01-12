@@ -17,7 +17,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
     return isMarketplaceRemote && account.isJwtTokenProvided()
   }
 
-  override fun postSubmission(project: Project, task: Task): Submission? {
+  override fun postSubmission(project: Project, task: Task): Submission {
     return MarketplaceSolutionLoader.getInstance(project).postSubmission(project, task)
   }
 

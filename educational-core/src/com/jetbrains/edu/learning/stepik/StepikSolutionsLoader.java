@@ -51,6 +51,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createStepikSubmission;
 import static com.jetbrains.edu.learning.submissions.SubmissionUtils.getSolutionFiles;
 
 public class StepikSolutionsLoader implements Disposable {
@@ -86,7 +87,7 @@ public class StepikSolutionsLoader implements Disposable {
     addFileOpenListener();
   }
 
-  public static Submission postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
+  public static Submission postSolution(@NotNull final Project project, @NotNull final Task task) {
     if (task.getId() <= 0) {
       return null;
     }
@@ -97,13 +98,13 @@ public class StepikSolutionsLoader implements Disposable {
       return null;
     }
     final Attempt attempt = ((Ok<Attempt>)postedAttempt).component1();
-    final Result<List<SolutionFile>, String> files = getSolutionFiles(project, task);
-    if (files instanceof Err) {
-      LOG.error(((Err<String>)files).getError());
+    final List<SolutionFile> solutionFiles = getSolutionFiles(project, task);
+    final Submission submission = createStepikSubmission(task, attempt, solutionFiles);
+    final Result<Submission, String> postedSubmission = StepikConnector.getInstance().postSubmission(submission);
+    if (postedSubmission instanceof Err) {
       return null;
     }
-    final List<SolutionFile> solutionFiles = ((Ok<List<SolutionFile>>)files).component1();
-    return StepikConnector.getInstance().postSubmission(passed, attempt, solutionFiles, task);
+    return ((Ok<Submission>)postedSubmission).component1();
   }
 
   public void loadSolutionsInBackground() {

@@ -16,10 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.api.Attempt;
 import com.jetbrains.edu.learning.stepik.api.Dataset;
-import com.jetbrains.edu.learning.stepik.api.Reply;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.submissions.Submission;
-import com.jetbrains.edu.learning.submissions.SubmissionData;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createChoiceTaskSubmission;
+import static com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createCodeTaskSubmission;
 
 public class StepikCheckerConnector {
   private static final Logger LOG = Logger.getInstance(StepikCheckerConnector.class);
@@ -91,55 +92,8 @@ public class StepikCheckerConnector {
     }
 
     final int attemptId = attempt.getId();
-    final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
-    return doCheck(submissionData, project, attemptId, user.getId(), task);
-  }
-
-  @NotNull
-  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, int attemptId) {
-    final SubmissionData submissionData = new SubmissionData();
-    submissionData.submission = new Submission();
-    submissionData.submission.setAttempt(attemptId);
-    final Reply reply = new Reply();
-    reply.setChoices(createChoiceTaskAnswerArray(task));
-    submissionData.submission.setReply(reply);
-    return submissionData;
-  }
-
-  @NotNull
-  private static SubmissionData createCodeSubmissionData(int attemptId, String language, String answer) {
-    final SubmissionData submissionData = new SubmissionData();
-    submissionData.submission = createCodeSubmission(attemptId, language, answer);
-    return submissionData;
-  }
-
-  public static Submission createCodeSubmission(int attemptId, String language, String answer) {
-    Submission submission = new Submission();
-    submission.setAttempt(attemptId);
-    final Reply reply = new Reply();
-    reply.setLanguage(language);
-    reply.setCode(answer);
-    submission.setReply(reply);
-    return submission;
-  }
-
-  @NotNull
-  public static Submission createDataSubmission(int attemptId, @NotNull String answer) {
-    Submission submission = new Submission();
-    submission.setAttempt(attemptId);
-    final Reply reply = new Reply();
-    reply.setFile(answer);
-    submission.setReply(reply);
-    return submission;
-  }
-
-  private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
-    final List<Integer> selectedVariants = task.getSelectedVariants();
-    final boolean[] answer = new boolean[task.getChoiceOptions().size()];
-    for (Integer index : selectedVariants) {
-      answer[index] = true;
-    }
-    return answer;
+    final Submission submission = createChoiceTaskSubmission(task, attempt);
+    return doCheck(project, submission, attemptId, user.getId(), task);
   }
 
   public static CheckResult checkCodeTask(@NotNull Project project, @NotNull Task task, @NotNull StepikUser user) {
@@ -148,7 +102,8 @@ public class StepikCheckerConnector {
       LOG.warn(((Err<String>)postedAttempt).getError());
       return CheckResult.getFailedToCheck();
     }
-    int attemptId = ((Ok<Attempt>)postedAttempt).component1().getId();
+    final Attempt attempt = ((Ok<Attempt>)postedAttempt).component1();
+    int attemptId = attempt.getId();
 
     final Course course = task.getLesson().getCourse();
     final Language courseLanguage = course.getLanguageById();
@@ -159,23 +114,28 @@ public class StepikCheckerConnector {
         String defaultLanguage = StepikLanguage.langOfId(courseLanguage.getID(), course.getLanguageVersion()).getLangName();
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
 
-        final SubmissionData submissionData = createCodeSubmissionData(attemptId, defaultLanguage, answer);
-        return doCheck(submissionData, project, attemptId, user.getId(), task);
+        final Submission submission = createCodeTaskSubmission(attempt, answer, defaultLanguage);
+        return doCheck(project, submission, attemptId, user.getId(), task);
       }
     }
     return CheckResult.getFailedToCheck();
   }
 
-  private static CheckResult doCheck(@NotNull SubmissionData submissionData,
-                                     Project project, int attemptId, int userId, Task task) {
-    Submission submission = postSubmission(submissionData, attemptId, userId);
-    if (submission != null) {
+  private static CheckResult doCheck(
+    @NotNull Project project,
+    @NotNull Submission submission,
+    int attemptId,
+    int userId,
+    @NotNull Task task
+  ) {
+    Submission postedSubmission = postSubmission(submission, attemptId, userId);
+    if (postedSubmission != null) {
       if (task instanceof CodeTask) {
-        SubmissionsManager.getInstance(project).addToSubmissions(task.getId(), submission);
+        SubmissionsManager.getInstance(project).addToSubmissions(task.getId(), postedSubmission);
       }
-      final String status = submission.getStatus();
+      final String status = postedSubmission.getStatus();
       if (status == null) return CheckResult.getFailedToCheck();
-      final String hint = submission.getHint();
+      final String hint = postedSubmission.getHint();
       final boolean isSolved = !status.equals(EduNames.WRONG);
       String message = hint;
       if (message == null || message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
@@ -189,23 +149,24 @@ public class StepikCheckerConnector {
     }
   }
 
-  private static Submission postSubmission(@NotNull SubmissionData submissionData, int attemptId, int userId) {
-    Submission submission = StepikConnector.getInstance().postSubmission(submissionData);
-    if (submission == null) {
+  private static Submission postSubmission(@NotNull Submission submission, int attemptId, int userId) {
+    final Result<Submission, String> sentSubmission = StepikConnector.getInstance().postSubmission(submission);
+    if (sentSubmission instanceof Err) {
       return null;
     }
+    Submission postedSubmission = ((Ok<Submission>)sentSubmission).component1();
     try {
-      String status = submission.getStatus();
+      String status = postedSubmission.getStatus();
       while ("evaluation".equals(status)) {
         TimeUnit.MILLISECONDS.sleep(500);
-        submission = StepikConnector.getInstance().getSubmission(attemptId, userId);
-        if (submission == null) break;
-        status = submission.getStatus();
+        postedSubmission = StepikConnector.getInstance().getSubmission(attemptId, userId);
+        if (postedSubmission == null) break;
+        status = postedSubmission.getStatus();
       }
     }
     catch (InterruptedException e) {
       LOG.warn(e.getMessage());
     }
-    return submission;
+    return postedSubmission;
   }
 }
