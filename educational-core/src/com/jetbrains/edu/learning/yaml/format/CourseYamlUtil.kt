@@ -29,13 +29,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.serialization.IntValueFilter
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.unknownFieldValueMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
@@ -139,7 +139,8 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String {
     val languageWithoutVersion = languageId.split(" ").first()
-    return Language.findLanguageByID(languageWithoutVersion)?.displayName ?: formatError("Cannot save programming language '$languageId'")
+    return Language.findLanguageByID(languageWithoutVersion)?.displayName
+           ?: formatError(EduCoreBundle.message("yaml.editor.invalid.cannot.save", languageId))
   }
 }
 
@@ -252,7 +253,7 @@ private class CourseBuilder(
         .filter { it.displayName == programmingLanguage }
         .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
       if (languages.isEmpty()) {
-        formatError("Unsupported language $programmingLanguage")
+        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", programmingLanguage))
       }
 
       if (languages.size > 1) {
@@ -262,10 +263,11 @@ private class CourseBuilder(
       language = languages.first().id
 
       val languageSettings = configurator?.courseBuilder?.getLanguageSettings()
-                             ?: formatError("Unsupported language $programmingLanguage")
+                             ?: formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", programmingLanguage))
       if (programmingLanguageVersion != null) {
         if (!languageSettings.getLanguageVersions().contains(programmingLanguageVersion)) {
-          formatError("Unsupported $programmingLanguage version: $programmingLanguageVersion")
+          formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", programmingLanguage,
+                                            programmingLanguageVersion))
         }
         else {
           language = "$language $programmingLanguageVersion"
@@ -282,8 +284,8 @@ private class CourseBuilder(
       setItems(items)
     }
 
-    val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language }
-                 ?: formatError(unknownFieldValueMessage("language", language))
+    val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language } ?: formatError(
+      EduCoreBundle.message("yaml.editor.invalid.format.unknown.field", language))
     course.languageCode = Locale(locale).language
     return course
   }

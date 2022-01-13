@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
-import com.jetbrains.edu.learning.yaml.errorHandling.negativeParamNotAllowedMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.negativeLengthNotAllowedMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.negativeOffsetNotAllowedMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
@@ -49,11 +50,11 @@ open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
   protected open fun createPlaceholder(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
     if (length < 0) {
-      formatError(negativeParamNotAllowedMessage(LENGTH))
+      formatError(negativeLengthNotAllowedMessage())
     }
 
     if (offset < 0) {
-      formatError(negativeParamNotAllowedMessage(OFFSET))
+      formatError(negativeOffsetNotAllowedMessage())
     }
     placeholder.length = length
     placeholder.placeholderText = placeholderText

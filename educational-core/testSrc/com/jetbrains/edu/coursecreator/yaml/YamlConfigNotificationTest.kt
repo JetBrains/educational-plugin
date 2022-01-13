@@ -41,7 +41,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
       YamlLoader.loadItem(project, configFile!!)
     }
     checkEditorNotification(configFile!!, YamlConfigNotificationProvider.KEY,
-                            "Failed to apply configuration: task type not specified")
+                            "Failed to apply configuration: task type is not specified")
   }
 
   private fun withOriginalException(action: () -> Unit) {

@@ -45,7 +45,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |- the first lesson
             |- the second lesson
             |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
-           "Unknown language 'wrong'", InvalidYamlFormatException::class.java)
+           "Unknown language \"wrong\"", InvalidYamlFormatException::class.java)
   }
 
   fun `test unexpected symbol`() {
@@ -76,7 +76,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |content:
             |- the first lesson
             |""".trimMargin(), YamlFormatSettings.COURSE_CONFIG,
-           "invalid config", MismatchedInputException::class.java)
+           "Invalid config", MismatchedInputException::class.java)
   }
 
   fun `test wrong type of placeholder offset`() {
@@ -89,7 +89,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |    length: 3
     |    placeholder_text: type here
     |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
-           "invalid config", InvalidFormatException::class.java)
+           "Invalid config", InvalidFormatException::class.java)
   }
 
   fun `test unexpected item type`() {
@@ -105,13 +105,13 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |- text: 2
       |  is_correct: false
       |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
-           "Unsupported task type 'e'", InvalidYamlFormatException::class.java)
+           "Unsupported task type \"e\"", InvalidYamlFormatException::class.java)
   }
 
   fun `test task without type`() {
     doTest("""
     """.trimIndent(), YamlFormatSettings.TASK_CONFIG,
-           "Task type not specified", InvalidYamlFormatException::class.java)
+           "Task type is not specified", InvalidYamlFormatException::class.java)
   }
 
   fun `test negtive placeholder length`() {
@@ -125,7 +125,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |    length: -1
     |    placeholder_text: type here
     |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
-           "Answer placeholders with negative length not allowed", InvalidYamlFormatException::class.java)
+           "Answer placeholder with negative length is not allowed", InvalidYamlFormatException::class.java)
   }
 
   fun `test negative placeholder offset`() {
@@ -139,7 +139,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |    length: 1
     |    placeholder_text: type here
     |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
-           "Answer placeholders with negative offset not allowed", InvalidYamlFormatException::class.java)
+           "Answer placeholder with negative offset is not allowed", InvalidYamlFormatException::class.java)
   }
 
   fun `test task file without name`() {
@@ -149,7 +149,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
     |- name:
     |  visible: true
     |""".trimMargin(), YamlFormatSettings.TASK_CONFIG,
-           "File without a name not allowed", InvalidYamlFormatException::class.java)
+           "File without a name is not allowed", InvalidYamlFormatException::class.java)
   }
 
   fun `test language without configurator`() {

@@ -9,6 +9,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.ui.YamlHelpTab
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 
 class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
   private var cause: String? = null
@@ -41,6 +42,8 @@ class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Pro
 
 
   companion object {
-    val KEY: Key<EditorNotificationPanel> = Key.create("Failed to apply configuration")
+    @NonNls
+    private const val EDITOR_NOTIFICATION_KEY_NAME = "Failed to apply configuration"
+    val KEY: Key<EditorNotificationPanel> = Key.create(EDITOR_NOTIFICATION_KEY_NAME)
   }
 }

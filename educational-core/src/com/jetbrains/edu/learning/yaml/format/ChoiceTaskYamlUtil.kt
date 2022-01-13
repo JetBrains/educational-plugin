@@ -92,7 +92,7 @@ private class FromChoiceOptionStatusConverter : StdConverter<ChoiceOptionStatus,
     return when (value) {
       ChoiceOptionStatus.CORRECT -> true
       ChoiceOptionStatus.INCORRECT -> false
-      else -> formatError("Unknown option status not allowed")
+      else -> formatError(EduCoreBundle.message("yaml.editor.invalid.unknown.option", value))
     }
   }
 }

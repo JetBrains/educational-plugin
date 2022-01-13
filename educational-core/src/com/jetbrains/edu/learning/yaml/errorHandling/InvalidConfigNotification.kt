@@ -30,24 +30,31 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
   val courseConfig = if (configFile.name == COURSE_CONFIG) {
     configFile
   }
-  else {
+                     else {
     project.courseDir.findChild(COURSE_CONFIG)
-  } ?: error("Can't find course config")
+  } ?: error(EduCoreBundle.message("yaml.editor.invalid.format.cannot.find.config"))
 
   val mode = YamlDeserializer.getCourseMode(courseConfig.document.text)
 
-  val mainErrorMessage = "${EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))}: ${cause.decapitalize()}"
-  val editLink = if (mode == EduNames.STUDY) ""
-  else """<br>
+  val mainErrorMessage = "${
+    EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))
+  }: ${cause.decapitalize()}"
+
+  val editLink = if (mode == EduNames.STUDY) {
+    ""
+  }
+  else {
+    """<br>
   <a href="">${
-    EduCoreBundle.message("yaml.invalid.config.notification.message.edit.link")
-  }</a>"""
+      EduCoreBundle.message("yaml.invalid.config.notification.message.edit.link")
+    }</a>"""
+  }
   return mainErrorMessage + editLink
 }
 
 private fun pathToConfig(project: Project, configFile: VirtualFile): String =
   FileUtil.getRelativePath(project.courseDir.path, configFile.path, VfsUtil.VFS_SEPARATOR_CHAR) ?: error(
-    "Path to config file $configFile bot found")
+    EduCoreBundle.message("yaml.editor.invalid.format.path.not.found", configFile))
 
 private class GoToFileListener(val project: Project, val file: VirtualFile) : NotificationListener {
   override fun hyperlinkUpdate(notification: Notification, event: HyperlinkEvent) {

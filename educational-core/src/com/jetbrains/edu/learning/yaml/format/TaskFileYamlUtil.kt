@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
@@ -44,7 +45,7 @@ open class TaskFileBuilder(@JsonProperty(NAME) val name: String?,
   @Suppress("unused") //used for deserialization
   private fun build(): TaskFile {
     if (name == null) {
-      formatError("File without a name not allowed")
+      formatError(EduCoreBundle.message("yaml.editor.invalid.file.without.name"))
     }
     return createTaskFile()
   }

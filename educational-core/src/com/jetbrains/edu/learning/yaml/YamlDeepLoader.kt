@@ -13,13 +13,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.notFoundMessage
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
 
 object YamlDeepLoader {
@@ -145,7 +145,8 @@ object YamlDeepLoader {
     if (remoteConfigFile == null) {
       if (id > 0) {
         loadingError(
-          notFoundMessage("config file $remoteConfigFileName", "item '$name'"))
+          EduCoreBundle.message("yaml.editor.invalid.format.config.file.not.found", configFileName, name)
+        )
       }
       else return
     }
@@ -172,6 +173,6 @@ object YamlDeepLoader {
 
   private fun VirtualFile.toDescriptionFormat(): DescriptionFormat {
     return DescriptionFormat.values().firstOrNull { it.fileExtension == extension } ?: loadingError(
-      "Invalid description format")
+      EduCoreBundle.message("yaml.editor.invalid.description"))
   }
 }

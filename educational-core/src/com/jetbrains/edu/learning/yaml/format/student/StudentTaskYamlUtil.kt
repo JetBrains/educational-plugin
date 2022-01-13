@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
@@ -65,11 +66,11 @@ abstract class FeedbackYamlMixin {
 class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
     if (existingItem.solutionHidden != deserializedItem.solutionHidden && !ApplicationManager.getApplication().isInternal) {
-      throw YamlLoadingException("Visibility of solution can't be changed")
+      throw YamlLoadingException(EduCoreBundle.message("yaml.editor.invalid.visibility.cannot.be.changed"))
     }
     super.applyChanges(existingItem, deserializedItem)
     if (existingItem.status != deserializedItem.status && !ApplicationManager.getApplication().isInternal) {
-      throw YamlLoadingException("Status can't be changed")
+      throw YamlLoadingException(EduCoreBundle.message("yaml.editor.invalid.status.cannot.be.changed"))
     }
     when (existingItem) {
       is CheckiOMission -> {
@@ -95,6 +96,6 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
   }
 
   override fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
-    throw YamlLoadingException("It's not allowed to change task type")
+    throw YamlLoadingException(EduCoreBundle.message("yaml.editor.invalid.not.allowed.to.change.task"))
   }
 }

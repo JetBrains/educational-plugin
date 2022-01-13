@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isUnitTestMode
+import org.jetbrains.annotations.NonNls
 
 object YamlFormatSettings {
   @JvmField
@@ -13,6 +14,7 @@ object YamlFormatSettings {
   val SECTION_CONFIG = getLocalConfigFileName(EduNames.SECTION)
   @JvmField
   val LESSON_CONFIG = getLocalConfigFileName(EduNames.LESSON)
+
   @JvmField
   val TASK_CONFIG = getLocalConfigFileName(EduNames.TASK)
 
@@ -21,9 +23,16 @@ object YamlFormatSettings {
    */
   fun getLocalConfigFileName(itemKind: String): String = "$itemKind-info.yaml"
 
+  @NonNls
   const val REMOTE_COURSE_CONFIG = "course-remote-info.yaml"
+
+  @NonNls
   const val REMOTE_SECTION_CONFIG = "section-remote-info.yaml"
+
+  @NonNls
   const val REMOTE_LESSON_CONFIG = "lesson-remote-info.yaml"
+
+  @NonNls
   const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
 
   @JvmStatic

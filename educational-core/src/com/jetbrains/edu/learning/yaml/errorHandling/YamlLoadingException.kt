@@ -1,13 +1,15 @@
 package com.jetbrains.edu.learning.yaml.errorHandling
 
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+
 class YamlLoadingException(override val message: String) : IllegalStateException(message)
 
 fun loadingError(message: String): Nothing = throw YamlLoadingException(message)
 
-fun noDirForItemMessage(name: String, itemTypeName: String = "item") = "Directory for $itemTypeName not found '$name'"
+fun noDirForItemMessage(name: String, itemTypeName: String = EduNames.ITEM) = EduCoreBundle.message("yaml.editor.invalid.format.no.dir",
+                                                                                                    name, itemTypeName)
 
-fun unknownConfigMessage(configName: String) = "Unknown config file '$configName'"
+fun unknownConfigMessage(configName: String) = EduCoreBundle.message("yaml.editor.invalid.format.unknown.config", configName)
 
-fun unexpectedItemTypeMessage(itemType: String) = "Unexpected item type '$itemType'"
-
-fun notFoundMessage(notFoundObjectName: String, itemName: String) = "${notFoundObjectName} not found for '$itemName'"
+fun unexpectedItemTypeMessage(itemType: String) = EduCoreBundle.message("yaml.editor.invalid.format.unexpected.type", itemType)

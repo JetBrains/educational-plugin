@@ -8,12 +8,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
-import com.jetbrains.edu.learning.yaml.errorHandling.*
+import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
+import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
+import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
 /**
@@ -113,16 +117,17 @@ object YamlLoader {
 
   private fun StudyItem.getParentItem(project: Project, parentDir: VirtualFile): ItemContainer {
     val course = StudyTaskManager.getInstance(project).course
-    return when (this) {
-             is Section -> course
-             is Lesson -> {
-               val section = course?.let { parentDir.getSection(project) }
-               section ?: course
-             }
-             is Task -> course?.let { parentDir.getLesson(project) }
-             else -> loadingError(
-               "Unexpected item type. Expected: 'Section', 'Lesson' or 'Task'. Was '${itemType}'")
-           } ?: loadingError(notFoundMessage("parent", "for item '${name}'"))
+    val itemContainer = when (this) {
+      is Section -> course
+      is Lesson -> {
+        val section = course?.let { parentDir.getSection(project) }
+        section ?: course
+      }
+      is Task -> course?.let { parentDir.getLesson(project) }
+      else -> loadingError(
+        EduCoreBundle.message("yaml.editor.invalid.unexpected.item.type", itemType))
+    }
+    return itemContainer ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.format.parent.not.found", name))
   }
 
   private fun <T : StudyItem> T.applyChanges(project: Project, deserializedItem: T) {
@@ -131,7 +136,7 @@ object YamlLoader {
 
   private fun getStudyItemForConfig(project: Project, configFile: VirtualFile): StudyItem? {
     val name = configFile.name
-    val itemDir = configFile.parent ?: error(notFoundMessage("containing item dir", name))
+    val itemDir = configFile.parent ?: error(EduCoreBundle.message("yaml.editor.invalid.format.containing.item.dir.not.found", name))
     val course = StudyTaskManager.getInstance(project).course ?: return null
     return when (name) {
       YamlFormatSettings.COURSE_CONFIG -> course
@@ -153,7 +158,7 @@ private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
     }
     is Task -> {
       taskFiles.forEach { (name, _) ->
-        itemDir.findFileByRelativePath(name) ?: loadingError("No file for `$name`")
+        itemDir.findFileByRelativePath(name) ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.format.no.file", name))
       }
     }
   }

@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
@@ -58,7 +59,8 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
       return
     }
 
-    loadingError("Expected ${existingItem::class.simpleName} class, but was: ${deserializedItem.javaClass.simpleName}")
+    loadingError(EduCoreBundle.message("yaml.editor.invalid.unexpected.class", existingItem::class.simpleName.toString(),
+                                       deserializedItem.javaClass.simpleName))
   }
 
   private fun updateChildren(deserializedItem: T, existingItem: T) {

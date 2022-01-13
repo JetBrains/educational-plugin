@@ -11,6 +11,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
@@ -39,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
@@ -55,6 +57,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import org.jetbrains.annotations.NonNls
 
 /**
  * Deserialize [StudyItem] object from yaml config file without any additional modifications.
@@ -62,7 +65,9 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
  * should be applied to existing one that is done in [YamlLoader.loadItem].
  */
 object YamlDeserializer {
-  val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create("Loaded YAML", YamlListener::class.java)
+  @NonNls
+  private const val TOPIC = "Loaded YAML"
+  val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
 
   fun deserializeItem(configFile: VirtualFile, project: Project?, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configName = configFile.name
@@ -141,7 +146,7 @@ object YamlDeserializer {
   @VisibleForTesting
   fun ObjectMapper.deserializeTask(configFileText: String): Task {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val type = asText(treeNode.get("type")) ?: formatError("Task type not specified")
+    val type = asText(treeNode.get("type")) ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
 
     val clazz = when (type) {
       EDU_TASK_TYPE -> EduTask::class.java
@@ -220,7 +225,12 @@ object YamlDeserializer {
       return configFile
     }
 
-    val message = if (itemDir == null) "Directory for item '$childName' not found" else "Config file for item '${childName}' not found"
+    val message = if (itemDir == null) {
+      EduCoreBundle.message("yaml.editor.notification.directory.not.found", childName)
+    }
+    else {
+      EduCoreBundle.message("yaml.editor.notification.config.file.not.found", childName)
+    }
     val parentConfig = dir.findChild(configFileName) ?: error("Config file for currently loading item ${name} not found")
     showError(project, null, parentConfig, message)
 
@@ -237,7 +247,9 @@ object YamlDeserializer {
           showError(project, e, configFile)
         }
         else {
-          showError(project, e, configFile, "${NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")} is empty")
+          val cause = EduCoreBundle.message("yaml.editor.notification.parameter.is.empty",
+                                            NameUtil.nameToWordsLowerCase(parameterName).joinToString("_"))
+          showError(project, e, configFile, cause)
         }
       }
       is InvalidYamlFormatException -> showError(project, e, configFile, e.message)
@@ -266,13 +278,16 @@ object YamlDeserializer {
     }
   }
 
+  // it doesn't require localization as `problems` is snakeyaml error message on which we have no influence
+  @Suppress("UnstableApiUsage")
+  @NlsSafe
   private fun yamlParsingErrorNotificationMessage(problem: String?, line: Int?) =
     if (problem != null && line != null) "$problem at line ${line + 1}" else null
 
   fun showError(project: Project,
                 originalException: Exception?,
                 configFile: VirtualFile,
-                cause: String = "invalid config") {
+                cause: String = EduCoreBundle.message("yaml.editor.notification.invalid.config")) {
     // to make test failures more comprehensible
     if (isUnitTestMode && project.getUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION) == true) {
       if (originalException != null) {
