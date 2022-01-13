@@ -11,7 +11,9 @@ query {
       downloads
       rating
       fields
-      developers
+      authors {
+        name
+      }
       lastUpdateDate
       cdate
       link

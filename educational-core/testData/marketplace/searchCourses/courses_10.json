@@ -8,8 +8,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -24,8 +26,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -40,8 +44,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -56,8 +62,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -72,8 +80,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -88,8 +98,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -104,8 +116,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -120,8 +134,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -136,8 +152,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",
@@ -152,8 +170,10 @@
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
           "description" : "Introduction course to Python",
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "programmingLanguage" : "Python",

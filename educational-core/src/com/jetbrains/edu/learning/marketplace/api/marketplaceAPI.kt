@@ -13,12 +13,12 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import org.jetbrains.annotations.TestOnly
 
+const val AUTHORS = "authors"
 const val CONTENT = "content"
 const val CREATE_DATE = "cdate"
 const val DATA = "data"
 const val DESCRIPTION = "description"
 const val DESCRIPTORS = "descriptors"
-const val DEVELOPERS = "developers"
 const val DOWNLOADS = "downloads"
 const val ENVIRONMENT = "environment"
 const val FIELDS = "fields"
@@ -121,6 +121,16 @@ class CoursesData {
 class Courses {
   @JsonProperty(PLUGINS)
   lateinit var coursesList: CoursesList
+}
+
+class Author {
+  @JsonProperty(NAME)
+  var name: String = ""
+
+  constructor()
+  constructor(name: String) {
+    this.name = name
+  }
 }
 
 class Fields {

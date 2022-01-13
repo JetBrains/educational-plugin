@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.addVendor
+import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -38,7 +39,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       }
       additionalFile("test.txt", "some text")
     }.apply { isMarketplace = true }
-    course.setMarketplaceAuthorsAsString(listOf("EduTools Dev", "EduTools QA", "EduTools"))
+    course.setMarketplaceAuthorsAsString(listOf(Author("EduTools Dev"), Author("EduTools QA"), Author("EduTools")))
     doTest()
   }
 

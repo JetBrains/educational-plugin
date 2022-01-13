@@ -29,8 +29,8 @@ abstract class MarketplaceEduCourseMixin {
   @JsonProperty(RATING)
   var reviewScore: Double? = 0.0
 
-  @JsonProperty(DEVELOPERS)
-  var developers: List<String> = emptyList()
+  @JsonProperty(AUTHORS)
+  var authors: List<Author> = emptyList()
 
   @JsonProperty(LINK)
   var myFeedbackLink: String = ""
@@ -44,7 +44,7 @@ private class MarketplaceCourseBuilder(
   @JsonProperty(ID) val courseId: Int,
   @JsonProperty(NAME) val courseName: String,
   @JsonProperty(DESCRIPTION) val courseDescription: String,
-  @JsonProperty(DEVELOPERS) val developers: List<String>,
+  @JsonProperty(AUTHORS) val marketplaceAuthors: List<Author>,
   @JsonProperty(DOWNLOADS) val downloads: Int,
   @JsonProperty(RATING) val rating: Double?,
   @JsonProperty(FIELDS) val fields: Fields,
@@ -76,7 +76,7 @@ private class MarketplaceCourseBuilder(
       createDate = Date(courseCreateDate)
       feedbackLink = "$PLUGINS_REPOSITORY_URL$courseLink$REVIEWS"
       license = courseLicense
-      setMarketplaceAuthorsAsString(developers)
+      setMarketplaceAuthorsAsString(marketplaceAuthors)
     }
 
     return course

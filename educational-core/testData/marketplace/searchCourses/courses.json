@@ -11,8 +11,10 @@
           "description" : "Introduction course to Python",
           "downloads" : 2,
           "rating" : 5.0,
-          "developers" : [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields" : {
             "environment": null,
@@ -34,9 +36,13 @@
           "description" : "Introduction course to Java",
           "downloads" : 5,
           "rating" : 5.0,
-          "developers" : [
-            "user1 LastName1",
-            "user2 LastName2"
+          "authors": [
+            {
+              "name": "user1 LastName1"
+            },
+            {
+              "name": "user2 LastName2"
+            }
           ],
           "fields" : {
             "environment": null,
@@ -56,8 +62,10 @@
           "description" : "Introduction course to Scala",
           "downloads" : 5,
           "rating" : 4.75,
-          "developers": [
-            "FirstName LastName"
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
           ],
           "fields": {
             "environment": "sbt",

@@ -14,7 +14,9 @@ query {
       description
       downloads
       rating
-      developers
+      authors {
+        name
+      }
       organization {name}
       fields
       lastUpdateDate
