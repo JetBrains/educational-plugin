@@ -30,7 +30,8 @@ class NumberTask : AnswerTask {
     if (validationMessage != null) {
       return validationMessage
     }
-    if (answer.toIntOrNull() == null) {
+
+    if (answer.trim().replace(',', '.').toDoubleOrNull() == null) {
       return EduCoreBundle.message("hyperskill.number.task.not.number")
     }
     return null

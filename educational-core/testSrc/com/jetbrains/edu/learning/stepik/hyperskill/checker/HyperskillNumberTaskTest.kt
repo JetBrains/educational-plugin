@@ -33,14 +33,29 @@ class HyperskillNumberTaskTest : CheckersTestBase<Unit>() {
   override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
     section("Topics") {
       lesson("1_lesson_correct") {
-        numberTask(stepId = 1, name = "1_number_task_non_number") {
+        numberTask(stepId = 1, name = "0_number_task_non_number") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>answer</p>")
         }
-        numberTask(stepId = 1, name = "2_number_task_empty") {
+        numberTask(stepId = 1, name = "1_number_task_empty") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, "<p></p>")
         }
-        numberTask(stepId = 1, name = "3_number_task_correct") {
+        numberTask(stepId = 1, name = "2_number_task_correct") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>12</p>")
+        }
+        numberTask(stepId = 1, name = "3_number_task_with_space") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>12   </p>")
+        }
+        numberTask(stepId = 1, name = "4_number_task_with_comma") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>\n12   </p>")
+        }
+        numberTask(stepId = 1, name = "5_number_task_with_comma") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>  12   </p>")
+        }
+        numberTask(stepId = 1, name = "6_number_task_with_space") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1,2</p>")
+        }
+        numberTask(stepId = 1, name = "7_number_task_with_comma") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1.2</p>")
         }
       }
     }
@@ -128,9 +143,20 @@ class HyperskillNumberTaskTest : CheckersTestBase<Unit>() {
     assertEquals(1, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(EduCoreBundle.message("string.task.comment.file"),
                  createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.placeholderText)
-//    assertEquals(0, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.offset)
+    assertEquals(0, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.offset)
     assertEquals(EduCoreBundle.message("string.task.comment.file").length,
                  createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.endOffset)
+  }
+
+  fun `test task with space`() {
+    assertNull((myCourse.allTasks[3] as NumberTask).validateAnswer (project))
+    assertNull((myCourse.allTasks[4] as NumberTask).validateAnswer (project))
+    assertNull((myCourse.allTasks[5] as NumberTask).validateAnswer (project))
+  }
+
+  fun `test task with comma and dot`() {
+    assertNull((myCourse.allTasks[6] as NumberTask).validateAnswer (project))
+    assertNull((myCourse.allTasks[7] as NumberTask).validateAnswer (project))
   }
 
   @Language("JSON")
