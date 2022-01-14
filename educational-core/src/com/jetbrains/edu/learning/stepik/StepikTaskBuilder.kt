@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TAS
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
@@ -75,6 +76,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         StepikTaskType.CHOICE -> this::choiceTask
         StepikTaskType.CODE -> this::codeTask
         StepikTaskType.DATASET -> this::dataTask
+        StepikTaskType.NUMBER -> this::numberTask
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
         StepikTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
         StepikTaskType.STRING -> this::stringTask
@@ -94,7 +96,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     MANUAL_SCORE("manual-score", "Manual Score"),
     MATCHING("matching", "Matching"),
     MATH("math", "Math"),
-    NUMBER("number", "Number"),
+    NUMBER(NUMBER_TASK_TYPE, "Number"),
     PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
     REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
     SORTING("sorting", "Sorting"),
@@ -123,7 +125,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
     descriptionFormat = DescriptionFormat.HTML
     descriptionText = buildString {
-      append(clearCodeBlockFromTags())
+      append(clearCodeBlockFromTags(step))
 
       if (samples != null) {
         append("<br>")
@@ -161,20 +163,9 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     return task
   }
 
-  private fun clearCodeBlockFromTags(): String {
-    val parsedText = Jsoup.parse(step.text)
-    for (element in parsedText.select("code")) {
-      val settings = Document.OutputSettings().prettyPrint(false)
-      var codeBlockWithoutTags = Jsoup.clean(element.html(), "", Whitelist().addTags("br"), settings)
-      codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n")
-      element.html(codeBlockWithoutTags)
-    }
-    return parsedText.toString()
-  }
-
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = clearCodeBlockFromTags()
+    task.descriptionText = clearCodeBlockFromTags(step)
     task.descriptionFormat = DescriptionFormat.HTML
 
     if (course is EduCourse && courseMode == CCUtils.COURSE_MODE && stepId > 0) {
@@ -210,19 +201,31 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   }
 
   private fun stringTask(name: String): StringTask {
-    val task = StringTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = clearCodeBlockFromTags()
-    task.descriptionFormat = DescriptionFormat.HTML
-    createTaskFileForStringTask(
-      task,
-      comment = EduCoreBundle.message("string.task.comment.file"),
-      fileName = StringTask.ANSWER_FILE_NAME)
-    return task
+    val stringTask = StringTask(name, stepId, stepPosition, updateDate)
+    stringTask.init(step.text)
+    return stringTask
+  }
+
+  private fun numberTask(name: String): NumberTask {
+    val numberTask = NumberTask(name, stepId, stepPosition, updateDate)
+    numberTask.init(step.text)
+    return numberTask
+  }
+
+  private fun AnswerTask.init(description: String) {
+    descriptionText = clearCodeBlockFromTags(description)
+    descriptionFormat = DescriptionFormat.HTML
+
+    val text = EduCoreBundle.message("string.task.comment.file")
+    val taskFile = TaskFile(AnswerTask.ANSWER_FILE_NAME, text)
+    val answerPlaceholder = AnswerPlaceholder(0, text)
+    taskFile.addAnswerPlaceholder(answerPlaceholder)
+    addTaskFile(taskFile)
   }
 
   private fun theoryTask(name: String): TheoryTask {
     val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = clearCodeBlockFromTags()
+    task.descriptionText = clearCodeBlockFromTags(step)
     task.descriptionFormat = DescriptionFormat.HTML
 
     initTaskFiles(task)
@@ -356,22 +359,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     task.addTaskFile(taskFile)
   }
 
-  private fun createTaskFileForStringTask(task: Task, comment: String, fileName: String) {
-    val taskFile = TaskFile(fileName, comment)
-    val answerPlaceholder = createAnswerPlaceholder(taskFile, comment)
-    taskFile.addAnswerPlaceholder(answerPlaceholder)
-    task.addTaskFile(taskFile)
-  }
-
-  private fun createAnswerPlaceholder(taskFile: TaskFile, comment: String): AnswerPlaceholder {
-    val answerPlaceholder = AnswerPlaceholder()
-    answerPlaceholder.taskFile = taskFile
-    answerPlaceholder.offset = 0
-    answerPlaceholder.length = comment.length
-    answerPlaceholder.placeholderText = comment
-    return answerPlaceholder
-  }
-
   private fun getCodeTemplateForTask(codeTemplates: Map<String, String>?): String? {
     val languageString = getLanguageName(language)
     return codeTemplates?.get(languageString)
@@ -406,6 +393,21 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
       task.isMultipleChoice = dataset.isMultipleChoice
       return true
+    }
+
+    private fun clearCodeBlockFromTags(text: String): String {
+      val parsedText = Jsoup.parse(text)
+      for (element in parsedText.select("code")) {
+        val settings = Document.OutputSettings().prettyPrint(false)
+        var codeBlockWithoutTags = Jsoup.clean(element.html(), "", Whitelist().addTags("br"), settings)
+        codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n")
+        element.html(codeBlockWithoutTags)
+      }
+      return parsedText.toString()
+    }
+
+    private fun clearCodeBlockFromTags(step: Step): String {
+      return clearCodeBlockFromTags(step.text)
     }
 
     @VisibleForTesting

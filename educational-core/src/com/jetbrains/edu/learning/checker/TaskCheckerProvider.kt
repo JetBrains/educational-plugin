@@ -40,6 +40,8 @@ interface TaskCheckerProvider {
 
   fun getStringTaskChecker(task: StringTask, project: Project): TaskChecker<StringTask>? = null
 
+  fun getNumberTaskChecker(task: NumberTask, project: Project): TaskChecker<NumberTask>? = null
+
   // Should not be overloaded by anyone
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
@@ -53,6 +55,7 @@ interface TaskCheckerProvider {
       is CodeforcesTaskWithFileIO -> CodeforcesTaskWithFileIOTaskChecker(task, project)
       is CodeforcesTask -> CodeforcesTaskChecker(task, envChecker, project, codeExecutor)
       is StringTask -> getStringTaskChecker(task, project)
+      is NumberTask -> getNumberTaskChecker(task, project)
       else -> throw IllegalStateException("Unknown task type: " + task.itemType)
     }
   }

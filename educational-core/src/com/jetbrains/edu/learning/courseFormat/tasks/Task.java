@@ -45,7 +45,7 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
  *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
  */
 public abstract class Task extends StudyItem {
-  private static final Logger LOG = Logger.getInstance(Task.class);
+  protected static final Logger LOG = Logger.getInstance(Task.class);
   @NotNull
   protected CheckStatus myStatus = CheckStatus.Unchecked;
   @Nullable

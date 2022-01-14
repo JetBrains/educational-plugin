@@ -336,6 +336,9 @@ class Reply {
   @JsonProperty(TEXT)
   var text: String? = null
 
+  @JsonProperty(NUMBER)
+  var number: String? = null
+
   @JsonProperty(EDU_TASK)
   var eduTask: String? = null
 

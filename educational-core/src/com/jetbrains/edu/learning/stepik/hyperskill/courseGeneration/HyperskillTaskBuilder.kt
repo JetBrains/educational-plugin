@@ -75,7 +75,7 @@ class HyperskillTaskBuilder(
           name = stepSource.title
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID)
         }
-        is DataTask, is StringTask -> {
+        is DataTask -> {
           name = stepSource.title
         }
         is EduTask -> {
@@ -87,7 +87,7 @@ class HyperskillTaskBuilder(
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
         }
-        is ChoiceTask -> {
+        is ChoiceTask, is StringTask, is NumberTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title ?: name)
           name = stepSource.title
         }

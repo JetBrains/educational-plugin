@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
@@ -174,6 +175,8 @@ object StepikCourseLoader {
           || type == DATA_TASK_TYPE
           // TODO hack until EDU-4763 will be implemented
           || type == STRING_TASK_TYPE
+          // TODO hack until EDU-4780 will be implemented
+          || type == NUMBER_TASK_TYPE
       ) continue
 
       val task = builder.createTask(type) ?: continue

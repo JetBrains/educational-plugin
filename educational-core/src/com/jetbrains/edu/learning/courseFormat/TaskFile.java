@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Implementation of task file which contains task answer placeholders for student to type in and
  * which is visible to student in project view
- *
+ * <p>
  * Update {@link StepikChangeRetriever#isEqualTo(TaskFile, TaskFile)} if you added new property that has to be compared
  */
 
@@ -206,6 +206,4 @@ public class TaskFile {
     }
     return true;
   }
-
-
 }

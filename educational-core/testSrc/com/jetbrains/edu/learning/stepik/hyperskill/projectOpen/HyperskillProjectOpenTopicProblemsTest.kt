@@ -7,7 +7,7 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
 import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
+import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -43,7 +43,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -224,7 +224,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -280,7 +280,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -351,7 +351,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -444,7 +444,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -545,7 +545,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -611,7 +611,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {
@@ -703,7 +703,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("task.html")
           }
           dir(step525047.title) {
-            file(StringTask.ANSWER_FILE_NAME)
+            file(AnswerTask.ANSWER_FILE_NAME)
             file("task.html")
           }
           dir(step2640.title) {

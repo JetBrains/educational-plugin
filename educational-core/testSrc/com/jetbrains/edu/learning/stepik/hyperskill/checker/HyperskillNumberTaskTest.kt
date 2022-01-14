@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
-import com.jetbrains.edu.learning.courseFormat.tasks.StringTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.Step
@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
+class HyperskillNumberTaskTest : CheckersTestBase<Unit>() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
@@ -33,11 +33,14 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
   override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
     section("Topics") {
       lesson("1_lesson_correct") {
-        stringTask(stepId = 1, name = "1_string_task") {
+        numberTask(stepId = 1, name = "1_number_task_non_number") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>answer</p>")
         }
-        stringTask(stepId = 1, name = "2_string_task") {
+        numberTask(stepId = 1, name = "2_number_task_empty") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, "<p></p>")
+        }
+        numberTask(stepId = 1, name = "3_number_task_correct") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>12</p>")
         }
       }
     }
@@ -48,7 +51,7 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
     loginFakeUser()
   }
 
-  fun `test string task correct`() {
+  fun `test number task correct`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
         when (val path = request.path) {
@@ -61,14 +64,32 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
     }
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    val task = myCourse.allTasks[0] as StringTask
+    val task = myCourse.allTasks[2] as NumberTask
     NavigationUtils.navigateToTask(project, task)
     testAction(CheckAction.ACTION_ID)
-    assertEquals("answer", task.getInputAnswer(project))
+    assertEquals("12", task.getInputAnswer(project))
   }
 
 
-  fun `test string task incorrect`() {
+  fun `test number task validation on number`() {
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      MockResponseFactory.fromString(
+        when (val path = request.path) {
+          "/api/attempts" -> attempt
+          "/api/submissions" -> submission
+          "/api/submissions/11" -> submissionWithFailedStatus
+          else -> error("Wrong path: ${path}")
+        }
+      )
+    }
+
+    CheckActionListener.shouldFail()
+    CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.number.task.not.number") }
+    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
+    testAction(CheckAction.ACTION_ID)
+  }
+
+  fun `test number task incorrect`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
         when (val path = request.path) {
@@ -82,11 +103,11 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
+    NavigationUtils.navigateToTask(project, myCourse.allTasks[2])
     testAction(CheckAction.ACTION_ID)
   }
 
-  fun `test string task input is empty`() {
+  fun `test number task input is empty`() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.string.task.empty.text") }
     NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
@@ -94,11 +115,11 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
   }
 
   fun `test creating placeholder`() {
-    val task = myCourse.allTasks[0] as StringTask
+    val task = myCourse.allTasks[0] as NumberTask
     val lesson = task.lesson
     val stepSource = HyperskillStepSource().apply {
       block = Step().apply {
-        name = "string"
+        name = "number"
       }
     }
 
@@ -107,7 +128,7 @@ class HyperskillStringTaskTest : CheckersTestBase<Unit>() {
     assertEquals(1, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(EduCoreBundle.message("string.task.comment.file"),
                  createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.placeholderText)
-    assertEquals(0, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.offset)
+//    assertEquals(0, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.offset)
     assertEquals(EduCoreBundle.message("string.task.comment.file").length,
                  createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.endOffset)
   }

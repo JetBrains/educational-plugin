@@ -11,7 +11,7 @@ import java.awt.*;
 
 /**
  * Implementation of answer placeholders which user should type in
- *
+ * <p>
  * Update {@link StepikChangeRetriever#isEqualTo(AnswerPlaceholder, AnswerPlaceholder)} if you added new property that has to be compared
  */
 
@@ -42,6 +42,12 @@ public class AnswerPlaceholder {
   private String myStudentAnswer = null;
 
   public AnswerPlaceholder() {
+  }
+
+  public AnswerPlaceholder(int offset, String placeholderText) {
+    this.myOffset = offset;
+    this.myLength = placeholderText.length();
+    this.myPlaceholderText = placeholderText;
   }
 
   public void initAnswerPlaceholder(final TaskFile file, boolean isRestarted) {

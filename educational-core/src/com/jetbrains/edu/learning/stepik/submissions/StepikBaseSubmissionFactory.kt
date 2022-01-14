@@ -104,6 +104,12 @@ object StepikBaseSubmissionFactory {
     return Submission(attempt, reply)
   }
 
+  fun createNumberTaskSubmission(attempt: Attempt, answer: String): Submission {
+    val reply = Reply()
+    reply.number = answer
+    return Submission(attempt, reply)
+  }
+
   fun createDataTaskSubmission(attempt: DataTaskAttempt, answer: String): Submission {
     val reply = Reply()
     reply.file = answer
