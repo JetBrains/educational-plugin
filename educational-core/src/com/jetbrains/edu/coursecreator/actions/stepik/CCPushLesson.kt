@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
+import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
@@ -109,7 +110,7 @@ class CCPushLesson : DumbAwareAction(
           EduCoreBundle.message("notification.wrap.lessons.into.section.message.for.single.lesson"),
           EduCoreBundle.message("notification.wrap.lessons.into.section"),
           EduCoreBundle.message("label.wrap.and.post"),
-          EduCoreBundle.message("label.cancel"),
+          CommonBundle.getCancelButtonText(),
           null
         )
         if (result == Messages.YES) {

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.marketplace
 
+import com.intellij.CommonBundle
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -90,7 +91,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     message("marketplace.push.course.confirmation.dialog.message", actionTitle),
     actionTitle,
     actionTitle,
-    message("dialog.cancel"),
+    CommonBundle.getCancelButtonText(),
     null
     )
 

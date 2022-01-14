@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.CommonBundle
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -376,7 +377,7 @@ object CCUtils {
       EduCoreBundle.message("notification.wrap.lessons.into.section.message"),
       EduCoreBundle.message("notification.wrap.lessons.into.section"),
       yesText,
-      EduCoreBundle.message("label.cancel"),
+      CommonBundle.getCancelButtonText(),
       null
     )
     if (result != Messages.YES) {
