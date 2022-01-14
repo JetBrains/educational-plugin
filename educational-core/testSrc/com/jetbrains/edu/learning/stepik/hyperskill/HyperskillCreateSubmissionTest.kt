@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createCodeTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createDataTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createNumberTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createRemoteEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createStringTaskSubmission
 import com.jetbrains.edu.learning.submissions.Submission
@@ -165,6 +166,20 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |attempt: 123
       |reply:
       |  text: $answer
+      |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for number task`() {
+    val attempt = Attempt().apply { id = 123 }
+    val answer = 123.toString()
+
+    val submission = createNumberTaskSubmission(attempt, answer)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  number: $answer
       |  version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
