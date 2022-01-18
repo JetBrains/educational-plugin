@@ -19,11 +19,6 @@ class PhpCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PhpProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PhpProjectSettings) {
-    super.afterProjectGenerated(project, projectSettings)
-    val selectedInterpreter = projectSettings.phpInterpreter
-  }
-
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     super.createAdditionalFiles(project, baseDir, isNewCourse)
     downloadPhar(project)
