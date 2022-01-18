@@ -51,7 +51,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory.createStepikSubmission;
+import static com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStepikSubmission;
 import static com.jetbrains.edu.learning.submissions.SubmissionUtils.getSolutionFiles;
 
 public class StepikSolutionsLoader implements Disposable {

@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import java.util.*
 
-object StepikBaseSubmissionFactory {
+object StepikBasedSubmissionFactory {
   @JvmStatic
   fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): Submission {
     val reply = Reply()

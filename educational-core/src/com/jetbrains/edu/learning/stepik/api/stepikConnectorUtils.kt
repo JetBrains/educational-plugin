@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.min
@@ -93,7 +93,7 @@ private fun markStepAsSolved(lessonId: Int, task: Task) {
     LOG.warn("Failed to make attempt ${task.id}")
     return
   }
-  val submission = StepikBaseSubmissionFactory.createStepikSubmission(task, attempt)
+  val submission = StepikBasedSubmissionFactory.createStepikSubmission(task, attempt)
   StepikConnector.getInstance().postSubmission(submission).onError {
     LOG.warn("Post submission failed for task ${task.name} (id=${task.id})")
   }

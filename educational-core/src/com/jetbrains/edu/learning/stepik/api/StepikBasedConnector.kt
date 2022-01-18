@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.Submission
 
-interface StepikBaseConnector {
+interface StepikBasedConnector {
   val platformName: String
 
   fun getActiveAttempt(task: Task): Result<Attempt?, String>
@@ -30,7 +30,7 @@ interface StepikBaseConnector {
   fun postSubmission(submission: Submission): Result<Submission, String>
 
   companion object {
-    fun Course.getStepikBaseConnector(): StepikBaseConnector {
+    fun Course.getStepikBasedConnector(): StepikBasedConnector {
       return when {
         isStepikRemote -> StepikConnector.getInstance()
         this is HyperskillCourse -> HyperskillConnector.getInstance()
@@ -38,6 +38,6 @@ interface StepikBaseConnector {
       }
     }
 
-    fun Task.getStepikBaseConnector(): StepikBaseConnector = course.getStepikBaseConnector()
+    fun Task.getStepikBasedConnector(): StepikBasedConnector = course.getStepikBasedConnector()
   }
 }

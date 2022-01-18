@@ -19,17 +19,17 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
-import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getStepikBaseConnector
+import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.submissions.Submission
 
-object StepikBaseSubmitConnector {
+object StepikBasedSubmitConnector {
   fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
-    val connector = task.getStepikBaseConnector()
+    val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)
     }
@@ -44,7 +44,7 @@ object StepikBaseSubmitConnector {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
       return Err(EduCoreBundle.message("error.failed.to.post.solution", connector.platformName))
     }
-    val submission = StepikBaseSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, defaultLanguage)
+    val submission = StepikBasedSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, defaultLanguage)
     return connector.postSubmission(submission)
   }
 
@@ -84,12 +84,12 @@ object StepikBaseSubmitConnector {
   }
 
   fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
-    val connector = task.getStepikBaseConnector()
+    val connector = task.getStepikBasedConnector()
     val attempt = connector.getActiveAttemptOrPostNew(task).onError {
       return Err(it)
     }
 
-    val submission = StepikBaseSubmissionFactory.createChoiceTaskSubmission(task, attempt)
+    val submission = StepikBasedSubmissionFactory.createChoiceTaskSubmission(task, attempt)
     return connector.postSubmission(submission)
   }
 
@@ -97,7 +97,7 @@ object StepikBaseSubmitConnector {
   fun submitDataTask(task: DataTask, answer: String): Result<Submission, String> {
     val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
     val connector = HyperskillConnector.getInstance()
-    val submission = StepikBaseSubmissionFactory.createDataTaskSubmission(attempt, answer)
+    val submission = StepikBasedSubmissionFactory.createDataTaskSubmission(attempt, answer)
     return connector.postSubmission(submission)
   }
 
@@ -109,8 +109,8 @@ object StepikBaseSubmitConnector {
     }
 
     val submission = when (task) {
-      is StringTask -> StepikBaseSubmissionFactory.createStringTaskSubmission(attempt, task.getInputAnswer(project))
-      is NumberTask -> StepikBaseSubmissionFactory.createNumberTaskSubmission(attempt, task.getInputAnswer(project))
+      is StringTask -> StepikBasedSubmissionFactory.createStringTaskSubmission(attempt, task.getInputAnswer(project))
+      is NumberTask -> StepikBasedSubmissionFactory.createNumberTaskSubmission(attempt, task.getInputAnswer(project))
     }
     return connector.postSubmission(submission)
   }
@@ -121,10 +121,10 @@ object StepikBaseSubmitConnector {
       return Err(it)
     }
 
-    val taskSubmission = StepikBaseSubmissionFactory.createRemoteEduTaskSubmission(task, attempt, files)
+    val taskSubmission = StepikBasedSubmissionFactory.createRemoteEduTaskSubmission(task, attempt, files)
     return connector.postSubmission(taskSubmission)
   }
 
   @JvmStatic
-  private val LOG: Logger = logger<StepikBaseSubmitConnector>()
+  private val LOG: Logger = logger<StepikBasedSubmitConnector>()
 }

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-import com.jetbrains.edu.learning.stepik.api.StepikBaseConnector.Companion.getStepikBaseConnector
+import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
@@ -23,14 +23,14 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.TimeUnit
 
-abstract class StepikBaseCheckConnector {
+abstract class StepikBasedCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
 
   protected fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
     require(task.isRemotelyChecked()) { "Task is not checked remotely" }
 
     val submissionId = submission.id ?: error("Submission must have id")
-    val connector = task.getStepikBaseConnector()
+    val connector = task.getStepikBasedConnector()
 
     var lastSubmission = submission
     var delay = 1L
@@ -62,14 +62,14 @@ abstract class StepikBaseCheckConnector {
     if (checkId != null) {
       return checkId
     }
-    val submission = StepikBaseSubmitConnector.submitChoiceTask(task).onError { error ->
+    val submission = StepikBasedSubmitConnector.submitChoiceTask(task).onError { error ->
       return failedToSubmit(project, task, error)
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {
-    val connector = task.getStepikBaseConnector()
+    val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)
     }
@@ -86,7 +86,7 @@ abstract class StepikBaseCheckConnector {
     private const val EVALUATION_STATUS: String = "evaluation"
 
     @JvmStatic
-    protected val LOG: Logger = logger<StepikBaseCheckConnector>()
+    protected val LOG: Logger = logger<StepikBasedCheckConnector>()
 
     @JvmStatic
     protected fun String.toCheckResult(): CheckResult {
@@ -123,7 +123,7 @@ abstract class StepikBaseCheckConnector {
     protected fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {
       LOG.error(error)
 
-      val platformName = task.getStepikBaseConnector().platformName
+      val platformName = task.getStepikBasedConnector().platformName
       val message = EduCoreBundle.message("stepik.base.failed.to.submit.task", task.itemType, platformName)
 
       if (task.course is HyperskillCourse) {

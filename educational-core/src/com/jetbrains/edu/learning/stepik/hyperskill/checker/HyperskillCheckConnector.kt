@@ -15,20 +15,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
-import com.jetbrains.edu.learning.stepik.checker.StepikBaseCheckConnector
-import com.jetbrains.edu.learning.stepik.checker.StepikBaseSubmitConnector
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.submissions.StepikBaseSubmissionFactory
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-object HyperskillCheckConnector : StepikBaseCheckConnector() {
+object HyperskillCheckConnector : StepikBasedCheckConnector() {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
@@ -50,7 +50,7 @@ object HyperskillCheckConnector : StepikBaseCheckConnector() {
       LOG.error(error)
       return
     }
-    val submission = StepikBaseSubmissionFactory.createEduTaskSubmission(task, attempt, files, feedback)
+    val submission = StepikBasedSubmissionFactory.createEduTaskSubmission(task, attempt, files, feedback)
     when (val response = HyperskillConnector.getInstance().postSubmission(submission)) {
       is Err -> showErrorDetails(project, response.error)
       is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)
@@ -109,7 +109,7 @@ object HyperskillCheckConnector : StepikBaseCheckConnector() {
     return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
       LOG.info(submissionError.error)
       val submission = when (submissionError) {
-        is SubmissionError.NoSubmission -> StepikBaseSubmitConnector.submitCodeTask(project, task).onError { error ->
+        is SubmissionError.NoSubmission -> StepikBasedSubmitConnector.submitCodeTask(project, task).onError { error ->
           return failedToSubmit(project, task, error)
         }
         is SubmissionError.WithSubmission -> submissionError.submission
@@ -139,7 +139,7 @@ object HyperskillCheckConnector : StepikBaseCheckConnector() {
       return EduCoreBundle.message("error.no.output").toCheckResult()
     }
 
-    val submission = StepikBaseSubmitConnector.submitDataTask(task, answer).onError { error ->
+    val submission = StepikBasedSubmitConnector.submitDataTask(task, answer).onError { error ->
       return failedToSubmit(project, task, error)
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
@@ -155,7 +155,7 @@ object HyperskillCheckConnector : StepikBaseCheckConnector() {
       return@checkAnswerTask CheckResult(CheckStatus.Failed, it)
     }
 
-    val submission = StepikBaseSubmitConnector.submitAnswerTask(project, task).onError { error ->
+    val submission = StepikBasedSubmitConnector.submitAnswerTask(project, task).onError { error ->
       return failedToSubmit(project, task, error)
     }
 
@@ -173,7 +173,7 @@ object HyperskillCheckConnector : StepikBaseCheckConnector() {
       return CheckResult.failedToCheck
     }
 
-    val submission = StepikBaseSubmitConnector.submitRemoteEduTask(task, files).onError { error ->
+    val submission = StepikBasedSubmitConnector.submitRemoteEduTask(task, files).onError { error ->
       return failedToSubmit(project, task, error)
     }
 

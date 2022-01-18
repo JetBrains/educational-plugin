@@ -33,8 +33,9 @@ import retrofit2.Call
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBaseConnector {
+abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
   override val platformName: String = EduNames.JBA
+
   override val account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
 

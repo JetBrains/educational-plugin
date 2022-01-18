@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
-import com.jetbrains.edu.learning.stepik.checker.StepikBaseCheckConnector.Companion.toCheckResult
-import com.jetbrains.edu.learning.stepik.checker.StepikBaseSubmitConnector
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector.Companion.toCheckResult
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.EVALUATION_STATUS
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -52,7 +52,7 @@ private class WaitingForConnectionState(project: Project, task: CodeTask) : WebS
 
 private class WaitingForSubscriptionState(project: Project, task: CodeTask) : WebSocketConnectionState(project, task) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
-    return when (val result: Result<Submission, String> = StepikBaseSubmitConnector.submitCodeTask(project, task)) {
+    return when (val result: Result<Submission, String> = StepikBasedSubmitConnector.submitCodeTask(project, task)) {
       is Ok -> ReceivingSubmissionsState(project, task, result.value)
       is Err -> ErrorState(project, task)
     }

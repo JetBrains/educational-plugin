@@ -27,8 +27,9 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
 
-abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBaseConnector {
+abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
   override val platformName: String = StepikNames.STEPIK
+
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
 
