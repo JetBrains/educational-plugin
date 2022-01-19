@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.codeInsight.documentation.DocumentationManagerProtocol
 import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.runInEdt
@@ -28,35 +27,23 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
 
 open class ToolWindowLinkHandler(val project: Project) {
-  /**
-   * @return true if success else false
-   */
-  open fun process(url: String): Boolean {
-    return when {
-      url.startsWith(PSI_ELEMENT_PROTOCOL) -> {
-        processPsiElementLink(project, url)
-        true
-      }
-      url.startsWith(IN_COURSE_PROTOCOL) -> {
-        processInCourseLink(project, url)
-        true
-      }
-      url.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX) -> processFileLink(project, url)
-      else -> processExternalLink(url)
-    }
-  }
+
+  protected open fun processExternalLink(url: String) = EduBrowser.getInstance().browse(url)
 
   /**
-   * @return true if success else false
+   * @return false if need to continue (for example open external link at task description), otherwise true
    */
-  protected open fun processExternalLink(url: String): Boolean {
-    EduBrowser.getInstance().browse(url)
+  open fun process(url: String): Boolean {
+    when {
+      url.contains(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol) -> processPsiElementLink(project, url)
+      url.startsWith(TaskDescriptionLinkProtocol.COURSE.protocol) -> processInCourseLink(project, url)
+      url.startsWith(TaskDescriptionLinkProtocol.FILE.protocol) -> processFileLink(project, url)
+      else -> processExternalLink(url)
+    }
     return true
   }
 
   companion object {
-    const val PSI_ELEMENT_PROTOCOL: String = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL
-    const val IN_COURSE_PROTOCOL: String = "course://"
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
 
     @JvmStatic
@@ -66,7 +53,7 @@ open class ToolWindowLinkHandler(val project: Project) {
 
     @JvmStatic
     fun processPsiElementLink(project: Project, url: String) {
-      val urlEncodedName = url.substringAfter(PSI_ELEMENT_PROTOCOL)
+      val urlEncodedName = url.substringAfter(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol)
       // Sometimes a user has to encode element reference because it contains invalid symbols like ` `.
       // For example, Java support produces `Foo#foo(int, int)` as reference for `foo` method in the following `Foo` class
       // ```
@@ -119,16 +106,15 @@ open class ToolWindowLinkHandler(val project: Project) {
     }
 
     @JvmStatic
-    fun processFileLink(project: Project, url: String): Boolean {
+    fun processFileLink(project: Project, url: String) {
       val urlWithoutProtocol = url.substringAfter(StandardFileSystems.FILE_PROTOCOL_PREFIX)
-
       val file = project.courseDir.findFileByRelativePath(urlWithoutProtocol)
       if (file == null) {
         LOG.warn("Can't find file for url $url")
-        return false
       }
-      navigateToFile(project, file)
-      return true
+      else {
+        navigateToFile(project, file)
+      }
     }
 
     private fun navigateToFile(project: Project, fileDir: VirtualFile) {
@@ -170,7 +156,7 @@ open class ToolWindowLinkHandler(val project: Project) {
         }
       }
 
-      val urlEncodedPath = url.substringAfter(IN_COURSE_PROTOCOL)
+      val urlEncodedPath = url.substringAfter(TaskDescriptionLinkProtocol.COURSE.protocol)
       val path = URLUtil.decode(urlEncodedPath)
       return parseNextItem(course, path)
     }
