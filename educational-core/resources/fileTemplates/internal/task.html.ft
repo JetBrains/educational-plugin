@@ -50,6 +50,7 @@ For example, a
 <a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.</li><br>
 
 <li>You can add link to file using <strong>full path</strong> like
-  <a href="file://lesson1/task1/file.txt">file link</a>.</li>
+  <code><a href="file://lesson1/task1/file.txt">file link</a></code>.
+</li>
 </ul>
 </html>

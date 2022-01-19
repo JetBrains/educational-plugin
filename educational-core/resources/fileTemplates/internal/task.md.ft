@@ -39,11 +39,11 @@ which will be replaced by the actual IDE name.
 For example, **%IDE_NAME%**.
 
 - Insert PSI elements, by using links like
-`<a href="psi_element://link.to.element">element description</a>`.
+`[element_description](psi_element://link.to.element)`.
 To get such a link, right-click the class or method
 and select **Copy Reference**.
 Then press &shortcut:EditorPaste; to insert the link where appropriate.
-For example, a <a href="psi_element://java.lang.String#contains">link to the "contains" method</a>.
+For example, a [link to the "contains" method](psi_element://java.lang.String#contains).
 
 - You can add link to file using **full path** like this:
-  [file_link](file://lesson1/task1/file.txt).
+  `[file_link](file://lesson1/task1/file.txt)`.

@@ -11,13 +11,13 @@ class jcefUtilsTest : EduTestCase() {
   @Test
   fun `test about_blank`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
-    TestCase.assertFalse(jCefToolWindowLinkHandler.process("about:blank"))
+    assertFalse(jCefToolWindowLinkHandler.process("about:blank"))
   }
 
   @Test
   fun `test youtube link`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
-    TestCase.assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
+    assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
   }
 
   @Test
@@ -43,5 +43,12 @@ class jcefUtilsTest : EduTestCase() {
     ToolWindowLinkHandler.processFileLink(project, "file://$pathToFile")
     val currentTask = EduUtils.getCurrentTask(project)
     assertEquals("task_name2", currentTask?.name)
+  }
+
+  @Test
+  fun `test psi Element`() {
+    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    assertTrue(jCefToolWindowLinkHandler.process("file:///jbcefbrowser/psi_element://java.lang.String#contains"))
+    TestCase.assertNull(EduUtils.getCurrentTask(project))
   }
 }

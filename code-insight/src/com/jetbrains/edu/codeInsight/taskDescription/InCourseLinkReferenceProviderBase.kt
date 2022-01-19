@@ -13,7 +13,7 @@ import com.intellij.util.ProcessingContext
 import com.jetbrains.edu.codeInsight.EduPsiReferenceProvider
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.taskDescription.ui.ToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionLinkProtocol
 
 abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
 
@@ -21,8 +21,8 @@ abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<FileReference> {
     val (text, offset) = element.textWithOffset ?: return emptyArray()
-    return if (text.startsWith(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)) {
-      val path = text.substringAfter(ToolWindowLinkHandler.IN_COURSE_PROTOCOL)
+    return if (text.startsWith(TaskDescriptionLinkProtocol.COURSE.protocol)) {
+      val path = text.substringAfter(TaskDescriptionLinkProtocol.COURSE.protocol)
       createFileReferenceSet(path, element, offset).allReferences
     }
     else {
@@ -35,7 +35,7 @@ abstract class InCourseLinkReferenceProviderBase : EduPsiReferenceProvider() {
   }
 
   protected open inner class CourseFileReferenceSet(path: String, element: PsiElement, valueOffset: Int) :
-    FileReferenceSet(path, element, valueOffset + ToolWindowLinkHandler.IN_COURSE_PROTOCOL.length, this, true) {
+    FileReferenceSet(path, element, valueOffset + TaskDescriptionLinkProtocol.COURSE.protocol.length, this, true) {
 
     override fun createFileReference(range: TextRange?, index: Int, text: String?): FileReference? {
       return super.createFileReference(range, index, text)?.let(::createFileReference)
