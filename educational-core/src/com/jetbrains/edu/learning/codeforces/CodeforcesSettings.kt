@@ -6,16 +6,19 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLogInListener
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jdom.Element
 import javax.swing.Icon
 
@@ -36,14 +39,27 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
             Messages.getCancelButton(),
             AllIcons.General.QuestionDialog) == Messages.OK) {
           field = value
+          handleLogin()
           ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()
         }
       }
       else {
         field = value
+        handleLogin()
         ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedIn()
       }
     }
+
+  private fun handleLogin() {
+    val openProjects = ProjectManager.getInstance().openProjects
+    if (openProjects.isNotEmpty()) {
+      val project = openProjects[0]
+      val task = EduUtils.getCurrentTask(project)
+      if (task != null) {
+        ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateCheckPanel(task) }
+      }
+    }
+  }
 
   override fun getState(): Element? {
     val mainElement = Element(serviceName)

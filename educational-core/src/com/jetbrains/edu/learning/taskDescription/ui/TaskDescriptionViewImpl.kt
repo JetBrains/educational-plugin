@@ -12,13 +12,11 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary.JCEF
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -171,21 +169,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     })
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
-    connection.subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
-      override fun userLoggedIn() {
-        val task = EduUtils.getCurrentTask(project)
-        if (task != null) {
-          ApplicationManager.getApplication().invokeLater { checkPanel.updateCheckPanel(task) }
-        }
-      }
-
-      override fun userLoggedOut() {
-        val task = EduUtils.getCurrentTask(project)
-        if (task != null) {
-          ApplicationManager.getApplication().invokeLater { checkPanel.updateCheckPanel(task) }
-        }
-      }
-    })
   }
 
   override fun checkStarted(task: Task, startSpinner: Boolean) {
