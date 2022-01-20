@@ -3,7 +3,7 @@ import de.undercouch.gradle.tasks.download.DownloadSpec
 import groovy.util.Node
 import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.JavaVersion.VERSION_1_8
+import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.IntelliJInstrumentCodeTask
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
@@ -109,7 +109,7 @@ plugins {
 idea {
   project {
     jdkName = "11"
-    languageLevel = IdeaLanguageLevel("1.8")
+    languageLevel = IdeaLanguageLevel("11")
     vcs = "Git"
   }
   module {
@@ -135,8 +135,8 @@ allprojects {
   }
 
   configure<JavaPluginExtension> {
-    sourceCompatibility = VERSION_1_8
-    targetCompatibility = VERSION_1_8
+    sourceCompatibility = VERSION_11
+    targetCompatibility = VERSION_11
   }
   sourceSets {
     main {
@@ -217,7 +217,7 @@ allprojects {
     withType<JavaCompile> { options.encoding = "UTF-8" }
     withType<KotlinCompile> {
       kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         languageVersion = "1.6"
         // see https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
         // BACKCOMPAT: 2021.1. Use `1.5` apiVersion
