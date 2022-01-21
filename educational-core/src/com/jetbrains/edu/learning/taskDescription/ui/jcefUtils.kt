@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
+import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.*
@@ -27,16 +28,19 @@ class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(projec
    *
    * @return false if need to continue (for example open external link at task description), otherwise true
    */
-  override fun process(url: String): Boolean {
+  override fun process(url: String, referUrl: String?): Boolean {
     // this links we can open in task description and don't open in browser
-    if (url.contains("about:blank") || url.containsYoutubeLink()) {
+    if (url.contains("about:blank") ||
+        url.containsYoutubeLink() ||
+        StringUtils.isNotBlank(referUrl) // for example: open link from youtube in task description
+    ) {
       return false
     }
 
     when {
-      containsMoreThanOneProtocol(url) -> super.process(url)
+      containsMoreThanOneProtocol(url) -> super.process(url, null)
       url.startsWith(JCEF_URL_PREFIX) -> processExternalLink(url.replace(JBCEF_BROWSER, ""))
-      else -> super.process(url)
+      else -> super.process(url, null)
     }
     return true
   }
@@ -91,7 +95,8 @@ class JCEFToolWindowRequestHandler(private val jcefLinkHandler: JCefToolWindowLi
                               user_gesture: Boolean,
                               is_redirect: Boolean): Boolean {
     val url = request?.url ?: return false
-    return jcefLinkHandler.process(url)
+    val referUrl = request.referrerURL
+    return jcefLinkHandler.process(url, referUrl)
   }
 }
 

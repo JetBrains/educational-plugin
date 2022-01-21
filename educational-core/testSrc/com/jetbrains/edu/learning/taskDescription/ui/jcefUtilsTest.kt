@@ -20,6 +20,13 @@ class jcefUtilsTest : EduTestCase() {
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
   }
 
+
+  @Test
+  fun `test youtube link with ref`() {
+    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro", "https://google.account"))
+  }
+
   @Test
   fun `test processInFileLink`() {
     val pathToFile = "lesson2/task_name2/inside.txt"

@@ -83,7 +83,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       project: Project,
       private val submissionsManager: SubmissionsManager
     ) : SwingToolWindowLinkHandler(project) {
-      override fun process(url: String): Boolean {
+      override fun process(url: String, referUrl: String?): Boolean {
         if (!url.startsWith(SUBMISSION_LOGIN_URL)) return false
 
         submissionsManager.doAuthorize()
@@ -96,7 +96,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       private val task: Task,
       private val submissionsManager: SubmissionsManager
     ) : SwingToolWindowLinkHandler(project) {
-      override fun process(url: String): Boolean {
+      override fun process(url: String, referUrl: String?): Boolean {
         if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
 
         val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()

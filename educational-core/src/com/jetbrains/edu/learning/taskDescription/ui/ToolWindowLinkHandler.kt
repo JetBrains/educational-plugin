@@ -33,7 +33,7 @@ open class ToolWindowLinkHandler(val project: Project) {
   /**
    * @return false if need to continue (for example open external link at task description), otherwise true
    */
-  open fun process(url: String): Boolean {
+  open fun process(url: String, referUrl: String? = null): Boolean {
     when {
       url.contains(TaskDescriptionLinkProtocol.PSI_ELEMENT.protocol) -> processPsiElementLink(project, url)
       url.startsWith(TaskDescriptionLinkProtocol.COURSE.protocol) -> processInCourseLink(project, url)
