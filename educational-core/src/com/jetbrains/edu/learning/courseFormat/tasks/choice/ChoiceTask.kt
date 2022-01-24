@@ -36,7 +36,7 @@ class ChoiceTask : Task {
 
   override fun isPluginTaskType() = false
 
-  override fun isChangedOnFailed(): Boolean = course is HyperskillCourse || (course is EduCourse && !course.isMarketplace)
+  override fun isChangedOnFailed(): Boolean = !canCheckLocally
 
   //Is called from choiceTask.html.ft
   @Suppress("unused")

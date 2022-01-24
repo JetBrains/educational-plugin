@@ -77,10 +77,7 @@ class RetryAction(actionText: Supplier<String>,
 
     override fun onSuccess() {
       when (val res = result) {
-        is Ok -> {
-          task.status = CheckStatus.Unchecked
-          YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
-        }
+        is Ok -> {}
         is Err -> if (!isHeadless) {
           context.showPopup(res.error)
         }
@@ -88,12 +85,18 @@ class RetryAction(actionText: Supplier<String>,
     }
 
     override fun onFinished() {
+      resetTaskStatus()
       ApplicationManager.getApplication().invokeLater {
         TaskDescriptionView.getInstance(project).updateTaskSpecificPanel()
         TaskDescriptionView.getInstance(project).updateCheckPanel(task)
       }
       processFinished()
       RetryActionState.getInstance(project).unlock();
+    }
+
+    private fun resetTaskStatus() {
+      task.status = CheckStatus.Unchecked
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
     }
   }
 
