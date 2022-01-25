@@ -217,9 +217,7 @@ allprojects {
       kotlinOptions {
         jvmTarget = "11"
         languageVersion = "1.6"
-        // see https://plugins.jetbrains.com/docs/intellij/kotlin.html#kotlin-standard-library
-        // BACKCOMPAT: 2021.1. Use `1.5` apiVersion
-        apiVersion = "1.4"
+        apiVersion = "1.5"
         freeCompilerArgs = listOf("-Xjvm-default=all")
       }
     }

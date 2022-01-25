@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
@@ -101,9 +102,8 @@ fun testAction(
     error(message)
   }
 
-  // BACKCOMPAT: 2021.1. Use the same implementation as `com.intellij.testFramework.fixtures.CodeInsightTestFixture.testAction`
-  if (presentation.isEnabled && runAction) {
-    action.actionPerformed(e)
+  if (ActionUtil.lastUpdateAndCheckDumb(action, e, true) && runAction) {
+    ActionUtil.performActionDumbAwareWithCallbacks(action, e)
   }
 
   return presentation

@@ -32,9 +32,7 @@ class RetryHyperlinkComponent private constructor() : JPanel(BorderLayout()) {
                                                    it.inputEvent,
                                                    CheckPanel.ACTION_PLACE,
                                                    dataContext)
-      // BACKCOMPAT: 2021.1
-      @Suppress("DEPRECATION")
-      ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
+      ActionUtil.performActionDumbAwareWithCallbacks(action, event)
     }
 
     return createButtonPanel(retryLink)

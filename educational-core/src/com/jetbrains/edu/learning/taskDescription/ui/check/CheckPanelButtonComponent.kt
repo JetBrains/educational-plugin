@@ -171,7 +171,5 @@ private fun performAnAction(actionEvent: ActionEvent, component: JComponent, act
     actionEvent.modifiers
   )
 
-  // BACKCOMPAT: 2021.1
-  @Suppress("DEPRECATION")
-  ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
+  ActionUtil.performActionDumbAwareWithCallbacks(action, event)
 }

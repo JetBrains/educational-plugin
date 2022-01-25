@@ -6,6 +6,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.PresentationFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.VerticalFlowLayout
@@ -110,10 +111,11 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
 
   private fun createLinkListener(): LinkListener<String> {
     return LinkListener { source, _ ->
-      val moreActionsGroup = EduActionUtils.createActionGroup(
+      @Suppress("UnstableApiUsage")
+      val moreActionsGroup = ActionUtil.getActionGroup(
         CCNewCourseAction.ACTION_ID,
         NewHyperskillCourseAction.ACTION_ID
-      )
+      ) ?: error("Failed to create action group")
 
       val popup = JBPopupFactory.getInstance().createActionGroupPopup(
         null,

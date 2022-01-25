@@ -16,9 +16,7 @@ class HyperskillChooseLanguageDialog : DialogWrapper(false) {
 
   init {
     title = EduCoreBundle.message("hyperskill.action.select.language.title")
-    // BACKCOMPAT: 2021.1
-    @Suppress("UsePropertyAccessSyntax")
-    setResizable(false)
+    isResizable = false
     initLanguageComboBox()
     init()
   }

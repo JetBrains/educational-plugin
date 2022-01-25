@@ -15,13 +15,6 @@ object EduActionUtils {
     return ActionManager.getInstance().getAction(id) ?: error("Can not find action by id $id")
   }
 
-  // BACKCOMPAT: 2021.1. Use `com.intellij.openapi.actionSystem.ex.ActionUtil#getActionGroup` instead
-  fun createActionGroup(vararg ids: String): ActionGroup {
-    require(ids.isNotEmpty())
-    val actions = ids.map { getAction(it) }
-    return DefaultActionGroup(actions)
-  }
-
   @JvmStatic
   fun showFakeProgress(indicator: ProgressIndicator) {
     if (!isUnitTestMode) {
