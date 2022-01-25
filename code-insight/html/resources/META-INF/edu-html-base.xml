@@ -1,9 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <completion.contributor language="HTML"
-                            id="EduHtmlCompletionContributor"
-                            implementationClass="com.jetbrains.edu.html.taskDescription.EduHtmlCompletionContributor"/>
-    <psi.referenceContributor language="HTML"
-                              implementation="com.jetbrains.edu.html.taskDescription.EduHtmlReferenceContributor"/>
-  </extensions>
-</idea-plugin>

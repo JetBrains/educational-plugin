@@ -1,0 +1,14 @@
+<idea-plugin package="com.jetbrains.edu.markdown">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.intellij.plugins.markdown"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="Markdown"
+                            id="EduMarkdownCompletionContributor"
+                            implementationClass="com.jetbrains.edu.markdown.taskDescription.EduMarkdownCompletionContributor"/>
+    <psi.referenceContributor language="Markdown"
+                              implementation="com.jetbrains.edu.markdown.taskDescription.EduMarkdownReferenceContributor"/>
+  </extensions>
+</idea-plugin>

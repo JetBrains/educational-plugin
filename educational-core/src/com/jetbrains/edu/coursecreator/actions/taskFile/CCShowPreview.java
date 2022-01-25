@@ -59,7 +59,7 @@ import java.util.Calendar;
 import static com.intellij.openapi.ui.Messages.showErrorDialog;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
 
-@SuppressWarnings("ComponentNotRegistered")  // educational-core-base.xml
+@SuppressWarnings("ComponentNotRegistered")  // educational-core.xml
 public class CCShowPreview extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCShowPreview.class.getName());
 

@@ -1,0 +1,23 @@
+<idea-plugin package="com.jetbrains.edu.java" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <module name="jvm-core"/>
+
+    <plugin id="com.intellij.modules.java"/>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <xi:include href="/META-INF/Hyperskill-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.java.codeforces.JCodeforcesLanguageProvider"/>
+    <mainFileProvider language="JAVA" implementationClass="com.jetbrains.edu.java.JMainFileProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.actions.JMoveHandler" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.java.actions.JClassRenameProcessor" order="first"/>
+  </extensions>
+</idea-plugin>

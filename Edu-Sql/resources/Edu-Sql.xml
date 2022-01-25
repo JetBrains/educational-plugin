@@ -1,0 +1,10 @@
+<idea-plugin package="com.jetbrains.edu.sql">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.database"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="SQL" implementationClass="com.jetbrains.edu.sql.SqlConfigurator"/>
+  </extensions>
+</idea-plugin>

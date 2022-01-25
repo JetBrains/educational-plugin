@@ -1,0 +1,28 @@
+<idea-plugin package="com.jetbrains.edu.jvm">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.java"/>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.gradleRefresher"
+                    interface="com.jetbrains.edu.jvm.gradle.GradleCourseRefresher"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.mainFileProvider"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.jvm.MainFileProvider"/>
+    </extensionPoint>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.jvm.gradle.GradleStartupActivity"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <gradleRefresher implementation="com.jetbrains.edu.jvm.gradle.IdeaGradleCourseRefresher"/>
+    <pathMacroProvider implementation="com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider"/>
+  </extensions>
+</idea-plugin>

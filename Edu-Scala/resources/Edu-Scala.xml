@@ -1,0 +1,19 @@
+<idea-plugin package="com.jetbrains.edu.scala" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <module name="jvm-core"/>
+
+    <plugin id="org.intellij.scala"/>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <xi:include href="/META-INF/Hyperskill-Scala.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" courseType="Stepik"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.scala.codeforces.ScalaCodeforcesLanguageProvider"/>
+    <mainFileProvider language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaMainFileProvider"/>
+  </extensions>
+</idea-plugin>

@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.php.PhpConfigurator" language="PHP" displayName="PHP"/>
-  </extensions>
-</idea-plugin>

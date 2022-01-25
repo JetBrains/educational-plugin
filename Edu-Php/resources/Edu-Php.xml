@@ -1,0 +1,10 @@
+<idea-plugin package="com.jetbrains.edu.php">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.jetbrains.php"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.php.PhpConfigurator" language="PHP" displayName="PHP"/>
+  </extensions>
+</idea-plugin>

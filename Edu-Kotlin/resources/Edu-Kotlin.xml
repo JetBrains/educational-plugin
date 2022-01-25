@@ -1,0 +1,20 @@
+<idea-plugin package="com.jetbrains.edu.kotlin">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <module name="jvm-core"/>
+
+    <plugin id="org.jetbrains.kotlin"/>
+    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
+    <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.kotlin.codeforces.KtCodeforcesLanguageProvider"/>
+    <mainFileProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.KtMainFileProvider"/>
+
+    <!-- Hyperskill -->
+    <configurator implementationClass="com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator" language="kotlin" courseType="Hyperskill"/>
+  </extensions>
+</idea-plugin>

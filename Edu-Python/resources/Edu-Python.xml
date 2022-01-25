@@ -1,0 +1,49 @@
+<idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.python"/>
+  </dependencies>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.pySdkSettingsHelper"
+                    interface="com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <xi:include href="/META-INF/CheckIO-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Hyperskill-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- Extensions available only in IDEA and Android Studio -->
+  <xi:include href="/META-INF/Edu-Python-Idea.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- Extensions available only in PyCharm and CLion -->
+  <xi:include href="/META-INF/Edu-Python-PyCharm.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <postStartupActivity implementation="com.jetbrains.edu.python.learning.PyShowTutorialStartupActivity"/>
+
+    <localInspection shortName="PyEduInterpreterInspection"
+                     bundle="messages.EduPythonBundle"
+                     groupKey="python.inspection.group.name"
+                     key="python.inspection.invalid.interpreter.display.name"
+                     groupPath="EduTools"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>
+    <configurationType implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Pythonid">
+    <inspectionExtension implementation="com.jetbrains.edu.python.learning.highlighting.PyEduInspectionExtension"/>
+    <importResolver implementation="com.jetbrains.edu.python.learning.PyEduImportResolver"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.PyNewConfigurator"
+                  language="Python"
+                  environment="unittest"
+                  displayName="Python"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.python.learning.codeforces.PyCodeforcesLanguageProvider"/>
+  </extensions>
+</idea-plugin>

@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.impl.ProjectViewRenderer
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationType.INFORMATION
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -14,23 +16,28 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.GotItTooltip
+import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtils.execCancelable
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.toPsiFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
+import java.awt.Point
 import java.awt.datatransfer.StringSelection
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.swing.JComponent
 
 
 class DownloadDataset(
@@ -101,6 +108,18 @@ class DownloadDataset(
     TaskDescriptionView.getInstance(project).updateCheckPanel(task)
   }
 
+  private fun showTooltipForDataset(project: Project, virtualFile: VirtualFile) {
+    val message = EduCoreBundle.getMessage("hyperskill.dataset.here.is.your.dataset")
+    val tooltip = GotItTooltip(TOOLTIP_ID, message, project)
+      // Update width if message has been changed
+      .withMaxWidth(JBUI.scale(270))
+      .withPosition(Balloon.Position.atRight)
+
+    if (tooltip.canShow()) {
+      virtualFile.showTooltipInCourseView(project, tooltip)
+    }
+  }
+
   override fun onFinished() {
     DownloadDatasetState.getInstance(project).unlock()
     onFinishedCallback()
@@ -167,6 +186,9 @@ class DownloadDataset(
   companion object {
     private val LOG = Logger.getInstance(DownloadDataset::class.java)
 
+    @NonNls
+    private const val TOOLTIP_ID: String = "downloaded.dataset.file"
+
     fun isRunning(project: Project): Boolean {
       return DownloadDatasetState.getInstance(project).isLocked
     }
@@ -174,5 +196,41 @@ class DownloadDataset(
     fun lock(project: Project): Boolean {
       return DownloadDatasetState.getInstance(project).lock()
     }
+
+    private fun VirtualFile.showTooltipInCourseView(project: Project, tooltip: GotItTooltip) {
+      if (!tooltip.canShow()) return
+      ApplicationManager.getApplication().assertIsDispatchThread()
+
+      val psiElement = document.toPsiFile(project) ?: return
+      val projectView = ProjectView.getInstance(project)
+
+      projectView.changeViewCB(CourseViewPane.ID, null).doWhenProcessed {
+        projectView.selectCB(psiElement, this, true).doWhenProcessed {
+          val tree = projectView.currentProjectViewPane.tree
+          val location = JBPopupFactory.getInstance().guessBestPopupLocation(tree)
+
+          val point = when (tooltip.position) {
+            Balloon.Position.atRight -> {
+              // icon width + text width
+              val xOffset = ((tree.cellRenderer as ProjectViewRenderer).icon?.iconWidth ?: 0) +
+                            (tree.getPathBounds(tree.selectionPath)?.width ?: 0)
+              // 1/2 text height
+              val yOffset = tree.getPathBounds(tree.selectionPath)?.height?.div(2) ?: 0
+              location.point.addXOffset(xOffset).addYOffset(-yOffset)
+            }
+            else -> {
+              LOG.warn("Unsupported position ${tooltip.position}")
+              location.point
+            }
+          }
+
+          val component = (location.component as JComponent)
+          tooltip.show(component) { _, _ -> point }
+        }
+      }
+    }
+
+    private fun Point.addXOffset(offset: Int) = Point(x + offset, y)
+    private fun Point.addYOffset(offset: Int) = Point(x, y + offset)
   }
 }

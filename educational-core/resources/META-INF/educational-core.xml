@@ -1,0 +1,406 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
+
+  <resource-bundle>messages.EduCoreBundle</resource-bundle>
+
+  <applicationListeners>
+    <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
+              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+    <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
+    <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+    <listener class="com.jetbrains.edu.learning.RecentPreviewCourseListener"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    <listener class="com.jetbrains.edu.learning.RecentPreviewCourseListener"
+              topic="com.intellij.ide.AppLifecycleListener"/>
+  </applicationListeners>
+
+  <projectListeners>
+    <listener class="com.jetbrains.edu.learning.checker.EduRunManagerListener"
+              topic="com.intellij.execution.RunManagerListener"/>
+  </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.configurator"
+                    beanClass="com.jetbrains.edu.learning.configuration.EducationalExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.configuration.EduConfigurator"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.compatibilityProvider"
+                    beanClass="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider"/>
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
+                    interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.remoteTaskChecker"
+                    interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.checkListener"
+                    interface="com.jetbrains.edu.learning.checker.CheckListener"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.submissionsProvider"
+                    interface="com.jetbrains.edu.learning.submissions.SubmissionsProvider"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.optionsProvider"
+                    beanClass="com.intellij.openapi.options.ConfigurableEP"
+                    dynamic="true">
+      <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
+    </extensionPoint>
+
+    <extensionPoint qualifiedName="Educational.coursesPlatformProviderFactory"
+                    interface="com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.pathMacroProvider"
+                    interface="com.jetbrains.edu.learning.courseGeneration.macro.EduMacroProvider"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <actions>
+    <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
+    <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
+    <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
+    <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
+    <action id="Educational.Retry" class="com.jetbrains.edu.learning.actions.RetryAction"/>
+    <action id="Educational.PrevPlaceholder"
+            class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
+            icon="AllIcons.Actions.Back"/>
+    <action id="Educational.NextPlaceholder"
+            class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
+            icon="AllIcons.Actions.Forward"/>
+    <action id="Educational.PreviousTask"
+            class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
+            icon="AllIcons.Actions.Back"/>
+    <action id="Educational.NextTask"
+            class="com.jetbrains.edu.learning.actions.NextTaskAction"
+            icon="AllIcons.Actions.Forward"/>
+    <action id="Educational.RefreshTask"
+            class="com.jetbrains.edu.learning.actions.RevertTaskAction"
+            icon="com.jetbrains.edu.EducationalCoreIcons.ResetTask"/>
+    <action id="Educational.LeaveCommentAction" class="com.jetbrains.edu.learning.actions.LeaveCommentAction"/>
+    <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
+    <action id="Educational.CompareWithAnswer"
+            class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
+            icon="AllIcons.Actions.Diff"/>
+    <action id="Educational.RefreshAnswerPlaceholder"
+            class="com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder"
+            icon="AllIcons.Actions.Refresh">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+    <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction">
+      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
+    </action>
+    <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
+    </action>
+
+    <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
+
+    <action id="Educational.ToggleRestServices"
+            class="com.jetbrains.edu.learning.actions.ToggleRestServicesAction"
+            internal="true"/>
+
+    <!--educator actions-->
+    <action id="Educational.Educator.InsertShortcut" class="com.jetbrains.edu.coursecreator.actions.InsertShortcutAction">
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </action>
+    <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction"/>
+    <action id="Educational.CCEditTaskDescription" class="com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription"/>
+
+    <group id="Educational.Educator.NewFile">
+      <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask"/>
+      <action id="Educational.Educator.CreateLesson"
+              class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson"/>
+      <action id="Educational.Educator.CreateSection"
+              class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection"/>
+      <separator/>
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </group>
+
+    <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
+    <action id="Educational.Educator.CheckAllTasks" class="com.jetbrains.edu.coursecreator.actions.CheckAllTasks"/>
+
+    <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
+
+    <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushTask"/>
+    <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
+    <action id="Educational.Educator.PushSection" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection"/>
+    <action id="Educational.Educator.UpdateAdditionalMaterials" class="com.jetbrains.edu.coursecreator.actions.stepik.UpdateAdditionalMaterials"/>
+
+    <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
+           class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
+      <action id="Educational.Educator.ShowToStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToLearner"/>
+      <action id="Educational.Educator.HideFromStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromLearner"/>
+      <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview">
+        <add-to-group group-id="EditorTabPopupMenu"/>
+      </action>
+      <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection"/>
+      <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection"/>
+      <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
+      <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
+      <separator/>
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
+      <reference id="Educational.Educator.CheckAllTasks"/>
+      <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
+      <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
+    </group>
+
+    <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
+
+    <group id="Educational.Educator.File" popup="true" text="Course Creator"
+           class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
+      <reference id="Educational.Educator.CheckAllTasks"/>
+      <reference id="Educational.Educator.PackCourse"/>
+      <reference id="Educational.Educator.PushCourse"/>
+      <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
+    </group>
+
+    <group id="Educational.Educator.AnswerPlaceholder">
+      <action id="Educational.Educator.AddAnswerPlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder"/>
+      <group id="Educational.Educator.ModifyAnswerPlaceholder" popup="true" text="Answer Placeholder"
+             class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
+        <action id="Educational.Educator.EditAnswerPlaceholder"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
+        <action id="Educational.Educator.RemoveDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCRemoveDependency"/>
+        <action id="Educational.Educator.DeleteAnswerPlaceholder"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
+        <action id="Educational.Educator.DeleteAllPlaceholders"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAllAnswerPlaceholdersAction"/>
+        <separator/>
+      </group>
+      <separator/>
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </group>
+
+    <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
+    <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
+    <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.actions.stepik.CCShowChangedFiles"/>
+    <action id="Educational.Educator.StepikChangeHost"
+            class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
+            internal="true"/>
+
+    <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
+      <reference id="Educational.BrowseCourses"/>
+      <reference id="Educational.Educator.NewCourse"/>
+      <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
+    </group>
+    <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
+      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
+    </action>
+    <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
+    <action id="Educational.Stepik.UpdateCourse" class="com.jetbrains.edu.learning.actions.SyncStepikCourseAction"/>
+    <action id="Educational.CreateNewIssue"
+            class="com.jetbrains.edu.learning.actions.CreateNewYouTrackIssue"
+            icon="/icons/com/jetbrains/edu/eduCourseAction.svg">
+      <add-to-group group-id="HelpMenu" anchor="after" relative-to-action="ReportProblem"/>
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
+                        serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
+                        testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
+    <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
+                        serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
+
+    <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
+
+    <applicationService serviceInterface="com.jetbrains.edu.learning.courseGeneration.ProjectOpener"
+                        serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>
+
+    <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.stepik.StepikWidgetFactory" order="before positionWidget"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
+                    serviceImplementation="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionViewImpl"
+                    testServiceImplementation="com.jetbrains.edu.learning.taskDescription.ui.MockTaskDescriptionView"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.checker.details.CheckDetailsView"
+                    serviceImplementation="com.jetbrains.edu.learning.checker.details.CheckDetailsViewImpl"
+                    testServiceImplementation="com.jetbrains.edu.learning.checker.details.MockCheckDetailsView"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
+                    serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
+
+    <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>
+
+    <registryKey key="edu.task.description.update.delay"
+                 description="The delay in ms before loading page by Task Description view. \nRequires project reopening"
+                 defaultValue="300"/>
+
+    <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
+                             id="Educational" displayName="Education"/>
+
+    <toolWindow id="Task" anchor="right" order="first"
+                factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"/>
+    <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
+                factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"/>
+    <!-- placeholder size listener -->
+    <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
+    <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
+    <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
+
+    <!-- Rename -->
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.SectionRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.LessonRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.TaskRenameProcessor" order="first"/>
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.learning.handlers.rename.EduTaskFileRenameProcessor" order="first"/>
+
+    <!-- Move -->
+    <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
+
+    <!-- Notifications   -->
+    <editorNotificationProvider
+        implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.editor.EduTaskFileNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
+
+    <notificationGroup id="EduTools" displayType="BALLOON"
+                       bundle="messages.EduCoreBundle" key="notification.group.edu.tools"/>
+
+    <!--suppress PluginXmlValidity -->
+    <statistics.applicationUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduStateUsagesCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.jetbrains.edu.learning.statistics.EduCounterUsageCollector"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler"/>
+    <registryKey key="edu.course.update.check.interval"
+                 description="Sets is course up to date check interval in seconds"
+                 defaultValue="18000"/>
+
+    <!--for educators-->
+    <xml.xmlSuppressionProvider
+        implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
+    <fileEditorProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.EduSplitFileEditorProvider" order="first"/>
+
+    <!-- Rename -->
+    <renamePsiElementProcessor implementation="com.jetbrains.edu.coursecreator.handlers.rename.CCDescriptionFileRenameProcessor" order="first"/>
+
+    <!-- Move -->
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCSectionMoveHandlerDelegate"
+                             order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCLessonMoveHandlerDelegate"
+                             order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.move.CCTaskMoveHandlerDelegate"
+                             order="first"/>
+
+    <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
+
+    <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
+    <editorActionHandler action="EditorBackSpace" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
+                         order="first"/>
+    <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
+                         order="first"/>
+
+    <editorActionHandler action="EditorCut" implementationClass="com.jetbrains.edu.learning.editor.EduCutTypedHandler"
+                         order="first"/>
+    <editorActionHandler action="EditorCutLineEnd" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorCutLineBackward" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteToLineEnd" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteToLineStart" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
+      <description>Enables previous task view for framework lessons</description>
+    </experimentalFeature>
+    <liveTemplateContext implementation="com.jetbrains.edu.coursecreator.taskDescription.HintTemplateContextType"/>
+    <defaultLiveTemplates file="liveTemplates/hint.xml"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.GeneratedRemoteInfoNotificationProvider"/>
+    <registryKey key="edu.course.creator.solve.all"
+                 description="Enables `Solve All Tasks Before` action"
+                 defaultValue="false"/>
+
+    <welcomeTabFactory id="EducationalWelcomeTab"
+                       implementation="com.jetbrains.edu.learning.newproject.ui.welcomeScreen.EduWelcomeTabFactory"
+                       order="last"/>
+
+    <writingAccessProvider implementation="com.jetbrains.edu.learning.editor.EditableFileProvider"/>
+
+    <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
+      <description>Enables support for SQL courses</description>
+    </experimentalFeature>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <!-- Only for development purposes -->
+    <configurator language="TEXT" implementationClass="com.jetbrains.edu.learning.configuration.PlainTextConfigurator"/>
+    <configurator language="TEXT" courseType="Hyperskill"
+                  implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator"/>
+
+    <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
+    <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
+    <checkListener implementation="com.jetbrains.edu.learning.stepik.StepikCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
+    <coursesPlatformProviderFactory id="Marketplace" order="first"
+                                    implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"
+                                    implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Stepik" order="after Marketplace"
+                                    implementation="com.jetbrains.edu.learning.stepik.StepikPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Coursera" order="after Stepik"
+                                    implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="CheckiO" order="after Coursera"
+                                    implementation="com.jetbrains.edu.learning.checkio.CheckiOPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Codeforces" order="after Coursera"
+                                    implementation="com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProviderFactory"/>
+
+
+    <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
+    <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsProvider"/>-->
+
+    <!-- Course compatibility providers   -->
+    <compatibilityProvider language="JAVA"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.JCourseCompatibilityProvider"/>
+    <compatibilityProvider language="kotlin"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.KtCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Scala"
+                           environment="Gradle"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
+    <!--need to register without environment to work with Hyperskill courses-->
+    <compatibilityProvider language="Scala"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Scala"
+                           environment="sbt"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaSbtCourseCompatibilityProvider"/>
+    <compatibilityProvider language="kotlin"
+                           environment="Android"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.AndroidCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Python"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Python"
+                           environment="unittest"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
+    <compatibilityProvider language="JavaScript"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.JsCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Rust"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.RsCourseCompatibilityProvider"/>
+    <compatibilityProvider language="go"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.GoCourseCompatibilityProvider"/>
+    <compatibilityProvider language="PHP"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.PhpCourseCompatibilityProvider"/>
+    <compatibilityProvider language="SQL"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlCourseCompatibilityProvider"/>
+
+    <!--educator-->
+    <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.twitter.TwitterOptionsProvider"/>
+
+    <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
+  </extensions>
+
+  <xi:include href="/META-INF/Codeforces.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>

@@ -1,0 +1,12 @@
+<idea-plugin package="com.jetbrains.edu.rust">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.rust.lang"/>
+    <plugin id="org.toml.lang"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
+    <codeforcesLanguageProvider implementation="com.jetbrains.edu.rust.codeforces.RsCodeforcesLanguageProvider"/>
+  </extensions>
+</idea-plugin>

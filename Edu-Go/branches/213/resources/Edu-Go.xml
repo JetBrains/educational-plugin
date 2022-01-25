@@ -1,9 +1,0 @@
-<idea-plugin package="com.jetbrains.edu.go" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
-  <dependencies>
-    <plugin id="org.jetbrains.plugins.go"/>
-  </dependencies>
-
-  <!-- BACKCOMPAT: 2021.1. Inline it -->
-  <xi:include href="/META-INF/Edu-Go-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>

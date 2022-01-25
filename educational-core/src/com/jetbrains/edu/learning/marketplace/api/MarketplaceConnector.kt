@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.io.URLUtil
@@ -211,8 +212,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   fun loadCourseStructure(course: EduCourse) {
     val buildNumber = getBuildNumberForRequests()
 
-    //BACKCOMPAT 221: replace with com.intellij.openapi.updateSettings.impl.PluginDownloader.getMarketplaceDownloadsUUID()
-    val uuid = UUIDProvider.getUUID()
+    val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
 
     val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$buildNumber"
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)

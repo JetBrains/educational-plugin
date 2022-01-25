@@ -1,0 +1,14 @@
+<idea-plugin package="com.jetbrains.edu.html">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.modules.xml"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="HTML"
+                            id="EduHtmlCompletionContributor"
+                            implementationClass="com.jetbrains.edu.html.taskDescription.EduHtmlCompletionContributor"/>
+    <psi.referenceContributor language="HTML"
+                              implementation="com.jetbrains.edu.html.taskDescription.EduHtmlReferenceContributor"/>
+  </extensions>
+</idea-plugin>

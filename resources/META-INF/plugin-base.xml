@@ -1,8 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-    <id>com.jetbrains.edu</id>
-    <name>EduTools</name>
-    <vendor>JetBrains</vendor>
-
-    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-    <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>

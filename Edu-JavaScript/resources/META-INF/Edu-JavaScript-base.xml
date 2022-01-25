@@ -1,8 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/CheckiO-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/Hyperskill-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>
-    <codeforcesLanguageProvider implementation="com.jetbrains.edu.javascript.learning.codeforces.JsCodeforcesLanguageProvider"/>
-  </extensions>
-</idea-plugin>
