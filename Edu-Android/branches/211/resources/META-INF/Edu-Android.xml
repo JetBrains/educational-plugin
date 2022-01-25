@@ -1,9 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>org.jetbrains.android</depends>
-  <depends>com.intellij.modules.androidstudio</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
-  <depends>JUnit</depends>
-
-  <xi:include href="/META-INF/Edu-Android-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>
-

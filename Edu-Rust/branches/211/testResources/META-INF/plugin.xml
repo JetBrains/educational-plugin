@@ -1,6 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/rust-plugin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-
-  <!--suppress PluginXmlValidity -->
-  <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
-</idea-plugin>

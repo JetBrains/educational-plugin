@@ -1,5 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>com.jetbrains.php</depends>
-
-  <xi:include href="/META-INF/Edu-Php-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>

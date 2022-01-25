@@ -1,8 +1,0 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>org.jetbrains.kotlin</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
-  <depends>JUnit</depends>
-
-  <xi:include href="/META-INF/Edu-Kotlin-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
-</idea-plugin>
-

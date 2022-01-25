@@ -63,8 +63,6 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
-// BACKCOMPAT: 2021.1
-val isAtLeast212 = environmentName.toInt() >= 212
 // BACKCOMPAT: 2021.2
 val isAtLeast213 = environmentName.toInt() >= 213
 
@@ -229,7 +227,6 @@ allprojects {
     val verifyClasses = task("verifyClasses") {
       dependsOn(jar)
       doLast {
-        if (!isAtLeast212) return@doLast
         verifyClasses(project)
       }
     }
