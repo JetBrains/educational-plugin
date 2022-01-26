@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import kotlinx.coroutines.runBlocking
 
 class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
@@ -18,7 +18,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    HyperskillSettings.INSTANCE.account = null
+    logOutFakeHyperskillUser()
     CoursesStorage.getInstance().state.courses.clear()
   }
 
@@ -33,7 +33,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
   }
 
   fun `test selected project added`() {
-    loginFakeUser()
+    logInFakeHyperskillUser()
     val profile = HyperskillUserInfo().apply { hyperskillProjectId = 1 }
     val hyperskillCourse = defaultHyperskillCourse()
 

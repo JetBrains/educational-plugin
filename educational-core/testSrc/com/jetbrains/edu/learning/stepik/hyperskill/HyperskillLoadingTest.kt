@@ -18,7 +18,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 class HyperskillLoadingTest : NavigationTestBase() {
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector

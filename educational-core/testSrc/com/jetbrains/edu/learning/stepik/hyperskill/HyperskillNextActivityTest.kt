@@ -13,13 +13,21 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
 class HyperskillNextActivityTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
+  override fun setUp() {
+    super.setUp()
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
+  }
+
   fun `test activity not available`() {
-    loginFakeUser()
     createHyperskillProblemsProject()
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
@@ -30,7 +38,7 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test activity not available without login`() {
-    HyperskillSettings.INSTANCE.account = null
+    logOutFakeHyperskillUser()
     createHyperskillProblemsProject()
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
@@ -41,7 +49,6 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test topic is completed`() {
-    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
@@ -60,7 +67,6 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test next activity unsupported in IDE`() {
-    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
@@ -78,7 +84,6 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test open next step in IDE`() {
-    loginFakeUser()
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
     val nextStepId = step5.id

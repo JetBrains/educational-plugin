@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.checker
 
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
@@ -12,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.stepik.StepikUser
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -57,14 +56,11 @@ class StepikCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
-      userInfo = StepikUserInfo("Test User")
-      userInfo.id = 1
-    }
+    loginFakeStepikUser()
   }
 
   override fun tearDown() {
-    EduSettings.getInstance().user = null
+    logOutFakeStepikUser()
     super.tearDown()
   }
 

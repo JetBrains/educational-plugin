@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetActio
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.testAction
 import java.util.*
 
@@ -25,12 +24,12 @@ class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
     configureResponses()
   }
 
   override fun tearDown() {
-    HyperskillSettings.INSTANCE.account = null
+    logOutFakeHyperskillUser()
     super.tearDown()
   }
 

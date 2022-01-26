@@ -15,6 +15,7 @@ import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
 
 class HyperskillCheckCodeTaskTest : EduTestCase() {
+  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun setUp() {
     super.setUp()
@@ -26,11 +27,14 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
       }
     } as HyperskillCourse
 
-    loginFakeUser()
+    logInFakeHyperskillUser()
     NavigationUtils.navigateToTask(project, findTask(0, 0))
   }
 
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
+  }
 
   fun `test successful check via web socket`() {
     configureResponses()

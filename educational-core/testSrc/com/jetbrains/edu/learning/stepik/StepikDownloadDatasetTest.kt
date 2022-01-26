@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduNames.TASK_HTML
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATASET_FOLDER_NAME
@@ -12,6 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INP
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -25,15 +26,12 @@ class StepikDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
-      userInfo = StepikUserInfo("Test User")
-      userInfo.id = 1
-    }
+    loginFakeStepikUser()
     configureResponses()
   }
 
   override fun tearDown() {
-    EduSettings.getInstance().user = null
+    logOutFakeStepikUser()
     super.tearDown()
   }
 

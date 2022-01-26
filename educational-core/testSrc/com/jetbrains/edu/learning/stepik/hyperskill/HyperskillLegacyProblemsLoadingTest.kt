@@ -26,7 +26,12 @@ class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   fun `test load step with hidden header and footer`() = doTest("steps_response_header_footer.json", shouldContainWarning = true)

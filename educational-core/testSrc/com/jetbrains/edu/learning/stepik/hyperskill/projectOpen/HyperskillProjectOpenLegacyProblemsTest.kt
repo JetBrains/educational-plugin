@@ -23,10 +23,18 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
     }
   }
 
-  fun `test open problem in new legacy code problems project`() {
-    loginFakeUser()
+  override fun setUp() {
+    super.setUp()
+    logInFakeHyperskillUser()
     configureMockResponsesForStages()
+  }
 
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
+  }
+
+  fun `test open problem in new legacy code problems project`() {
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(stepId = 4) {
@@ -49,9 +57,6 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
   }
 
   fun `test open problem in existing legacy code problems project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null, language = PlainTextLanguage.INSTANCE) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(name = "new task", stepId = 5) {
@@ -87,9 +92,6 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
   }
 
   fun `test open problem in existing project with stages`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(stepId = 4) {
@@ -168,9 +170,6 @@ class HyperskillProjectOpenLegacyProblemsTest : HyperskillProjectOpenerTestBase(
   }
 
   private fun doLanguageValidationTest(language: String, checkError: (String) -> Unit) {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       lesson(HYPERSKILL_PROBLEMS) {
         codeTask(stepId = 4) {

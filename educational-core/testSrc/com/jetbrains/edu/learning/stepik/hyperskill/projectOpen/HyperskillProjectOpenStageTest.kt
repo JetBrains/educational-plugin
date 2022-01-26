@@ -11,10 +11,18 @@ import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
 
-  fun `test open stage in new project`() {
-    loginFakeUser()
+  override fun setUp() {
+    super.setUp()
+    logInFakeHyperskillUser()
     configureMockResponsesForStages()
+  }
 
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
+  }
+
+  fun `test open stage in new project`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStageRequest(1, 1))
 
     val fileTree = fileTree {
@@ -41,9 +49,6 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
   }
 
   fun `test open stage in opened legacy code problems project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
     // set up existing project
     hyperskillCourseWithFiles {
       lesson(HYPERSKILL_PROBLEMS) {
@@ -89,8 +94,6 @@ class HyperskillProjectOpenStageTest : HyperskillProjectOpenerTestBase() {
   }
 
   fun `test open stage in opened problems project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
     val topicName = "topicName"
 
     // set up existing project

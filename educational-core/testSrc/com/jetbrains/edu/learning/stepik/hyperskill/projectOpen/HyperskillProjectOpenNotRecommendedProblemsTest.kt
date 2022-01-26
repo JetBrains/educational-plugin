@@ -17,11 +17,20 @@ import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerTestBase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    loginFakeUser()
-    configureMockResponsesForNotRecommendedProblem()
     withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
       super.runTestRunnable(context)
     }
+  }
+
+  override fun setUp() {
+    super.setUp()
+    logInFakeHyperskillUser()
+    configureMockResponsesForNotRecommendedProblem()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   fun `test open not recommended problem in new project`() {

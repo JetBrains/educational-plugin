@@ -17,8 +17,13 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
     configureResponses()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   private fun configureResponses() {

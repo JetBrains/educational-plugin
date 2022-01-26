@@ -12,7 +12,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import org.intellij.lang.annotations.Language
 
 class HyperskillCheckEduTaskMessageTest : CheckersTestBase<Unit>() {
@@ -46,7 +47,12 @@ class HyperskillCheckEduTaskMessageTest : CheckersTestBase<Unit>() {
   override fun setUp() {
     super.setUp()
     configureResponse()
-    loginFakeUser()
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   fun `test solve all edu tasks in topic`() {

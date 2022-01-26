@@ -29,11 +29,19 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     }
   }
 
-  fun `test open code problem in project`() {
-    loginFakeUser()
+  override fun setUp() {
+    super.setUp()
+    logInFakeHyperskillUser()
     configureMockResponsesForStages()
     configureMockResponsesForProblems()
+  }
 
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
+  }
+
+  fun `test open code problem in project`() {
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step2640.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
@@ -69,10 +77,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open edu problem`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step10960.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
@@ -129,10 +133,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open dataset problem without samples`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step14259.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
@@ -156,10 +156,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open dataset problem with samples`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step12164.id, "TEXT"))
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
@@ -184,10 +180,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open non dataset problem with language chosen by user`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     val request = HyperskillOpenStepRequest(1, step10960.id, "TEXT", true)
     assertThrows(IllegalStateException::class.java) {
       mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, request)
@@ -195,10 +187,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem with same topic in existing problems project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles(name = getProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
@@ -250,10 +238,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem with different topic in existing problems project`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles(name = getProblemsProjectName("TEXT"), language = PlainTextLanguage.INSTANCE) {
       section(HYPERSKILL_TOPICS) {
@@ -306,10 +290,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem in existing project with stages`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles {
       frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {
@@ -387,10 +367,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem in existing project with stages and problems with same topic`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles {
       frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {
@@ -480,10 +456,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem in existing project with stages and problems with different topic`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles {
       frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {
@@ -581,10 +553,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem in existing project with legacy code problems`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles {
       lesson(HYPERSKILL_PROBLEMS) {
@@ -647,10 +615,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   fun `test open problem in existing project with stages and legacy code problems`() {
-    loginFakeUser()
-    configureMockResponsesForStages()
-    configureMockResponsesForProblems()
-
     // set up existing project
     hyperskillCourseWithFiles {
       frameworkLesson(TEST_HYPERSKILL_PROJECT_NAME) {
@@ -761,9 +725,6 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   }
 
   private fun doLanguageValidationTest(language: String, checkError: (String) -> Unit) {
-    loginFakeUser()
-    configureMockResponsesForStages()
-
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       section(HYPERSKILL_TOPICS) {
         lesson(TOPIC_NAME) {

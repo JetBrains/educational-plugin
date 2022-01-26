@@ -20,7 +20,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
 import java.util.*
@@ -63,7 +64,12 @@ class HyperskillNumberTaskTest : CheckersTestBase<Unit>() {
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
+  }
+
+  override fun tearDown() {
+    logOutFakeHyperskillUser()
+    super.tearDown()
   }
 
   fun `test number task correct`() {

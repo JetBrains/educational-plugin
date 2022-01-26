@@ -1,9 +1,10 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.http.HttpStatus
@@ -13,10 +14,7 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
-      userInfo = StepikUserInfo("Test User")
-      userInfo.id = 1
-    }
+    loginFakeStepikUser()
     courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::EduCourse,
@@ -36,7 +34,7 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
   }
 
   override fun tearDown() {
-    EduSettings.getInstance().user = null
+    logOutFakeStepikUser()
     super.tearDown()
   }
 

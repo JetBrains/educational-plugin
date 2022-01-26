@@ -18,13 +18,17 @@ const val TEST_HYPERSKILL_PROJECT_NAME = "Test Hyperskill Project"
 
 fun testStageName(index: Int): String = "Test Stage $index"
 
-fun loginFakeUser() {
+fun logInFakeHyperskillUser() {
   val fakeToken = TokenInfo().apply { accessToken = "faketoken" }
   HyperskillSettings.INSTANCE.account = HyperskillAccount().apply {
     userInfo = HyperskillUserInfo()
     userInfo.id = 1
     saveTokens(fakeToken)
   }
+}
+
+fun logOutFakeHyperskillUser() {
+  HyperskillSettings.INSTANCE.account = null
 }
 
 fun EduTestCase.hyperskillCourseWithFiles(

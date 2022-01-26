@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckDataTaskTest
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
+import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import java.util.*
 
 class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
@@ -57,11 +57,11 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    logInFakeHyperskillUser()
   }
 
   override fun tearDown() {
-    HyperskillSettings.INSTANCE.account = null
+    logOutFakeHyperskillUser()
     super.tearDown()
   }
 

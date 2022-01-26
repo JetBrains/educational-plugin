@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.checker.retry
 
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.RetryAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -10,8 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
-import com.jetbrains.edu.learning.stepik.StepikUser
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -25,10 +24,7 @@ class StepikRetryActionTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
-      userInfo = StepikUserInfo("Test User")
-      userInfo.id = 1
-    }
+    loginFakeStepikUser()
     courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::EduCourse,
@@ -50,6 +46,11 @@ class StepikRetryActionTest : SubmissionsTestBase() {
         }
       }
     } as EduCourse
+  }
+
+  override fun tearDown() {
+    logOutFakeStepikUser()
+    super.tearDown()
   }
 
   fun `test choice task correct`() {

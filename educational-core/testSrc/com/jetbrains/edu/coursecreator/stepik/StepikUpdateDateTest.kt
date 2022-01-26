@@ -1,10 +1,10 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.stepik.StepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.isUpToDate
 import junit.framework.TestCase
 import java.util.*
@@ -13,11 +13,11 @@ class StepikUpdateDateTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().user = StepikUser.createEmptyUser()
+    loginFakeStepikUser()
   }
 
   override fun tearDown() {
-    EduSettings.getInstance().user = null
+    logOutFakeStepikUser()
     super.tearDown()
   }
 

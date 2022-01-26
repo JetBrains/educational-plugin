@@ -13,7 +13,7 @@ class HyperskillCompleteTheoryTaskTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   fun `test solving theory problem`() {
-    loginFakeUser()
+    logInFakeHyperskillUser()
 
     val stepId = 666
     var requestSent = false

@@ -25,6 +25,19 @@ object StepikTestUtils {
 
   private val LOG: Logger = Logger.getInstance(StepikTestUtils::class.java)
 
+  fun loginFakeStepikUser() {
+    val fakeToken = TokenInfo().apply { accessToken = "faketoken" }
+    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
+      userInfo = StepikUserInfo("Test User")
+      userInfo.id = 1
+      saveTokens(fakeToken)
+    }
+  }
+
+  fun logOutFakeStepikUser() {
+    EduSettings.getInstance().user = null
+  }
+
   fun login(disposable: Disposable): StepikUser {
     val tokenInfo = getTokens() ?: error("Failed to get auth token")
     val user = StepikUser(tokenInfo)
