@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -9,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.stepik.StepikBasedCreateSubmissionTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
-class HyperskillCreateSubmissionTest : EduTestCase() {
+class HyperskillCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
   private val hyperskillCourse: HyperskillCourse by lazy {
     courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section("Topics") {

@@ -93,4 +93,9 @@ fun notificationListener(project: Project,
   }
 }
 
+fun notifyStepikUnauthorized(project: Project, specificMessage: String) {
+  Notification("EduTools", specificMessage, EduCoreBundle.message("stepik.auth.error.message"), NotificationType.ERROR)
+    .notify(project)
+}
+
 val StepikUser.profileUrl: String get() = "${getStepikProfilePath()}${userInfo.id}"

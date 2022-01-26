@@ -19,7 +19,7 @@ class RetryDataTaskAction : DownloadDatasetActionBase(EduCoreBundle.lazyMessage(
     task.status = CheckStatus.Unchecked
     YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
 
-    if (!checkAuthorized(project)) return
+    if (!checkAuthorized(project, task.course)) return
 
     if (!DownloadDataset.lock(project)) {
       e.dataContext.showPopup(EduCoreBundle.message("hyperskill.download.dataset.already.running"))

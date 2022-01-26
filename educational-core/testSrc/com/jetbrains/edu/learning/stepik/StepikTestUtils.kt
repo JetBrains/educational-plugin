@@ -18,6 +18,8 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
+import java.text.SimpleDateFormat
+import java.util.*
 
 object StepikTestUtils {
 
@@ -82,5 +84,10 @@ object StepikTestUtils {
     }
 
     return null
+  }
+
+  fun Date.format(): String {
+    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+    return formatter.format(this)
   }
 }

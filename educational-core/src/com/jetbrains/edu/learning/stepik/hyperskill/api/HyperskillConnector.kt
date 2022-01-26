@@ -244,8 +244,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     }
   }
 
-  fun getDataset(attemptId: Int): Result<String, String> {
-    return hyperskillEndpoints.dataset(attemptId).executeParsingErrors().flatMap {
+  override fun getDataset(attempt: Attempt): Result<String, String> {
+    return hyperskillEndpoints.dataset(attempt.id).executeParsingErrors().flatMap {
       val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
       Ok(responseBody.string())
     }

@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.invokeAllWithProgress
 import com.jetbrains.edu.learning.stepik.*
 import java.util.concurrent.Executors
@@ -171,8 +170,6 @@ object StepikCourseLoader {
 
       val type = step.block?.name ?: error("Can't get type from step source")
       if (!builder.isSupported(type)
-          // TODO hack until EDU-4744 will be implemented
-          || type == DATA_TASK_TYPE
           // TODO hack until EDU-4763 will be implemented
           || type == STRING_TASK_TYPE
           // TODO hack until EDU-4780 will be implemented

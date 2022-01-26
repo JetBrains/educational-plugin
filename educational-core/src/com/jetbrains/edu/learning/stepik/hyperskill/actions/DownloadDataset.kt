@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.toPsiFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -59,14 +59,14 @@ class DownloadDataset(
       return
     }
 
-    val connector = HyperskillConnector.getInstance()
+    val connector = task.getStepikBasedConnector()
     val retrievedAttempt = connector.getActiveAttemptOrPostNew(task, submitNewAttempt).onError { error ->
       processError(project, "Error getting attempt for task with ${task.id} id: $error")
       return
     }
     ProgressManager.checkCanceled()
 
-    val dataset = execCancelable { connector.getDataset(retrievedAttempt.id) }?.onError { error ->
+    val dataset = execCancelable { connector.getDataset(retrievedAttempt) }?.onError { error ->
       processError(project, "Error getting dataset for attempt with ${retrievedAttempt.id} id: $error")
       null
     } ?: return

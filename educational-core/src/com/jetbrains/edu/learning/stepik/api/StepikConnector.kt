@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
@@ -166,6 +167,13 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
       .onError { return Err(it) }
     val activeAttempt = attempts.firstOrNull { it.isActive }
     return Ok(activeAttempt)
+  }
+
+  override fun getDataset(attempt: Attempt): Result<String, String> {
+    return stepikEndpoints.dataset(attempt.id).executeParsingErrors().flatMap {
+      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
+      Ok(responseBody.string())
+    }
   }
 
   fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {

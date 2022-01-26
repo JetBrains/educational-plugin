@@ -25,6 +25,8 @@ interface StepikBasedConnector {
 
   fun postAttempt(task: Task): Result<Attempt, String>
 
+  fun getDataset(attempt: Attempt): Result<String, String>
+
   fun getSubmission(id: Int): Result<Submission, String>
 
   fun postSubmission(submission: Submission): Result<Submission, String>

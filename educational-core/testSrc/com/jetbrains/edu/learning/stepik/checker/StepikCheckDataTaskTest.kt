@@ -1,5 +1,6 @@
-package com.jetbrains.edu.learning.stepik.hyperskill.checker
+package com.jetbrains.edu.learning.stepik.checker
 
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
@@ -11,21 +12,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.stepik.StepikUser
+import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckDataTaskTest
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.loginFakeUser
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import org.apache.http.HttpStatus
 import java.util.*
 
-class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
-  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
+class StepikCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
+  private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
 
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("Topic name") {
+  override fun createCourse(): Course = course {
+    section(SECTION) {
+      lesson(LESSON) {
         dataTask(
           DATA_TASK_1,
           stepId = 1,
@@ -53,15 +53,18 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
         }
       }
     }
-  } as HyperskillCourse
+  }.apply { id = 1 }
 
   override fun setUp() {
     super.setUp()
-    loginFakeUser()
+    EduSettings.getInstance().user = StepikUser.createEmptyUser().apply {
+      userInfo = StepikUserInfo("Test User")
+      userInfo.id = 1
+    }
   }
 
   override fun tearDown() {
-    HyperskillSettings.INSTANCE.account = null
+    EduSettings.getInstance().user = null
     super.tearDown()
   }
 
@@ -72,7 +75,8 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithSucceedStatus
           else -> error("Wrong path: ${path}")
-        }
+        },
+        responseCode = HttpStatus.SC_CREATED
       )
     }
 
@@ -87,7 +91,8 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithFailedStatus
           else -> error("Wrong path: ${path}")
-        }
+        },
+        responseCode = HttpStatus.SC_CREATED
       )
     }
 
@@ -103,4 +108,8 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
 
   // TODO TIME/TIMER RELATED tests (EDU-4845)
 
+  companion object {
+    private const val SECTION: String = "Section"
+    private const val LESSON: String = "Lesson"
+  }
 }

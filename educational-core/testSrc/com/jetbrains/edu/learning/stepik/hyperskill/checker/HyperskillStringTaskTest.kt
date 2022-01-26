@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillDownloadDatasetTest.Companion.format
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector

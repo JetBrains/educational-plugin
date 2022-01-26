@@ -15,7 +15,7 @@ class DownloadDatasetAction :
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) as? DataTask ?: return
 
-    if (!checkAuthorized(project)) return
+    if (!checkAuthorized(project, task.course)) return
 
     if (!DownloadDataset.lock(project)) {
       e.dataContext.showPopup(EduCoreBundle.message("hyperskill.download.dataset.already.running"))

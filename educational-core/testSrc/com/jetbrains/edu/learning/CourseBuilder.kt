@@ -333,14 +333,13 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
   fun dataTask(
     name: String? = null,
     taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     attempt: DataTaskAttempt? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val dataTask = DataTask()
-    task(dataTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(dataTask, name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
     dataTask.attempt = attempt
   }
 }

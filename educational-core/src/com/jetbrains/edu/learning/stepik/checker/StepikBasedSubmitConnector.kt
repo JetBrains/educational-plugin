@@ -93,10 +93,9 @@ object StepikBasedSubmitConnector {
     return connector.postSubmission(submission)
   }
 
-  // will be supported for Stepik in EDU-4744
   fun submitDataTask(task: DataTask, answer: String): Result<Submission, String> {
     val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
-    val connector = HyperskillConnector.getInstance()
+    val connector = task.getStepikBasedConnector()
     val submission = StepikBasedSubmissionFactory.createDataTaskSubmission(attempt, answer)
     return connector.postSubmission(submission)
   }

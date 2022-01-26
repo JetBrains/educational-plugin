@@ -1,26 +1,26 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.*
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
+import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
+import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
@@ -32,6 +32,14 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
+
+  override val remotelyCheckedTasks: Set<Class<out Task>>
+    get() = setOf(
+      *super.remotelyCheckedTasks.toTypedArray(),
+      NumberTask::class.java,
+      StringTask::class.java,
+      RemoteEduTask::class.java,
+    )
 
   fun postEduTaskSolution(task: Task, project: Project, result: CheckResult) {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task)) {
@@ -65,16 +73,6 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
       return Err("Unable to create submission for the task ${task.name}: ${e.message}")
     }
     return Ok(files)
-  }
-
-  private fun String.toCheckResult(): CheckResult {
-    return if (this == EduCoreBundle.message("error.access.denied")) {
-      CheckResult(CheckStatus.Unchecked,
-                  EduCoreBundle.message("error.access.denied.with.link"),
-                  hyperlinkListener = HyperskillLoginListener
-      )
-    }
-    else CheckResult(CheckStatus.Unchecked, this)
   }
 
   private fun checkCodeTaskWithWebSockets(project: Project, task: CodeTask): Result<CheckResult, SubmissionError> {
@@ -117,32 +115,6 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
 
       return periodicallyCheckSubmissionResult(project, submission, task)
     }
-  }
-
-  fun checkDataTask(project: Project, task: DataTask, indicator: ProgressIndicator): CheckResult {
-    val checkIdResult = task.checkId()
-    if (checkIdResult != null) {
-      return checkIdResult
-    }
-
-    val codeExecutor = task.course.configurator?.taskCheckerProvider?.codeExecutor
-    if (codeExecutor == null) {
-      LOG.error("Unable to get code executor for the `${task.name}` task")
-      return EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA).toCheckResult()
-    }
-    val answer = codeExecutor.execute(project, task, indicator).onError {
-      return it
-    }
-
-    if (answer == NO_OUTPUT) {
-      LOG.warn("No output after execution of the `${task.name}` task")
-      return EduCoreBundle.message("error.no.output").toCheckResult()
-    }
-
-    val submission = StepikBasedSubmitConnector.submitDataTask(task, answer).onError { error ->
-      return failedToSubmit(project, task, error)
-    }
-    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   fun checkAnswerTask(project: Project, task: AnswerTask): CheckResult {

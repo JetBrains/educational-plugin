@@ -75,6 +75,9 @@ interface StepikEndpoints {
   @GET("api/course-review-summaries")
   fun courseReviewSummaries(@Query("ids[]") vararg ids: Int): Call<CourseReviewSummariesList>
 
+  @GET("api/attempts/{attempt_id}/file")
+  fun dataset(@Path("attempt_id") attemptId: Int): Call<ResponseBody>
+
   // POST requests:
 
   @POST("api/courses")

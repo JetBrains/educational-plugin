@@ -8,26 +8,24 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {
     val course = task.course
-    return task.shouldBeCheckedOnStepik && (course is EduCourse && course.isStepikRemote)
+    return course.isStepikRemote && StepikCheckConnector.isRemotelyChecked(task)
   }
-
-  private val Task.shouldBeCheckedOnStepik: Boolean
-    get() = this is CodeTask || (this is ChoiceTask && !canCheckLocally)
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
       is ChoiceTask -> StepikCheckConnector.checkChoiceTask(project, task)
       is CodeTask -> StepikCheckConnector.checkCodeTask(project, task)
+      is DataTask -> StepikCheckConnector.checkDataTask(project, task, indicator)
       else -> error("Can't check ${task.itemType} on ${StepikNames.STEPIK}")
     }
   }

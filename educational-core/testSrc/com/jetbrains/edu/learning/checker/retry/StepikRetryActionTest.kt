@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker.retry
 
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.RetryAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -8,12 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillDownloadDatasetTest.Companion.format
+import com.jetbrains.edu.learning.testAction
 import org.apache.http.HttpStatus
 import org.intellij.lang.annotations.Language
 import java.util.*

@@ -2,21 +2,24 @@ package com.jetbrains.edu.learning.stepik.checker
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.isRemotelyChecked
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -26,8 +29,19 @@ import java.util.concurrent.TimeUnit
 abstract class StepikBasedCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
 
+  protected open val remotelyCheckedTasks: Set<Class<out Task>> = setOf(
+    ChoiceTask::class.java,
+    CodeTask::class.java,
+    DataTask::class.java
+  )
+
+  fun isRemotelyChecked(task: Task): Boolean = when (task) {
+    is ChoiceTask -> !task.canCheckLocally
+    else -> task.javaClass in remotelyCheckedTasks
+  }
+
   protected fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
-    require(task.isRemotelyChecked()) { "Task is not checked remotely" }
+    require(isRemotelyChecked(task)) { "Task is not checked remotely" }
 
     val submissionId = submission.id ?: error("Submission must have id")
     val connector = task.getStepikBasedConnector()
@@ -79,6 +93,33 @@ abstract class StepikBasedCheckConnector {
       return Ok(true)
     }
     return Err(EduCoreBundle.message("hyperskill.choice.task.dataset.empty"))
+  }
+
+  fun checkDataTask(project: Project, task: DataTask, indicator: ProgressIndicator): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+
+    val codeExecutor = task.course.configurator?.taskCheckerProvider?.codeExecutor
+    if (codeExecutor == null) {
+      LOG.error("Unable to get code executor for the `${task.name}` task")
+      val connector = task.getStepikBasedConnector()
+      return EduCoreBundle.message("error.failed.to.post.solution", connector.platformName).toCheckResult()
+    }
+    val answer = codeExecutor.execute(project, task, indicator).onError {
+      return it
+    }
+
+    if (answer == DefaultCodeExecutor.NO_OUTPUT) {
+      LOG.warn("No output after execution of the `${task.name}` task")
+      return EduCoreBundle.message("error.no.output").toCheckResult()
+    }
+
+    val submission = StepikBasedSubmitConnector.submitDataTask(task, answer).onError { error ->
+      return failedToSubmit(project, task, error)
+    }
+    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   companion object {

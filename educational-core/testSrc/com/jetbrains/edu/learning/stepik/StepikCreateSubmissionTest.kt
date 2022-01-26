@@ -1,23 +1,25 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createCodeTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createDataTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStepikSubmission
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.util.*
 
-class StepikCreateSubmissionTest : EduTestCase() {
+class StepikCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
   private val stepikCourse: EduCourse by lazy {
     courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("Section") {
@@ -96,6 +98,21 @@ class StepikCreateSubmissionTest : EduTestCase() {
       |    - false
       |    - true
       |    - false
+      |    version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for data task`() {
+    val dataTaskAttempt = Attempt(123, Date(), 300).toDataTaskAttempt()
+    val answer = "answer"
+
+    val submission = createDataTaskSubmission(dataTaskAttempt, answer).toSubmissionData()
+    doTest(submission, """
+      |submission:
+      |  attempt: 123
+      |  reply:
+      |    file: $answer
       |    version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
