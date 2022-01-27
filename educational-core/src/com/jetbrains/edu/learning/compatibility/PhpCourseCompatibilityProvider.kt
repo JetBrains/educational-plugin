@@ -12,10 +12,5 @@ class PhpCourseCompatibilityProvider : CourseCompatibilityProvider {
 
   override val technologyName: String get() = "PHP"
 
-  override fun requiredPlugins(): List<PluginInfo>? {
-    return if (isFeatureEnabled(EduExperimentalFeatures.PHP_COURSES))
-      listOf(PluginInfo.PHP)
-    else
-      null
-  }
+  override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfo.PHP)
 }
