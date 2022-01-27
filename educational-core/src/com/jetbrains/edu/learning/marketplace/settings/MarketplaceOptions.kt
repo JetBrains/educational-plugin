@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
-import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
@@ -13,12 +12,12 @@ class MarketplaceOptions : LoginOptions<MarketplaceAccount>() {
 
   override fun setCurrentAccount(account: MarketplaceAccount?) {
     MarketplaceSettings.INSTANCE.account = account
-    val messageBus = ApplicationManager.getApplication().messageBus
+    val connector = MarketplaceConnector.getInstance()
     if (account != null) {
-      messageBus.syncPublisher(MarketplaceConnector.AUTHORIZATION_TOPIC).userLoggedIn()
+      connector.notifyUserLoggedIn()
     }
     else {
-      messageBus.syncPublisher(MarketplaceConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+      connector.notifyUserLoggedOut()
     }
   }
 

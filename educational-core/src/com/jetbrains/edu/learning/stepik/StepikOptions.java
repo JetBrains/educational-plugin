@@ -15,10 +15,9 @@
  */
 package com.jetbrains.edu.learning.stepik;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.jetbrains.edu.learning.EduLogInListener;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.LoginOptions;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +34,11 @@ public class StepikOptions extends LoginOptions<StepikUser> {
   @Override
   public void setCurrentAccount(@Nullable StepikUser stepikUser) {
     EduSettings.getInstance().setUser(stepikUser);
+    if (stepikUser != null) {
+      StepikConnector.getInstance().notifyUserLoggedIn();
+    } else {
+      StepikConnector.getInstance().notifyUserLoggedOut();
+    }
   }
 
   @NotNull
@@ -43,17 +47,14 @@ public class StepikOptions extends LoginOptions<StepikUser> {
 
       @Override
       protected void authorize(HyperlinkEvent e) {
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, new EduLogInListener() {
-          @Override
-          public void userLoggedIn() {
-            StepikUser user = EduSettings.getInstance().getUser();
-            setLastSavedAccount(user);
-            updateLoginLabels();
-          }
-          @Override
-          public void userLoggedOut() { }
-        });
-        StepikAuthorizer.doAuthorize(() -> showDialog());
+        Runnable[] postLoginActions = new Runnable[2];
+        postLoginActions[0] = () -> {
+          StepikUser user = EduSettings.getInstance().getUser();
+          setLastSavedAccount(user);
+        };
+        postLoginActions[1] = () -> updateLoginLabels();
+
+        StepikConnector.getInstance().doAuthorize(postLoginActions, () -> showDialog());
       }
 
       private void showDialog() {

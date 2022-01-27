@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
@@ -118,8 +117,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       YES -> {
         // logout
         HyperskillSettings.INSTANCE.account = null
-        val messageBus = ApplicationManager.getApplication().messageBus
-        messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+        HyperskillConnector.getInstance().notifyUserLoggedOut()
 
         // login
         HyperskillConnector.getInstance().doAuthorize(Runnable { action() })

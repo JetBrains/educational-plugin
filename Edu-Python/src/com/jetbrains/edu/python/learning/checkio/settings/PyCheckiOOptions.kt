@@ -1,10 +1,8 @@
 package com.jetbrains.edu.python.learning.checkio.settings
 
-import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.settings.LoginOptions
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import com.jetbrains.edu.python.learning.checkio.utils.profileUrl
@@ -16,12 +14,11 @@ class PyCheckiOOptions : LoginOptions<CheckiOAccount>() {
 
   override fun setCurrentAccount(account: CheckiOAccount?) {
     PyCheckiOSettings.getInstance().account = account
-    val messageBus = ApplicationManager.getApplication().messageBus
     if (account != null) {
-      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedIn()
+      PyCheckiOOAuthConnector.notifyUserLoggedIn()
     }
     else {
-      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+      PyCheckiOOAuthConnector.notifyUserLoggedOut()
     }
   }
 

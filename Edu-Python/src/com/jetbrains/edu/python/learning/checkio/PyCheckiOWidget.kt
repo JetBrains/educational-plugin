@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import com.jetbrains.edu.python.learning.checkio.utils.profileUrl
@@ -30,6 +29,6 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     PyCheckiOSettings.getInstance().account = null
-    project.messageBus.syncPublisher(CheckiOOAuthConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+    PyCheckiOOAuthConnector.notifyUserLoggedOut()
   }
 }

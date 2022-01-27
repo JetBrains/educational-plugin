@@ -37,8 +37,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -446,7 +446,10 @@ object CCUtils {
 
   @JvmStatic
   fun checkIfAuthorizedToStepik(project: Project, failedActionTitle: String): Boolean {
-    return checkIfAuthorized(project, failedActionTitle,
-                             EduSettings.isLoggedIn()) { StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() } }
+    return checkIfAuthorized(project, failedActionTitle, EduSettings.isLoggedIn()) {
+      StepikConnector.getInstance().doAuthorize(
+        ifFailedAction = { EduUtils.showOAuthDialog() }
+      )
+    }
   }
 }

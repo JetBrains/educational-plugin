@@ -7,7 +7,6 @@ import com.jetbrains.edu.javascript.learning.checkio.utils.profileUrl
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
 class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
@@ -30,6 +29,6 @@ class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     JsCheckiOSettings.getInstance().account = null
-    project.messageBus.syncPublisher(CheckiOOAuthConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+    JsCheckiOOAuthConnector.notifyUserLoggedOut()
   }
 }

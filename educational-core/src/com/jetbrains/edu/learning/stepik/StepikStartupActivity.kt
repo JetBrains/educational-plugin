@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -30,36 +31,36 @@ class StepikStartupActivity : StartupActivity {
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
 
     val submissionsManager = SubmissionsManager.getInstance(project)
-    if (submissionsManager.submissionsSupported()) {
-      val updateChecker = StepikUpdateChecker.getInstance(project)
-      if (EduSettings.getInstance().user != null) {
-        submissionsManager.prepareSubmissionsContent {
-          loadSolutionsFromStepik(project, course)
-        }
-      }
-      else {
-        project.messageBus.connect().subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-          override fun userLoggedIn() {
-            if (!EduSettings.isLoggedIn()) return
+    if (!submissionsManager.submissionsSupported()) return
 
-            submissionsManager.prepareSubmissionsContent {}
-            if (!course.isStepikPublic) {
-              updateChecker.check()
-            }
-          }
-
-          override fun userLoggedOut() {
-            TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
-          }
-        })
+    val updateChecker = StepikUpdateChecker.getInstance(project)
+    if (EduSettings.getInstance().user != null) {
+      submissionsManager.prepareSubmissionsContent {
+        loadSolutionsFromStepik(project, course)
       }
-      updateChecker.check()
-      val currentUser = EduSettings.getInstance().user
-      if (currentUser == null) {
-        showBalloon(project)
-      }
-      selectStep(project, course)
     }
+    else {
+      StepikConnector.getInstance().subscribe(object : EduLogInListener {
+        override fun userLoggedIn() {
+          if (!EduSettings.isLoggedIn()) return
+
+          submissionsManager.prepareSubmissionsContent {}
+          if (!course.isStepikPublic) {
+            updateChecker.check()
+          }
+        }
+
+        override fun userLoggedOut() {
+          TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
+        }
+      })
+    }
+    updateChecker.check()
+    val currentUser = EduSettings.getInstance().user
+    if (currentUser == null) {
+      showBalloon(project)
+    }
+    selectStep(project, course)
   }
 
   private fun showBalloon(project: Project) {

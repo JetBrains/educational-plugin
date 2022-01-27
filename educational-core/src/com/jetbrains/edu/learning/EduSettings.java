@@ -1,18 +1,17 @@
 package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
+import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +21,6 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
 public class EduSettings implements PersistentStateComponent<Element> {
-  public static final Topic<EduLogInListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", EduLogInListener.class);
   @Transient
   @Nullable
   private StepikUser myUser;
@@ -92,7 +90,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   public void setUser(@Nullable final StepikUser user) {
     myUser = user;
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).userLoggedIn();
+    StepikConnector.getInstance().notifyUserLoggedIn();
   }
 
   private JavaUILibrary initialJavaUiLibrary() {

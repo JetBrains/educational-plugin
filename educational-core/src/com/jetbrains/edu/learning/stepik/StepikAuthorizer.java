@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.io.URLUtil;
 import com.jetbrains.edu.learning.EduUtils;
@@ -61,14 +60,5 @@ public class StepikAuthorizer {
   private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
     final boolean success = StepikConnector.getInstance().login(code, redirectUri);
     return success ? null : "Couldn't get user info";
-  }
-
-  public static void doAuthorize(@NotNull Runnable externalRedirectUrlHandler) {
-    String redirectUrl = getOAuthRedirectUrl();
-    String link = createOAuthLink(redirectUrl);
-    BrowserUtil.browse(link);
-    if (!redirectUrl.startsWith("http://localhost")) {
-      externalRedirectUrlHandler.run();
-    }
   }
 }

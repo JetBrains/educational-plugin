@@ -1,26 +1,23 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
 class ImportStepikCoursePanel(
-  courseConnector: CourseConnector,
-  private val parent: Disposable
+  courseConnector: CourseConnector
 ) : ImportCoursePanel(courseConnector, "https://stepik.org/course/*") {
 
   private var validationListener: ValidationListener? = null
@@ -41,25 +38,15 @@ class ImportStepikCoursePanel(
   }
 
   fun getHyperlinkListener(): HyperlinkListener = HyperlinkListener { e ->
-    if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-      if (!EduSettings.isLoggedIn()) {
-        addLoginListener()
-        StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
-        EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
-      }
-    }
-  }
+    if (e.eventType != HyperlinkEvent.EventType.ACTIVATED) return@HyperlinkListener
+    if (EduSettings.isLoggedIn()) return@HyperlinkListener
 
-  private fun addLoginListener() {
-    val busConnection = ApplicationManager.getApplication().messageBus.connect(parent)
-    busConnection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-      override fun userLoggedIn() {
-        busConnection.disconnect()
-        ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any())
-      }
-
-      override fun userLoggedOut() {}
-    })
+    val connector = StepikConnector.getInstance()
+    connector.doAuthorize(
+      { ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any()) },
+      ifFailedAction = { EduUtils.showOAuthDialog() }
+    )
+    EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
 
   private fun doValidation() {

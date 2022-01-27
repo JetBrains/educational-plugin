@@ -46,7 +46,9 @@ class StepikSubmissionsProvider : SubmissionsProvider {
   override fun isLoggedIn(): Boolean = EduSettings.isLoggedIn()
 
   override fun doAuthorize() {
-    StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+    StepikConnector.getInstance().doAuthorize(
+      ifFailedAction = { EduUtils.showOAuthDialog() }
+    )
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.SUBMISSIONS_TAB)
   }
 }

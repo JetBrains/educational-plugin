@@ -39,7 +39,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   override val account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
 
-  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
+  override val authorizationTopicName: String = "Edu.hyperskillLoggedIn"
 
   override val clientId: String = CLIENT_ID
 
@@ -66,7 +66,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   fun doAuthorize(vararg postLoginActions: Runnable) {
     if (!checkBuiltinPortValid()) return
 
-    createAuthorizationListener(*postLoginActions)
+    initiateAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(AUTHORISATION_CODE_URL)
   }
 
@@ -83,7 +83,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
     account.saveTokens(tokenInfo)
-    ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
+    notifyUserLoggedIn()
     return true
   }
 
@@ -293,10 +293,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     return result
   }
 
-  private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
-    authorizationBusConnection.disconnect()
-    authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
+  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+    reconnectAndSubscribe(object : EduLogInListener {
       override fun userLoggedOut() {}
 
       override fun userLoggedIn() {
@@ -305,7 +303,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
         }
       }
     })
-  }
 
   fun connectToWebSocketWithTimeout(timeOutSec: Long, url: String, initialState: WebSocketConnectionState): WebSocketConnectionState {
 
@@ -360,9 +357,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   companion object {
     private val LOG = Logger.getInstance("com.jetbrains.edu.learning.HyperskillConnector")
-
-    @JvmStatic
-    val AUTHORIZATION_TOPIC = com.intellij.util.messages.Topic.create("Edu.hyperskillLoggedIn", EduLogInListener::class.java)
 
     private val AUTHORISATION_CODE_URL: String
       get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${

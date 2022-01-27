@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -34,6 +36,8 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   override val account: StepikUser?
     get() = EduSettings.getInstance().user
 
+  override val authorizationTopicName: String = "Edu.stepikLoggedIn"
+
   override val clientId: String = getClientId()
 
   override val clientSecret: String = getClientSecret()
@@ -56,6 +60,20 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   // Authorization requests:
+
+  fun doAuthorize(vararg postLoginActions: Runnable, ifFailedAction: Runnable? = null) {
+    if (!checkBuiltinPortValid()) return
+
+    initiateAuthorizationListener(*postLoginActions)
+
+    val redirectUrl = StepikAuthorizer.getOAuthRedirectUrl()
+    val link = StepikAuthorizer.createOAuthLink(redirectUrl)
+    BrowserUtil.browse(link)
+
+    if (ifFailedAction != null && !redirectUrl.startsWith("http://localhost")) {
+      ifFailedAction.run()
+    }
+  }
 
   fun login(code: String, redirectUri: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return false
@@ -483,6 +501,17 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
     return null
   }
+
+  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+    reconnectAndSubscribe(object : EduLogInListener {
+      override fun userLoggedOut() {}
+
+      override fun userLoggedIn() {
+        for (action in postLoginActions) {
+          action.run()
+        }
+      }
+    })
 
   companion object {
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests

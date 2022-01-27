@@ -3,12 +3,7 @@ package com.jetbrains.edu.learning.stepik.newProjectUI
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.Messages
-import com.intellij.util.messages.MessageBusConnection
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -16,9 +11,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HELP
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCoursesProvider
 import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +27,6 @@ class StepikCoursesPanel(
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
-  private var busConnection: MessageBusConnection? = null
 
   override fun toolbarAction(): ToolbarActionWrapper {
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("stepik.courses.open.by.link", StepikNames.STEPIK), OpenStepikCourseByLink())
@@ -62,37 +56,15 @@ class StepikCoursesPanel(
                                                     { handleLogin() })
 
   private fun handleLogin() {
-    addLoginListener({ hideLoginPanel() }, { coursePanel.hideErrorPanel() })
-    StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+    StepikConnector.getInstance().doAuthorize(
+      { hideLoginPanel() },
+      { coursePanel.hideErrorPanel() },
+      ifFailedAction = { EduUtils.showOAuthDialog() }
+    )
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
 
   override fun isLoginNeeded(): Boolean = !EduSettings.isLoggedIn()
-
-  private fun addLoginListener(vararg postLoginActions: () -> Unit) {
-    if (busConnection != null) {
-      busConnection!!.disconnect()
-    }
-    busConnection = ApplicationManager.getApplication().messageBus.connect()
-    busConnection!!.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-      override fun userLoggedOut() {}
-      override fun userLoggedIn() {
-        runPostLoginActions(*postLoginActions)
-      }
-    })
-  }
-
-  private fun runPostLoginActions(vararg postLoginActions: () -> Unit) {
-    invokeLater(modalityState = ModalityState.any()) {
-      for (action in postLoginActions) {
-        action()
-      }
-      if (busConnection != null) {
-        busConnection!!.disconnect()
-        busConnection = null
-      }
-    }
-  }
 
   override fun createCoursesListPanel() = StepikCoursesListPanel()
 
@@ -122,8 +94,10 @@ class StepikCoursesPanel(
       )
 
       if (result == Messages.OK) {
-        addLoginListener(this@OpenStepikCourseByLink::importCourse)
-        StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+        StepikConnector.getInstance().doAuthorize(
+          this@OpenStepikCourseByLink::importCourse,
+          ifFailedAction = { EduUtils.showOAuthDialog() }
+        )
       }
     }
 

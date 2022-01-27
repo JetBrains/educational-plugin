@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notifications
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
@@ -35,6 +33,8 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
   @set:Transient
   abstract override var account: CheckiOAccount?
 
+  override val authorizationTopicName: String = "Edu.checkioUserLoggedIn"
+
   override val baseUrl: String = CheckiONames.CHECKIO_OAUTH_HOST
 
   override val baseOAuthTokenUrl: String = "oauth/token/"
@@ -46,8 +46,6 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
   override val objectMapper: ObjectMapper by lazy {
     ConnectorUtils.createRegisteredMapper(SimpleModule())
   }
-
-  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
 
   private val currentPort: Int
     get() = BuiltInServerManager.getInstance().port
@@ -86,7 +84,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
       if (!OAuthUtils.checkBuiltinPortValid()) return
 
       val oauthLink = getOauthLink(redirectUri)
-      createAuthorizationListener(*postLoginActions)
+      initiateAuthorizationListener(*postLoginActions)
       BrowserUtil.browse(oauthLink)
     }
     catch (e: Exception) {
@@ -107,10 +105,8 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
       .build()
   }
 
-  private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
-    authorizationBusConnection.disconnect()
-    authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
+  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+    reconnectAndSubscribe(object : EduLogInListener {
       override fun userLoggedIn() {
         for (action in postLoginActions) {
           action.run()
@@ -119,7 +115,6 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
 
       override fun userLoggedOut() {}
     })
-  }
 
   private fun createCustomServer(): CustomAuthorizationServer {
     return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
@@ -131,7 +126,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
   fun login(code: String): String? {
     return try {
       if (account != null) {
-        ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
+        notifyUserLoggedIn()
         return "You're logged in already"
       }
       val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return null
@@ -140,7 +135,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
       checkiOAccount.userInfo = userInfo
       checkiOAccount.saveTokens(tokenInfo)
       account = checkiOAccount
-      ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
+      notifyUserLoggedIn()
       null
     }
     catch (e: NetworkException) {
@@ -149,10 +144,5 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
     catch (e: ApiException) {
       "Couldn't get user info"
     }
-  }
-
-  companion object {
-    @JvmStatic
-    val AUTHORIZATION_TOPIC: Topic<EduLogInListener> = Topic.create("Edu.checkioUserLoggedIn", EduLogInListener::class.java)
   }
 }

@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 class ImportStepikCourseDialog(courseConnector: CourseConnector) : ImportCourseDialog() {
-  override val coursePanel: ImportCoursePanel = ImportStepikCoursePanel(courseConnector, myDisposable)
+  override val coursePanel: ImportCoursePanel = ImportStepikCoursePanel(courseConnector)
 
   init {
     title = EduCoreBundle.message("dialog.title.start.course", StepikNames.STEPIK)

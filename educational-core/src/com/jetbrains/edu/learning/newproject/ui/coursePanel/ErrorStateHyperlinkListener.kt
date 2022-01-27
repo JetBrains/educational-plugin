@@ -14,9 +14,7 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
@@ -27,8 +25,8 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.browseHyperlink
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
@@ -40,6 +38,13 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
 
     val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? JTextPane) ?: return
     val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane)
+    val postLoginActions = arrayOf(
+      Runnable { coursePanel.hideErrorPanel() },
+      Runnable { coursesPanel?.hideLoginPanel() },
+      Runnable { doValidation(coursePanel) },
+      Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
+    )
+
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
         val course = coursePanel.course as CheckiOCourse
@@ -49,18 +54,12 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
         EduCounterUsageCollector.loggedIn(course.name, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.JetBrainsAcademyLoginNeeded -> {
-        addLoginListener(coursePanel, coursesPanel)
-        HyperskillConnector.getInstance().doAuthorize(
-          Runnable { coursePanel.hideErrorPanel() },
-          Runnable { coursesPanel?.setButtonsEnabled(true) },
-          Runnable { coursesPanel?.hideLoginPanel() },
-          Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
-        )
+        HyperskillConnector.getInstance().doAuthorize(*postLoginActions)
+        EduCounterUsageCollector.loggedIn(EduNames.JBA, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
-        addLoginListener(coursePanel, coursesPanel)
         // TODO: Update course list
-        StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+        StepikConnector.getInstance().doAuthorize(*postLoginActions, ifFailedAction = { EduUtils.showOAuthDialog() })
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
@@ -106,20 +105,6 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { doValidation(coursePanel) }
     )
-  }
-
-  private fun addLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel?) {
-    val connection = ApplicationManager.getApplication().messageBus.connect()
-    connection.subscribe(EduSettings.SETTINGS_CHANGED, object : EduLogInListener {
-      override fun userLoggedOut() {}
-      override fun userLoggedIn() {
-        coursePanel.hideErrorPanel()
-        coursesPanel?.hideLoginPanel()
-        doValidation(coursePanel)
-        connection.disconnect()
-        coursesPanel?.scheduleUpdateAfterLogin()
-      }
-    })
   }
 
   private fun invokeSwitchUILibrary(coursePanel: CoursePanel) {

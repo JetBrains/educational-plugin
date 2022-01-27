@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -23,12 +22,12 @@ class HyperskillOptions : LoginOptions<HyperskillAccount>() {
 
   override fun setCurrentAccount(account: HyperskillAccount?) {
     HyperskillSettings.INSTANCE.account = account
-    val messageBus = ApplicationManager.getApplication().messageBus
+    val connector = HyperskillConnector.getInstance()
     if (account != null) {
-      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedIn()
+      connector.notifyUserLoggedIn()
     }
     else {
-      messageBus.syncPublisher(HyperskillConnector.AUTHORIZATION_TOPIC).userLoggedOut()
+      connector.notifyUserLoggedOut()
     }
   }
 

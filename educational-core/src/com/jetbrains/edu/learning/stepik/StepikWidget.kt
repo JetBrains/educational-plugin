@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.LoginWidget
 import com.jetbrains.edu.learning.actions.SyncStepikCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 
 class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
                                                                EduCoreBundle.message("stepik.widget.title"),
@@ -26,7 +27,9 @@ class StepikWidget(project: Project) : LoginWidget<StepikUser>(project,
   override fun ID() = ID
 
   override fun authorize() {
-    StepikAuthorizer.doAuthorize { EduUtils.showOAuthDialog() }
+    StepikConnector.getInstance().doAuthorize(
+      ifFailedAction = { EduUtils.showOAuthDialog() }
+    )
   }
 
   override fun resetAccount() {

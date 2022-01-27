@@ -7,7 +7,6 @@ import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
@@ -18,7 +17,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.io.URLUtil
-import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
@@ -51,7 +49,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   override val account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
 
-  private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
+  override val authorizationTopicName: String = "Edu.marketplaceLoggedIn"
 
   override val clientId: String = EDU_CLIENT_ID
 
@@ -76,7 +74,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   fun doAuthorize(vararg postLoginActions: Runnable) {
     if (!checkBuiltinPortValid()) return
 
-    createAuthorizationListener(*postLoginActions)
+    initiateAuthorizationListener(*postLoginActions)
     BrowserUtil.browse(HUB_AUTHORISATION_CODE_URL)
   }
 
@@ -93,7 +91,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     account.userInfo = currentUser
     MarketplaceSettings.INSTANCE.account = account
     account.saveTokens(tokenInfo)
-    ApplicationManager.getApplication().messageBus.syncPublisher(AUTHORIZATION_TOPIC).userLoggedIn()
+    notifyUserLoggedIn()
     return true
   }
 
@@ -358,10 +356,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return true
   }
 
-  private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
-    authorizationBusConnection.disconnect()
-    authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-    authorizationBusConnection.subscribe(AUTHORIZATION_TOPIC, object : EduLogInListener {
+  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+    reconnectAndSubscribe(object : EduLogInListener {
       override fun userLoggedOut() {}
 
       override fun userLoggedIn() {
@@ -373,7 +369,6 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
         showLoginSuccessfulNotification(userName)
       }
     })
-  }
 
   /**
    * the following link formats are supported:
@@ -454,9 +449,6 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
-
-    @JvmStatic
-    val AUTHORIZATION_TOPIC = Topic.create("Edu.marketplaceLoggedIn", EduLogInListener::class.java)
 
     @JvmStatic
     fun getInstance(): MarketplaceConnector = service()

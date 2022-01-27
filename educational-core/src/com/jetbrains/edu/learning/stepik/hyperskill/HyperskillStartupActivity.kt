@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -22,7 +21,6 @@ class HyperskillStartupActivity : StartupActivity {
 
   override fun runActivity(project: Project) {
     if (project.isDisposed || !EduUtils.isStudentProject(project) || isUnitTestMode) return
-    val taskManager = StudyTaskManager.getInstance(project)
 
     val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
     val submissionsManager = SubmissionsManager.getInstance(project)
@@ -32,8 +30,7 @@ class HyperskillStartupActivity : StartupActivity {
       submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
     }
     else {
-      val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)
-      busConnection.subscribe(HyperskillConnector.AUTHORIZATION_TOPIC, object : EduLogInListener {
+      HyperskillConnector.getInstance().subscribe(object : EduLogInListener {
         override fun userLoggedIn() {
           if (HyperskillSettings.INSTANCE.account == null) {
             return
