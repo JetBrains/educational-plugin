@@ -1,69 +1,54 @@
-package com.jetbrains.edu.learning.stepik;
+package com.jetbrains.edu.learning.stepik
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.util.text.nullize
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import javax.swing.Action
+import javax.swing.JComponent
 
-import javax.swing.*;
+class OAuthDialog : DialogWrapper(false) {
+  private val loginPanel: AuthorizationPanel = AuthorizationPanel()
 
-public class OAuthDialog extends DialogWrapper {
-  protected final AuthorizationPanel myLoginPanel;
-  private String myProgressTitle;
-
-  public OAuthDialog() {
-    super(false);
-    myLoginPanel = new AuthorizationPanel();
-    myProgressTitle = "Authorizing on Stepik";
-    setTitle("Stepik Authorization");
-    init();
+  init {
+    title = EduCoreBundle.message("authorization.title", StepikNames.STEPIK)
+    init()
   }
 
-  @NotNull
-  protected Action[] createActions() {
-    return new Action[]{getOKAction(), getCancelAction()};
+  override fun createActions(): Array<Action> = arrayOf(okAction, cancelAction)
+
+  override fun createCenterPanel(): JComponent? = loginPanel.contentPanel
+
+  override fun getPreferredFocusedComponent(): JComponent? = loginPanel.preferableFocusComponent
+
+  override fun doOKAction() {
+    val code = loginPanel.code.nullize() ?: return
+
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        val success = EduUtils.execCancelable {
+          StepikConnector.getInstance().login(code, StepikNames.EXTERNAL_REDIRECT_URL)
+        }
+        if (success == true) {
+          doJustOkAction()
+        }
+        else {
+          setError()
+        }
+      }, EduCoreBundle.message("authorizing.on.title", StepikNames.STEPIK), true, null)
   }
 
-  @Override
-  protected JComponent createCenterPanel() {
-    return myLoginPanel.getContentPanel();
+  private fun doJustOkAction() {
+    ApplicationManager.getApplication().invokeLater { super.doOKAction() }
   }
 
-  @Override
-  protected String getHelpId() {
-    return "login_to_stepic";
-  }
-
-  @Override
-  public JComponent getPreferredFocusedComponent() {
-    return myLoginPanel.getPreferableFocusComponent();
-  }
-
-  @Override
-  protected void doOKAction() {
-    String code = myLoginPanel.getCode();
-    if (code == null || code.isEmpty()) return;
-
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-
-      final Boolean success = EduUtils.execCancelable(() -> StepikConnector.getInstance().login(code, StepikNames.EXTERNAL_REDIRECT_URL));
-      if (success != null && success) {
-        doJustOkAction();
-      }
-      else {
-        setError("Login Failed");
-      }
-    }, myProgressTitle, true, null);
-  }
-
-  private void setError(@NotNull String errorText) {
-    ApplicationManager.getApplication().invokeLater(() -> setErrorText(errorText));
-  }
-
-  protected void doJustOkAction() {
-    ApplicationManager.getApplication().invokeLater(() -> super.doOKAction());
+  private fun setError() {
+    ApplicationManager.getApplication().invokeLater {
+      setErrorText(EduCoreBundle.message("error.login.failed"))
+    }
   }
 }
