@@ -109,6 +109,10 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   // Get requests:
 
+  /**
+   * For getting user info from Marketplace, account and access token must not to be passed to
+   * [com.jetbrains.edu.learning.api.EduOAuthConnector.getEndpoints]
+   */
   override fun getUserInfo(account: MarketplaceAccount, accessToken: String?): MarketplaceUserInfo? {
     val token = accessToken ?: return null
     val userId = decodeHubToken(token) ?: return null

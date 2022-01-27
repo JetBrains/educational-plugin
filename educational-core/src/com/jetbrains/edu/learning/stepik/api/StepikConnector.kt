@@ -50,14 +50,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   private val stepikEndpoints: StepikEndpoints
-    get() = stepikEndpoints(account)
-
-  private fun stepikEndpoints(
-    account: StepikUser?,
-    accessToken: String? = account?.getAccessToken()
-  ): StepikEndpoints {
-    return getEndpoints(account, accessToken)
-  }
+    get() = getEndpoints()
 
   // Authorization requests:
 
@@ -94,7 +87,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   // Get requests:
 
   override fun getUserInfo(account: StepikUser, accessToken: String?): StepikUserInfo? {
-    val response = stepikEndpoints(account, accessToken).getCurrentUser().executeHandlingExceptions()
+    val response = getEndpoints<StepikEndpoints>(account, accessToken).getCurrentUser().executeHandlingExceptions()
     return response?.body()?.users?.firstOrNull()
   }
 

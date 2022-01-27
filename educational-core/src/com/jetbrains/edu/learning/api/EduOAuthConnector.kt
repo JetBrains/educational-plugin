@@ -58,9 +58,13 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
       .create(EduOAuthEndpoints::class.java)
   }
 
+  /**
+   * No need to pass any arguments by default, but you need to pass
+   * account and accessToken for [com.jetbrains.edu.learning.api.EduOAuthConnector.getUserInfo]
+   */
   protected inline fun <reified Endpoints> getEndpoints(
-    account: Account? = null,
-    accessToken: String? = null,
+    account: Account? = this.account,
+    accessToken: String? = account?.getAccessToken(),
     baseUrl: String = this.baseUrl
   ): Endpoints {
     if (!isUnitTestMode && account != null && !account.isUpToDate()) {

@@ -52,14 +52,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   }
 
   private val hyperskillEndpoints: HyperskillEndpoints
-    get() = hyperskillEndpoints(account)
-
-  private fun hyperskillEndpoints(
-    account: HyperskillAccount?,
-    accessToken: String? = account?.getAccessToken()
-  ): HyperskillEndpoints {
-    return getEndpoints(account, accessToken)
-  }
+    get() = getEndpoints()
 
   // Authorization requests:
 
@@ -90,7 +83,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   // Get requests:
 
   override fun getUserInfo(account: HyperskillAccount, accessToken: String?): HyperskillUserInfo? {
-    val response = hyperskillEndpoints(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
+    val response = getEndpoints<HyperskillEndpoints>(account, accessToken).getCurrentUserInfo().executeHandlingExceptions()
     return response?.body()?.profiles?.firstOrNull()
   }
 
