@@ -2,11 +2,11 @@ package com.jetbrains.edu.scala.sbt
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.ensureToolWindowInitialized
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -58,7 +58,8 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(projectSettings)
     systemSettings.linkedProjectsSettings = projects
-    ExternalSystemUtil.ensureToolWindowInitialized(project, SbtProjectSystem.Id)
+    // https://youtrack.jetbrains.com/issue/SCL-19909
+    ensureToolWindowInitialized(project, SbtProjectSystem.Id)
   }
 
   companion object {

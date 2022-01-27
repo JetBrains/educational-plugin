@@ -5,7 +5,6 @@ import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUt
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_INTERNAL_JAVA
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
@@ -14,6 +13,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.jetbrains.edu.jvm.ensureToolWindowInitialized
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
@@ -70,7 +70,7 @@ object EduGradleUtils {
     val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(gradleProjectSettings)
     systemSettings.linkedProjectsSettings = projects
-    ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
+    ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
   }
 
   private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
