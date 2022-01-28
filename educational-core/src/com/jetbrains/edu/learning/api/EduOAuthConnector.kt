@@ -86,7 +86,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     return response?.body() ?: error("Failed to refresh tokens")
   }
 
-  protected fun refreshTokens() {
+  protected open fun refreshTokens() {
     val currentAccount = account ?: return
     val tokens = getNewTokens()
     currentAccount.tokenExpiresIn = tokens.expiresIn

@@ -39,7 +39,7 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
     return getSecret(getUserName(), serviceNameForRefreshToken)
   }
 
-  fun saveTokens(tokenInfo: TokenInfo) {
+  open fun saveTokens(tokenInfo: TokenInfo) {
     val userName = getUserName()
     PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForAccessToken), Credentials(userName, tokenInfo.accessToken))
     PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForRefreshToken), Credentials(userName, tokenInfo.refreshToken))
@@ -68,6 +68,8 @@ class TokenInfo {
   var accessToken: String = ""
   @JsonProperty("refresh_token")
   var refreshToken: String = ""
+  @JsonProperty("id_token")
+  var idToken: String = ""
   @JsonProperty("expires_in")
   @JsonDeserialize(using = ExpiresDeserializer::class)
   var expiresIn: Long = -1

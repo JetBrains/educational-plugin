@@ -9,6 +9,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import org.jetbrains.annotations.TestOnly
@@ -51,12 +52,34 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
   constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
 
   private val serviceNameForJwtToken @NlsSafe get() = "$servicePrefix jwt token"
+  private val serviceNameForHubIdToken @NlsSafe get() = "$servicePrefix hub id token"
+  private val serviceNameForJBAccountToken @NlsSafe get() = "$servicePrefix jb account id token"
 
   @NlsSafe
   override val servicePrefix: String = MARKETPLACE
 
   override fun getUserName(): String {
     return userInfo.getFullName()
+  }
+
+  override fun saveTokens(tokenInfo: TokenInfo) {
+    super.saveTokens(tokenInfo)
+
+    val userName = getUserName()
+    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForHubIdToken), Credentials(userName, tokenInfo.idToken))
+  }
+
+  fun getHubIdToken(): String? {
+    return getSecret(getUserName(), serviceNameForHubIdToken)
+  }
+
+  fun getJBAccountToken(): String? {
+    return getSecret(getUserName(), serviceNameForJBAccountToken)
+  }
+
+  fun saveJBAccountToken(jBAccountToken: String) {
+    val userName = getUserName()
+    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForJBAccountToken), Credentials(userName, jBAccountToken))
   }
 
   fun saveJwtToken(jwtToken: String) {

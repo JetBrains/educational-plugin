@@ -28,6 +28,7 @@ import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
@@ -69,6 +70,10 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   private val repositoryEndpoints: MarketplaceRepositoryEndpoints
     get() = getEndpoints(baseUrl = repositoryUrl)
 
+  private val extensionGrantsEndpoint: MarketplaceExtensionGrantsEndpoints
+    get() = getEndpoints(baseUrl = JB_ACCOUNT_URL)
+
+
   // Authorization requests:
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
@@ -79,9 +84,9 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   }
 
   fun login(code: String): Boolean {
-    val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
-    val account = MarketplaceAccount(tokenInfo.expiresIn)
-    val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false
+    val hubTokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
+    val account = MarketplaceAccount(hubTokenInfo.expiresIn)
+    val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return false
     if (currentUser.isGuest) {
       // it means that session is broken, so we should force user to re-login
       LOG.warn("User ${currentUser.name} is anonymous")
@@ -89,10 +94,38 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
       return false
     }
     account.userInfo = currentUser
+
+    // Hub token and JBA token both have expiresIn times, which are of the same duration.
+    // We keep the hub token expiresIn interval as the shortest one.
+    val jBAccountTokenInfo = retrieveJBAccountToken(hubTokenInfo.idToken)
+    if (jBAccountTokenInfo == null) {
+      LOG.error("Failed to obtain JBA token via extension grants")
+      return false
+    }
+
     MarketplaceSettings.INSTANCE.account = account
-    account.saveTokens(tokenInfo)
+    account.saveTokens(hubTokenInfo)
+    account.saveJBAccountToken(jBAccountTokenInfo.idToken)
     notifyUserLoggedIn()
     return true
+  }
+
+  private fun retrieveJBAccountToken(hubIdToken: String?): TokenInfo? {
+    if (hubIdToken.isNullOrEmpty()) {
+      LOG.error("Failed to obtain JB account token via extension grants. Hub id token is null")
+      return null
+    }
+    val response = extensionGrantsEndpoint.exchangeTokens(TOKEN_EXCHANGE, hubIdToken).executeHandlingExceptions()
+    return response?.body()
+  }
+
+  override fun refreshTokens() {
+    super.refreshTokens()
+
+    val currentAccount = account ?: error("No logged in user")
+    val jBAccountToken = retrieveJBAccountToken(currentAccount.getHubIdToken()) ?: error(
+      "Failed to obtain JB account token via extension grants at token refresh")
+    currentAccount.saveJBAccountToken(jBAccountToken.idToken)
   }
 
   override fun getNewTokens(): TokenInfo {
@@ -449,8 +482,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     private val HUB_AUTHORISATION_CODE_URL: String
       get() = "${HUB_AUTH_URL}oauth2/auth?" +
               "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +
-              "client_id=${EDU_CLIENT_ID}&scope=$0-0-0-0-0%20${EDU_CLIENT_ID}%20${MARKETPLACE_CLIENT_ID}&access_type=offline"
-
+              "client_id=$EDU_CLIENT_ID&scope=openid%20$EDU_CLIENT_ID%20$MARKETPLACE_CLIENT_ID&access_type=offline"
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
