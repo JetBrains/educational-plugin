@@ -225,6 +225,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            || localTask.choiceOptions != remoteTask.choiceOptions
            || localTask.messageIncorrect != remoteTask.messageIncorrect
            || localTask.messageCorrect != remoteTask.messageCorrect
+           || localTask.quizHeader != remoteTask.quizHeader
   }
 
   private fun taskFilesChanged(task: Task, remoteTask: Task): Boolean {

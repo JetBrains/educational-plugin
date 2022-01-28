@@ -149,12 +149,14 @@ class StudentYamlSerializationTest : EduTestCase() {
   fun `test choice task`() {
     val task: ChoiceTask = courseWithFiles {
       lesson {
-        choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT))
+        choiceTask(
+          choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+          status = CheckStatus.Solved,
+          selectedVariants = mutableListOf(1)
+        )
       }
     }.findTask("lesson1", "task1") as ChoiceTask
-    task.status = CheckStatus.Solved
     task.record = 1
-    task.selectedVariants = mutableListOf(1)
 
     doTest(task, """
     |type: choice
@@ -166,6 +168,39 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  is_correct: false
     |message_correct: Congratulations!
     |message_incorrect: Incorrect solution
+    |status: Solved
+    |record: 1
+    |selected_options:
+    |- 1
+    |""".trimMargin())
+  }
+
+  fun `test choice task with custom messages`() {
+    val task: ChoiceTask = courseWithFiles {
+      lesson {
+        choiceTask(
+          name = "task1",
+          isMultipleChoice = true,
+          choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+          quizHeader = "Let's do it!",
+          status = CheckStatus.Solved,
+          selectedVariants = mutableListOf(1)
+        )
+      }
+    }.findTask("lesson1", "task1") as ChoiceTask
+    task.record = 1
+
+    doTest(task, """
+    |type: choice
+    |is_multiple_choice: true
+    |options:
+    |- text: 1
+    |  is_correct: true
+    |- text: 2
+    |  is_correct: false
+    |message_correct: Congratulations!
+    |message_incorrect: Incorrect solution
+    |quiz_header: Let's do it!
     |status: Solved
     |record: 1
     |selected_options:

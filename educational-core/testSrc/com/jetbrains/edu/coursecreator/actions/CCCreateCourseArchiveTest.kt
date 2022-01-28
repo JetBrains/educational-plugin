@@ -364,6 +364,21 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test course with choice with customized messages`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        choiceTask(isMultipleChoice = true,
+                   choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+                   quizHeader = "Come on! You can do it!",
+        ) {
+          taskFile("task.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    doTest()
+  }
+
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {

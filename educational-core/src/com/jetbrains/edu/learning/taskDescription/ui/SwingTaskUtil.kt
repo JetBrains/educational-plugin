@@ -25,52 +25,55 @@ fun Task?.createSpecificPanel(): JPanel? {
   return choiceTask.createSpecificPanel()
 }
 
-private fun ChoiceTask.createSpecificPanel(): JPanel {
-  val jPanel = NonOpaquePanel(VerticalFlowLayout())
-  jPanel.border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
+private fun ChoiceTask.createSpecificPanel(): JPanel =
+  NonOpaquePanel(VerticalFlowLayout())
+    .apply {
+      border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
+    }
+    .addBox(this, isMultipleChoice)
 
-  val isEnabled = status != CheckStatus.Failed
+
+private fun NonOpaquePanel.addBox(task: ChoiceTask, isMultipleChoice: Boolean): NonOpaquePanel {
   if (isMultipleChoice) {
-    val text = JLabel(MULTIPLE_CHOICE_LABEL, SwingConstants.LEFT).apply {
-      isOpaque = false
-    }
-    jPanel.add(text)
-
-    for ((index, option) in choiceOptions.withIndex()) {
-      val checkBox = createCheckBox(option.text, index, this, isEnabled)
-      jPanel.add(checkBox)
-    }
+    addSpecificBox(task) { JCheckBox(it) }
   }
   else {
-    val text = JLabel(SINGLE_CHOICE_LABEL, SwingConstants.LEFT).apply {
-      isOpaque = false
-    }
-    jPanel.add(text)
-
-    val group = ButtonGroup()
-    for ((index, option) in choiceOptions.withIndex()) {
-      val checkBox = createRadioButton(option.text, index, group, this, isEnabled)
-      jPanel.add(checkBox)
-    }
+    addSpecificBox(task, ButtonGroup()) { JRadioButton(it) }
   }
-  return jPanel
+  return this
 }
 
-private fun createCheckBox(variant: String?, index: Int, task: ChoiceTask, isEnabled: Boolean): JCheckBox {
-  val checkBox = JCheckBox(variant).apply { isOpaque = false }
-  checkBox.isSelected = task.selectedVariants.contains(index)
-  checkBox.addItemListener(createListener(task, index))
-  checkBox.isEnabled = isEnabled
-  return checkBox
+private fun <Button : JToggleButton> NonOpaquePanel.addSpecificBox(
+  task: ChoiceTask,
+  group: ButtonGroup? = null,
+  createBox: (str: String) -> Button
+) {
+  createTopicForSpecificPanel(task.quizHeader)
+  val isEnabled = task.status != CheckStatus.Failed
+  for ((index, option) in task.choiceOptions.withIndex()) {
+    val box = createBox(option.text).createButton(index, task, enabled = isEnabled, opaque = false, group)
+    add(box)
+  }
 }
 
-private fun createRadioButton(variant: String, index: Int, group: ButtonGroup, task: ChoiceTask, isEnabled: Boolean): JRadioButton {
-  val button = JRadioButton(variant).apply { isOpaque = false }
-  button.isSelected = task.selectedVariants.contains(index)
-  button.addItemListener(createListener(task, index))
-  button.isEnabled = isEnabled
-  group.add(button)
-  return button
+private fun NonOpaquePanel.createTopicForSpecificPanel(message: String) {
+  val text = JLabel(message, SwingConstants.LEFT).apply { isOpaque = false }
+  add(text)
+}
+
+private fun <Button : JToggleButton> Button.createButton(
+  index: Int,
+  task: ChoiceTask,
+  enabled: Boolean,
+  opaque: Boolean,
+  group: ButtonGroup? = null
+): Button {
+  isOpaque = opaque
+  isSelected = task.selectedVariants.contains(index)
+  addItemListener(createListener(task, index))
+  isEnabled = enabled
+  group?.add(this)
+  return this
 }
 
 private fun createListener(task: ChoiceTask, index: Int): ItemListener {

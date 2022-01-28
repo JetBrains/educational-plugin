@@ -13,9 +13,6 @@ import org.apache.commons.lang.text.StrSubstitutor
 import org.jsoup.Jsoup
 import java.io.File
 
-const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
-const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
-
 fun htmlWithResources(project: Project, content: String): String {
   val templateText = loadText("/style/template.html.ft")
   val textWithResources = StrSubstitutor(StyleManager.resources(content)).replace(templateText) ?: "Cannot load task text"

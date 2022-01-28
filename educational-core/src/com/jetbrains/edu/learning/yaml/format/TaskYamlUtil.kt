@@ -83,6 +83,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
       existingItem.choiceOptions = deserializedItem.choiceOptions
       existingItem.messageCorrect = deserializedItem.messageCorrect
       existingItem.messageIncorrect = deserializedItem.messageIncorrect
+      existingItem.quizHeader = deserializedItem.quizHeader
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
     hideOldPlaceholdersForOpenedFiles(project, existingItem)

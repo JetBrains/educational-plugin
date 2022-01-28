@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_INCORRECT
@@ -19,11 +20,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, FILES, FEEDBACK_LINK, TAGS)
+@JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, QUIZ_HEADER, FILES, FEEDBACK_LINK, TAGS)
 abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(IS_MULTIPLE_CHOICE)
@@ -37,6 +39,21 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(FEEDBACK_INCORRECT)
   private var messageIncorrect: String = ""
+
+  @JsonProperty(QUIZ_HEADER)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = QuizHeaderFilter::class)
+  private var quizHeader: String = ""
+}
+
+/**
+ * Not to serialize default quizHeader values
+ */
+@Suppress("EqualsOrHashCode")
+class QuizHeaderFilter {
+  override fun equals(other: Any?): Boolean = (other is String &&
+                                               (other == EduCoreBundle.message("course.creator.create.choice.task.multiple.label") ||
+                                                other == EduCoreBundle.message("course.creator.create.choice.task.single.label")))
+
 }
 
 abstract class ChoiceOptionYamlMixin {

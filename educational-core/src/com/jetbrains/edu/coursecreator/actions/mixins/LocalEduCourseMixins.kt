@@ -79,6 +79,7 @@ import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
+import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
 
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -258,6 +259,10 @@ abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty
   private lateinit var choiceOptions: List<ChoiceOption>
+
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = QuizHeaderFilter::class)
+  @JsonProperty
+  private lateinit var quizHeader: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

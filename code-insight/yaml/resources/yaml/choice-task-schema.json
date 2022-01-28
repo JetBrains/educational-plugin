@@ -50,6 +50,10 @@
       "type": "string",
       "description": "Custom message to be shown to learner in case of incorrect solution (ex. Review how to define a function to solve this task)"
     },
+    "quiz_header": {
+      "type": "string",
+      "description": "Custom header for quiz"
+    },
     "tags": {
       "description": "Tags for content",
       "type": "array",

@@ -101,7 +101,7 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test checkiO mission`() {
     val course = course(courseProducer = ::CheckiOCourse) {
       lesson {
-        mission ("mission") { }
+        mission("mission") { }
       }
     }
 
@@ -845,6 +845,38 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
 
     Locale.setDefault(defaultLocale)
+  }
+
+  fun `test course with choice tasks`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        choiceTask(
+          name = "task1",
+          isMultipleChoice = true,
+          choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+          quizHeader = "Let's do it!",
+        ) {
+          taskFile("task.txt")
+        }
+      }
+    }.findTask("lesson1", "task1")
+
+    doTest(task, """
+      |type: choice
+      |is_multiple_choice: true
+      |options:
+      |- text: 1
+      |  is_correct: true
+      |- text: 2
+      |  is_correct: false
+      |message_correct: Congratulations!
+      |message_incorrect: Incorrect solution
+      |quiz_header: Let's do it!
+      |files:
+      |- name: task.txt
+      |  visible: true
+      |
+    """.trimMargin())
   }
 
   private fun doTest(item: StudyItem, expected: String) {

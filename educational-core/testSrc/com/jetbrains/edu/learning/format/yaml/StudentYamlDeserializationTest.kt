@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
@@ -238,6 +239,34 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
+    assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+  }
+
+  fun `test deserialize choice task with custom messages variants`() {
+    val yamlContent = """
+    |type: choice
+    |is_multiple_choice: false
+    |options:
+    |- text: 1
+    |  is_correct: true
+    |- text: 2
+    |  is_correct: false
+    |message_correct: Congratulations!
+    |message_incorrect: Incorrect solution
+    |quiz_header: I am a topic
+    |status: Solved
+    |record: 1
+    |selected_options:
+    |- 1
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is ChoiceTask)
+    assertEquals(CheckStatus.Solved, task.status)
+    assertEquals(1, task.record)
+    assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
+    assertEquals("I am a topic", task.quizHeader)
+    assertEquals("Congratulations!", task.messageCorrect)
+    assertEquals("Incorrect solution", task.messageIncorrect)
   }
 
   fun `test video task sources`() {

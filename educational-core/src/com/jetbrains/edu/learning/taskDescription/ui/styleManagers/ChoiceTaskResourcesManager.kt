@@ -13,8 +13,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
-import com.jetbrains.edu.learning.taskDescription.ui.MULTIPLE_CHOICE_LABEL
-import com.jetbrains.edu.learning.taskDescription.ui.SINGLE_CHOICE_LABEL
 import kotlinx.css.*
 import kotlinx.css.properties.*
 
@@ -26,19 +24,12 @@ object ChoiceTaskResourcesManager {
 
   // because task object is inserted after html is loaded
   private fun getResources(task: ChoiceTask): Map<String, Any> = mapOf(
-    "text" to task.getChoiceLabel(),
+    "text" to task.quizHeader,
     "selected_variants" to task.selectedVariants,
     "choice_options" to Gson().toJson(task.choiceOptions.map { it.text }),
     "is_multiple_choice" to task.isMultipleChoice,
     "is_disabled" to (task.status == CheckStatus.Failed && task.isChangedOnFailed)
   )
-
-  private fun ChoiceTask.getChoiceLabel() = if (isMultipleChoice) {
-    MULTIPLE_CHOICE_LABEL
-  }
-  else {
-    SINGLE_CHOICE_LABEL
-  }
 
   fun getText(task: ChoiceTask): String = if (task.choiceOptions.isNotEmpty()) {
     GeneratorUtils.getInternalTemplateText(CHOICE_TASK_TEMPLATE, getResources(task))

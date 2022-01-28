@@ -61,6 +61,7 @@ object YamlMixinNames {
   const val FEEDBACK_CORRECT = "message_correct"
   const val FEEDBACK_INCORRECT = "message_incorrect"
   const val SELECTED_OPTIONS = "selected_options"
+  const val QUIZ_HEADER = "quiz_header"
 
   // data task
   const val ATTEMPT = "attempt"
