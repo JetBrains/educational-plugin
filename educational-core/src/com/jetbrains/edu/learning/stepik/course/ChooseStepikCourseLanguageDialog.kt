@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.stepik.StepikLanguage
+import com.jetbrains.edu.learning.EduLanguage
 import javax.swing.JComponent
 
-class ChooseStepikCourseLanguageDialog(languages: List<StepikLanguage>, name: String) : DialogWrapper(false) {
+class ChooseStepikCourseLanguageDialog(languages: List<EduLanguage>, name: String) : DialogWrapper(false) {
     private val panel: ChooseStepikCourseLanguagePanel = ChooseStepikCourseLanguagePanel(languages, name)
 
     override fun createCenterPanel(): JComponent? = panel.constructMainPanel()
@@ -14,5 +14,5 @@ class ChooseStepikCourseLanguageDialog(languages: List<StepikLanguage>, name: St
         init()
     }
 
-    fun selectedLanguage(): StepikLanguage = panel.selectedLanguage
+    fun selectedLanguage(): EduLanguage = panel.selectedLanguage
 }

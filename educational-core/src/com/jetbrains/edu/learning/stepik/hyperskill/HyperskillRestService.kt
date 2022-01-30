@@ -153,7 +153,12 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       if (!dialog.showAndGet()) {
         return@invokeAndWaitIfNeeded Err("You should select language to open the problem")
       }
-      Ok(dialog.selectedLanguage().requestLanguage)
+      val eduLanguage = dialog.selectedLanguage()
+      val language = HyperskillLanguages.getRequestLanguage(eduLanguage.id)
+      if (language == null) {
+        return@invokeAndWaitIfNeeded Err("Language isn't found")
+      }
+      Ok(language)
     }
   }
 

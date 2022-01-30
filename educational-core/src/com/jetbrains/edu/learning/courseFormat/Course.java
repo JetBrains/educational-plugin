@@ -4,6 +4,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.EducationalCoreIcons;
+import com.jetbrains.edu.learning.EduLanguage;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.actions.CheckAction;
@@ -161,14 +162,9 @@ public abstract class Course extends LessonContainer {
     this.description = description;
   }
 
-  @Nullable
-  public Language getLanguageById() {
-    return Language.findLanguageByID(getLanguageID());
-  }
-
   /**
    * This method is needed to serialize language and its version as one property
-   * Consider using {@link #getLanguageID()} and {@link #getLanguageVersion()} methods instead
+   * Consider using {@link #getEduLanguage()} {@link #getLanguageID()} and {@link #getLanguageVersion()} methods instead
    */
   public String getLanguage() {
     return myProgrammingLanguage;
@@ -178,28 +174,33 @@ public abstract class Course extends LessonContainer {
     myProgrammingLanguage = language;
   }
 
+  @NotNull
+  private EduLanguage getEduLanguage() {
+    return EduLanguage.get(myProgrammingLanguage);
+  }
+
+  @NotNull
+  public String getLanguageID() {
+    return getEduLanguage().getId();
+  }
+
+  @Nullable
+  public String getLanguageVersion() {
+    final String version = getEduLanguage().getVersion();
+    return (!version.isEmpty()) ? version : null;
+  }
+
+  @Nullable
+  public Language getLanguageById() {
+    return getEduLanguage().getLanguage();
+  }
+
   public boolean getSolutionsHidden() {
     return solutionsHidden;
   }
 
   public void setSolutionsHidden(boolean solutionsHidden) {
     this.solutionsHidden = solutionsHidden;
-  }
-
-  public String getLanguageID() {
-    return myProgrammingLanguage.split(" ")[0];
-  }
-
-  @Nullable
-  public String getLanguageVersion() {
-    if (!myProgrammingLanguage.contains(" ")) {
-      return null;
-    }
-    int languageVersionStartIndex = myProgrammingLanguage.indexOf(" ");
-    if (languageVersionStartIndex == myProgrammingLanguage.length() - 1) {
-      return null;
-    }
-    return myProgrammingLanguage.substring(languageVersionStartIndex + 1);
   }
 
   public void setAuthors(List<UserInfo> authors) {
