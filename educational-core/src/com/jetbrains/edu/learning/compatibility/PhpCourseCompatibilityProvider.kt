@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.compatibility
 
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import javax.swing.Icon
 
