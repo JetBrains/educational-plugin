@@ -97,7 +97,11 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
     // Hub token and JBA token both have expiresIn times, which are of the same duration.
     // We keep the hub token expiresIn interval as the shortest one.
-    val jBAccountTokenInfo = retrieveJBAccountToken(hubTokenInfo.idToken)
+    val jBAccountTokenInfo = if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) {
+      retrieveJBAccountToken(hubTokenInfo.idToken)
+    }
+    else TokenInfo()
+
     if (jBAccountTokenInfo == null) {
       LOG.error("Failed to obtain JBA token via extension grants")
       return false
