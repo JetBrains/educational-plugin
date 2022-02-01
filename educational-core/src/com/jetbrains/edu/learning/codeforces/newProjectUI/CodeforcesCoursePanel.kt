@@ -13,22 +13,27 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.DEFAULT_TERMS_OF_AGREEMENT
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TERMS_OF_AGREEMENT
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
+import com.jetbrains.edu.learning.codeforces.api.RegistrationCompleted
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
+import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Font
 import java.net.URL
 import java.time.format.DateTimeFormatter
 import javax.swing.JComponent
-import javax.swing.JScrollPane
-import javax.swing.JTextPane
+import javax.swing.JPanel
+import javax.swing.JSeparator
 import javax.swing.SwingConstants
 
 private const val EM_DASH = "\u2014"
@@ -79,25 +84,6 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     }
   }
 
-  private fun registerFromIDE(id: Int, registrationLink: String) {
-    val connector = CodeforcesConnector.getInstance()
-    val (csrfToken, termsOfAgreement) = connector.getRegistrationData(id)
-    if (termsOfAgreement != null) {
-      if (TermsOfAgreementDialog(termsOfAgreement).showAndGet()) {
-        if (connector.registerToContest(id, csrfToken)) {
-          Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
-                                   EduCoreBundle.message("codeforces.contest.registration"))
-          return
-        }
-      }
-      else {
-        return
-      }
-    }
-    Messages.showErrorDialog(EduCoreBundle.message("codeforces.registration.failed", registrationLink),
-                             EduCoreBundle.message("codeforces.contest.registration.failed"))
-  }
-
   override fun createCourseDetailsPanel(): NonOpaquePanel {
     return ContestDetailsPanel()
   }
@@ -135,6 +121,26 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     else {
       BrowserUtil.browse(URL(registrationLink))
     }
+  }
+
+  private fun registerFromIDE(id: Int, registrationLink: String) {
+    val connector = CodeforcesConnector.getInstance()
+    val registrationData = connector.getRegistrationData(id)
+    if (registrationData is RegistrationCompleted) {
+      if (TermsOfAgreementDialog(registrationData.termsOfAgreement, registrationLink,
+                                 registrationData.isTeamRegistrationAvailable).showAndGet()) {
+        if (connector.registerToContest(id, registrationData.token)) {
+          Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
+                                   EduCoreBundle.message("codeforces.contest.registration"))
+          return
+        }
+      }
+      else {
+        return
+      }
+    }
+    Messages.showErrorDialog(EduCoreBundle.message("codeforces.registration.failed", registrationLink),
+                             EduCoreBundle.message("codeforces.contest.registration.failed"))
   }
 }
 
@@ -290,22 +296,35 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
   }
 }
 
-private class TermsOfAgreementDialog(private val termsOfAgreement: String) : DialogWrapper(false) {
+private class TermsOfAgreementDialog(private val termsOfAgreement: String,
+                                     private val registrationLink: String,
+                                     private val isTeamRegistrationAvailable: Boolean) : DialogWrapper(false) {
   init {
     title = EduCoreBundle.message("codeforces.contest.registration")
-    setOKButtonText("Register")
+    setOKButtonText(EduCoreBundle.message("codeforces.register.as.individual"))
     init()
   }
 
   override fun createCenterPanel(): JComponent? {
+    val text = if (termsOfAgreement == DEFAULT_TERMS_OF_AGREEMENT) TERMS_OF_AGREEMENT else termsOfAgreement.replace("\n", "<br>")
     return panel {
-      row(EduCoreBundle.message("codeforces.terms.of.agreement")) {
-        JScrollPane(JTextPane().apply {
-          text = termsOfAgreement
-        }).apply {
-          preferredSize = JBUI.size(550, 250)
-        }()
+      row() {
+        EduHyperlinkLabel(text)()
       }
-    }
+    }.withBorder(JBUI.Borders.empty(0, 10))
   }
+
+  override fun createNorthPanel(): JComponent? {
+    if (!isTeamRegistrationAvailable) return super.createNorthPanel()
+    val jPanel = JPanel(BorderLayout())
+    jPanel.border = JBUI.Borders.empty(6, 16)
+    val jbLabel = EduHyperlinkLabel(EduCoreBundle.message("codeforces.team.registration.notice", registrationLink))
+    jbLabel.alignmentX = Component.CENTER_ALIGNMENT
+    jbLabel.border = JBUI.Borders.empty(0, 0, 12, 16)
+    val jSeparator = JSeparator()
+    jPanel.add(jbLabel, BorderLayout.CENTER)
+    jPanel.add(jSeparator, BorderLayout.SOUTH)
+    return jPanel
+  }
+
 }

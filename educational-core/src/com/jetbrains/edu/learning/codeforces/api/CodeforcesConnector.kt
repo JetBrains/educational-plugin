@@ -42,6 +42,7 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 abstract class CodeforcesConnector {
   @VisibleForTesting
   val objectMapper: ObjectMapper
@@ -330,22 +331,27 @@ abstract class CodeforcesConnector {
 
   /**
    * Get mandatory data for contest registration
-   * returns a pair of CSRF token and TermsOfAgreement text
+   * returns RegistrationData: CSRF token, TermsOfAgreement text and team registration ability
    */
-  fun getRegistrationData(contestId: Int): Pair<String, String?> {
-    val account = CodeforcesSettings.getInstance().account ?: return "" to null
+  fun getRegistrationData(contestId: Int): RegistrationData {
+    val account = CodeforcesSettings.getInstance().account ?: return RegistrationFailed()
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
-      return "" to null
+      return RegistrationFailed()
     }
-    val jSessionID = account.getSessionId() ?: return "" to null
+    val jSessionID = account.getSessionId() ?: return RegistrationFailed()
 
-    val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID").executeParsingErrors().onError { return "" to null }
-    registrationPage.body() ?: return "" to null
+    val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
+      .executeParsingErrors()
+      .onError { return RegistrationFailed() }
+    registrationPage.body() ?: return RegistrationFailed()
     val doc = Jsoup.parse(registrationPage.body()?.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
-    val text = doc.getElementsByClass("terms").firstOrNull()?.text()
+    val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return RegistrationFailed()
 
-    return csrfToken to text
+    //TODO: find out how to recognize team registration
+    val isTeamRegistrationAvailable = false
+
+    return RegistrationCompleted(csrfToken, text, isTeamRegistrationAvailable)
   }
 
   /**
