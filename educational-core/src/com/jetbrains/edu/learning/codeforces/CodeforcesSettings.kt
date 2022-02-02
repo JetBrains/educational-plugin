@@ -17,6 +17,8 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jdom.Element
@@ -39,26 +41,28 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
             Messages.getCancelButton(),
             AllIcons.General.QuestionDialog) == Messages.OK) {
           field = value
-          handleLogin()
+          updateCheckPanel()
           ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedOut()
         }
       }
       else {
         field = value
-        handleLogin()
+        updateCheckPanel()
         ApplicationManager.getApplication().messageBus.syncPublisher(AUTHENTICATION_TOPIC).userLoggedIn()
       }
     }
 
-  private fun handleLogin() {
-    val openProjects = ProjectManager.getInstance().openProjects
-    if (openProjects.isNotEmpty()) {
-      val project = openProjects[0]
-      val task = EduUtils.getCurrentTask(project)
-      if (task != null) {
-        ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(project).updateCheckPanel(task) }
+  private fun updateCheckPanel() {
+    ProjectManager.getInstance().openProjects
+      .filter { !it.isDisposed }
+      .forEach {
+        if (it.course is CodeforcesCourse) {
+          val task = EduUtils.getCurrentTask(it)
+          if (task != null) {
+            ApplicationManager.getApplication().invokeLater { TaskDescriptionView.getInstance(it).updateCheckPanel(task) }
+          }
+        }
       }
-    }
   }
 
   override fun getState(): Element? {
