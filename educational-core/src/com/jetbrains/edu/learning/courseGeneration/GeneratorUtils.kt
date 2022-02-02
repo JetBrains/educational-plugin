@@ -285,8 +285,8 @@ object GeneratorUtils {
 
   @JvmStatic
   @JvmOverloads
-  fun getJ2eeTemplateText(templateName: String, templateVariables: Map<String, Any> = emptyMap()): String =
-    FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).getText(templateVariables)
+  fun getJ2eeTemplateText(templateName: String): String =
+    FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).text
 
   @Throws(IOException::class)
   fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
