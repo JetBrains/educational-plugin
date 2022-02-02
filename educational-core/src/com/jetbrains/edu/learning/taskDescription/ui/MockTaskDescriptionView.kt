@@ -19,7 +19,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun updateTaskDescription() {}
   override fun updateAdditionalTaskTabs(task: Task?) {}
   override fun updateTab(tabType: TabType) {}
-  override fun addLoadingPanel(platformName: String) {}
+  override fun showLoadingSubmissionsPanel(platformName: String) {}
 
   override fun readyToCheck() {}
   override fun checkStarted(task: Task, startSpinner: Boolean) {}

@@ -25,7 +25,7 @@ abstract class TaskDescriptionView {
   abstract fun updateTaskDescription()
   abstract fun updateAdditionalTaskTabs(task: Task? = null)
   abstract fun updateTab(tabType: TabType)
-  abstract fun addLoadingPanel(platformName: String)
+  abstract fun showLoadingSubmissionsPanel(platformName: String)
 
   abstract fun readyToCheck()
   abstract fun checkStarted(task: Task, startSpinner: Boolean = false)

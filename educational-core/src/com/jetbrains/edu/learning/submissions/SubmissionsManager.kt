@@ -114,7 +114,7 @@ class SubmissionsManager(private val project: Project) {
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     val taskDescriptionView = TaskDescriptionView.getInstance(project)
-    taskDescriptionView.addLoadingPanel(getPlatformName())
+    taskDescriptionView.showLoadingSubmissionsPanel(getPlatformName())
 
     if (!isUnitTestMode) {
       ApplicationManager.getApplication().executeOnPooledThread {

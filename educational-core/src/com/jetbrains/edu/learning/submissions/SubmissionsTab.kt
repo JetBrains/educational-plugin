@@ -14,10 +14,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.SolutionFile
@@ -43,6 +41,9 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
     init()
   }
 
+  private val panel: SwingTextPanel
+    get() = innerTextPanel as SwingTextPanel
+
   override fun update(task: Task) {
     if (!task.supportSubmissions()) return
 
@@ -65,11 +66,16 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       customLinkHandler = LoginLinkHandler(project, submissionsManager)
     }
 
-    (innerTextPanel as SwingTextPanel).updateLinkHandler(customLinkHandler)
+    panel.apply {
+      hideLoadingSubmissionsPanel()
+      updateLinkHandler(customLinkHandler)
+    }
     setText(descriptionText.toString())
   }
 
   override fun createTextPanel(): TabTextPanel = SwingTextPanel(project)
+
+  fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
 
   companion object {
     private const val SUBMISSION_PROTOCOL = "submission://"

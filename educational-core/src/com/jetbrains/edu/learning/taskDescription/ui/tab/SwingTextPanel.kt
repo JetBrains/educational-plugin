@@ -19,15 +19,17 @@ import javax.swing.JTextPane
 
 
 class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? = null) : TabTextPanel(project) {
-  private val textPane: JTextPane = createTextPane()
   private var currentLinkHandler: SwingToolWindowLinkHandler? = null
+
+  private val textPane: JTextPane = createTextPane()
+  private val textPanel: JBScrollPane = JBScrollPane(textPane)
 
   override val component: JComponent = textPane
 
   init {
-    val scrollPane = JBScrollPane(textPane)
-    scrollPane.border = JBUI.Borders.empty()
-    add(scrollPane, BorderLayout.CENTER)
+    textPanel.border = JBUI.Borders.empty()
+    add(textPanel, BorderLayout.CENTER)
+
     updateLinkHandler(linkHandler)
   }
 
@@ -46,15 +48,30 @@ class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? 
     currentLinkHandler = linkHandler
   }
 
-  fun addLoadingSubmissionsPanel(platformName: String) {
+  fun showLoadingSubmissionsPanel(platformName: String) {
     removeAll()
-    val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
-    val iconPanel = JPanel(FlowLayout(FlowLayout.LEADING))
-    iconPanel.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
-    iconPanel.add(asyncProcessIcon)
-    setTabText("<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}")
-    iconPanel.add(textPane)
-    add(iconPanel, BorderLayout.CENTER)
+    val loadingPanel = createLoadingPanel(platformName)
+    add(loadingPanel)
     revalidate()
+  }
+
+  fun hideLoadingSubmissionsPanel() {
+    removeAll()
+    add(textPanel)
+    revalidate()
+  }
+
+  private fun createLoadingPanel(platformName: String): JPanel {
+    val loadingPanel = JPanel(FlowLayout(FlowLayout.LEADING))
+    val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
+    val loadingTextPane: JTextPane = createTextPane().apply {
+      text = "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}"
+    }
+    loadingPanel.apply {
+      background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+      add(asyncProcessIcon)
+      add(loadingTextPane)
+    }
+    return loadingPanel
   }
 }
