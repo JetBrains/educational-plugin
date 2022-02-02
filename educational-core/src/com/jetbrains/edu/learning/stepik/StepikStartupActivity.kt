@@ -32,28 +32,28 @@ class StepikStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsManager.submissionsSupported()) return
 
-    val updateChecker = StepikUpdateChecker.getInstance(project)
     if (EduSettings.getInstance().user != null) {
       submissionsManager.prepareSubmissionsContent {
         loadSolutionsFromStepik(project, course)
       }
     }
-    else {
-      StepikConnector.getInstance().subscribe(object : EduLogInListener {
-        override fun userLoggedIn() {
-          if (!EduSettings.isLoggedIn()) return
 
-          submissionsManager.prepareSubmissionsContent {}
-          if (!course.isStepikPublic) {
-            updateChecker.check()
-          }
+    val updateChecker = StepikUpdateChecker.getInstance(project)
+    StepikConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {
+      override fun userLoggedIn() {
+        if (project.isDisposed) return
+        submissionsManager.prepareSubmissionsContent()
+        if (!course.isStepikPublic) {
+          updateChecker.check()
         }
+      }
 
-        override fun userLoggedOut() {
-          TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
-        }
-      })
-    }
+      override fun userLoggedOut() {
+        if (project.isDisposed) return
+        TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
+      }
+    })
+
     updateChecker.check()
     val currentUser = EduSettings.getInstance().user
     if (currentUser == null) {

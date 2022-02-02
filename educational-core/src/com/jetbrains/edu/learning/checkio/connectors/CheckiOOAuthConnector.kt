@@ -20,8 +20,6 @@ import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.RestService
 
 abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiOUserInfo>() {
-  override val authorizationTopicName: String = "Edu.checkioUserLoggedIn"
-
   override val authorizationUrl: String
     get() = URIBuilder(CHECKIO_URL)
       .setPath("/oauth/authorize/")

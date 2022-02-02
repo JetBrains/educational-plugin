@@ -53,8 +53,6 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
       MarketplaceSettings.INSTANCE.account = account
     }
 
-  override val authorizationTopicName: String = "Edu.marketplaceLoggedIn"
-
   override val authorizationUrl: String
     get() = URIBuilder(HUB_AUTH_URL)
       .setPath("$HUB_API_PATH/oauth2/auth")
@@ -404,20 +402,15 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return true
   }
 
-  // Will be unified after EDU-4871 is being fixed
-  override fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
-    reconnectAndSubscribe(object : EduLogInListener {
-      override fun userLoggedOut() {}
-
-      override fun userLoggedIn() {
-        for (action in postLoginActions) {
-          action.run()
-        }
-        runInEdt { requestFocus() }
-        val userName = account?.userInfo?.getFullName() ?: return
-        showLoginSuccessfulNotification(userName)
-      }
-    })
+  override fun setPostLoginActions(vararg postLoginActions: Runnable) {
+    val requestFocus = Runnable { runInEdt { requestFocus() } }
+    val showNotification = Runnable {
+      val userName = account?.userInfo?.getFullName() ?: return@Runnable
+      showLoginSuccessfulNotification(userName)
+    }
+    val actions = listOf(*postLoginActions, requestFocus, showNotification).toTypedArray()
+    super.setPostLoginActions(*actions)
+  }
 
   /**
    * the following link formats are supported:

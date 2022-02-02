@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning
 
 interface EduLogInListener {
-  fun userLoggedIn()
-  fun userLoggedOut()
+  fun userLoggedIn() {}
+  fun userLoggedOut() {}
 }

@@ -27,22 +27,22 @@ class HyperskillStartupActivity : StartupActivity {
     if (!submissionsManager.submissionsSupported()) return
 
     if (HyperskillSettings.INSTANCE.account != null) {
-      submissionsManager.prepareSubmissionsContent { HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground() }
+      submissionsManager.prepareSubmissionsContent {
+        HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+      }
     }
-    else {
-      HyperskillConnector.getInstance().subscribe(object : EduLogInListener {
-        override fun userLoggedIn() {
-          if (HyperskillSettings.INSTANCE.account == null) {
-            return
-          }
-          submissionsManager.prepareSubmissionsContent()
-        }
+    HyperskillConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {
+      override fun userLoggedIn() {
+        if (project.isDisposed) return
+        submissionsManager.prepareSubmissionsContent()
+      }
 
-        override fun userLoggedOut() {
-          TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
-        }
-      })
-    }
+      override fun userLoggedOut() {
+        if (project.isDisposed) return
+        TaskDescriptionView.getInstance(project).updateTab(SUBMISSIONS_TAB)
+      }
+    })
+
     synchronizeTopics(project, course)
     HyperskillCourseUpdateChecker.getInstance(project).check()
   }

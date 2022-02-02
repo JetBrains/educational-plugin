@@ -43,8 +43,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
       HyperskillSettings.INSTANCE.account = account
     }
 
-  override val authorizationTopicName: String = "Edu.hyperskillLoggedIn"
-
   override val authorizationUrl: String
     get() {
       val url = URIBuilder(HYPERSKILL_URL)

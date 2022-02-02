@@ -2,12 +2,8 @@ package com.jetbrains.edu.learning.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
-import com.intellij.util.messages.MessageBus
-import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
@@ -25,22 +21,12 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.IOException
 import java.util.regex.Pattern
 
-abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> : Disposable {
+abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
   @get:Transient
   @set:Transient
   protected abstract var account: Account?
 
-  private val applicationMessageBus: MessageBus = ApplicationManager.getApplication().messageBus
-
   protected abstract val authorizationUrl: String
-
-  private var authorizationMessageBus = applicationMessageBus.connect()
-
-  protected abstract val authorizationTopicName: String
-
-  private val authorizationTopic by lazy {
-    Topic.create(authorizationTopicName, EduLogInListener::class.java)
-  }
 
   protected abstract val baseUrl: String
 
@@ -60,6 +46,14 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     JacksonConverterFactory.create(objectMapper)
   }
 
+  @get: Synchronized
+  @set: Synchronized
+  private var postLoginActions: Array<out Runnable>? = null
+
+  @get: Synchronized
+  @set: Synchronized
+  private var submissionTabListener: EduLogInListener? = null
+
   open val serviceName: String by lazy {
     "${EduNames.EDU_PREFIX}/${platformName.toLowerCase()}"
   }
@@ -73,24 +67,28 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   open fun doAuthorize(vararg postLoginActions: Runnable) {
     if (!OAuthUtils.checkBuiltinPortValid()) return
 
-    initiateAuthorizationListener(*postLoginActions)
+    setPostLoginActions(*postLoginActions)
     BrowserUtil.browse(authorizationUrl)
   }
 
-  protected open fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
-    reconnectAndSubscribe(object : EduLogInListener {
-      override fun userLoggedIn() {
-        for (action in postLoginActions) {
-          action.run()
-        }
-      }
-
-      override fun userLoggedOut() {}
-    })
-
   abstract fun login(code: String): Boolean
 
-  override fun dispose() = authorizationMessageBus.disconnect()
+  /**
+   * @param postLoginActions - actions to be happened after successful authorization
+   * this could be actions to update some UI e.x. to hide panels with login offering messages
+   * on every doAuthorize call these actions are being rewritten
+   */
+  protected open fun setPostLoginActions(vararg postLoginActions: Runnable) {
+    this.postLoginActions = postLoginActions
+  }
+
+  /**
+   * @param logInListener - listener to update submissions list and
+   * [com.jetbrains.edu.learning.submissions.SubmissionsTab]
+   */
+  fun setSubmissionTabListener(logInListener: EduLogInListener) {
+    submissionTabListener = logInListener
+  }
 
   fun getCurrentUserInfo(): SpecificUserInfo? {
     val currentAccount = account ?: return null
@@ -177,26 +175,18 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.setUser
    */
-  fun notifyUserLoggedIn() = applicationMessageBus.syncPublisher(authorizationTopic).userLoggedIn()
+  fun notifyUserLoggedIn() {
+    postLoginActions?.forEach {
+      it.run()
+    }
+    submissionTabListener?.userLoggedIn()
+  }
 
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.setUser
    */
-  fun notifyUserLoggedOut() = applicationMessageBus.syncPublisher(authorizationTopic).userLoggedOut()
-
-  fun subscribe(eduLogInListener: EduLogInListener) {
-    authorizationMessageBus.subscribe(authorizationTopic, eduLogInListener)
-  }
-
-  /**
-   * Drops existing log in listeners and add new one
-   */
-  fun reconnectAndSubscribe(eduLogInListener: EduLogInListener) {
-    authorizationMessageBus.disconnect()
-    authorizationMessageBus = applicationMessageBus.connect()
-    subscribe(eduLogInListener)
-  }
+  fun notifyUserLoggedOut() = submissionTabListener?.userLoggedOut()
 
   companion object {
     @JvmStatic
