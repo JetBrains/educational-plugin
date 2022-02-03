@@ -87,7 +87,7 @@ class StepikCoursesPanel(
         EduCoreBundle.message("stepik.auth.required.message", StepikNames.STEPIK),
         EduCoreBundle.message("course.dialog.log.in.to.title", StepikNames.STEPIK),
         EduCoreBundle.message("stepik.log.in.dialog.ok"),
-        EduCoreBundle.message("dialog.cancel"),
+        Messages.getCancelButton(),
         null
       )
 
