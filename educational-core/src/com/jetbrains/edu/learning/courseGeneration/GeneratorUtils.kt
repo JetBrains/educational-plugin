@@ -284,7 +284,6 @@ object GeneratorUtils {
     FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName).getText(templateVariables)
 
   @JvmStatic
-  @JvmOverloads
   fun getJ2eeTemplateText(templateName: String): String =
     FileTemplateManager.getDefaultInstance().getJ2eeTemplate(templateName).text
 
