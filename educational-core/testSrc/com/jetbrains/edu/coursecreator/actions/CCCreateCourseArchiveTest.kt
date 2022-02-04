@@ -369,6 +369,8 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       lesson {
         choiceTask(isMultipleChoice = true,
                    choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+                   messageCorrect = "You are good!",
+                   messageIncorrect = "You are not good!",
                    quizHeader = "Come on! You can do it!",
         ) {
           taskFile("task.txt")

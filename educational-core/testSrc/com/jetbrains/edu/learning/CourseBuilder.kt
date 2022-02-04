@@ -238,6 +238,8 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     isMultipleChoice: Boolean = false,
     selectedVariants: MutableList<Int> = mutableListOf(),
     status: CheckStatus = CheckStatus.Unchecked,
+    messageCorrect: String? = null,
+    messageIncorrect: String? = null,
     quizHeader: String? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
@@ -248,6 +250,8 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     choiceTask.selectedVariants = selectedVariants
     choiceTask.status = status
     quizHeader?.also {choiceTask.quizHeader = it }
+    messageCorrect?.also {choiceTask.messageCorrect = it }
+    messageIncorrect?.also {choiceTask.messageIncorrect = it }
   }
 
   fun stringTask(

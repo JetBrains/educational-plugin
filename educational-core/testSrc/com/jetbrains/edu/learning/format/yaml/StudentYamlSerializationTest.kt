@@ -166,8 +166,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  is_correct: true
     |- text: 2
     |  is_correct: false
-    |message_correct: Congratulations!
-    |message_incorrect: Incorrect solution
     |status: Solved
     |record: 1
     |selected_options:
@@ -182,6 +180,8 @@ class StudentYamlSerializationTest : EduTestCase() {
           name = "task1",
           isMultipleChoice = true,
           choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+          messageCorrect = "You are genius!",
+          messageIncorrect = "Try more",
           quizHeader = "Let's do it!",
           status = CheckStatus.Solved,
           selectedVariants = mutableListOf(1)
@@ -198,8 +198,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  is_correct: true
     |- text: 2
     |  is_correct: false
-    |message_correct: Congratulations!
-    |message_incorrect: Incorrect solution
+    |message_correct: You are genius!
+    |message_incorrect: Try more
     |quiz_header: Let's do it!
     |status: Solved
     |record: 1

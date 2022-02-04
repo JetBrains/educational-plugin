@@ -78,6 +78,8 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYP
 import com.jetbrains.edu.learning.serialization.TrueValueFilter
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
+import com.jetbrains.edu.learning.yaml.format.FeedbackCorrectFilter
+import com.jetbrains.edu.learning.yaml.format.FeedbackIncorrectFilter
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
 
@@ -259,6 +261,14 @@ abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty
   private lateinit var choiceOptions: List<ChoiceOption>
+
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = FeedbackCorrectFilter::class)
+  @JsonProperty
+  private lateinit var messageCorrect: String
+
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = FeedbackIncorrectFilter::class)
+  @JsonProperty
+  private lateinit var messageIncorrect: String
 
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = QuizHeaderFilter::class)
   @JsonProperty

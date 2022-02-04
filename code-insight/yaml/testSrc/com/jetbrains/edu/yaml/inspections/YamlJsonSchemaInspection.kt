@@ -133,8 +133,6 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
       |- text: 2
       |  is_correct: false
       |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>
-      |message_correct: Congratulations!
-      |message_incorrect: Incorrect solution
       |files:
       |- name: Test.java
       |  <warning descr="Schema validation: Property 'wrong_property' is not allowed">wrong_property: prop</warning>

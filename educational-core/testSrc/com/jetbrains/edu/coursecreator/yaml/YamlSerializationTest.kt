@@ -332,8 +332,6 @@ class YamlSerializationTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |message_correct: Congratulations!
-      |message_incorrect: Incorrect solution
       |files:
       |- name: Test.java
       |  visible: true
@@ -354,8 +352,6 @@ class YamlSerializationTest : YamlTestCase() {
       |options:
       |- text: 1
       |- text: 2
-      |message_correct: Congratulations!
-      |message_incorrect: Incorrect solution
       |files:
       |- name: Test.java
       |  visible: true
@@ -854,6 +850,8 @@ class YamlSerializationTest : YamlTestCase() {
           name = "task1",
           isMultipleChoice = true,
           choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT),
+          messageCorrect = "You are genius!",
+          messageIncorrect = "Try more",
           quizHeader = "Let's do it!",
         ) {
           taskFile("task.txt")
@@ -869,8 +867,8 @@ class YamlSerializationTest : YamlTestCase() {
       |  is_correct: true
       |- text: 2
       |  is_correct: false
-      |message_correct: Congratulations!
-      |message_incorrect: Incorrect solution
+      |message_correct: You are genius!
+      |message_incorrect: Try more
       |quiz_header: Let's do it!
       |files:
       |- name: task.txt

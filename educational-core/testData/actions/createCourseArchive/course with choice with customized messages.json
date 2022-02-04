@@ -20,6 +20,8 @@
             }
           ],
           "isMultipleChoice" : true,
+          "messageCorrect" : "You are good!",
+          "messageIncorrect" : "You are not good!",
           "quizHeader" : "Come on! You can do it!",
           "name" : "task1",
           "files" : {

@@ -35,14 +35,35 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
   private lateinit var choiceOptions: List<ChoiceOption>
 
   @JsonProperty(FEEDBACK_CORRECT)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = FeedbackCorrectFilter::class)
   private var messageCorrect: String = ""
 
   @JsonProperty(FEEDBACK_INCORRECT)
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = FeedbackIncorrectFilter::class)
   private var messageIncorrect: String = ""
 
   @JsonProperty(QUIZ_HEADER)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = QuizHeaderFilter::class)
   private var quizHeader: String = ""
+}
+
+/**
+ * Not to serialize default feedback_correct values
+ */
+@Suppress("EqualsOrHashCode")
+class FeedbackCorrectFilter {
+  override fun equals(other: Any?): Boolean = (other is String &&
+                                               (other == EduCoreBundle.message("check.correct.solution")))
+
+}
+
+/**
+ * Not to serialize default feedback_incorrect values
+ */
+@Suppress("EqualsOrHashCode")
+class FeedbackIncorrectFilter {
+  override fun equals(other: Any?): Boolean = (other is String &&
+                                               (other == EduCoreBundle.message("check.incorrect.solution")))
 }
 
 /**
@@ -53,7 +74,6 @@ class QuizHeaderFilter {
   override fun equals(other: Any?): Boolean = (other is String &&
                                                (other == EduCoreBundle.message("course.creator.create.choice.task.multiple.label") ||
                                                 other == EduCoreBundle.message("course.creator.create.choice.task.single.label")))
-
 }
 
 abstract class ChoiceOptionYamlMixin {

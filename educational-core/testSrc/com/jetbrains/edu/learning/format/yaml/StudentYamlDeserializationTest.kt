@@ -227,8 +227,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |  is_correct: true
     |- text: 2
     |  is_correct: false
-    |message_correct: Congratulations!
-    |message_incorrect: Incorrect solution
     |status: Solved
     |record: 1
     |selected_options:
@@ -239,6 +237,8 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
+    assertEquals(EduCoreBundle.message("check.correct.solution"), task.messageCorrect)
+    assertEquals(EduCoreBundle.message("check.incorrect.solution"), task.messageIncorrect)
     assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
   }
 
@@ -251,8 +251,8 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |  is_correct: true
     |- text: 2
     |  is_correct: false
-    |message_correct: Congratulations!
-    |message_incorrect: Incorrect solution
+    |message_correct: You are good!
+    |message_incorrect: You are not good!
     |quiz_header: I am a topic
     |status: Solved
     |record: 1
@@ -265,8 +265,8 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
     assertEquals("I am a topic", task.quizHeader)
-    assertEquals("Congratulations!", task.messageCorrect)
-    assertEquals("Incorrect solution", task.messageIncorrect)
+    assertEquals("You are good!", task.messageCorrect)
+    assertEquals("You are not good!", task.messageIncorrect)
   }
 
   fun `test video task sources`() {
