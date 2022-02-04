@@ -54,7 +54,7 @@ public class StepikOptions extends LoginOptions<StepikUser> {
         };
         postLoginActions[1] = () -> updateLoginLabels();
 
-        StepikConnector.getInstance().doAuthorize(postLoginActions, () -> showDialog());
+        StepikConnector.getInstance().doAuthorize(postLoginActions);
       }
 
       private void showDialog() {

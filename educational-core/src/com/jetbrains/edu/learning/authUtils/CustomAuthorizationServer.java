@@ -97,7 +97,7 @@ public class CustomAuthorizationServer {
     // In case of Stepik our redirect_uri is `http://localhost:port`
     // but authorization code request is sent on `http://localhost:port/`
     // So we have to add additional slash
-    final String slashIfNeeded = (platformName.equals(StepikNames.STEPIK) ? "/" : "");
+    final String slashIfNeeded = platformName.equals(StepikNames.STEPIK) ? "/" : "";
 
     final HttpServer newServer = ServerBootstrap.bootstrap()
       .setListenerPort(port)

@@ -63,6 +63,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     objectMapper
   }
 
+  override val platformName: String = MARKETPLACE
+
   protected abstract val repositoryUrl: String
 
   private val marketplaceEndpoints: MarketplaceEndpoints
@@ -81,11 +83,16 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     if (!checkBuiltinPortValid()) return
 
     initiateAuthorizationListener(*postLoginActions)
-    BrowserUtil.browse(HUB_AUTHORISATION_CODE_URL)
+    BrowserUtil.browse(HUB_AUTHORIZATION_CODE_URL)
   }
 
-  fun login(code: String): Boolean {
-    val hubTokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
+  private val HUB_AUTHORIZATION_CODE_URL: String
+    get() = "${HUB_AUTH_URL}oauth2/auth?" +
+            "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(getRedirectUri())}&" +
+            "client_id=$EDU_CLIENT_ID&scope=openid%20$EDU_CLIENT_ID%20$MARKETPLACE_CLIENT_ID&access_type=offline"
+
+  override fun login(code: String): Boolean {
+    val hubTokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = MarketplaceAccount(hubTokenInfo.expiresIn)
     val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return false
     if (currentUser.isGuest) {
@@ -483,10 +490,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     private val MARKETPLACE_CLIENT_ID: String = MarketplaceOAuthBundle.value("marketplaceHubClientId")
     private val EDU_CLIENT_ID: String = MarketplaceOAuthBundle.value("eduHubClientId")
     private val EDU_CLIENT_SECRET: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
-    private val HUB_AUTHORISATION_CODE_URL: String
-      get() = "${HUB_AUTH_URL}oauth2/auth?" +
-              "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(REDIRECT_URI)}&" +
-              "client_id=$EDU_CLIENT_ID&scope=openid%20$EDU_CLIENT_ID%20$MARKETPLACE_CLIENT_ID&access_type=offline"
+
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 

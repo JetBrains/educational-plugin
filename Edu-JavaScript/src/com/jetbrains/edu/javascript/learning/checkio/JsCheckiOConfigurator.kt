@@ -6,7 +6,7 @@ import com.jetbrains.edu.javascript.learning.JsConfigurator
 import com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOTaskCheckerProvider
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames.JS_CHECKIO_API_HOST
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames.JS_CHECKIO_URL
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
@@ -29,7 +29,6 @@ class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
 
   override fun beforeCourseStarted(course: Course) {
     val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector)
-    getCourseFromServerUnderProgress(contentGenerator, course as CheckiOCourse, JsCheckiOSettings.getInstance().account,
-                                     JS_CHECKIO_API_HOST)
+    getCourseFromServerUnderProgress(contentGenerator, course as CheckiOCourse, JsCheckiOSettings.getInstance().account, JS_CHECKIO_URL)
   }
 }

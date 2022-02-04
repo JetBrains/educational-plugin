@@ -6,10 +6,9 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.notification.Notifications
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduLogInListener
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo
@@ -20,11 +19,10 @@ import com.jetbrains.edu.learning.checkio.api.executeHandlingCheckiOExceptions
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
 import com.jetbrains.edu.learning.checkio.notifications.CheckiONotifications.error
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.apache.http.client.utils.URIBuilder
-import org.jetbrains.ide.BuiltInServerManager
+import org.jetbrains.ide.RestService
 import java.net.URI
 
 abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiOUserInfo>() {
@@ -39,30 +37,12 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
 
   override val baseOAuthTokenUrl: String = "oauth/token/"
 
-  protected abstract val oAuthServicePath: String
-
-  protected abstract val platformName: String
-
   override val objectMapper: ObjectMapper by lazy {
     ConnectorUtils.createRegisteredMapper(SimpleModule())
   }
 
-  private val currentPort: Int
-    get() = BuiltInServerManager.getInstance().port
-
-  private val customServer: CustomAuthorizationServer
-    get() {
-      val startedServer = CustomAuthorizationServer.getServerIfStarted(platformName)
-      return startedServer ?: createCustomServer()
-    }
-
-  private val redirectUri: String
-    get() = if (EduUtils.isAndroidStudio()) {
-      customServer.handlingUri
-    }
-    else {
-      """$CHECKIO_OAUTH_REDIRECT_HOST:${currentPort}$oAuthServicePath"""
-    }
+  override val oAuthServicePath: String
+    get() = "/${RestService.PREFIX}/$serviceName"
 
   private val checkiOEndpoints: CheckiOEndpoints
     get() = getEndpoints()
@@ -83,6 +63,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
     try {
       if (!OAuthUtils.checkBuiltinPortValid()) return
 
+      val redirectUri = getRedirectUri()
       val oauthLink = getOauthLink(redirectUri)
       initiateAuthorizationListener(*postLoginActions)
       BrowserUtil.browse(oauthLink)
@@ -116,33 +97,38 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
       override fun userLoggedOut() {}
     })
 
-  private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
-      login(code)
+  @Synchronized
+  override fun login(code: String): Boolean {
+    if (account != null) {
+      notifyUserLoggedIn()
+      return true
     }
+    val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
+    val checkiOAccount = CheckiOAccount(tokenInfo)
+    val userInfo =
+      try {
+        getUserInfo(checkiOAccount, tokenInfo.accessToken)
+      }
+      catch (e: NetworkException) {
+        LOG.warn("Connection failed", e)
+        null
+      }
+      catch (e: ApiException) {
+        LOG.warn("Couldn't get user info", e)
+        null
+      } ?: return false
+
+    checkiOAccount.userInfo = userInfo
+    checkiOAccount.saveTokens(tokenInfo)
+    account = checkiOAccount
+    notifyUserLoggedIn()
+    return true
   }
 
-  @Synchronized
-  fun login(code: String): String? {
-    return try {
-      if (account != null) {
-        notifyUserLoggedIn()
-        return "You're logged in already"
-      }
-      val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return null
-      val checkiOAccount = CheckiOAccount(tokenInfo)
-      val userInfo = getUserInfo(checkiOAccount, tokenInfo.accessToken)
-      checkiOAccount.userInfo = userInfo
-      checkiOAccount.saveTokens(tokenInfo)
-      account = checkiOAccount
-      notifyUserLoggedIn()
-      null
-    }
-    catch (e: NetworkException) {
-      "Connection failed"
-    }
-    catch (e: ApiException) {
-      "Couldn't get user info"
+  companion object {
+    @JvmStatic
+    protected fun getCheckiOServiceName(language: String): String {
+      return listOf(EduNames.EDU_PREFIX, CheckiONames.CHECKIO.toLowerCase(), OAUTH_SUFFIX, language).joinToString("/")
     }
   }
 }

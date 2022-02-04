@@ -31,7 +31,7 @@ class OAuthDialog : DialogWrapper(false) {
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         val success = EduUtils.execCancelable {
-          StepikConnector.getInstance().login(code, StepikNames.EXTERNAL_REDIRECT_URL)
+          StepikConnector.getInstance().login(code)
         }
         if (success == true) {
           doJustOkAction()

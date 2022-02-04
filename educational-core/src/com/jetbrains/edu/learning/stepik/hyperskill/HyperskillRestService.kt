@@ -5,7 +5,6 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
@@ -20,10 +19,8 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.io.send
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
-import java.util.regex.Pattern
 
 class HyperskillRestService : OAuthRestService(HYPERSKILL) {
-  override fun getServiceName(): String = EDU_HYPERSKILL_SERVICE_NAME
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
@@ -50,7 +47,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
-      val code = getStringParameter(CODE, urlDecoder)!! // cannot be null because of pattern
+      val code = getStringParameter(CODE_ARGUMENT, urlDecoder)!! // cannot be null because of pattern
 
       val success = HyperskillConnector.getInstance().login(code)
       if (success) {
@@ -80,6 +77,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
   }
+
+  override fun getServiceName(): String = HyperskillConnector.getInstance().serviceName
 
   private fun withHyperskillAuthorization(userId: Int, action: () -> String?): String? {
     val account = HyperskillSettings.INSTANCE.account
@@ -220,9 +219,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   companion object {
     // Parameters
     @NonNls
-    private const val CODE: String = "code"
-
-    @NonNls
     private const val LANGUAGE: String = "language"
 
     @NonNls
@@ -237,11 +233,10 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     @NonNls
     private const val USER_ID: String = "user_id"
 
-    const val EDU_HYPERSKILL_SERVICE_NAME: String = "$EDU_PREFIX/hyperskill"
-    private val OAUTH_CODE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\?$CODE=(\w+)""")
-    private val OPEN_COURSE_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STAGE_ID=.+&$PROJECT_ID=.+""")
-    private val OPEN_STEP_PATTERN = Pattern.compile("""/api/$EDU_HYPERSKILL_SERVICE_NAME\?$STEP_ID=.+""")
-    private val PLUGIN_INFO = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/info")
+    private val OAUTH_CODE_PATTERN = HyperskillConnector.getInstance().getOAuthPattern()
+    private val OPEN_COURSE_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STAGE_ID=.+&$PROJECT_ID=.+""")
+    private val OPEN_STEP_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STEP_ID=.+""")
+    private val PLUGIN_INFO = HyperskillConnector.getInstance().getServicePattern("/info")
 
     private enum class ReLoginDialogResult(private val result: Int) {
       YES(0), NO(1), CANCEL(-1);

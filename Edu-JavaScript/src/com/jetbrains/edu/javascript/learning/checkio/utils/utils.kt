@@ -6,5 +6,5 @@ import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
 val CheckiOAccount.profileUrl: String
-  get() = "${JsCheckiONames.JS_CHECKIO_API_HOST}${CheckiONames.CHECKIO_USER}${userInfo.username}"
+  get() = "${JsCheckiONames.JS_CHECKIO_URL}${CheckiONames.CHECKIO_USER}${userInfo.username}"
 

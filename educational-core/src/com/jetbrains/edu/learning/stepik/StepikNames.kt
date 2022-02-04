@@ -14,11 +14,8 @@ object StepikNames {
   const val STEPIK_RELEASE_URL = "https://release.stepik.org"
 
   const val PYCHARM_PREFIX = "pycharm"
-  const val EDU_STEPIK_SERVICE_NAME = "edu/stepik"
   const val LINK = "link"
 
-  const val OAUTH_SERVICE_NAME = "edu/stepik/oauth"
-  const val EXTERNAL_REDIRECT_URL = "https://example.com"
   const val PYCHARM_ADDITIONAL = "PyCharm additional materials"
   const val ADDITIONAL_INFO = "additional_files.json"
   const val PLUGIN_NAME = "EduTools"

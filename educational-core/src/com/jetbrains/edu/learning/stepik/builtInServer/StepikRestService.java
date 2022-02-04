@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.stepik.StepikAuthorizer;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
@@ -54,12 +53,10 @@ import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUt
 
 public class StepikRestService extends OAuthRestService {
   private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
-  private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
+  private static final Pattern OPEN_COURSE_PATTERN = StepikConnector.getInstance().getServicePattern("\\?link=.+");
   private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
-  private static final Pattern OAUTH_CODE_PATTERN =
-    Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
-  private static final Pattern OAUTH_ERROR_CODE_PATTERN =
-    Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?error=(\\w+)");
+  private static final Pattern OAUTH_CODE_PATTERN = StepikConnector.getInstance().getOAuthPattern();
+  private static final Pattern OAUTH_ERROR_CODE_PATTERN = StepikConnector.getInstance().getOAuthPattern("\\?error=(\\w+)");
 
   public StepikRestService() {
     super(StepikNames.STEPIK);
@@ -69,12 +66,6 @@ public class StepikRestService extends OAuthRestService {
   private static String log(@NotNull String message) {
     LOG.info(message);
     return message;
-  }
-
-  @NotNull
-  @Override
-  protected String getServiceName() {
-    return StepikNames.EDU_STEPIK_SERVICE_NAME;
   }
 
   @Override
@@ -115,9 +106,9 @@ public class StepikRestService extends OAuthRestService {
 
     Matcher codeMatcher = OAUTH_CODE_PATTERN.matcher(uri);
     if (codeMatcher.matches()) {
-      String code = getStringParameter("code", urlDecoder);
+      String code = getStringParameter(CODE_ARGUMENT, urlDecoder);
       if (code != null) {
-        final boolean success = StepikConnector.getInstance().login(code, StepikAuthorizer.getOAuthRedirectUrl());
+        final boolean success = StepikConnector.getInstance().login(code);
         final StepikUser user = EduSettings.getInstance().getUser();
         if (success && user != null) {
           showOkPage(request, context);
@@ -136,6 +127,11 @@ public class StepikRestService extends OAuthRestService {
     String message = "Unknown command: " + uri;
     LOG.info(message);
     return message;
+  }
+
+  @Override
+  protected @NotNull String getServiceName() {
+    return StepikConnector.getInstance().getServiceName();
   }
 
   @Nullable

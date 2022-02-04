@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.RestService;
@@ -19,6 +20,9 @@ import static com.jetbrains.edu.learning.authUtils.RestServiceUtilsKt.createResp
 public abstract class OAuthRestService extends RestService {
 
   private static final String IS_REST_SERVICES_ENABLED = "Edu.Stepik.RestServicesEnabled";
+
+  @NonNls
+  public static final String CODE_ARGUMENT = "code";
 
   protected final String myPlatformName;
 

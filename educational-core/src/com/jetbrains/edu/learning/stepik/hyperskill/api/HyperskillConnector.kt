@@ -7,10 +7,12 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -51,6 +53,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     StepikConnector.createObjectMapper(module)
   }
 
+  override val serviceName: String = "$EDU_PREFIX/${HYPERSKILL.toLowerCase()}"
+
   private val hyperskillEndpoints: HyperskillEndpoints
     get() = getEndpoints()
 
@@ -60,11 +64,16 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     if (!checkBuiltinPortValid()) return
 
     initiateAuthorizationListener(*postLoginActions)
-    BrowserUtil.browse(AUTHORISATION_CODE_URL)
+    BrowserUtil.browse(AUTHORIZATION_CODE_URL)
   }
 
-  fun login(code: String): Boolean {
-    val tokenInfo = retrieveLoginToken(code, REDIRECT_URI) ?: return false
+  private val AUTHORIZATION_CODE_URL: String
+    get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
+      URLUtil.encodeURIComponent(getRedirectUri())
+    }&grant_type=code&scope=read+write&response_type=code", "login")
+
+  override fun login(code: String): Boolean {
+    val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
     val currentUser = getUserInfo(account, tokenInfo.accessToken) ?: return false
     if (currentUser.isGuest) {
@@ -349,12 +358,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     client.newWebSocket(Request.Builder().url(url).build(), listener)
 
   companion object {
-    private val LOG = Logger.getInstance("com.jetbrains.edu.learning.HyperskillConnector")
+    private val LOG: Logger = logger<HyperskillConnector>()
 
-    private val AUTHORISATION_CODE_URL: String
-      get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
-        URLUtil.encodeURIComponent(REDIRECT_URI)
-      }&grant_type=code&scope=read+write&response_type=code", "login")
     private val CLIENT_ID: String = HyperskillOAuthBundle.value("hyperskillClientId")
     private val CLIENT_SECRET: String = HyperskillOAuthBundle.value("hyperskillClientSecret")
 

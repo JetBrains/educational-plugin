@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
@@ -58,8 +57,7 @@ class StepikCoursesPanel(
   private fun handleLogin() {
     StepikConnector.getInstance().doAuthorize(
       { hideLoginPanel() },
-      { coursePanel.hideErrorPanel() },
-      ifFailedAction = { EduUtils.showOAuthDialog() }
+      { coursePanel.hideErrorPanel() }
     )
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
@@ -94,10 +92,7 @@ class StepikCoursesPanel(
       )
 
       if (result == Messages.OK) {
-        StepikConnector.getInstance().doAuthorize(
-          this@OpenStepikCourseByLink::importCourse,
-          ifFailedAction = { EduUtils.showOAuthDialog() }
-        )
+        StepikConnector.getInstance().doAuthorize(this@OpenStepikCourseByLink::importCourse)
       }
     }
 

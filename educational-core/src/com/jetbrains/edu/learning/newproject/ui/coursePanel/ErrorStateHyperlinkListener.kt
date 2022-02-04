@@ -15,7 +15,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -59,7 +58,7 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
         // TODO: Update course list
-        StepikConnector.getInstance().doAuthorize(*postLoginActions, ifFailedAction = { EduUtils.showOAuthDialog() })
+        StepikConnector.getInstance().doAuthorize(*postLoginActions)
         EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)

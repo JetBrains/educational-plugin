@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -46,9 +45,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
   override fun isLoggedIn(): Boolean = EduSettings.isLoggedIn()
 
   override fun doAuthorize() {
-    StepikConnector.getInstance().doAuthorize(
-      ifFailedAction = { EduUtils.showOAuthDialog() }
-    )
+    StepikConnector.getInstance().doAuthorize()
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.SUBMISSIONS_TAB)
   }
 }

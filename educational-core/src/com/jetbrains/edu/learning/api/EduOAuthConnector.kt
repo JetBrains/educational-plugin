@@ -3,15 +3,24 @@ package com.jetbrains.edu.learning.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.util.Urls
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import okhttp3.ConnectionPool
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.ide.BuiltInServerManager
+import org.jetbrains.ide.RestService
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.IOException
+import java.util.regex.Pattern
 
 abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> : Disposable {
   protected abstract val account: Account?
@@ -36,13 +45,25 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   abstract val objectMapper: ObjectMapper
 
+  protected abstract val platformName: String
+
   protected val connectionPool: ConnectionPool = ConnectionPool()
 
   protected val converterFactory: JacksonConverterFactory by lazy {
     JacksonConverterFactory.create(objectMapper)
   }
 
+  open val serviceName: String by lazy {
+    "${EduNames.EDU_PREFIX}/${platformName.toLowerCase()}"
+  }
+
+  protected open val oAuthServicePath: String by lazy {
+    "/${RestService.PREFIX}/$serviceName/$OAUTH_SUFFIX"
+  }
+
   abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
+
+  abstract fun login(code: String): Boolean
 
   override fun dispose() = authorizationMessageBus.disconnect()
 
@@ -86,6 +107,32 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     return response?.body() ?: error("Failed to refresh tokens")
   }
 
+  @Throws(IOException::class)
+  private fun createCustomServer(): CustomAuthorizationServer {
+    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
+      if (!login(code)) "Failed to login to $platformName" else null
+    }
+  }
+
+  protected open fun getRedirectUri(): String =
+    if (EduUtils.isAndroidStudio()) {
+      val runningServer = CustomAuthorizationServer.getServerIfStarted(platformName)
+      val server = runningServer ?: createCustomServer()
+      server.handlingUri
+    }
+    else {
+      // port is already checked to be valid
+      val currentPort = BuiltInServerManager.getInstance().port
+      Urls.newHttpUrl("localhost:${currentPort}", oAuthServicePath).toString()
+    }
+
+  @JvmOverloads
+  fun getOAuthPattern(suffix: String = """\?$CODE_ARGUMENT=(\w+)"""): Pattern {
+    return "^.*$oAuthServicePath$suffix".toPattern()
+  }
+
+  fun getServicePattern(suffix: String): Pattern = "^.*$serviceName$suffix".toPattern()
+
   protected open fun refreshTokens() {
     val currentAccount = account ?: return
     val tokens = getNewTokens()
@@ -117,5 +164,14 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     authorizationMessageBus.disconnect()
     authorizationMessageBus = applicationMessageBus.connect()
     subscribe(eduLogInListener)
+  }
+
+  companion object {
+    @JvmStatic
+    protected val LOG = Logger.getInstance(EduOAuthConnector::class.java)
+
+    @JvmStatic
+    @NonNls
+    protected val OAUTH_SUFFIX: String = "oauth"
   }
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio.connectors;
 
 import com.jetbrains.edu.learning.authUtils.OAuthRestService;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -21,12 +22,16 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
 
   protected CheckiOOAuthRestService(
     @NotNull String platformName,
-    @NotNull String restServicePath,
     @NotNull CheckiOOAuthConnector oauthConnector
   ) {
     super(platformName);
-    myOAuthCodePattern = Pattern.compile(restServicePath + "\\?code=(\\w+)");
+    myOAuthCodePattern = oauthConnector.getOAuthPattern();
     myOAuthConnector = oauthConnector;
+  }
+
+  @Override
+  protected @NotNull String getServiceName() {
+    return myOAuthConnector.getServiceName();
   }
 
   @Override
@@ -48,18 +53,20 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
     @NotNull ChannelHandlerContext context
   ) throws IOException {
     final String uri = decoder.uri();
+    LOG.info("Request: " + uri);
 
     if (myOAuthCodePattern.matcher(uri).matches()) {
-      final String code = getStringParameter("code", decoder);
+      final String code = getStringParameter(CODE_ARGUMENT, decoder);
       assert code != null; // cannot be null because of pattern
 
       LOG.info(myPlatformName + ": OAuth code is handled");
-      final String errorMessage = myOAuthConnector.login(code);
+      final boolean success = myOAuthConnector.login(code);
 
-      if (errorMessage == null) {
+      if (success) {
         return sendOkResponse(request, context);
       }
       else {
+        final String errorMessage = "Failed to login to " + CheckiONames.CHECKIO;
         return sendErrorResponse(request, context, errorMessage);
       }
     }

@@ -21,6 +21,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -30,9 +31,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
-private val LOG = Logger.getInstance(StepikAuthorizer::class.java)
+private val LOG: Logger = logger<StepikConnector>()
 
 fun setCourseLanguageEnvironment(info: EduCourse) {
   val courseFormat = info.type

@@ -14,7 +14,7 @@ import com.jetbrains.edu.python.learning.PyConfigurator
 import com.jetbrains.edu.python.learning.checkio.checker.PyCheckiOTaskCheckerProvider
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
-import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames.PY_CHECKIO_API_HOST
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames.PY_CHECKIO_URL
 import com.jetbrains.python.PythonFileType
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import javax.swing.Icon
@@ -36,7 +36,7 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
 
   override fun beforeCourseStarted(course: Course) {
     val contentGenerator = CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector)
-    getCourseFromServerUnderProgress(contentGenerator, (course as CheckiOCourse), PyCheckiOSettings.getInstance().account, PY_CHECKIO_API_HOST)
+    getCourseFromServerUnderProgress(contentGenerator, (course as CheckiOCourse), PyCheckiOSettings.getInstance().account, PY_CHECKIO_URL)
   }
 
   override fun getOAuthConnector(): CheckiOOAuthConnector = PyCheckiOOAuthConnector

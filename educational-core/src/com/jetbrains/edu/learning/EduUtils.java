@@ -42,7 +42,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
-import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
@@ -332,11 +331,6 @@ public class EduUtils {
       }
     });
     return taskRef.get();
-  }
-
-  public static void showOAuthDialog() {
-    OAuthDialog dialog = new OAuthDialog();
-    dialog.show();
   }
 
   public static void runUndoableAction(Project project,

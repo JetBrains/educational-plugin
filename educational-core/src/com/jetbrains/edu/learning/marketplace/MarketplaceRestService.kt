@@ -4,7 +4,6 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.util.io.origin
-import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
@@ -24,12 +23,11 @@ import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
 class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
-  override fun getServiceName(): String = EDU_MARKETPLACE_SERVICE_NAME
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
     val uri = request.uri()
-    val isOauthCodeRequest = getStringParameter(CODE, urlDecoder) != null
+    val isOauthCodeRequest = getStringParameter(CODE_ARGUMENT, urlDecoder) != null
     val isOpenCourseRequest = getIntParameter(COURSE_ID, urlDecoder) != -1
     val isErrorRequest = getStringParameter(ERROR, urlDecoder) != null
     val isPluginInfoRequest = uri.contains(INFO)
@@ -46,7 +44,7 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
       return null
     }
 
-    val code = getStringParameter(CODE, urlDecoder)
+    val code = getStringParameter(CODE_ARGUMENT, urlDecoder)
     if (code != null) {
       val success = MarketplaceConnector.getInstance().login(code)
       if (success) {
@@ -71,6 +69,8 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
     sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel())
     return "Unknown command: $uri"
   }
+
+  override fun getServiceName(): String = MarketplaceConnector.getInstance().serviceName
 
   private fun openInIDE(openCourseRequest: MarketplaceOpenCourseRequest,
                         request: FullHttpRequest,
@@ -106,10 +106,8 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
 
   companion object {
     private const val COURSE_ID = "course_id"
-    private const val CODE = "code"
     private const val ERROR = "error"
     private const val INFO = "info"
-    private const val EDU_MARKETPLACE_SERVICE_NAME = "$EDU_PREFIX/marketplace"
     private val JETBRAINS_ORIGIN_PATTERN = Pattern.compile("https://([a-z0-9-]+\\.)*jetbrains.com$")
     private val TRUSTED_ORIGINS = setOf(PLUGINS_REPOSITORY_URL, PLUGINS_EDU_DEMO, PLUGINS_MASTER_DEMO)
   }

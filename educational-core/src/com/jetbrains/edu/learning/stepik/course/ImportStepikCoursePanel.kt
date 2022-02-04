@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
@@ -43,8 +42,7 @@ class ImportStepikCoursePanel(
 
     val connector = StepikConnector.getInstance()
     connector.doAuthorize(
-      { ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any()) },
-      ifFailedAction = { EduUtils.showOAuthDialog() }
+      { ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any()) }
     )
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }

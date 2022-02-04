@@ -12,8 +12,6 @@ object MockCheckiOOAuthConnector : CheckiOOAuthConnector() {
 
   override val clientSecret: String = ""
 
-  override val oAuthServicePath: String = ""
-
   override val platformName: String = ""
 
   override fun getAccessToken(): String = ""

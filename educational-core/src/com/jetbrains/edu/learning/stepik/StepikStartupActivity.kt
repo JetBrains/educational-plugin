@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -68,11 +67,9 @@ class StepikStartupActivity : StartupActivity {
     val statusBar = frame.statusBar ?: return
     val widget = statusBar.getWidget(StepikWidget.ID) as? CustomStatusBarWidget ?: return
     val widgetComponent = widget.component ?: return
-    val redirectUrl = StepikAuthorizer.getOAuthRedirectUrl()
-    val authLnk = StepikAuthorizer.createOAuthLink(redirectUrl)
     val builder = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder("<a href=\"\">Log in</a> to synchronize your study progress", MessageType.INFO, null)
-    builder.setClickHandler({ BrowserUtil.browse(authLnk) }, true)
+    builder.setClickHandler({ StepikConnector.getInstance().doAuthorize() }, true)
     builder.setHideOnClickOutside(true)
     builder.setCloseButtonEnabled(true)
     builder.setHideOnCloseClick(true)

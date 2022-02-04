@@ -18,18 +18,16 @@ public final class CheckiONames {
   @NonNls private static final String CHECKIO_OAUTH_PATH = "/oauth/authorize";
   @NonNls public static final String CHECKIO_OAUTH_URL = CHECKIO_OAUTH_HOST + CHECKIO_OAUTH_PATH;
 
-  @NonNls public static final String CHECKIO_OAUTH_REDIRECT_HOST = "http://localhost";
-  @NonNls public static final String CHECKIO_OAUTH_SERVICE_PREFIX = "/api";
-  @NonNls public static final String CHECKIO_OAUTH_SERVICE_NAME = "edu/checkio/oauth";
-  @NonNls public static final String CHECKIO_OAUTH_SERVICE_PATH = CHECKIO_OAUTH_SERVICE_PREFIX + "/" + CHECKIO_OAUTH_SERVICE_NAME;
   @NonNls public static final String CHECKIO_USER = "/user/";
 
   @NonNls public static final String CHECKIO_TEST_FORM_TARGET_PATH = "/mission/check-html-output";
 
   @NonNls public static final String CHECKIO_HELP = MARKETPLACE_PLUGIN_URL + "/10081-edutools/docs/checkio-integration.html";
 
-  @NonNls public static final String PY_CHECKIO = "Py " + CHECKIO;
-  @NonNls public static final String JS_CHECKIO = "Js " + CHECKIO;
+  @NonNls public static final String PY_CHECKIO_PREFIX = "Py";
+  @NonNls public static final String PY_CHECKIO = PY_CHECKIO_PREFIX+ " " + CHECKIO;
+  @NonNls public static final String JS_CHECKIO_PREFIX = "Js";
+  @NonNls public static final String JS_CHECKIO = JS_CHECKIO_PREFIX + " " + CHECKIO;
 
   @NotNull
   @NonNls

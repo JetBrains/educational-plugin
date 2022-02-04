@@ -8,6 +8,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
@@ -20,12 +21,14 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.apache.http.HttpStatus
+import org.jetbrains.annotations.NonNls
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
@@ -42,6 +45,10 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   override val clientSecret: String = getClientSecret()
 
+  override val oAuthServicePath: String
+    // In case of Stepik and Android Studio our redirect_uri is `http://localhost:port`
+    get() = if (EduUtils.isAndroidStudio()) "" else super.oAuthServicePath
+
   override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
@@ -54,22 +61,28 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Authorization requests:
 
-  fun doAuthorize(vararg postLoginActions: Runnable, ifFailedAction: Runnable? = null) {
+  fun doAuthorize(vararg postLoginActions: Runnable) {
     if (!checkBuiltinPortValid()) return
 
     initiateAuthorizationListener(*postLoginActions)
 
-    val redirectUrl = StepikAuthorizer.getOAuthRedirectUrl()
-    val link = StepikAuthorizer.createOAuthLink(redirectUrl)
-    BrowserUtil.browse(link)
+    val redirectUrl = getRedirectUri()
+    BrowserUtil.browse(AUTHORIZATION_CODE_URL)
 
-    if (ifFailedAction != null && !redirectUrl.startsWith("http://localhost")) {
-      ifFailedAction.run()
+    if (redirectUrl == EXTERNAL_REDIRECT_URL) {
+      val dialog = OAuthDialog()
+      dialog.show()
     }
   }
 
-  fun login(code: String, redirectUri: String): Boolean {
-    val tokenInfo = retrieveLoginToken(code, redirectUri) ?: return false
+  private val AUTHORIZATION_CODE_URL: String
+    get() = "${getStepikUrl()}/oauth2/authorize/" +
+            "?client_id=${getClientId()}" +
+            "&redirect_uri=${URLUtil.encodeURIComponent(getRedirectUri())}" +
+            "&response_type=code"
+
+  override fun login(code: String): Boolean {
+    val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val currentUser = getUserInfo(stepikUser, tokenInfo.accessToken) ?: return false
     if (currentUser.isGuest) {
@@ -82,6 +95,14 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     stepikUser.saveTokens(tokenInfo)
     EduSettings.getInstance().user = stepikUser
     return true
+  }
+
+  override fun getRedirectUri(): String {
+    return try {
+      super.getRedirectUri()
+    } catch (e: IOException) {
+      EXTERNAL_REDIRECT_URL
+    }
   }
 
   // Get requests:
@@ -509,6 +530,9 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   companion object {
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
     private val LOG = Logger.getInstance(StepikConnector::class.java)
+
+    @NonNls
+    private const val EXTERNAL_REDIRECT_URL: String = "https://example.com"
 
     @JvmStatic
     fun getInstance(): StepikConnector = service()
