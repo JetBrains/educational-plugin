@@ -347,9 +347,7 @@ abstract class CodeforcesConnector {
     val doc = Jsoup.parse(registrationPage.body()?.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
     val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return RegistrationFailed()
-
-    //TODO: find out how to recognize team registration
-    val isTeamRegistrationAvailable = false
+    val isTeamRegistrationAvailable = doc.getElementsByAttributeValue("id","takePartAsTeamInput").isNotEmpty()
 
     return RegistrationCompleted(csrfToken, text, isTeamRegistrationAvailable)
   }
