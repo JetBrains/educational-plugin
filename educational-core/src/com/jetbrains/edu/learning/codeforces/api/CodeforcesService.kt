@@ -92,4 +92,9 @@ interface CodeforcesService {
     @Header("Cookie") cookie: String,
     @Field("action") action: String = "formSubmitted",
     @Field("takePartAs") takePartAs: String = "personal"): Call<ResponseBody>
+
+
+  @GET("/contests/{id}")
+  fun getContestRegistrationData(@Path("id") contestId: Int,
+                                 @Header("Cookie") jSessionId: String): Call<ResponseBody>
 }

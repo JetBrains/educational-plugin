@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getLanguages
-import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesAccount
@@ -333,23 +332,23 @@ abstract class CodeforcesConnector {
    * Get mandatory data for contest registration
    * returns RegistrationData: CSRF token, TermsOfAgreement text and team registration ability
    */
-  fun getRegistrationData(contestId: Int): RegistrationData {
-    val account = CodeforcesSettings.getInstance().account ?: return RegistrationFailed()
+  fun getRegistrationData(contestId: Int): ContestRegistration {
+    val account = CodeforcesSettings.getInstance().account ?: return ContestRegistrationError()
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
-      return RegistrationFailed()
+      return ContestRegistrationError()
     }
-    val jSessionID = account.getSessionId() ?: return RegistrationFailed()
+    val jSessionID = account.getSessionId() ?: return ContestRegistrationError()
 
     val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
       .executeParsingErrors()
-      .onError { return RegistrationFailed() }
-    registrationPage.body() ?: return RegistrationFailed()
+      .onError { return ContestRegistrationError() }
+    registrationPage.body() ?: return ContestRegistrationError()
     val doc = Jsoup.parse(registrationPage.body()?.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
-    val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return RegistrationFailed()
+    val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return ContestRegistrationError()
     val isTeamRegistrationAvailable = doc.getElementsByAttributeValue("id","takePartAsTeamInput").isNotEmpty()
 
-    return RegistrationCompleted(csrfToken, text, isTeamRegistrationAvailable)
+    return ContestRegistrationData(csrfToken, text, isTeamRegistrationAvailable)
   }
 
   /**
@@ -358,18 +357,21 @@ abstract class CodeforcesConnector {
   fun registerToContest(contestId: Int, csrfToken: String): Boolean {
     val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
 
-    val response = service.postRegistration(csrfToken, contestId, "JSESSIONID=$jSessionId").executeParsingErrors().onError { return false }
+    val response = service.postRegistration(csrfToken, contestId, "JSESSIONID=$jSessionId")
+      .executeParsingErrors()
+      .onError { return false }
     return response.raw().isSuccessful
   }
 
   fun isUserRegisteredForContest(contestId: Int): Boolean {
     val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
-    val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionId").executeParsingErrors().onError { return false }
-    val redirectUrl = registrationPage.raw().priorResponse()?.headers("location") ?: return false
-    if (redirectUrl.isNotEmpty()) {
-      return redirectUrl[0].startsWith("${CodeforcesNames.CODEFORCES_URL}/profile")
-    }
-    return false
+    val registrationData = service.getContestRegistrationData(contestId, "JSESSIONID=$jSessionId")
+      .executeParsingErrors()
+      .onError { return false }
+
+    registrationData.body() ?: return false
+    val doc = Jsoup.parse(registrationData.body()?.string())
+    return doc.getElementsByClass("welldone").isNotEmpty()
   }
 
   companion object {

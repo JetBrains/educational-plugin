@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TERMS_OF_AGREEMENT
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.api.RegistrationCompleted
+import com.jetbrains.edu.learning.codeforces.api.ContestRegistrationData
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -77,7 +77,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
     if (codeforcesCourse.isRegistrationOpen && !codeforcesCourse.isOngoing) {
       val registrationLink = CodeforcesNames.CODEFORCES_URL + codeforcesCourse.registrationLink
-      register(codeforcesCourse.id, registrationLink)
+      register(codeforcesCourse.id, registrationLink, info)
     }
     else {
       CodeforcesPlatformProvider().joinAction(info, mode, this)
@@ -106,7 +106,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
         isVisible = codeforcesCourse.isRegistrationOpen == true && codeforcesCourse.isOngoing
         setListener(LinkListener { _, course ->
           val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
-          register(codeforcesCourse.id, registrationLink)
+          register(codeforcesCourse.id, registrationLink, courseInfo)
         }, codeforcesCourse)
       }
 
@@ -114,22 +114,23 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     }
   }
 
-  private fun register(contestId: Int, registrationLink: String) {
+  private fun register(contestId: Int, registrationLink: String, courseInfo: CourseInfo) {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
-      registerFromIDE(contestId, registrationLink)
+      registerFromIDE(contestId, registrationLink, courseInfo)
     }
     else {
       BrowserUtil.browse(URL(registrationLink))
     }
   }
 
-  private fun registerFromIDE(id: Int, registrationLink: String) {
+  private fun registerFromIDE(id: Int, registrationLink: String, courseInfo: CourseInfo) {
     val connector = CodeforcesConnector.getInstance()
-    val registrationData = connector.getRegistrationData(id)
-    if (registrationData is RegistrationCompleted) {
-      if (TermsOfAgreementDialog(registrationData.termsOfAgreement, registrationLink,
-                                 registrationData.isTeamRegistrationAvailable).showAndGet()) {
-        if (connector.registerToContest(id, registrationData.token)) {
+    val registration = connector.getRegistrationData(id)
+    if (registration is ContestRegistrationData) {
+      if (TermsOfAgreementDialog(registration.termsOfAgreement, registrationLink,
+                                 registration.isTeamRegistrationAvailable).showAndGet()) {
+        if (connector.registerToContest(id, registration.token)) {
+          content.update(courseInfo, CourseDisplaySettings())
           Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
                                    EduCoreBundle.message("codeforces.contest.registration"))
           return
