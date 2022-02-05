@@ -8,6 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import org.jdom.Element
 
@@ -18,6 +19,12 @@ class HyperskillSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: HyperskillAccount? = null
+    set(account) {
+      field = account
+      HyperskillConnector.getInstance().apply {
+        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
+      }
+    }
 
   var updateAutomatically: Boolean = true
 

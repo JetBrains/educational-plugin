@@ -11,12 +11,9 @@ public final class CheckiONames {
   @NonNls public static final String CHECKIO = "CheckiO";
   @NonNls public static final String CHECKIO_TYPE = CHECKIO;
 
-  @NonNls public static final String HTTPS = "https://";
-  @NonNls public static final String CHECKIO_URL = "checkio.org";
-
-  @NonNls public static final String CHECKIO_OAUTH_HOST = HTTPS + CHECKIO_URL;
-  @NonNls private static final String CHECKIO_OAUTH_PATH = "/oauth/authorize";
-  @NonNls public static final String CHECKIO_OAUTH_URL = CHECKIO_OAUTH_HOST + CHECKIO_OAUTH_PATH;
+  @NonNls private static final String HTTPS = "https://";
+  @NonNls public static final String CHECKIO_HOST = "checkio.org";
+  @NonNls public static final String CHECKIO_URL = HTTPS + CHECKIO_HOST;
 
   @NonNls public static final String CHECKIO_USER = "/user/";
 
@@ -32,12 +29,12 @@ public final class CheckiONames {
   @NotNull
   @NonNls
   public static String getSolutionsLink(@NotNull String languageId, @NotNull String slug) {
-    return HTTPS + languageId + "." + CHECKIO_URL + "/mission/" + slug + "/publications/category/clear";
+    return HTTPS + languageId + "." + CHECKIO_HOST + "/mission/" + slug + "/publications/category/clear";
   }
 
   @NotNull
   @NonNls
   public static String getTaskLink(@NotNull String languageId, @NotNull String humanLanguageId, @NotNull String slug) {
-    return HTTPS + languageId + "." + CHECKIO_URL + "/" + humanLanguageId + "/mission/" + slug;
+    return HTTPS + languageId + "." + CHECKIO_HOST + "/" + humanLanguageId + "/mission/" + slug;
   }
 }

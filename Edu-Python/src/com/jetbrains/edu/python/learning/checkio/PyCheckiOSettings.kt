@@ -6,6 +6,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import org.jdom.Element
 
 private const val serviceName = "PyCheckiOSettings"
@@ -14,6 +15,12 @@ class PyCheckiOSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: CheckiOAccount? = null
+    set(account) {
+      field = account
+      PyCheckiOOAuthConnector.apply {
+        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
+      }
+    }
 
   override fun getState(): Element? {
     return account?.serializeIntoService(serviceName)

@@ -14,12 +14,6 @@ class PyCheckiOOptions : LoginOptions<CheckiOAccount>() {
 
   override fun setCurrentAccount(account: CheckiOAccount?) {
     PyCheckiOSettings.getInstance().account = account
-    if (account != null) {
-      PyCheckiOOAuthConnector.notifyUserLoggedIn()
-    }
-    else {
-      PyCheckiOOAuthConnector.notifyUserLoggedOut()
-    }
   }
 
   override fun createAuthorizeListener(): LoginListener {

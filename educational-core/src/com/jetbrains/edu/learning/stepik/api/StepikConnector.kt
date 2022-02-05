@@ -8,10 +8,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -28,6 +28,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.apache.http.HttpStatus
+import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.annotations.NonNls
 import java.io.BufferedReader
 import java.io.IOException
@@ -36,10 +37,22 @@ import java.net.URL
 abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
   override val platformName: String = StepikNames.STEPIK
 
-  override val account: StepikUser?
+  override var account: StepikUser?
     get() = EduSettings.getInstance().user
+    set(account) {
+      EduSettings.getInstance().user = account
+    }
 
   override val authorizationTopicName: String = "Edu.stepikLoggedIn"
+
+  override val authorizationUrl: String
+    get() = URIBuilder(getStepikUrl())
+      .setPath("/oauth2/authorize/")
+      .addParameter("client_id", getClientId())
+      .addParameter("redirect_uri", getRedirectUri())
+      .addParameter("response_type", CODE_ARGUMENT)
+      .build()
+      .toString()
 
   override val clientId: String = getClientId()
 
@@ -61,25 +74,20 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Authorization requests:
 
-  fun doAuthorize(vararg postLoginActions: Runnable) {
+  override fun doAuthorize(vararg postLoginActions: Runnable) {
     if (!checkBuiltinPortValid()) return
 
     initiateAuthorizationListener(*postLoginActions)
 
     val redirectUrl = getRedirectUri()
-    BrowserUtil.browse(AUTHORIZATION_CODE_URL)
+    BrowserUtil.browse(authorizationUrl)
 
+    // EDU-4767
     if (redirectUrl == EXTERNAL_REDIRECT_URL) {
       val dialog = OAuthDialog()
       dialog.show()
     }
   }
-
-  private val AUTHORIZATION_CODE_URL: String
-    get() = "${getStepikUrl()}/oauth2/authorize/" +
-            "?client_id=${getClientId()}" +
-            "&redirect_uri=${URLUtil.encodeURIComponent(getRedirectUri())}" +
-            "&response_type=code"
 
   override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
@@ -88,12 +96,12 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     if (currentUser.isGuest) {
       // it means that session is broken, so we should force user to re-login
       LOG.warn("User ${currentUser.getFullName()} is anonymous")
-      EduSettings.getInstance().user = null
+      account = null
       return false
     }
     stepikUser.userInfo = currentUser
     stepikUser.saveTokens(tokenInfo)
-    EduSettings.getInstance().user = stepikUser
+    account = stepikUser
     return true
   }
 
@@ -515,17 +523,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
     return null
   }
-
-  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
-    reconnectAndSubscribe(object : EduLogInListener {
-      override fun userLoggedOut() {}
-
-      override fun userLoggedIn() {
-        for (action in postLoginActions) {
-          action.run()
-        }
-      }
-    })
 
   companion object {
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests

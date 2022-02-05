@@ -22,13 +22,6 @@ class HyperskillOptions : LoginOptions<HyperskillAccount>() {
 
   override fun setCurrentAccount(account: HyperskillAccount?) {
     HyperskillSettings.INSTANCE.account = account
-    val connector = HyperskillConnector.getInstance()
-    if (account != null) {
-      connector.notifyUserLoggedIn()
-    }
-    else {
-      connector.notifyUserLoggedOut()
-    }
   }
 
   @Nls

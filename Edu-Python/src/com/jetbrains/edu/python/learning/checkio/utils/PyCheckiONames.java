@@ -1,12 +1,12 @@
 package com.jetbrains.edu.python.learning.checkio.utils;
 
+import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_HOST;
 import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TEST_FORM_TARGET_PATH;
-import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_URL;
 
 public final class PyCheckiONames {
   private PyCheckiONames() {}
 
-  public static final String PY_CHECKIO_URL = "https://py." + CHECKIO_URL;
+  public static final String PY_CHECKIO_URL = "https://py." + CHECKIO_HOST;
 
   public static final String PY_CHECKIO_INTERPRETER = "python-3";
 

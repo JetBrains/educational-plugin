@@ -1,16 +1,19 @@
 package com.jetbrains.edu.learning.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.messages.Topic
+import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
+import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
@@ -23,9 +26,13 @@ import java.io.IOException
 import java.util.regex.Pattern
 
 abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> : Disposable {
-  protected abstract val account: Account?
+  @get:Transient
+  @set:Transient
+  protected abstract var account: Account?
 
   private val applicationMessageBus: MessageBus = ApplicationManager.getApplication().messageBus
+
+  protected abstract val authorizationUrl: String
 
   private var authorizationMessageBus = applicationMessageBus.connect()
 
@@ -63,6 +70,24 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
 
+  open fun doAuthorize(vararg postLoginActions: Runnable) {
+    if (!OAuthUtils.checkBuiltinPortValid()) return
+
+    initiateAuthorizationListener(*postLoginActions)
+    BrowserUtil.browse(authorizationUrl)
+  }
+
+  protected open fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+    reconnectAndSubscribe(object : EduLogInListener {
+      override fun userLoggedIn() {
+        for (action in postLoginActions) {
+          action.run()
+        }
+      }
+
+      override fun userLoggedOut() {}
+    })
+
   abstract fun login(code: String): Boolean
 
   override fun dispose() = authorizationMessageBus.disconnect()
@@ -72,12 +97,11 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     return getUserInfo(currentAccount, currentAccount.getAccessToken())
   }
 
-  private fun getEduOAuthEndpoints(): EduOAuthEndpoints {
-    return createRetrofitBuilder(baseUrl, connectionPool)
+  private fun getEduOAuthEndpoints(): EduOAuthEndpoints =
+    createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool)
       .addConverterFactory(converterFactory)
       .build()
       .create(EduOAuthEndpoints::class.java)
-  }
 
   /**
    * No need to pass any arguments by default, but you need to pass
@@ -92,7 +116,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
       refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl, connectionPool, accessToken)
+    return createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool, accessToken)
       .addConverterFactory(converterFactory)
       .build()
       .create(Endpoints::class.java)
@@ -149,8 +173,16 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   fun isLoggedIn(): Boolean = account != null
 
+  /**
+   * Designed to be called in a single place `*Settings.setAccount` for every platform
+   * @see com.jetbrains.edu.learning.EduSettings.setUser
+   */
   fun notifyUserLoggedIn() = applicationMessageBus.syncPublisher(authorizationTopic).userLoggedIn()
 
+  /**
+   * Designed to be called in a single place `*Settings.setAccount` for every platform
+   * @see com.jetbrains.edu.learning.EduSettings.setUser
+   */
   fun notifyUserLoggedOut() = applicationMessageBus.syncPublisher(authorizationTopic).userLoggedOut()
 
   fun subscribe(eduLogInListener: EduLogInListener) {
@@ -173,5 +205,10 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     @JvmStatic
     @NonNls
     protected val OAUTH_SUFFIX: String = "oauth"
+
+    /**
+     * Retrofit builder needs url to be with trailing slash
+     */
+    protected fun String.withTrailingSlash(): String = if (!endsWith('/')) "$this/" else this
   }
 }

@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.authUtils
 
 import com.google.common.collect.ImmutableMap
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.StreamUtil
 import com.jetbrains.edu.learning.EduNames
@@ -13,6 +15,8 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 object OAuthUtils {
+  private val LOG: Logger = logger<OAuthUtils>()
+
   private const val OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html"
   private const val OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html"
   private const val IDE_NAME = "%IDE_NAME"
@@ -66,7 +70,12 @@ object OAuthUtils {
     val defaultPort = BuiltInServerOptions.DEFAULT_PORT
 
     // 20 port range comes from org.jetbrains.ide.BuiltInServerManagerImplKt.PORTS_COUNT
-    return port in defaultPort..defaultPort + 20
+    val portsRange = defaultPort..defaultPort + 20
+    val isValid = port in portsRange
+    if (!isValid) {
+      LOG.error("Built-in port $port is not valid, because it's outside of default port range $portsRange")
+    }
+    return isValid
   }
 
   private fun showUnsupportedPortError(port: Int) {

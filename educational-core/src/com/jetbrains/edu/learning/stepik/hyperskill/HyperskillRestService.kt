@@ -116,7 +116,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       YES -> {
         // logout
         HyperskillSettings.INSTANCE.account = null
-        HyperskillConnector.getInstance().notifyUserLoggedOut()
 
         // login
         HyperskillConnector.getInstance().doAuthorize(Runnable { action() })

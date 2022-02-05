@@ -29,6 +29,5 @@ class PyCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     PyCheckiOSettings.getInstance().account = null
-    PyCheckiOOAuthConnector.notifyUserLoggedOut()
   }
 }

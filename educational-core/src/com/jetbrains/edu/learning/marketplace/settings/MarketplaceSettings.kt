@@ -8,6 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import org.jdom.Element
 
@@ -18,6 +19,12 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: MarketplaceAccount? = null
+    set(account) {
+      field = account
+      MarketplaceConnector.getInstance().apply {
+        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
+      }
+    }
 
   override fun getState(): Element? {
     val mainElement = Element(serviceName)

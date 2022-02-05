@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
@@ -10,11 +9,10 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.api.EduOAuthConnector
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -31,6 +29,7 @@ import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import okhttp3.*
+import org.apache.http.client.utils.URIBuilder
 import retrofit2.Call
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -38,10 +37,27 @@ import java.util.concurrent.TimeUnit
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
   override val platformName: String = EduNames.JBA
 
-  override val account: HyperskillAccount?
+  override var account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
+    set(account) {
+      HyperskillSettings.INSTANCE.account = account
+    }
 
   override val authorizationTopicName: String = "Edu.hyperskillLoggedIn"
+
+  override val authorizationUrl: String
+    get() {
+      val url = URIBuilder(HYPERSKILL_URL)
+        .setPath("/oauth2/authorize/")
+        .addParameter("client_id", CLIENT_ID)
+        .addParameter("grant_type", CODE_ARGUMENT)
+        .addParameter("redirect_uri", getRedirectUri())
+        .addParameter("response_type", CODE_ARGUMENT)
+        .addParameter("scope", "read write")
+        .build()
+        .toString()
+      return wrapWithUtm(url, "login")
+    }
 
   override val clientId: String = CLIENT_ID
 
@@ -60,18 +76,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   // Authorization requests:
 
-  fun doAuthorize(vararg postLoginActions: Runnable) {
-    if (!checkBuiltinPortValid()) return
-
-    initiateAuthorizationListener(*postLoginActions)
-    BrowserUtil.browse(AUTHORIZATION_CODE_URL)
-  }
-
-  private val AUTHORIZATION_CODE_URL: String
-    get() = wrapWithUtm("${HYPERSKILL_URL}oauth2/authorize/?client_id=$CLIENT_ID&redirect_uri=${
-      URLUtil.encodeURIComponent(getRedirectUri())
-    }&grant_type=code&scope=read+write&response_type=code", "login")
-
   override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)
@@ -79,13 +83,12 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     if (currentUser.isGuest) {
       // it means that session is broken, so we should force user to re-login
       LOG.warn("User ${currentUser.getFullName()} ${currentUser.email} is anonymous")
-      HyperskillSettings.INSTANCE.account = null
+      this.account = null
       return false
     }
     account.userInfo = currentUser
-    HyperskillSettings.INSTANCE.account = account
     account.saveTokens(tokenInfo)
-    notifyUserLoggedIn()
+    this.account = account
     return true
   }
 
@@ -294,17 +297,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     }
     return result
   }
-
-  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
-    reconnectAndSubscribe(object : EduLogInListener {
-      override fun userLoggedOut() {}
-
-      override fun userLoggedIn() {
-        for (action in postLoginActions) {
-          action.run()
-        }
-      }
-    })
 
   fun connectToWebSocketWithTimeout(timeOutSec: Long, url: String, initialState: WebSocketConnectionState): WebSocketConnectionState {
 

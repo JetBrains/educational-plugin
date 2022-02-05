@@ -90,7 +90,12 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   public void setUser(@Nullable final StepikUser user) {
     myUser = user;
-    StepikConnector.getInstance().notifyUserLoggedIn();
+    if (user != null) {
+      StepikConnector.getInstance().notifyUserLoggedIn();
+    }
+    else {
+      StepikConnector.getInstance().notifyUserLoggedOut();
+    }
   }
 
   private JavaUILibrary initialJavaUiLibrary() {

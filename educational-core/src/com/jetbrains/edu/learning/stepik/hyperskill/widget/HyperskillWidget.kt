@@ -32,6 +32,5 @@ class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(projec
 
   override fun resetAccount() {
     HyperskillSettings.INSTANCE.account = null
-    HyperskillConnector.getInstance().notifyUserLoggedOut()
   }
 }

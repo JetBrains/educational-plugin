@@ -34,11 +34,6 @@ public class StepikOptions extends LoginOptions<StepikUser> {
   @Override
   public void setCurrentAccount(@Nullable StepikUser stepikUser) {
     EduSettings.getInstance().setUser(stepikUser);
-    if (stepikUser != null) {
-      StepikConnector.getInstance().notifyUserLoggedIn();
-    } else {
-      StepikConnector.getInstance().notifyUserLoggedOut();
-    }
   }
 
   @NotNull

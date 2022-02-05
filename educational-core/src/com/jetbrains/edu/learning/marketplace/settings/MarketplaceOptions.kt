@@ -12,13 +12,6 @@ class MarketplaceOptions : LoginOptions<MarketplaceAccount>() {
 
   override fun setCurrentAccount(account: MarketplaceAccount?) {
     MarketplaceSettings.INSTANCE.account = account
-    val connector = MarketplaceConnector.getInstance()
-    if (account != null) {
-      connector.notifyUserLoggedIn()
-    }
-    else {
-      connector.notifyUserLoggedOut()
-    }
   }
 
   override fun profileUrl(account: MarketplaceAccount): String = MARKETPLACE_PROFILE_PATH

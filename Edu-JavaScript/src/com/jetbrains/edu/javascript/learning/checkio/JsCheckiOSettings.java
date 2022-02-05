@@ -6,6 +6,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -43,5 +44,10 @@ public class JsCheckiOSettings implements PersistentStateComponent<Element> {
   @Transient
   public void setAccount(@Nullable CheckiOAccount account) {
     myCheckiOAccount = account;
+    if (account != null) {
+      JsCheckiOOAuthConnector.INSTANCE.notifyUserLoggedIn();
+    } else {
+      JsCheckiOOAuthConnector.INSTANCE.notifyUserLoggedOut();
+    }
   }
 }

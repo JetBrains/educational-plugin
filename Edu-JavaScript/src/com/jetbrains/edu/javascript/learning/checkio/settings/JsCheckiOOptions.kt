@@ -14,12 +14,6 @@ class JsCheckiOOptions : LoginOptions<CheckiOAccount>() {
 
   override fun setCurrentAccount(account: CheckiOAccount?) {
     JsCheckiOSettings.getInstance().account = account
-    if (account != null) {
-      JsCheckiOOAuthConnector.notifyUserLoggedIn()
-    }
-    else {
-      JsCheckiOOAuthConnector.notifyUserLoggedOut()
-    }
   }
 
   override fun createAuthorizeListener(): LoginListener {

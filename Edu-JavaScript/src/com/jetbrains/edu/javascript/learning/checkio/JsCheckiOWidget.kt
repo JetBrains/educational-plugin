@@ -29,6 +29,5 @@ class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
 
   override fun resetAccount() {
     JsCheckiOSettings.getInstance().account = null
-    JsCheckiOOAuthConnector.notifyUserLoggedOut()
   }
 }

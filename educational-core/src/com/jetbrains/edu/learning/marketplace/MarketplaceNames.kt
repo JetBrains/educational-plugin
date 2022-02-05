@@ -1,7 +1,8 @@
 package com.jetbrains.edu.learning.marketplace
 
 const val MARKETPLACE = "Marketplace"
-const val HUB_AUTH_URL = "https://hub.jetbrains.com/api/rest/"
+const val HUB_AUTH_URL = "https://hub.jetbrains.com"
+const val HUB_API_PATH = "/api/rest"
 const val JB_ACCOUNT_URL = "https://account.jetbrains.com"
 const val PLUGINS_REPOSITORY_URL = "https://plugins.jetbrains.com"
 const val PLUGINS_EDU_DEMO = "https://edu-courses.dev.marketplace.intellij.net"

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.ide.BrowserUtil
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -17,7 +16,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
-import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
@@ -29,8 +27,8 @@ import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.TOKEN_EXCHANGE
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -40,6 +38,7 @@ import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.apache.http.client.utils.URIBuilder
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
@@ -48,10 +47,24 @@ import java.net.MalformedURLException
 import java.net.URL
 
 abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
-  override val account: MarketplaceAccount?
+  override var account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
+    set(account) {
+      MarketplaceSettings.INSTANCE.account = account
+    }
 
   override val authorizationTopicName: String = "Edu.marketplaceLoggedIn"
+
+  override val authorizationUrl: String
+    get() = URIBuilder(HUB_AUTH_URL)
+      .setPath("$HUB_API_PATH/oauth2/auth")
+      .addParameter("access_type", "offline")
+      .addParameter("client_id", EDU_CLIENT_ID)
+      .addParameter("redirect_uri", getRedirectUri())
+      .addParameter("response_type", CODE_ARGUMENT)
+      .addParameter("scope", "openid $EDU_CLIENT_ID $MARKETPLACE_CLIENT_ID")
+      .build()
+      .toString()
 
   override val clientId: String = EDU_CLIENT_ID
 
@@ -79,18 +92,6 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   // Authorization requests:
 
-  fun doAuthorize(vararg postLoginActions: Runnable) {
-    if (!checkBuiltinPortValid()) return
-
-    initiateAuthorizationListener(*postLoginActions)
-    BrowserUtil.browse(HUB_AUTHORIZATION_CODE_URL)
-  }
-
-  private val HUB_AUTHORIZATION_CODE_URL: String
-    get() = "${HUB_AUTH_URL}oauth2/auth?" +
-            "response_type=code&redirect_uri=${URLUtil.encodeURIComponent(getRedirectUri())}&" +
-            "client_id=$EDU_CLIENT_ID&scope=openid%20$EDU_CLIENT_ID%20$MARKETPLACE_CLIENT_ID&access_type=offline"
-
   override fun login(code: String): Boolean {
     val hubTokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = MarketplaceAccount(hubTokenInfo.expiresIn)
@@ -98,7 +99,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     if (currentUser.isGuest) {
       // it means that session is broken, so we should force user to re-login
       LOG.warn("User ${currentUser.name} is anonymous")
-      MarketplaceSettings.INSTANCE.account = null
+      this.account = null
       return false
     }
     account.userInfo = currentUser
@@ -115,10 +116,9 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
       return false
     }
 
-    MarketplaceSettings.INSTANCE.account = account
+    this.account = account
     account.saveTokens(hubTokenInfo)
     account.saveJBAccountToken(jBAccountTokenInfo.idToken)
-    notifyUserLoggedIn()
     return true
   }
 
@@ -404,7 +404,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return true
   }
 
-  private fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
+  // Will be unified after EDU-4871 is being fixed
+  override fun initiateAuthorizationListener(vararg postLoginActions: Runnable) =
     reconnectAndSubscribe(object : EduLogInListener {
       override fun userLoggedOut() {}
 
