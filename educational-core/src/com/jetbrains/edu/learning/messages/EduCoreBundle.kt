@@ -8,7 +8,6 @@ import java.util.function.Supplier
 const val BUNDLE = "messages.EduCoreBundle"
 
 object EduCoreBundle : EduBundle(BUNDLE) {
-  const val FAILED_TO_CONVERT_TO_STUDENT_FILE = "Failed to convert answer file to student one because placeholder is broken."
 
   @JvmStatic
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
