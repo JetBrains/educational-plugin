@@ -12,7 +12,9 @@ import com.jetbrains.edu.learning.stepik.api.Dataset
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createCodeTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createDataTaskSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createNumberTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStepikSubmission
+import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStringTaskSubmission
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
@@ -113,6 +115,36 @@ class StepikCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
       |  attempt: 123
       |  reply:
       |    file: $answer
+      |    version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for string task`() {
+    val attempt = Attempt().apply { id = 123 }
+    val answer = "answer"
+
+    val submission = createStringTaskSubmission(attempt, answer).toSubmissionData()
+    doTest(submission, """
+      |submission:
+      |  attempt: 123
+      |  reply:
+      |    text: $answer
+      |    version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for number task`() {
+    val attempt = Attempt().apply { id = 123 }
+    val answer = 123.toString()
+
+    val submission = createNumberTaskSubmission(attempt, answer).toSubmissionData()
+    doTest(submission, """
+      |submission:
+      |  attempt: 123
+      |  reply:
+      |    number: $answer
       |    version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())

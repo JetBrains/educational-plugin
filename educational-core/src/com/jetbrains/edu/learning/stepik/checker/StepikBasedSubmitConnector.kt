@@ -100,9 +100,8 @@ object StepikBasedSubmitConnector {
     return connector.postSubmission(submission)
   }
 
-  // will be supported for Stepik in EDU-4763, EDU-4780
   fun submitAnswerTask(project: Project, task: AnswerTask): Result<Submission, String> {
-    val connector = HyperskillConnector.getInstance()
+    val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)
     }

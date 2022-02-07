@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
+import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -23,6 +24,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
+      is AnswerTask -> StepikCheckConnector.checkAnswerTask(project, task)
       is ChoiceTask -> StepikCheckConnector.checkChoiceTask(project, task)
       is CodeTask -> StepikCheckConnector.checkCodeTask(project, task)
       is DataTask -> StepikCheckConnector.checkDataTask(project, task, indicator)

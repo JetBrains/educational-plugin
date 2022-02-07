@@ -11,7 +11,11 @@ import com.jetbrains.edu.learning.ResponseHandler
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.BLOCK
+import com.jetbrains.edu.learning.stepik.PYCHARM
+import com.jetbrains.edu.learning.stepik.SOURCE
+import com.jetbrains.edu.learning.stepik.Step
+import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.OPTIONS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import okhttp3.OkHttpClient
@@ -20,7 +24,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okhttp3.mockwebserver.MockResponse
 
-class MockHyperskillConnector : HyperskillConnector() {
+class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector {
 
   private val helper = MockWebServerHelper(ApplicationManager.getApplication())
 
@@ -28,7 +32,7 @@ class MockHyperskillConnector : HyperskillConnector() {
 
   private var webSocketListener: WebSocketListener? = null
 
-  fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockHyperskillConnector {
+  override fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockHyperskillConnector {
     helper.addResponseHandler(disposable, handler)
     return this
   }

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
 
-class MockStepikConnector : StepikConnector() {
+class MockStepikConnector : StepikConnector(), MockStepikBasedConnector {
 
   private val helper = MockWebServerHelper(ApplicationManager.getApplication())
 
@@ -30,7 +30,7 @@ class MockStepikConnector : StepikConnector() {
     _baseUrl = helper.baseUrl
   }
 
-  fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockStepikConnector {
+  override fun withResponseHandler(disposable: Disposable, handler: ResponseHandler): MockStepikConnector {
     helper.addResponseHandler(disposable, handler)
     return this
   }

@@ -11,8 +11,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -32,7 +31,9 @@ abstract class StepikBasedCheckConnector {
   protected open val remotelyCheckedTasks: Set<Class<out Task>> = setOf(
     ChoiceTask::class.java,
     CodeTask::class.java,
-    DataTask::class.java
+    DataTask::class.java,
+    NumberTask::class.java,
+    StringTask::class.java
   )
 
   fun isRemotelyChecked(task: Task): Boolean = when (task) {
@@ -63,6 +64,23 @@ abstract class StepikBasedCheckConnector {
     }
 
     return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.failed.to.get.check.result.from", connector.platformName))
+  }
+
+  fun checkAnswerTask(project: Project, task: AnswerTask): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+
+    task.validateAnswer(project)?.also {
+      return@checkAnswerTask CheckResult(CheckStatus.Failed, it)
+    }
+
+    val submission = StepikBasedSubmitConnector.submitAnswerTask(project, task).onError { error ->
+      return failedToSubmit(project, task, error)
+    }
+
+    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   abstract fun checkCodeTask(project: Project, task: CodeTask): CheckResult

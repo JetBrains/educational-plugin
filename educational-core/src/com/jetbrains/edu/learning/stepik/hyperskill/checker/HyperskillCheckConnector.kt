@@ -7,7 +7,8 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
@@ -36,8 +37,6 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
   override val remotelyCheckedTasks: Set<Class<out Task>>
     get() = setOf(
       *super.remotelyCheckedTasks.toTypedArray(),
-      NumberTask::class.java,
-      StringTask::class.java,
       RemoteEduTask::class.java,
     )
 
@@ -115,23 +114,6 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
 
       return periodicallyCheckSubmissionResult(project, submission, task)
     }
-  }
-
-  fun checkAnswerTask(project: Project, task: AnswerTask): CheckResult {
-    val checkIdResult = task.checkId()
-    if (checkIdResult != null) {
-      return checkIdResult
-    }
-
-    task.validateAnswer(project)?.also {
-      return@checkAnswerTask CheckResult(CheckStatus.Failed, it)
-    }
-
-    val submission = StepikBasedSubmitConnector.submitAnswerTask(project, task).onError { error ->
-      return failedToSubmit(project, task, error)
-    }
-
-    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   fun checkRemoteEduTask(project: Project, task: RemoteEduTask): CheckResult {
