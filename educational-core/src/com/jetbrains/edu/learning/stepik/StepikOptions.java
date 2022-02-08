@@ -15,58 +15,15 @@
  */
 package com.jetbrains.edu.learning.stepik;
 
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.settings.LoginOptions;
+import com.jetbrains.edu.learning.api.EduOAuthConnector;
+import com.jetbrains.edu.learning.settings.OAuthLoginOptions;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
-
-public class StepikOptions extends LoginOptions<StepikUser> {
-  @Nullable
+public class StepikOptions extends OAuthLoginOptions<StepikUser> {
   @Override
-  public StepikUser getCurrentAccount() {
-    return EduSettings.getInstance().getUser();
-  }
-
-  @Override
-  public void setCurrentAccount(@Nullable StepikUser stepikUser) {
-    EduSettings.getInstance().setUser(stepikUser);
-  }
-
-  @NotNull
-  protected LoginListener createAuthorizeListener() {
-    return new LoginListener() {
-
-      @Override
-      protected void authorize(HyperlinkEvent e) {
-        Runnable[] postLoginActions = new Runnable[2];
-        postLoginActions[0] = () -> {
-          StepikUser user = EduSettings.getInstance().getUser();
-          setLastSavedAccount(user);
-        };
-        postLoginActions[1] = () -> updateLoginLabels();
-
-        StepikConnector.getInstance().doAuthorize(postLoginActions);
-      }
-
-      private void showDialog() {
-        OAuthDialog dialog = new OAuthDialog();
-        if (dialog.showAndGet()) {
-          final StepikUser user = EduSettings.getInstance().getUser();
-          setLastSavedAccount(user);
-          updateLoginLabels();
-        }
-      }
-    };
-  }
-
-  @Nls
-  @Override
-  public String getDisplayName() {
-    return "Stepik";
+  protected @NotNull EduOAuthConnector<StepikUser, ?> getConnector() {
+    return StepikConnector.getInstance();
   }
 
   @NotNull

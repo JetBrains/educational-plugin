@@ -1,31 +1,14 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PROFILE_PATH
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.settings.LoginOptions
-import javax.swing.event.HyperlinkEvent
+import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 
-class MarketplaceOptions : LoginOptions<MarketplaceAccount>() {
-  override fun getCurrentAccount(): MarketplaceAccount? = MarketplaceSettings.INSTANCE.account
-
-  override fun setCurrentAccount(account: MarketplaceAccount?) {
-    MarketplaceSettings.INSTANCE.account = account
-  }
+class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
+  override val connector: EduOAuthConnector<MarketplaceAccount, *>
+    get() = MarketplaceConnector.getInstance()
 
   override fun profileUrl(account: MarketplaceAccount): String = MARKETPLACE_PROFILE_PATH
-
-  override fun createAuthorizeListener(): LoginListener {
-    return object : LoginListener() {
-      override fun authorize(e: HyperlinkEvent?) {
-        MarketplaceConnector.getInstance().doAuthorize(Runnable {
-          lastSavedAccount = getCurrentAccount()
-          updateLoginLabels()
-        })
-      }
-    }
-  }
-
-  override fun getDisplayName(): String = MARKETPLACE
 }

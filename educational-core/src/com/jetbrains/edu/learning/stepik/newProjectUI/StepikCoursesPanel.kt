@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HELP
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -59,9 +59,9 @@ class StepikCoursesPanel(
   private fun handleLogin() {
     StepikConnector.getInstance().doAuthorize(
       { runInEdt(ModalityState.any()) { hideLoginPanel() } },
-      { runInEdt(ModalityState.any()) { coursePanel.hideErrorPanel() } }
+      { runInEdt(ModalityState.any()) { coursePanel.hideErrorPanel() } },
+      authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
     )
-    EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
 
   override fun isLoginNeeded(): Boolean = !EduSettings.isLoggedIn()
@@ -97,7 +97,8 @@ class StepikCoursesPanel(
         StepikConnector.getInstance().doAuthorize(
           { runInEdt(ModalityState.any()) { hideLoginPanel() } },
           { runInEdt(ModalityState.any()) { coursePanel.hideErrorPanel() } },
-          { runInEdt(ModalityState.any()) { importCourse() } }
+          { runInEdt(ModalityState.any()) { importCourse() } },
+          authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
         )
       }
     }

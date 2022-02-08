@@ -10,7 +10,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduNames.EDU_PREFIX
 import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -34,7 +33,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
-  override val platformName: String = EduNames.JBA
+  override val displayName: String = EduNames.JBA
+  override val platformName: String = HYPERSKILL
 
   override var account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
@@ -65,8 +65,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     StepikConnector.createObjectMapper(module)
   }
-
-  override val serviceName: String = "$EDU_PREFIX/${HYPERSKILL.toLowerCase()}"
 
   private val hyperskillEndpoints: HyperskillEndpoints
     get() = getEndpoints()

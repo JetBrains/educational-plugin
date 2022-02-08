@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 /**
@@ -56,7 +56,6 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   override fun getPlatformName(): String = MARKETPLACE
 
   override fun doAuthorize() {
-    MarketplaceConnector.getInstance().doAuthorize()
-    EduCounterUsageCollector.loggedIn(MARKETPLACE, EduCounterUsageCollector.AuthorizationPlace.SUBMISSIONS_TAB)
+    MarketplaceConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.SUBMISSIONS_TAB)
   }
 }

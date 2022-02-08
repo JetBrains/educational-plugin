@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -12,12 +11,12 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.checkBuiltinPortValid
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
@@ -70,15 +69,14 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Authorization requests:
 
-  override fun doAuthorize(vararg postLoginActions: Runnable) {
-    if (!checkBuiltinPortValid()) return
-
-    setPostLoginActions(*postLoginActions)
-
-    val redirectUrl = getRedirectUri()
-    BrowserUtil.browse(authorizationUrl)
+  override fun doAuthorize(
+    vararg postLoginActions: Runnable,
+    authorizationPlace: EduCounterUsageCollector.AuthorizationPlace
+  ) {
+    super.doAuthorize(*postLoginActions, authorizationPlace = authorizationPlace)
 
     // EDU-4767
+    val redirectUrl = getRedirectUri()
     if (redirectUrl == EXTERNAL_REDIRECT_URL) {
       val dialog = OAuthDialog()
       dialog.show()

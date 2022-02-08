@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import kotlinx.coroutines.CoroutineScope
 
 class CheckiOCoursesPanel(
@@ -56,7 +57,8 @@ class CheckiOCoursesPanel(
                                                        checkiOOAuthConnector.doAuthorize(
                                                          Runnable { coursePanel.hideErrorPanel() },
                                                          Runnable { coursePanel.hideErrorPanel() },
-                                                         Runnable { doValidation() }
+                                                         Runnable { doValidation() },
+                                                         authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
                                                        )
                                                      })
 }

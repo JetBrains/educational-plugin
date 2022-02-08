@@ -81,9 +81,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   override fun getServiceName(): String = HyperskillConnector.getInstance().serviceName
 
   private fun withHyperskillAuthorization(userId: Int, action: () -> String?): String? {
-    val account = HyperskillSettings.INSTANCE.account
-    return if (account == null) {
-      HyperskillConnector.getInstance().doAuthorize(Runnable { action() })
+    val connector = HyperskillConnector.getInstance()
+    return if (!connector.isLoggedIn()) {
+      connector.doAuthorize(Runnable { action() })
       null
     }
     else {

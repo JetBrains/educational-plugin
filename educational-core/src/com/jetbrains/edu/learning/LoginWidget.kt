@@ -15,9 +15,10 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.SyncCourseAction
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
 import java.awt.Point
@@ -32,13 +33,11 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
                                                       tooltipText: String,
                                                       private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
-  abstract val account: T?
+  abstract val connector: EduOAuthConnector<T, *>
 
   open val synchronizeCourseActionId: String? = null
 
   protected abstract fun profileUrl(account: T): String
-
-  protected abstract val platformName: String
 
   private val component: JLabel = JBLabel(icon)
 
@@ -73,7 +72,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
   private fun updateContent(wrapperPanel: JPanel, popup: JBPopup) {
     wrapperPanel.removeAll()
-    wrapperPanel.add(createWidgetContent(account, popup, wrapperPanel), BorderLayout.CENTER)
+    wrapperPanel.add(createWidgetContent(connector.account, popup, wrapperPanel), BorderLayout.CENTER)
     wrapperPanel.revalidate()
     wrapperPanel.repaint()
     UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
@@ -92,16 +91,14 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
 
     val accountActionLabel = if (currentAccount == null) {
       EduHyperlinkLabel(EduCoreBundle.message("account.widget.login"), true) {
-        authorize()
+        connector.doAuthorize(authorizationPlace = AuthorizationPlace.WIDGET)
         popup.closeOk(null)
-        EduCounterUsageCollector.loggedIn(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
       }
     }
     else {
       EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
-        resetAccount()
+        connector.doLogout(authorizationPlace = AuthorizationPlace.WIDGET)
         updateContent(wrapperPanel, popup)
-        EduCounterUsageCollector.loggedOut(platformName, EduCounterUsageCollector.AuthorizationPlace.WIDGET)
       }
     }
 
@@ -127,11 +124,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
            ?: error("Action `$synchronizeCourseActionId` should inherit `${SyncCourseAction::class.java.simpleName}`")
   }
 
-  open fun loginNeeded(): Boolean = account == null
-
-  abstract fun authorize()
-
-  abstract fun resetAccount()
+  open fun loginNeeded(): Boolean = !connector.isLoggedIn()
 
   override fun getComponent(): JComponent = component
 

@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_HELP
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -67,7 +68,8 @@ class JetBrainsAcademyCoursesPanel(
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { setButtonsEnabled(true) },
       Runnable { hideLoginPanel() },
-      Runnable { scheduleUpdateAfterLogin() }
+      Runnable { scheduleUpdateAfterLogin() },
+      authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
     )
   }
 

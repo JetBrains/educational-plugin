@@ -6,28 +6,18 @@ import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthCo
 import com.jetbrains.edu.javascript.learning.checkio.utils.profileUrl
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.LoginWidget
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
 class JsCheckiOWidget(project: Project) : LoginWidget<CheckiOAccount>(project,
                                                                       EduJavaScriptBundle.message("checkio.widget.title"),
                                                                       EduJavaScriptBundle.message("checkio.widget.tooltip"),
                                                                       EducationalCoreIcons.JSCheckiO) {
-  override val account: CheckiOAccount?
-    get() = JsCheckiOSettings.getInstance().account
-
-  override val platformName: String
-    get() = CheckiONames.JS_CHECKIO
+  override val connector: EduOAuthConnector<CheckiOAccount, *>
+    get() = JsCheckiOOAuthConnector
 
   override fun profileUrl(account: CheckiOAccount): String = account.profileUrl
 
   override fun ID() = "JsCheckiOAccountWidget"
 
-  override fun authorize() {
-    JsCheckiOOAuthConnector.doAuthorize()
-  }
-
-  override fun resetAccount() {
-    JsCheckiOSettings.getInstance().account = null
-  }
 }

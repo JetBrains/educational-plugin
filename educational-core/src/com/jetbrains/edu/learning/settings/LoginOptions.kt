@@ -8,11 +8,9 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.Account
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.event.HyperlinkEvent
 
 // Implement this class to show oauth settings with login/logout link
 abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
@@ -26,11 +24,14 @@ abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
   private var initialAccount: T? = null
 
   abstract fun getCurrentAccount(): T?
+
   abstract fun setCurrentAccount(account: T?)
 
   protected abstract fun profileUrl(account: T): String
 
-  protected abstract fun createAuthorizeListener(): LoginListener
+  protected abstract fun createAuthorizeListener(): HyperlinkAdapter
+
+  protected abstract fun createLogOutListener(): HyperlinkAdapter
 
   private fun initUI() {
     val additionalComponents = getAdditionalComponents()
@@ -117,36 +118,15 @@ abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
     if (selectedAccount == null) {
       browseProfileLabel.text = "You're not logged in"
       loginLink.text = "Log in to $displayName"
-
       loginListener = createAuthorizeListener()
     }
     else {
       val info = selectedAccount.userInfo
       browseProfileLabel.text = "You're logged in as <a href=${profileUrl(selectedAccount)}>${info}</a>"
       loginLink.text = "Log out"
-      loginListener = createLogoutListener()
+      loginListener = createLogOutListener()
     }
 
     loginLink.addHyperlinkListener(loginListener)
-  }
-
-  protected open fun createLogoutListener(): HyperlinkAdapter {
-    return object : HyperlinkAdapter() {
-      override fun hyperlinkActivated(event: HyperlinkEvent) {
-        lastSavedAccount = null
-        setCurrentAccount(null)
-        updateLoginLabels()
-        EduCounterUsageCollector.loggedOut(displayName, EduCounterUsageCollector.AuthorizationPlace.SETTINGS)
-      }
-    }
-  }
-
-  abstract inner class LoginListener : HyperlinkAdapter() {
-    protected abstract fun authorize(e: HyperlinkEvent?)
-
-    override fun hyperlinkActivated(e: HyperlinkEvent?) {
-      authorize(e)
-      EduCounterUsageCollector.loggedIn(displayName, EduCounterUsageCollector.AuthorizationPlace.SETTINGS)
-    }
   }
 }

@@ -1,44 +1,23 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.ui.components.JBCheckBox
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.settings.LoginOptions
+import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import com.jetbrains.edu.learning.stepik.hyperskill.profileUrl
-import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
-import javax.swing.event.HyperlinkEvent
 
-class HyperskillOptions : LoginOptions<HyperskillAccount>() {
+class HyperskillOptions : OAuthLoginOptions<HyperskillAccount>() {
   private var automaticUpdateCheckBox: JBCheckBox = JBCheckBox(EduCoreBundle.message("hyperskill.settings.auto.update"),
                                                                HyperskillSettings.INSTANCE.updateAutomatically)
 
-  override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.INSTANCE.account
+  override val connector: EduOAuthConnector<HyperskillAccount, *>
+    get() = HyperskillConnector.getInstance()
 
   override fun isAvailable(): Boolean = isHyperskillSupportAvailable()
-
-  override fun setCurrentAccount(account: HyperskillAccount?) {
-    HyperskillSettings.INSTANCE.account = account
-  }
-
-  @Nls
-  override fun getDisplayName(): String {
-    return EduNames.JBA
-  }
-
-  override fun createAuthorizeListener(): LoginListener {
-    return object : LoginListener() {
-      override fun authorize(e: HyperlinkEvent?) {
-        HyperskillConnector.getInstance().doAuthorize(Runnable {
-          lastSavedAccount = getCurrentAccount()
-          updateLoginLabels()
-        })
-      }
-    }
-  }
 
   override fun profileUrl(account: HyperskillAccount): String = account.profileUrl
 

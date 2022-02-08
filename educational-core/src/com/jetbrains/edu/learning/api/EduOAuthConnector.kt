@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
-import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
@@ -13,6 +12,8 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import okhttp3.ConnectionPool
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.ide.BuiltInServerManager
@@ -22,9 +23,9 @@ import java.io.IOException
 import java.util.regex.Pattern
 
 abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
-  @get:Transient
-  @set:Transient
-  protected abstract var account: Account?
+  @get:Synchronized
+  @set:Synchronized
+  open var account: Account? = null
 
   protected abstract val authorizationUrl: String
 
@@ -38,7 +39,18 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   abstract val objectMapper: ObjectMapper
 
+  /**
+   * User visible name of the platform
+   */
+  open val displayName: String
+    get() = platformName
+
+
+  /**
+   * Name of the platform used for developing purposes
+   */
   protected abstract val platformName: String
+    @NonNls get
 
   protected val connectionPool: ConnectionPool = ConnectionPool()
 
@@ -46,12 +58,16 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     JacksonConverterFactory.create(objectMapper)
   }
 
-  @get: Synchronized
-  @set: Synchronized
+  @get:Synchronized
+  @set:Synchronized
+  protected var authorizationPlace: AuthorizationPlace? = null
+
+  @get:Synchronized
+  @set:Synchronized
   private var postLoginActions: Array<out Runnable>? = null
 
-  @get: Synchronized
-  @set: Synchronized
+  @get:Synchronized
+  @set:Synchronized
   private var submissionTabListener: EduLogInListener? = null
 
   open val serviceName: String by lazy {
@@ -64,14 +80,23 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
 
-  open fun doAuthorize(vararg postLoginActions: Runnable) {
+  open fun doAuthorize(
+    vararg postLoginActions: Runnable,
+    authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN
+  ) {
     if (!OAuthUtils.checkBuiltinPortValid()) return
 
+    this.authorizationPlace = authorizationPlace
     setPostLoginActions(*postLoginActions)
     BrowserUtil.browse(authorizationUrl)
   }
 
   abstract fun login(code: String): Boolean
+
+  fun doLogout(authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
+    this.authorizationPlace = authorizationPlace
+    account = null
+  }
 
   /**
    * @param postLoginActions - actions to be happened after successful authorization
@@ -175,18 +200,30 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.setUser
    */
+  @Synchronized
   fun notifyUserLoggedIn() {
     postLoginActions?.forEach {
       it.run()
     }
     submissionTabListener?.userLoggedIn()
+
+    val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
+    EduCounterUsageCollector.logInSucceed(platformName, place)
+    authorizationPlace = null
   }
 
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.setUser
    */
-  fun notifyUserLoggedOut() = submissionTabListener?.userLoggedOut()
+  @Synchronized
+  fun notifyUserLoggedOut() {
+    submissionTabListener?.userLoggedOut()
+
+    val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
+    EduCounterUsageCollector.logOutSucceed(platformName, place)
+    authorizationPlace = null
+  }
 
   companion object {
     @JvmStatic

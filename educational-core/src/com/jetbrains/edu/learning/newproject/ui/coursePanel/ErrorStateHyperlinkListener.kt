@@ -17,14 +17,12 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.browseHyperlink
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import javax.swing.JTextPane
@@ -46,20 +44,19 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
 
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
-        val course = coursePanel.course as CheckiOCourse
-        addCheckiOLoginListener(coursePanel, coursesPanel)
-
-        //for Checkio course name matches platform name
-        EduCounterUsageCollector.loggedIn(course.name, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        val checkiOConnectorProvider = (coursePanel.course?.configurator as CheckiOConnectorProvider?)
+        if (checkiOConnectorProvider == null) {
+          Logger.getInstance(CoursesPanel::class.java).error("CheckiO connector provider is not found")
+          return
+        }
+        checkiOConnectorProvider.oAuthConnector.doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.JetBrainsAcademyLoginNeeded -> {
-        HyperskillConnector.getInstance().doAuthorize(*postLoginActions)
-        EduCounterUsageCollector.loggedIn(EduNames.JBA, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        HyperskillConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
         // TODO: Update course list
-        StepikConnector.getInstance().doAuthorize(*postLoginActions)
-        EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+        StepikConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
       }
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
       is ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
@@ -93,17 +90,6 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
       is ErrorState.CustomSevereError -> state.action?.run()
       else -> browseHyperlink(state.message)
     }
-  }
-
-  private fun addCheckiOLoginListener(coursePanel: CoursePanel, coursesPanel: CoursesPanel?) {
-    val course = coursePanel.course
-    val checkiOConnectorProvider = (course?.configurator as CheckiOConnectorProvider?)!!
-    val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
-    checkiOOAuthConnector.doAuthorize(
-      Runnable { coursesPanel?.hideLoginPanel() },
-      Runnable { coursePanel.hideErrorPanel() },
-      Runnable { doValidation(coursePanel) }
-    )
   }
 
   private fun invokeSwitchUILibrary(coursePanel: CoursePanel) {

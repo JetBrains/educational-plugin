@@ -7,8 +7,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -41,9 +40,9 @@ class ImportStepikCoursePanel(
     if (EduSettings.isLoggedIn()) return@HyperlinkListener
 
     StepikConnector.getInstance().doAuthorize(
-      { runInEdt(ModalityState.any()) { doValidation() } }
+      { runInEdt(ModalityState.any()) { doValidation() } },
+      authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
     )
-    EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
 
   private fun doValidation() {

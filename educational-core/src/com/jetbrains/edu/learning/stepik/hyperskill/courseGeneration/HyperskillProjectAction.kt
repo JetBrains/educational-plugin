@@ -14,8 +14,7 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderProgress
@@ -77,8 +76,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : NotificationListener
 
   private fun authorizeOrBrowse(url: URL?) {
     if (authorize) {
-      HyperskillConnector.getInstance().doAuthorize()
-      EduCounterUsageCollector.loggedIn(HYPERSKILL, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
+      HyperskillConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
     }
     else {
       if (url != null) {

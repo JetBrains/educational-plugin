@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformPr
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
 import com.jetbrains.edu.learning.stepik.newProjectUI.StepikPlatformProvider
 
@@ -40,12 +41,22 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     IN_COURSE, STEPIK, EXTERNAL, PSI, CODEFORCES, JBA, FILE
   }
 
+  /**
+   * [LOG_IN] and [LOG_OUT] events describe user _clicked_ link to do log in or log out
+   * These events were used before 2022.3 plugin version
+   *
+   * [LOG_IN_SUCCEED] and [LOG_OUT_SUCCEED] events describe user actually did authorized or logged out
+   */
   private enum class AuthorizationEvent {
-    LOG_IN, LOG_OUT
+    @Deprecated("Use LOG_IN_SUCCEED instead")
+    LOG_IN,
+    @Deprecated("Use LOG_OUT_SUCCEED instead")
+    LOG_OUT,
+    LOG_IN_SUCCEED, LOG_OUT_SUCCEED
   }
 
   enum class AuthorizationPlace {
-    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB
+    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB, UNKNOWN
   }
 
   private enum class HintEvent {
@@ -142,7 +153,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val LICK_CLICKED_EVENT = GROUP.registerEvent("link.clicked", enumField<LinkType>(TYPE))
     private val AUTHORIZATION_EVENT = GROUP.registerEvent("authorization",
                                                           enumField<AuthorizationEvent>(EVENT),
-                                                          EventFields.String("platform", listOf("Hyperskill", "Stepik", "Js_CheckiO", "Py_CheckiO")),
+                                                          EventFields.String("platform", listOf(
+                                                            "Hyperskill",
+                                                            "Stepik",
+                                                            "Js_CheckiO",
+                                                            "Py_CheckiO",
+                                                            "Marketplace"
+                                                          )),
                                                           enumField<AuthorizationPlace>(SOURCE))
     private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")
     private val PEEK_SOLUTION_EVENT = GROUP.registerEvent("peek.solution")
@@ -185,10 +202,18 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun linkClicked(linkType: LinkType) = LICK_CLICKED_EVENT.log(linkType)
 
     @JvmStatic
-    fun loggedIn(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(AuthorizationEvent.LOG_IN, platform, place)
+    @Deprecated("Use logInSucceed instead")
+    fun loggedIn(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_IN, platform, place)
 
     @JvmStatic
-    fun loggedOut(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(AuthorizationEvent.LOG_OUT, platform, place)
+    @Deprecated("Use logOutSucceed instead")
+    fun loggedOut(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_OUT, platform, place)
+
+    @JvmStatic
+    fun logInSucceed(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_IN_SUCCEED, platform, place)
+
+    @JvmStatic
+    fun logOutSucceed(platform: String, place: AuthorizationPlace) = AUTHORIZATION_EVENT.log(LOG_OUT_SUCCEED, platform, place)
 
     @JvmStatic
     fun fullOutputShown() = SHOW_FULL_OUTPUT_EVENT.log()
