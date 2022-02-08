@@ -10,24 +10,22 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.intellij.ui.layout.*
+import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.Executor.execCancelable
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.DEFAULT_TERMS_OF_AGREEMENT
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.TERMS_OF_AGREEMENT
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
-import com.jetbrains.edu.learning.codeforces.api.ContestRegistrationData
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
-import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Font
 import java.net.URL
 import java.time.format.DateTimeFormatter
@@ -125,23 +123,36 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
 
   private fun registerFromIDE(id: Int, registrationLink: String, courseInfo: CourseInfo) {
     val connector = CodeforcesConnector.getInstance()
-    val registration = connector.getRegistrationData(id)
-    if (registration is ContestRegistrationData) {
-      if (TermsOfAgreementDialog(registration.termsOfAgreement, registrationLink,
-                                 registration.isTeamRegistrationAvailable).showAndGet()) {
-        if (connector.registerToContest(id, registration.token)) {
-          content.update(courseInfo, CourseDisplaySettings())
-          Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
-                                   EduCoreBundle.message("codeforces.contest.registration"))
-          return
-        }
+    val registration = execCancelable(EduCoreBundle.message("course.dialog.tags.in.progress"))
+    { connector.getRegistrationData(id) }
+
+    if (registration == null) {
+      Messages.showErrorDialog(EduCoreBundle.message("codeforces.registration.failed", registrationLink),
+                               EduCoreBundle.message("codeforces.contest.registration.failed"))
+      return
+    }
+
+    val termsAccepted = TermsOfAgreementDialog(
+      registration.termsOfAgreement,
+      registrationLink,
+      registration.isTeamRegistrationAvailable
+    ).showAndGet()
+
+    if (termsAccepted) {
+
+      val registrationCompleted = execCancelable(EduCoreBundle.message("course.dialog.tags.in.progress"))
+      { connector.registerToContest(id, registration.token) }
+
+      if (registrationCompleted) {
+        content.update(courseInfo, CourseDisplaySettings())
+        Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
+                                 EduCoreBundle.message("codeforces.contest.registration"))
       }
       else {
-        return
+        Messages.showErrorDialog(EduCoreBundle.message("codeforces.registration.failed", registrationLink),
+                                 EduCoreBundle.message("codeforces.contest.registration.failed"))
       }
     }
-    Messages.showErrorDialog(EduCoreBundle.message("codeforces.registration.failed", registrationLink),
-                             EduCoreBundle.message("codeforces.contest.registration.failed"))
   }
 }
 
@@ -308,24 +319,45 @@ private class TermsOfAgreementDialog(private val termsOfAgreement: String,
 
   override fun createCenterPanel(): JComponent? {
     val text = if (termsOfAgreement == DEFAULT_TERMS_OF_AGREEMENT) TERMS_OF_AGREEMENT else termsOfAgreement.replace("\n", "<br>")
-    return panel {
-      row() {
-        EduHyperlinkLabel(text)()
-      }
-    }.withBorder(JBUI.Borders.empty(0, 10))
+
+    val panel = CustomTextPanel("ul li {list-style-type:disc;margin-top: 12px;}")
+    panel.setBody(text)
+
+    panel.border = JBUI.Borders.empty(10, 10)
+    return panel
   }
 
   override fun createNorthPanel(): JComponent? {
     if (!isTeamRegistrationAvailable) return super.createNorthPanel()
     val jPanel = JPanel(BorderLayout())
-    jPanel.border = JBUI.Borders.empty(6, 16)
-    val jbLabel = EduHyperlinkLabel(EduCoreBundle.message("codeforces.team.registration.notice", registrationLink))
-    jbLabel.alignmentX = Component.CENTER_ALIGNMENT
-    jbLabel.border = JBUI.Borders.empty(0, 0, 12, 16)
-    val jSeparator = JSeparator()
-    jPanel.add(jbLabel, BorderLayout.CENTER)
-    jPanel.add(jSeparator, BorderLayout.SOUTH)
+    val textPanel = CustomTextPanel()
+    textPanel.setBody(EduCoreBundle.message("codeforces.team.registration.notice", registrationLink))
+    textPanel.border = JBUI.Borders.empty(10, 10, 12, 16)
+    jPanel.add(textPanel, BorderLayout.CENTER)
+    jPanel.add(JSeparator(), BorderLayout.SOUTH)
     return jPanel
+  }
+
+  private class CustomTextPanel(private val style: String = "") : HtmlPanel() {
+    override fun getBody(): String {
+      return ""
+    }
+
+    override fun setBody(text: String) {
+      setText("""
+        <html>
+        <head>
+          <style>
+            body {width: 380px}
+            $style
+          </style>
+        </head>
+        <body>
+        $text
+        </body>
+        </html>
+      """.trimIndent())
+    }
   }
 
 }

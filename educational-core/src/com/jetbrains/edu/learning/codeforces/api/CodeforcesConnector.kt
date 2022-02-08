@@ -332,20 +332,20 @@ abstract class CodeforcesConnector {
    * Get mandatory data for contest registration
    * returns RegistrationData: CSRF token, TermsOfAgreement text and team registration ability
    */
-  fun getRegistrationData(contestId: Int): ContestRegistration {
-    val account = CodeforcesSettings.getInstance().account ?: return ContestRegistrationError()
+  fun getRegistrationData(contestId: Int): ContestRegistrationData? {
+    val account = CodeforcesSettings.getInstance().account ?: return null
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
-      return ContestRegistrationError()
+      return null
     }
-    val jSessionID = account.getSessionId() ?: return ContestRegistrationError()
+    val jSessionID = account.getSessionId() ?: return null
 
     val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
       .executeParsingErrors()
-      .onError { return ContestRegistrationError() }
-    registrationPage.body() ?: return ContestRegistrationError()
+      .onError { return null }
+    registrationPage.body() ?: return null
     val doc = Jsoup.parse(registrationPage.body()?.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
-    val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return ContestRegistrationError()
+    val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return null
     val isTeamRegistrationAvailable = doc.getElementsByAttributeValue("id","takePartAsTeamInput").isNotEmpty()
 
     return ContestRegistrationData(csrfToken, text, isTeamRegistrationAvailable)
@@ -382,3 +382,5 @@ abstract class CodeforcesConnector {
     fun getInstance(): CodeforcesConnector = service()
   }
 }
+
+data class ContestRegistrationData(val token: String, val termsOfAgreement: String, val isTeamRegistrationAvailable: Boolean)

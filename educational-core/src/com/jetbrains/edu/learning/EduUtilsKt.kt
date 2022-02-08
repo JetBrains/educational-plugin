@@ -3,12 +3,14 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
+import java.util.concurrent.Callable
 
 object EduUtilsKt {
   @JvmStatic
@@ -47,3 +49,14 @@ class NumericInputValidator(val emptyInputMessage: String, val notNumericMessage
     return string.all { StringUtil.isDecimalDigit(it) }
   }
 }
+
+object Executor {
+  fun <T> execCancelable(message: String, callable: Callable<T>): T =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<T, RuntimeException>(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        EduUtils.execCancelable(callable)
+      },
+      message, true, null)
+}
+
