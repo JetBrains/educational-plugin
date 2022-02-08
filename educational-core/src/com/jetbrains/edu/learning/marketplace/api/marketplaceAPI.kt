@@ -7,16 +7,22 @@ import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.stepik.api.SOLUTION
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.SubmissionBase
 import org.jetbrains.annotations.TestOnly
+import java.util.*
 
 const val AUTHORS = "authors"
 const val CONTENT = "content"
 const val CREATE_DATE = "cdate"
+const val COURSE_VERSION = "course_version"
 const val DATA = "data"
 const val DESCRIPTION = "description"
 const val DESCRIPTORS = "descriptors"
@@ -38,6 +44,7 @@ const val PLUGINS = "plugins"
 const val PROGRAMMING_LANGUAGE = "programmingLanguage"
 const val QUERY = "query"
 const val RATING = "rating"
+const val TASK_ID = "task_id"
 const val TOTAL = "total"
 const val TIMESTAMP = "timestamp"
 const val TYPE = "type"
@@ -265,6 +272,31 @@ class SubmissionDocument() {
     id = docId
     version = versionId
     content = submissionContent
+  }
+}
+
+class MarketplaceSubmission : SubmissionBase {
+  @JsonProperty(COURSE_VERSION)
+  var courseVersion: Int = 0
+
+  @JsonProperty(TASK_ID)
+  override var taskId: Int = -1
+
+  @JsonProperty(SOLUTION)
+  override var solutionFiles: List<SolutionFile>? = null
+
+  @JsonProperty(VERSION)
+  override var formatVersion: Int = JSON_FORMAT_VERSION
+
+  constructor()
+
+  constructor(taskId: Int, status: String, files: List<SolutionFile>, courseVersion: Int) {
+    time = Date()
+    id = this.hashCode()
+    solutionFiles = files
+    this.taskId = taskId
+    this.status = status
+    this.courseVersion = courseVersion
   }
 }
 

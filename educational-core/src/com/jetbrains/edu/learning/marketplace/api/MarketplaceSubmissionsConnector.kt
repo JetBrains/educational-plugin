@@ -17,8 +17,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.ConnectionPool
 import org.apache.commons.httpclient.HttpStatus
@@ -108,9 +108,9 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  fun getAllSubmissions(course: EduCourse): MutableMap<Int, MutableList<Submission>> {
+  fun getAllSubmissions(course: EduCourse): MutableMap<Int, List<Submission>> {
     val descriptorsList = getDescriptorsList("/${course.id}")
-    val submissionsByTaskId = mutableMapOf<Int, MutableList<Submission>>()
+    val submissionsByTaskId = mutableMapOf<Int, List<Submission>>()
     val documentIdByTaskId = mutableMapOf<Int, String>()
     for (descriptor in descriptorsList) {
       val taskId = parseTaskIdFromPath(descriptor.path)
@@ -126,22 +126,21 @@ class MarketplaceSubmissionsConnector {
       }
       // documentIdByTaskId contains already existing submissions, we should put empty lists for tasks that have no submissions yet
       else {
-        submissionsByTaskId[taskId] = mutableListOf()
+        submissionsByTaskId[taskId] = listOf()
       }
     }
     return submissionsByTaskId
   }
 
-  fun getSubmissions(task: Task, courseId: Int): MutableList<Submission> {
-    val documentId = getDocumentId(courseId, task.id) ?: return mutableListOf()
+  fun getSubmissions(task: Task, courseId: Int): List<Submission> {
+    val documentId = getDocumentId(courseId, task.id) ?: return listOf()
     task.submissionsId = documentId
     return getSubmissions(documentId)
   }
 
-  private fun getSubmissions(documentId: String): MutableList<Submission> {
-    val submissions = mutableListOf<Submission>()
-    val versionsList = getDocVersionsIds(documentId) ?: return submissions
-    return versionsList.mapNotNull { getSubmission(documentId, it) }.toMutableList()
+  private fun getSubmissions(documentId: String): List<Submission> {
+    val versionsList = getDocVersionsIds(documentId) ?: return listOf()
+    return versionsList.mapNotNull { getSubmission(documentId, it) }
   }
 
   @VisibleForTesting
@@ -253,7 +252,6 @@ class MarketplaceSubmissionsConnector {
       return true
     }
   }
-
 
   private class DescriptorPathFormatException(descriptorPath: String, details: String) : IllegalStateException(
     buildString {

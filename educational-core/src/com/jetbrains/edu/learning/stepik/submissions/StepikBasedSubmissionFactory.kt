@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import java.util.*
 

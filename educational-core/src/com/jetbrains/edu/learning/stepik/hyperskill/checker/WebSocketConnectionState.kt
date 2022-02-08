@@ -7,13 +7,13 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector.Companion.toCheckResult
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.EVALUATION_STATUS
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import okhttp3.WebSocket
 

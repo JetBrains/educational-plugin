@@ -35,7 +35,8 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
-import com.jetbrains.edu.learning.submissions.Submission;
+import com.jetbrains.edu.learning.submissions.SolutionFile;
+import com.jetbrains.edu.learning.submissions.SubmissionBase;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -311,8 +312,7 @@ public class StepikSolutionsLoader implements Disposable {
     if (task instanceof EduTask) {
       Submission submission = getLastSubmission(submissionsManager, task);
       if (submission != null) {
-        Reply reply = submission.getReply();
-        if (reply != null && reply.getSolution() != null && !reply.getSolution().isEmpty()) {
+        if (submission.getSolutionFiles() != null && !submission.getSolutionFiles().isEmpty()) {
           return true;
         }
       }
@@ -367,20 +367,26 @@ public class StepikSolutionsLoader implements Disposable {
     if (submission == null) {
       return TaskSolutions.EMPTY;
     }
+    List<SolutionFile> solutionFiles = submission.getSolutionFiles();
     Reply reply = submission.getReply();
-    if (reply == null || reply.getSolution() == null || reply.getSolution().isEmpty()) {
+    if (solutionFiles == null || solutionFiles.isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
-      if (reply != null && reply.getSolution() == null) {
+      if (reply != null && solutionFiles == null) {
         LOG.warn(String.format("`solution` field of reply object is null for task `%s`", task.getName()));
       }
       task.setStatus(CheckStatus.Unchecked);
       return TaskSolutions.EMPTY;
     }
 
-    if (reply.getVersion() > EduVersions.JSON_FORMAT_VERSION) {
+    Integer formatVersion = submission.getFormatVersion();
+    if (reply == null || formatVersion == null) {
+      return TaskSolutions.EMPTY;
+    }
+
+    if (formatVersion > EduVersions.JSON_FORMAT_VERSION) {
       // TODO: show notification with suggestion to update plugin
       LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
-                             EduVersions.JSON_FORMAT_VERSION, reply.getVersion()));
+                             EduVersions.JSON_FORMAT_VERSION, formatVersion));
       return TaskSolutions.INCOMPATIBLE;
     }
 
@@ -391,7 +397,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     final SimpleModule module = new SimpleModule();
-    module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(reply.getVersion(), language));
+    module.addDeserializer(Task.class, new JacksonSubmissionDeserializer(formatVersion, language));
     final ObjectMapper objectMapper = StepikConnector.getInstance().getObjectMapper().copy();
     objectMapper.registerModule(module);
     TaskData updatedTaskData;
@@ -406,7 +412,7 @@ public class StepikSolutionsLoader implements Disposable {
     task.setStatus(getCheckStatus(submission));
 
     Map<String, String> taskFileToText = new HashMap<>();
-    for (SolutionFile file : reply.getSolution()) {
+    for (SolutionFile file : solutionFiles) {
       TaskFile taskFile = task.getTaskFile(file.getName());
       TaskFile updatedTaskFile = updatedTaskData.getTask().getTaskFile(file.getName());
       if (taskFile != null && updatedTaskFile != null) {
@@ -421,16 +427,23 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   @NotNull
-  private static CheckStatus getCheckStatus(@Nullable Submission submission) {
+  private static CheckStatus getCheckStatus(@Nullable SubmissionBase submission) {
     if (submission == null) return CheckStatus.Unchecked;
     return EduNames.CORRECT.equals(submission.getStatus()) ? CheckStatus.Solved : CheckStatus.Failed;
   }
 
   @Nullable
   private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, Task task) {
-    List<Submission> submissions = submissionsManager.getSubmissions(task);
+    List<SubmissionBase> submissions = submissionsManager.getSubmissions(task);
     if (submissions.isEmpty()) return null;
-    return submissions.get(0);
+    SubmissionBase lastSubmission = submissions.get(0);
+    if (!(lastSubmission instanceof Submission)) {
+      String errorMessage = String.format("Stepik submission %s for task %s is not instance of Submission class",
+                                          lastSubmission.getId(), task.getName());
+      LOG.error(errorMessage);
+      throw new IllegalStateException(errorMessage);
+    }
+    return (Submission) lastSubmission;
   }
 
   private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task) {
@@ -545,7 +558,7 @@ public class StepikSolutionsLoader implements Disposable {
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task,
                                                    @NotNull SubmissionsManager submissionsManager) {
-    final List<Submission> submissions = submissionsManager.getSubmissions(task);
+    final List<SubmissionBase> submissions = submissionsManager.getSubmissions(task);
     if (submissions.isEmpty()) {
       return null;
     }
@@ -558,16 +571,19 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   @Nullable
-  private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language, String version) {
+  private static String findStepikSolutionForLanguage(List<SubmissionBase> submissions, Language language, String version) {
     String stepikLanguage = StepikLanguage.langOfId(language.getID(), version).getLangName();
     if (stepikLanguage == null) {
       return null;
     }
 
-    for (Submission submission : submissions) {
-      Reply reply = submission.getReply();
-      if (reply != null && stepikLanguage.equals(reply.getLanguage()) && reply.getCode() != null) {
-        return removeEduPrefix(reply.getCode(), language);
+    for (SubmissionBase submissionBase : submissions) {
+      if (submissionBase instanceof Submission) {
+        Submission submission = (Submission)submissionBase;
+        Reply reply = submission.getReply();
+        if (reply != null && stepikLanguage.equals(reply.getLanguage()) && reply.getCode() != null) {
+          return removeEduPrefix(reply.getCode(), language);
+        }
       }
     }
 

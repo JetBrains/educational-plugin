@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Compan
 import com.jetbrains.edu.learning.stepik.StepikBasedCreateSubmissionTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
@@ -20,7 +21,6 @@ import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactor
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createNumberTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createRemoteEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStringTaskSubmission
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*

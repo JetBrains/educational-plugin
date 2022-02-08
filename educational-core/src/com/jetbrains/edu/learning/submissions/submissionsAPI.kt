@@ -1,8 +1,7 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY
-import com.jetbrains.edu.learning.courseFormat.AttemptBase
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.stepik.api.*
 import java.util.*
 
@@ -19,36 +18,27 @@ class SubmissionData {
   }
 }
 
-class Submission {
-  @JsonProperty(ATTEMPT)
-  var attempt: Int = 0
-
-  @JsonProperty(REPLY)
-  var reply: Reply? = null
-
-  // WRITE_ONLY because we don't need to send it
-  @JsonProperty(STEP, access = WRITE_ONLY)
-  var step: Int = -1
-
+abstract class SubmissionBase {
   @JsonProperty(ID)
   var id: Int? = null
-
-  @JsonProperty(STATUS)
-  var status: String? = null
-
-  @JsonProperty(HINT)
-  var hint: String? = null
-
-  @JsonProperty(FEEDBACK)
-  var feedback: Feedback? = null
 
   @JsonProperty(TIME)
   var time: Date? = null
 
-  constructor()
+  @JsonProperty(STATUS)
+  var status: String? = null
 
-  constructor(attempt: AttemptBase, reply: Reply) {
-    this.attempt = attempt.id
-    this.reply = reply
-  }
+  abstract var taskId: Int
+  abstract val solutionFiles: List<SolutionFile>?
+  abstract val formatVersion: Int?
+  open fun getSubmissionTexts(taskName: String): Map<String, String>? = solutionFiles?.associate { it.name to it.text }
+}
+
+class SolutionFile(
+  @field:JsonProperty(NAME) var name: String,
+  @field:JsonProperty(TEXT) var text: String,
+  @field:JsonProperty(IS_VISIBLE) var isVisible: Boolean,
+  @field:JsonProperty(PLACEHOLDERS) var placeholders: List<AnswerPlaceholder>? = null
+) {
+  constructor() : this(name = "", text = "", isVisible = true)
 }

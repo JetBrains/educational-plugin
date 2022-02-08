@@ -17,8 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
-import com.jetbrains.edu.learning.stepik.api.Reply
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
@@ -31,7 +29,6 @@ import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
 import java.text.DateFormat
 import java.util.*
-import java.util.stream.Collectors
 import kotlin.math.roundToInt
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
@@ -107,9 +104,8 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
         val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
         val submission = submissionsManager.getSubmission(task, submissionId) ?: return true
-        val reply = submission.reply ?: return true
         runInEdt {
-          showDiff(project, task, reply)
+          showDiff(project, task, submission)
         }
         return true
       }
@@ -119,7 +115,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
     }
 
-    private fun StringBuilder.addSubmissions(submissionsNext: List<Submission>) {
+    private fun StringBuilder.addSubmissions(submissionsNext: List<SubmissionBase>) {
       append("<ul style=list-style-type:none;margin:0;padding:0;>")
       submissionsNext.forEach { submission ->
         append(submissionLink(submission))
@@ -132,9 +128,9 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
              EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
     }
 
-    private fun showDiff(project: Project, task: Task, reply: Reply) {
+    private fun showDiff(project: Project, task: Task, submission: SubmissionBase) {
       val taskFiles = task.taskFiles.values.toMutableList()
-      val submissionTexts = getSubmissionTexts(reply, task.name) ?: return
+      val submissionTexts = submission.getSubmissionTexts(task.name) ?: return
       val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
       val requests = submissionTaskFiles.mapNotNull {
         val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
@@ -157,16 +153,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
     }
 
-    private fun getSubmissionTexts(reply: Reply, taskName: String): Map<String, String>? {
-      val solutions = reply.solution
-      if (solutions == null) {
-        val submissionText = reply.code ?: return null
-        return mapOf(taskName to submissionText)
-      }
-      return solutions.stream().collect(Collectors.toMap(SolutionFile::name, SolutionFile::text))
-    }
-
-    private fun submissionLink(submission: Submission): String? {
+    private fun submissionLink(submission: SubmissionBase): String? {
       val time = submission.time ?: return null
       val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
       val text = formatDate(time)
@@ -190,7 +177,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       return (icon as IconLoader.CachedImageIcon).url
     }
 
-    private fun getLinkColor(submission: Submission): String {
+    private fun getLinkColor(submission: SubmissionBase): String {
       return when (submission.status) {
         EduNames.CORRECT -> getCorrectLinkColor()
         else -> getWrongLinkColor()

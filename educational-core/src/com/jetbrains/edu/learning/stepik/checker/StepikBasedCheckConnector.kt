@@ -17,10 +17,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.TimeUnit

@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
@@ -23,6 +22,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
+import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import java.net.MalformedURLException

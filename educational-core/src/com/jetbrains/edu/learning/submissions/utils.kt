@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.CLOSE_PLACEHOLDER_TAG
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.OPEN_PLACEHOLDER_TAG
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
 
 private const val MAX_FILE_SIZE: Int = 5 * 1024 * 1024 // 5 Mb
 private val LOG: Logger = Logger.getInstance(EduUtils::class.java.name)

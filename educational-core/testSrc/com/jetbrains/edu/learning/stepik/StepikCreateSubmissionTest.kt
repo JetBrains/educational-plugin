@@ -9,13 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createCodeTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createDataTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createNumberTaskSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStepikSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStringTaskSubmission
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer

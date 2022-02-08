@@ -9,12 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.api.SubmissionDocument
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SubmissionBase
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
-  override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
+  override fun loadSolution(task: Task, submissions: List<SubmissionBase>): TaskSolutions {
     TODO("Not yet implemented")
   }
 

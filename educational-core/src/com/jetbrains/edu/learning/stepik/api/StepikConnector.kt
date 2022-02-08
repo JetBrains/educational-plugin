@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
-import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.MediaType
 import okhttp3.MultipartBody

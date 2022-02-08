@@ -54,7 +54,7 @@ object CodeforcesUtils {
       val submissions = submissionsManager.getSubmissions(task)
       val currentStatus = task.status
       if (submissions.isNotEmpty()) {
-        task.status = if (submissions.any { it.step == task.id && it.status == EduNames.CORRECT }) {
+        task.status = if (submissions.any { it.taskId == task.id && it.status == EduNames.CORRECT }) {
           CheckStatus.Solved
         }
         else {

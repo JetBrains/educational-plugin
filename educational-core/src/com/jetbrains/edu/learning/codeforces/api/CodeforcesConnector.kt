@@ -26,8 +26,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Reply
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -260,7 +260,7 @@ abstract class CodeforcesConnector {
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
-  fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, MutableList<Submission>> {
+  fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, List<Submission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
         .executeParsingErrors().onError { return emptyMap() }.body()
@@ -274,7 +274,7 @@ abstract class CodeforcesConnector {
             this.id = it.id
             this.time = Date.from(Instant.ofEpochSecond(it.creationTimeSeconds.toLong()))
             this.status = it.verdict.stringVerdict
-            this.step = task.id
+            this.taskId = task.id
             val submissionSource = getSubmissionSource(it.id, csrfToken, jSessionID)
 
             if (mainFileName != null) {
@@ -285,8 +285,8 @@ abstract class CodeforcesConnector {
             }
 
           }
-        }?.toMutableList()
-        if (taskSubmissions == null) task.id to mutableListOf()
+        }
+        if (taskSubmissions == null) task.id to emptyList()
         else task.id to taskSubmissions
       }
     }

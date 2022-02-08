@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
 
 sealed class SubmissionError(val error: String) {
   class NoSubmission(error: String) : SubmissionError(error)

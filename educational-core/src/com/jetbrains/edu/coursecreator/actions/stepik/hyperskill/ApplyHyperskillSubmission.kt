@@ -64,7 +64,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
         return@computeUnderProgress
       }
       // there is no information about step id in Stepik submissions, so we have to assume that it's a submission for current task
-      submission.step = task.id
+      submission.taskId = task.id
       HyperskillSolutionLoader.getInstance(project).updateTask(project, task, listOf(submission), true)
     }
   }

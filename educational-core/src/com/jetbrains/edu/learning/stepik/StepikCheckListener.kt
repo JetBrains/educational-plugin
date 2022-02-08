@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
 
 class StepikCheckListener: PostSolutionCheckListener() {
 

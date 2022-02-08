@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -12,7 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.SubmissionBase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import org.jetbrains.annotations.TestOnly
 import java.util.*
@@ -359,25 +361,6 @@ class Reply {
   constructor()
 }
 
-class SolutionFile {
-  @JsonProperty(NAME)
-  var name: String = ""
-
-  @JsonProperty(TEXT)
-  var text: String = ""
-
-  @JsonProperty(IS_VISIBLE)
-  var isVisible: Boolean = true
-
-  constructor()
-
-  constructor(name: String, text: String, visible: Boolean) {
-    this.name = name
-    this.text = text
-    isVisible = visible
-  }
-}
-
 class Attachment {
   @JsonProperty(ID)
   var id: Int = 0
@@ -457,5 +440,55 @@ class TaskAdditionalInfo {
     this.name = name
     this.customName = customName
     this.taskFiles = taskFiles
+  }
+}
+
+class Submission : SubmissionBase {
+  @JsonProperty(ATTEMPT)
+  var attempt: Int = 0
+
+  @JsonProperty(REPLY)
+  var reply: Reply? = null
+
+  @JsonProperty(HINT)
+  var hint: String? = null
+
+  @JsonProperty(FEEDBACK)
+  var feedback: Feedback? = null
+
+  // WRITE_ONLY because we don't need to send it
+  @JsonProperty(STEP, access = JsonProperty.Access.WRITE_ONLY)
+  override var taskId: Int = -1
+
+  private val LOG = logger<Submission>()
+
+  override val solutionFiles: List<SolutionFile>?
+    get() {
+      val submissionReply = reply
+      // https://youtrack.jetbrains.com/issue/EDU-1449
+      if (submissionReply != null && submissionReply.solution == null) {
+        LOG.warn("`solution` field of reply object is null for task $taskId")
+      }
+      return reply?.solution
+    }
+
+  override val formatVersion: Int?
+    get() = reply?.version
+
+  override fun getSubmissionTexts(taskName: String): Map<String, String>? {
+    return if (solutionFiles == null) {
+      val submissionText = reply?.code ?: return null
+      mapOf(taskName to submissionText)
+    }
+    else {
+      super.getSubmissionTexts(taskName)
+    }
+  }
+
+  constructor()
+
+  constructor(attempt: AttemptBase, reply: Reply) {
+    this.attempt = attempt.id
+    this.reply = reply
   }
 }

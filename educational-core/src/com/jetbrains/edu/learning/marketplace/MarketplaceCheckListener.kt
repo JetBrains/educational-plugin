@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
 
 class MarketplaceCheckListener: PostSolutionCheckListener() {
 

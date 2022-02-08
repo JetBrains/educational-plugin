@@ -10,16 +10,16 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class CodeforcesSubmissionsProvider : SubmissionsProvider {
-  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>> {
     if (!areSubmissionsAvailable(course) || !isLoggedIn()) return emptyMap()
     return loadSubmissions(course.allTasks, course.id)
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, MutableList<Submission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>> {
     val (csrfToken, jSessionID) = CodeforcesConnector.getInstance().getCSRFTokenWithJSessionID().onError { return emptyMap() }
     return CodeforcesConnector.getInstance().getUserSubmissions(courseId, tasks, csrfToken, jSessionID)
   }

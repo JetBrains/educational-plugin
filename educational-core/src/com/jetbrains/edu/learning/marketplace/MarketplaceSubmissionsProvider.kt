@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 /**
@@ -33,14 +33,14 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
  */
 
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
-  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, MutableList<Submission>> {
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>> {
     if (course is EduCourse && course.isMarketplaceRemote && isLoggedIn()) {
       return MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(course)
     }
     return emptyMap()
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, MutableList<Submission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>> {
     return tasks.associate { Pair(it.id, MarketplaceSubmissionsConnector.getInstance().getSubmissions(it, courseId)) }
   }
 

@@ -18,14 +18,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.StepikLanguage
-import com.jetbrains.edu.learning.stepik.api.SolutionFile
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
+import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
-import com.jetbrains.edu.learning.submissions.Submission
+import com.jetbrains.edu.learning.submissions.SolutionFile
 
 object StepikBasedSubmitConnector {
   fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {

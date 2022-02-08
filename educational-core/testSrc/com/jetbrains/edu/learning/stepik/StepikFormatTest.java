@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
 import com.jetbrains.edu.learning.stepik.api.*;
+import com.jetbrains.edu.learning.submissions.SolutionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

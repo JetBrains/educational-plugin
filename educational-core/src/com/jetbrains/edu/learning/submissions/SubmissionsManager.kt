@@ -24,12 +24,12 @@ import java.util.stream.Collectors
  */
 @Service
 class SubmissionsManager(private val project: Project) {
-  private val submissions = ConcurrentHashMap<Int, MutableList<Submission>>()
+  private val submissions = ConcurrentHashMap<Int, List<SubmissionBase>>()
   var course: Course? = project.course
     @TestOnly set
 
-  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
-    val submissionsFromMemory = mutableListOf<Submission>()
+  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<SubmissionBase>? {
+    val submissionsFromMemory = mutableListOf<SubmissionBase>()
     for (stepId in stepIds) {
       val submissionsByStep = submissions[stepId] ?: return null
       submissionsFromMemory.addAll(submissionsByStep)
@@ -37,9 +37,9 @@ class SubmissionsManager(private val project: Project) {
     return submissionsFromMemory.sortedByDescending { it.time }.toList()
   }
 
-  fun getSubmissions(tasks: List<Task>): List<Submission>? {
+  fun getSubmissions(tasks: List<Task>): List<SubmissionBase>? {
     val course = this.course
-    val stepIds = tasks.stream().map { task -> task.id}.collect(Collectors.toSet())
+    val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
     return if (submissionsFromMemory != null) submissionsFromMemory
     else {
@@ -48,21 +48,19 @@ class SubmissionsManager(private val project: Project) {
       val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)
       updateSubmissionsTab()
-      submissionsById.values.stream()
-        .flatMap(List<Submission>::stream)
-        .collect(Collectors.toList())
+      submissionsById.values.flatten()
     }
   }
 
-  fun getSubmissions(task: Task): List<Submission> {
+  fun getSubmissions(task: Task): List<SubmissionBase> {
     return getOrLoadSubmissions(task)
   }
 
-  fun getSubmission(task: Task, submissionId: Int): Submission? {
+  fun getSubmission(task: Task, submissionId: Int): SubmissionBase? {
     return getOrLoadSubmissions(task).find { it.id == submissionId }
   }
 
-  private fun getOrLoadSubmissions(task: Task): List<Submission> {
+  private fun getOrLoadSubmissions(task: Task): List<SubmissionBase> {
     val course = this.course ?: return emptyList()
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
     val submissionsList = submissions[task.id]
@@ -77,11 +75,12 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun addToSubmissions(taskId: Int, submission: Submission) {
-    val submissionsList = submissions.getOrPut(taskId) { mutableListOf(submission) }
+  fun addToSubmissions(taskId: Int, submission: SubmissionBase) {
+    val submissionsList = submissions.getOrPut(taskId) { listOf(submission) }.toMutableList()
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
       submissionsList.sortByDescending { it.time }
+      submissions[taskId] = submissionsList
       //potential race when loading submissions and checking task at one time
     }
     updateSubmissionsTab()
@@ -96,7 +95,7 @@ class SubmissionsManager(private val project: Project) {
     return submissions.any { it.status == EduNames.CORRECT }
   }
 
-  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
+  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: SubmissionBase?) {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
     addToSubmissions(taskId, submission)
