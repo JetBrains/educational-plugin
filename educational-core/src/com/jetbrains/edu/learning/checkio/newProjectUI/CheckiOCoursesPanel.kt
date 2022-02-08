@@ -56,7 +56,7 @@ class CheckiOCoursesPanel(
                                                        val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
                                                        checkiOOAuthConnector.doAuthorize(
                                                          Runnable { coursePanel.hideErrorPanel() },
-                                                         Runnable { coursePanel.hideErrorPanel() },
+                                                         Runnable { hideLoginPanel() },
                                                          Runnable { doValidation() },
                                                          authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
                                                        )
