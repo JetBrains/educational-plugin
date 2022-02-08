@@ -1,13 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -22,34 +18,34 @@ import com.jetbrains.edu.learning.testAction
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
+class HyperskillCheckChoiceTaskTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
-
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("1_lesson_correct") {
-        choiceTask(stepId = 1,
-                   name = "1_choice_task",
-                   isMultipleChoice = true,
-                   choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
-                                         "Incorrect" to ChoiceOptionStatus.UNKNOWN,
-                                         "Correct2" to ChoiceOptionStatus.UNKNOWN),
-                   selectedVariants = mutableListOf(0, 2)) {
-          taskFile("Task.txt", "")
-        }
-        choiceTask(stepId = 2,
-                   name = "2_choice_task",
-                   isMultipleChoice = false,
-                   choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
-                                         "Incorrect" to ChoiceOptionStatus.UNKNOWN,
-                                         "Correct2" to ChoiceOptionStatus.UNKNOWN)) {
-          taskFile("Task.txt", "")
+  override fun createCourse() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("1_lesson_correct") {
+          choiceTask(stepId = 1,
+                     name = "1_choice_task",
+                     isMultipleChoice = true,
+                     choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
+                                           "Incorrect" to ChoiceOptionStatus.UNKNOWN,
+                                           "Correct2" to ChoiceOptionStatus.UNKNOWN),
+                     selectedVariants = mutableListOf(0, 2)) {
+            taskFile("Task.txt", "")
+          }
+          choiceTask(stepId = 2,
+                     name = "2_choice_task",
+                     isMultipleChoice = false,
+                     choiceOptions = mapOf("Correct1" to ChoiceOptionStatus.UNKNOWN,
+                                           "Incorrect" to ChoiceOptionStatus.UNKNOWN,
+                                           "Correct2" to ChoiceOptionStatus.UNKNOWN)) {
+            taskFile("Task.txt", "")
+          }
         }
       }
     }
-  } as HyperskillCourse
+  }
 
   override fun setUp() {
     super.setUp()
@@ -74,7 +70,8 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
     }
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[0])
     testAction(CheckAction.ACTION_ID)
   }
 
@@ -93,14 +90,16 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[0])
     testAction(CheckAction.ACTION_ID)
   }
 
   fun `test choice task nothing selected `() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("choice.task.empty.variant") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[1])
     testAction(CheckAction.ACTION_ID)
   }
 
