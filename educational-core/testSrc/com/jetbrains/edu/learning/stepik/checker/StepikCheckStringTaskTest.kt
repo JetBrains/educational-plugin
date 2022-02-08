@@ -28,11 +28,20 @@ class StepikCheckStringTaskTest : StepikBasedCheckStringTaskTest() {
   override fun createCourse(): Course = course {
     section(SECTION) {
       lesson(LESSON) {
-        stringTask(stepId = 1, name = "1_string_task") {
+        stringTask(stepId = 1, name = "0_string_task") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>answer</p>")
         }
-        stringTask(stepId = 1, name = "2_string_task") {
+        stringTask(stepId = 1, name = "1_string_task") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, "<p></p>")
+        }
+        stringTask(stepId = 1, name = "2_string_task") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, "<p>answer</p>")
+          taskFile("taskFile.txt", "text")
+        }
+        stringTask(stepId = 1, name = "3_answer_file_in_src") {
+          dir("src") {
+            taskFile(AnswerTask.ANSWER_FILE_NAME, "<p>answer</p>")
+          }
         }
       }
     }

@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -87,5 +88,49 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
   fun `test task with comma and dot`() {
     assertNull((myCourse.allTasks[6] as NumberTask).validateAnswer (project))
     assertNull((myCourse.allTasks[7] as NumberTask).validateAnswer (project))
+  }
+
+  /**
+   * test method
+   * [TrailingSpacesOptionsAnswerTaskProvider.AnswerOptions.getEnsureNewLineAtEOF]
+   *
+   * method getEnsureNewLineAtEOF allow adding blank line to the end of file.
+   * This option is enabled from the settings by checking the box "ensure every saved file ends with a line break".
+   * In the answerTask for file with name [AnswerTask.ANSWER_FILE_NAME] this option must be disabled.
+   */
+  fun `test numberTask new line at eof for answer_txt`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[8] as NumberTask
+      val textForSaving = "test numberTask new line at eof for answer_txt"
+      val text = getSavedTextInFile(task, AnswerTask.ANSWER_FILE_NAME, textForSaving, project)
+      assertEquals(textForSaving, text)
+      assertEquals(textForSaving, task.getInputAnswer(project))
+    }
+  }
+
+  /**
+   * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME].
+   * Blank line must add for others files at AnswerTask
+   */
+  fun `test numberTask new line at eof for task file`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[8] as NumberTask
+      val textForSaving = "test numberTask new line at eof for task file"
+      val text = getSavedTextInFile(task, "taskFile.txt", textForSaving, project)
+      assertEquals("$textForSaving\n", text)
+    }
+  }
+
+  /**
+   * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME] file.
+   * Blank line must add for others files at any task type
+   */
+  fun `test new line at eof for not answer task`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[9] as EduTask
+      val textForSaving = "test new line at eof for not answer task"
+      val text = getSavedTextInFile(task, "test.txt", textForSaving, project)
+      assertEquals("$textForSaving\n", text)
+    }
   }
 }

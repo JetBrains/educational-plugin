@@ -325,6 +325,7 @@
                        order="last"/>
 
     <writingAccessProvider implementation="com.jetbrains.edu.learning.editor.EditableFileProvider"/>
+    <trailingSpacesOptionsProvider implementation="com.jetbrains.edu.learning.editor.TrailingSpacesOptionsAnswerTaskProvider"/>
 
     <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
       <description>Enables support for SQL courses</description>

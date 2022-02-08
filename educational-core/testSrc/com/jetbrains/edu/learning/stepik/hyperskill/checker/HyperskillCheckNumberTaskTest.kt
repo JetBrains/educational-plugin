@@ -28,8 +28,8 @@ class HyperskillCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
   }
 
   override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("1_lesson_correct") {
+    section(SECTION) {
+      lesson(LESSON) {
         numberTask(stepId = 1, name = "0_number_task_non_number") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>answer</p>")
         }
@@ -53,6 +53,13 @@ class HyperskillCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
         }
         numberTask(stepId = 1, name = "7_number_task_with_comma") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1.2</p>")
+        }
+        numberTask(stepId = 1, name = "8_number_task_ne_line_at_eof") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1.2</p>")
+          taskFile("taskFile.txt", text = "")
+        }
+        eduTask(name = "9_edu_task") {
+          taskFile("test.txt", text = "text")
         }
       }
     }

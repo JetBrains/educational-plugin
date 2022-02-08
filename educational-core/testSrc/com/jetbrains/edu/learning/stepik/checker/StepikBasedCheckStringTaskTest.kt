@@ -58,4 +58,44 @@ abstract class StepikBasedCheckStringTaskTest : StepikBasedCheckAnswerTaskTest()
     assertEquals(EduCoreBundle.message("string.task.comment.file").length,
                  createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.first()?.endOffset)
   }
+
+  /**
+   * test method
+   * [TrailingSpacesOptionsAnswerTaskProvider.AnswerOptions.getEnsureNewLineAtEOF]
+   *
+   * method getEnsureNewLineAtEOF allow adding blank line to the end of file.
+   * This option is enabled from the settings by checking the box "ensure every saved file ends with a line break".
+   * In the answerTask for file with name [AnswerTask.ANSWER_FILE_NAME] this option must be disabled.
+   */
+  fun `test string task new line at eof for answer_txt`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[2] as StringTask
+      val textForSaving = "test StringTask new line at eof for answer_txt"
+      val text = getSavedTextInFile(task, AnswerTask.ANSWER_FILE_NAME, textForSaving, project)
+      assertEquals(textForSaving, text)
+      assertEquals(textForSaving, task.getInputAnswer(project))
+    }
+  }
+
+  /**
+   * Test that new line at the end of file for AnswerTask appear only in [AnswerTask.ANSWER_FILE_NAME].
+   * Blank line must add for others files at AnswerTask
+   */
+  fun `test string task new line at eof for task file`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[2] as StringTask
+      val textForSaving = "test StringTask new line at eof for task file"
+      val text = getSavedTextInFile(task, "taskFile.txt", textForSaving, project)
+      assertEquals("$textForSaving\n", text)
+    }
+  }
+
+  fun `test src answer file`() {
+    testWithEnabledEnsureNewLineAtEOFSetting {
+      val task = myCourse.allTasks[3] as StringTask
+      val textForSaving = "test src answer file"
+      val text = getSavedTextInFile(task, "src/${AnswerTask.ANSWER_FILE_NAME}", textForSaving, project)
+      assertEquals("$textForSaving\n", text)
+    }
+  }
 }

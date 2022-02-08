@@ -52,6 +52,13 @@ class StepikCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
         numberTask(stepId = 1, name = "7_number_task_with_comma") {
           taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1.2</p>")
         }
+        numberTask(stepId = 1, name = "8_number_task_ne_line_at_eof") {
+          taskFile(AnswerTask.ANSWER_FILE_NAME, text = "<p>1.2</p>")
+          taskFile("taskFile.txt", text = "")
+        }
+        eduTask(name = "9_edu_task") {
+          taskFile("test.txt", text = "text")
+        }
       }
     }
   }.apply { id = 1 }
