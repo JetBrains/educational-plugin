@@ -4,10 +4,8 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
@@ -15,12 +13,10 @@ import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-abstract class StepikBasedCheckAnswerTaskTest : CheckersTestBase<Unit>() {
+abstract class StepikBasedCheckAnswerTaskTest : EduTestCase() {
   protected abstract val defaultResponseCode: Int
 
   protected abstract val mockConnector: MockStepikBasedConnector
-
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
 
   protected fun configureResponses(succeed: Boolean) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
@@ -151,6 +147,7 @@ abstract class StepikBasedCheckAnswerTaskTest : CheckersTestBase<Unit>() {
   companion object {
     @JvmStatic
     protected val SECTION: String = "Section"
+
     @JvmStatic
     protected val LESSON: String = "Lesson"
   }

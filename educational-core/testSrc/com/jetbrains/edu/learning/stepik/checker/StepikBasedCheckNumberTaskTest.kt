@@ -20,7 +20,8 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    val task = myCourse.allTasks[2] as NumberTask
+    val course = getCourse()
+    val task = course.allTasks[2] as NumberTask
     NavigationUtils.navigateToTask(project, task)
     testAction(CheckAction.ACTION_ID)
     assertEquals("12", task.getInputAnswer(project))
@@ -31,7 +32,8 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[2])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[2])
     testAction(CheckAction.ACTION_ID)
   }
 
@@ -49,19 +51,22 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.number.task.not.number") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[0])
     testAction(CheckAction.ACTION_ID)
   }
 
   fun `test number task input is empty`() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.string.task.empty.text") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
+    val course = getCourse()
+    NavigationUtils.navigateToTask(project, course.allTasks[1])
     testAction(CheckAction.ACTION_ID)
   }
 
   fun `test creating placeholder`() {
-    val task = myCourse.allTasks[0] as NumberTask
+    val course = getCourse()
+    val task = course.allTasks[0] as NumberTask
     val lesson = task.lesson
     val stepSource = StepSource().apply {
       block = Step().apply {
@@ -69,7 +74,7 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
       }
     }
 
-    val createdTask = StepikTaskBuilder(myCourse, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
+    val createdTask = StepikTaskBuilder(course, lesson, stepSource).createTask(stepSource.block?.name!!) ?: error("")
     assertEquals(1, createdTask.taskFiles.size)
     assertEquals(1, createdTask.getTaskFile(AnswerTask.ANSWER_FILE_NAME)?.answerPlaceholders?.size)
     assertEquals(EduCoreBundle.message("string.task.comment.file"),
@@ -80,14 +85,16 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
   }
 
   fun `test task with space`() {
-    assertNull((myCourse.allTasks[3] as NumberTask).validateAnswer (project))
-    assertNull((myCourse.allTasks[4] as NumberTask).validateAnswer (project))
-    assertNull((myCourse.allTasks[5] as NumberTask).validateAnswer (project))
+    val course = getCourse()
+    assertNull((course.allTasks[3] as NumberTask).validateAnswer(project))
+    assertNull((course.allTasks[4] as NumberTask).validateAnswer(project))
+    assertNull((course.allTasks[5] as NumberTask).validateAnswer(project))
   }
 
   fun `test task with comma and dot`() {
-    assertNull((myCourse.allTasks[6] as NumberTask).validateAnswer (project))
-    assertNull((myCourse.allTasks[7] as NumberTask).validateAnswer (project))
+    val course = getCourse()
+    assertNull((course.allTasks[6] as NumberTask).validateAnswer(project))
+    assertNull((course.allTasks[7] as NumberTask).validateAnswer(project))
   }
 
   /**
@@ -100,7 +107,8 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
    */
   fun `test numberTask new line at eof for answer_txt`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
-      val task = myCourse.allTasks[8] as NumberTask
+      val course = getCourse()
+      val task = course.allTasks[8] as NumberTask
       val textForSaving = "test numberTask new line at eof for answer_txt"
       val text = getSavedTextInFile(task, AnswerTask.ANSWER_FILE_NAME, textForSaving, project)
       assertEquals(textForSaving, text)
@@ -114,7 +122,8 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
    */
   fun `test numberTask new line at eof for task file`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
-      val task = myCourse.allTasks[8] as NumberTask
+      val course = getCourse()
+      val task = course.allTasks[8] as NumberTask
       val textForSaving = "test numberTask new line at eof for task file"
       val text = getSavedTextInFile(task, "taskFile.txt", textForSaving, project)
       assertEquals("$textForSaving\n", text)
@@ -127,7 +136,8 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
    */
   fun `test new line at eof for not answer task`() {
     testWithEnabledEnsureNewLineAtEOFSetting {
-      val task = myCourse.allTasks[9] as EduTask
+      val course = getCourse()
+      val task = course.allTasks[9] as EduTask
       val textForSaving = "test new line at eof for not answer task"
       val text = getSavedTextInFile(task, "test.txt", textForSaving, project)
       assertEquals("$textForSaving\n", text)
