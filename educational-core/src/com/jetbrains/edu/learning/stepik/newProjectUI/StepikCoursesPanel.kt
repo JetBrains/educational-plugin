@@ -95,6 +95,8 @@ class StepikCoursesPanel(
 
       if (result == Messages.OK) {
         StepikConnector.getInstance().doAuthorize(
+          { runInEdt(ModalityState.any()) { hideLoginPanel() } },
+          { runInEdt(ModalityState.any()) { coursePanel.hideErrorPanel() } },
           { runInEdt(ModalityState.any()) { importCourse() } }
         )
       }
