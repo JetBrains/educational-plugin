@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
@@ -40,9 +40,8 @@ class ImportStepikCoursePanel(
     if (e.eventType != HyperlinkEvent.EventType.ACTIVATED) return@HyperlinkListener
     if (EduSettings.isLoggedIn()) return@HyperlinkListener
 
-    val connector = StepikConnector.getInstance()
-    connector.doAuthorize(
-      { ApplicationManager.getApplication().invokeLater({ doValidation() }, ModalityState.any()) }
+    StepikConnector.getInstance().doAuthorize(
+      { runInEdt(ModalityState.any()) { doValidation() } }
     )
     EduCounterUsageCollector.loggedIn(StepikNames.STEPIK, EduCounterUsageCollector.AuthorizationPlace.START_COURSE_DIALOG)
   }
