@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.SubmissionBase
+import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -80,7 +80,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<SubmissionBase>, progressIndicator: ProgressIndicator?,
+  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?,
                                  force: Boolean = false) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
@@ -197,7 +197,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  open fun updateTask(project: Project, task: Task, submissions: List<SubmissionBase>, force: Boolean = false): Boolean {
+  open fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
     val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
     if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
@@ -210,9 +210,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     cancelUnfinishedTasks()
   }
 
-  private fun loadSubmissions(tasks: List<Task>): List<SubmissionBase>? = SubmissionsManager.getInstance(project).getSubmissions(tasks)
+  private fun loadSubmissions(tasks: List<Task>): List<Submission>? = SubmissionsManager.getInstance(project).getSubmissions(tasks)
 
-  protected abstract fun loadSolution(task: Task, submissions: List<SubmissionBase>): TaskSolutions
+  protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
   abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   companion object {

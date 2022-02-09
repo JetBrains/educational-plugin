@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
-import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -176,10 +175,10 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return stepSource?.block
   }
 
-  fun getSubmissions(stepId: Int): List<Submission> {
+  fun getSubmissions(stepId: Int): List<StepikBasedSubmission> {
     if (!isUnitTestMode && !EduSettings.isLoggedIn()) return emptyList()
     var currentPage = 1
-    val allSubmissions = mutableListOf<Submission>()
+    val allSubmissions = mutableListOf<StepikBasedSubmission>()
     do {
       val submissionsList = stepikEndpoints.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
@@ -190,7 +189,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return allSubmissions
   }
 
-  override fun getSubmission(id: Int): Result<Submission, String> =
+  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> =
     stepikEndpoints.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
@@ -269,7 +268,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.body()?.steps?.firstOrNull()
   }
 
-  override fun postSubmission(submission: Submission): Result<Submission, String> {
+  override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> {
     val submissionData = SubmissionData(submission)
     val response = stepikEndpoints.submission(submissionData).executeHandlingExceptions()
     val submissions = response?.body()?.submissions

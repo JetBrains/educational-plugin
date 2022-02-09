@@ -8,24 +8,23 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.SubmissionData
 import java.util.*
 
 object StepikBasedSubmissionFactory {
   @JvmStatic
-  fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): Submission {
+  fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): StepikBasedSubmission {
     val reply = Reply()
     reply.code = answer
     reply.language = language
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
-  fun createEduTaskSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): Submission {
+  fun createEduTaskSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): StepikBasedSubmission {
     val reply = Reply()
     reply.feedback = Feedback(feedback)
     reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
     reply.solution = files
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
   // to be used for marketplace submissions creation
@@ -43,7 +42,7 @@ object StepikBasedSubmissionFactory {
     reply.score = if (passed) "1" else "0"
     reply.solution = files
 
-    val submission = Submission()
+    val submission = StepikBasedSubmission()
     submission.reply = reply
     submission.time = Date()
 
@@ -56,7 +55,7 @@ object StepikBasedSubmissionFactory {
   }
 
   @JvmStatic
-  fun createStepikSubmission(task: Task, attempt: Attempt, files: List<SolutionFile> = emptyList()): Submission {
+  fun createStepikSubmission(task: Task, attempt: Attempt, files: List<SolutionFile> = emptyList()): StepikBasedSubmission {
     val objectMapper = StepikConnector.getInstance().objectMapper
     val serializedTask = objectMapper.writeValueAsString(TaskData(task))
 
@@ -64,22 +63,22 @@ object StepikBasedSubmissionFactory {
     reply.eduTask = serializedTask
     reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
     reply.solution = files
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
-  fun createRemoteEduTaskSubmission(task: RemoteEduTask, attempt: Attempt, files: List<SolutionFile>): Submission {
+  fun createRemoteEduTaskSubmission(task: RemoteEduTask, attempt: Attempt, files: List<SolutionFile>): StepikBasedSubmission {
     val reply = Reply()
     reply.checkProfile = task.checkProfile
     reply.solution = files
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
   @JvmStatic
-  fun createChoiceTaskSubmission(task: ChoiceTask, attempt: Attempt): Submission {
+  fun createChoiceTaskSubmission(task: ChoiceTask, attempt: Attempt): StepikBasedSubmission {
     val answerArray = createChoiceTaskAnswerArray(task, attempt)
     val reply = Reply()
     reply.choices = answerArray
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
   private fun createChoiceTaskAnswerArray(task: ChoiceTask, attempt: Attempt): BooleanArray {
@@ -97,21 +96,21 @@ object StepikBasedSubmissionFactory {
     return answer
   }
 
-  fun createStringTaskSubmission(attempt: Attempt, answer: String): Submission {
+  fun createStringTaskSubmission(attempt: Attempt, answer: String): StepikBasedSubmission {
     val reply = Reply()
     reply.text = answer
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
-  fun createNumberTaskSubmission(attempt: Attempt, answer: String): Submission {
+  fun createNumberTaskSubmission(attempt: Attempt, answer: String): StepikBasedSubmission {
     val reply = Reply()
     reply.number = answer
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 
-  fun createDataTaskSubmission(attempt: DataTaskAttempt, answer: String): Submission {
+  fun createDataTaskSubmission(attempt: DataTaskAttempt, answer: String): StepikBasedSubmission {
     val reply = Reply()
     reply.file = answer
-    return Submission(attempt, reply)
+    return StepikBasedSubmission(attempt, reply)
   }
 }

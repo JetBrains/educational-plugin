@@ -207,10 +207,10 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     return "${stageLink(project, stage.id)}$HYPERSKILL_COMMENT_ANCHOR"
   }
 
-  fun getSubmissions(stepIds: Set<Int>): List<Submission> {
+  fun getSubmissions(stepIds: Set<Int>): List<StepikBasedSubmission> {
     val userId = account?.userInfo?.id ?: return emptyList()
     var currentPage = 1
-    val allSubmissions = mutableListOf<Submission>()
+    val allSubmissions = mutableListOf<StepikBasedSubmission>()
     while (true) {
       val submissionsList = hyperskillEndpoints.submission(userId, stepIds.joinToString(separator = ","),
                                                            currentPage).executeHandlingExceptions()?.body() ?: break
@@ -224,7 +224,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     return allSubmissions
   }
 
-  override fun getSubmission(id: Int): Result<Submission, String> {
+  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> {
     return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(id).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
@@ -255,7 +255,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   // Post requests:
 
-  override fun postSubmission(submission: Submission): Result<Submission, String> {
+  override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> {
     return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 

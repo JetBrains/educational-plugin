@@ -2,23 +2,18 @@ package com.jetbrains.edu.learning.submissions
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.stepik.api.*
 import java.util.*
 
+const val ID = "id"
+const val IS_VISIBLE = "is_visible"
+const val NAME = "name"
+const val PLACEHOLDERS = "placeholders"
+const val STATUS = "status"
 const val SUBMISSION = "submission"
+const val TEXT = "text"
+const val TIME = "time"
 
-class SubmissionData {
-  @JsonProperty(SUBMISSION)
-  lateinit var submission: Submission
-
-  constructor()
-
-  constructor(submission: Submission) {
-    this.submission = submission
-  }
-}
-
-abstract class SubmissionBase {
+abstract class Submission {
   @JsonProperty(ID)
   var id: Int? = null
 

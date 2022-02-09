@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Compan
 import com.jetbrains.edu.learning.stepik.StepikBasedCreateSubmissionTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
@@ -199,7 +199,7 @@ class HyperskillCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
     """.trimMargin())
   }
 
-  private fun doTest(submission: Submission, expected: String) {
+  private fun doTest(submission: StepikBasedSubmission, expected: String) {
     val actual = YamlFormatSynchronizer.STUDENT_MAPPER.writeValueAsString(submission)
     assertEquals(expected, actual)
   }

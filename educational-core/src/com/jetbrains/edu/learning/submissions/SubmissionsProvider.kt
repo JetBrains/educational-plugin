@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
  */
 interface SubmissionsProvider {
 
-  fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<SubmissionBase>>
+  fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>>
 
-  fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<SubmissionBase>>
+  fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>>
 
   fun areSubmissionsAvailable(course: Course): Boolean
 

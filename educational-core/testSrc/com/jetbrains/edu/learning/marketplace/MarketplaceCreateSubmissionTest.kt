@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.stepik.api.SubmissionData
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
 import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.SubmissionData
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 import java.util.*

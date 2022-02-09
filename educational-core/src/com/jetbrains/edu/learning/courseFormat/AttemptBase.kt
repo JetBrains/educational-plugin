@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jetbrains.edu.learning.stepik.api.ID
-import com.jetbrains.edu.learning.stepik.api.TIME
 import com.jetbrains.edu.learning.stepik.api.TIME_LEFT
+import com.jetbrains.edu.learning.submissions.ID
+import com.jetbrains.edu.learning.submissions.TIME
 import java.util.*
 
 abstract class AttemptBase {

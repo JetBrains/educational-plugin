@@ -115,7 +115,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
     }
 
-    private fun StringBuilder.addSubmissions(submissionsNext: List<SubmissionBase>) {
+    private fun StringBuilder.addSubmissions(submissionsNext: List<Submission>) {
       append("<ul style=list-style-type:none;margin:0;padding:0;>")
       submissionsNext.forEach { submission ->
         append(submissionLink(submission))
@@ -128,7 +128,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
              EduCoreBundle.message("submissions.login", submissionsManager.getPlatformName()) + "</a>")
     }
 
-    private fun showDiff(project: Project, task: Task, submission: SubmissionBase) {
+    private fun showDiff(project: Project, task: Task, submission: Submission) {
       val taskFiles = task.taskFiles.values.toMutableList()
       val submissionTexts = submission.getSubmissionTexts(task.name) ?: return
       val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
@@ -153,7 +153,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
     }
 
-    private fun submissionLink(submission: SubmissionBase): String? {
+    private fun submissionLink(submission: Submission): String? {
       val time = submission.time ?: return null
       val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
       val text = formatDate(time)
@@ -177,7 +177,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       return (icon as IconLoader.CachedImageIcon).url
     }
 
-    private fun getLinkColor(submission: SubmissionBase): String {
+    private fun getLinkColor(submission: Submission): String {
       return when (submission.status) {
         EduNames.CORRECT -> getCorrectLinkColor()
         else -> getWrongLinkColor()

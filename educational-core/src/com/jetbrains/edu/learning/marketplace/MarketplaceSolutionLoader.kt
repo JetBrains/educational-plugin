@@ -9,13 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.api.SubmissionDocument
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
-import com.jetbrains.edu.learning.submissions.SubmissionBase
+import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
-  override fun loadSolution(task: Task, submissions: List<SubmissionBase>): TaskSolutions {
+  override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
     TODO("Not yet implemented")
   }
 
@@ -23,7 +23,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
     TODO("Not yet implemented")
   }
 
-  fun postSubmission(project: Project, task: Task): Submission {
+  fun postSubmission(project: Project, task: Task): StepikBasedSubmission {
     val solutionFiles = getSolutionFiles(project, task).filter { it.isVisible }
     val submissionData = createMarketplaceSubmissionData(task, solutionFiles)
     val submissionDocument = SubmissionDocument(docId = task.submissionsId,

@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 
 class MarketplaceCheckListener: PostSolutionCheckListener() {
 
@@ -17,7 +17,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
     return isMarketplaceRemote && account.isJwtTokenProvided()
   }
 
-  override fun postSubmission(project: Project, task: Task): Submission {
+  override fun postSubmission(project: Project, task: Task): StepikBasedSubmission {
     return MarketplaceSolutionLoader.getInstance(project).postSubmission(project, task)
   }
 

@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -14,15 +14,15 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class HyperskillSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>> {
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<StepikBasedSubmission>> {
     if (!areSubmissionsAvailable(course) || !isLoggedIn()) return emptyMap()
     val tasks = HyperskillSolutionLoader.getInstance(project).provideTasksToUpdate(course)
     return loadSubmissions(tasks, course.id)
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<StepikBasedSubmission>> {
     val stepIds = tasks.map { it.id }.toSet()
-    val submissionsById = mutableMapOf<Int, MutableList<Submission>>()
+    val submissionsById = mutableMapOf<Int, MutableList<StepikBasedSubmission>>()
     val submissionsList = HyperskillConnector.getInstance().getSubmissions(stepIds)
     return submissionsList.groupByTo(submissionsById) { it.taskId }
   }

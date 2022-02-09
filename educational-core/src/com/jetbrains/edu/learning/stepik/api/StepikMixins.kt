@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -20,7 +21,6 @@ const val IS_ADAPTIVE = "is_adaptive"
 const val COURSE_FORMAT = "course_format"
 const val SECTIONS = "sections"
 const val INSTRUCTORS = "instructors"
-const val ID = "id"
 const val UPDATE_DATE = "update_date"
 const val IS_PUBLIC = "is_public"
 const val SUMMARY = "summary"
@@ -35,10 +35,6 @@ const val COURSE = "course"
 const val POSITION = "position"
 const val STEPS = "steps"
 const val UNIT_ID = "unit_id"
-const val NAME = "name"
-const val PLACEHOLDERS = "placeholders"
-const val IS_VISIBLE = "is_visible"
-const val TEXT = "text"
 const val NUMBER = "number"
 const val OFFSET = "offset"
 const val LENGTH = "length"
@@ -54,7 +50,6 @@ private const val FILE = "file"
 const val PLACEHOLDER = "placeholder"
 const val LINK_TYPE = "link_type"
 const val LINK = "link"
-const val STATUS = "status"
 const val STEPIK_ID = "stepic_id"
 const val FILES = "files"
 const val CHOICE_VARIANTS = "choice_variants"

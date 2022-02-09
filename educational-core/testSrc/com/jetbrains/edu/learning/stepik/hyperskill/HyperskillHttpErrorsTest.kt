@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import okhttp3.mockwebserver.MockResponse
@@ -19,7 +19,7 @@ class HyperskillHttpErrorsTest : EduTestCase() {
 
   private fun doTest(code: Int, expectedError: String) {
     mockConnector.withResponseHandler(testRootDisposable) { MockResponse().setResponseCode(code) }
-    val response = mockConnector.postSubmission(Submission())
+    val response = mockConnector.postSubmission(StepikBasedSubmission())
     val actualError = (response as Err).error
     assertTrue("Unexpected error message: `$actualError`", actualError.startsWith(expectedError))
   }

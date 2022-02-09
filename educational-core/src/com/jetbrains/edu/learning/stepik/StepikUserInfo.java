@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.jetbrains.edu.learning.stepik.api.StepikAPIKt.*;
-import static com.jetbrains.edu.learning.stepik.api.StepikMixinsKt.ID;
+import static com.jetbrains.edu.learning.submissions.SubmissionsAPIKt.ID;
 
 public class StepikUserInfo implements UserInfo {
   @JsonProperty(ID)

@@ -13,8 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.SubmissionBase
+import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import org.jetbrains.annotations.TestOnly
 import java.util.*
@@ -59,7 +58,6 @@ const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASKS_INFO = "tasks_info"
-const val TIME = "time"
 const val TIME_LEFT = "time_left"
 const val MEMORY = "memory"
 const val AVERAGE = "average"
@@ -117,7 +115,7 @@ class SubmissionsList {
   lateinit var meta: Map<Any, Any>
 
   @JsonProperty(SUBMISSIONS)
-  lateinit var submissions: List<Submission>
+  lateinit var submissions: List<StepikBasedSubmission>
 }
 
 class ProgressesList {
@@ -443,7 +441,7 @@ class TaskAdditionalInfo {
   }
 }
 
-class Submission : SubmissionBase {
+class StepikBasedSubmission : Submission {
   @JsonProperty(ATTEMPT)
   var attempt: Int = 0
 
@@ -460,7 +458,7 @@ class Submission : SubmissionBase {
   @JsonProperty(STEP, access = JsonProperty.Access.WRITE_ONLY)
   override var taskId: Int = -1
 
-  private val LOG = logger<Submission>()
+  private val LOG = logger<StepikBasedSubmission>()
 
   override val solutionFiles: List<SolutionFile>?
     get() {
@@ -490,5 +488,16 @@ class Submission : SubmissionBase {
   constructor(attempt: AttemptBase, reply: Reply) {
     this.attempt = attempt.id
     this.reply = reply
+  }
+}
+
+class SubmissionData {
+  @JsonProperty(SUBMISSION)
+  lateinit var submission: StepikBasedSubmission
+
+  constructor()
+
+  constructor(submission: StepikBasedSubmission) {
+    this.submission = submission
   }
 }

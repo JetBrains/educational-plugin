@@ -10,14 +10,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class StepikSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>> {
-    val submissionsById = mutableMapOf<Int, List<Submission>>()
+  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<StepikBasedSubmission>> {
+    val submissionsById = mutableMapOf<Int, List<StepikBasedSubmission>>()
     if (course is EduCourse && course.isStepikRemote && isLoggedIn()) {
       val allTasks: List<Task> = course.allTasks
       for (task in allTasks) {
@@ -32,7 +32,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
     return submissionsById
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int,List<Submission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int,List<StepikBasedSubmission>> {
     return tasks.associate { Pair(it.id, StepikConnector.getInstance().getSubmissions(it.id)) }
   }
 

@@ -10,13 +10,13 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
 abstract class PostSolutionCheckListener : CheckListener {
 
   protected abstract fun isUpToDate(course: EduCourse, task: Task): Boolean
-  protected abstract fun postSubmission(project: Project, task: Task): Submission?
+  protected abstract fun postSubmission(project: Project, task: Task): StepikBasedSubmission?
   protected abstract fun updateCourseAction(project: Project, course: EduCourse)
   protected abstract fun EduCourse.isToPostSubmissions(): Boolean
 

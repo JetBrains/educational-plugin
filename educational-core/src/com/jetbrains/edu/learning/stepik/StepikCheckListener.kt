@@ -4,11 +4,11 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 
 class StepikCheckListener: PostSolutionCheckListener() {
 
-  override fun postSubmission(project: Project, task: Task): Submission? = StepikSolutionsLoader.postSolution(project, task)
+  override fun postSubmission(project: Project, task: Task): StepikBasedSubmission? = StepikSolutionsLoader.postSolution(project, task)
 
   override fun isUpToDate(course: EduCourse, task: Task): Boolean = task.isUpToDate
 

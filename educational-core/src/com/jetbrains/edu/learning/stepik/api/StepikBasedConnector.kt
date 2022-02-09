@@ -26,9 +26,9 @@ interface StepikBasedConnector {
 
   fun getDataset(attempt: Attempt): Result<String, String>
 
-  fun getSubmission(id: Int): Result<Submission, String>
+  fun getSubmission(id: Int): Result<StepikBasedSubmission, String>
 
-  fun postSubmission(submission: Submission): Result<Submission, String>
+  fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String>
 
   companion object {
     fun Course.getStepikBasedConnector(): StepikBasedConnector {

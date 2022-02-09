@@ -24,12 +24,12 @@ import java.util.stream.Collectors
  */
 @Service
 class SubmissionsManager(private val project: Project) {
-  private val submissions = ConcurrentHashMap<Int, List<SubmissionBase>>()
+  private val submissions = ConcurrentHashMap<Int, List<Submission>>()
   var course: Course? = project.course
     @TestOnly set
 
-  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<SubmissionBase>? {
-    val submissionsFromMemory = mutableListOf<SubmissionBase>()
+  fun getSubmissionsFromMemory(stepIds: Set<Int>): List<Submission>? {
+    val submissionsFromMemory = mutableListOf<Submission>()
     for (stepId in stepIds) {
       val submissionsByStep = submissions[stepId] ?: return null
       submissionsFromMemory.addAll(submissionsByStep)
@@ -37,7 +37,7 @@ class SubmissionsManager(private val project: Project) {
     return submissionsFromMemory.sortedByDescending { it.time }.toList()
   }
 
-  fun getSubmissions(tasks: List<Task>): List<SubmissionBase>? {
+  fun getSubmissions(tasks: List<Task>): List<Submission>? {
     val course = this.course
     val stepIds = tasks.stream().map { task -> task.id }.collect(Collectors.toSet())
     val submissionsFromMemory = getSubmissionsFromMemory(stepIds)
@@ -52,15 +52,15 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun getSubmissions(task: Task): List<SubmissionBase> {
+  fun getSubmissions(task: Task): List<Submission> {
     return getOrLoadSubmissions(task)
   }
 
-  fun getSubmission(task: Task, submissionId: Int): SubmissionBase? {
+  fun getSubmission(task: Task, submissionId: Int): Submission? {
     return getOrLoadSubmissions(task).find { it.id == submissionId }
   }
 
-  private fun getOrLoadSubmissions(task: Task): List<SubmissionBase> {
+  private fun getOrLoadSubmissions(task: Task): List<Submission> {
     val course = this.course ?: return emptyList()
     val submissionsProvider = course.getSubmissionsProvider() ?: return emptyList()
     val submissionsList = submissions[task.id]
@@ -75,7 +75,7 @@ class SubmissionsManager(private val project: Project) {
     }
   }
 
-  fun addToSubmissions(taskId: Int, submission: SubmissionBase) {
+  fun addToSubmissions(taskId: Int, submission: Submission) {
     val submissionsList = submissions.getOrPut(taskId) { listOf(submission) }.toMutableList()
     if (!submissionsList.contains(submission)) {
       submissionsList.add(submission)
@@ -95,7 +95,7 @@ class SubmissionsManager(private val project: Project) {
     return submissions.any { it.status == EduNames.CORRECT }
   }
 
-  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: SubmissionBase?) {
+  fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
     submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
     addToSubmissions(taskId, submission)

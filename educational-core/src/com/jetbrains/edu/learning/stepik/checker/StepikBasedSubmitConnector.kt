@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactor
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
 object StepikBasedSubmitConnector {
-  fun submitCodeTask(project: Project, task: CodeTask): Result<Submission, String> {
+  fun submitCodeTask(project: Project, task: CodeTask): Result<StepikBasedSubmission, String> {
     val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)
@@ -83,7 +83,7 @@ object StepikBasedSubmitConnector {
     return Err("""Unknown language "$languageDisplayName". Check if support for "$languageDisplayName" is enabled.""")
   }
 
-  fun submitChoiceTask(task: ChoiceTask): Result<Submission, String> {
+  fun submitChoiceTask(task: ChoiceTask): Result<StepikBasedSubmission, String> {
     val connector = task.getStepikBasedConnector()
     val attempt = connector.getActiveAttemptOrPostNew(task).onError {
       return Err(it)
@@ -93,14 +93,14 @@ object StepikBasedSubmitConnector {
     return connector.postSubmission(submission)
   }
 
-  fun submitDataTask(task: DataTask, answer: String): Result<Submission, String> {
+  fun submitDataTask(task: DataTask, answer: String): Result<StepikBasedSubmission, String> {
     val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
     val connector = task.getStepikBasedConnector()
     val submission = StepikBasedSubmissionFactory.createDataTaskSubmission(attempt, answer)
     return connector.postSubmission(submission)
   }
 
-  fun submitAnswerTask(project: Project, task: AnswerTask): Result<Submission, String> {
+  fun submitAnswerTask(project: Project, task: AnswerTask): Result<StepikBasedSubmission, String> {
     val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)
@@ -113,7 +113,7 @@ object StepikBasedSubmitConnector {
     return connector.postSubmission(submission)
   }
 
-  fun submitRemoteEduTask(task: RemoteEduTask, files: List<SolutionFile>): Result<Submission, String> {
+  fun submitRemoteEduTask(task: RemoteEduTask, files: List<SolutionFile>): Result<StepikBasedSubmission, String> {
     val connector = HyperskillConnector.getInstance()
     val attempt = connector.postAttempt(task).onError {
       return Err(it)

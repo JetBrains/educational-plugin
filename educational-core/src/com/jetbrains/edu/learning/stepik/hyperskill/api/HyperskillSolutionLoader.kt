@@ -16,18 +16,18 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.stepik.hyperskill.openSelectedStage
-import com.jetbrains.edu.learning.submissions.SubmissionBase
+import com.jetbrains.edu.learning.submissions.Submission
 
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
-  override fun loadSolution(task: Task, submissions: List<SubmissionBase>): TaskSolutions {
-    val lastSubmission: SubmissionBase = submissions.firstOrNull { it.taskId == task.id } ?: return TaskSolutions.EMPTY
-    if (lastSubmission !is Submission) error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of Submission class")
+  override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
+    val lastSubmission: Submission = submissions.firstOrNull { it.taskId == task.id } ?: return TaskSolutions.EMPTY
+    if (lastSubmission !is StepikBasedSubmission) error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of Submission class")
 
     val files: Map<String, Solution> = when (task) {
       is EduTask -> lastSubmission.eduTaskFiles
@@ -43,10 +43,10 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     else TaskSolutions(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
   }
 
-  private val Submission.eduTaskFiles: Map<String, Solution>
+  private val StepikBasedSubmission.eduTaskFiles: Map<String, Solution>
     get() = solutionFiles?.associate { it.name to Solution(it.text, it.isVisible, emptyList()) } ?: emptyMap()
 
-  private fun Submission.codeTaskFiles(task: CodeTask): Map<String, Solution> {
+  private fun StepikBasedSubmission.codeTaskFiles(task: CodeTask): Map<String, Solution> {
     val codeFromServer = reply?.code ?: return emptyMap()
     val configurator = task.course.configurator as? HyperskillConfigurator ?: return emptyMap()
     val taskFile = configurator.getCodeTaskFile(project, task) ?: return emptyMap()
@@ -65,7 +65,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun updateTasks(course: Course,
                            tasks: List<Task>,
-                           submissions: List<SubmissionBase>,
+                           submissions: List<Submission>,
                            progressIndicator: ProgressIndicator?,
                            force: Boolean) {
     super.updateTasks(course, tasks, submissions, progressIndicator, force)
@@ -74,7 +74,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }
   }
 
-  override fun updateTask(project: Project, task: Task, submissions: List<SubmissionBase>, force: Boolean): Boolean {
+  override fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean): Boolean {
     val course = task.course as HyperskillCourse
     if (course.isStudy && task.lesson == course.getProjectLesson() && submissions.any { it.taskId == task.id && it.status == EduNames.CORRECT }) {
       markStageAsCompleted(task)

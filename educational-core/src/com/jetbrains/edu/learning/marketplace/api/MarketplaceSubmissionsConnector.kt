@@ -17,9 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
+import com.jetbrains.edu.learning.stepik.api.SubmissionData
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
-import com.jetbrains.edu.learning.submissions.SubmissionData
 import okhttp3.ConnectionPool
 import org.apache.commons.httpclient.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -108,9 +108,9 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  fun getAllSubmissions(course: EduCourse): MutableMap<Int, List<Submission>> {
+  fun getAllSubmissions(course: EduCourse): MutableMap<Int, List<StepikBasedSubmission>> {
     val descriptorsList = getDescriptorsList("/${course.id}")
-    val submissionsByTaskId = mutableMapOf<Int, List<Submission>>()
+    val submissionsByTaskId = mutableMapOf<Int, List<StepikBasedSubmission>>()
     val documentIdByTaskId = mutableMapOf<Int, String>()
     for (descriptor in descriptorsList) {
       val taskId = parseTaskIdFromPath(descriptor.path)
@@ -132,19 +132,19 @@ class MarketplaceSubmissionsConnector {
     return submissionsByTaskId
   }
 
-  fun getSubmissions(task: Task, courseId: Int): List<Submission> {
+  fun getSubmissions(task: Task, courseId: Int): List<StepikBasedSubmission> {
     val documentId = getDocumentId(courseId, task.id) ?: return listOf()
     task.submissionsId = documentId
     return getSubmissions(documentId)
   }
 
-  private fun getSubmissions(documentId: String): List<Submission> {
+  private fun getSubmissions(documentId: String): List<StepikBasedSubmission> {
     val versionsList = getDocVersionsIds(documentId) ?: return listOf()
     return versionsList.mapNotNull { getSubmission(documentId, it) }
   }
 
   @VisibleForTesting
-  fun getSubmission(documentId: String, version: Version): Submission? {
+  fun getSubmission(documentId: String, version: Version): StepikBasedSubmission? {
     val submissionDocument = SubmissionDocument(documentId, versionId = version.id)
     val response = submissionsService.getSubmissionContent(submissionDocument).executeHandlingExceptions()
     val content = response?.body()?.content

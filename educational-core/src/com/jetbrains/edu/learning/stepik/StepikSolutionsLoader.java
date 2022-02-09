@@ -36,7 +36,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.submissions.SolutionFile;
-import com.jetbrains.edu.learning.submissions.SubmissionBase;
+import com.jetbrains.edu.learning.submissions.Submission;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -88,7 +88,7 @@ public class StepikSolutionsLoader implements Disposable {
     addFileOpenListener();
   }
 
-  public static Submission postSolution(@NotNull final Project project, @NotNull final Task task) {
+  public static StepikBasedSubmission postSolution(@NotNull final Project project, @NotNull final Task task) {
     if (task.getId() <= 0) {
       return null;
     }
@@ -100,12 +100,12 @@ public class StepikSolutionsLoader implements Disposable {
     }
     final Attempt attempt = ((Ok<Attempt>)postedAttempt).component1();
     final List<SolutionFile> solutionFiles = getSolutionFiles(project, task);
-    final Submission submission = createStepikSubmission(task, attempt, solutionFiles);
-    final Result<Submission, String> postedSubmission = StepikConnector.getInstance().postSubmission(submission);
+    final StepikBasedSubmission submission = createStepikSubmission(task, attempt, solutionFiles);
+    final Result<StepikBasedSubmission, String> postedSubmission = StepikConnector.getInstance().postSubmission(submission);
     if (postedSubmission instanceof Err) {
       return null;
     }
-    return ((Ok<Submission>)postedSubmission).component1();
+    return ((Ok<StepikBasedSubmission>)postedSubmission).component1();
   }
 
   public void loadSolutionsInBackground() {
@@ -310,7 +310,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static boolean isToUpdate(Task task, @NotNull SubmissionsManager submissionsManager) {
     if (task instanceof EduTask) {
-      Submission submission = getLastSubmission(submissionsManager, task);
+      StepikBasedSubmission submission = getLastSubmission(submissionsManager, task);
       if (submission != null) {
         if (submission.getSolutionFiles() != null && !submission.getSolutionFiles().isEmpty()) {
           return true;
@@ -363,7 +363,7 @@ public class StepikSolutionsLoader implements Disposable {
   private static TaskSolutions getEduTaskSolutions(@NotNull Project project, @NotNull Task task) {
     String language = task.getCourse().getLanguageID();
     SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    Submission submission = getLastSubmission(submissionsManager, task);
+    StepikBasedSubmission submission = getLastSubmission(submissionsManager, task);
     if (submission == null) {
       return TaskSolutions.EMPTY;
     }
@@ -427,28 +427,28 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   @NotNull
-  private static CheckStatus getCheckStatus(@Nullable SubmissionBase submission) {
+  private static CheckStatus getCheckStatus(@Nullable Submission submission) {
     if (submission == null) return CheckStatus.Unchecked;
     return EduNames.CORRECT.equals(submission.getStatus()) ? CheckStatus.Solved : CheckStatus.Failed;
   }
 
   @Nullable
-  private static Submission getLastSubmission(@NotNull SubmissionsManager submissionsManager, Task task) {
-    List<SubmissionBase> submissions = submissionsManager.getSubmissions(task);
+  private static StepikBasedSubmission getLastSubmission(@NotNull SubmissionsManager submissionsManager, Task task) {
+    List<Submission> submissions = submissionsManager.getSubmissions(task);
     if (submissions.isEmpty()) return null;
-    SubmissionBase lastSubmission = submissions.get(0);
-    if (!(lastSubmission instanceof Submission)) {
+    Submission lastSubmission = submissions.get(0);
+    if (!(lastSubmission instanceof StepikBasedSubmission)) {
       String errorMessage = String.format("Stepik submission %s for task %s is not instance of Submission class",
                                           lastSubmission.getId(), task.getName());
       LOG.error(errorMessage);
       throw new IllegalStateException(errorMessage);
     }
-    return (Submission) lastSubmission;
+    return (StepikBasedSubmission) lastSubmission;
   }
 
   private static boolean isLastSubmissionUpToDate(@NotNull SubmissionsManager submissionsManager, @NotNull Task task) {
     if (task instanceof TheoryTask || task instanceof IdeTask) return true;
-    Submission submission = getLastSubmission(submissionsManager, task);
+    StepikBasedSubmission submission = getLastSubmission(submissionsManager, task);
     if (submission != null) {
       Date submissionTime = submission.getTime();
       if (submissionTime != null) {
@@ -558,7 +558,7 @@ public class StepikSolutionsLoader implements Disposable {
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task,
                                                    @NotNull SubmissionsManager submissionsManager) {
-    final List<SubmissionBase> submissions = submissionsManager.getSubmissions(task);
+    final List<Submission> submissions = submissionsManager.getSubmissions(task);
     if (submissions.isEmpty()) {
       return null;
     }
@@ -571,16 +571,16 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   @Nullable
-  private static String findStepikSolutionForLanguage(List<SubmissionBase> submissions, Language language, String version) {
+  private static String findStepikSolutionForLanguage(List<Submission> submissions, Language language, String version) {
     String stepikLanguage = StepikLanguage.langOfId(language.getID(), version).getLangName();
     if (stepikLanguage == null) {
       return null;
     }
 
-    for (SubmissionBase submissionBase : submissions) {
-      if (submissionBase instanceof Submission) {
-        Submission submission = (Submission)submissionBase;
-        Reply reply = submission.getReply();
+    for (Submission submission : submissions) {
+      if (submission instanceof StepikBasedSubmission) {
+        StepikBasedSubmission stepikBasedSubmission = (StepikBasedSubmission)submission;
+        Reply reply = stepikBasedSubmission.getReply();
         if (reply != null && stepikLanguage.equals(reply.getLanguage()) && reply.getCode() != null) {
           return removeEduPrefix(reply.getCode(), language);
         }

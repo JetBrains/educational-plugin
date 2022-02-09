@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
 import com.jetbrains.edu.learning.submissions.SolutionFile
-import com.jetbrains.edu.learning.submissions.SubmissionBase
+import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 
@@ -275,7 +275,7 @@ class SubmissionDocument() {
   }
 }
 
-class MarketplaceSubmission : SubmissionBase {
+class MarketplaceSubmission : Submission {
   @JsonProperty(COURSE_VERSION)
   var courseVersion: Int = 0
 

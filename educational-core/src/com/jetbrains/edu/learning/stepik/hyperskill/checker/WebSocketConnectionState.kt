@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector.Companion.toCheckResult
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
@@ -52,15 +52,15 @@ private class WaitingForConnectionState(project: Project, task: CodeTask) : WebS
 
 private class WaitingForSubscriptionState(project: Project, task: CodeTask) : WebSocketConnectionState(project, task) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
-    return when (val result: Result<Submission, String> = StepikBasedSubmitConnector.submitCodeTask(project, task)) {
+    return when (val result: Result<StepikBasedSubmission, String> = StepikBasedSubmitConnector.submitCodeTask(project, task)) {
       is Ok -> ReceivingSubmissionsState(project, task, result.value)
       is Err -> ErrorState(project, task)
     }
   }
 }
 
-private class ReceivingSubmissionsState(project: Project, task: CodeTask, val submission: Submission) : WebSocketConnectionState(project,
-                                                                                                                                 task) {
+private class ReceivingSubmissionsState(project: Project, task: CodeTask, val submission: StepikBasedSubmission) : WebSocketConnectionState(project,
+                                                                                                                                            task) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
     val objectMapper = HyperskillConnector.getInstance().objectMapper
     val dataKey = "data"
@@ -80,7 +80,7 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
   }
 }
 
-private class SubmissionReceivedState(project: Project, task: CodeTask, private val submission: Submission) : WebSocketConnectionState(
+private class SubmissionReceivedState(project: Project, task: CodeTask, private val submission: StepikBasedSubmission) : WebSocketConnectionState(
   project, task, true) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
     return this

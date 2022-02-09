@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.AttemptsList
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -52,7 +52,7 @@ interface HyperskillEndpoints {
   fun completeStep(@Path("id") id: Int): Call<Any>
 
   @POST("api/submissions")
-  fun submission(@Body submission: Submission): Call<SubmissionsList>
+  fun submission(@Body submission: StepikBasedSubmission): Call<SubmissionsList>
 
   @POST("api/ws")
   fun websocket(): Call<WebSocketConfiguration>

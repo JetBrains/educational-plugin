@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
-import com.jetbrains.edu.learning.stepik.api.Submission
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
@@ -41,7 +41,7 @@ abstract class StepikBasedCheckConnector {
     else -> task.javaClass in remotelyCheckedTasks
   }
 
-  protected fun periodicallyCheckSubmissionResult(project: Project, submission: Submission, task: Task): CheckResult {
+  protected fun periodicallyCheckSubmissionResult(project: Project, submission: StepikBasedSubmission, task: Task): CheckResult {
     require(isRemotelyChecked(task)) { "Task is not checked remotely" }
 
     val submissionId = submission.id ?: error("Submission must have id")
@@ -158,7 +158,7 @@ abstract class StepikBasedCheckConnector {
       else CheckResult(CheckStatus.Unchecked, this)
     }
 
-    fun Submission.toCheckResult(): CheckResult {
+    fun StepikBasedSubmission.toCheckResult(): CheckResult {
       val status = status ?: return CheckResult.failedToCheck
       val isSolved = status != "wrong"
       var message = hint.nullize() ?: "${StringUtil.capitalize(status)} solution"
