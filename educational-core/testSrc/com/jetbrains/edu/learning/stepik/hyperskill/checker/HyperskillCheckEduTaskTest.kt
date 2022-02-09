@@ -1,10 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -13,23 +12,23 @@ import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import org.intellij.lang.annotations.Language
 
-class HyperskillCheckEduTaskTest : CheckersTestBase<Unit>() {
+class HyperskillCheckEduTaskTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
-
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("Topic name") {
-        eduTask("Problem name 1") {
-          checkResultFile(CheckStatus.Solved)
-        }
-        eduTask("Problem name 2") {
-          checkResultFile(CheckStatus.Failed)
+  override fun createCourse() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("Topic name") {
+          eduTask("Problem name 1") {
+            checkResultFile(CheckStatus.Solved)
+          }
+          eduTask("Problem name 2") {
+            checkResultFile(CheckStatus.Failed)
+          }
         }
       }
     }
-  } as HyperskillCourse
+  }
 
   override fun setUp() {
     super.setUp()
@@ -45,12 +44,14 @@ class HyperskillCheckEduTaskTest : CheckersTestBase<Unit>() {
   fun `test solved edu task`() {
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { CheckUtils.CONGRATULATIONS }
-    checkTask(myCourse.allTasks[0]).apply { assertEmpty(this) }
+    val course = getCourse()
+    CheckersTestBase.checkTaskWithProject(course.allTasks[0], project).apply { assertEmpty(this) }
   }
 
   fun `test failed edu task`() {
     CheckActionListener.shouldFail()
-    checkTask(myCourse.allTasks[1]).apply { assertEmpty(this) }
+    val course = getCourse()
+    CheckersTestBase.checkTaskWithProject(course.allTasks[1], project).apply { assertEmpty(this) }
   }
 
   private fun configureResponse() {

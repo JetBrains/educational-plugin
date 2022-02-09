@@ -1,16 +1,16 @@
 package com.jetbrains.edu.learning.stepik.checker
 
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.intellij.lang.annotations.Language
 
-abstract class StepikBasedCheckDataTaskTest : CheckersTestBase<Unit>() {
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+abstract class StepikBasedCheckDataTaskTest : EduTestCase() {
 
-  override fun checkTask(task: Task): List<AssertionError> {
-    val assertions = super.checkTask(task)
+  protected fun checkTask(task: Task): List<AssertionError> {
+    val project = getCourse().project!!
+    val assertions = CheckersTestBase.checkTaskWithProject(task, project)
     assertEmpty(assertions)
     return assertions
   }
@@ -81,11 +81,13 @@ abstract class StepikBasedCheckDataTaskTest : CheckersTestBase<Unit>() {
   companion object {
     @JvmStatic
     protected val DATA_TASK_1: String = "Data Task 1"
+
     @JvmStatic
     protected val DATA_TASK_2: String = "Data Task 2"
 
     @JvmStatic
     protected val ATTEMPT_ID_OF_SUCCEED_SUBMISSION: Int = 101
+
     @JvmStatic
     protected val ATTEMPT_ID_OF_FAILED_SUBMISSION: Int = 102
 

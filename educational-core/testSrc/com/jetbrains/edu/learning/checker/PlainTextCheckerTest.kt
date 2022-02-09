@@ -88,7 +88,7 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
     val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
 
     assertEmpty(vTestFile.document.text)
-    checkTask(outputTask)
+    checkTaskWithProject(outputTask, project)
     assertEmpty(vTestFile.document.text)
   }
 
@@ -102,7 +102,7 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
     val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
 
     assertEmpty(vTestFile.document.text)
-    checkTask(eduTask)
+    checkTaskWithProject(eduTask, project)
     assertEmpty(vTestFile.document.text)
   }
 
@@ -116,7 +116,7 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
     val vTestFile = taskDir.findFileByRelativePath(testFile.name) ?: error("no virtual file found for the test file")
 
     assertEquals(EDU_TEST_FILE_TEXT, vTestFile.document.text)
-    checkTask(eduTask)
+    checkTaskWithProject(eduTask, project)
     assertEquals(EDU_TEST_FILE_TEXT, vTestFile.document.text)
   }
 
