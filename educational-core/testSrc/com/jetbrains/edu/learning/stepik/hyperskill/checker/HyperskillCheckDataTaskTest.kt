@@ -4,8 +4,6 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor.Companion.NO_OUTPUT
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator.Companion.CHECK_RESULT_FILE
-import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATASET_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
@@ -23,37 +21,39 @@ import java.util.*
 class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
-    section("Topics") {
-      lesson("Topic name") {
-        dataTask(
-          DATA_TASK_1,
-          stepId = 1,
-          attempt = Attempt(ATTEMPT_ID_OF_SUCCEED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
-        ) {
-          taskFile(CHECK_RESULT_FILE, "some text")
-          dir(DATA_FOLDER_NAME) {
-            dir(DATASET_FOLDER_NAME) {
-              taskFile(INPUT_FILE_NAME, "some text")
+  override fun createCourse() {
+    courseWithFiles(courseProducer = ::HyperskillCourse) {
+      section("Topics") {
+        lesson("Topic name") {
+          dataTask(
+            DATA_TASK_1,
+            stepId = 1,
+            attempt = Attempt(ATTEMPT_ID_OF_SUCCEED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
+          ) {
+            taskFile(CHECK_RESULT_FILE, "some text")
+            dir(DATA_FOLDER_NAME) {
+              dir(DATASET_FOLDER_NAME) {
+                taskFile(INPUT_FILE_NAME, "some text")
+              }
             }
           }
-        }
-        dataTask(
-          DATA_TASK_2,
-          stepId = 2,
-          attempt = Attempt(ATTEMPT_ID_OF_FAILED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
-        ) {
-          // mimics no output result
-          taskFile(CHECK_RESULT_FILE, NO_OUTPUT)
-          dir(DATA_FOLDER_NAME) {
-            dir(DATASET_FOLDER_NAME) {
-              taskFile(INPUT_FILE_NAME, "some text")
+          dataTask(
+            DATA_TASK_2,
+            stepId = 2,
+            attempt = Attempt(ATTEMPT_ID_OF_FAILED_SUBMISSION, Date(0), 300).toDataTaskAttempt()
+          ) {
+            // mimics no output result
+            taskFile(CHECK_RESULT_FILE, NO_OUTPUT)
+            dir(DATA_FOLDER_NAME) {
+              dir(DATASET_FOLDER_NAME) {
+                taskFile(INPUT_FILE_NAME, "some text")
+              }
             }
           }
         }
       }
     }
-  } as HyperskillCourse
+  }
 
   override fun setUp() {
     super.setUp()
@@ -77,7 +77,8 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
     }
 
     CheckActionListener.reset()
-    checkTask(myCourse.allTasks[0])
+    val course = getCourse()
+    checkTask(course.allTasks[0])
   }
 
   fun `test failed data task`() {
@@ -92,13 +93,15 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
     }
 
     CheckActionListener.shouldFail()
-    checkTask(myCourse.allTasks[0])
+    val course = getCourse()
+    checkTask(course.allTasks[0])
   }
 
 
   fun `test skipped data task`() {
     CheckActionListener.shouldSkip()
-    checkTask(myCourse.allTasks[1])
+    val course = getCourse()
+    checkTask(course.allTasks[1])
   }
 
   // TODO TIME/TIMER RELATED tests (EDU-4845)
