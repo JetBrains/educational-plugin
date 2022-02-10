@@ -41,7 +41,6 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 abstract class CodeforcesConnector {
   @VisibleForTesting
   val objectMapper: ObjectMapper
@@ -104,6 +103,7 @@ abstract class CodeforcesConnector {
     }
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun login(userName: String, password: String): Result<Boolean, String> {
     if (userName.isEmpty() || password.isEmpty()) {
       return Err(EduCoreBundle.message("error.empty.handle.or.password"))
@@ -141,11 +141,12 @@ abstract class CodeforcesConnector {
     return Err(EduCoreBundle.message("error.unknown.error"))
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {
     val loginPage = service.getLoginPage().executeParsingErrors().onError { return Err(it) }
-    loginPage.body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
+    val loginPageBody = loginPage.body()?.string() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
 
-    val body = Jsoup.parse(loginPage.body()?.string().orEmpty())
+    val body = Jsoup.parse(loginPageBody)
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 
     val jSessionId = loginPage.headers().toMultimap()["set-cookie"]
@@ -163,6 +164,7 @@ abstract class CodeforcesConnector {
                                  cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount, project: Project): Result<String, String> {
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
       return Err(EduCoreBundle.message("error.access.denied"))
@@ -255,12 +257,13 @@ abstract class CodeforcesConnector {
     })
 
     latch.await(TIMEOUT_IN_SEC, TimeUnit.SECONDS)
-    socket.close(1000, null)
+    socket.close(1000, "")
     client.dispatcher().executorService().shutdown()
     val submissions = getUserSubmissions(task.course.id, listOf(task), csrfToken, jSessionID)[task.id] ?: return
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, List<StepikBasedSubmission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
@@ -294,17 +297,19 @@ abstract class CodeforcesConnector {
     return emptyMap()
   }
 
-  fun getSubmissionSource(submissionId: Int, token: String, jSessionId: String): String {
-    val response = service.getSubmissionSource(token, submissionId,
-                                               "JSESSIONID=$jSessionId").executeParsingErrors().onError { return "" }.body()
-    return response?.source ?: ""
-  }
+  @Suppress("UNNECESSARY_SAFE_CALL")
+  fun getSubmissionSource(submissionId: Int, token: String, jSessionId: String): String =
+    service.getSubmissionSource(token, submissionId, "JSESSIONID=$jSessionId")
+      .executeParsingErrors()
+      .onError { return "" }
+      .body()?.source ?: ""
 
   private fun isLoggedIn(): Boolean {
     CodeforcesSettings.getInstance().account?.getSessionId()?.let { getProfile(it) } ?: return false
     return true
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {
     val (csrfToken, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError { return false }
     val password = codeforcesAccount.getPassword() ?: return false
@@ -319,6 +324,7 @@ abstract class CodeforcesConnector {
     return false
   }
 
+  @Suppress("UNNECESSARY_SAFE_CALL")
   fun getProfile(jSessionID: String): String? {
     val response = service.profile("JSESSIONID=$jSessionID").executeParsingErrors().onError { return null }
     return response.raw().priorResponse()
@@ -340,13 +346,13 @@ abstract class CodeforcesConnector {
     val jSessionID = account.getSessionId() ?: return null
 
     val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
-      .executeParsingErrors()
-      .onError { return null }
-    registrationPage.body() ?: return null
-    val doc = Jsoup.parse(registrationPage.body()?.string())
+                             .executeParsingErrors()
+                             .onError { return null }.body() ?: return null
+
+    val doc = Jsoup.parse(registrationPage.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
     val text = doc.getElementsByClass("terms").firstOrNull()?.text() ?: return null
-    val isTeamRegistrationAvailable = doc.getElementsByAttributeValue("id","takePartAsTeamInput").isNotEmpty()
+    val isTeamRegistrationAvailable = doc.getElementsByAttributeValue("id", "takePartAsTeamInput").isNotEmpty()
 
     return ContestRegistrationData(csrfToken, text, isTeamRegistrationAvailable)
   }
@@ -366,11 +372,10 @@ abstract class CodeforcesConnector {
   fun isUserRegisteredForContest(contestId: Int): Boolean {
     val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
     val registrationData = service.getContestRegistrationData(contestId, "JSESSIONID=$jSessionId")
-      .executeParsingErrors()
-      .onError { return false }
+                             .executeParsingErrors()
+                             .onError { return false }.body() ?: return false
 
-    registrationData.body() ?: return false
-    val doc = Jsoup.parse(registrationData.body()?.string())
+    val doc = Jsoup.parse(registrationData.string())
     return doc.getElementsByClass("welldone").isNotEmpty()
   }
 

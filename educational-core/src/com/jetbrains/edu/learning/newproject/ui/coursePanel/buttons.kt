@@ -132,10 +132,10 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
     }
 
     if (course is CodeforcesCourse) {
-      return (course.isRegistrationOpen && course.isUpcomingContest
-              && !CodeforcesConnector.getInstance().isUserRegisteredForContest(course.id))
-             || course.isOngoing
-             || course.isPastContest
+      val isRegistrationPossible = course.isRegistrationOpen 
+                                   && course.isUpcomingContest 
+                                   && !CodeforcesConnector.getInstance().isUserRegisteredForContest(course.id)
+      return isRegistrationPossible || course.isOngoing || course.isPastContest
     }
 
     return true
