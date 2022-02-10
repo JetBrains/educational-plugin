@@ -731,24 +731,6 @@ project(":Edu-Rust") {
     implementation(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
   }
-
-  tasks {
-    withType<KotlinCompile> {
-      doFirst {
-        // Since 142 version of Rust & toml plugins contain conflicted markdown library with 0.2.0 version
-        // TODO: find out a better way to avoid wrong dependency during compilation
-        classpath = classpath.filter { it.name != "markdown-jvm-0.2.0.jar" }
-      }
-    }
-
-    withType<Test> {
-      doFirst {
-        // Since 142 version of Rust & toml plugins contain conflicted markdown library with 0.2.0 version
-        // TODO: find out a better way to avoid wrong dependency during compilation
-        classpath = classpath.filter { it.name != "markdown-jvm-0.2.0.jar" }
-      }
-    }
-  }
 }
 
 project(":Edu-Cpp") {
