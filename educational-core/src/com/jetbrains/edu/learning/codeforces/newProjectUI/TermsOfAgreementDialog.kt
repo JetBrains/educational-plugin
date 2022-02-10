@@ -11,10 +11,16 @@ import javax.swing.JPanel
 import javax.swing.JSeparator
 
 class TermsOfAgreementDialog(
-    private val currentTermsOfAgreement: String,
-    private val registrationLink: String,
-    private val isTeamRegistrationAvailable: Boolean
+  private val currentTermsOfAgreement: String,
+  private val registrationLink: String,
+  private val isTeamRegistrationAvailable: Boolean
 ) : DialogWrapper(false) {
+
+  private val prettyTermsOfAgreement = EduCoreBundle.message("codeforces.default.terms.of.agreement",
+                                                             CodeforcesNames.CONTESTS_POST,
+                                                             CodeforcesNames.CONTESTS_RULES,
+                                                             CodeforcesNames.THIRD_PARTY_CODE_RULE_CHANGING)
+
   init {
     title = EduCoreBundle.message("codeforces.contest.registration")
     setOKButtonText(EduCoreBundle.message("codeforces.register.as.individual"))
@@ -22,7 +28,7 @@ class TermsOfAgreementDialog(
   }
 
   override fun createCenterPanel(): JComponent {
-    val text = if (currentTermsOfAgreement == CodeforcesNames.DEFAULT_TERMS_OF_AGREEMENT) CodeforcesNames.PRETTY_TERMS_OF_AGREEMENT
+    val text = if (currentTermsOfAgreement == DEFAULT_TERMS_OF_AGREEMENT) prettyTermsOfAgreement
     else currentTermsOfAgreement.replace("\n", "<br>")
 
     val panel = CustomTextPanel("ul li {list-style-type:disc;margin-top: 12px;}").apply {
@@ -64,6 +70,18 @@ class TermsOfAgreementDialog(
         </html>
       """.trimIndent())
     }
+  }
+
+  companion object {
+    const val DEFAULT_TERMS_OF_AGREEMENT = "The registration confirms that you:\n" +
+                                           "\n" +
+                                           "* have read the contest rules  by the links http://codeforces.com/blog/entry/456 and http://codeforces.com/blog/entry/4088\n" +
+                                           "* will not violate the rules described on http://codeforces.com/blog/entry/456 and/or http://codeforces.com/blog/entry/4088\n" +
+                                           "* will not communicate with other participants, share ideas of solutions and hacks\n" +
+                                           "* will not use third-party code, except stated in http://codeforces.com/blog/entry/8790\n" +
+                                           "* will not attempt to deliberately destabilize the testing process and try to hack the contest system in any form\n" +
+                                           "* will not use multiple accounts and will take part in the contest using your personal and the single account."
+
   }
 
 }
