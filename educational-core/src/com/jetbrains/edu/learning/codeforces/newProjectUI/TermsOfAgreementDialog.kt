@@ -73,7 +73,7 @@ class TermsOfAgreementDialog(
   }
 
   companion object {
-    const val DEFAULT_TERMS_OF_AGREEMENT = "The registration confirms that you:\n" +
+    private const val DEFAULT_TERMS_OF_AGREEMENT = "The registration confirms that you:\n" +
                                            "\n" +
                                            "* have read the contest rules  by the links http://codeforces.com/blog/entry/456 and http://codeforces.com/blog/entry/4088\n" +
                                            "* will not violate the rules described on http://codeforces.com/blog/entry/456 and/or http://codeforces.com/blog/entry/4088\n" +
