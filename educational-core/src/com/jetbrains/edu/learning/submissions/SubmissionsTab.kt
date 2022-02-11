@@ -6,6 +6,7 @@ import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
@@ -14,7 +15,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
@@ -134,9 +134,11 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       val submissionTaskFiles = taskFiles.filter { it.isVisible && !it.isTestFile }
       val requests = submissionTaskFiles.mapNotNull {
         val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
-        val currentFileContent = DiffContentFactory.getInstance().create(virtualFile.document.text, virtualFile.fileType)
+        val documentText = FileDocumentManager.getInstance().getDocument(virtualFile)?.text
+        val currentFileContent = if (documentText != null) DiffContentFactory.getInstance().create(documentText, virtualFile.fileType)
+        else null
         val submissionText = submissionTexts[it.name] ?: submissionTexts[task.name]
-        if (submissionText == null) {
+        if (submissionText == null || currentFileContent == null) {
           null
         }
         else {
