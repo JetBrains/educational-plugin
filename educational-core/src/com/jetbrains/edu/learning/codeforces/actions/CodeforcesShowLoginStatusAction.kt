@@ -6,7 +6,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.openapi.wm.impl.InternalDecoratorImpl
+import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -32,8 +32,9 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) return
-    val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
-    val headerToolbarComponent = (toolWindow.component.parent as InternalDecoratorImpl).headerToolbar.component
+    val toolWindow = ToolWindowManager.getInstance(project)
+                       .getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) as? ToolWindowEx ?: return
+    val headerToolbarComponent = toolWindow.decorator.headerToolbar.component
 
     val popup = createPopup(project)
     popup.show(RelativePoint(headerToolbarComponent, Point(-POPUP_OFFSET, headerToolbarComponent.height)))
