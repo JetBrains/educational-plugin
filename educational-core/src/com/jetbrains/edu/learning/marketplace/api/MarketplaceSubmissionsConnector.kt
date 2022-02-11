@@ -8,8 +8,12 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
+import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -17,9 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
-import com.jetbrains.edu.learning.stepik.api.SubmissionData
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
 import okhttp3.ConnectionPool
 import org.apache.commons.httpclient.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -29,13 +30,16 @@ import java.util.*
 class MarketplaceSubmissionsConnector {
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
-  private val objectMapper: ObjectMapper
+  val objectMapper: ObjectMapper by lazy {
+    val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
+    objectMapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
+    objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+    objectMapper
+  }
 
   private val grazieUrl: String = GRAZIE_STAGING_URL
 
   init {
-    val module = SimpleModule()
-    objectMapper = ConnectorUtils.createRegisteredMapper(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
 
@@ -108,9 +112,9 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  fun getAllSubmissions(course: EduCourse): MutableMap<Int, List<StepikBasedSubmission>> {
+  fun getAllSubmissions(course: EduCourse): MutableMap<Int, List<MarketplaceSubmission>> {
     val descriptorsList = getDescriptorsList("/${course.id}")
-    val submissionsByTaskId = mutableMapOf<Int, List<StepikBasedSubmission>>()
+    val submissionsByTaskId = mutableMapOf<Int, List<MarketplaceSubmission>>()
     val documentIdByTaskId = mutableMapOf<Int, String>()
     for (descriptor in descriptorsList) {
       val taskId = parseTaskIdFromPath(descriptor.path)
@@ -132,28 +136,26 @@ class MarketplaceSubmissionsConnector {
     return submissionsByTaskId
   }
 
-  fun getSubmissions(task: Task, courseId: Int): List<StepikBasedSubmission> {
+  fun getSubmissions(task: Task, courseId: Int): List<MarketplaceSubmission> {
     val documentId = getDocumentId(courseId, task.id) ?: return listOf()
     task.submissionsId = documentId
     return getSubmissions(documentId)
   }
 
-  private fun getSubmissions(documentId: String): List<StepikBasedSubmission> {
+  private fun getSubmissions(documentId: String): List<MarketplaceSubmission> {
     val versionsList = getDocVersionsIds(documentId) ?: return listOf()
     return versionsList.mapNotNull { getSubmission(documentId, it) }
   }
 
   @VisibleForTesting
-  fun getSubmission(documentId: String, version: Version): StepikBasedSubmission? {
+  fun getSubmission(documentId: String, version: Version): MarketplaceSubmission? {
     val submissionDocument = SubmissionDocument(documentId, versionId = version.id)
     val response = submissionsService.getSubmissionContent(submissionDocument).executeHandlingExceptions()
     val content = response?.body()?.content
     val submissionContent = objectMapper.readValue(content, Content::class.java) ?: return null
     // TODO: double wrapping into "content" is a bug on grazie side, should be fixed on our side when ready
-    val submissionData = objectMapper.readValue(submissionContent.content, SubmissionData::class.java) ?: return null
-    val submission = submissionData.submission
+    val submission = objectMapper.readValue(submissionContent.content, MarketplaceSubmission::class.java) ?: return null
     submission.time = Date.from(Instant.ofEpochSecond(version.timestamp))
-    submission.status = if (submission.reply?.score == "1") EduNames.CORRECT else EduNames.WRONG
     return submission
   }
 
@@ -203,8 +205,8 @@ class MarketplaceSubmissionsConnector {
 
   fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
     if (task.submissionsId == null) {
-      val emptySubmissionData = createMarketplaceSubmissionData(task, passed = true)
-      val submissionId = emptySubmissionData.submission.id ?: error("Submission id not generated at creation")
+      val emptySubmissionData = MarketplaceSubmission(task)
+      val submissionId = emptySubmissionData.id ?: error("Submission id not generated at creation")
       val submissionDocument = SubmissionDocument(docId = task.submissionsId,
                                                   submissionContent = ObjectMapper().writeValueAsString(emptySubmissionData).trimIndent())
 

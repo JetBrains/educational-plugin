@@ -6,8 +6,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.CLOSE_PLACEHOLDER_TAG
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.OPEN_PLACEHOLDER_TAG
@@ -20,11 +22,7 @@ fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
   val taskDir = task.getDir(project.courseDir) ?: error("Failed to find task directory ${task.name}")
 
   for (taskFile in task.taskFiles.values) {
-    val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-    if (virtualFile.length > MAX_FILE_SIZE) {
-      LOG.warn("File ${virtualFile.path} is too big (${virtualFile.length} bytes), will be ignored for submitting to the server")
-      continue
-    }
+    val virtualFile = findTaskFileInDirWithSizeCheck(taskFile, taskDir) ?: continue
 
     ApplicationManager.getApplication().runReadAction {
       val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
@@ -40,9 +38,21 @@ fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
     }
   }
 
-  if (files.isEmpty()) {
+  return files.checkNotEmpty()
+}
+
+fun findTaskFileInDirWithSizeCheck(taskFile: TaskFile, taskDir: VirtualFile): VirtualFile? {
+  val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: return null
+  return if (virtualFile.length > MAX_FILE_SIZE) {
+    LOG.warn("File ${virtualFile.path} is too big (${virtualFile.length} bytes), will be ignored for submitting to the server")
+    null
+  }
+  else virtualFile
+}
+
+fun List<SolutionFile>.checkNotEmpty(): List<SolutionFile> {
+  if (isEmpty()) {
     error("No files were collected to post solution")
   }
-
-  return files
+  else return this
 }

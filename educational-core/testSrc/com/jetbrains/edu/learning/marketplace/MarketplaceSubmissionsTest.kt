@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -52,7 +52,7 @@ class MarketplaceSubmissionsTest: SubmissionsTestBase() {
   }
 
   private fun configureResponses() {
-    val mapper = ObjectMapper()
+    val mapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
     mockkConstructor(Retrofit::class)
     val service = mockk<SubmissionsService>()
     every {
@@ -112,8 +112,8 @@ class MarketplaceSubmissionsTest: SubmissionsTestBase() {
     val submission = MarketplaceSubmissionsConnector.getInstance().getSubmission("1", version)
     checkNotNull(submission){ "Content is null" }
     assertEquals(Date.from(Instant.ofEpochSecond(version.timestamp)), submission.time)
-    assertEquals(EduNames.CORRECT, submission.status)
-    assertEquals("solution text", submission.reply?.solution?.get(0)?.text)
+    assertEquals(CheckStatus.Solved.name, submission.status)
+    assertEquals("solution text", submission.solutionFiles?.get(0)?.text)
   }
 
   fun `test get document id`() {
@@ -164,7 +164,7 @@ class MarketplaceSubmissionsTest: SubmissionsTestBase() {
   @Language("JSON")
   private val submissionContentCorrеctFormat = """
   {
-    "content": "{\"submission\":{\"attempt\":0,\"reply\":{\"choices\":null,\"score\":\"1\",\"solution\":[{\"visible\":true,\"name\":\"hello_world.py\",\"text\":\"solution text\",\"is_visible\":true}],\"language\":null,\"code\":null,\"edu_task\":\"{\\\"task\\\":{\\\"name\\\":\\\"Our first program\\\",\\\"stepic_id\\\":186010,\\\"status\\\":\\\"Solved\\\",\\\"files\\\":{\\\"execute.svg\\\":{\\\"name\\\":\\\"execute.svg\\\",\\\"placeholders\\\":[],\\\"is_visible\\\":false,\\\"text\\\":\\\"<svg height=\\\\\\\"16\\\\\\\" viewBox=\\\\\\\"0 0 16 16\\\\\\\" width=\\\\\\\"16\\\\\\\" xmlns=\\\\\\\"http://www.w3.org/2000/svg\\\\\\\"><path d=\\\\\\\"m4 2 10 6-10 6z\\\\\\\" fill=\\\\\\\"#59a869\\\\\\\" fill-rule=\\\\\\\"evenodd\\\\\\\"/></svg>\\\"},\\\"hello_world.py\\\":{\\\"name\\\":\\\"hello_world.py\\\",\\\"placeholders\\\":[{\\\"offset\\\":32,\\\"length\\\":4,\\\"dependency\\\":null,\\\"hints\\\":[],\\\"possible_answer\\\":\\\"Liana\\\",\\\"placeholder_text\\\":\\\"Type your name here\\\",\\\"selected\\\":false}],\\\"is_visible\\\":true,\\\"text\\\":\\\"print(\\\\\\\"Hello, world! My name is Type your name here\\\\\\\")\\\\n\\\"},\\\"tests.py\\\":{\\\"name\\\":\\\"tests.py\\\",\\\"placeholders\\\":[],\\\"is_visible\\\":false,\\\"text\\\":\\\"from test_helper import run_common_tests, failed, passed, get_answer_placeholders\\\\n\\\\n\\\\ndef test_initial():\\\\n    window = get_answer_placeholders()[0]\\\\n    if window == \\\\\\\"type your name\\\\\\\":\\\\n        failed(\\\\\\\"You should modify the file\\\\\\\")\\\\n    else:\\\\n        passed()\\\\n\\\\nif __name__ == '__main__':\\\\n    run_common_tests(\\\\\\\"You should enter your name\\\\\\\")\\\\n    test_initial()\\\\n\\\\n\\\\n\\\"}},\\\"task_type\\\":\\\"edu\\\"}}\",\"version\":11,\"feedback\":null},\"step\":186010,\"id\":1233312,\"status\":null,\"hint\":null,\"feedback\":null,\"time\":0}}"
+    "content": "{\"id\":86515016,\"time\":1644312602091,\"status\":\"Failed\",\"course_version\":4,\"task_id\":234720,\"solution\":[{\"name\":\"src/Task.kt\",\"text\":\"fun start(): String = \\\"NOT OK\\\"\\n\",\"is_visible\":true,\"placeholders\":[{\"offset\":22,\"length\":8,\"dependency\":null,\"possible_answer\":\"\\\"OK\\\"\",\"placeholder_text\":\"TODO()\",\"selected\":true}]}],\"version\":13}"
   }
   """
 
@@ -172,7 +172,7 @@ class MarketplaceSubmissionsTest: SubmissionsTestBase() {
   @Language("JSON")
   private val submissionContent = """
   {
-    "content": "{\"content\":\"{\\\"submission\\\":{\\\"attempt\\\":0,\\\"reply\\\":{\\\"choices\\\":null,\\\"score\\\":\\\"1\\\",\\\"solution\\\":[{\\\"visible\\\":true,\\\"name\\\":\\\"undefined_variable.py\\\",\\\"text\\\":\\\"solution text\\\",\\\"is_visible\\\":true}],\\\"language\\\":null,\\\"code\\\":null,\\\"edu_task\\\":\\\"{\\\\\\\"task\\\\\\\":{\\\\\\\"name\\\\\\\":\\\\\\\"Undefined variable\\\\\\\",\\\\\\\"stepic_id\\\\\\\":186013,\\\\\\\"status\\\\\\\":\\\\\\\"Failed\\\\\\\",\\\\\\\"files\\\\\\\":{\\\\\\\"undefined_variable.py\\\\\\\":{\\\\\\\"name\\\\\\\":\\\\\\\"undefined_variable.py\\\\\\\",\\\\\\\"placeholders\\\\\\\":[{\\\\\\\"offset\\\\\\\":25,\\\\\\\"length\\\\\\\":2,\\\\\\\"dependency\\\\\\\":null,\\\\\\\"hints\\\\\\\":[],\\\\\\\"possible_answer\\\\\\\":\\\\\\\"other_variable\\\\\\\",\\\\\\\"placeholder_text\\\\\\\":\\\\\\\"???\\\\\\\",\\\\\\\"selected\\\\\\\":true}],\\\\\\\"is_visible\\\\\\\":true,\\\\\\\"text\\\\\\\":\\\\\\\"variable = 1\\\\\\\\nprint(???)\\\\\\\\n\\\\\\\"},\\\\\\\"tests.py\\\\\\\":{\\\\\\\"name\\\\\\\":\\\\\\\"tests.py\\\\\\\",\\\\\\\"placeholders\\\\\\\":[],\\\\\\\"is_visible\\\\\\\":false,\\\\\\\"text\\\\\\\":\\\\\\\"from test_helper import test_is_not_empty, test_answer_placeholders_text_deleted, passed, failed, import_task_file\\\\\\\\n\\\\\\\\n\\\\\\\\ndef test_is_identifier():\\\\\\\\n    try:\\\\\\\\n        import_task_file()\\\\\\\\n    except NameError:\\\\\\\\n        passed()\\\\\\\\n        return\\\\\\\\n    except SyntaxError:\\\\\\\\n        failed(\\\\\\\\\\\\\\\"Used invalid identifier\\\\\\\\\\\\\\\")\\\\\\\\n        return\\\\\\\\n    failed(\\\\\\\\\\\\\\\"Use undefined variable\\\\\\\\\\\\\\\")\\\\\\\\n\\\\\\\\n\\\\\\\\nif __name__ == '__main__':\\\\\\\\n    error_text = \\\\\\\\\\\\\\\"You should type undefined variable here\\\\\\\\\\\\\\\"\\\\\\\\n\\\\\\\\n    test_is_not_empty()\\\\\\\\n    test_answer_placeholders_text_deleted(error_text)\\\\\\\\n    test_is_identifier()\\\\\\\\n\\\\\\\"}},\\\\\\\"task_type\\\\\\\":\\\\\\\"edu\\\\\\\"}}\\\",\\\"version\\\":11,\\\"feedback\\\":null},\\\"step\\\":186013,\\\"id\\\":452528473,\\\"status\\\":null,\\\"hint\\\":null,\\\"feedback\\\":null,\\\"time\\\":1628594590068}}\"}"
+    "content": "{\"content\": \"{\\\"id\\\":86515016,\\\"time\\\":1644312602091,\\\"status\\\":\\\"Solved\\\",\\\"course_version\\\":4,\\\"task_id\\\":234720,\\\"solution\\\":[{\\\"name\\\":\\\"src/Task.kt\\\",\\\"text\\\":\\\"solution text\\\",\\\"is_visible\\\":true,\\\"placeholders\\\":[{\\\"offset\\\":22,\\\"length\\\":8,\\\"dependency\\\":null,\\\"possible_answer\\\":\\\"\\\\\\\"OK\\\\\\\"\\\",\\\"placeholder_text\\\":\\\"TODO()\\\",\\\"selected\\\":true}]}],\\\"version\\\":13}\" }"
   }
   """
 

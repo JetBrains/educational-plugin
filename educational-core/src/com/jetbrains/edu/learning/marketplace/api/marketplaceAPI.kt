@@ -11,7 +11,9 @@ import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -290,12 +292,15 @@ class MarketplaceSubmission : Submission {
 
   constructor()
 
-  constructor(taskId: Int, status: String, files: List<SolutionFile>, courseVersion: Int) {
+  // used to mark TheoryTasks solved
+  constructor(task: TheoryTask) : this(task.id, CheckStatus.Solved, null, task.course.marketplaceCourseVersion)
+
+  constructor(taskId: Int, status: CheckStatus, files: List<SolutionFile>?, courseVersion: Int) {
     time = Date()
     id = this.hashCode()
-    solutionFiles = files
+    solutionFiles = files?.filter { it.isVisible }
     this.taskId = taskId
-    this.status = status
+    this.status = status.toString()
     this.courseVersion = courseVersion
   }
 }

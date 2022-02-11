@@ -8,8 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
-import com.jetbrains.edu.learning.stepik.api.SubmissionData
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createMarketplaceSubmissionData
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
@@ -32,43 +30,14 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     } as EduCourse
   }
 
-  fun `test creating old format submission for edu task`() {
-    val eduTask = course.allTasks[0]
-    val solutionFiles = getSolutionFiles(project, eduTask)
-    val submission = createMarketplaceSubmissionData(eduTask, solutionFiles)
-    val submissionTime = submission.submission.time ?: error("Time must be specified")
-    val submissionId = submission.submission.id ?: error("Id must be specified")
-
-    doTest(submission, """
-      |submission:
-      |  id: $submissionId
-      |  time: ${submissionTime.time}
-      |  attempt: 0
-      |  reply:
-      |    score: 0
-      |    solution:
-      |    - name: src/Task.kt
-      |      text: solution file text
-      |      is_visible: true
-      |    - name: src/Test.kt
-      |      text: test file text
-      |      is_visible: false
-      |    edu_task: '{"task":{"name":"Edu problem","stepic_id":1,"status":"Unchecked","files":{"src/Task.kt":{"name":"src/Task.kt","placeholders":[],"is_visible":true,"text":"solution
-      |      file text"},"src/Test.kt":{"name":"src/Test.kt","placeholders":[],"is_visible":false,"text":"test
-      |      file text"}},"task_type":"edu"}}'
-      |    version: $JSON_FORMAT_VERSION
-      |
-    """.trimMargin())
-  }
-
   fun `test marketplace edu task submission serialization`() {
     val eduTask = course.allTasks[0]
     val solutionFiles = getSolutionFiles(project, eduTask)
     val firstSolutionFile = solutionFiles.first()
     val placeholder = AnswerPlaceholder(2, "placeholder text")
-    placeholder.initAnswerPlaceholder(eduTask.taskFiles.get("src/Task.kt"), false)
+    placeholder.initAnswerPlaceholder(eduTask.taskFiles["src/Task.kt"], false)
     firstSolutionFile.placeholders = listOf(placeholder)
-    val submission = MarketplaceSubmission(eduTask.id, eduTask.status.name, solutionFiles, course.marketplaceCourseVersion)
+    val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionFiles, course.marketplaceCourseVersion)
     val submissionTime = submission.time ?: error("Time must be specified")
     val submissionId = submission.id ?: error("Id must be specified")
 
@@ -92,9 +61,6 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |    initialized_from_dependency: false
       |    selected: false
       |    status: Unchecked
-      |- name: src/Test.kt
-      |  text: test file text
-      |  is_visible: false
       |version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
@@ -161,11 +127,6 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       assertEquals(expected.placeholders!!.size, actual.placeholders!!.size)
       assertEquals(expected.placeholders!!.first().placeholderText, actual.placeholders!!.first().placeholderText)
     }
-  }
-
-  private fun doTest(submissionData: SubmissionData, expected: String) {
-    val actual = STUDENT_MAPPER.writeValueAsString(submissionData)
-    assertEquals(expected, actual)
   }
 
   private fun doTest(submission: MarketplaceSubmission, expected: String) {

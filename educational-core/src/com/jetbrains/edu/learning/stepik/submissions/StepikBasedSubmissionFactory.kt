@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.SolutionFile
-import java.util.*
 
 object StepikBasedSubmissionFactory {
   @JvmStatic
@@ -25,33 +24,6 @@ object StepikBasedSubmissionFactory {
     reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
     reply.solution = files
     return StepikBasedSubmission(attempt, reply)
-  }
-
-  // to be used for marketplace submissions creation
-  // temporary for now and will be removed
-  fun createMarketplaceSubmissionData(
-    task: Task,
-    files: List<SolutionFile> = emptyList(),
-    passed: Boolean = task.status == CheckStatus.Solved
-  ): SubmissionData {
-    val objectMapper = StepikConnector.getInstance().objectMapper
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-
-    val reply = Reply()
-    reply.eduTask = serializedTask
-    reply.score = if (passed) "1" else "0"
-    reply.solution = files
-
-    val submission = StepikBasedSubmission()
-    submission.reply = reply
-    submission.time = Date()
-
-    // don't forget to remove SubmissionData() constructor
-    val submissionData = SubmissionData()
-    submissionData.submission = submission
-    submissionData.submission.id = submissionData.hashCode()
-
-    return submissionData
   }
 
   @JvmStatic
