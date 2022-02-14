@@ -261,7 +261,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun showNoEditingNotification(editor: Editor) {
-    val label = JLabel("This is a course configuration file. Not intended for manual editing.")
+    val label = JLabel(EduCoreBundle.message("yaml.editor.notification.configuration.file")
     label.border = JBUI.Borders.empty(5, 10, 5, 0)
 
     val panel = JPanel(BorderLayout())
