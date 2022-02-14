@@ -1,4 +1,8 @@
 package com.jetbrains.edu.learning.yaml.format
 
+import org.jetbrains.annotations.NonNls
 
-internal class NotImplementedInMixin : IllegalStateException("Method from actual class should be called, not from mixin")
+@NonNls
+private const val ERROR_TO_LOG = "Method from actual class should be called, not from mixin"
+
+internal class NotImplementedInMixin : IllegalStateException(ERROR_TO_LOG)

@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -60,6 +61,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.student.*
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.util.*
 import javax.swing.JLabel
@@ -183,7 +185,9 @@ object YamlFormatSynchronizer {
 
   @JvmStatic
   fun saveAll(project: Project) {
-    val course = StudyTaskManager.getInstance(project).course ?: error("Attempt to create config files for project without course")
+    @NonNls
+    val errorMessageToLog = "Attempt to create config files for project without course"
+    val course = StudyTaskManager.getInstance(project).course ?: error(errorMessageToLog)
     val mapper = course.mapper
     saveItem(course, mapper)
     course.visitSections { section -> saveItem(section, mapper) }
@@ -202,7 +206,9 @@ object YamlFormatSynchronizer {
   fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper, configName: String = item.configFileName) {
     val course = item.course
 
-    val project = course.project ?: error("Failed to find project for course")
+    @NonNls
+    val errorMessageToLog = "Failed to find project for course"
+    val project = course.project ?: error(errorMessageToLog)
     if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
       return
     }
@@ -248,7 +254,9 @@ object YamlFormatSynchronizer {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
           if (EduUtils.isStudentProject(project)) {
-            val editor = file.getEditor(project) ?: error("Can't find editor for a file: ${file.name}")
+            @NonNls
+            val errorMessageToLog = "Can't find editor for a file: ${file.name}"
+            val editor = file.getEditor(project) ?: error(errorMessageToLog)
             showNoEditingNotification(editor)
             return
           }
@@ -261,7 +269,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun showNoEditingNotification(editor: Editor) {
-    val label = JLabel(EduCoreBundle.message("yaml.editor.notification.configuration.file")
+    val label = JLabel(EduCoreBundle.message("yaml.editor.notification.configuration.file"))
     label.border = JBUI.Borders.empty(5, 10, 5, 0)
 
     val panel = JPanel(BorderLayout())
@@ -280,8 +288,10 @@ object YamlFormatSynchronizer {
         try {
           file.putUserData(LOAD_FROM_CONFIG, false)
           if (FileTypeManager.getInstance().getFileTypeByFile(file) == UnknownFileType.INSTANCE) {
+            @NonNls
+            val errorMessageToLog = "Failed to get extension for file ${file.name}"
             FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE,
-                                                             file.extension ?: error("Failed to get extension for file ${file.name}"))
+                                                             file.extension ?: error(errorMessageToLog))
           }
           file.document?.setText(mapper.writeValueAsString(this))
         }
@@ -327,7 +337,11 @@ val StudyItem.configFileName: String
     is Section -> SECTION_CONFIG
     is Lesson -> LESSON_CONFIG
     is Task -> TASK_CONFIG
-    else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
+    else -> {
+      @NonNls
+      val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"
+      error(errorMessageToLog)
+    }
   }
 
 val StudyItem.remoteConfigFileName: String
@@ -336,12 +350,18 @@ val StudyItem.remoteConfigFileName: String
     is Section -> REMOTE_SECTION_CONFIG
     is Lesson -> REMOTE_LESSON_CONFIG
     is Task -> REMOTE_TASK_CONFIG
-    else -> error("Unknown StudyItem type: ${javaClass.simpleName}")
+    else -> {
+      @NonNls
+      val errorMessageToLog = "Unknown StudyItem type: ${javaClass.simpleName}"
+      error(errorMessageToLog)
+    }
   }
 
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
   return if (this is Task && lesson is FrameworkLesson) {
-    lesson.getDir(project.courseDir)?.findChild(name) ?: error("Config for '$name' task dir in framework lesson not found")
+    @NonNls
+    val errorMessageToLog = "Config for '$name' task dir in framework lesson not found"
+    lesson.getDir(project.courseDir)?.findChild(name) ?: error(errorMessageToLog)
   }
   else {
     getDir(project.courseDir)

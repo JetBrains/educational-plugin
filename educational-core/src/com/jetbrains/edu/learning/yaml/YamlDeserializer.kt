@@ -231,7 +231,10 @@ object YamlDeserializer {
     else {
       EduCoreBundle.message("yaml.editor.notification.config.file.not.found", childName)
     }
-    val parentConfig = dir.findChild(configFileName) ?: error("Config file for currently loading item ${name} not found")
+
+    @NonNls
+    val errorMessageToLog = "Config file for currently loading item ${name} not found"
+    val parentConfig = dir.findChild(configFileName) ?: error(errorMessageToLog)
     showError(project, null, parentConfig, message)
 
     return null

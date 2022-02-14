@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
+import org.jetbrains.annotations.NonNls
 
 /**
  * Mixin class is used to deserialize [Task] item.
@@ -65,7 +66,9 @@ abstract class TaskYamlMixin {
 
 open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task>() {
   override fun applyChanges(existingItem: Task, deserializedItem: Task) {
-    val project = existingItem.project ?: error("Project not found for ${existingItem.name}")
+    @NonNls
+    val messageToLog = "Project not found for ${existingItem.name}"
+    val project = existingItem.project ?: error(messageToLog)
     if (existingItem.itemType != deserializedItem.itemType) {
       changeType(project, existingItem, deserializedItem)
       return

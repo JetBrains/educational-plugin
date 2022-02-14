@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
+import org.jetbrains.annotations.NonNls
 
 object YamlDeepLoader {
   private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
@@ -29,7 +30,10 @@ object YamlDeepLoader {
   @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
+
+    @NonNls
+    val errorMessageToLog = "Course yaml config cannot be null"
+    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
 
     val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper
