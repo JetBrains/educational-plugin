@@ -34,6 +34,8 @@ import java.net.URL
 abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
   override val platformName: String = StepikNames.STEPIK
 
+  @get:Synchronized
+  @set:Synchronized
   override var account: StepikUser?
     get() = EduSettings.getInstance().user
     set(account) {
@@ -83,6 +85,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
   }
 
+  @Synchronized
   override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val stepikUser = StepikUser(tokenInfo)

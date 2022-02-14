@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.JS_CHECKIO_PREFIX
 
 object JsCheckiOOAuthConnector : CheckiOOAuthConnector() {
+  @get:Synchronized
+  @set:Synchronized
   override var account: CheckiOAccount?
     get() = JsCheckiOSettings.getInstance().account
     set(account) {

@@ -47,6 +47,8 @@ import java.net.MalformedURLException
 import java.net.URL
 
 abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
+  @get:Synchronized
+  @set:Synchronized
   override var account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
     set(account) {
@@ -90,6 +92,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   // Authorization requests:
 
+  @Synchronized
   override fun login(code: String): Boolean {
     val hubTokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = MarketplaceAccount(hubTokenInfo.expiresIn)
@@ -402,14 +405,14 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return true
   }
 
-  override fun setPostLoginActions(vararg postLoginActions: Runnable) {
+  override fun setPostLoginActions(postLoginActions: List<Runnable>) {
     val requestFocus = Runnable { runInEdt { requestFocus() } }
     val showNotification = Runnable {
       val userName = account?.userInfo?.getFullName() ?: return@Runnable
       showLoginSuccessfulNotification(userName)
     }
-    val actions = listOf(*postLoginActions, requestFocus, showNotification).toTypedArray()
-    super.setPostLoginActions(*actions)
+    val actions = postLoginActions + listOf(requestFocus, showNotification)
+    super.setPostLoginActions(actions)
   }
 
   /**

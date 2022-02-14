@@ -36,6 +36,8 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   override val displayName: String = EduNames.JBA
   override val platformName: String = HYPERSKILL
 
+  @get:Synchronized
+  @set:Synchronized
   override var account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
     set(account) {
@@ -71,6 +73,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   // Authorization requests:
 
+  @Synchronized
   override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val account = HyperskillAccount(tokenInfo.expiresIn)

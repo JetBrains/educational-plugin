@@ -8,6 +8,8 @@ import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle
 
 object PyCheckiOOAuthConnector : CheckiOOAuthConnector() {
+  @get:Synchronized
+  @set:Synchronized
   override var account: CheckiOAccount?
     get() = PyCheckiOSettings.getInstance().account
     set(account) {

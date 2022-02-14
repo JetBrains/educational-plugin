@@ -23,8 +23,6 @@ import java.io.IOException
 import java.util.regex.Pattern
 
 abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
-  @get:Synchronized
-  @set:Synchronized
   open var account: Account? = null
 
   protected abstract val authorizationUrl: String
@@ -45,7 +43,6 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   open val displayName: String
     get() = platformName
 
-
   /**
    * Name of the platform used for developing purposes
    */
@@ -58,16 +55,19 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     JacksonConverterFactory.create(objectMapper)
   }
 
-  @get:Synchronized
-  @set:Synchronized
+  /**
+   * Must be changed only with synchronization
+   */
   protected var authorizationPlace: AuthorizationPlace? = null
 
-  @get:Synchronized
-  @set:Synchronized
-  private var postLoginActions: Array<out Runnable>? = null
+  /**
+   * Must be changed only with synchronization
+   */
+  private var postLoginActions: List<Runnable>? = null
 
-  @get:Synchronized
-  @set:Synchronized
+  /**
+   * Must be changed only with synchronization
+   */
   private var submissionTabListener: EduLogInListener? = null
 
   open val serviceName: String by lazy {
@@ -80,6 +80,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
 
+  @Synchronized
   open fun doAuthorize(
     vararg postLoginActions: Runnable,
     authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN
@@ -87,12 +88,16 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     if (!OAuthUtils.checkBuiltinPortValid()) return
 
     this.authorizationPlace = authorizationPlace
-    setPostLoginActions(*postLoginActions)
+    setPostLoginActions(postLoginActions.asList())
     BrowserUtil.browse(authorizationUrl)
   }
 
+  /**
+   * Must be synchronized to avoid race condition
+   */
   abstract fun login(code: String): Boolean
 
+  @Synchronized
   fun doLogout(authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
     this.authorizationPlace = authorizationPlace
     account = null
@@ -103,7 +108,8 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    * this could be actions to update some UI e.x. to hide panels with login offering messages
    * on every doAuthorize call these actions are being rewritten
    */
-  protected open fun setPostLoginActions(vararg postLoginActions: Runnable) {
+  @Synchronized
+  protected open fun setPostLoginActions(postLoginActions: List<Runnable>) {
     this.postLoginActions = postLoginActions
   }
 
@@ -111,6 +117,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    * @param logInListener - listener to update submissions list and
    * [com.jetbrains.edu.learning.submissions.SubmissionsTab]
    */
+  @Synchronized
   fun setSubmissionTabListener(logInListener: EduLogInListener) {
     submissionTabListener = logInListener
   }
