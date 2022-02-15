@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MARKETPLACE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_PRIVATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_COURSE_VERSION
@@ -197,10 +196,8 @@ private class CourseBuilder(
   @JsonProperty(TYPE) val courseType: String?,
   @JsonProperty(TITLE) val title: String,
   @JsonProperty(SUMMARY) val summary: String,
-  @JsonProperty(IS_MARKETPLACE) val yamlIsMarketplace: Boolean,
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
-  @JsonProperty(MARKETPLACE_COURSE_VERSION) val yamlCourseVersion: Int?,
   @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
