@@ -22,7 +22,6 @@ import org.rust.cargo.toolchain.tools.cargo
 import org.rust.lang.RsConstants.MAIN_RS_FILE
 import org.rust.lang.core.psi.ext.containingCargoTarget
 import org.rust.lang.core.psi.rustFile
-import org.rust.openapiext.execute
 import org.rust.openapiext.isSuccess
 
 class RsCodeExecutor : CodeExecutor {
@@ -35,7 +34,7 @@ class RsCodeExecutor : CodeExecutor {
     val cmd = CargoCommandLine.forTarget(target, "run")
 
     val disposable = StudyTaskManager.getInstance(project)
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(disposable, stdIn = input?.toByteArray())
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable, input)
     val output = processOutput.stdout
 
     return when {
