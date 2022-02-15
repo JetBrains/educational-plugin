@@ -5,6 +5,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.selectedVirtualFile
 import com.jetbrains.edu.learning.taskDescription.ui.ToolWindowLinkHandler
 
@@ -49,7 +50,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
   fun `test don't close opened files 2`() =
     doTest("course://lesson2/task2", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
 
-  private fun doTest(url: String, expectedPath: String? = null, courseMode: String = EduNames.STUDY, openedFile: String? = null) {
+  private fun doTest(url: String, expectedPath: String? = null, courseMode: CourseMode = EduNames.STUDY, openedFile: String? = null) {
     createCourse(courseMode)
     if (openedFile != null) {
       val file = findFile(openedFile)
@@ -80,7 +81,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
     }
   }
 
-  private fun createCourse(courseMode: String) {
+  private fun createCourse(courseMode: CourseMode) {
     courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {

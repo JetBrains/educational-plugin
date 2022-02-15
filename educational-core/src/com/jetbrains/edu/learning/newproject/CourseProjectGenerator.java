@@ -41,10 +41,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.PluginUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
@@ -61,7 +58,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-import static com.jetbrains.edu.coursecreator.CCUtils.COURSE_MODE;
 import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
 import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.isNewTrustedProjectApiAvailable;
 import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.setProjectPathTrusted;
@@ -73,7 +69,7 @@ import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.setProje
 public abstract class CourseProjectGenerator<S> {
 
   public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");
-  public static final Key<String> COURSE_MODE_TO_CREATE = Key.create("edu.courseModeToCreate");
+  public static final Key<CourseMode> COURSE_MODE_TO_CREATE = Key.create("edu.courseModeToCreate");
   public static final Key<String> COURSE_LANGUAGE_ID_TO_CREATE = Key.create("edu.courseLanguageIdToCreate");
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
@@ -282,7 +278,7 @@ public abstract class CourseProjectGenerator<S> {
                                     boolean isNewCourse) throws IOException {}
 
   private boolean isNewCourseCreatorCourse() {
-    return myCourse.getCourseMode().equals(COURSE_MODE) && myCourse.getItems().isEmpty();
+    return myCourse.getCourseMode().equals(CourseMode.COURSE_MODE) && myCourse.getItems().isEmpty();
   }
 
   // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems

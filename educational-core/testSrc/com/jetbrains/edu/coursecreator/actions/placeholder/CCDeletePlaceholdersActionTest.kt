@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getActionById
 import com.jetbrains.edu.learning.testAction
@@ -33,7 +34,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
     taskFileName: String,
     shouldBeAvailable: Boolean,
     actionId: String,
-    courseMode: String = CCUtils.COURSE_MODE
+    courseMode: CourseMode = CCUtils.COURSE_MODE
   ) {
     val course = courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {

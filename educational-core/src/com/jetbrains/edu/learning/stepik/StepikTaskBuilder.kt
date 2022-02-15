@@ -49,7 +49,7 @@ import java.util.Collections.unmodifiableList
 
 open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
   private val courseType: String = course.itemType
-  private val courseMode: String = course.courseMode
+  private val courseMode: CourseMode = course.courseMode
   private val courseEnvironment: String = course.environment
   private val language: Language = course.languageById ?: Language.ANY
   private val languageVersion: String = course.languageVersion ?: ""

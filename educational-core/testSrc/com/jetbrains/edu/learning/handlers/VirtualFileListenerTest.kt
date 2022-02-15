@@ -5,6 +5,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -12,7 +13,7 @@ import com.jetbrains.edu.learning.yaml.configFileName
 
 class VirtualFileListenerTest : VirtualFileListenerTestBase() {
 
-  override val courseMode: String = EduNames.STUDY
+  override val courseMode: CourseMode = EduNames.STUDY
 
   override fun createListener(project: Project): EduVirtualFileListener = UserCreatedFileListener(project)
 

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -93,7 +94,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     assertEquals(shouldDialogBeShown, isDialogShown)
   }
 
-  private fun createHyperskillCourse(courseMode: String = EduNames.STUDY): HyperskillCourse {
+  private fun createHyperskillCourse(courseMode: CourseMode = EduNames.STUDY): HyperskillCourse {
     return hyperskillCourseWithFiles(courseMode = courseMode) {
       frameworkLesson("Project") {
         eduTask("Task1") {

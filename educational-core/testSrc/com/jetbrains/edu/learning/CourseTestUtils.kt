@@ -5,16 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.lang.Language
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.coursecreator.actions.mixins.LocalTaskMixin
 import com.jetbrains.edu.coursecreator.actions.mixins.RemoteLessonMixin
 import com.jetbrains.edu.coursecreator.actions.mixins.RemoteSectionMixin
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.converter.json.local.To10VersionLocalCourseConverter
 import com.jetbrains.edu.learning.stepik.api.STEPIK_ID
@@ -30,7 +26,7 @@ fun createCourseFromJson(pathToJson: String, courseMode: CourseMode, isEncrypted
   var objectNode = courseMapper.readTree(courseJson) as ObjectNode
   objectNode = To10VersionLocalCourseConverter().convert(objectNode)
   return courseMapper.treeToValue(objectNode, EduCourse::class.java).apply {
-    this.courseMode = courseMode.toString()
+    this.courseMode = courseMode
   }
 }
 
@@ -41,22 +37,12 @@ private fun configureCourseMapper(courseMapper: ObjectMapper, isEncrypted: Boole
   courseMapper.addMixIn(Task::class.java, TestRemoteTaskMixin::class.java)
 }
 
-fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUCATOR, environment: String = ""): Course = EduCourse().apply {
+fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.COURSE_MODE, environment: String = ""): Course = EduCourse().apply {
   name = "Test Course"
   description = "Test Description"
-  this.courseMode = courseMode.toString()
+  this.courseMode = courseMode
   this.environment = environment
   programmingLanguage = courseLanguage.id
-}
-
-enum class CourseMode {
-  STUDENT,
-  EDUCATOR;
-
-  override fun toString(): String = when (this) {
-    STUDENT -> EduNames.STUDY
-    EDUCATOR -> CCUtils.COURSE_MODE
-  }
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for correct updateDate deserialization from json test data

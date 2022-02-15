@@ -40,7 +40,7 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
     EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))
   }: ${cause.decapitalize()}"
 
-  val editLink = if (mode == EduNames.STUDY) {
+  val editLink = if (mode == EduNames.STUDY.toString()) {
     ""
   }
   else {

@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
 import com.jetbrains.edu.learning.notIn
@@ -12,7 +13,7 @@ import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
-  override val courseMode: String = CCUtils.COURSE_MODE
+  override val courseMode: CourseMode = CCUtils.COURSE_MODE
 
   override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project)
 

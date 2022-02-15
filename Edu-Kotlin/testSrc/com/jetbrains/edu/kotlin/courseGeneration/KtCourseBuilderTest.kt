@@ -1,7 +1,7 @@
 package com.jetbrains.edu.kotlin.courseGeneration
 
 import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.CourseMode
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
@@ -81,7 +81,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   }
 
   fun `test educator course structure from not empty course`() {
-    generateCourseStructure("testData/newCourse/kotlin_course.json", CourseMode.EDUCATOR)
+    generateCourseStructure("testData/newCourse/kotlin_course.json", CourseMode.COURSE_MODE)
     val expectedFileTree = fileTree {
       dir("Introduction") {
         dir("Hello, world") {

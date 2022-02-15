@@ -1,7 +1,7 @@
 package com.jetbrains.edu.python.courseGeneration
 
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.python.PythonLanguage
@@ -59,7 +59,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   }
 
   fun `test educator course structure from not empty course`() {
-    generateCourseStructure("testData/newCourse/python_course.json", CourseMode.EDUCATOR)
+    generateCourseStructure("testData/newCourse/python_course.json", CourseMode.COURSE_MODE)
     val expectedFileTree = fileTree {
       dir("Introduction") {
         dir("Our first program") {

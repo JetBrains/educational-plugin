@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -216,7 +217,7 @@ class NodesTest : CourseViewTestBase() {
     """.trimIndent())
   }
 
-  private fun courseWithInvisibleItems(courseMode: String) {
+  private fun courseWithInvisibleItems(courseMode: CourseMode) {
     courseWithFiles(courseMode = courseMode) {
       lesson {
         eduTask {
@@ -239,7 +240,7 @@ class NodesTest : CourseViewTestBase() {
     }
   }
 
-  private fun createCourseWithTestsInsideTestDir(courseMode: String = EduNames.STUDY) {
+  private fun createCourseWithTestsInsideTestDir(courseMode: CourseMode = EduNames.STUDY) {
     courseWithFiles(courseMode = courseMode) {
       lesson {
         eduTask {

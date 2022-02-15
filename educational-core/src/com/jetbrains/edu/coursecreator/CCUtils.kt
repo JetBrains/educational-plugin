@@ -52,7 +52,8 @@ object CCUtils {
   private val LOG = Logger.getInstance(CCUtils::class.java)
 
   const val GENERATED_FILES_FOLDER = ".coursecreator"
-  const val COURSE_MODE = "Course Creator"
+  @JvmField
+  val COURSE_MODE = CourseMode.COURSE_MODE
   const val DEFAULT_PLACEHOLDER_TEXT = "type here"
 
   /**

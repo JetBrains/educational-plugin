@@ -1,9 +1,9 @@
 package com.jetbrains.edu.python.courseGeneration
 
 import com.jetbrains.edu.learning.CourseBuilder
-import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.python.PythonLanguage
@@ -14,7 +14,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
   override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
 
   fun `test new educator course`() {
-    val course = pythonCourse(CourseMode.EDUCATOR)
+    val course = pythonCourse(CourseMode.COURSE_MODE)
     createCourseStructure(course)
     fileTree {
       dir("lesson1") {
@@ -32,7 +32,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
   }
 
   fun `test student course`() {
-    val course = pythonCourse(CourseMode.STUDENT) {
+    val course = pythonCourse(CourseMode.STUDY) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("__init__.py")
@@ -103,7 +103,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
   private fun pythonCourse(courseMode: CourseMode, buildCourse: CourseBuilder.() -> Unit = {}): Course = course(
     language = PythonLanguage.INSTANCE,
     environment = "unittest",
-    courseMode = courseMode.toString(),
+    courseMode = courseMode,
     buildCourse = buildCourse
   )
 }

@@ -197,7 +197,7 @@ public class EduUtils {
   }
 
   @Nullable
-  public static String getCourseModeForNewlyCreatedProject(@NotNull Project project) {
+  public static CourseMode getCourseModeForNewlyCreatedProject(@NotNull Project project) {
     if (project.isDefault() || LightEdit.owns(project)) return null;
     VirtualFile baseDir = OpenApiExtKt.getCourseDir(project);
     return baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE);

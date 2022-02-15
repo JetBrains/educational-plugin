@@ -10,12 +10,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.NotNullProducer
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -155,7 +154,7 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 }
 
 class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(errorHandler) {
-  override val courseMode = CourseMode.COURSE_CREATOR
+  override val courseMode = CourseMode.COURSE_MODE
 
   init {
     text = "Edit"
@@ -211,13 +210,4 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
       addActionListener(listener)
     }
   }
-}
-
-enum class CourseMode {
-  STUDY {
-    override fun toString(): String = EduNames.STUDY
-  },
-  COURSE_CREATOR {
-    override fun toString(): String = CCUtils.COURSE_MODE
-  };
 }

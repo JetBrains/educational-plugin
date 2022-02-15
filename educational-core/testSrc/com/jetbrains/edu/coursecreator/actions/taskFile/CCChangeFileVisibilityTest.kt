@@ -10,6 +10,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
@@ -35,7 +36,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
 
   private fun doUnavailableTest(
     vararg paths: String,
-    courseMode: String = CCUtils.COURSE_MODE,
+    courseMode: CourseMode = CCUtils.COURSE_MODE,
     pathPrefix: String = ""
   ) = doTest(false, false, *paths, courseMode = courseMode, pathPrefix = pathPrefix)
 
@@ -43,7 +44,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     shouldActionBeEnabled: Boolean,
     shouldOppositeActionBeEnabled: Boolean,
     vararg paths: String,
-    courseMode: String,
+    courseMode: CourseMode,
     pathPrefix: String
   ) {
     val course = createCourse(courseMode)
@@ -88,7 +89,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   }
 
   private fun createCourse(
-    courseMode: String
+    courseMode: CourseMode
   ): Course = courseWithFiles(courseMode = courseMode) {
     lesson("lesson1") {
       eduTask("task1") {

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
@@ -35,7 +36,7 @@ fun EduTestCase.hyperskillCourseWithFiles(
   projectId: Int? = 1,
   name: String = TEST_HYPERSKILL_PROJECT_NAME,
   language: Language = FakeGradleBasedLanguage,
-  courseMode: String = EduNames.STUDY,
+  courseMode: CourseMode = EduNames.STUDY,
   completeStages: Boolean = false,
   buildCourse: CourseBuilder.() -> Unit
 ): HyperskillCourse {

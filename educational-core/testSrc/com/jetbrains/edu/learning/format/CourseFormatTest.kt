@@ -4,10 +4,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -180,7 +177,7 @@ class CourseFormatTest : EduTestCase() {
   private val courseFromJson: Course
     get() {
       val fileName = testFile
-      return createCourseFromJson(testDataPath + fileName, CourseMode.STUDENT)
+      return createCourseFromJson(testDataPath + fileName, CourseMode.STUDY)
     }
 
   override fun getTestDataPath(): String = "${super.getTestDataPath()}/format/"

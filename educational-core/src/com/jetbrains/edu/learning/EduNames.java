@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning;
 
+import com.jetbrains.edu.learning.courseFormat.CourseMode;
 import org.jetbrains.annotations.NonNls;
 
 @NonNls
@@ -58,7 +59,7 @@ public class EduNames {
   public static final String ANDROID = "Android";
   public static final String UNITTEST = "unittest";
 
-  public static final String STUDY = "Study";
+  public static final CourseMode STUDY = CourseMode.STUDY;
 
   public static final String SRC = "src";
   public static final String TEST = "test";

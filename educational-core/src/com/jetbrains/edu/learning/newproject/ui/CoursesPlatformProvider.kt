@@ -7,10 +7,10 @@ import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseMode
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
@@ -79,7 +79,7 @@ abstract class CoursesPlatformProvider {
             val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
             dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
           }
-          course.courseMode = courseMode.toString()
+          course.courseMode = courseMode
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
           val project = projectGenerator?.doCreateCourseProject(location, projectSettings)
           // null project means that user hasn't created course project at all.

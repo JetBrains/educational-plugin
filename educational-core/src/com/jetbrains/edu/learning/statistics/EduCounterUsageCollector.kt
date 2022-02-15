@@ -125,7 +125,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup("educational.counters", 7)
 
     private val COURSE_MODE_FIELD = EventFields.String(MODE,
-                                                       listOf(EduNames.STUDY, CCUtils.COURSE_MODE))
+                                                       listOf(EduNames.STUDY.toString(), CCUtils.COURSE_MODE.toString()))
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
                                                                   "PyCharm",
                                                                   "Coursera",
@@ -190,13 +190,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     @JvmStatic
-    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageID)
+    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode.toString(), course.itemType, course.languageID)
 
     @JvmStatic
-    fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
+    fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode.toString(), course.itemType)
 
     @JvmStatic
-    fun studyItemCreated(item: StudyItem) = STUDY_ITEM_CREATED_EVENT.log(item.course.courseMode, item.itemType)
+    fun studyItemCreated(item: StudyItem) = STUDY_ITEM_CREATED_EVENT.log(item.course.courseMode.toString(), item.itemType)
 
     @JvmStatic
     fun linkClicked(linkType: LinkType) = LICK_CLICKED_EVENT.log(linkType)
@@ -283,7 +283,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     @JvmStatic
     fun viewEvent(task: Task?) {
       val course = task?.course ?: return
-      VIEW_EVENT.log(course.courseMode, course.itemType)
+      VIEW_EVENT.log(course.courseMode.toString(), course.itemType)
     }
   }
 }

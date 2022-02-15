@@ -12,11 +12,12 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
-  protected abstract val courseMode: String
+  protected abstract val courseMode: CourseMode
   protected abstract fun createListener(project: Project): EduVirtualFileListener
 
   override fun setUp() {

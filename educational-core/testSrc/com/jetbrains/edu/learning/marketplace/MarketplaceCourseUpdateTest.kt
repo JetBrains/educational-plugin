@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
+import com.jetbrains.edu.learning.FileTree
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.createCourseFromJson
+import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
 import com.jetbrains.rd.util.firstOrNull
@@ -332,8 +336,8 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
   }
 
   override fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit) {
-    val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
-    val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
+    val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDY)
+    val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDY)
     modifyCourse(course)
     doTest(course, courseFromServer, expectedFileTree, 1)
   }

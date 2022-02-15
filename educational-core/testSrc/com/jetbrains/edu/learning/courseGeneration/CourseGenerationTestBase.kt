@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
-import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -30,7 +30,7 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
     }
   }
 
-  protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDENT): Course {
+  protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDY): Course {
     val course = createCourseFromJson(pathToCourseJson, courseMode)
     createCourseStructure(course)
     return course

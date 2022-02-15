@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.CourseMode
 import com.jetbrains.edu.learning.FileTree
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
@@ -12,8 +12,8 @@ import java.util.*
 abstract class CourseUpdateTestBase : CourseGenerationTestBase<Unit>() {
 
   open fun doTest(expectedFileTree: FileTree, testPath: String, modifyCourse: (course: EduCourse) -> Unit = {}) {
-    val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
-    val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
+    val course = createCourseFromJson("$testPath/course.json", CourseMode.STUDY)
+    val courseFromServer = createCourseFromJson("$testPath/updated_course.json", CourseMode.STUDY)
     modifyCourse(course)
     doTest(course, courseFromServer, expectedFileTree)
   }

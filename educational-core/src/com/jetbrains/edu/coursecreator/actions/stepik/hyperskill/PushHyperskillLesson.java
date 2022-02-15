@@ -13,6 +13,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.CourseMode;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -108,7 +109,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
 
   @Nullable
   private static Lesson getLesson(@Nullable VirtualFile[] selectedFiles, Project project, Course course) {
-    if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return null;
+    if (!course.getCourseMode().equals(CourseMode.COURSE_MODE)) return null;
     if (selectedFiles == null || selectedFiles.length != 1) {
       return null;
     }

@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskillSubmission
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -53,7 +54,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
     file("settings.gradle")
   })
 
-  private fun doTest(submissionsJson: String, mode: String = EduNames.STUDY, expectedFileTree: FileTree = learnerExpectedFileTree) {
+  private fun doTest(submissionsJson: String, mode: CourseMode = EduNames.STUDY, expectedFileTree: FileTree = learnerExpectedFileTree) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
         when (request.path) {
@@ -74,7 +75,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
     expectedFileTree.assertEquals(project.courseDir, myFixture)
   }
 
-  private fun createHyperskillCourse(mode: String): HyperskillCourse {
+  private fun createHyperskillCourse(mode: CourseMode): HyperskillCourse {
     val course = courseWithFiles(
       courseMode = mode,
       language = FakeGradleBasedLanguage,

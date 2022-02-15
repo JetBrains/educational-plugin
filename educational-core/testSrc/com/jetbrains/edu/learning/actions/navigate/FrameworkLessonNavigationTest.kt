@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -585,7 +586,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }
   }
 
-  private fun createFrameworkCourse(courseMode: String = EduNames.STUDY): Course = courseWithFiles(courseMode = courseMode) {
+  private fun createFrameworkCourse(courseMode: CourseMode = EduNames.STUDY): Course = courseWithFiles(courseMode = courseMode) {
     frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """

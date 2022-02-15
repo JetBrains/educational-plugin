@@ -25,7 +25,7 @@ import javax.swing.Icon
 abstract class Course : LessonContainer() {
   var description: String = ""
   var environment: String = EduNames.DEFAULT_ENVIRONMENT
-  var courseMode: String = EduNames.STUDY //this field is used to distinguish study and course creator modes
+  var courseMode: CourseMode = EduNames.STUDY //this field is used to distinguish study and course creator modes
   var solutionsHidden: Boolean = false
 
   @Transient

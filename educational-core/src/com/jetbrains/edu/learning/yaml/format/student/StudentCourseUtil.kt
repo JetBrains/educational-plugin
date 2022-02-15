@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.yaml.format.student
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -18,6 +20,13 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 @Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, PROGRAMMING_LANGUAGE, PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, CONTENT, MODE, TAGS)
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
+  @JsonSerialize(converter = CourseModeSerializationConverter::class)
   @JsonProperty(MODE)
-  private var courseMode: String = EduNames.STUDY
+  private var courseMode = CourseMode.STUDY
+}
+
+private class CourseModeSerializationConverter : StdConverter<CourseMode, String>() {
+  override fun convert(courseMode: CourseMode): String {
+    return courseMode.toString()
+  }
 }
