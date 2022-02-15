@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -860,7 +861,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |mode: Study
       |""".trimMargin()
 
-    assertEquals(EduNames.STUDY.toString(), getCourseMode(yamlContent))
+    assertEquals(CourseMode.STUDY.toString(), getCourseMode(yamlContent))
   }
 
   private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)

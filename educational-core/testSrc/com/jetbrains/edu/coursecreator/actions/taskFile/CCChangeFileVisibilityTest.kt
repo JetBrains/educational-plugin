@@ -22,7 +22,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   fun `test directory 2`() = doAvailableTest(true, "lesson1/task1/folder2")
   fun `test save stepik change status after undo`() =
     doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
-  fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = EduNames.STUDY)
+  fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = CourseMode.STUDY)
   fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
   fun `test file outside of task`() = doUnavailableTest("lesson1")
 

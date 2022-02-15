@@ -36,7 +36,7 @@ fun EduTestCase.hyperskillCourseWithFiles(
   projectId: Int? = 1,
   name: String = TEST_HYPERSKILL_PROJECT_NAME,
   language: Language = FakeGradleBasedLanguage,
-  courseMode: CourseMode = EduNames.STUDY,
+  courseMode: CourseMode = CourseMode.STUDY,
   completeStages: Boolean = false,
   buildCourse: CourseBuilder.() -> Unit
 ): HyperskillCourse {

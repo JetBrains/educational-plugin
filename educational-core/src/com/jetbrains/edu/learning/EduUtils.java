@@ -208,7 +208,7 @@ public class EduUtils {
     if (course != null && course.isStudy()) {
       return true;
     }
-    return EduNames.STUDY.equals(getCourseModeForNewlyCreatedProject(project));
+    return CourseMode.STUDY.equals(getCourseModeForNewlyCreatedProject(project));
   }
 
   public static boolean hasJCEF() {

@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
@@ -40,7 +41,7 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
     EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))
   }: ${cause.decapitalize()}"
 
-  val editLink = if (mode == EduNames.STUDY.toString()) {
+  val editLink = if (mode == CourseMode.STUDY.toString()) {
     ""
   }
   else {

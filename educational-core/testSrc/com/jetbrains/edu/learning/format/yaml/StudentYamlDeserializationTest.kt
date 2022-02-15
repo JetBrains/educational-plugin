@@ -9,10 +9,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYP
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
-import com.jetbrains.edu.learning.courseFormat.CheckFeedback
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -40,7 +37,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |""".trimMargin()
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
-    assertEquals(EduNames.STUDY, course.courseMode)
+    assertEquals(CourseMode.STUDY, course.courseMode)
   }
 
   fun `test codeforces course`() {

@@ -146,7 +146,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test invisible files in student mode`() {
-    courseWithInvisibleItems(EduNames.STUDY)
+    courseWithInvisibleItems(CourseMode.STUDY)
     assertCourseView("""
       -Project
        -CourseNode Test Course  0/2
@@ -240,7 +240,7 @@ class NodesTest : CourseViewTestBase() {
     }
   }
 
-  private fun createCourseWithTestsInsideTestDir(courseMode: CourseMode = EduNames.STUDY) {
+  private fun createCourseWithTestsInsideTestDir(courseMode: CourseMode = CourseMode.STUDY) {
     courseWithFiles(courseMode = courseMode) {
       lesson {
         eduTask {

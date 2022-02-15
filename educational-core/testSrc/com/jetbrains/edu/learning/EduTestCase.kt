@@ -175,7 +175,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   fun courseWithFiles(
     name: String = "Test Course",
-    courseMode: CourseMode = EduNames.STUDY,
+    courseMode: CourseMode = CourseMode.STUDY,
     id: Int? = null,
     description: String = "Test Course Description",
     environment: String = "",

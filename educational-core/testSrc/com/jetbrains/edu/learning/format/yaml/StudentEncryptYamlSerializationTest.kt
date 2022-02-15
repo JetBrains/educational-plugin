@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.encrypt.AES256
 import com.jetbrains.edu.learning.encrypt.getAesKey
@@ -32,7 +33,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   }
 
   fun `test edu task in student mode with encrypted text`() {
-    val task = course(courseMode = EduNames.STUDY) {
+    val task = course(courseMode = CourseMode.STUDY) {
       lesson {
         eduTask {
           taskFile("Test.txt", "<p>42 is the answer</p>") {

@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.testAction
 
@@ -26,7 +27,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   }
 
   fun `test is invisible for student`() {
-    getCourse().courseMode = EduNames.STUDY
+    getCourse().courseMode = CourseMode.STUDY
     doOpenTaskDescription(shouldBeEnabled = false)
   }
 

@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.yaml.configFileName
 
 class VirtualFileListenerTest : VirtualFileListenerTestBase() {
 
-  override val courseMode: CourseMode = EduNames.STUDY
+  override val courseMode: CourseMode = CourseMode.STUDY
 
   override fun createListener(project: Project): EduVirtualFileListener = UserCreatedFileListener(project)
 

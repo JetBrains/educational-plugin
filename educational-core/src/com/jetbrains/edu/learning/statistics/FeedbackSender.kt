@@ -10,6 +10,7 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import javax.swing.event.HyperlinkEvent
 
 fun showNotification(student : Boolean, course: Course, project: Project) {
@@ -17,7 +18,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
       .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
                                              PlatformUtils.getPlatformPrefix())
       .replace("\$COURSE", course.name)
-      .replace("\$MODE", if (course.courseMode == EduNames.STUDY) "Learner" else "Educator")
+      .replace("\$MODE", if (course.courseMode == CourseMode.STUDY) "Learner" else "Educator")
 
   val product = if (PlatformUtils.isPyCharmEducational()) "PyCharm Edu" else "EduTools"
   val language = course.languageID

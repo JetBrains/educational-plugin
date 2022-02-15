@@ -9,7 +9,8 @@ import com.jetbrains.edu.learning.testAction
 
 class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
 
-  fun `test not available in student mode`() = doTestDeleteAll("Foo.kt", false, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID, EduNames.STUDY)
+  fun `test not available in student mode`() = doTestDeleteAll("Foo.kt", false, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID,
+                                                               CourseMode.STUDY)
   fun `test not available without placeholders`() = doTestDeleteAll("Bar.kt", false, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID)
   fun `test delete all placeholders`() = doTestDeleteAll("Foo.kt", true, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID)
 

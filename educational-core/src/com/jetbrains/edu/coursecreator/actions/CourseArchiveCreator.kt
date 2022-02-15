@@ -107,7 +107,7 @@ class CourseArchiveCreator(
     course.sortItems()
     course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
     course.pluginDependencies = collectCourseDependencies(project, course)
-    course.courseMode = EduNames.STUDY
+    course.courseMode = CourseMode.STUDY
   }
 
   private fun synchronize(project: Project) {

@@ -94,7 +94,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     assertEquals(shouldDialogBeShown, isDialogShown)
   }
 
-  private fun createHyperskillCourse(courseMode: CourseMode = EduNames.STUDY): HyperskillCourse {
+  private fun createHyperskillCourse(courseMode: CourseMode = CourseMode.STUDY): HyperskillCourse {
     return hyperskillCourseWithFiles(courseMode = courseMode) {
       frameworkLesson("Project") {
         eduTask("Task1") {

@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOPlatformProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
@@ -125,7 +126,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup("educational.counters", 7)
 
     private val COURSE_MODE_FIELD = EventFields.String(MODE,
-                                                       listOf(EduNames.STUDY.toString(), CCUtils.COURSE_MODE.toString()))
+                                                       listOf(CourseMode.STUDY.toString(), CCUtils.COURSE_MODE.toString()))
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
                                                                   "PyCharm",
                                                                   "Coursera",

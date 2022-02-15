@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -79,7 +80,7 @@ class StudentChangeApplierTest() : YamlTestCase() {
   }
 
   fun `test checkio mission`() {
-    val existingMission = courseWithFiles(courseMode = EduNames.STUDY) {
+    val existingMission = courseWithFiles(courseMode = CourseMode.STUDY) {
       station("station") {
         mission("mission1")
       }

@@ -586,7 +586,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }
   }
 
-  private fun createFrameworkCourse(courseMode: CourseMode = EduNames.STUDY): Course = courseWithFiles(courseMode = courseMode) {
+  private fun createFrameworkCourse(courseMode: CourseMode = CourseMode.STUDY): Course = courseWithFiles(courseMode = courseMode) {
     frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """

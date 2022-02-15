@@ -30,7 +30,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
   }
 
   fun `test no hint live template in task description file in student mode`() {
-    createCourse(EduNames.STUDY)
+    createCourse(CourseMode.STUDY)
 
     expandSnippet("lesson/task/task.html", """
       <html>

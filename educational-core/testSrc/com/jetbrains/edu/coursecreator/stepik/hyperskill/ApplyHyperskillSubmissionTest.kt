@@ -54,7 +54,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
     file("settings.gradle")
   })
 
-  private fun doTest(submissionsJson: String, mode: CourseMode = EduNames.STUDY, expectedFileTree: FileTree = learnerExpectedFileTree) {
+  private fun doTest(submissionsJson: String, mode: CourseMode = CourseMode.STUDY, expectedFileTree: FileTree = learnerExpectedFileTree) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
         when (request.path) {
