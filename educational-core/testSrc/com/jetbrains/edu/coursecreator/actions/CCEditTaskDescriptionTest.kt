@@ -4,7 +4,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
@@ -17,7 +16,7 @@ import com.jetbrains.edu.learning.testAction
 class CCEditTaskDescriptionTest : EduTestCase() {
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("task.txt", "task file text")

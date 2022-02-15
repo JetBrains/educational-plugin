@@ -1,13 +1,13 @@
 package com.jetbrains.edu.go.actions
 
 import com.goide.GoLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class GoAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

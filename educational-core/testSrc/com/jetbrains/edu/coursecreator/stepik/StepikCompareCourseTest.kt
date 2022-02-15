@@ -2,15 +2,11 @@ package com.jetbrains.edu.coursecreator.stepik
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -23,7 +19,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
   fun `test the same course`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -44,7 +40,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test new lesson`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
         outputTask { }
@@ -60,7 +56,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test new section`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -78,7 +74,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change lesson name`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
         outputTask { }
@@ -94,7 +90,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change lesson custom presentable name`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
         outputTask { }
@@ -109,7 +105,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change lesson index`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
         outputTask { }
@@ -129,7 +125,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change section name`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -153,7 +149,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change section index`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -174,14 +170,14 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test add new task`() {
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
       }
     }.asRemote()
 
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
@@ -195,13 +191,13 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test add new non-plugin task`() {
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
       }
     }.asRemote()
 
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         videoTask(sources = mapOf())
@@ -214,7 +210,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task name`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
@@ -237,7 +233,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
   fun `test change non-plugin task name`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         choiceTask(choiceOptions = choiceOptions) { }
       }
@@ -259,7 +255,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
   fun `test change non-plugin task custom name`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         choiceTask(choiceOptions = choiceOptions) { }
       }
@@ -277,7 +273,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task index`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
@@ -295,7 +291,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task type`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         videoTask(sources = mapOf())
       }
@@ -313,7 +309,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test add task file`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
@@ -336,7 +332,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
   fun `test add task file to choice task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
       }
@@ -356,7 +352,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task description`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask { }
         outputTask { }
@@ -380,7 +376,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task file name`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile.txt")
@@ -397,7 +393,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change task file text`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile.txt")
@@ -418,7 +414,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test add placeholder`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("taskFile.txt", "text")
@@ -442,7 +438,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change placeholder offset`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
@@ -462,7 +458,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change placeholder text`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
@@ -482,7 +478,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change placeholder length`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
@@ -502,7 +498,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test add placeholder dependency`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("Task.txt", "fun foo(): String = <p>TODO()</p>") {
@@ -522,7 +518,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change options in choice task`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = true, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
                                                                   "2" to ChoiceOptionStatus.INCORRECT))
@@ -536,7 +532,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test change multiple choice in choice task`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
@@ -549,7 +545,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test choice task with changed correct message`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
@@ -562,7 +558,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test choice task with changed incorrect message`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = false, choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT,
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
@@ -575,7 +571,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test course with hidden solutions`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
       }
@@ -589,7 +585,7 @@ class StepikCompareCourseTest : EduTestCase() {
   }
 
   fun `test tasks with hidden solution`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") { }
         eduTask("task2") { }

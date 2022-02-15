@@ -52,8 +52,6 @@ object CCUtils {
   private val LOG = Logger.getInstance(CCUtils::class.java)
 
   const val GENERATED_FILES_FOLDER = ".coursecreator"
-  @JvmField
-  val COURSE_MODE = CourseMode.COURSE_MODE
   const val DEFAULT_PLACEHOLDER_TEXT = "type here"
 
   /**
@@ -133,7 +131,7 @@ object CCUtils {
   @JvmStatic
   fun isCourseCreator(project: Project): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
-    return COURSE_MODE == course.courseMode || COURSE_MODE == EduUtils.getCourseModeForNewlyCreatedProject(project)
+    return CourseMode.COURSE_MODE == course.courseMode || CourseMode.COURSE_MODE == EduUtils.getCourseModeForNewlyCreatedProject(project)
   }
 
   @JvmStatic

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -30,7 +30,7 @@ class YamlTypeChangedTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("test1.txt", text = "// <p>my</p> task file text") {

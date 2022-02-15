@@ -5,11 +5,11 @@ import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Urls
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.cargo.CfgOptions
@@ -28,7 +28,7 @@ class RsCreateTaskTest : RsActionTestBase() {
   override fun createCourse() {
     // Should be synchronized with workspace structure provided by RsProjectDescriptor
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

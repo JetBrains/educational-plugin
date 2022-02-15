@@ -15,7 +15,6 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.CHECK_IO_MISSION_TASK_TYPE
@@ -113,7 +112,7 @@ object YamlDeserializer {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val courseMode = asText(treeNode.get("mode"))
     val course = treeToValue(treeNode, Course::class.java)
-    course.courseMode = if (courseMode != null) CourseMode.STUDY else CCUtils.COURSE_MODE
+    course.courseMode = if (courseMode != null) CourseMode.STUDY else CourseMode.COURSE_MODE
     return course
   }
 

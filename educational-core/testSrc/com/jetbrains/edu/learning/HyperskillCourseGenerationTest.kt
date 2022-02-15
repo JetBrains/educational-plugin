@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillCourseGenerationTest : EduTestCase() {
@@ -12,7 +12,7 @@ class HyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CCUtils.COURSE_MODE) {}
+    courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.COURSE_MODE) {}
 
     checkFileTree {
       dir("lesson1/task1") {

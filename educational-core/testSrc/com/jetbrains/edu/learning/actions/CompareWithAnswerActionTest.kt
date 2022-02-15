@@ -3,12 +3,12 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.MockEduBrowser
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
@@ -47,7 +47,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
   }
 
   fun `test disabled in educator mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("task.txt", "task file text")

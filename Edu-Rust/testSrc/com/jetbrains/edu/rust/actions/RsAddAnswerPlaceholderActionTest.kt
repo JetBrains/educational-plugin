@@ -1,13 +1,13 @@
 package com.jetbrains.edu.rust.actions
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.rust.lang.RsLanguage
 
 class RsAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = RsLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = RsLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

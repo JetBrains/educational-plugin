@@ -1,11 +1,11 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -17,7 +17,7 @@ import java.util.*
 class YamlSerializationTest : YamlTestCase() {
 
   fun `test edu task`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -118,7 +118,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test edu task with content tags`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -146,7 +146,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test empty placeholder`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -168,7 +168,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test placeholder starts with spaces`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -190,7 +190,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test placeholder ends with spaces`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -212,7 +212,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test edu task with test files`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Task.java", "<p>42 is the answer</p>") {
@@ -239,7 +239,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test edu task with additional files`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>42 is the answer</p>") {
@@ -266,7 +266,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test edu task with dependency`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
@@ -301,7 +301,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test output task`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         outputTask {
           taskFile("Test.java", "")
@@ -317,7 +317,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test quiz task`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("Test.java", "")
@@ -339,7 +339,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test quiz task without answers`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.UNKNOWN, "2" to ChoiceOptionStatus.UNKNOWN)) {
           taskFile("Test.java", "")
@@ -359,7 +359,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("the first lesson")
       lesson("the second lesson")
     }
@@ -433,7 +433,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test use dir name for lesson with custom name`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask("Introduction Task")
@@ -453,7 +453,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test framework lesson`() {
-    val lesson = course(courseMode = CCUtils.COURSE_MODE) {
+    val lesson = course(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson {
         eduTask("Introduction Task")
         eduTask("Advanced Task")
@@ -469,7 +469,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test framework lesson with content tags`() {
-    val lesson = course(courseMode = CCUtils.COURSE_MODE) {
+    val lesson = course(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson {
         eduTask("Introduction Task")
         eduTask("Advanced Task")
@@ -489,7 +489,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test non templated based framework lesson`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson("lesson", isTemplateBased = false)
     }
 
@@ -501,7 +501,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test section`() {
-    val section = course(courseMode = CCUtils.COURSE_MODE) {
+    val section = course(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("Introduction Lesson")
         lesson("Advanced Lesson")
@@ -517,7 +517,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test section with custom name`() {
-    val section = course(courseMode = CCUtils.COURSE_MODE) {
+    val section = course(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("Introduction Lesson")
         lesson("Advanced Lesson")
@@ -535,7 +535,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test section with content tags`() {
-    val section = course(courseMode = CCUtils.COURSE_MODE) {
+    val section = course(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("Introduction Lesson")
         lesson("Advanced Lesson")
@@ -555,7 +555,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task feedback link`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
       }
@@ -582,7 +582,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with custom presentable name`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
       }
@@ -596,7 +596,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with environment`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID) {
+    val course = course(courseMode = CourseMode.COURSE_MODE, environment = EduNames.ANDROID) {
       lesson {
         eduTask { }
       }
@@ -615,7 +615,7 @@ class YamlSerializationTest : YamlTestCase() {
 
   fun `test course feedback link`() {
     val courseLink = "https://course_link.com"
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
       }
@@ -673,7 +673,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with hidden solutions`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {}
+    val course = course(courseMode = CourseMode.COURSE_MODE) {}
     course.solutionsHidden = true
     doTest(course, """
       |title: Test Course
@@ -686,7 +686,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with hidden solution`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {}
       }
@@ -702,7 +702,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with hidden solution = false`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {}
       }
@@ -730,7 +730,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test empty section`() {
-    val section = course(courseMode = CCUtils.COURSE_MODE) {
+    val section = course(courseMode = CourseMode.COURSE_MODE) {
       section {
       }
     }.items.first()
@@ -742,7 +742,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test empty course`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {}
+    val course = course(courseMode = CourseMode.COURSE_MODE) {}
 
     doTest(course, """
       |title: Test Course
@@ -754,7 +754,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with lang version`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {}
+    val course = course(courseMode = CourseMode.COURSE_MODE) {}
     course.languageCode = "ru"
     course.description = "sum"
     course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
@@ -769,7 +769,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with content tags`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {}
+    val course = course(courseMode = CourseMode.COURSE_MODE) {}
     course.contentTags = listOf("kotlin", "cycles")
     doTest(course, """
       |title: Test Course
@@ -784,7 +784,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test coursera course`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE, courseProducer = ::CourseraCourse) {}
+    val course = course(courseMode = CourseMode.COURSE_MODE, courseProducer = ::CourseraCourse) {}
     course.languageCode = "ru"
     course.description = "sum"
     course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
@@ -800,7 +800,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test coursera course manual submit`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE, courseProducer = ::CourseraCourse) {} as CourseraCourse
+    val course = course(courseMode = CourseMode.COURSE_MODE, courseProducer = ::CourseraCourse) {} as CourseraCourse
     course.languageCode = "ru"
     course.description = "sum"
     course.submitManually = true
@@ -821,7 +821,7 @@ class YamlSerializationTest : YamlTestCase() {
     val defaultLocale = Locale.getDefault()
     Locale.setDefault(Locale.KOREAN)
 
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("the first lesson")
       lesson("the second lesson")
     }
@@ -844,7 +844,7 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test course with choice tasks`() {
-    val task = course(courseMode = CCUtils.COURSE_MODE) {
+    val task = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         choiceTask(
           name = "task1",

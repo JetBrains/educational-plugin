@@ -15,7 +15,7 @@ import junit.framework.TestCase
 class CourseUpdateTest : StepikTestCase() {
 
   fun `test upload course with top level lessons`() {
-    val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseToPost = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -60,7 +60,7 @@ class CourseUpdateTest : StepikTestCase() {
   }
 
   fun `test rearrange lessons`() {
-    val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseToPost = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")

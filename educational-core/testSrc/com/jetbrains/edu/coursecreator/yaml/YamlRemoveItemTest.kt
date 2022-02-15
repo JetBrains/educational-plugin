@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 
@@ -12,7 +12,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove lesson`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson { }
       lesson { }
     }
@@ -32,7 +32,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove section`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("lesson1") { }
       }
@@ -56,7 +56,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove task`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask { }
         eduTask { }
@@ -78,7 +78,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test task file`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("task1.txt")

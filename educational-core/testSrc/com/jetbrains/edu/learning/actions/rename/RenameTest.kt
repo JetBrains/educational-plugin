@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.actions.rename
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -172,7 +172,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename section in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -189,7 +189,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename lesson in section in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -208,7 +208,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename lesson in course in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -223,7 +223,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename task in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -239,7 +239,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename task description file in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -254,7 +254,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test wrong new task description file name in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -270,7 +270,7 @@ class RenameTest : RenameTestBase() {
   }
 
   fun `test rename task file in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")

@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -13,12 +12,12 @@ import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
-  override val courseMode: CourseMode = CCUtils.COURSE_MODE
+  override val courseMode: CourseMode = CourseMode.COURSE_MODE
 
   override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project)
 
   fun `test delete section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section()
       lesson()
@@ -35,7 +34,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete not empty section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson()
@@ -54,7 +53,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section()
       lesson()
@@ -72,7 +71,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
 
   fun `test delete lesson from section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson()
@@ -97,7 +96,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete task`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("tmp.txt")

@@ -1,12 +1,12 @@
 package com.jetbrains.edu.android.actions
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class AndroidCreateTaskTest : EduActionTestCase() {
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, environment = EduNames.ANDROID,
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, environment = EduNames.ANDROID,
                                  language = KotlinLanguage.INSTANCE, settings = JdkProjectSettings.emptySettings()) {
       lesson()
     }

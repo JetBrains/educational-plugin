@@ -1,12 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.move
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class CCMoveSectionTest : MoveTestBase() {
 
   fun `test move section before lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson2")
@@ -23,7 +23,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section after lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("lesson2")
       }
@@ -42,7 +42,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section before section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section()
       section()
@@ -59,7 +59,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section after section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section()
       section()

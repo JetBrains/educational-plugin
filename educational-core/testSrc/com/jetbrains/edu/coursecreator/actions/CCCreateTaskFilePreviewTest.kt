@@ -6,10 +6,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCTestsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.File
 
@@ -31,7 +31,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test nested task file`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/Task.txt", """<p>type here</p>""") {
@@ -55,7 +55,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test show error if placeholder is broken`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
@@ -72,7 +72,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test show error if we have no placeholders`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("fizz.kt", "no placeholders")
@@ -86,7 +86,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   private fun doTest(taskFilePath: String, buildTask: TaskBuilder.() -> Unit) {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1", buildTask = buildTask)
       }

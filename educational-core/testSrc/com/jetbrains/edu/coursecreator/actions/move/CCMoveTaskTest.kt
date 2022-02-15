@@ -1,12 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.move
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.actions.move.MoveTestBase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class CCMoveTaskTest : MoveTestBase() {
 
   fun `test move to another lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()
@@ -33,7 +33,7 @@ class CCMoveTaskTest : MoveTestBase() {
 
   // EDU-2467
   fun `test move from lesson with the same name to another lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("lesson1")
         eduTask("task2")
@@ -58,7 +58,7 @@ class CCMoveTaskTest : MoveTestBase() {
 
   fun `test move task with custom name to another lesson`() {
     val customTaskName = "Custom Task Name"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask(customTaskName)
         eduTask()
@@ -85,7 +85,7 @@ class CCMoveTaskTest : MoveTestBase() {
   }
 
   fun `test move after task`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()
@@ -108,7 +108,7 @@ class CCMoveTaskTest : MoveTestBase() {
   }
 
   fun `test move before task`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()
@@ -131,7 +131,7 @@ class CCMoveTaskTest : MoveTestBase() {
   }
 
   fun `test move before task in another lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()
@@ -159,7 +159,7 @@ class CCMoveTaskTest : MoveTestBase() {
   }
 
   fun `test move after task in another lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()

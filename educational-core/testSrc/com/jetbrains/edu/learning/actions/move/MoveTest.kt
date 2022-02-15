@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.actions.move
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.withEduTestDialog
 
@@ -163,7 +163,7 @@ class MoveTest : MoveTestBase() {
     val lessonName = "lesson1"
     val taskName = "task1"
     val taskFileName = "taskFile1.txt"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson(lessonName) {
         eduTask(taskName) {
           taskFile("src/$taskFileName")
@@ -185,7 +185,7 @@ class MoveTest : MoveTestBase() {
     val lessonName = "lesson1"
     val taskName = "task1"
     val taskFileName = "taskFile1.txt"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson(lessonName) {
         eduTask(taskName) {
           taskFile(taskFileName)

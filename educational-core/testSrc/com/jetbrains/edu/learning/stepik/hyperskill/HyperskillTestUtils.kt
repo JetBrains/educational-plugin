@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.CourseBuilder
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage

@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.intellij.lang.annotations.Language
 
@@ -81,7 +81,7 @@ class ExportStepikIdsTest : EduTestCase() {
   private fun convertToRemoteCourse(course: Course): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.name = course.name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
+    remoteCourse.courseMode = CourseMode.COURSE_MODE
     remoteCourse.items = course.items
     return remoteCourse
   }

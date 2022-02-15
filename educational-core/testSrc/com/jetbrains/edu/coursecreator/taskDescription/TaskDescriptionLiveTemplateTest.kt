@@ -3,8 +3,6 @@ package com.jetbrains.edu.coursecreator.taskDescription
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -13,7 +11,7 @@ import org.intellij.lang.annotations.Language
 class TaskDescriptionLiveTemplateTest : EduTestCase() {
 
   fun `test hint live template in task description file in cc mode`() {
-    createCourse(CCUtils.COURSE_MODE)
+    createCourse(CourseMode.COURSE_MODE)
 
     expandSnippet("lesson/task/task.html", """
       <html>
@@ -44,7 +42,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
   }
 
   fun `test no hint live template in non task description file`() {
-    createCourse(CCUtils.COURSE_MODE)
+    createCourse(CourseMode.COURSE_MODE)
 
     expandSnippet("lesson/task/taskFile.html", """
       <html>

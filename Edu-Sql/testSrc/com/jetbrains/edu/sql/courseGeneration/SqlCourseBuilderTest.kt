@@ -1,8 +1,8 @@
 package com.jetbrains.edu.sql.courseGeneration
 
 import com.intellij.sql.psi.SqlLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
@@ -23,7 +23,7 @@ class SqlCourseBuilderTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test create existent educator course`() {
-    val course = course(language = SqlLanguage.INSTANCE, courseMode = CCUtils.COURSE_MODE) {
+    val course = course(language = SqlLanguage.INSTANCE, courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("task.sql")

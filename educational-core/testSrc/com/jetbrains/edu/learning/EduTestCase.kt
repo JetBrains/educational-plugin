@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -272,7 +271,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     return copyAs(EduCourse::class.java)
   }
 
-  protected fun Course.asRemote(courseMode: CourseMode = CCUtils.COURSE_MODE): EduCourse {
+  protected fun Course.asRemote(courseMode: CourseMode = CourseMode.COURSE_MODE): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.id = 1
     remoteCourse.name = name

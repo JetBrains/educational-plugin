@@ -5,8 +5,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -88,7 +86,7 @@ private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(Flo
     val tasksSolved = courseMetaInfo.tasksSolved
     val tasksTotal = courseMetaInfo.tasksTotal
 
-    if (courseMetaInfo.courseMode != CCUtils.COURSE_MODE && (tasksSolved != 0 && tasksSolved != tasksTotal)) {
+    if (courseMetaInfo.courseMode != CourseMode.COURSE_MODE && (tasksSolved != 0 && tasksSolved != tasksTotal)) {
       val progressBar = ProgressUtil.createProgressBar().apply {
         border = JBUI.Borders.emptyRight(H_GAP)
         maximum = tasksTotal

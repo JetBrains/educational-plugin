@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.util.messages.MessageBusConnection
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.testAction
 
@@ -18,7 +18,7 @@ class CheckAllTest : EduActionTestCase() {
   }
 
   fun `test all solved`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           checkResultFile(CheckStatus.Solved)
@@ -33,7 +33,7 @@ class CheckAllTest : EduActionTestCase() {
 
   fun `test failed tasks`() {
     val taskName = "Failed Task"
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask(name = taskName) {
           checkResultFile(CheckStatus.Failed)
@@ -48,7 +48,7 @@ class CheckAllTest : EduActionTestCase() {
   }
 
   fun `test tasks with different statuses`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           checkResultFile(CheckStatus.Unchecked)

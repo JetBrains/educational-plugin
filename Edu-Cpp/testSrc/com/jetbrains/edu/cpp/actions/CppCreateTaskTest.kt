@@ -2,7 +2,6 @@ package com.jetbrains.edu.cpp.actions
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
@@ -13,6 +12,7 @@ import com.jetbrains.edu.cpp.CppGTestCourseBuilder
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.getExpectedTaskCMakeText
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
@@ -24,7 +24,7 @@ class CppCreateTaskTest : EduActionTestCase() {
   private fun createTaskInEmptyLessonTestBase(environment: String, useFrameworkLesson: Boolean = false) {
     val course = courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = environment
     ) {
       if (useFrameworkLesson)
@@ -114,7 +114,7 @@ class CppCreateTaskTest : EduActionTestCase() {
 
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "Catch" // Environment doesn't matter here
     ) {
       frameworkLesson("lesson") {

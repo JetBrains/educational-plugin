@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning
 
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class PlainTextCourseGeneratorTest : EduTestCase() {
 
@@ -80,7 +80,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test course with framework lesson structure creation in CC mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson {
         eduTask {
           taskFile("Fizz.kt")
@@ -158,7 +158,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test course creation in CC mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -199,7 +199,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test course with sections creation in CC mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -240,7 +240,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test creation of course with sections and without top level lessons in CC mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -281,7 +281,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test empty course creation`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {}
 
     checkFileTree {
       dir("lesson1") {
@@ -341,7 +341,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test placeholder content in CC mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Fizz.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -385,7 +385,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   }
 
   fun `test placeholder content in CC mode with sections`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask {

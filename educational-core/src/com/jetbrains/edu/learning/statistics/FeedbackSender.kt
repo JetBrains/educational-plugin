@@ -8,7 +8,6 @@ import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import javax.swing.event.HyperlinkEvent

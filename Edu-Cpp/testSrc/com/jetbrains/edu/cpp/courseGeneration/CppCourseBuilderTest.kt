@@ -1,10 +1,10 @@
 package com.jetbrains.edu.cpp.courseGeneration
 
 import com.jetbrains.cidr.lang.OCLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.getExpectedTaskCMakeText
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
@@ -16,7 +16,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   fun `test create new cc edu GoogleTest course`() {
     val course = course(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "GoogleTest"
     ) { }
     createCourseStructure(course)
@@ -45,7 +45,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   fun `test create new cc edu Catch course`() {
     val course = course(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "Catch"
     ) {}
     createCourseStructure(course)

@@ -2,16 +2,16 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 
 class YamlSynchronizationTest : YamlTestCase() {
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask()

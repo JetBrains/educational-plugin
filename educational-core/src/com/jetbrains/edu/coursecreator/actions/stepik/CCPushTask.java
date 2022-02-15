@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.CourseMode;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -52,7 +53,7 @@ public class CCPushTask extends DumbAwareAction {
     if (!(course instanceof EduCourse) || !course.isStepikRemote()) {
       return;
     }
-    if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
+    if (!course.getCourseMode().equals(CourseMode.COURSE_MODE)) return;
     final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return;

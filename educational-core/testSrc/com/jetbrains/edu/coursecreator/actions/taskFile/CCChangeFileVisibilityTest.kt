@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -31,12 +30,12 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     vararg paths: String,
     pathPrefix: String = ""
   ) = doTest(true, shouldOppositeActionBeEnabled, *paths,
-             courseMode = CCUtils.COURSE_MODE,
+             courseMode = CourseMode.COURSE_MODE,
              pathPrefix = pathPrefix)
 
   private fun doUnavailableTest(
     vararg paths: String,
-    courseMode: CourseMode = CCUtils.COURSE_MODE,
+    courseMode: CourseMode = CourseMode.COURSE_MODE,
     pathPrefix: String = ""
   ) = doTest(false, false, *paths, courseMode = courseMode, pathPrefix = pathPrefix)
 

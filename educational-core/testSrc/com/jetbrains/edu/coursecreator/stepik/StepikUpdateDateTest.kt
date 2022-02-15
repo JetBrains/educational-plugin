@@ -1,8 +1,8 @@
 package com.jetbrains.edu.coursecreator.stepik
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.isUpToDate
@@ -22,7 +22,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course up to date`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -39,7 +39,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -63,7 +63,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course date changed`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -80,7 +80,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -105,7 +105,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course additional materials date changed`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -122,7 +122,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = course(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -147,7 +147,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course section added`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -164,7 +164,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -195,7 +195,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course section removed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -212,7 +212,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -229,7 +229,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course lesson added`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -246,7 +246,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -270,7 +270,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test course lesson removed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -283,7 +283,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -295,7 +295,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test all top-level lessons removed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -308,7 +308,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -326,7 +326,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test section date changed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -336,7 +336,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -356,7 +356,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test lesson date changed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -364,7 +364,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -378,7 +378,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test lesson from section date changed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -388,7 +388,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -408,7 +408,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test lesson added into section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -418,7 +418,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -443,7 +443,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test lesson removed from section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -458,7 +458,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -476,15 +476,15 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test task added`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-        lesson("lesson1") {
-          eduTask {
-            taskFile("fizz.kt")
-          }
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt")
         }
+      }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
@@ -497,7 +497,7 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test task removed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
@@ -506,7 +506,7 @@ class StepikUpdateDateTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
@@ -517,14 +517,14 @@ class StepikUpdateDateTest : EduTestCase() {
   }
 
   fun `test task date changed`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
       }
     }.asRemote()
 
-    val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val courseFromServer = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }

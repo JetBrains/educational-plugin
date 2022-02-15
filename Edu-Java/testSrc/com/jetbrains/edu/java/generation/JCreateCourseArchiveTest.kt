@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -15,7 +16,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
     courseWithFiles(
       language = JavaLanguage.INSTANCE,
       settings = JdkProjectSettings.emptySettings(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       description = "my summary"
     ) {
       lesson("lesson1") {

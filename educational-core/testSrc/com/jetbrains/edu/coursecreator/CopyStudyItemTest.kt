@@ -11,7 +11,7 @@ class CopyStudyItemTest : EduTestCase() {
 
   fun `test copy course`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -32,7 +32,7 @@ class CopyStudyItemTest : EduTestCase() {
 
   fun `test copy course as stepik course`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {
           eduTask { }
@@ -53,7 +53,7 @@ class CopyStudyItemTest : EduTestCase() {
   }
 
   fun `test copy edu task`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("temp.py", "a = 1", true)
@@ -67,7 +67,7 @@ class CopyStudyItemTest : EduTestCase() {
   }
 
   fun `test copy output task`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         outputTask { }
       }
@@ -78,7 +78,7 @@ class CopyStudyItemTest : EduTestCase() {
   }
 
   fun `test copy theory task`() {
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         theoryTask("theory", "my description", DescriptionFormat.MD, 4) { }
       }
@@ -90,7 +90,7 @@ class CopyStudyItemTest : EduTestCase() {
 
   fun `test copy choice task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
       }

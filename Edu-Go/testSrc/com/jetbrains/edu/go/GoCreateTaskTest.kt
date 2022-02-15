@@ -1,16 +1,16 @@
 package com.jetbrains.edu.go
 
 import com.goide.GoLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 
 class GoCreateTaskTest : EduActionTestCase() {
   fun `test module name generated correctly`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
       lesson {}
     }
 
@@ -27,7 +27,7 @@ class GoCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test forbidden task name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
       lesson {}
     }
 

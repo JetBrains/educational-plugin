@@ -1,15 +1,15 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.configFileName
 
 class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
   fun `test navigate to yaml`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>")

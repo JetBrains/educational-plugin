@@ -1,13 +1,13 @@
 package com.jetbrains.edu.yaml.completion
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import kotlin.test.assertNotEquals
 
 class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   fun `test completion for course programming language`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -31,7 +31,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course programming language version`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -54,7 +54,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course human language`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -77,7 +77,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course environment`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -118,7 +118,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test no completion for is_template_based property for common lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1")
     }
     val lesson = course.getLesson("lesson1")!!
@@ -129,7 +129,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test is_template_based property completion for framework lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson("lesson1")
     }
     val lesson = course.getLesson("lesson1")!!

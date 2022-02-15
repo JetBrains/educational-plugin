@@ -1,9 +1,9 @@
 package com.jetbrains.edu.rust.actions
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import com.jetbrains.edu.rust.RsProjectSettings
@@ -42,7 +42,7 @@ class RsDeleteActionTest : RsActionTestBase() {
 
   fun `test delete last lesson with trailing comma`() {
     val course = courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -142,7 +142,7 @@ class RsDeleteActionTest : RsActionTestBase() {
 
   private fun createRustCourse(): Course {
     return courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

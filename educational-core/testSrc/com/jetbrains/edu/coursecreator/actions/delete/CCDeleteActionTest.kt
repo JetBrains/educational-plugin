@@ -3,14 +3,14 @@ package com.jetbrains.edu.coursecreator.actions.delete
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCDeleteActionTest : EduActionTestCase() {
 
   fun `test delete task`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask("task1")
         eduTask("task2")
@@ -34,7 +34,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete task with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -81,7 +81,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete lesson`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask("task1")
       }
@@ -105,7 +105,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test lesson deletion with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -160,7 +160,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete section`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("lesson1") {
           eduTask("task1")
@@ -188,7 +188,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test section deletion with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {
           eduTask("task1") {

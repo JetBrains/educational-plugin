@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -336,7 +335,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
   }
 
   fun `test navigation in CC mode`() {
-    val course = createFrameworkCourse(CCUtils.COURSE_MODE)
+    val course = createFrameworkCourse(CourseMode.COURSE_MODE)
     val task1 = course.findTask("lesson1", "task1")
     val task2 = course.findTask("lesson1", "task2")
     val task3 = course.findTask("lesson1", "task3")

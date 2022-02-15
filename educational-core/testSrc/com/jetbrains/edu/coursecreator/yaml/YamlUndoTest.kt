@@ -7,10 +7,10 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -28,7 +28,7 @@ open class YamlUndoTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile(TASK_FILE_NAME, "42 is the <p>TODO()</p>. 43 is not") {

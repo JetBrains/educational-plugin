@@ -3,10 +3,10 @@ package com.jetbrains.edu.coursecreator.actions.delete
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import junit.framework.TestCase
@@ -21,7 +21,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test unwrap lessons`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson2")
@@ -40,7 +40,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test one lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson2")
@@ -58,7 +58,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test with multiple lesson before and after`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
@@ -80,7 +80,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test unwrap lessons tree structure`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson2")
@@ -100,7 +100,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test course has the same named lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson1")

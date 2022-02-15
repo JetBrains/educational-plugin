@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik.hyperskill
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskillSubmission
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -20,7 +19,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
 
   fun `test submission from ide`() = doTest(submissionFromIDE)
 
-  fun `test in educator mode`() = doTest(submissionFromWeb, CCUtils.COURSE_MODE, fileTree {
+  fun `test in educator mode`() = doTest(submissionFromWeb, CourseMode.COURSE_MODE, fileTree {
     dir("test project") {
       dir("task1") {
         file("task.html")

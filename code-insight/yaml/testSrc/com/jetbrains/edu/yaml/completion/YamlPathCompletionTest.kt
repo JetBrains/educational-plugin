@@ -1,14 +1,14 @@
 package com.jetbrains.edu.yaml.completion
 
 import com.intellij.openapi.application.runWriteAction
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class YamlPathCompletionTest : YamlCompletionTestBase() {
 
   fun `test task file completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -37,7 +37,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test task file completion 2`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -65,7 +65,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test do not suggest existing paths while completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -94,7 +94,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test do not suggest excluded from archive files while completion 1`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -123,7 +123,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test do not suggest excluded from archive files while completion 2`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -145,7 +145,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test task file extend completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")
@@ -174,7 +174,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test directories completion in task config`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -197,7 +197,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test course content completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {}
     }
 
@@ -231,7 +231,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test lesson content completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {}
       }
@@ -253,7 +253,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test section content completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section("section1") {
         lesson("lesson1") {}
         lesson("lesson2") {}
@@ -274,7 +274,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test lesson content extend completion`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {}
       }

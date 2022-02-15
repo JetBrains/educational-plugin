@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.taskDescription
 
 import com.intellij.xml.util.CheckDtdReferencesInspection
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.taskDescription.toShortcut
 
@@ -23,7 +23,7 @@ class ShortcutsHighlightingTest : EduTestCase() {
 
   private fun doTest(descriptionFormat: DescriptionFormat = DescriptionFormat.HTML) {
     val taskDescriptionText = "Text with shortcut: ${"CodeCompletion".toShortcut()}"
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask(taskDescriptionFormat = descriptionFormat, taskDescription = taskDescriptionText) {
           taskFile("taskFile1.txt")

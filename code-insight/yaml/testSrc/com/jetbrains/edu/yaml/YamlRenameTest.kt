@@ -2,9 +2,9 @@ package com.jetbrains.edu.yaml
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.yaml.configFileName
@@ -17,7 +17,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
   }
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")

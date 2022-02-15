@@ -1,7 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getActionById
@@ -16,7 +14,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
 
   fun `test delete placeholder`() {
     val taskFileName = "Task.kt"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
@@ -35,7 +33,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
     taskFileName: String,
     shouldBeAvailable: Boolean,
     actionId: String,
-    courseMode: CourseMode = CCUtils.COURSE_MODE
+    courseMode: CourseMode = CourseMode.COURSE_MODE
   ) {
     val course = courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {

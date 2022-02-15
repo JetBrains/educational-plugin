@@ -1,10 +1,10 @@
 package com.jetbrains.edu.slow.checker
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckersTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
@@ -35,7 +35,7 @@ abstract class RealCourseCheckersTestBase<Settings>(private val courseId: Int) :
     println("'${course.name}' ($courseId) course loading started")
     StepikCourseLoader.loadCourseStructure(course)
     println("'${course.name}' ($courseId) course loading finished")
-    course.courseMode = CCUtils.COURSE_MODE
+    course.courseMode = CourseMode.COURSE_MODE
     return course
   }
 

@@ -6,7 +6,6 @@ import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -168,7 +167,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     task.descriptionText = clearCodeBlockFromTags(step)
     task.descriptionFormat = DescriptionFormat.HTML
 
-    if (course is EduCourse && courseMode == CCUtils.COURSE_MODE && stepId > 0) {
+    if (course is EduCourse && courseMode == CourseMode.COURSE_MODE && stepId > 0) {
       return task.apply { fillForCourseCreatorMode() }
     }
 

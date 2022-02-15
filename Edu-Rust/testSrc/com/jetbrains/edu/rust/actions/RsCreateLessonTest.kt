@@ -2,11 +2,11 @@ package com.jetbrains.edu.rust.actions
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
@@ -109,7 +109,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add lesson item with section`() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -149,7 +149,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add the first lesson in course`() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -183,7 +183,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add lesson in the middle of course`() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -226,7 +226,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test do not modify manifest on empty lesson creation`() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -265,7 +265,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test do not modify manifest on non first task creation`() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -305,7 +305,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

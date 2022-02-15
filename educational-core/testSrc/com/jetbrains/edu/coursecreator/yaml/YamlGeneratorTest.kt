@@ -8,9 +8,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.checkConfigsExistAndNotEmpty
 
@@ -35,7 +35,7 @@ class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
       }
     })
 
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
       }

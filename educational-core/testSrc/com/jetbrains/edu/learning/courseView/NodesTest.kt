@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseView
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -163,7 +162,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test invisible files in educator mode`() {
-    courseWithInvisibleItems(CCUtils.COURSE_MODE)
+    courseWithInvisibleItems(CourseMode.COURSE_MODE)
     assertCourseView("""
       -Project
        -CCCourseNode Test Course (Course Creation)
@@ -186,7 +185,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test non course files`() {
-    courseWithInvisibleItems(CCUtils.COURSE_MODE)
+    courseWithInvisibleItems(CourseMode.COURSE_MODE)
     runWriteAction {
       LightPlatformTestCase.getSourceRoot().createChildData(NodesTest::class.java, "non_course_file1.txt")
       findFile("lesson1/task1").createChildData(NodesTest::class.java, "non_course_file2.txt")
@@ -263,7 +262,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test course with tests inside test dir`() {
-    createCourseWithTestsInsideTestDir(CCUtils.COURSE_MODE)
+    createCourseWithTestsInsideTestDir(CourseMode.COURSE_MODE)
     assertCourseView("""
       |-Project
       | -CCCourseNode Test Course (Course Creation)
@@ -303,7 +302,7 @@ class NodesTest : CourseViewTestBase() {
 
 
   fun `test course with dir inside test`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -348,7 +347,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test directory inside lesson in educator mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("file1.txt")
@@ -380,7 +379,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test directory inside course in educator mode`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("file1.txt")
@@ -414,7 +413,7 @@ class NodesTest : CourseViewTestBase() {
   fun `test excluded files in educator mode`() {
     val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
     val courseIgnoredFile = "IgnoredFile.txt"
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
           taskFile("file1.txt")

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.format.yaml
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation

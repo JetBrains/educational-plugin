@@ -1,13 +1,13 @@
 package com.jetbrains.edu.python.actions
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.python.PythonLanguage
 
 class PyAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = PythonLanguage.getInstance()) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = PythonLanguage.getInstance()) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

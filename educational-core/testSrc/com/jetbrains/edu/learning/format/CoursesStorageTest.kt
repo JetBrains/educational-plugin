@@ -4,12 +4,12 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
 import com.intellij.util.xmlb.XmlSerializer
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -38,7 +38,7 @@ class CoursesStorageTest : EduTestCase() {
 
   fun testCourseModeRespected() {
     val coursesStorage = CoursesStorage.getInstance()
-    val educatorCourse = course(courseMode = CCUtils.COURSE_MODE) {}
+    val educatorCourse = course(courseMode = CourseMode.COURSE_MODE) {}
     coursesStorage.addCourse(educatorCourse, "", 0, 0)
     val studentCourse = course {}
     assertFalse(coursesStorage.hasCourse(studentCourse))
@@ -197,7 +197,7 @@ class CoursesStorageTest : EduTestCase() {
 
   fun testCCGroup() {
     val coursesStorage = getCoursesStorage()
-    val educatorCourse = course(courseMode = CCUtils.COURSE_MODE) {}
+    val educatorCourse = course(courseMode = CourseMode.COURSE_MODE) {}
     coursesStorage.addCourse(educatorCourse, "", 0, 0)
     val coursesInGroups = coursesStorage.coursesInGroups()
     assertSize(1, coursesInGroups)
@@ -207,7 +207,7 @@ class CoursesStorageTest : EduTestCase() {
   fun testAllCoursesGroups() {
     val coursesStorage = getCoursesStorage()
 
-    val educatorCourse = course(name="CC course", courseMode = CCUtils.COURSE_MODE) {}
+    val educatorCourse = course(name = "CC course", courseMode = CourseMode.COURSE_MODE) {}
     coursesStorage.addCourse(educatorCourse, "/CC course", 0, 0)
 
     val inProgressCourse = course(name="In Progress") {}

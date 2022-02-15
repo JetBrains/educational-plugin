@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.runWriteAction
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.yaml.YamlLoader
 class YamlConfigNotificationTest : NotificationsTestBase() {
 
   fun `test correct config`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
-        eduTask {  }
+        eduTask { }
       }
     }
 
@@ -26,9 +26,9 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
   }
 
   fun `test invalid config`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
-        eduTask {  }
+        eduTask { }
       }
     }
 

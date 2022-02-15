@@ -1,14 +1,14 @@
 package com.jetbrains.edu.scala.actions
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaGradleAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, language = ScalaLanguage.INSTANCE,
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = ScalaLanguage.INSTANCE,
                                  environment = "Gradle", settings = JdkProjectSettings.emptySettings()) {
       lesson("lesson1") {
         eduTask("task1") {

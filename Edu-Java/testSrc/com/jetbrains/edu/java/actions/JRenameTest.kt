@@ -8,9 +8,9 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.MapDataContext
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.testAction
@@ -88,7 +88,7 @@ class JRenameTest : EduActionTestCase() {
   }
 
   fun `test rename public class in CC mode`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           javaTaskFile("Task1.java", """

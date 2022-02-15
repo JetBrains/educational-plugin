@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.courseView
 
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.tree.TreeUtil
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseView.CourseViewTestBase
 
@@ -10,7 +10,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test lesson with custom name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
     }
 
@@ -23,7 +23,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test section with custom name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section()
     }
 
@@ -36,7 +36,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test task with custom name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask()
         eduTask()

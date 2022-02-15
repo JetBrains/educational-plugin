@@ -1,7 +1,7 @@
 package com.jetbrains.edu.rust.courseGeneration
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
@@ -44,7 +44,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
   }
 
   fun `test create existent educator course`() {
-    val course = course(language = RsLanguage, courseMode = CCUtils.COURSE_MODE) {
+    val course = course(language = RsLanguage, courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("src/main.rs")

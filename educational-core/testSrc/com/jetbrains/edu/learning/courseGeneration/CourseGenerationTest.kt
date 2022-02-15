@@ -4,11 +4,11 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestVFiles
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.fileTree
@@ -44,7 +44,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test substitute placeholder answers in CC mode`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("TaskFile1.kt", """
@@ -74,7 +74,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test opened files in CC mode`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("TaskFile1.kt", """

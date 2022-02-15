@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode

@@ -19,6 +19,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
@@ -49,7 +50,7 @@ class CCPushLesson : DumbAwareAction(
     }
 
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CCUtils.COURSE_MODE || !course.isStepikRemote) return
+    if (course.courseMode != CourseMode.COURSE_MODE || !course.isStepikRemote) return
 
     val lesson = CCUtils.lessonFromDir(course, lessonDir, project) ?: return
     val section = lesson.section
@@ -83,7 +84,7 @@ class CCPushLesson : DumbAwareAction(
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CCUtils.COURSE_MODE || !course.isStepikRemote) return
+    if (course.courseMode != CourseMode.COURSE_MODE || !course.isStepikRemote) return
     val lesson = CCUtils.lessonFromDir(course, lessonDir, project) ?: return
 
     if (course.hasSections && lesson.section == null && lesson.id <= 0) {

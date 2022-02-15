@@ -1,10 +1,10 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.notIn
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 
 class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask.ACTION_ID) {
@@ -133,7 +133,7 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask.ACTION
 
   override fun createCourse() {
     courseWithFiles(
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {

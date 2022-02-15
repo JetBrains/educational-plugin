@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.update
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile

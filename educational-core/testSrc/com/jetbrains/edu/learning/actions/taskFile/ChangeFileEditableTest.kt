@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.actions.taskFile
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.ReadOnlyModificationException
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
 
 class ChangeFileEditableTest : EduTestCase() {
@@ -35,7 +35,7 @@ class ChangeFileEditableTest : EduTestCase() {
     val initialTextInNonEditableFile = "text in nonEditableFile"
     val initialTextInEditableFile = "text in editableFile"
 
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task") {
           taskFile("nonEditableFile.txt", text = initialTextInNonEditableFile, editable = false)

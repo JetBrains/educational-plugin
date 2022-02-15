@@ -2,9 +2,9 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -22,7 +22,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("test1.txt")

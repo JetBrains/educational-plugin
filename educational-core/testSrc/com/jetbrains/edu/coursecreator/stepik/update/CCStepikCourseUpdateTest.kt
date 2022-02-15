@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.stepik.update
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdateTestBase
@@ -10,7 +10,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test task with placeholders added`() {
-    val course = course(courseMode = CCUtils.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask(stepId = 1) {
           taskFile("TaskFile1.kt")
@@ -18,7 +18,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase() {
       }
     } as EduCourse
 
-    val serverCourse = course(courseMode = CCUtils.COURSE_MODE) {
+    val serverCourse = course(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask(stepId = 1) {
           taskFile("TaskFile1.kt")

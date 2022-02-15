@@ -7,17 +7,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import java.awt.event.KeyEvent
 
 
 class InsertShortcutActionTest : EduActionTestCase() {
   fun `test shortcut inserted`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -46,7 +46,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
   fun `test action not available in task file`() {
     val taskFileName = "taskFile1.txt"
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile(taskFileName)

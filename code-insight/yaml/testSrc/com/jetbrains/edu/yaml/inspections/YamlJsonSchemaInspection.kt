@@ -1,13 +1,13 @@
 package com.jetbrains.edu.yaml.inspections
 
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 
 class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlightingInspection::class) {
 
   fun `test course with one wrong property`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -27,7 +27,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test course with marketplace course type`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {}
     }
 
@@ -47,7 +47,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test section with one wrong property`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson {}
       }
@@ -61,9 +61,9 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test lesson with one wrong property`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
-        eduTask {  }
+        eduTask { }
       }
     }
 
@@ -76,7 +76,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test edu task with wrong properties on each level`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
@@ -115,7 +115,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test choice task with wrong properties on each level`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("Test.java", "")

@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.taskDescription
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.selectedVirtualFile
@@ -40,7 +38,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
     doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task/TaskFile6.txt")
 
   fun `test link to task file in current task of framework lesson in educator mode`() =
-    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CCUtils.COURSE_MODE)
+    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.COURSE_MODE)
 
   fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt")
 

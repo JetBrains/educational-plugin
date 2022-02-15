@@ -4,18 +4,18 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cmake.CMakeListsFileType
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class NoTaskProjectNameInspectionTest : EduTestCase() {
 
   fun `test add deleted project name to CMakeList with set minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {
@@ -37,7 +37,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList without minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {
@@ -56,7 +56,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList with custom task name`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CCUtils.COURSE_MODE,
+      courseMode = CourseMode.COURSE_MODE,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {

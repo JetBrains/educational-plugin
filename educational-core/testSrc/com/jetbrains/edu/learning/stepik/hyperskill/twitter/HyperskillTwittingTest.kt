@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.twitter
 
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -42,7 +40,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     }
 
   fun `test do not show dialog in course creator mode`() =
-    doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CCUtils.COURSE_MODE) }) { course, task ->
+    doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CourseMode.COURSE_MODE) }) { course, task ->
       (course as HyperskillCourse).getProjectLesson()?.visitTasks {
         if (it != task) {
           it.status = CheckStatus.Solved

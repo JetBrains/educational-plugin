@@ -1,14 +1,14 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 
 class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test add placeholder without selection without dependency`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)
@@ -24,7 +24,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
   }
 
   fun `test add placeholder with selection without dependency`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)
@@ -41,7 +41,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
   }
 
   fun `test placeholder intersection`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)
@@ -56,7 +56,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
   }
 
   fun `test add placeholder with dependency`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
@@ -78,7 +78,7 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
   }
 
   fun `test add placeholder action is disabled in non templated based framework lesson`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson("lesson1", isTemplateBased = false) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = TODO()")

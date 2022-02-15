@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -15,7 +15,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test coursera submit manually`() {
-    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.COURSE_MODE) {
       lesson { }
     } as CourseraCourse
     assertFalse(course.submitManually)
@@ -38,7 +38,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add lesson custom presentable name`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson { }
     }
 
@@ -54,7 +54,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove lesson custom presentable name`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson {
         eduTask("Introduction Task")
       }
@@ -75,7 +75,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add section custom presentable name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section { }
     }
 
@@ -91,7 +91,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove section custom presentable name`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       section {
         lesson("lesson 1")
       }
@@ -112,7 +112,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add task custom presentable name`() {
-    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson 1") {
         eduTask {
           taskFile("task.txt")
@@ -134,7 +134,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove task custom presentable name`() {
-    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson 1") {
         eduTask {
           taskFile("task.txt")
@@ -158,7 +158,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add hide solutions for course`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson { }
     }
     assertFalse(course.solutionsHidden)
@@ -176,7 +176,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove hide solutions for course`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson { }
     }
     course.solutionsHidden = true
@@ -193,7 +193,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add hide solution for task`() {
-    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
       }
@@ -210,7 +210,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove hide solution for task`() {
-    val task = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson("lesson1") {
         eduTask("task1")
       }
@@ -226,7 +226,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test change is_template_based flag in framework lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson("lesson1") {
         eduTask("task1")
       }

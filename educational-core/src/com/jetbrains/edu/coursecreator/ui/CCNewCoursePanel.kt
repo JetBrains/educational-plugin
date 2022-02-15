@@ -18,7 +18,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.layout.*
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
@@ -26,6 +25,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
@@ -88,7 +88,7 @@ class CCNewCoursePanel(
     preferredSize = JBUI.size(700, 372)
     minimumSize = JBUI.size(700, 372)
 
-    _course = (course ?: courseProducer()).apply { courseMode = CCUtils.COURSE_MODE }
+    _course = (course ?: courseProducer()).apply { courseMode = CourseMode.COURSE_MODE }
 
     descriptionTextArea.rows = 10
     descriptionTextArea.lineWrap = true

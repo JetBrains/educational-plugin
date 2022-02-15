@@ -3,10 +3,10 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import org.junit.Assert.assertArrayEquals
@@ -20,7 +20,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   fun `test first task in framework lesson`() {
     val lessonName = "FrameworkLesson"
     val taskName = "Task"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson(lessonName)
     }
 
@@ -50,7 +50,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   fun `test new task in framework lesson`() {
     val lessonName = "FrameworkLesson"
 
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -101,7 +101,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   }
 
   fun `test new task in the middle of lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson {
         eduTask {
           taskFile("Task.kt", """
@@ -154,7 +154,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val lessonName = "lesson1"
     val imageName = "image.png"
 
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson(lessonName) {
         eduTask {
           taskFile("Task.kt")
@@ -199,7 +199,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
   fun `test copy actual text of files`() {
     val lessonName = "lesson1"
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = TODO()")

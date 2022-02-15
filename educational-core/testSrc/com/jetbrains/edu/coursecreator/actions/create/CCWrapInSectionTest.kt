@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCWrapWithSection
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestInputDialog
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
@@ -11,13 +11,13 @@ import junit.framework.TestCase
 class CCWrapInSectionTest : EduActionTestCase() {
 
   fun `test wrap consecutive lessons`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
       lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
+    course.courseMode = CourseMode.COURSE_MODE
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
     withEduTestDialog(EduTestInputDialog("section1")) {
@@ -31,7 +31,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test wrap random lessons`() {
-    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
@@ -46,7 +46,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test wrap one lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
@@ -69,7 +69,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test all lessons`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
       lesson()
       lesson()
       lesson()
