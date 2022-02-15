@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.yaml.configFileName
 
 class CCEditAnswerPlaceholderActionTest : EduActionTestCase() {
   fun `test navigate to yaml`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>")

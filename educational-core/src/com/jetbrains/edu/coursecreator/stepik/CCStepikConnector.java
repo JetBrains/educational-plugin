@@ -97,7 +97,7 @@ public class CCStepikConnector {
     final List<StudyItem> items = course.getItems();
     courseOnRemote.setItems(Lists.newArrayList(items));
     courseOnRemote.setAuthors(course.getAuthors());
-    courseOnRemote.setCourseMode(CourseMode.COURSE_MODE);
+    courseOnRemote.setCourseMode(CourseMode.EDUCATOR);
     courseOnRemote.setEnvironment(course.getEnvironment());
     courseOnRemote.setProgrammingLanguage(course.getProgrammingLanguage());
 

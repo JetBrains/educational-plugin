@@ -12,7 +12,7 @@ class HyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.COURSE_MODE) {}
+    courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.EDUCATOR) {}
 
     checkFileTree {
       dir("lesson1/task1") {

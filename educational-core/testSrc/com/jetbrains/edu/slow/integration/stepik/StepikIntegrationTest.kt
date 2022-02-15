@@ -77,7 +77,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   fun `test upload task failed because of broken placeholders`() {
-    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt", "fn fizzz() = <p>TODO()</p>")
@@ -232,7 +232,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   fun `test custom lesson name`() {
-    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask { }
       }
@@ -316,7 +316,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   fun `test file text in Quiz task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
 
-    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         choiceTask("Quiz", choiceOptions = choiceOptions) {
           taskFile("src/Task.kt")
@@ -340,7 +340,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   fun `test placeholders in Quiz task`() {
     val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
 
-    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         choiceTask("Quiz", choiceOptions = choiceOptions) {
           taskFile("src/Task.kt", "fun foo(): String = <p>Foo</p>") {
@@ -366,7 +366,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   fun `test course with language version`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {}
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     course.programmingLanguage = course.programmingLanguage + " 2"
     val expectedLanguage = course.programmingLanguage
     pushCourse(course)
@@ -378,7 +378,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   fun `test course with choice task`() {
     val expectedChoiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.CORRECT)
     val taskName = "Greatest name ever"
-    val localCourse = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         choiceTask(taskName, isMultipleChoice = true, choiceOptions = expectedChoiceOptions) {
           taskFile("text.txt")
@@ -401,7 +401,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val courseFromStepik = getCourseFromStepik(sourceCourse.id)
     checkCourseUploaded(sourceCourse)
 
-    courseFromStepik.courseMode = CourseMode.COURSE_MODE
+    courseFromStepik.courseMode = CourseMode.EDUCATOR
     StepikCourseLoader.fillItems(courseFromStepik)
 
     val task = (courseFromStepik.items[0] as Lesson).taskList[0]
@@ -488,7 +488,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun initCourse(builder: CourseBuilder.() -> Unit): EduCourse {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, buildCourse = builder)
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, buildCourse = builder)
     return initCourse(course)
   }
 

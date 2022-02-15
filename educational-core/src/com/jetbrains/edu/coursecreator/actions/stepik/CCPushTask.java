@@ -53,7 +53,7 @@ public class CCPushTask extends DumbAwareAction {
     if (!(course instanceof EduCourse) || !course.isStepikRemote()) {
       return;
     }
-    if (!course.getCourseMode().equals(CourseMode.COURSE_MODE)) return;
+    if (!course.getCourseMode().equals(CourseMode.EDUCATOR)) return;
     final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return;

@@ -28,7 +28,7 @@ class MyCoursesProvider : CoursesPlatformProvider() {
 
   fun getAdditionalText(isSelected: Boolean): String {
     val courses = CoursesStorage.getInstance().state.courses
-    val studyCourses = courses.filter { it.courseMode == CourseMode.STUDY }
+    val studyCourses = courses.filter { it.courseMode == CourseMode.STUDENT }
     val completedCourses = studyCourses.count { it.tasksTotal != 0 && it.tasksSolved == it.tasksTotal }
     val inProgressCourses = studyCourses.size - completedCourses
 

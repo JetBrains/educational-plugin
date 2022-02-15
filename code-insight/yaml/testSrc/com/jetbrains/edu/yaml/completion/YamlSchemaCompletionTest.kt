@@ -7,7 +7,7 @@ import kotlin.test.assertNotEquals
 
 class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   fun `test completion for course programming language`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -31,7 +31,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course programming language version`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -54,7 +54,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course human language`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -77,7 +77,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test completion for course environment`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -118,7 +118,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test no completion for is_template_based property for common lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1")
     }
     val lesson = course.getLesson("lesson1")!!
@@ -129,7 +129,7 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   fun `test is_template_based property completion for framework lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson1")
     }
     val lesson = course.getLesson("lesson1")!!

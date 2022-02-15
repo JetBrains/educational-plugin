@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.testAction
 class CCEditTaskDescriptionTest : EduTestCase() {
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task.txt", "task file text")
@@ -26,7 +26,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
   }
 
   fun `test is invisible for student`() {
-    getCourse().courseMode = CourseMode.STUDY
+    getCourse().courseMode = CourseMode.STUDENT
     doOpenTaskDescription(shouldBeEnabled = false)
   }
 

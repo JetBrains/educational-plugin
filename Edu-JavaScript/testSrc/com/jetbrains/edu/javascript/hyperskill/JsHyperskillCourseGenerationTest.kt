@@ -17,7 +17,7 @@ class JsHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = JavascriptLanguage.INSTANCE, courseMode = CourseMode.COURSE_MODE,
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = JavascriptLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
                     settings = JsNewProjectSettings()) {}
 
     checkFileTree {

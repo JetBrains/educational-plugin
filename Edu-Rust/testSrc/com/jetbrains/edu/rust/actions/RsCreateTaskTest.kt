@@ -28,7 +28,7 @@ class RsCreateTaskTest : RsActionTestBase() {
   override fun createCourse() {
     // Should be synchronized with workspace structure provided by RsProjectDescriptor
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

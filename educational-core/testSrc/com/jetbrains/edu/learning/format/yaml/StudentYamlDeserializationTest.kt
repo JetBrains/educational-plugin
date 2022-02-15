@@ -36,7 +36,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |""".trimMargin()
     val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
     assertNotNull(course)
-    assertEquals(CourseMode.STUDY, course.courseMode)
+    assertEquals(CourseMode.STUDENT, course.courseMode)
   }
 
   fun `test codeforces course`() {

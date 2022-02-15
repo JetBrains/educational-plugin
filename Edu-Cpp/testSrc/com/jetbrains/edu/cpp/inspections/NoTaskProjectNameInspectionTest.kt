@@ -15,7 +15,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList with set minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {
@@ -37,7 +37,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList without minimum required`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {
@@ -56,7 +56,7 @@ class NoTaskProjectNameInspectionTest : EduTestCase() {
   fun `test add deleted project name to CMakeList with custom task name`() {
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "GoogleTest" // Environment doesn't matter here
     ) {
       lesson("lesson") {

@@ -11,13 +11,13 @@ import junit.framework.TestCase
 class CCWrapInSectionTest : EduActionTestCase() {
 
   fun `test wrap consecutive lessons`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       lesson()
       lesson()
     }
-    course.courseMode = CourseMode.COURSE_MODE
+    course.courseMode = CourseMode.EDUCATOR
     val lesson2 = findFile("lesson2")
     val lesson3 = findFile("lesson3")
     withEduTestDialog(EduTestInputDialog("section1")) {
@@ -31,7 +31,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test wrap random lessons`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       lesson()
@@ -46,7 +46,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test wrap one lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       lesson()
@@ -69,7 +69,7 @@ class CCWrapInSectionTest : EduActionTestCase() {
   }
 
   fun `test all lessons`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       lesson()

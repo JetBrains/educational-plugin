@@ -44,7 +44,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
   }
 
   fun `test create existent educator course`() {
-    val course = course(language = RsLanguage, courseMode = CourseMode.COURSE_MODE) {
+    val course = course(language = RsLanguage, courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("src/main.rs")

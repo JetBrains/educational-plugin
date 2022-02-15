@@ -20,7 +20,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   fun `test first task in framework lesson`() {
     val lessonName = "FrameworkLesson"
     val taskName = "Task"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson(lessonName)
     }
 
@@ -50,7 +50,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   fun `test new task in framework lesson`() {
     val lessonName = "FrameworkLesson"
 
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -101,7 +101,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
   }
 
   fun `test new task in the middle of lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
         eduTask {
           taskFile("Task.kt", """
@@ -154,7 +154,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val lessonName = "lesson1"
     val imageName = "image.png"
 
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson(lessonName) {
         eduTask {
           taskFile("Task.kt")
@@ -199,7 +199,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
   fun `test copy actual text of files`() {
     val lessonName = "lesson1"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = TODO()")

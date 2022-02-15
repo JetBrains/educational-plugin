@@ -123,7 +123,7 @@ class OpenCourseButton : CourseButtonBase() {
 }
 
 class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
-  override val courseMode = CourseMode.STUDY
+  override val courseMode = CourseMode.STUDENT
 
   override fun isVisible(course: Course): Boolean {
     if (CoursesStorage.getInstance().hasCourse(course)) {
@@ -154,7 +154,7 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 }
 
 class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(errorHandler) {
-  override val courseMode = CourseMode.COURSE_MODE
+  override val courseMode = CourseMode.EDUCATOR
 
   init {
     text = "Edit"

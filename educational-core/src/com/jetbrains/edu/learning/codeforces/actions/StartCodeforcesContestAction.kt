@@ -79,7 +79,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       val contest = loadContestAndProcessErrors(contestParameters)
       val contestInfo = CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
 
-      joinCourse(contestInfo, CourseMode.STUDY, component) {}
+      joinCourse(contestInfo, CourseMode.STUDENT, component) {}
     }
 
     private fun loadContestAndProcessErrors(contestParameters: ContestParameters): CodeforcesCourse {

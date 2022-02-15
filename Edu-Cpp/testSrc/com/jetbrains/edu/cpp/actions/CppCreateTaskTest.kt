@@ -24,7 +24,7 @@ class CppCreateTaskTest : EduActionTestCase() {
   private fun createTaskInEmptyLessonTestBase(environment: String, useFrameworkLesson: Boolean = false) {
     val course = courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = environment
     ) {
       if (useFrameworkLesson)
@@ -114,7 +114,7 @@ class CppCreateTaskTest : EduActionTestCase() {
 
     courseWithFiles(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "Catch" // Environment doesn't matter here
     ) {
       frameworkLesson("lesson") {

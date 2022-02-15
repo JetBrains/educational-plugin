@@ -861,7 +861,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |mode: Study
       |""".trimMargin()
 
-    assertEquals(CourseMode.STUDY.toString(), getCourseMode(yamlContent))
+    assertEquals(CourseMode.STUDENT.toString(), getCourseMode(yamlContent))
   }
 
   private fun deserializeNotNull(yamlContent: String) : Course = MAPPER.deserializeCourse(yamlContent)

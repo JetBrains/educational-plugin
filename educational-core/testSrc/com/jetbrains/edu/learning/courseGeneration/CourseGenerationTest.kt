@@ -44,7 +44,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test substitute placeholder answers in CC mode`() {
-    val course = course(courseMode = CourseMode.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("TaskFile1.kt", """
@@ -74,7 +74,7 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test opened files in CC mode`() {
-    val course = course(courseMode = CourseMode.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("TaskFile1.kt", """

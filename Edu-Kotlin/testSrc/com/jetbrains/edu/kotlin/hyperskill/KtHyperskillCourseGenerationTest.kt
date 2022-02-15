@@ -20,7 +20,7 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = KotlinLanguage.INSTANCE, courseMode = CourseMode.COURSE_MODE,
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = KotlinLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
                     settings = JdkProjectSettings.emptySettings()) {}
 
     checkFileTree {

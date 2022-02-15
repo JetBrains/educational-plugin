@@ -23,7 +23,7 @@ class ShortcutsHighlightingTest : EduTestCase() {
 
   private fun doTest(descriptionFormat: DescriptionFormat = DescriptionFormat.HTML) {
     val taskDescriptionText = "Text with shortcut: ${"CodeCompletion".toShortcut()}"
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask(taskDescriptionFormat = descriptionFormat, taskDescription = taskDescriptionText) {
           taskFile("taskFile1.txt")

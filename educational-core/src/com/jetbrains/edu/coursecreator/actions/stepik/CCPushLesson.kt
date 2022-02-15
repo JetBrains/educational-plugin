@@ -50,7 +50,7 @@ class CCPushLesson : DumbAwareAction(
     }
 
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CourseMode.COURSE_MODE || !course.isStepikRemote) return
+    if (course.courseMode != CourseMode.EDUCATOR || !course.isStepikRemote) return
 
     val lesson = CCUtils.lessonFromDir(course, lessonDir, project) ?: return
     val section = lesson.section
@@ -84,7 +84,7 @@ class CCPushLesson : DumbAwareAction(
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CourseMode.COURSE_MODE || !course.isStepikRemote) return
+    if (course.courseMode != CourseMode.EDUCATOR || !course.isStepikRemote) return
     val lesson = CCUtils.lessonFromDir(course, lessonDir, project) ?: return
 
     if (course.hasSections && lesson.section == null && lesson.id <= 0) {

@@ -30,7 +30,7 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
     }
   }
 
-  protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDY): Course {
+  protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDENT): Course {
     val course = createCourseFromJson(pathToCourseJson, courseMode)
     createCourseStructure(course)
     return course

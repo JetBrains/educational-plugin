@@ -7,7 +7,7 @@ import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlightingInspection::class) {
 
   fun `test course with one wrong property`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -27,7 +27,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test course with marketplace course type`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {}
     }
 
@@ -47,7 +47,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test section with one wrong property`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {}
       }
@@ -61,7 +61,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test lesson with one wrong property`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
       }
@@ -76,7 +76,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test edu task with wrong properties on each level`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("Test.java", "<p>f()</p>") {
@@ -115,7 +115,7 @@ class YamlJsonSchemaInspection : YamlInspectionsTestBase(YamlJsonSchemaHighlight
   }
 
   fun `test choice task with wrong properties on each level`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         choiceTask(choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)) {
           taskFile("Test.java", "")

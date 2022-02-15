@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class GoAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

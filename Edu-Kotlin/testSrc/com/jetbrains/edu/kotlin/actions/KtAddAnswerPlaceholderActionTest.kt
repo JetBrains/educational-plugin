@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 class KtAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = KotlinLanguage.INSTANCE,
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = KotlinLanguage.INSTANCE,
                                  settings = JdkProjectSettings.emptySettings()) {
       lesson("lesson1") {
         eduTask("task1") {

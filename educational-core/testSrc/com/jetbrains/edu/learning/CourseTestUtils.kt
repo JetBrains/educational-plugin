@@ -37,7 +37,7 @@ private fun configureCourseMapper(courseMapper: ObjectMapper, isEncrypted: Boole
   courseMapper.addMixIn(Task::class.java, TestRemoteTaskMixin::class.java)
 }
 
-fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.COURSE_MODE, environment: String = ""): Course = EduCourse().apply {
+fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUCATOR, environment: String = ""): Course = EduCourse().apply {
   name = "Test Course"
   description = "Test Description"
   this.courseMode = courseMode

@@ -109,7 +109,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add lesson item with section`() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -149,7 +149,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add the first lesson in course`() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -183,7 +183,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test add lesson in the middle of course`() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -226,7 +226,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test do not modify manifest on empty lesson creation`() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -265,7 +265,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   fun `test do not modify manifest on non first task creation`() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -305,7 +305,7 @@ class RsCreateLessonTest : RsActionTestBase() {
 
   private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

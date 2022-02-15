@@ -21,7 +21,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
       placeholder += placeholder
     }
 
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
         eduTask {
           taskFile(fileName, placeholder)

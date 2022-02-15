@@ -10,7 +10,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test lesson with custom name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
     }
 
@@ -23,7 +23,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test section with custom name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section()
     }
 
@@ -36,7 +36,7 @@ class CCCourseViewTest : CourseViewTestBase() {
 
   @Suppress("DEPRECATION")
   fun `test task with custom name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask()
         eduTask()

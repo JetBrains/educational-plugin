@@ -22,7 +22,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("test1.txt")

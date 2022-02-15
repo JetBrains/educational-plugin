@@ -20,7 +20,7 @@ class CheckActionListener : CheckListener {
   }
 
   private fun checkFeedbackEqualsWithCheckResult(task: Task, checkResult: CheckResult) {
-    if (task.course.courseMode == CourseMode.COURSE_MODE) return
+    if (task.course.courseMode == CourseMode.EDUCATOR) return
     val errorMessage = "Check result and saved feedback doesn't match for ${task.name}"
     val feedback = task.feedback ?: error("CheckFeedback should be filled out for ${task.lesson.name}/${task.name}")
     assertEquals(errorMessage, feedback.message, checkResult.message)

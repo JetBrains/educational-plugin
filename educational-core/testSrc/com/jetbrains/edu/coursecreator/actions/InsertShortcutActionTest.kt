@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent
 
 class InsertShortcutActionTest : EduActionTestCase() {
   fun `test shortcut inserted`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -46,7 +46,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
 
   fun `test action not available in task file`() {
     val taskFileName = "taskFile1.txt"
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile(taskFileName)

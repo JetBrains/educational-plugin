@@ -25,7 +25,7 @@ import org.junit.Assert.assertThat
 class CCCreateTaskTest : EduActionTestCase() {
 
   fun `test create task in lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -44,7 +44,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task in lesson in section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask {
@@ -62,7 +62,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
     }
     val lessonFile = findFile("lesson1")
@@ -74,7 +74,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task after task`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -98,7 +98,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task before task`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -123,7 +123,7 @@ class CCCreateTaskTest : EduActionTestCase() {
 
   fun `test create task before task with custom name`() {
     val customTaskName = "Custom Task Name"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -147,7 +147,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task after task in section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask {
@@ -173,7 +173,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task not available on course`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -185,7 +185,7 @@ class CCCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test create task not available on section`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask {
@@ -204,7 +204,7 @@ class CCCreateTaskTest : EduActionTestCase() {
 
   private fun doCreateFrameworkTaskTest(copyTests: Boolean) {
     val lessonName = "lesson1"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = FakeGradleBasedLanguage) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("src/Task.kt")

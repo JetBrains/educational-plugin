@@ -36,7 +36,7 @@ fun course(
   language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
   description: String = "Test Course Description",
   environment: String = "",
-  courseMode: CourseMode = CourseMode.STUDY,
+  courseMode: CourseMode = CourseMode.STUDENT,
   courseProducer: () -> Course = ::EduCourse,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {

@@ -12,7 +12,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove lesson`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
       lesson { }
     }
@@ -32,7 +32,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove section`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson("lesson1") { }
       }
@@ -56,7 +56,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test remove task`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
         eduTask { }
@@ -78,7 +78,7 @@ class YamlRemoveItemTest : YamlTestCase() {
   }
 
   fun `test task file`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task1.txt")

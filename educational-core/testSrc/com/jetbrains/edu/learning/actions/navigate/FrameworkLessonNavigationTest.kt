@@ -335,7 +335,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
   }
 
   fun `test navigation in CC mode`() {
-    val course = createFrameworkCourse(CourseMode.COURSE_MODE)
+    val course = createFrameworkCourse(CourseMode.EDUCATOR)
     val task1 = course.findTask("lesson1", "task1")
     val task2 = course.findTask("lesson1", "task2")
     val task3 = course.findTask("lesson1", "task3")
@@ -585,7 +585,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     }
   }
 
-  private fun createFrameworkCourse(courseMode: CourseMode = CourseMode.STUDY): Course = courseWithFiles(courseMode = courseMode) {
+  private fun createFrameworkCourse(courseMode: CourseMode = CourseMode.STUDENT): Course = courseWithFiles(courseMode = courseMode) {
     frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """

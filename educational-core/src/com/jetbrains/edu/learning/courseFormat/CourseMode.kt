@@ -1,10 +1,13 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import com.jetbrains.edu.learning.EduNames
+
 enum class CourseMode {
-  STUDY {
-    override fun toString(): String = "Study"
-  },
-  COURSE_MODE {
-    override fun toString(): String = "Course Creator"
-  };
+  STUDENT,
+  EDUCATOR;
+
+  override fun toString(): String = when (this) {
+    STUDENT -> EduNames.STUDY
+    EDUCATOR -> EduNames.EDUCATOR
+  }
 }

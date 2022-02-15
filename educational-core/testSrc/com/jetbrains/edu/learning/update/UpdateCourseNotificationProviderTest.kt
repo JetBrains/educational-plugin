@@ -28,7 +28,7 @@ class UpdateCourseNotificationProviderTest : NotificationsTestBase() {
           taskFile("Task.txt")
         }
       }
-    }.asRemote(CourseMode.STUDY)
+    }.asRemote(CourseMode.STUDENT)
     course.isUpToDate = isUpToDate
     return course
   }

@@ -177,7 +177,7 @@ class CourseFormatTest : EduTestCase() {
   private val courseFromJson: Course
     get() {
       val fileName = testFile
-      return createCourseFromJson(testDataPath + fileName, CourseMode.STUDY)
+      return createCourseFromJson(testDataPath + fileName, CourseMode.STUDENT)
     }
 
   override fun getTestDataPath(): String = "${super.getTestDataPath()}/format/"

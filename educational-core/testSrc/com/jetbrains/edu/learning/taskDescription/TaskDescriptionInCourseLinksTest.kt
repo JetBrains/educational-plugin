@@ -38,7 +38,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
     doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task/TaskFile6.txt")
 
   fun `test link to task file in current task of framework lesson in educator mode`() =
-    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.COURSE_MODE)
+    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.EDUCATOR)
 
   fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt")
 
@@ -48,7 +48,7 @@ class TaskDescriptionInCourseLinksTest : EduTestCase() {
   fun `test don't close opened files 2`() =
     doTest("course://lesson2/task2", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
 
-  private fun doTest(url: String, expectedPath: String? = null, courseMode: CourseMode = CourseMode.STUDY, openedFile: String? = null) {
+  private fun doTest(url: String, expectedPath: String? = null, courseMode: CourseMode = CourseMode.STUDENT, openedFile: String? = null) {
     createCourse(courseMode)
     if (openedFile != null) {
       val file = findFile(openedFile)

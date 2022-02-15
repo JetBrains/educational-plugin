@@ -133,7 +133,7 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask.ACTION
 
   override fun createCourse() {
     courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = FakeGradleBasedLanguage
     ) {
       lesson("lesson1") {

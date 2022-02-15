@@ -16,7 +16,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
     courseWithFiles(
       language = JavaLanguage.INSTANCE,
       settings = JdkProjectSettings.emptySettings(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       description = "my summary"
     ) {
       lesson("lesson1") {

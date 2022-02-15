@@ -19,7 +19,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
 
   fun `test submission from ide`() = doTest(submissionFromIDE)
 
-  fun `test in educator mode`() = doTest(submissionFromWeb, CourseMode.COURSE_MODE, fileTree {
+  fun `test in educator mode`() = doTest(submissionFromWeb, CourseMode.EDUCATOR, fileTree {
     dir("test project") {
       dir("task1") {
         file("task.html")
@@ -53,7 +53,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
     file("settings.gradle")
   })
 
-  private fun doTest(submissionsJson: String, mode: CourseMode = CourseMode.STUDY, expectedFileTree: FileTree = learnerExpectedFileTree) {
+  private fun doTest(submissionsJson: String, mode: CourseMode = CourseMode.STUDENT, expectedFileTree: FileTree = learnerExpectedFileTree) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
         when (request.path) {

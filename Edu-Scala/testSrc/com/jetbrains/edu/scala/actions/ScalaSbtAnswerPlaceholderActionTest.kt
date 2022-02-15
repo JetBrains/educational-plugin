@@ -8,7 +8,7 @@ import org.jetbrains.plugins.scala.ScalaLanguage
 class ScalaSbtAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = ScalaLanguage.INSTANCE,
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = ScalaLanguage.INSTANCE,
                                  environment = "sbt", settings = JdkProjectSettings.emptySettings()) {
       lesson("lesson1") {
         eduTask("task1") {

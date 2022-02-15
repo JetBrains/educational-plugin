@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class CppCatchAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = OCLanguage.getInstance(),
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = OCLanguage.getInstance(),
                                  environment = "Catch") {
       lesson("lesson1") {
         eduTask("task1") {

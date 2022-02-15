@@ -25,7 +25,7 @@ import javax.swing.Icon
 abstract class Course : LessonContainer() {
   var description: String = ""
   var environment: String = EduNames.DEFAULT_ENVIRONMENT
-  var courseMode: CourseMode = CourseMode.STUDY //this field is used to distinguish study and course creator modes
+  var courseMode: CourseMode = CourseMode.STUDENT //this field is used to distinguish study and course creator modes
   var solutionsHidden: Boolean = false
 
   @Transient
@@ -138,7 +138,7 @@ abstract class Course : LessonContainer() {
   }
 
   val isStudy: Boolean
-    get() = CourseMode.STUDY == courseMode
+    get() = CourseMode.STUDENT == courseMode
 
   override fun sortItems() {
     super.sortItems()

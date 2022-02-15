@@ -7,7 +7,7 @@ import com.jetbrains.python.PythonLanguage
 class PyAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = PythonLanguage.getInstance()) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = PythonLanguage.getInstance()) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

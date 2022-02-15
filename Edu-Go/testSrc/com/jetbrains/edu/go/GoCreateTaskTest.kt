@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.testAction
 
 class GoCreateTaskTest : EduActionTestCase() {
   fun `test module name generated correctly`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson {}
     }
 
@@ -27,7 +27,7 @@ class GoCreateTaskTest : EduActionTestCase() {
   }
 
   fun `test forbidden task name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = GoLanguage.INSTANCE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = GoLanguage.INSTANCE) {
       lesson {}
     }
 

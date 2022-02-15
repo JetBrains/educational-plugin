@@ -14,7 +14,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
   override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
 
   fun `test new educator course`() {
-    val course = pythonCourse(CourseMode.COURSE_MODE)
+    val course = pythonCourse(CourseMode.EDUCATOR)
     createCourseStructure(course)
     fileTree {
       dir("lesson1") {
@@ -32,7 +32,7 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() 
   }
 
   fun `test student course`() {
-    val course = pythonCourse(CourseMode.STUDY) {
+    val course = pythonCourse(CourseMode.STUDENT) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("__init__.py")

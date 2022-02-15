@@ -16,7 +16,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   fun `test create new cc edu GoogleTest course`() {
     val course = course(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "GoogleTest"
     ) { }
     createCourseStructure(course)
@@ -45,7 +45,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
   fun `test create new cc edu Catch course`() {
     val course = course(
       language = OCLanguage.getInstance(),
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       environment = "Catch"
     ) {}
     createCourseStructure(course)

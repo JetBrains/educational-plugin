@@ -35,7 +35,7 @@ class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
       }
     })
 
-    val course = course(courseMode = CourseMode.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1")
       }

@@ -124,7 +124,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup("educational.counters", 7)
 
     private val COURSE_MODE_FIELD = EventFields.String(MODE,
-                                                       listOf(CourseMode.STUDY.toString(), CourseMode.COURSE_MODE.toString()))
+                                                       listOf(CourseMode.STUDENT.toString(), CourseMode.EDUCATOR.toString()))
     private val ITEM_TYPE_FIELD = EventFields.String(TYPE, listOf("CheckiO",
                                                                   "PyCharm",
                                                                   "Coursera",

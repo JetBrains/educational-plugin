@@ -18,7 +18,7 @@ class CheckAllTest : EduActionTestCase() {
   }
 
   fun `test all solved`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           checkResultFile(CheckStatus.Solved)
@@ -33,7 +33,7 @@ class CheckAllTest : EduActionTestCase() {
 
   fun `test failed tasks`() {
     val taskName = "Failed Task"
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask(name = taskName) {
           checkResultFile(CheckStatus.Failed)
@@ -48,7 +48,7 @@ class CheckAllTest : EduActionTestCase() {
   }
 
   fun `test tasks with different statuses`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           checkResultFile(CheckStatus.Unchecked)

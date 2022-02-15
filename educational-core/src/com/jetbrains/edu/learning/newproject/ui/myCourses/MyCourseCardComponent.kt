@@ -86,7 +86,7 @@ private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(Flo
     val tasksSolved = courseMetaInfo.tasksSolved
     val tasksTotal = courseMetaInfo.tasksTotal
 
-    if (courseMetaInfo.courseMode != CourseMode.COURSE_MODE && (tasksSolved != 0 && tasksSolved != tasksTotal)) {
+    if (courseMetaInfo.courseMode != CourseMode.EDUCATOR && (tasksSolved != 0 && tasksSolved != tasksTotal)) {
       val progressBar = ProgressUtil.createProgressBar().apply {
         border = JBUI.Borders.emptyRight(H_GAP)
         maximum = tasksTotal
@@ -95,7 +95,7 @@ private class MyCourseInfoComponent(courseMetaInfo: CourseMetaInfo) : JPanel(Flo
       add(progressBar)
     }
 
-    val isStudentMode = courseMetaInfo.courseMode == CourseMode.STUDY
+    val isStudentMode = courseMetaInfo.courseMode == CourseMode.STUDENT
     val infoLabel = JLabel().apply {
       foreground = GRAY_COLOR
       text = when (tasksSolved) {

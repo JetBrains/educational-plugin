@@ -35,7 +35,7 @@ class ChangeFileEditableTest : EduTestCase() {
     val initialTextInNonEditableFile = "text in nonEditableFile"
     val initialTextInEditableFile = "text in editableFile"
 
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task") {
           taskFile("nonEditableFile.txt", text = initialTextInNonEditableFile, editable = false)

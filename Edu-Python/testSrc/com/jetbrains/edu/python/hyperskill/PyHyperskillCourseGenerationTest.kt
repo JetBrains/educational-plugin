@@ -24,7 +24,7 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CourseMode.COURSE_MODE,
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
                     settings = PyNewProjectSettings()) {}
 
     checkFileTree {

@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class CCMoveSectionTest : MoveTestBase() {
 
   fun `test move section before lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson2")
@@ -23,7 +23,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section after lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson("lesson2")
       }
@@ -42,7 +42,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section before section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section()
       section()
@@ -59,7 +59,7 @@ class CCMoveSectionTest : MoveTestBase() {
   }
 
   fun `test move section after section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section()
       section()

@@ -42,7 +42,7 @@ class RsDeleteActionTest : RsActionTestBase() {
 
   fun `test delete last lesson with trailing comma`() {
     val course = courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {
@@ -142,7 +142,7 @@ class RsDeleteActionTest : RsActionTestBase() {
 
   private fun createRustCourse(): Course {
     return courseWithFiles(
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       language = RsLanguage,
       settings = RsProjectSettings()
     ) {

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class JAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = JavaLanguage.INSTANCE,
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = JavaLanguage.INSTANCE,
                                  settings = JdkProjectSettings.emptySettings()) {
       lesson("lesson1") {
         eduTask("task1") {

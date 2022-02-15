@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.yaml.YamlLoader
 class YamlConfigNotificationTest : NotificationsTestBase() {
 
   fun `test correct config`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
       }
@@ -26,7 +26,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
   }
 
   fun `test invalid config`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
       }

@@ -38,7 +38,7 @@ class CoursesStorageTest : EduTestCase() {
 
   fun testCourseModeRespected() {
     val coursesStorage = CoursesStorage.getInstance()
-    val educatorCourse = course(courseMode = CourseMode.COURSE_MODE) {}
+    val educatorCourse = course(courseMode = CourseMode.EDUCATOR) {}
     coursesStorage.addCourse(educatorCourse, "", 0, 0)
     val studentCourse = course {}
     assertFalse(coursesStorage.hasCourse(studentCourse))
@@ -197,7 +197,7 @@ class CoursesStorageTest : EduTestCase() {
 
   fun testCCGroup() {
     val coursesStorage = getCoursesStorage()
-    val educatorCourse = course(courseMode = CourseMode.COURSE_MODE) {}
+    val educatorCourse = course(courseMode = CourseMode.EDUCATOR) {}
     coursesStorage.addCourse(educatorCourse, "", 0, 0)
     val coursesInGroups = coursesStorage.coursesInGroups()
     assertSize(1, coursesInGroups)
@@ -207,7 +207,7 @@ class CoursesStorageTest : EduTestCase() {
   fun testAllCoursesGroups() {
     val coursesStorage = getCoursesStorage()
 
-    val educatorCourse = course(name = "CC course", courseMode = CourseMode.COURSE_MODE) {}
+    val educatorCourse = course(name = "CC course", courseMode = CourseMode.EDUCATOR) {}
     coursesStorage.addCourse(educatorCourse, "/CC course", 0, 0)
 
     val inProgressCourse = course(name="In Progress") {}

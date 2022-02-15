@@ -47,7 +47,7 @@ class CompareWithAnswerActionTest : EduActionTestCase() {
   }
 
   fun `test disabled in educator mode`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task.txt", "task file text")

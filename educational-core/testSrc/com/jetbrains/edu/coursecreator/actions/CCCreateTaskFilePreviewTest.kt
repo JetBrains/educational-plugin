@@ -31,7 +31,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test nested task file`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/Task.txt", """<p>type here</p>""") {
@@ -55,7 +55,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test show error if placeholder is broken`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("fizz.kt", """fn fizzz() = <p>TODO()</p>""")
@@ -72,7 +72,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   fun `test show error if we have no placeholders`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("fizz.kt", "no placeholders")
@@ -86,7 +86,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
   }
 
   private fun doTest(taskFilePath: String, buildTask: TaskBuilder.() -> Unit) {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1", buildTask = buildTask)
       }

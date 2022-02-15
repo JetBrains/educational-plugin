@@ -163,7 +163,7 @@ class MoveTest : MoveTestBase() {
     val lessonName = "lesson1"
     val taskName = "task1"
     val taskFileName = "taskFile1.txt"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson(lessonName) {
         eduTask(taskName) {
           taskFile("src/$taskFileName")
@@ -185,7 +185,7 @@ class MoveTest : MoveTestBase() {
     val lessonName = "lesson1"
     val taskName = "task1"
     val taskFileName = "taskFile1.txt"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson(lessonName) {
         eduTask(taskName) {
           taskFile(taskFileName)

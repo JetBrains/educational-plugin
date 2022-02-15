@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
@@ -13,7 +13,7 @@ import java.io.File
 
 class HyperskillLessonTest : EduTestCase() {
   fun `test collecting course additional files`() {
-    val course = courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CCUtils.COURSE_MODE) {
+    val course = courseWithFiles(courseProducer = ::HyperskillCourse, courseMode = CourseMode.EDUCATOR) {
       frameworkLesson {
         eduTask {}
       }

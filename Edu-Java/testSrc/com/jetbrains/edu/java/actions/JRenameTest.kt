@@ -88,7 +88,7 @@ class JRenameTest : EduActionTestCase() {
   }
 
   fun `test rename public class in CC mode`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           javaTaskFile("Task1.java", """

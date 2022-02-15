@@ -30,7 +30,7 @@ class YamlTypeChangedTest : YamlTestCase() {
   }
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("test1.txt", text = "// <p>my</p> task file text") {

@@ -131,7 +131,7 @@ object CCUtils {
   @JvmStatic
   fun isCourseCreator(project: Project): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
-    return CourseMode.COURSE_MODE == course.courseMode || CourseMode.COURSE_MODE == EduUtils.getCourseModeForNewlyCreatedProject(project)
+    return CourseMode.EDUCATOR == course.courseMode || CourseMode.EDUCATOR == EduUtils.getCourseModeForNewlyCreatedProject(project)
   }
 
   @JvmStatic

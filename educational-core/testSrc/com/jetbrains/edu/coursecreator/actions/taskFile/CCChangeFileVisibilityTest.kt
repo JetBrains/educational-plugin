@@ -21,7 +21,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   fun `test directory 2`() = doAvailableTest(true, "lesson1/task1/folder2")
   fun `test save stepik change status after undo`() =
     doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
-  fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = CourseMode.STUDY)
+  fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = CourseMode.STUDENT)
   fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
   fun `test file outside of task`() = doUnavailableTest("lesson1")
 
@@ -30,12 +30,12 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     vararg paths: String,
     pathPrefix: String = ""
   ) = doTest(true, shouldOppositeActionBeEnabled, *paths,
-             courseMode = CourseMode.COURSE_MODE,
+             courseMode = CourseMode.EDUCATOR,
              pathPrefix = pathPrefix)
 
   private fun doUnavailableTest(
     vararg paths: String,
-    courseMode: CourseMode = CourseMode.COURSE_MODE,
+    courseMode: CourseMode = CourseMode.EDUCATOR,
     pathPrefix: String = ""
   ) = doTest(false, false, *paths, courseMode = courseMode, pathPrefix = pathPrefix)
 

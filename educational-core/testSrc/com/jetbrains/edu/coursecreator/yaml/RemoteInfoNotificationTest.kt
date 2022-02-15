@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 class RemoteInfoNotificationTest : NotificationsTestBase() {
 
   fun `test course remote notification`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {}
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
     val yamlText = createRemoteYamlConfigText()
 
     withYamlFileTypeRegistered {
@@ -21,7 +21,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
   }
 
   fun `test section remote notification`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section { }
     }
     val yamlText = createRemoteYamlConfigText()
@@ -34,7 +34,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
   }
 
   fun `test lesson remote notification`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
     }
     val yamlText = createRemoteYamlConfigText()
@@ -47,7 +47,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
   }
 
   fun `test task remote notification`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
       }
@@ -62,7 +62,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
   }
 
   fun `test non config file`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task.txt", "empty text")
@@ -76,7 +76,7 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
   }
 
   fun `test local config file`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask { }
       }

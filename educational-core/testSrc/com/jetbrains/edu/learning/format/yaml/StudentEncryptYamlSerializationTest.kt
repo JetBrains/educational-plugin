@@ -32,7 +32,7 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   }
 
   fun `test edu task in student mode with encrypted text`() {
-    val task = course(courseMode = CourseMode.STUDY) {
+    val task = course(courseMode = CourseMode.STUDENT) {
       lesson {
         eduTask {
           taskFile("Test.txt", "<p>42 is the answer</p>") {

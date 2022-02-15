@@ -71,7 +71,7 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
       language = language,
       settings = settings,
       environment = environment,
-      courseMode = CourseMode.COURSE_MODE,
+      courseMode = CourseMode.EDUCATOR,
       courseProducer = courseProducer
     ) {
       lesson("lesson1")

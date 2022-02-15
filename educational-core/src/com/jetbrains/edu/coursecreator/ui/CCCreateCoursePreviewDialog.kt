@@ -50,7 +50,7 @@ class CCCreateCoursePreviewDialog(
       // is set not to show "Edit" button for course preview
       dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
       // is set to show "Start" button for course preview
-      courseMode = CourseMode.STUDY
+      courseMode = CourseMode.STUDENT
     }
     panel.bindCourse(courseCopy)
     init()

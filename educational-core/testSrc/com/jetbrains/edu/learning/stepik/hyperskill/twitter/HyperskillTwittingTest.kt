@@ -40,7 +40,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     }
 
   fun `test do not show dialog in course creator mode`() =
-    doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CourseMode.COURSE_MODE) }) { course, task ->
+    doTest(lessonName = "Project", taskName = "Task2", createCourse = { createHyperskillCourse(CourseMode.EDUCATOR) }) { course, task ->
       (course as HyperskillCourse).getProjectLesson()?.visitTasks {
         if (it != task) {
           it.status = CheckStatus.Solved
@@ -92,7 +92,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
     assertEquals(shouldDialogBeShown, isDialogShown)
   }
 
-  private fun createHyperskillCourse(courseMode: CourseMode = CourseMode.STUDY): HyperskillCourse {
+  private fun createHyperskillCourse(courseMode: CourseMode = CourseMode.STUDENT): HyperskillCourse {
     return hyperskillCourseWithFiles(courseMode = courseMode) {
       frameworkLesson("Project") {
         eduTask("Task1") {

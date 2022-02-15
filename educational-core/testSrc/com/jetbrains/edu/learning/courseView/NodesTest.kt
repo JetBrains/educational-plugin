@@ -145,7 +145,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test invisible files in student mode`() {
-    courseWithInvisibleItems(CourseMode.STUDY)
+    courseWithInvisibleItems(CourseMode.STUDENT)
     assertCourseView("""
       -Project
        -CourseNode Test Course  0/2
@@ -162,7 +162,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test invisible files in educator mode`() {
-    courseWithInvisibleItems(CourseMode.COURSE_MODE)
+    courseWithInvisibleItems(CourseMode.EDUCATOR)
     assertCourseView("""
       -Project
        -CCCourseNode Test Course (Course Creation)
@@ -185,7 +185,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test non course files`() {
-    courseWithInvisibleItems(CourseMode.COURSE_MODE)
+    courseWithInvisibleItems(CourseMode.EDUCATOR)
     runWriteAction {
       LightPlatformTestCase.getSourceRoot().createChildData(NodesTest::class.java, "non_course_file1.txt")
       findFile("lesson1/task1").createChildData(NodesTest::class.java, "non_course_file2.txt")
@@ -239,7 +239,7 @@ class NodesTest : CourseViewTestBase() {
     }
   }
 
-  private fun createCourseWithTestsInsideTestDir(courseMode: CourseMode = CourseMode.STUDY) {
+  private fun createCourseWithTestsInsideTestDir(courseMode: CourseMode = CourseMode.STUDENT) {
     courseWithFiles(courseMode = courseMode) {
       lesson {
         eduTask {
@@ -262,7 +262,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test course with tests inside test dir`() {
-    createCourseWithTestsInsideTestDir(CourseMode.COURSE_MODE)
+    createCourseWithTestsInsideTestDir(CourseMode.EDUCATOR)
     assertCourseView("""
       |-Project
       | -CCCourseNode Test Course (Course Creation)
@@ -302,7 +302,7 @@ class NodesTest : CourseViewTestBase() {
 
 
   fun `test course with dir inside test`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -347,7 +347,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test directory inside lesson in educator mode`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("file1.txt")
@@ -379,7 +379,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   fun `test directory inside course in educator mode`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("file1.txt")
@@ -413,7 +413,7 @@ class NodesTest : CourseViewTestBase() {
   fun `test excluded files in educator mode`() {
     val lessonIgnoredFile = "lesson1/LessonIgnoredFile.txt"
     val courseIgnoredFile = "IgnoredFile.txt"
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask {
           taskFile("file1.txt")

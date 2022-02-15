@@ -75,7 +75,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
   }
 
   fun `test educator course structure from not empty course`() {
-    generateCourseStructure("testData/newCourse/java_course.json", CourseMode.COURSE_MODE)
+    generateCourseStructure("testData/newCourse/java_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {
       dir("lesson1") {
         dir("task1") {

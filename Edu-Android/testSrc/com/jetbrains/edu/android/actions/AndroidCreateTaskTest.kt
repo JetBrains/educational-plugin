@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class AndroidCreateTaskTest : EduActionTestCase() {
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, environment = EduNames.ANDROID,
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, environment = EduNames.ANDROID,
                                  language = KotlinLanguage.INSTANCE, settings = JdkProjectSettings.emptySettings()) {
       lesson()
     }

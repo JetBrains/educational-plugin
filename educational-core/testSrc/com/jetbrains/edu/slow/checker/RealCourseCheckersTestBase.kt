@@ -35,7 +35,7 @@ abstract class RealCourseCheckersTestBase<Settings>(private val courseId: Int) :
     println("'${course.name}' ($courseId) course loading started")
     StepikCourseLoader.loadCourseStructure(course)
     println("'${course.name}' ($courseId) course loading finished")
-    course.courseMode = CourseMode.COURSE_MODE
+    course.courseMode = CourseMode.EDUCATOR
     return course
   }
 

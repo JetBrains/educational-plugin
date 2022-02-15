@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class CCDeleteActionTest : EduActionTestCase() {
 
   fun `test delete task`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask("task1")
         eduTask("task2")
@@ -34,7 +34,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete task with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -81,7 +81,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete lesson`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask("task1")
       }
@@ -105,7 +105,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test lesson deletion with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
@@ -160,7 +160,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete section`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson("lesson1") {
           eduTask("task1")
@@ -188,7 +188,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test section deletion with dependent tasks`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {
         lesson("lesson1") {
           eduTask("task1") {

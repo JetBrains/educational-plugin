@@ -174,7 +174,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   fun courseWithFiles(
     name: String = "Test Course",
-    courseMode: CourseMode = CourseMode.STUDY,
+    courseMode: CourseMode = CourseMode.STUDENT,
     id: Int? = null,
     description: String = "Test Course Description",
     environment: String = "",
@@ -271,7 +271,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     return copyAs(EduCourse::class.java)
   }
 
-  protected fun Course.asRemote(courseMode: CourseMode = CourseMode.COURSE_MODE): EduCourse {
+  protected fun Course.asRemote(courseMode: CourseMode = CourseMode.EDUCATOR): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.id = 1
     remoteCourse.name = name

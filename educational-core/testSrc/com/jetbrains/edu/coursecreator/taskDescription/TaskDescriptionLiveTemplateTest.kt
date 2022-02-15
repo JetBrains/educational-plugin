@@ -11,7 +11,7 @@ import org.intellij.lang.annotations.Language
 class TaskDescriptionLiveTemplateTest : EduTestCase() {
 
   fun `test hint live template in task description file in cc mode`() {
-    createCourse(CourseMode.COURSE_MODE)
+    createCourse(CourseMode.EDUCATOR)
 
     expandSnippet("lesson/task/task.html", """
       <html>
@@ -28,7 +28,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
   }
 
   fun `test no hint live template in task description file in student mode`() {
-    createCourse(CourseMode.STUDY)
+    createCourse(CourseMode.STUDENT)
 
     expandSnippet("lesson/task/task.html", """
       <html>
@@ -42,7 +42,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
   }
 
   fun `test no hint live template in non task description file`() {
-    createCourse(CourseMode.COURSE_MODE)
+    createCourse(CourseMode.EDUCATOR)
 
     expandSnippet("lesson/task/taskFile.html", """
       <html>

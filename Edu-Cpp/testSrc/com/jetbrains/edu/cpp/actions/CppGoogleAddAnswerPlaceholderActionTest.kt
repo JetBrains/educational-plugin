@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class CppGoogleAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE, language = OCLanguage.getInstance(),
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = OCLanguage.getInstance(),
                                  environment = "GoogleTest") {
       lesson("lesson1") {
         eduTask("task1") {

@@ -21,7 +21,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test unwrap lessons`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson2")
@@ -40,7 +40,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test one lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson2")
@@ -58,7 +58,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test with multiple lesson before and after`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       lesson()
@@ -80,7 +80,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test unwrap lessons tree structure`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson2")
@@ -100,7 +100,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
   }
 
   fun `test course has the same named lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson1")

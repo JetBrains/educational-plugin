@@ -167,7 +167,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     task.descriptionText = clearCodeBlockFromTags(step)
     task.descriptionFormat = DescriptionFormat.HTML
 
-    if (course is EduCourse && courseMode == CourseMode.COURSE_MODE && stepId > 0) {
+    if (course is EduCourse && courseMode == CourseMode.EDUCATOR && stepId > 0) {
       return task.apply { fillForCourseCreatorMode() }
     }
 

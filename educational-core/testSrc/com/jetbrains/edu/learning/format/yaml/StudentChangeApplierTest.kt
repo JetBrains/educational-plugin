@@ -79,7 +79,7 @@ class StudentChangeApplierTest() : YamlTestCase() {
   }
 
   fun `test checkio mission`() {
-    val existingMission = courseWithFiles(courseMode = CourseMode.STUDY) {
+    val existingMission = courseWithFiles(courseMode = CourseMode.STUDENT) {
       station("station") {
         mission("mission1")
       }

@@ -8,13 +8,13 @@ import com.jetbrains.edu.learning.testAction
 class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
 
   fun `test not available in student mode`() = doTestDeleteAll("Foo.kt", false, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID,
-                                                               CourseMode.STUDY)
+                                                               CourseMode.STUDENT)
   fun `test not available without placeholders`() = doTestDeleteAll("Bar.kt", false, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID)
   fun `test delete all placeholders`() = doTestDeleteAll("Foo.kt", true, CCDeleteAllAnswerPlaceholdersAction.ACTION_ID)
 
   fun `test delete placeholder`() {
     val taskFileName = "Task.kt"
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", "fun <p>foo(): String = TODO()</p>")
@@ -33,7 +33,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
     taskFileName: String,
     shouldBeAvailable: Boolean,
     actionId: String,
-    courseMode: CourseMode = CourseMode.COURSE_MODE
+    courseMode: CourseMode = CourseMode.EDUCATOR
   ) {
     val course = courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {

@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 abstract class StudentCourseYamlMixin : CourseYamlMixin() {
   @JsonSerialize(converter = CourseModeSerializationConverter::class)
   @JsonProperty(MODE)
-  private var courseMode = CourseMode.STUDY
+  private var courseMode = CourseMode.STUDENT
 }
 
 private class CourseModeSerializationConverter : StdConverter<CourseMode, String>() {

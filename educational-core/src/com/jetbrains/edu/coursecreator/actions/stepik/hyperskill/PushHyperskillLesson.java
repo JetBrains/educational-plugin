@@ -109,7 +109,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
 
   @Nullable
   private static Lesson getLesson(@Nullable VirtualFile[] selectedFiles, Project project, Course course) {
-    if (!course.getCourseMode().equals(CourseMode.COURSE_MODE)) return null;
+    if (!course.getCourseMode().equals(CourseMode.EDUCATOR)) return null;
     if (selectedFiles == null || selectedFiles.length != 1) {
       return null;
     }

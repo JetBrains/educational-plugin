@@ -278,7 +278,7 @@ public abstract class CourseProjectGenerator<S> {
                                     boolean isNewCourse) throws IOException {}
 
   private boolean isNewCourseCreatorCourse() {
-    return myCourse.getCourseMode().equals(CourseMode.COURSE_MODE) && myCourse.getItems().isEmpty();
+    return myCourse.getCourseMode().equals(CourseMode.EDUCATOR) && myCourse.getItems().isEmpty();
   }
 
   // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems

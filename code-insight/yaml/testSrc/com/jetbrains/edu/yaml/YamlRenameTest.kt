@@ -17,7 +17,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
   }
 
   override fun createCourse() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/taskfile1.txt")

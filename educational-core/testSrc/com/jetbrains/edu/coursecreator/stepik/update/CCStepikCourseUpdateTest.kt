@@ -10,7 +10,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test task with placeholders added`() {
-    val course = course(courseMode = CourseMode.COURSE_MODE) {
+    val course = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask(stepId = 1) {
           taskFile("TaskFile1.kt")
@@ -18,7 +18,7 @@ class CCStepikCourseUpdateTest : CourseUpdateTestBase() {
       }
     } as EduCourse
 
-    val serverCourse = course(courseMode = CourseMode.COURSE_MODE) {
+    val serverCourse = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask(stepId = 1) {
           taskFile("TaskFile1.kt")

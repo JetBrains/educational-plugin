@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.testAction
 class CCCreateLessonTest : EduActionTestCase() {
 
   fun `test create lesson in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -24,7 +24,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson in section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask {
@@ -42,7 +42,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson between lessons in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -65,7 +65,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson before lesson in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -88,7 +88,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson after lesson in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -111,7 +111,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson between lessons in section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask {
@@ -138,7 +138,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson not available inside lesson`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -150,7 +150,7 @@ class CCCreateLessonTest : EduActionTestCase() {
   }
 
   fun `test create lesson not available on top level with section on top level`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")

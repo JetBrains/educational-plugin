@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.yaml.YamlTestCase
 class YamlSynchronizationTest : YamlTestCase() {
 
   override fun createCourse() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson {
           eduTask()

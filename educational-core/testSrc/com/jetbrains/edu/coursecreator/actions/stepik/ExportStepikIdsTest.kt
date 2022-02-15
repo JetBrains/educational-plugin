@@ -81,7 +81,7 @@ class ExportStepikIdsTest : EduTestCase() {
   private fun convertToRemoteCourse(course: Course): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.name = course.name
-    remoteCourse.courseMode = CourseMode.COURSE_MODE
+    remoteCourse.courseMode = CourseMode.EDUCATOR
     remoteCourse.items = course.items
     return remoteCourse
   }

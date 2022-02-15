@@ -88,7 +88,7 @@ class CCNewCoursePanel(
     preferredSize = JBUI.size(700, 372)
     minimumSize = JBUI.size(700, 372)
 
-    _course = (course ?: courseProducer()).apply { courseMode = CourseMode.COURSE_MODE }
+    _course = (course ?: courseProducer()).apply { courseMode = CourseMode.EDUCATOR }
 
     descriptionTextArea.rows = 10
     descriptionTextArea.lineWrap = true

@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 class CCMoveLessonTest : MoveTestBase() {
 
   fun `test move lesson to section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson("lesson2")
@@ -25,7 +25,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   fun `test move lesson before lesson in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson()
@@ -45,7 +45,7 @@ class CCMoveLessonTest : MoveTestBase() {
 
 
   fun `test move lesson after lesson in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       section {
@@ -64,7 +64,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   fun `test move lesson from section to course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       lesson()
       section {
@@ -84,7 +84,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   fun `test move lesson in section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson()
         lesson()
@@ -104,7 +104,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   fun `test move lesson from section to section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson()
         lesson()
@@ -133,7 +133,7 @@ class CCMoveLessonTest : MoveTestBase() {
 
   // EDU-2467
   fun `test move from section with the same name to section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section("section1") {
         lesson("section1")
       }
@@ -155,7 +155,7 @@ class CCMoveLessonTest : MoveTestBase() {
   }
 
   fun `test move lesson from section to lesson in another section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson()
         lesson()

@@ -23,7 +23,7 @@ class SqlCourseBuilderTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test create existent educator course`() {
-    val course = course(language = SqlLanguage.INSTANCE, courseMode = CourseMode.COURSE_MODE) {
+    val course = course(language = SqlLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("task.sql")

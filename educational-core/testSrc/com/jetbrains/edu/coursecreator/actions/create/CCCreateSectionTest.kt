@@ -11,7 +11,7 @@ import junit.framework.TestCase
 class CCCreateSectionTest : EduActionTestCase() {
 
   fun `test create section in course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -29,7 +29,7 @@ class CCCreateSectionTest : EduActionTestCase() {
   }
 
   fun `test create section after lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -60,7 +60,7 @@ class CCCreateSectionTest : EduActionTestCase() {
   }
 
   fun `test create section before lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -91,7 +91,7 @@ class CCCreateSectionTest : EduActionTestCase() {
   }
 
   fun `test create section before section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -122,7 +122,7 @@ class CCCreateSectionTest : EduActionTestCase() {
   }
 
   fun `test create section not available inside lesson`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -134,7 +134,7 @@ class CCCreateSectionTest : EduActionTestCase() {
   }
 
   fun `test create section after section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")

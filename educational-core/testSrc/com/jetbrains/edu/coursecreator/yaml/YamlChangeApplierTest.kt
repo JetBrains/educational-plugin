@@ -15,7 +15,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test coursera submit manually`() {
-    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.EDUCATOR) {
       lesson { }
     } as CourseraCourse
     assertFalse(course.submitManually)
@@ -38,7 +38,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add lesson custom presentable name`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
     }
 
@@ -54,7 +54,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove lesson custom presentable name`() {
-    courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask("Introduction Task")
       }
@@ -75,7 +75,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add section custom presentable name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section { }
     }
 
@@ -91,7 +91,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove section custom presentable name`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
         lesson("lesson 1")
       }
@@ -112,7 +112,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add task custom presentable name`() {
-    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson 1") {
         eduTask {
           taskFile("task.txt")
@@ -134,7 +134,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove task custom presentable name`() {
-    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson 1") {
         eduTask {
           taskFile("task.txt")
@@ -158,7 +158,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add hide solutions for course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
     }
     assertFalse(course.solutionsHidden)
@@ -176,7 +176,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove hide solutions for course`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson { }
     }
     course.solutionsHidden = true
@@ -193,7 +193,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test add hide solution for task`() {
-    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1")
       }
@@ -210,7 +210,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test remove hide solution for task`() {
-    val task = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {
         eduTask("task1")
       }
@@ -226,7 +226,7 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   fun `test change is_template_based flag in framework lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       frameworkLesson("lesson1") {
         eduTask("task1")
       }

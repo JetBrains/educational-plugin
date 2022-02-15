@@ -12,12 +12,12 @@ import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
-  override val courseMode: CourseMode = CourseMode.COURSE_MODE
+  override val courseMode: CourseMode = CourseMode.EDUCATOR
 
   override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project)
 
   fun `test delete section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section()
       lesson()
@@ -34,7 +34,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete not empty section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson()
@@ -53,7 +53,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section()
       lesson()
@@ -71,7 +71,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
 
   fun `test delete lesson from section`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
       section {
         lesson()
@@ -96,7 +96,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   }
 
   fun `test delete task`() {
-    val course = courseWithFiles(courseMode = CourseMode.COURSE_MODE) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask {
           taskFile("tmp.txt")

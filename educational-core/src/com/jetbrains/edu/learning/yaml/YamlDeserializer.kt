@@ -112,7 +112,7 @@ object YamlDeserializer {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
     val courseMode = asText(treeNode.get("mode"))
     val course = treeToValue(treeNode, Course::class.java)
-    course.courseMode = if (courseMode != null) CourseMode.STUDY else CourseMode.COURSE_MODE
+    course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
     return course
   }
 
