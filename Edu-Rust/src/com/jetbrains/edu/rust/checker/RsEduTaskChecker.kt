@@ -24,7 +24,6 @@ import org.rust.cargo.runconfig.command.CargoCommandConfigurationType
 import org.rust.cargo.runconfig.mergeWithDefault
 import org.rust.cargo.toolchain.CargoCommandLine
 import org.rust.cargo.toolchain.tools.cargo
-import org.rust.openapiext.execute
 
 class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: EduTask) : EduTaskCheckerBase(task, envChecker, project) {
 
@@ -34,7 +33,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
 
     val disposable = StudyTaskManager.getInstance(project)
     val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
-    val processOutput = cargo.toGeneralCommandLine(project, cmd).execute(disposable)
+    val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable)
     for (line in processOutput.stdoutLines) {
       if (line.trimStart().startsWith(COMPILATION_ERROR_MESSAGE, true)) {
         return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
