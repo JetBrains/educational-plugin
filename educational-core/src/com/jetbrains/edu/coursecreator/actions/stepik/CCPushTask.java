@@ -49,7 +49,7 @@ public class CCPushTask extends DumbAwareAction {
     }
 
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof EduCourse) || !((EduCourse)course).isStepikRemote()) {
+    if (!(course instanceof EduCourse) || !course.isStepikRemote()) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;

@@ -63,7 +63,7 @@ public class CCPushCourse extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof EduCourse) || !((EduCourse)course).isStepikRemote()) {
+    if (!(course instanceof EduCourse) || !course.isStepikRemote()) {
       return;
     }
     presentation.setEnabledAndVisible(true);
