@@ -55,6 +55,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
       MarketplaceSettings.INSTANCE.account = account
     }
 
+  override val authorizationTopicName: String = "Edu.marketplaceLoggedIn"
+
   override val authorizationUrl: String
     get() = URIBuilder(HUB_AUTH_URL)
       .setPath("$HUB_API_PATH/oauth2/auth")

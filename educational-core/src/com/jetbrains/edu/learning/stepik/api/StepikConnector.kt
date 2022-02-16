@@ -42,6 +42,8 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
       EduSettings.getInstance().user = account
     }
 
+  override val authorizationTopicName: String = "Edu.stepikLoggedIn"
+
   override val authorizationUrl: String
     get() = URIBuilder(getStepikUrl())
       .setPath("/oauth2/authorize/")

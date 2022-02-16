@@ -2,8 +2,13 @@ package com.jetbrains.edu.learning.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
+import com.intellij.util.messages.MessageBus
+import com.intellij.util.messages.MessageBusConnection
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
@@ -22,10 +27,20 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.IOException
 import java.util.regex.Pattern
 
-abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
+abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> : Disposable {
   open var account: Account? = null
 
+  private val applicationMessageBus: MessageBus = ApplicationManager.getApplication().messageBus
+
   protected abstract val authorizationUrl: String
+
+  private val authorizationMessageBus: MessageBusConnection = applicationMessageBus.connect()
+
+  protected abstract val authorizationTopicName: String
+
+  private val authorizationTopic by lazy {
+    Topic.create(authorizationTopicName, EduLogInListener::class.java)
+  }
 
   protected abstract val baseUrl: String
 
@@ -115,6 +130,8 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   fun setSubmissionTabListener(logInListener: EduLogInListener) {
     submissionTabListener = logInListener
   }
+
+  override fun dispose() = authorizationMessageBus.disconnect()
 
   fun getCurrentUserInfo(): SpecificUserInfo? {
     val currentAccount = account ?: return null
@@ -211,6 +228,10 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
     EduCounterUsageCollector.logInSucceed(platformName, place)
     authorizationPlace = null
+  }
+
+  fun subscribe(eduLogInListener: EduLogInListener) {
+    authorizationMessageBus.subscribe(authorizationTopic, eduLogInListener)
   }
 
   /**
