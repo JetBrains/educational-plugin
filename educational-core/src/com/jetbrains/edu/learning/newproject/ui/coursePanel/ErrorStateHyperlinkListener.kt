@@ -9,11 +9,14 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
@@ -35,12 +38,16 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
 
     val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? JTextPane) ?: return
     val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane)
-    val postLoginActions = arrayOf(
-      Runnable { coursePanel.hideErrorPanel() },
-      Runnable { coursesPanel?.hideLoginPanel() },
-      Runnable { doValidation(coursePanel) },
-      Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
-    )
+    val logInListener = object : EduLogInListener {
+      override fun userLoggedIn() {
+        runInEdt(ModalityState.any()) {
+          coursePanel.hideErrorPanel()
+          coursesPanel?.hideLoginPanel()
+          doValidation(coursePanel)
+          coursesPanel?.scheduleUpdateAfterLogin()
+        }
+      }
+    }
 
     when (val state = coursePanel.errorState) {
       is ErrorState.CheckiOLoginRequired -> {
@@ -49,14 +56,23 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
           Logger.getInstance(CoursesPanel::class.java).error("CheckiO connector provider is not found")
           return
         }
-        checkiOConnectorProvider.oAuthConnector.doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        checkiOConnectorProvider.oAuthConnector.apply {
+          subscribe(logInListener, parentDisposable)
+          doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        }
       }
       is ErrorState.JetBrainsAcademyLoginNeeded -> {
-        HyperskillConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        HyperskillConnector.getInstance().apply {
+          subscribe(logInListener, parentDisposable)
+          doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        }
       }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
         // TODO: Update course list
-        StepikConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        StepikConnector.getInstance().apply {
+          subscribe(logInListener, parentDisposable)
+          doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+        }
       }
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
       is ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
