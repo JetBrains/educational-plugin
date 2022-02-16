@@ -2,10 +2,12 @@ package com.jetbrains.edu.learning.checkio.notifications.errors
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException
@@ -55,7 +57,15 @@ class CheckiOErrorReporter(
 
   private class LoginLinkListener(private val connector: CheckiOOAuthConnector) : NotificationListener.Adapter() {
     override fun hyperlinkActivated(notification: Notification, event: HyperlinkEvent) {
-      connector.doAuthorize(Runnable { ApplicationManager.getApplication().invokeLater { notification.hideBalloon() } })
+      connector.subscribe(object : EduLogInListener {
+        override fun userLoggedIn() {
+          if (notification.isExpired) return
+          runInEdt(ModalityState.any()) {
+            notification.hideBalloon()
+          }
+        }
+      })
+      connector.doAuthorize()
     }
   }
 }
