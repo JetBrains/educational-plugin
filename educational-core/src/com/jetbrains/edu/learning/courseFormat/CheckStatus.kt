@@ -1,5 +1,5 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-public enum CheckStatus {
+enum class CheckStatus {
   Unchecked, Solved, Failed
 }
