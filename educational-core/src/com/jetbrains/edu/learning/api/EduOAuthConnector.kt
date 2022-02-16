@@ -220,6 +220,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    */
   @Synchronized
   fun notifyUserLoggedIn() {
+    applicationMessageBus.syncPublisher(authorizationTopic).userLoggedIn()
     postLoginActions?.forEach {
       it.run()
     }
@@ -245,6 +246,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    */
   @Synchronized
   fun notifyUserLoggedOut() {
+    applicationMessageBus.syncPublisher(authorizationTopic).userLoggedOut()
     submissionTabListener?.userLoggedOut()
 
     val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
