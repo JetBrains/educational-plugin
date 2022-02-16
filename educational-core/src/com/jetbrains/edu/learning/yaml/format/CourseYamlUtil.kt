@@ -122,7 +122,7 @@ abstract class CourseYamlMixin {
   protected open lateinit var contentTags: List<String>
 }
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
+@Suppress("unused", "UNUSED_PARAMETER", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -211,7 +211,7 @@ private class CourseBuilder(
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    val course = when (courseType?.capitalize()) {
+    val course = when (courseType?.replaceFirstChar { it.titlecaseChar() }) {
       CourseraNames.COURSE_TYPE -> {
         CourseraCourse().apply {
           submitManually = courseraSubmitManually ?: false
