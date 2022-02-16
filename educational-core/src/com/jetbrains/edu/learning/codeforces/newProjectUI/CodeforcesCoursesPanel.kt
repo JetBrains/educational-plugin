@@ -63,19 +63,18 @@ class CodeforcesCoursesPanel(
     return CodeforcesCoursesListPanel()
   }
 
-  override fun getLoginComponent(): LoginPanel {
-    return CodeforcesLoginPanel()
-  }
+  override fun getLoginComponent(disposable: Disposable): LoginPanel = CodeforcesLoginPanel()
 
-  private inner class CodeforcesLoginPanel : LoginPanel(isLoginNeeded(),
-                                                        CodeforcesNames.CODEFORCES_TITLE,
-                                                        EduCoreBundle.message("codeforces.login.to.codeforces.message"),
-                                                        { handleLogin() })
-
-  private fun handleLogin() {
+  private inner class CodeforcesLoginPanel : LoginPanel(
+    isLoginNeeded(),
+    CodeforcesNames.CODEFORCES_TITLE,
+    EduCoreBundle.message("codeforces.login.to.codeforces.message")
+  ) {
+    override fun handleLogin() {
       if (LoginDialog().showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
         hideLoginPanel()
       }
+    }
   }
 
   override fun isLoginNeeded(): Boolean = !CodeforcesSettings.getInstance().isLoggedIn()

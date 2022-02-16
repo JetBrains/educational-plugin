@@ -39,7 +39,7 @@ private const val NO_COURSES = "NO_COURSES"
 abstract class CoursesPanel(
   private val coursesProvider: CoursesPlatformProvider,
   private val scope: CoroutineScope,
-  disposable: Disposable
+  private val disposable: Disposable
 ) : JPanel() {
 
   @VisibleForTesting
@@ -52,7 +52,7 @@ abstract class CoursesPanel(
                                                                                         { groups -> updateModel(groups, selectedCourse) })
 
   private val coursesListDecorator = CoursesListDecorator(this.createCoursesListPanel(), this.tabDescription(), this.toolbarAction())
-  private val loginPanel: LoginPanel? by lazy { getLoginComponent() }
+  private val loginPanel: LoginPanel? by lazy { getLoginComponent(disposable) }
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
@@ -149,7 +149,7 @@ abstract class CoursesPanel(
 
   protected open fun tabDescription(): String? = null
 
-  protected open fun getLoginComponent(): LoginPanel? = null
+  protected open fun getLoginComponent(disposable: Disposable): LoginPanel? = null
 
   private fun createLoadingPanel() = JPanel(BorderLayout()).apply {
     add(CenteredIcon(), BorderLayout.CENTER)

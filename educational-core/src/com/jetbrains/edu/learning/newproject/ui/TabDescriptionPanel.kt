@@ -39,7 +39,7 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
   }
 }
 
-open class LoginPanel(isVisible: Boolean, platformName: String, afterLinkText: String, loginHandler: () -> Unit) : JPanel(BorderLayout()) {
+abstract class LoginPanel(isVisible: Boolean, platformName: String, afterLinkText: String) : JPanel(BorderLayout()) {
   private val BACKGROUND_COLOR = JBColor(0xE6EEF7, 0x1C3956)
 
   init {
@@ -47,7 +47,7 @@ open class LoginPanel(isVisible: Boolean, platformName: String, afterLinkText: S
       val linkText = EduCoreBundle.message("course.dialog.log.in.to.title", platformName)
       @Suppress("UnstableApiUsage")
       setTextWithHyperlink("<hyperlink>$linkText</hyperlink> $afterLinkText")
-      addHyperlinkListener { loginHandler() }
+      addHyperlinkListener { handleLogin() }
       setIcon(AllIcons.General.BalloonInformation)
       font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.fontSize)
       iconTextGap = 5
@@ -65,4 +65,6 @@ open class LoginPanel(isVisible: Boolean, platformName: String, afterLinkText: S
 
   open val beforeLinkForeground: Color
     get() = UIUtil.getLabelForeground()
+
+  protected abstract fun handleLogin()
 }

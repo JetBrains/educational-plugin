@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -47,21 +48,28 @@ class StepikCoursesPanel(
     super.updateCoursesAfterLogin(preserveSelection)
   }
 
-  override fun getLoginComponent(): LoginPanel {
-    return StepikLoginPanel()
-  }
+  override fun getLoginComponent(disposable: Disposable): LoginPanel = StepikLoginPanel(disposable)
 
-  private inner class StepikLoginPanel : LoginPanel(isLoginNeeded(),
-                                                    StepikNames.STEPIK,
-                                                    EduCoreBundle.message("course.dialog.log.in.label.before.link"),
-                                                    { handleLogin() })
+  private inner class StepikLoginPanel(disposable: Disposable) : LoginPanel(
+    isLoginNeeded(),
+    StepikNames.STEPIK,
+    EduCoreBundle.message("course.dialog.log.in.label.before.link")
+  ) {
 
-  private fun handleLogin() {
-    StepikConnector.getInstance().doAuthorize(
-      { runInEdt(ModalityState.any()) { hideLoginPanel() } },
-      { runInEdt(ModalityState.any()) { coursePanel.hideErrorPanel() } },
-      authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
-    )
+    init {
+      StepikConnector.getInstance().subscribe(object : EduLogInListener {
+        override fun userLoggedIn() {
+          runInEdt(ModalityState.any()) {
+            hideLoginPanel()
+            coursePanel.hideErrorPanel()
+          }
+        }
+      }, disposable)
+    }
+
+    override fun handleLogin() {
+      StepikConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+    }
   }
 
   override fun isLoginNeeded(): Boolean = !EduSettings.isLoggedIn()

@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.checkio.newProjectUI
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -39,26 +42,31 @@ class CheckiOCoursesPanel(
 
   override fun isLoginNeeded(): Boolean = true
 
-  override fun getLoginComponent(): LoginPanel {
-    return CheckiOLoginPanel()
-  }
+  override fun getLoginComponent(disposable: Disposable): LoginPanel = CheckiOLoginPanel(disposable)
 
   override fun tabDescription(): String {
     val linkText = """<a href="$CHECKIO_HELP">${CheckiONames.CHECKIO}</a>"""
     return EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
   }
 
-  private inner class CheckiOLoginPanel : LoginPanel(true,
-                                                     CheckiONames.CHECKIO,
-                                                     EduCoreBundle.message("course.dialog.log.in.label.before.link"),
-                                                     {
-                                                       val checkiOConnectorProvider = (selectedCourse?.configurator as CheckiOConnectorProvider?)!!
-                                                       val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
-                                                       checkiOOAuthConnector.doAuthorize(
-                                                         Runnable { coursePanel.hideErrorPanel() },
-                                                         Runnable { hideLoginPanel() },
-                                                         Runnable { doValidation() },
-                                                         authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
-                                                       )
-                                                     })
+  private inner class CheckiOLoginPanel(private val disposable: Disposable) : LoginPanel(
+    true,
+    CheckiONames.CHECKIO,
+    EduCoreBundle.message("course.dialog.log.in.label.before.link")
+  ) {
+    override fun handleLogin() {
+      val checkiOConnectorProvider = selectedCourse?.configurator as? CheckiOConnectorProvider ?: return
+      val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector
+      checkiOOAuthConnector.subscribe(object : EduLogInListener {
+        override fun userLoggedIn() {
+          runInEdt(ModalityState.any()) {
+            coursePanel.hideErrorPanel()
+            hideLoginPanel()
+            doValidation()
+          }
+        }
+      }, disposable)
+      checkiOOAuthConnector.doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+    }
+  }
 }

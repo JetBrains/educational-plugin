@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.runInEdt
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -46,9 +49,7 @@ class JetBrainsAcademyCoursesPanel(
 
   override fun createCoursesListPanel() = JetBrainsAcademyCoursesListPanel()
 
-  override fun getLoginComponent(): LoginPanel {
-    return JetBrainsAcademyLoginPanel()
-  }
+  override fun getLoginComponent(disposable: Disposable): LoginPanel = JetBrainsAcademyLoginPanel(disposable)
 
   inner class JetBrainsAcademyCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCardForNewCourse(course: Course): CourseCardComponent {
@@ -56,22 +57,30 @@ class JetBrainsAcademyCoursesPanel(
     }
   }
 
-  private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),
-                                                              EduNames.JBA,
-                                                              EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
-                                                              { handleLogin() })
+  private inner class JetBrainsAcademyLoginPanel(disposable: Disposable) : LoginPanel(
+    isLoginNeeded(),
+    EduNames.JBA,
+    EduCoreBundle.message("course.dialog.jba.log.in.label.before.link")
+  ) {
+    init {
+      HyperskillConnector.getInstance().subscribe(object : EduLogInListener {
+        override fun userLoggedIn() {
+          runInEdt(ModalityState.any()) {
+            coursePanel.hideErrorPanel()
+            setButtonsEnabled(true)
+            hideLoginPanel()
+            scheduleUpdateAfterLogin()
+          }
+        }
+      }, disposable)
+    }
+
+    override fun handleLogin() {
+      HyperskillConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
+    }
+  }
 
   override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null
-
-  private fun handleLogin() {
-    HyperskillConnector.getInstance().doAuthorize(
-      Runnable { coursePanel.hideErrorPanel() },
-      Runnable { setButtonsEnabled(true) },
-      Runnable { hideLoginPanel() },
-      Runnable { scheduleUpdateAfterLogin() },
-      authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG
-    )
-  }
 
   override suspend fun updateCoursesAfterLogin(preserveSelection: Boolean) {
     val academyCoursesGroups = withContext(Dispatchers.IO) { platformProvider.loadCourses() }
