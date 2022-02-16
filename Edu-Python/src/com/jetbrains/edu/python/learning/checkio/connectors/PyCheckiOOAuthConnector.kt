@@ -20,7 +20,7 @@ object PyCheckiOOAuthConnector : CheckiOOAuthConnector() {
 
   override val clientSecret: String = PyCheckiOOAuthBundle.value("pyCheckioClientSecret")
 
-  override val serviceName: String = getCheckiOServiceName(PY_CHECKIO_PREFIX.toLowerCase())
+  override val serviceName: String = getCheckiOServiceName(PY_CHECKIO_PREFIX.lowercase())
 
   override val platformName: String = CheckiONames.PY_CHECKIO
 }

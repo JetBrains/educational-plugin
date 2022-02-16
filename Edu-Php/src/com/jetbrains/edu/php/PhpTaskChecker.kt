@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.runReadActionInSmartMode
 class PhpTaskChecker(
   task: EduTask,
   envChecker: EnvironmentChecker,
-  project: Project
+  project: Project,
 ) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
@@ -42,7 +42,7 @@ class PhpTaskChecker(
       var destroyed = false
       val processListener = object : ProcessAdapter() {
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-          val containsError = event.text.toUpperCase().contains(error)
+          val containsError = event.text.replaceFirstChar { it.titlecaseChar() }.contains(error)
           if (outputType == ProcessOutputTypes.STDERR || containsError) {
             errorOutput.append(event.text)
           }

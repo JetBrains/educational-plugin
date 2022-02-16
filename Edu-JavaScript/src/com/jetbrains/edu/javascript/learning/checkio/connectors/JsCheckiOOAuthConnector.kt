@@ -20,7 +20,7 @@ object JsCheckiOOAuthConnector : CheckiOOAuthConnector() {
 
   override val clientSecret: String = JsCheckiOOAuthBundle.value("jsCheckioClientSecret")
 
-  override val serviceName: String = getCheckiOServiceName(JS_CHECKIO_PREFIX.toLowerCase())
+  override val serviceName: String = getCheckiOServiceName(JS_CHECKIO_PREFIX.lowercase())
 
   override val platformName: String = CheckiONames.JS_CHECKIO
 }

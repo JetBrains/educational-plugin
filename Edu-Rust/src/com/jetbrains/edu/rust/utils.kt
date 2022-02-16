@@ -6,6 +6,6 @@ import org.rust.cargo.CargoConstants
 
 private val INVALID_SYMBOLS = """[^a-zA-Z0-9_]""".toRegex()
 
-fun String.toPackageName(): String = replace(INVALID_SYMBOLS, "_").toLowerCase()
+fun String.toPackageName(): String = replace(INVALID_SYMBOLS, "_").lowercase()
 
 val Project.isSingleWorkspaceProject: Boolean get() = courseDir.findChild(CargoConstants.MANIFEST_FILE) != null

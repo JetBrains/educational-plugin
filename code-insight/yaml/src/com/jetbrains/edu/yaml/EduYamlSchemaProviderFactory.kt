@@ -34,7 +34,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   }
 
   open class StudyItemConfigSchemaProvider(protected val project: Project, protected val itemKind: String) : JsonSchemaFileProvider {
-    override fun getName(): String = "${itemKind.capitalize()} Configuration"
+    override fun getName(): String = "${itemKind.replaceFirstChar { it.titlecaseChar() }} Configuration"
 
     override fun isAvailable(file: VirtualFile): Boolean = CCUtils.isCourseCreator(project)
                                                            && YamlFormatSettings.getLocalConfigFileName(itemKind) == file.name
@@ -54,7 +54,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   class TaskSpecificConfigSchemaProvider(project: Project, private val taskType: String)
     : StudyItemConfigSchemaProvider(project, EduNames.TASK) {
 
-    override fun getName(): String = "${taskType.capitalize()} ${super.getName()}"
+    override fun getName(): String = "${taskType.replaceFirstChar { it.titlecaseChar() }} ${super.getName()}"
 
     override fun isAvailable(file: VirtualFile): Boolean {
       val task = file.getContainingTask(project) ?: return false

@@ -43,7 +43,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
   }
 
   override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
-    val moduleName = info.name.replace(" ", "_").toLowerCase()
+    val moduleName = info.name.replace(" ", "_").lowercase()
     val moduleQuoted = "\"$moduleName\""
     return mapOf(
       "MODULE_NAME" to moduleName,
