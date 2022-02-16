@@ -38,12 +38,6 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   abstract val objectMapper: ObjectMapper
 
   /**
-   * User visible name of the platform
-   */
-  open val displayName: String
-    get() = platformName
-
-  /**
    * Name of the platform used for developing purposes
    */
   protected abstract val platformName: String

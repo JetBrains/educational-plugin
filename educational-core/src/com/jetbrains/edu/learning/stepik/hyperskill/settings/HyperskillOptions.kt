@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.ui.components.JBCheckBox
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions
@@ -16,6 +17,8 @@ class HyperskillOptions : OAuthLoginOptions<HyperskillAccount>() {
 
   override val connector: EduOAuthConnector<HyperskillAccount, *>
     get() = HyperskillConnector.getInstance()
+
+  override fun getDisplayName(): String = EduNames.JBA
 
   override fun isAvailable(): Boolean = isHyperskillSupportAvailable()
 

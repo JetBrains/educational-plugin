@@ -15,8 +15,6 @@ abstract class OAuthLoginOptions <T : OAuthAccount<out Any>> : LoginOptions<T>()
     connector.account = account
   }
 
-  override fun getDisplayName(): String = connector.displayName
-
   override fun createAuthorizeListener(): HyperlinkAdapter =
     object : HyperlinkAdapter() {
       override fun hyperlinkActivated(e: HyperlinkEvent?) {

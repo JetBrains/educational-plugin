@@ -28,6 +28,12 @@ public class StepikOptions extends OAuthLoginOptions<StepikUser> {
 
   @NotNull
   @Override
+  public String getDisplayName() {
+    return StepikNames.STEPIK;
+  }
+
+  @NotNull
+  @Override
   protected String profileUrl(@NotNull StepikUser account) {
     return StepikUtils.getProfileUrl(account);
   }

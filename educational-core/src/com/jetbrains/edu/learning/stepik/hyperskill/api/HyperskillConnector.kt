@@ -33,7 +33,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
-  override val displayName: String = EduNames.JBA
   override val platformName: String = HYPERSKILL
 
   @get:Synchronized
