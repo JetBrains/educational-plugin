@@ -1,74 +1,55 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.visitors.LessonVisitor;
-import com.jetbrains.edu.learning.courseFormat.visitors.SectionVisitor;
-import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor;
-import one.util.streamex.StreamEx;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+abstract class LessonContainer : ItemContainer() {
+  open val lessons: List<Lesson>
+    get() = items.filterIsInstance<Lesson>()
 
-public abstract class LessonContainer extends ItemContainer {
-  @Nullable
-  public Lesson getLesson(@NotNull final String name) {
-    return getLesson(lesson -> name.equals(lesson.getName()));
+  fun getLesson(name: String): Lesson? {
+    return getLesson { it.name == name }
   }
 
-  @Nullable
-  public Lesson getLesson(int id) {
-    return getLesson(lesson -> id == lesson.getId());
+  fun getLesson(id: Int): Lesson? {
+    return getLesson { id == it.id }
   }
 
-  @Nullable
-  public Lesson getLesson(Predicate<Lesson> isLesson) {
-    return (Lesson)StreamEx.of(getItems()).filter(Lesson.class::isInstance)
-      .findFirst(item -> isLesson.test((Lesson)item)).orElse(null);
+  fun getLesson(check: (Lesson) -> Boolean): Lesson? {
+    return lessons.firstOrNull { check(it) }
   }
 
-  @NotNull
-  public List<Lesson> getLessons() {
-    return getItems().stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
-  }
-
-  public void addLessons(@NotNull final List<Lesson> lessons) {
-    for (Lesson lesson : lessons) {
-      addItem(lesson);
+  fun addLessons(lessons: List<Lesson>) {
+    for (lesson in lessons) {
+      addItem(lesson)
     }
   }
 
-  public void addLesson(@NotNull final Lesson lesson) {
-    addItem(lesson);
+  fun addLesson(lesson: Lesson) {
+    addItem(lesson)
   }
 
-  public void removeLesson(@NotNull Lesson lesson) {
-    removeItem(lesson);
+  fun removeLesson(lesson: Lesson) {
+    removeItem(lesson)
   }
 
-  public void visitLessons(@NotNull LessonVisitor visitor) {
-    for (StudyItem item : getItems()) {
-      if (item instanceof Lesson) {
-        visitor.visit((Lesson)item);
+  fun visitLessons(visit: (Lesson) -> Unit) {
+    for (item in items) {
+      if (item is Lesson) {
+        visit(item)
       }
-      else if (item instanceof Section) {
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          visitor.visit(lesson);
+      else if (item is Section) {
+        for (lesson in item.lessons) {
+          visit(lesson)
         }
       }
     }
   }
 
-  public void visitSections(@NotNull SectionVisitor visitor) {
-    for (StudyItem item : getItems()) {
-      if (item instanceof Section) {
-        visitor.visit((Section)item);
-      }
-    }
+  fun visitSections(visit: (Section) -> Unit) {
+    items.filterIsInstance<Section>().forEach(visit)
   }
 
-  public void visitTasks(@NotNull TaskVisitor visitor) {
-    visitLessons(lesson -> lesson.visitTasks(visitor));
+  fun visitTasks(visitor: TaskVisitor) {
+    visitLessons { it.visitTasks(visitor) }
   }
 }

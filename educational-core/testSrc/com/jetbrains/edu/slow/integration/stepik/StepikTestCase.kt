@@ -50,7 +50,7 @@ abstract class StepikTestCase : EduTestCase() {
     mockStepikConnector.setHelperBaseUrl()
     val course = StudyTaskManager.getInstance(project).course
     if (course is EduCourse && course.isStepikRemote) {
-      removeUploadedCourse(course.id, course.getLessons().map { it.id })
+      removeUploadedCourse(course.id, course.lessons.map { it.id })
     }
     super.tearDown()
   }

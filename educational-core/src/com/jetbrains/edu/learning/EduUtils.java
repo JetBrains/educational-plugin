@@ -310,6 +310,7 @@ public class EduUtils {
       if (task != null) {
         taskRef.set(task);
       }
+      return null;
     });
     return taskRef.get();
   }
