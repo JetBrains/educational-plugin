@@ -149,7 +149,7 @@ private class LanguageConverter : StdConverter<String, String>() {
 
 private class CourseTypeSerializationConverter : StdConverter<String, String?>() {
   override fun convert(courseType: String): String? {
-    return if (courseType == PYCHARM) null else courseType.decapitalize()
+    return if (courseType == PYCHARM) null else courseType.replaceFirstChar { it.lowercaseChar() }
   }
 }
 
@@ -207,7 +207,7 @@ private class CourseBuilder(
   @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
   @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?,
-  @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList()
+  @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {

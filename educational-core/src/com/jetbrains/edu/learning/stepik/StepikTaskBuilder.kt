@@ -279,12 +279,12 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   private fun unsupportedTask(@NonNls name: String): Task {
     val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = "${name.toLowerCase().capitalize()} tasks are not supported yet. <br>" +
+    task.descriptionText = "${name.lowercase().replaceFirstChar { it.titlecaseChar() }} tasks are not supported yet. <br>" +
                            "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
     task.descriptionFormat = DescriptionFormat.HTML
     task.postSubmissionOnOpen = false
 
-    initTaskFiles(task, "This is a ${name.toLowerCase()} task. You can use this editor as a playground\n")
+    initTaskFiles(task, "This is a ${name.lowercase()} task. You can use this editor as a playground\n")
     return task
   }
 
@@ -312,7 +312,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private fun initTaskFiles(
     task: Task,
     comment: String = "You can experiment here, it won’t be checked\n",
-    codeTemplate: String? = null
+    codeTemplate: String? = null,
   ) {
     val options = step.options
     if (options is PyCharmStepOptions) {

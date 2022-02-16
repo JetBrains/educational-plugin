@@ -50,7 +50,7 @@ import javax.swing.text.PlainDocument
 class CCNewCoursePanel(
   private val parentDisposable: Disposable,
   course: Course? = null,
-  courseProducer: () -> Course = ::EduCourse
+  courseProducer: () -> Course = ::EduCourse,
 ) : JPanel() {
   private val courseDataComboBox: ComboBox<CourseData> = ComboBox()
   private val titleField: CourseTitleField = CourseTitleField()
@@ -228,7 +228,7 @@ class CCNewCoursePanel(
     val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
     languageSettingsDisposable = settingsDisposable
 
-    val courseName = "${courseData.displayName.capitalize().replace(File.separatorChar, '_')} ${
+    val courseName = "${courseData.displayName.replaceFirstChar { it.titlecaseChar() }.replace(File.separatorChar, '_')} ${
       EduCoreBundle.message("item.course.title")
     }"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
@@ -276,7 +276,7 @@ class CCNewCoursePanel(
 
   private fun obtainCourseData(
     extension: EducationalExtensionPoint<EduConfigurator<*>>,
-    language: Language? = getLanguageById(extension.language)
+    language: Language? = getLanguageById(extension.language),
   ): CourseData? {
     if (language == null) return null
     val environment = extension.environment
@@ -313,7 +313,7 @@ class CCNewCoursePanel(
     val courseType: String,
     val environment: String,
     val displayName: String,
-    val icon: Icon?
+    val icon: Icon?,
   )
 
   private class CourseTitleDocument : PlainDocument() {
