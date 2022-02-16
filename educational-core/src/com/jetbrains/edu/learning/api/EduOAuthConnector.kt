@@ -234,6 +234,11 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     authorizationMessageBus.subscribe(authorizationTopic, eduLogInListener)
   }
 
+  fun subscribe(eduLogInListener: EduLogInListener, parentDisposable: Disposable) {
+    val messageBus = ApplicationManager.getApplication().messageBus.connect(parentDisposable)
+    messageBus.subscribe(authorizationTopic, eduLogInListener)
+  }
+
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.setUser
