@@ -31,7 +31,7 @@ public class CheckiOCourse extends Course {
 
   @NotNull
   public List<CheckiOStation> getStations() {
-    return items.stream().filter(CheckiOStation.class::isInstance).map(CheckiOStation.class::cast).collect(Collectors.toList());
+    return getItems().stream().filter(CheckiOStation.class::isInstance).map(CheckiOStation.class::cast).collect(Collectors.toList());
   }
 
   @Override

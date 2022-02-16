@@ -1,40 +1,33 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduUtils;
-import one.util.streamex.StreamEx;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jetbrains.edu.learning.EduUtils
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+abstract class ItemContainer : StudyItem() {
+  var items: List<StudyItem>
+    get() = _items
+    set(value) {
+      _items = value.toMutableList()
+    }
 
-public abstract class ItemContainer extends StudyItem {
-  protected List<StudyItem> items = new ArrayList<>();
+  private var _items = mutableListOf<StudyItem>()
 
-  @Nullable
-  public StudyItem getItem(@NotNull final String name) {
-    return StreamEx.of(items).findFirst(item -> item.getName().equals(name)).orElse(null);
+  fun getItem(name: String): StudyItem? {
+    return items.firstOrNull { it.name == name }
   }
 
-  @NotNull
-  public List<StudyItem> getItems() {
-    return Collections.unmodifiableList(items);
+  fun addItem(item: StudyItem) {
+    _items.add(item)
   }
 
-  public void setItems(List<StudyItem> items) {
-    this.items = items;
+  fun addItem(index: Int, item: StudyItem) {
+    _items.add(index, item)
   }
 
-  public void addItem(StudyItem item) {
-    items.add(item);
+  fun removeItem(item: StudyItem) {
+    _items.remove(item)
   }
 
-  public void removeItem(StudyItem item) {
-    items.remove(item);
-  }
-
-  public void sortItems() {
-    Collections.sort(items, EduUtils.INDEX_COMPARATOR);
+  open fun sortItems() {
+    _items.sortWith(EduUtils.INDEX_COMPARATOR)
   }
 }

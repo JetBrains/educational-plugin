@@ -91,7 +91,7 @@ object YamlDeserializer {
 
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(
     project: Project,
-    contentList: MutableList<T>,
+    contentList: List<T>,
     mapper: ObjectMapper = MAPPER,
   ): List<T> {
     val content = mutableListOf<T>()

@@ -12,7 +12,6 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import org.apache.commons.lang.LocaleUtils
@@ -121,16 +120,6 @@ class CourseMetaInfo() : Course() {
   @Transient
   override fun setIndex(index: Int) {
     super.setIndex(index)
-  }
-
-  @Transient
-  override fun getItems(): List<StudyItem> {
-    return super.getItems()
-  }
-
-  @Transient
-  override fun setItems(items: List<StudyItem>) {
-    super.setItems(items)
   }
 
   override fun getId(): Int {

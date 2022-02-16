@@ -19,7 +19,7 @@ public class Section extends LessonContainer {
     myCourse = course;
     int index = 1;
 
-    for (StudyItem lesson : items) {
+    for (StudyItem lesson : getItems()) {
       if (lesson instanceof Lesson) {
         lesson.setIndex(index);
         index++;

@@ -1,4 +1,5 @@
 @file:JvmName("LocalEduCourseMixins")
+@file:Suppress("unused")
 
 package com.jetbrains.edu.coursecreator.actions.mixins
 
@@ -84,7 +85,6 @@ import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
 
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
                    ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
@@ -117,7 +117,7 @@ abstract class LocalEduCourseMixin {
   }
 
   @JsonProperty(ITEMS)
-  private lateinit var items: List<StudyItem>
+  private lateinit var _items: List<StudyItem>
 
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -136,7 +136,6 @@ abstract class LocalEduCourseMixin {
   private lateinit var contentTags: List<String>
 }
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 abstract class CourseraCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
@@ -174,13 +173,13 @@ abstract class PluginInfoMixin : PluginInfo() {
   override var maxVersion: String? = null
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonPropertyOrder(TITLE, TAGS, ITEMS, TYPE)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
 
   @JsonProperty(ITEMS)
-  private lateinit var items: List<StudyItem>
+  private lateinit var _items: List<StudyItem>
 
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -192,13 +191,12 @@ abstract class LocalSectionMixin {
   private lateinit var contentTags: List<String>
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var myName: String
 
   @JsonProperty(TASK_LIST)
-  private lateinit var items: List<StudyItem>
+  private lateinit var _items: List<StudyItem>
 
   @JsonProperty(TYPE)
   fun getItemType(): String {
@@ -210,14 +208,12 @@ abstract class LocalLessonMixin {
   private lateinit var contentTags: List<String>
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class FrameworkLessonMixin : LocalLessonMixin() {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_TEMPLATE_BASED)
   private var isTemplateBased: Boolean = true
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
@@ -253,7 +249,6 @@ abstract class LocalTaskMixin {
   private lateinit var contentTags: List<String>
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty
@@ -275,7 +270,6 @@ abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
   private lateinit var quizHeader: String
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class ChoiceOptionLocalMixin {
   @JsonProperty
   private var text: String = ""
@@ -284,7 +278,6 @@ abstract class ChoiceOptionLocalMixin {
   private var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 @JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
 abstract class TaskFileMixin {
   @JsonProperty(NAME)
@@ -305,7 +298,6 @@ abstract class TaskFileMixin {
   var myEditable: Boolean = true
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
@@ -322,7 +314,6 @@ abstract class AnswerPlaceholderMixin {
   private lateinit var myPlaceholderText: String
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
   @JsonProperty(POSSIBLE_ANSWER)
@@ -330,7 +321,6 @@ abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
   private lateinit var myPossibleAnswer: String
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 @JsonInclude(JsonInclude.Include.NON_NULL)
 abstract class AnswerPlaceholderDependencyMixin {
   @JsonProperty("section")
@@ -354,7 +344,6 @@ abstract class AnswerPlaceholderDependencyMixin {
 
 class VersionPropertyWriter : VirtualBeanPropertyWriter {
 
-  @Suppress("unused")
   constructor()
 
   constructor(propDef: BeanPropertyDefinition, contextAnnotations: Annotations, declaredType: JavaType) : super(propDef,

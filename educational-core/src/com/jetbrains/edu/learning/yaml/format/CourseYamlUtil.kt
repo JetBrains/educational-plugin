@@ -99,7 +99,7 @@ abstract class CourseYamlMixin {
 
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   @JsonProperty(CONTENT)
-  private lateinit var items: List<StudyItem>
+  private lateinit var _items: List<StudyItem>
 
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -270,7 +270,7 @@ private class CourseBuilder(
           programmingLanguage = "$programmingLanguage $programmingLanguageVersion"
         }
       }
-      val items = content.mapIndexed { index, title ->
+      val newItems = content.mapIndexed { index, title ->
         if (title == null) {
           formatError(unnamedItemAtMessage(index + 1))
         }
@@ -278,7 +278,7 @@ private class CourseBuilder(
         titledStudyItem.index = index + 1
         titledStudyItem
       }
-      setItems(items)
+      items = newItems
     }
 
     val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language } ?: formatError(

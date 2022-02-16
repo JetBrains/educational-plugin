@@ -1,4 +1,5 @@
 @file:JvmName("RemoteEduCourseMixins")
+@file:Suppress("unused")
 
 package com.jetbrains.edu.coursecreator.actions.mixins
 
@@ -31,6 +32,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_H
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VENDOR
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
@@ -50,7 +52,6 @@ import java.util.*
  * and wait for it to be accepted and deployed.
  */
 
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
                    PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ID, UPDATE_DATE,
@@ -84,7 +85,6 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   private lateinit var feedbackLink: String
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteFrameworkLessonMixin : RemoteLessonMixin() {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(JsonMixinNames.IS_TEMPLATE_BASED)
@@ -92,7 +92,6 @@ abstract class RemoteFrameworkLessonMixin : RemoteLessonMixin() {
 }
 
 @JsonPropertyOrder(ID)
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteLessonMixin : LocalLessonMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -100,15 +99,13 @@ abstract class RemoteLessonMixin : LocalLessonMixin() {
 }
 
 @JsonPropertyOrder(ID)
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
   private var myId: Int = 0
 }
 
-@JsonPropertyOrder(ID)
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonPropertyOrder(ID, TITLE, TAGS, ITEMS, TYPE)
 abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -117,7 +114,6 @@ abstract class RemoteSectionMixin : LocalSectionMixin() {
 
 private class PluginVersionPropertyWriter : VirtualBeanPropertyWriter {
 
-  @Suppress("unused")
   constructor()
 
   constructor(propDef: BeanPropertyDefinition, contextAnnotations: Annotations, declaredType: JavaType) : super(propDef,

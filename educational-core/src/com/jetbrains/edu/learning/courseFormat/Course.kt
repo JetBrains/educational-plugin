@@ -95,11 +95,11 @@ abstract class Course : LessonContainer() {
     get() = items.filterIsInstance<Section>()
 
   fun addSection(section: Section) {
-    items.add(section)
+    addItem(section)
   }
 
   fun removeSection(toRemove: Section) {
-    items.remove(toRemove)
+    removeItem(toRemove)
   }
 
   fun getSection(name: String): Section? {
@@ -176,10 +176,6 @@ abstract class Course : LessonContainer() {
 
   open val isStepikRemote: Boolean
     get() = false
-
-  fun addItem(item: StudyItem, index: Int) {
-    items.add(index, item)
-  }
 
   fun incrementMarketplaceCourseVersion(remoteCourseVersion: Int) {
     marketplaceCourseVersion = remoteCourseVersion + 1

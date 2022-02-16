@@ -30,7 +30,7 @@ abstract class SectionYamlMixin {
 
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)
-  private lateinit var items: List<StudyItem>
+  private lateinit var _items: List<StudyItem>
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)

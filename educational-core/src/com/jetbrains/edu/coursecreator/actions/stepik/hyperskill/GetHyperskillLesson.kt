@@ -111,7 +111,7 @@ class GetHyperskillLesson : DumbAwareAction(
       }
 
       val hyperskillLesson = FrameworkLesson(lesson)
-      course.addItem(hyperskillLesson, 0)
+      course.addItem(0, hyperskillLesson)
       loadAndFillAdditionalCourseInfo(course)
       loadAndFillLessonAdditionalInfo(lesson, course)
 

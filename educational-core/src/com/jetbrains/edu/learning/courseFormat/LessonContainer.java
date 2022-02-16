@@ -24,29 +24,31 @@ public abstract class LessonContainer extends ItemContainer {
 
   @Nullable
   public Lesson getLesson(Predicate<Lesson> isLesson) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
+    return (Lesson)StreamEx.of(getItems()).filter(Lesson.class::isInstance)
       .findFirst(item -> isLesson.test((Lesson)item)).orElse(null);
   }
 
   @NotNull
   public List<Lesson> getLessons() {
-    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
+    return getItems().stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
   }
 
   public void addLessons(@NotNull final List<Lesson> lessons) {
-    items.addAll(lessons);
+    for (Lesson lesson : lessons) {
+      addItem(lesson);
+    }
   }
 
   public void addLesson(@NotNull final Lesson lesson) {
-    items.add(lesson);
+    addItem(lesson);
   }
 
   public void removeLesson(@NotNull Lesson lesson) {
-    items.remove(lesson);
+    removeItem(lesson);
   }
 
   public void visitLessons(@NotNull LessonVisitor visitor) {
-    for (StudyItem item : items) {
+    for (StudyItem item : getItems()) {
       if (item instanceof Lesson) {
         visitor.visit((Lesson)item);
       }
@@ -59,7 +61,7 @@ public abstract class LessonContainer extends ItemContainer {
   }
 
   public void visitSections(@NotNull SectionVisitor visitor) {
-    for (StudyItem item : items) {
+    for (StudyItem item : getItems()) {
       if (item instanceof Section) {
         visitor.visit((Section)item);
       }

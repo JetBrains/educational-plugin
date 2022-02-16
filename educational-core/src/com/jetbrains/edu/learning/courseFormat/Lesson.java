@@ -41,7 +41,7 @@ public class Lesson extends ItemContainer {
    * Returns tasks copy. Dedicated methods should be used to modify list of lesson items ([addTask], [removeTask])
    */
   public List<Task> getTaskList() {
-    return items.stream().filter(Task.class::isInstance).map(Task.class::cast).collect(Collectors.toList());
+    return getItems().stream().filter(Task.class::isInstance).map(Task.class::cast).collect(Collectors.toList());
   }
 
   @NotNull
@@ -65,15 +65,15 @@ public class Lesson extends ItemContainer {
   }
 
   public void addTask(@NotNull final Task task) {
-    items.add(task);
+    addItem(task);
   }
 
   public void addTask(int index, @NotNull final Task task) {
-    items.add(index, task);
+    addItem(index, task);
   }
 
   public void removeTask(@NotNull final Task task) {
-    items.remove(task);
+    removeItem(task);
   }
 
   @Nullable
