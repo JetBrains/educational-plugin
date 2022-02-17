@@ -103,7 +103,9 @@ abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
   override fun apply() {
     if (isModified) {
       initialAccount = lastSavedAccount
-      setCurrentAccount(initialAccount)
+      if (getCurrentAccount() != initialAccount) {
+        setCurrentAccount(initialAccount)
+      }
       updateLoginLabels()
     }
   }
