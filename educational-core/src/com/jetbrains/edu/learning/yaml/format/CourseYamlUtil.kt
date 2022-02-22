@@ -82,7 +82,7 @@ abstract class CourseYamlMixin {
 
   @JsonSerialize(converter = ProgrammingLanguageConverter::class)
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  private lateinit var myProgrammingLanguage: String
+  lateinit var language: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
   fun getLanguageVersion(): String? {
@@ -91,11 +91,11 @@ abstract class CourseYamlMixin {
 
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
-  private lateinit var myLanguageCode: String
+  private lateinit var languageCode: String
 
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private lateinit var myEnvironment: String
+  private lateinit var environment: String
 
   @JsonSerialize(contentConverter = StudyItemConverter::class)
   @JsonProperty(CONTENT)
@@ -107,7 +107,7 @@ abstract class CourseYamlMixin {
 
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private val myVendor: Vendor? = null
+  private val vendor: Vendor? = null
 
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -115,7 +115,7 @@ abstract class CourseYamlMixin {
 
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  protected open lateinit var myFeedbackLink: String
+  protected open lateinit var feedbackLink: String
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -129,7 +129,7 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   private var submitManually = false
 
   @JsonIgnore
-  override lateinit var myFeedbackLink: String
+  override lateinit var feedbackLink: String
 
   @JsonIgnore
   override lateinit var contentTags: List<String>
@@ -167,7 +167,7 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myMarketplaceCourseVersion: Int? = 0
+  private var marketplaceCourseVersion: Int? = 0
 }
 
 /**

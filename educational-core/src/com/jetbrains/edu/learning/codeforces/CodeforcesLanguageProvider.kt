@@ -50,7 +50,7 @@ interface CodeforcesLanguageProvider {
      * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguageID]
      * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguageVersion]
      */
-    fun getLanguageIdAndVersion(codeforcesLanguage: String): String? {
+    fun getLanguageIdAndVersion(codeforcesLanguage: String): String {
       EP_NAME.extensions.forEach {
         if (codeforcesLanguage in it.codeforcesLanguageNamings) {
           val languageId = it.languageId
@@ -62,7 +62,7 @@ interface CodeforcesLanguageProvider {
           else languageId
         }
       }
-      return null
+      error("Failed to get language and id from codeForces $codeforcesLanguage")
     }
 
     fun generateTaskFiles(task: Task): List<TaskFile>? =

@@ -124,7 +124,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.lessons[1], localCourse.lessons[0])
     localCourse.init(null, null, false)
-    val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons)
+    val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -168,7 +168,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.sections[1], localCourse.sections[0])
     localCourse.init(null, null, false)
-    val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections)
+    val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections.toMutableList())
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
@@ -209,7 +209,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val expectedInfo = StepikChangesInfo(newTasks = mutableListOf(localCourse.lessons.single().taskList[1]),
-                                         lessonAdditionalInfosToUpdate = localCourse.lessons)
+                                         lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -308,7 +308,7 @@ class StepikCompareCourseTest : EduTestCase() {
     lesson.items = listOf<StudyItem>(newTask)
     localCourse.init(null, null, false)
 
-    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons, tasksToUpdate = lesson.taskList)
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList(), tasksToUpdate = lesson.taskList)
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -351,7 +351,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }
     changedTask.addTaskFile(newFileName)
 
-    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask), lessonAdditionalInfosToUpdate = localCourse.lessons)
+    val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask), lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 

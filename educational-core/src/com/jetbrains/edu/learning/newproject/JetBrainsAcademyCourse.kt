@@ -28,7 +28,8 @@ class JetBrainsAcademyCourse : Course() {
    """.trimIndent()
   }
 
-  override fun getTags(): MutableList<Tag> {
+  override val tags: List<Tag>
+    get() {
     val tags = mutableListOf<Tag>()
 
     tags.addAll(supportedLanguages.map { ProgrammingLanguageTag(it) })
@@ -42,7 +43,8 @@ class JetBrainsAcademyCourse : Course() {
       CourseCompatibilityProviderEP.find(languageId, EduNames.DEFAULT_ENVIRONMENT)?.technologyName
     }
 
-  override fun isViewAsEducatorEnabled(): Boolean = false
+  override val isViewAsEducatorEnabled: Boolean
+    get() = false
 
   companion object {
     private val FEATURED_LANGUAGES = listOf(

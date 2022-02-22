@@ -8,6 +8,7 @@ class CourseraCourse : Course() {
   var submitManually = false
 
   override fun getItemType(): String = CourseraNames.COURSE_TYPE
-  override fun getCheckAction(): CheckAction = CheckAction(if (submitManually) EduCoreBundle.lazyMessage("action.coursera.run.tests.text")
-                                                           else EduCoreBundle.lazyMessage("action.coursera.submit.text"))
+  override val checkAction: CheckAction
+    get() = CheckAction(if (submitManually) EduCoreBundle.lazyMessage("action.coursera.run.tests.text")
+                        else EduCoreBundle.lazyMessage("action.coursera.submit.text"))
 }

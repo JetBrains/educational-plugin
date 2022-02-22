@@ -1,402 +1,206 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.lang.Language;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.EducationalCoreIcons;
-import com.jetbrains.edu.learning.EduLanguage;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.UserInfo;
-import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.plugins.PluginInfo;
-import one.util.streamex.StreamEx;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.UserInfo
+import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
+import com.jetbrains.edu.learning.courseFormat.ext.technologyName
+import com.jetbrains.edu.learning.plugins.PluginInfo
+import java.util.*
+import javax.swing.Icon
 
 /**
  * To introduce new course it's required to:
  * - Extend Course class
- * - Update CourseBuilder#build() in {@link com.jetbrains.edu.learning.yaml.format.CourseYamlUtil} to handle course loading from YAML
- * - Override {@link Course#getItemType}, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
+ * - Update CourseBuilder#build() in [com.jetbrains.edu.learning.yaml.format.CourseYamlUtil] to handle course loading from YAML
+ * - Override [Course.getItemType], that's how we find appropriate [com.jetbrains.edu.learning.configuration.EduConfigurator]
  */
-public abstract class Course extends LessonContainer {
-  transient private List<UserInfo> authors = Collections.emptyList();
-  private String description;
+abstract class Course : LessonContainer() {
+  var description = ""
+  var environment = EduNames.DEFAULT_ENVIRONMENT
+  var courseMode = EduNames.STUDY //this field is used to distinguish study and course creator modes
+  var solutionsHidden = false
 
-  private String myProgrammingLanguage = EduNames.PYTHON; // language and optional version in form "Language Version" (as "Python 3.7")
-  private String myLanguageCode = "en";
+  @Transient
+  var visibility: CourseVisibility = CourseVisibility.LocalVisibility
 
-  @NotNull protected String myEnvironment = EduNames.DEFAULT_ENVIRONMENT;
-  private String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
+  @Transient
+  var additionalFiles = listOf<TaskFile>()
+    set(value) {
+      field = value.toList()
+    }
 
-  private boolean solutionsHidden;
+  @Transient
+  var pluginDependencies = emptyList<PluginInfo>()
 
-  transient protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
+  open var languageCode = "en"
 
   // Marketplace:
-  private boolean isMarketplace = false;
-  @Nullable private Vendor myVendor;
-  private int myMarketplaceCourseVersion = 0;
-  @Nullable private String organization;
-  private boolean isMarketplacePrivate = false;
-  private Date myCreateDate = new Date(0);
-  @Nullable private String myFeedbackLink;
-  @Nullable private String myLicense;
-
-  transient private final Set<String> nonEditableFiles = new HashSet<>();
-
-  transient protected List<TaskFile> additionalFiles = new ArrayList<>();
-
-  transient private List<PluginInfo> myPluginDependencies = new ArrayList<>();
-
-  public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
-    for (int i = 0; i < items.size(); i++) {
-      StudyItem item = items.get(i);
-      item.setIndex(i + 1);
-      item.init(this, this, isRestarted);
-    }
-  }
-
-  public List<TaskFile> getAdditionalFiles() {
-    return additionalFiles;
-  }
-
-  public void setAdditionalFiles(@NotNull List<TaskFile> additionalFiles) {
-    this.additionalFiles = additionalFiles;
-  }
-
-  /**
-   * Returns lessons copy.
-   */
-  @NotNull
-  @Override
-  public List<Lesson> getLessons() {
-    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
-  }
-
-  public void addSection(@NotNull Section section) {
-    items.add(section);
-  }
-
-  @NotNull
-  public List<Section> getSections() {
-    return items.stream().filter(Section.class::isInstance).map(Section.class::cast).collect(Collectors.toList());
-  }
-
-  public void removeSection(@NotNull final Section toRemove) {
-    items.remove(toRemove);
-  }
-
-  @Nullable
-  public Lesson getLesson(@Nullable final String sectionName, @NotNull final String lessonName) {
-    if (sectionName != null) {
-      final Section section = getSection(sectionName);
-      if (section != null) {
-        return section.getLesson(lessonName);
-      }
-    }
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(lesson -> lessonName.equals(lesson.getName())).orElse(null);
-  }
-
-  @Nullable
-  public Section getSection(@NotNull final String name) {
-    return getSection(section -> name.equals(section.getName()));
-  }
-
-  @Nullable
-  public Section getSection(Predicate<Section> isSection) {
-    return (Section)items.stream().filter(Section.class::isInstance).
-      filter(item -> isSection.test((Section)item)).findFirst().orElse(null);
-  }
-
-  @NotNull
-  public List<UserInfo> getAuthors() {
-    return Collections.unmodifiableList(authors);
-  }
-
-  @NotNull
-  public String getEnvironment() {
-    return myEnvironment;
-  }
-
-  public void setEnvironment(@NotNull String environment) {
-    myEnvironment = environment;
-  }
-
-  @Override
-  public int getId() {
-    return 0;
-  }
-
-  @Override
-  @NotNull
-  public VirtualFile getDir(@NotNull final VirtualFile baseDir) {
-    return baseDir;
-  }
-
-  @NotNull
-  @Override
-  public Course getCourse() {
-    return this;
-  }
-
-  @NotNull
-  @Override
-  public StudyItem getParent() {
-    return this;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
+  var isMarketplace = false
+  var vendor: Vendor? = null
+  var marketplaceCourseVersion = 0
+  var organization: String? = null
+  var isMarketplacePrivate = false
+  var createDate = Date(0)
+  var feedbackLink: String? = null
+  var license: String? = null
 
   /**
    * This method is needed to serialize language and its version as one property
-   * Consider using {@link #getEduLanguage()} {@link #getLanguageID()} and {@link #getLanguageVersion()} methods instead
+   * Consider using [.getLanguageID] and [.getLanguageVersion] methods instead
    */
-  public String getLanguage() {
-    return myProgrammingLanguage;
-  }
+  open var language = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
 
-  public void setLanguage(@NotNull final String language) {
-    myProgrammingLanguage = language;
-  }
+  val languageById: Language?
+    get() = Language.findLanguageByID(languageID)
 
-  @NotNull
-  private EduLanguage getEduLanguage() {
-    return EduLanguage.get(myProgrammingLanguage);
-  }
+  val languageID: String
+    get() = language.split(" ")[0]
 
-  @NotNull
-  public String getLanguageID() {
-    return getEduLanguage().getId();
-  }
+  open val languageVersion: String?
+    get() {
+      if (!language.contains(" ")) {
+        return null
+      }
+      val languageVersionStartIndex = language.indexOf(" ")
+      return if (languageVersionStartIndex == language.length - 1) {
+        null
+      }
+      else language.substring(languageVersionStartIndex + 1)
+    }
 
-  @Nullable
-  public String getLanguageVersion() {
-    final String version = getEduLanguage().getVersion();
-    return (!version.isEmpty()) ? version : null;
-  }
+  @Transient
+  private val nonEditableFiles = mutableSetOf<String>()
 
-  @Nullable
-  public Language getLanguageById() {
-    return getEduLanguage().getLanguage();
-  }
+  @Transient
+  var authors = listOf<UserInfo>()
+    set(value) {
+      field = value.toList()
+    }
 
-  public boolean getSolutionsHidden() {
-    return solutionsHidden;
-  }
-
-  public void setSolutionsHidden(boolean solutionsHidden) {
-    this.solutionsHidden = solutionsHidden;
-  }
-
-  public void setAuthors(List<UserInfo> authors) {
-    this.authors = Collections.unmodifiableList(new ArrayList<>(authors));
-  }
-
-  @NotNull
-  public String getItemType() {
-    return EduNames.PYCHARM;  //"PyCharm" is used here for historical reasons
-  }
-
-  @NotNull
-  public CheckAction getCheckAction() {
-    return new CheckAction();
-  }
-
-  public String getCourseMode() {
-    return courseMode;
-  }
-
-  public void setCourseMode(String courseMode) {
-    this.courseMode = courseMode;
-  }
-
-  @NotNull
-  public Course copy() {
-    return CopyUtilKt.copyAs(this, getClass());
-  }
-
-  public boolean isStudy() {
-    return EduNames.STUDY.equals(courseMode);
-  }
-
-  @Override
-  public void sortItems() {
-    super.sortItems();
-    for (Section section : getSections()) {
-      section.sortItems();
+  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+    for ((i, item) in items.withIndex()) {
+      item.index = i + 1
+      item.init(this, this, isRestarted)
     }
   }
 
-  @Override
-  public String toString() {
-    return getName();
-  }
+  fun getLesson(sectionName: String?, lessonName: String): Lesson? {
+    if (sectionName == null) return lessons.firstOrNull { lessonName == it.name }
 
-  @NotNull
-  public List<String> getAuthorFullNames() {
-    if (organization != null) return Collections.singletonList(organization);
-    return authors.stream()
-      .map(user -> user.getFullName())
-      .collect(Collectors.toList());
-  }
-
-  @NotNull
-  public List<Tag> getTags() {
-    List<Tag> tags = new ArrayList<>();
-
-    String technologyName = CourseExt.getTechnologyName(this);
-    if (technologyName != null) {
-      tags.add(new ProgrammingLanguageTag(technologyName));
+    val section = getSection(sectionName)
+    if (section != null) {
+      return section.getLesson(lessonName)
     }
-    tags.add(new HumanLanguageTag(getHumanLanguage()));
-    return tags;
+    return lessons.firstOrNull { lessonName == it.name }
   }
 
-  public String getHumanLanguage() {
-    Locale loc = new Locale(myLanguageCode);
-    return loc.getDisplayName();
+  val sections: List<Section>
+    get() = items.filterIsInstance(Section::class.java)
+
+  fun addSection(section: Section) {
+    items.add(section)
   }
 
-  public String getLanguageCode() {
-    return myLanguageCode;
+  fun removeSection(toRemove: Section) {
+    items.remove(toRemove)
   }
 
-  public void setLanguageCode(String languageCode) {
-    myLanguageCode = languageCode;
+  fun getSection(name: String): Section? {
+    return getSection { name == it.name }
   }
 
-  public CourseVisibility getVisibility() {
-    return myVisibility;
+  fun getSection(isSection: (Section) -> Boolean): Section? {
+    return items.filterIsInstance(Section::class.java).firstOrNull { isSection(it) }
   }
 
-  public void setVisibility(CourseVisibility visibility) {
-    myVisibility = visibility;
+  override fun getId(): Int {
+    return 0
   }
 
-  @NotNull
-  public CourseCompatibility getCompatibility() {
-    return CourseCompatibility.forCourse(this);
+  override fun getDir(baseDir: VirtualFile): VirtualFile {
+    return baseDir
   }
 
-  public void addItem(@NotNull StudyItem item, int index) {
-    items.add(index, item);
+  override fun getCourse(): Course {
+    return this
   }
 
-  @NotNull
-  public Icon getIcon() {
-    return EducationalCoreIcons.CourseTree;
+  override fun getParent(): StudyItem {
+    return this
   }
 
-  public boolean isViewAsEducatorEnabled() {
-    return ApplicationManager.getApplication().isInternal();
+  override fun getItemType(): String {
+    return EduNames.PYCHARM //"PyCharm" is used here for historical reasons
   }
 
-  @Nullable
-  public Vendor getVendor() {
-    return myVendor;
+  open val checkAction: CheckAction
+    get() = CheckAction()
+
+  fun copy(): Course {
+    return copyAs(javaClass)
   }
 
-  public void setVendor(@Nullable Vendor vendor) {
-    myVendor = vendor;
+  val isStudy: Boolean
+    get() = EduNames.STUDY == courseMode
+
+  override fun sortItems() {
+    super.sortItems()
+    sections.forEach { it.sortItems() }
   }
 
-  public boolean isStepikRemote() {
-    return false;
+  override fun toString(): String {
+    return name
   }
 
-  public boolean isMarketplace() {
-    return isMarketplace;
-  }
-
-  public void setMarketplace(boolean isMarketplace) {
-    this.isMarketplace = isMarketplace;
-  }
-
-  public int getMarketplaceCourseVersion() {
-    return myMarketplaceCourseVersion;
-  }
-
-  public void setMarketplaceCourseVersion(int marketplaceCourseVersion) {
-    myMarketplaceCourseVersion = marketplaceCourseVersion;
-  }
-
-  @Nullable
-  public String getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(@Nullable String organization) {
-    this.organization = organization;
-  }
-
-  public void incrementMarketplaceCourseVersion(int remoteCourseVersion) {
-    myMarketplaceCourseVersion = ++remoteCourseVersion;
-  }
-
-  public boolean isMarketplacePrivate() {
-    return isMarketplacePrivate;
-  }
-
-  public void setMarketplacePrivate(boolean isCoursePrivate) {
-    isMarketplacePrivate = isCoursePrivate;
-  }
-
-  public Date getCreateDate() {
-    return myCreateDate;
-  }
-
-  public void setCreateDate(Date createDate) {
-    myCreateDate = createDate;
-  }
-
-  public List<PluginInfo> getPluginDependencies() {
-    return myPluginDependencies;
-  }
-
-  public void setPluginDependencies(List<PluginInfo> pluginDependencies) {
-    myPluginDependencies = pluginDependencies;
-  }
-
-  @Nullable
-  public String getFeedbackLink() {
-    return myFeedbackLink;
-  }
-
-  public void setFeedbackLink(@Nullable String feedbackLink) {
-    myFeedbackLink = feedbackLink;
-  }
-
-  public boolean isEditableFile(String path) {
-    return !nonEditableFiles.contains(path);
-  }
-
-  public void addNonEditableFile(String path) {
-    if (path != null && isStudy()) {
-      nonEditableFiles.add(path);
+  val authorFullNames: List<String>
+    get() {
+      return organization?.let { listOf(it) } ?: authors.map { it.getFullName() }
     }
+
+  open val tags: List<Tag>
+    get() {
+      val tags = mutableListOf<Tag>()
+      technologyName?.let { tags.add(ProgrammingLanguageTag(it)) }
+      tags.add(HumanLanguageTag(humanLanguage))
+      return tags
+    }
+
+  open val humanLanguage: String
+    get() = Locale(languageCode).displayName
+
+  open val compatibility: CourseCompatibility
+    get() = forCourse(this)
+
+  open val icon: Icon
+    get() = EducationalCoreIcons.CourseTree
+
+  open val isViewAsEducatorEnabled: Boolean
+    get() = ApplicationManager.getApplication().isInternal
+
+  open val isStepikRemote: Boolean
+    get() = false
+
+  fun addItem(item: StudyItem, index: Int) {
+    items.add(index, item)
   }
 
-  @Nullable
-  public String getLicense() {
-    return myLicense;
+  fun incrementMarketplaceCourseVersion(remoteCourseVersion: Int) {
+    marketplaceCourseVersion = remoteCourseVersion + 1
   }
 
-  public void setLicense(@Nullable String license) {
-    myLicense = license;
+  fun isEditableFile(path: String): Boolean {
+    return !nonEditableFiles.contains(path)
+  }
+
+  fun addNonEditableFile(path: String?) {
+    if (path != null && isStudy) {
+      nonEditableFiles.add(path)
+    }
   }
 }

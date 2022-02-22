@@ -132,14 +132,14 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertTrue(course.isMarketplace)
   }
 
-  private fun checkAuthorFullNames(expected: List<String>, actual: MutableList<String>) {
+  private fun checkAuthorFullNames(expected: List<String>, actual: List<String>) {
     assertEquals(expected.size, actual.size)
     for (n in expected.indices) {
       assertEquals(expected[n], actual[n])
     }
   }
 
-  private fun checkAuthors(expected: List<String>, actual: MutableList<UserInfo>) {
+  private fun checkAuthors(expected: List<String>, actual: List<UserInfo>) {
     assertEquals(expected.size, actual.size)
     for (n in expected.indices) {
       assertEquals(expected[n], actual[n].getFullName())

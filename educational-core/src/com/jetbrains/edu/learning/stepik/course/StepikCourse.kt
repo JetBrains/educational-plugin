@@ -12,7 +12,8 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  */
 class StepikCourse : EduCourse() {
   override fun getItemType(): String = StepikNames.STEPIK_TYPE
-  override fun isViewAsEducatorEnabled(): Boolean = ApplicationManager.getApplication().isInternal
+  override val isViewAsEducatorEnabled: Boolean
+    get() = ApplicationManager.getApplication().isInternal
 }
 
 fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse {

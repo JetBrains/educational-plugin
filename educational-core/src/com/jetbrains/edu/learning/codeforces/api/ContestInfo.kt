@@ -69,7 +69,8 @@ class ContestInfo : Course() {
     @JsonIgnore
     get() = relativeTimeSeconds.toDuration()
 
-  override fun getCompatibility(): CourseCompatibility = CourseCompatibility.Compatible
+  override val compatibility: CourseCompatibility
+    get() = CourseCompatibility.Compatible
 }
 
 enum class ContestType {

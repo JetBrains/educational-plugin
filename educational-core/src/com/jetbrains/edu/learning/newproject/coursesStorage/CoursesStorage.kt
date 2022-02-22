@@ -85,7 +85,7 @@ class CoursesStorage : SimplePersistentStateComponent<UserCoursesState>(UserCour
 }
 
 @Tag(EduNames.COURSE)
-class CourseMetaInfo(): Course() {
+class CourseMetaInfo() : Course() {
   var type: String = ""
   var location: String = ""
   var tasksTotal: Int = 0
@@ -137,64 +137,59 @@ class CourseMetaInfo(): Course() {
     return myId
   }
 
+  override var language: String
+    @OptionTag(PROGRAMMING_LANGUAGE)
+    get() {
+      if (programmingLanguageVersion != null) {
+        convertProgrammingLanguageVersion()
+      }
+      return super.language
+    }
+    @OptionTag(PROGRAMMING_LANGUAGE)
+    set(value) {
+      super.language = value
+    }
+
+  override val humanLanguage: String
+    get() {
+      try {
+        val locale = Locale.Builder().setLanguageTag(languageCode).build()
+        if (languageCode.length > 3 && !LocaleUtils.isAvailableLocale(locale)) {
+          convertLanguageCode()
+        }
+      }
+      catch (e: IllformedLocaleException) {
+        convertLanguageCode()
+      }
+      return super.humanLanguage
+    }
+
   @OptionTag(HUMAN_LANGUAGE)
-  override fun getLanguageCode(): String {
-    return super.getLanguageCode()
-  }
+  override var languageCode = super.languageCode
 
   private fun convertLanguageCode() {
     val languageCode = Locale.getAvailableLocales().find { it.displayName == this.languageCode }?.toLanguageTag()
     if (languageCode != null) {
-      setLanguageCode(languageCode)
+      this.languageCode = languageCode
     }
     else {
-      Logger.getInstance(this::class.java).warn("Cannot find locale for '${super.getLanguageCode()}'")
+      Logger.getInstance(this::class.java).warn("Cannot find locale for '${super.languageCode}'")
     }
-  }
-
-  override fun getHumanLanguage(): String {
-    try {
-      val locale = Locale.Builder().setLanguageTag(languageCode).build()
-      if (languageCode.length > 3 && !LocaleUtils.isAvailableLocale(locale)) {
-        convertLanguageCode()
-      }
-    }
-    catch (e: IllformedLocaleException) {
-      convertLanguageCode()
-    }
-    return super.getHumanLanguage()
-  }
-
-  @OptionTag(HUMAN_LANGUAGE)
-  override fun setLanguageCode(languageCode: String) {
-    super.setLanguageCode(languageCode)
-  }
-
-  @OptionTag(PROGRAMMING_LANGUAGE)
-  override fun getLanguage(): String {
-    if (programmingLanguageVersion != null) {
-      convertProgrammingLanguageVersion()
-    }
-    return super.getLanguage()
   }
 
   private fun convertProgrammingLanguageVersion() {
-    language = "${super.getLanguage()} $programmingLanguageVersion"
+    language = "${super.language} $programmingLanguageVersion"
     programmingLanguageVersion = null
   }
 
-  override fun getLanguageVersion(): String? {
-    if (programmingLanguageVersion != null) {
-      convertProgrammingLanguageVersion()
+  override val languageVersion: String?
+    get() {
+      if (programmingLanguageVersion != null) {
+        convertProgrammingLanguageVersion()
+      }
+
+      return super.languageVersion
     }
-
-    return super.getLanguageVersion()
-  }
-
-  @OptionTag(PROGRAMMING_LANGUAGE)
-  override fun setLanguage(language: String) {
-    super.setLanguage(language)
-  }
 }
 
 class UserCoursesState : BaseState() {

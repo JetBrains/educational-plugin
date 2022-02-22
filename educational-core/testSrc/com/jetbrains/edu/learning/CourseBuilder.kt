@@ -129,7 +129,14 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     builder.withName(name)
     builder.withText(text)
     builder.buildTaskFile()
-    course.additionalFiles.add(builder.taskFile)
+
+    addAdditionalFile(builder.taskFile)
+  }
+
+  private fun addAdditionalFile(taskFile: TaskFile) {
+    val additionalFiles = course.additionalFiles.toMutableList()
+    additionalFiles.add(taskFile)
+    course.additionalFiles = additionalFiles
   }
 }
 
@@ -529,7 +536,13 @@ class AdditionalFilesBuilder(val course: Course) {
     taskFileBuilder.withText(textBuilder.toString())
     taskFileBuilder.buildTaskFile()
     val taskFile = taskFileBuilder.taskFile
-    course.additionalFiles.add(taskFile)
+    addAdditionalFile(taskFile)
+  }
+
+  private fun addAdditionalFile(taskFile: TaskFile) {
+    val additionalFiles = course.additionalFiles.toMutableList()
+    additionalFiles.add(taskFile)
+    course.additionalFiles = additionalFiles
   }
 }
 

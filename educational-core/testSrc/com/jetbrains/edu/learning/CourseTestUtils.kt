@@ -46,7 +46,7 @@ fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUC
   description = "Test Description"
   this.courseMode = courseMode.toString()
   this.environment = environment
-  language = courseLanguage.id
+  programmingLanguage = courseLanguage.id
 }
 
 enum class CourseMode {

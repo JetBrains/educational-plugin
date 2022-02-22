@@ -11,5 +11,5 @@ interface UserInfo {
 }
 
 fun Course.setMarketplaceAuthorsAsString(authors: List<Author>) {
-  setAuthors(authors.map { MarketplaceUserInfo(it.name) })
+  this.authors = authors.map { MarketplaceUserInfo(it.name) }
 }

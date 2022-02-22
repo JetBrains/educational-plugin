@@ -67,9 +67,6 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       }
 
       val languageIdAndVersion = getLanguageIdAndVersion(dialog.selectedLanguage())
-      if (languageIdAndVersion == null) {
-        error("Failed to get language and id for contest with id=$contestId")
-      }
 
       val contestParameters = ContestParameters(
         codeforcesCourse.id,

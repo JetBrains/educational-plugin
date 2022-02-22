@@ -91,10 +91,10 @@ abstract class StepikEduCourseMixin {
   lateinit var myName: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  lateinit var myProgrammingLanguage: String
+  lateinit var language: String
 
   @JsonProperty(LANGUAGE)
-  lateinit var myLanguageCode: String
+  lateinit var languageCode: String
 
   @JsonProperty(ADMINS_GROUP)
   lateinit var adminsGroup: String

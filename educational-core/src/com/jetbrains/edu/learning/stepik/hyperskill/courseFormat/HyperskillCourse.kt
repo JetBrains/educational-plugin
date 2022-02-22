@@ -113,7 +113,8 @@ class HyperskillCourse : Course {
     return hyperskillProject?.id ?: super.getId()
   }
 
-  override fun isViewAsEducatorEnabled(): Boolean = false
+  override val isViewAsEducatorEnabled: Boolean
+    get() = false
 
   // lexicographical order
   companion object {

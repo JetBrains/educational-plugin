@@ -303,7 +303,9 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       sourceCompatibility = '1.8'
     """.trimIndent()
     updateCourse {
-      additionalFiles.add(TaskFile("build.gradle", buildGradleText))
+      val fileMutableList = additionalFiles.toMutableList()
+      fileMutableList.add(TaskFile("build.gradle", buildGradleText))
+      additionalFiles = fileMutableList
     }
 
     fileTree {

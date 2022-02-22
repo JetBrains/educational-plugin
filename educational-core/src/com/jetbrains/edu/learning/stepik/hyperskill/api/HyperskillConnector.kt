@@ -368,9 +368,9 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
     fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
       val files = (stepSource.block?.options as? PyCharmStepOptions)?.hyperskill?.files ?: return
-      additionalFiles.addAll(files.filter { taskFile ->
+      additionalFiles = files.filter { taskFile ->
         taskFile.name !in additionalFiles.map { it.name }
-      })
+      }
     }
   }
 }

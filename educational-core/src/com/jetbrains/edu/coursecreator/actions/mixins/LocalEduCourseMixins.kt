@@ -85,8 +85,8 @@ import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
 
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, AUTHORS, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
-                   ITEMS, TAGS)
+@JsonPropertyOrder(VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
+                   ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -102,14 +102,14 @@ abstract class LocalEduCourseMixin {
   private lateinit var description: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  private lateinit var myProgrammingLanguage: String
+  private lateinit var language: String
 
   @JsonProperty(LANGUAGE)
-  private lateinit var myLanguageCode: String
+  private lateinit var languageCode: String
 
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  lateinit var myEnvironment: String
+  lateinit var environment: String
 
   @JsonProperty(COURSE_TYPE)
   fun getItemType(): String {
@@ -125,7 +125,7 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(PLUGINS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private lateinit var myPluginDependencies: List<PluginInfo>
+  private lateinit var pluginDependencies: List<PluginInfo>
 
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)

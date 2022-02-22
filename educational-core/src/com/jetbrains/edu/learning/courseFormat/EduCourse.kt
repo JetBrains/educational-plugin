@@ -10,8 +10,17 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
+/**
+ * Used in the following Mixins:
+ * - [com.jetbrains.edu.coursecreator.actions.mixins.RemoteEduCourseMixin]
+ * - [com.jetbrains.edu.learning.marketplace.api.MarketplaceEduCourseMixin]
+ * - [com.jetbrains.edu.learning.stepik.api.StepikEduCourseMixin]
+ * - [com.jetbrains.edu.learning.yaml.format.EduCourseRemoteInfoYamlMixin]
+ * - [com.jetbrains.edu.learning.yaml.format.CourseYamlMixin]
+ */
 open class EduCourse : Course() {
   //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
+  @Suppress("LeakingThis") // TODO[ktisha]: remove `type` once we move all courses to the marketplace
   var type: String = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $language"
   @Transient
   var isUpToDate: Boolean = true
@@ -30,21 +39,24 @@ open class EduCourse : Course() {
   var adminsGroup: String? = null
   var reviewSummary: Int = 0
 
-  override fun setLanguage(language: String) {
-    super.setLanguage(language)
-    updateType(language)
-  }
+  override var language: String
+    get() = super.language
+    set(value) {
+      super.language = value
+      updateType(value)
+    }
 
-  override fun getTags(): List<Tag> {
-    val tags = super.getTags()
-    if (visibility is FeaturedVisibility) {
-      tags.add(FeaturedTag())
+  override val tags: List<Tag>
+    get() {
+      val tags = super.tags.toMutableList()
+      if (visibility is FeaturedVisibility) {
+        tags.add(FeaturedTag())
+      }
+      if (visibility is InProgressVisibility) {
+        tags.add(InProgressTag())
+      }
+      return tags
     }
-    if (visibility is InProgressVisibility) {
-      tags.add(InProgressTag())
-    }
-    return tags
-  }
 
   override fun getItemType(): String {
     return if (isMarketplace) MARKETPLACE else super.getItemType()
@@ -78,9 +90,8 @@ open class EduCourse : Course() {
       return JSON_FORMAT_VERSION
     }
 
-  override fun isStepikRemote(): Boolean {
-    return id != 0 && !isMarketplace
-  }
+  override val isStepikRemote: Boolean
+    get() = id != 0 && !isMarketplace
 
   val isMarketplaceRemote: Boolean
     get() = id != 0 && isMarketplace
@@ -100,9 +111,9 @@ open class EduCourse : Course() {
     updateDate = Date(0)
   }
 
-  override fun isViewAsEducatorEnabled(): Boolean {
-    return super.isViewAsEducatorEnabled() && dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
-  }
+  override val isViewAsEducatorEnabled: Boolean
+    get() = super.isViewAsEducatorEnabled &&
+            dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
 
   companion object {
     @NonNls

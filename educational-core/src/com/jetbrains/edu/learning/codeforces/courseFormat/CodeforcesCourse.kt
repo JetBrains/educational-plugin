@@ -67,11 +67,22 @@ open class CodeforcesCourse : Course {
     authors = contestParameters.authors
   }
 
-  override fun getIcon(): Icon = EducationalCoreIcons.CODEFORCES_SMALL
+  override val icon: Icon
+    get() = EducationalCoreIcons.CODEFORCES_SMALL
+
   override fun getId(): Int = myId
   override fun getItemType(): String = CODEFORCES_COURSE_TYPE
-  override fun getCheckAction(): CheckAction = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
-  override fun isViewAsEducatorEnabled(): Boolean = false
+  override val checkAction: CheckAction
+    get() = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
+
+  override val isViewAsEducatorEnabled: Boolean
+    get() = false
+
+  override val tags: List<Tag>
+    get() = emptyList()
+
+  override val compatibility: CourseCompatibility
+    get() = CourseCompatibility.Compatible
 
   fun getContestUrl(): String = getContestURLFromID(id)
 
@@ -91,13 +102,5 @@ open class CodeforcesCourse : Course {
 
     addLesson(lesson)
     problems.forEachIndexed { index, task -> lesson.addTask(CodeforcesTask.create(task, lesson, index + 1)) }
-  }
-
-  override fun getTags(): List<Tag> {
-    return emptyList()
-  }
-
-  override fun getCompatibility(): CourseCompatibility {
-    return CourseCompatibility.Compatible
   }
 }

@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter
 import com.fasterxml.jackson.databind.util.Annotations
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
@@ -51,14 +53,15 @@ import java.util.*
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
-                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, TAGS, ID, UPDATE_DATE)
+                   PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ID, UPDATE_DATE,
+                   ADDITIONAL_FILES)
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class),
   JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private val myVendor: Vendor? = null
+  private val vendor: Vendor? = null
 
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -66,7 +69,7 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private val myMarketplaceCourseVersion: Int = -1
+  private val marketplaceCourseVersion: Int = -1
 
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -78,7 +81,7 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private lateinit var myFeedbackLink: String
+  private lateinit var feedbackLink: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
