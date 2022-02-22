@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
@@ -144,7 +144,7 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
 
   private fun courseAdditionalInfoChanged(course: EduCourse, remoteCourse: EduCourse, project: Project): Boolean {
     if (course.solutionsHidden != remoteCourse.solutionsHidden) return true
-    val additionalFiles = CCUtils.collectAdditionalFiles(course, project)
+    val additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
     if (additionalFiles.size != remoteCourse.additionalFiles.size) return true
     for ((index, additionalFile) in additionalFiles.withIndex()) {
       val remoteAdditionalFile = remoteCourse.additionalFiles[index]

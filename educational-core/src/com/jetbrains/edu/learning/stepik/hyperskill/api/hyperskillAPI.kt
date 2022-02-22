@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
@@ -171,7 +172,7 @@ class HyperskillStepOptions : PyCharmStepOptions {
 
   constructor(project: Project, task: Task) : super(project, task) {
     val hyperskillAdditionalInfo = HyperskillAdditionalInfo()
-    hyperskillAdditionalInfo.files = CCUtils.collectAdditionalFiles(task.course, project)
+    hyperskillAdditionalInfo.files = AdditionalFilesUtils.collectAdditionalFiles(task.course, project)
     hyperskill = hyperskillAdditionalInfo
   }
 }

@@ -51,9 +51,9 @@ class CCCourseViewTest : CourseViewTestBase() {
        -CCCourseNode Test Course (Course Creation)
         -CCLessonNode lesson1
          -CCTaskNode custom name (task1)
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
          -CCTaskNode task2
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
     """.trimIndent())
   }
 

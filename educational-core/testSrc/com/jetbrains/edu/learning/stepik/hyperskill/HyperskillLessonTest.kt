@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.CCUtils.collectAdditionalLessonInfo
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -19,7 +19,7 @@ class HyperskillLessonTest : EduTestCase() {
       }
       additionalFile("package.json", "My cool dependencies")
     }
-    val info = collectAdditionalLessonInfo(course.lessons.first(), project)
+    val info = AdditionalFilesUtils.collectAdditionalLessonInfo(course.lessons.first(), project)
 
     assertEquals(1, info.additionalFiles.size)
     assertEquals("package.json", info.additionalFiles[0].name)

@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
 import com.jetbrains.edu.coursecreator.StudyItemType;
 import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.learning.EduBrowser;
@@ -121,12 +122,12 @@ public class CCStepikConnector {
     }
 
     updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
-    String errors = checkIgnoredFiles(project);
+    String errors = AdditionalFilesUtils.checkIgnoredFiles(project);
     if (errors != null) {
       showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"), errors);
       return false;
     }
-    final List<TaskFile> additionalFiles = collectAdditionalFiles(course, project);
+    final List<TaskFile> additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
     if (code != HttpStatus.SC_CREATED) {
@@ -299,12 +300,12 @@ public class CCStepikConnector {
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
     assert courseInfo != null;
     updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
-    String errors = checkIgnoredFiles(project);
+    String errors = AdditionalFilesUtils.checkIgnoredFiles(project);
     if (errors != null) {
       showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.update.additional.files"), errors);
       return false;
     }
-    final List<TaskFile> additionalFiles = collectAdditionalFiles(courseInfo, project);
+    final List<TaskFile> additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(courseInfo, project);
     CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
     return StepikConnector.getInstance().updateCourseAttachment(courseAdditionalInfo, courseInfo) == HttpStatus.SC_CREATED;
   }
@@ -373,7 +374,7 @@ public class CCStepikConnector {
   public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return false;
 
-    LessonAdditionalInfo info = collectAdditionalLessonInfo(lesson, project);
+    LessonAdditionalInfo info = AdditionalFilesUtils.collectAdditionalLessonInfo(lesson, project);
     if (info.isEmpty()) {
       StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
       return true;

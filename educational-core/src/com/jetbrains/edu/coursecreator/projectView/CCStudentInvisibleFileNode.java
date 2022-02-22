@@ -7,15 +7,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
+import static com.jetbrains.edu.learning.EduNames.COURSE_IGNORE;
+
 /**
- * represents a file which is invisible for student in student mode
+ * Add to the file name postfix "course.creator.course.view.excluded" from EduCoreBundle.properties
+ * if the file in {@link COURSE_IGNORE}
  */
 public class CCStudentInvisibleFileNode extends PsiFileNode {
   private final String myName;
@@ -32,7 +35,8 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
                                     String name) {
     super(project, value, viewSettings);
     VirtualFile file = value.getVirtualFile();
-    boolean isExcluded = file != null && (VirtualFileExt.canBeAddedToTask(file, project) || CCUtils.isExcluded(file, project));
+    boolean isExcluded = file != null &&
+                         (VirtualFileExt.canBeAddedToTask(file, project) || AdditionalFilesUtils.isExcluded(file, null, null, project));
     myName = isExcluded ? excludedName(name) : name;
   }
 

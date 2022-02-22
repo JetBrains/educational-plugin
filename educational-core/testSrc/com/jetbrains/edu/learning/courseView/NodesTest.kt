@@ -171,7 +171,7 @@ class NodesTest : CourseViewTestBase() {
           -CCNode folder1
            taskFile3.txt
            CCStudentInvisibleFileNode taskFile4.txt
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
           taskFile1.txt
           CCStudentInvisibleFileNode taskFile2.txt
          -CCTaskNode task2
@@ -180,7 +180,7 @@ class NodesTest : CourseViewTestBase() {
           -CCNode folder
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
     """.trimIndent())
   }
 
@@ -201,7 +201,7 @@ class NodesTest : CourseViewTestBase() {
            taskFile3.txt
            CCStudentInvisibleFileNode taskFile4.txt
           CCStudentInvisibleFileNode non_course_file2.txt (excluded)
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
           taskFile1.txt
           CCStudentInvisibleFileNode taskFile2.txt
          -CCTaskNode task2
@@ -211,7 +211,7 @@ class NodesTest : CourseViewTestBase() {
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
            CCStudentInvisibleFileNode non_course_file3.txt (excluded)
-          CCStudentInvisibleFileNode task.md
+          CCStudentInvisibleFileNode task.md (excluded)
         CCStudentInvisibleFileNode non_course_file1.txt
     """.trimIndent())
   }
@@ -268,7 +268,7 @@ class NodesTest : CourseViewTestBase() {
       | -CCCourseNode Test Course (Course Creation)
       |  -CCLessonNode lesson1
       |   -CCTaskNode task1
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |    taskFile1.txt
       |    taskFile2.txt
       |    -CCNode tests
@@ -279,7 +279,7 @@ class NodesTest : CourseViewTestBase() {
       |    -CCNode folder
       |     additionalFile3.txt
       |     CCStudentInvisibleFileNode additionalFile4.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
     """.trimMargin("|"))
   }
 
@@ -329,7 +329,7 @@ class NodesTest : CourseViewTestBase() {
       | -CCCourseNode Test Course (Course Creation)
       |  -CCLessonNode lesson1
       |   -CCTaskNode task1
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |    taskFile1.txt
       |    taskFile2.txt
       |    -CCNode tests
@@ -342,7 +342,7 @@ class NodesTest : CourseViewTestBase() {
       |    -CCNode folder
       |     additionalFile3.txt
       |     CCStudentInvisibleFileNode additionalFile4.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
     """.trimMargin("|"))
   }
 
@@ -369,11 +369,11 @@ class NodesTest : CourseViewTestBase() {
       |   -CCTaskNode task1
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |   -CCTaskNode task2
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |   CCNode non-task
     """.trimMargin("|"))
   }
@@ -401,11 +401,11 @@ class NodesTest : CourseViewTestBase() {
       |   -CCTaskNode task1
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |   -CCTaskNode task2
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |  CCNode non-lesson
     """.trimMargin("|"))
   }
@@ -435,11 +435,11 @@ class NodesTest : CourseViewTestBase() {
       |   -CCTaskNode task1
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |   -CCTaskNode task2
       |    file1.txt
       |    file2.txt
-      |    CCStudentInvisibleFileNode task.md
+      |    CCStudentInvisibleFileNode task.md (excluded)
       |   CCStudentInvisibleFileNode LessonIgnoredFile.txt (excluded)
       |  CCStudentInvisibleFileNode .courseignore (excluded)
       |  CCStudentInvisibleFileNode IgnoredFile.txt (excluded)

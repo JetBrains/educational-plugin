@@ -22,8 +22,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.CCUtils.checkIgnoredFiles
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
 import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.*
@@ -67,7 +66,7 @@ class CourseArchiveCreator(
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
-    val error = checkIgnoredFiles(project)
+    val error = AdditionalFilesUtils.checkIgnoredFiles(project)
     if (error != null) {
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: $error")
@@ -106,7 +105,7 @@ class CourseArchiveCreator(
   fun prepareCourse(course: Course) {
     loadActualTexts(project, course)
     course.sortItems()
-    course.additionalFiles = CCUtils.collectAdditionalFiles(course, project)
+    course.additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project)
     course.pluginDependencies = collectCourseDependencies(project, course)
     course.courseMode = EduNames.STUDY
   }

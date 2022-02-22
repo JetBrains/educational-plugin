@@ -101,7 +101,8 @@ object CCUtils {
         val module = ModuleUtilCore.findModuleForFile(baseDir, project) ?: return@runWriteAction generatedRoot
         ModuleRootModificationUtil.updateExcludedFolders(module, contentRootForFile, emptyList(), listOf(generatedRoot.url))
         generatedRoot
-      } catch (e: IOException) {
+      }
+      catch (e: IOException) {
         LOG.info("Failed to create folder for generated files", e)
         null
       }
@@ -119,7 +120,8 @@ object CCUtils {
       try {
         folder?.delete(CCUtils::class.java)
         folder = generatedRoot.createChildDirectory(null, name)
-      } catch (e: IOException) {
+      }
+      catch (e: IOException) {
         LOG.info("Failed to generate folder $name", e)
       }
     }
@@ -138,91 +140,6 @@ object CCUtils {
     val presentation = e.presentation
     val project = e.project
     presentation.isEnabledAndVisible = project != null && isCourseCreator(project)
-  }
-
-  @JvmStatic
-  fun checkIgnoredFiles(project: Project): String? {
-    val excludedFiles = loadExcludedFilePaths(project)
-    val filesNotFound = excludedFiles.filter { project.courseDir.findFileByRelativePath(it) == null }
-
-    return if (filesNotFound.isNotEmpty()) {
-      buildString {
-        appendLine("${EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)}:")
-        appendLine()
-        appendLine(filesNotFound.joinToString())
-      }
-    }
-    else null
-  }
-
-  private fun loadExcludedFilePaths(project: Project): List<String> {
-    val courseIgnore = project.courseDir.findChild(EduNames.COURSE_IGNORE)
-    if (courseIgnore == null || !courseIgnore.exists()) return emptyList()
-    return courseIgnore.document.text.lines().map { it.trim() }.filter { it.isNotEmpty() }
-  }
-
-  @JvmStatic
-  fun isExcluded(file: VirtualFile, project: Project): Boolean {
-    val excludedFiles = loadExcludedFilePaths(project)
-    val courseRelativePath = VfsUtil.getRelativePath(file, project.courseDir)
-    return courseRelativePath in excludedFiles || courseRelativePath == EduNames.COURSE_IGNORE
-  }
-
-  @JvmStatic
-  fun collectAdditionalFiles(course: Course, project: Project): List<TaskFile> {
-    ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
-    val configurator = course.configurator
-    val sanitizedName = FileUtil.sanitizeFileName(course.name)
-    val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
-    val baseDir = project.courseDir
-
-    val excludedFiles = loadExcludedFilePaths(project)
-
-    val additionalTaskFiles = mutableListOf<TaskFile>()
-    VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
-      override fun visitFile(file: VirtualFile): Boolean {
-        @Suppress("NAME_SHADOWING")
-        val name = file.name
-        if (name == archiveName) return false
-        val courseRelativePath = VfsUtil.getRelativePath(file, project.courseDir)
-        if (courseRelativePath in excludedFiles) return true
-        if (file.isDirectory) {
-          // All files inside task directory are already handled by `CCVirtualFileListener`
-          // so here we don't need to process them again
-          return file.getTask(project) == null
-        }
-        if (file.isTestsFile(project)) return true
-        if (configurator != null && configurator.excludeFromArchive(project, file)) return false
-
-        var taskFile = file.getTaskFile(project)
-        if (taskFile == null) {
-          try {
-            val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return true
-            taskFile = TaskFile(path, file.loadEncodedContent())
-            additionalTaskFiles.add(taskFile)
-          }
-          catch (e: FileTooBigException) {
-            throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
-          }
-          catch (e: IOException) {
-            LOG.error(e)
-          }
-        }
-        return true
-      }
-    })
-    return additionalTaskFiles
-  }
-
-  @JvmStatic
-  @Suppress("deprecation")
-  fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
-    val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
-    val taskInfo = nonPluginTasks.associateBy(Task::getId) {
-      TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
-    }
-    val courseFiles: List<TaskFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
-    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
   }
 
   /**
