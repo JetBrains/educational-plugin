@@ -23,7 +23,7 @@ abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
 
   abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, String>
 
-  protected fun Course.validateLanguage(projectLanguage: String = course.language): Result<Unit, String> {
+  protected fun Course.validateLanguage(projectLanguage: String = course.programmingLanguage): Result<Unit, String> {
     val pluginCompatibility = pluginCompatibility()
     if (pluginCompatibility is CourseCompatibility.PluginsRequired) {
       val requiredPluginsMessage = getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable)

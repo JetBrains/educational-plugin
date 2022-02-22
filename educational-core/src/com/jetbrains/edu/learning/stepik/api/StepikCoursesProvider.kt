@@ -155,7 +155,7 @@ class StepikCoursesProvider : CoroutineScope {
       }
       else {
         languages.forEach { language ->
-          course.language = language
+          course.programmingLanguage = language
           // as course is copied to become Stepik type, it's ok to use the same loaded course for different languages
           addCourse()
         }

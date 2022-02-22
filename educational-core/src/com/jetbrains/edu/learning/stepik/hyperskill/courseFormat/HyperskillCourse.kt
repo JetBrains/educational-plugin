@@ -26,14 +26,14 @@ class HyperskillCourse : Course {
     this.hyperskillProject = hyperskillProject
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
-    language = languageID
+    programmingLanguage = languageID
     this.environment = environment
   }
 
   constructor(languageName: String, languageID: String) {
     name = getProblemsProjectName(languageName)
     description = EduCoreBundle.message("hyperskill.problems.project.description", languageName.capitalize())
-    language = languageID
+    programmingLanguage = languageID
   }
 
   val isTemplateBased: Boolean

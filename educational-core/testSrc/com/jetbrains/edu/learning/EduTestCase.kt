@@ -278,7 +278,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     remoteCourse.name = name
     remoteCourse.courseMode = courseMode
     remoteCourse.items = Lists.newArrayList(items)
-    remoteCourse.language = language
+    remoteCourse.programmingLanguage = programmingLanguage
     remoteCourse.description = description
 
     var hasSections = false

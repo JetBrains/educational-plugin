@@ -78,7 +78,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
     val course = EduCourse()
     course.name = "Edu test course"
-    course.language = PlainTextLanguage.INSTANCE.id
+    course.programmingLanguage = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course
     val lesson1 = createLesson(1, 3)
     course.addLesson(lesson1)

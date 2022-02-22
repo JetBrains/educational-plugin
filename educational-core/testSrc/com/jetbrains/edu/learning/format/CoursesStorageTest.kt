@@ -56,7 +56,7 @@ class CoursesStorageTest : EduTestCase() {
     val coursesStorage = CoursesStorage.getInstance()
     val courseWithDefaultId = course {}
     coursesStorage.addCourse(courseWithDefaultId, "", 0, 0)
-    val courseWithLanguage = course {}.apply { language = EduNames.PYTHON }
+    val courseWithLanguage = course {}.apply { programmingLanguage = EduNames.PYTHON }
     assertFalse(coursesStorage.hasCourse(courseWithLanguage))
   }
 
@@ -69,7 +69,7 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/Introduction to Python", course.location)
     assertEquals("Introduction course to Python.", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals("Python 2.7", course.language)
+    assertEquals("Python 2.7", course.programmingLanguage)
     assertEquals("2.7", course.languageVersion)
   }
 
@@ -82,7 +82,7 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals("kotlin", course.language)
+    assertEquals("kotlin", course.programmingLanguage)
   }
 
   fun testDeserializeLanguageVersion() {
@@ -94,7 +94,7 @@ class CoursesStorageTest : EduTestCase() {
     assertEquals("\$USER_HOME\$/IdeaProjects/AtomicKotlin", course.location)
     assertEquals("The examples and exercises accompanying the AtomicKotlin book", course.description)
     assertEquals("PyCharm", course.type)
-    assertEquals("Python 3.7", course.language)
+    assertEquals("Python 3.7", course.programmingLanguage)
     assertEquals("3.7", course.languageVersion)
   }
 
@@ -125,7 +125,7 @@ class CoursesStorageTest : EduTestCase() {
       "AtomicKotlin",
       description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
       id = 20403
-      language = EduNames.PYTHON
+      programmingLanguage = EduNames.PYTHON
     }
 
     doSerializationTest(course)
@@ -136,7 +136,7 @@ class CoursesStorageTest : EduTestCase() {
       "AtomicKotlin",
       description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
       id = 20403
-      language = "${EduNames.PYTHON} 3.7"
+      programmingLanguage = "${EduNames.PYTHON} 3.7"
     }
 
     doSerializationTest(course)
@@ -149,7 +149,7 @@ class CoursesStorageTest : EduTestCase() {
       "AtomicKotlin",
       description = "The examples and exercises accompanying the AtomicKotlin book") { }.apply {
       id = 20403
-      language = "${EduNames.PYTHON} 3.7"
+      programmingLanguage = "${EduNames.PYTHON} 3.7"
       languageCode = "ru"
     }
 

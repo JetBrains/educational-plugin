@@ -42,11 +42,11 @@ fun setCourseLanguageEnvironment(info: EduCourse) {
   if (languageIndex != -1) {
     val environmentIndex = courseFormat.indexOf(EduCourse.ENVIRONMENT_SEPARATOR, languageIndex + 1)
     if (environmentIndex != -1) {
-      info.language = courseFormat.substring(languageIndex + 1, environmentIndex)
+      info.programmingLanguage = courseFormat.substring(languageIndex + 1, environmentIndex)
       info.environment = courseFormat.substring(environmentIndex + 1)
     }
     else {
-      info.language = courseFormat.substring(languageIndex + 1)
+      info.programmingLanguage = courseFormat.substring(languageIndex + 1)
     }
   }
   else {

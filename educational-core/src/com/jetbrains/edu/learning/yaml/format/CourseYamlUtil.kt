@@ -82,7 +82,7 @@ abstract class CourseYamlMixin {
 
   @JsonSerialize(converter = ProgrammingLanguageConverter::class)
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  lateinit var language: String
+  lateinit var programmingLanguage: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION)
   fun getLanguageVersion(): String? {
@@ -199,7 +199,7 @@ private class CourseBuilder(
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
   @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
-  @JsonProperty(PROGRAMMING_LANGUAGE) val programmingLanguage: String,
+  @JsonProperty(PROGRAMMING_LANGUAGE) val displayProgrammingLanguageName: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) val language: String,
   @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
@@ -247,27 +247,27 @@ private class CourseBuilder(
 
       // for C++ there are two languages with the same display name, and we have to filter out the one we have configurator for
       val languages = Language.getRegisteredLanguages()
-        .filter { it.displayName == programmingLanguage }
+        .filter { it.displayName == displayProgrammingLanguageName }
         .filter { EduConfiguratorManager.findConfigurator(itemType, environment, it) != null }
       if (languages.isEmpty()) {
-        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", programmingLanguage))
+        formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
       }
 
       if (languages.size > 1) {
-        error("Multiple configurators for language with name: $programmingLanguage")
+        error("Multiple configurators for language with name: $displayProgrammingLanguageName")
       }
 
-      language = languages.first().id
+      programmingLanguage = languages.first().id
 
       val languageSettings = configurator?.courseBuilder?.getLanguageSettings()
-                             ?: formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", programmingLanguage))
+                             ?: formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
       if (programmingLanguageVersion != null) {
         if (!languageSettings.getLanguageVersions().contains(programmingLanguageVersion)) {
-          formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", programmingLanguage,
+          formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", displayProgrammingLanguageName,
                                             programmingLanguageVersion))
         }
         else {
-          language = "$language $programmingLanguageVersion"
+          programmingLanguage = "$programmingLanguage $programmingLanguageVersion"
         }
       }
       val items = content.mapIndexed { index, title ->
@@ -302,10 +302,10 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
-      existingItem.language = "${existingItem.language} ${deserializedItem.languageVersion}"
+      existingItem.programmingLanguage = "${existingItem.programmingLanguage} ${deserializedItem.languageVersion}"
     }
     else {
-      existingItem.language = deserializedItem.language
+      existingItem.programmingLanguage = deserializedItem.programmingLanguage
     }
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually

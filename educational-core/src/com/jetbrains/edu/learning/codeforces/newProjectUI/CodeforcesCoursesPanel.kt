@@ -84,7 +84,7 @@ class CodeforcesCoursesPanel(
     override fun createCourseCard(course: Course): CourseCardComponent {
       val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfoForAnyLanguage(course)
       if (courseMetaInfo != null) {
-        course.language = courseMetaInfo.language
+        course.programmingLanguage = courseMetaInfo.programmingLanguage
       }
       return CodeforcesCardComponent(course)
     }

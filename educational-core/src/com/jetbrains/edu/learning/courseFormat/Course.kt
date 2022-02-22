@@ -4,6 +4,8 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -21,67 +23,43 @@ import javax.swing.Icon
  * - Override [Course.getItemType], that's how we find appropriate [com.jetbrains.edu.learning.configuration.EduConfigurator]
  */
 abstract class Course : LessonContainer() {
-  var description = ""
-  var environment = EduNames.DEFAULT_ENVIRONMENT
-  var courseMode = EduNames.STUDY //this field is used to distinguish study and course creator modes
-  var solutionsHidden = false
+  var description: String = ""
+  var environment: String = EduNames.DEFAULT_ENVIRONMENT
+  var courseMode: String = EduNames.STUDY //this field is used to distinguish study and course creator modes
+  var solutionsHidden: Boolean = false
 
   @Transient
   var visibility: CourseVisibility = CourseVisibility.LocalVisibility
 
   @Transient
-  var additionalFiles = listOf<TaskFile>()
-    set(value) {
-      field = value.toList()
-    }
+  var additionalFiles: List<TaskFile> = emptyList()
 
   @Transient
-  var pluginDependencies = emptyList<PluginInfo>()
+  var pluginDependencies: List<PluginInfo> = emptyList()
 
-  open var languageCode = "en"
+  @Transient
+  private val nonEditableFiles: MutableSet<String> = mutableSetOf()
+
+  @Transient
+  var authors: List<UserInfo> = emptyList()
+
+  open var languageCode: String = "en"
 
   // Marketplace:
-  var isMarketplace = false
+  var isMarketplace: Boolean = false
   var vendor: Vendor? = null
-  var marketplaceCourseVersion = 0
+  var marketplaceCourseVersion: Int = 0
   var organization: String? = null
-  var isMarketplacePrivate = false
-  var createDate = Date(0)
+  var isMarketplacePrivate: Boolean = false
+  var createDate: Date = Date(0)
   var feedbackLink: String? = null
   var license: String? = null
 
   /**
    * This method is needed to serialize language and its version as one property
-   * Consider using [.getLanguageID] and [.getLanguageVersion] methods instead
+   * Consider using [languageID] and [languageVersion] properties instead
    */
-  open var language = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
-
-  val languageById: Language?
-    get() = Language.findLanguageByID(languageID)
-
-  val languageID: String
-    get() = language.split(" ")[0]
-
-  open val languageVersion: String?
-    get() {
-      if (!language.contains(" ")) {
-        return null
-      }
-      val languageVersionStartIndex = language.indexOf(" ")
-      return if (languageVersionStartIndex == language.length - 1) {
-        null
-      }
-      else language.substring(languageVersionStartIndex + 1)
-    }
-
-  @Transient
-  private val nonEditableFiles = mutableSetOf<String>()
-
-  @Transient
-  var authors = listOf<UserInfo>()
-    set(value) {
-      field = value.toList()
-    }
+  open var programmingLanguage: String = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
 
   override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
     for ((i, item) in items.withIndex()) {
@@ -90,18 +68,31 @@ abstract class Course : LessonContainer() {
     }
   }
 
-  fun getLesson(sectionName: String?, lessonName: String): Lesson? {
-    if (sectionName == null) return lessons.firstOrNull { lessonName == it.name }
+  val languageById: Language?
+    get() = getEduLanguage().language
 
-    val section = getSection(sectionName)
-    if (section != null) {
-      return section.getLesson(lessonName)
+  val languageID: String
+    get() = getEduLanguage().id
+
+  open val languageVersion: String?
+    get() = getEduLanguage().version.ifEmpty { null }
+
+  private fun getEduLanguage(): EduLanguage {
+    return get(programmingLanguage)
+  }
+
+  fun getLesson(sectionName: String?, lessonName: String): Lesson? {
+    if (sectionName != null) {
+      val section = getSection(sectionName)
+      if (section != null) {
+        return section.getLesson(lessonName)
+      }
     }
     return lessons.firstOrNull { lessonName == it.name }
   }
 
   val sections: List<Section>
-    get() = items.filterIsInstance(Section::class.java)
+    get() = items.filterIsInstance<Section>()
 
   fun addSection(section: Section) {
     items.add(section)
@@ -115,8 +106,8 @@ abstract class Course : LessonContainer() {
     return getSection { name == it.name }
   }
 
-  fun getSection(isSection: (Section) -> Boolean): Section? {
-    return items.filterIsInstance(Section::class.java).firstOrNull { isSection(it) }
+  fun getSection(predicate: (Section) -> Boolean): Section? {
+    return sections.firstOrNull { predicate(it) }
   }
 
   override fun getId(): Int {

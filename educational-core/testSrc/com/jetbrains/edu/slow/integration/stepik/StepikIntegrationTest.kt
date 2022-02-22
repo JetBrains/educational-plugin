@@ -367,12 +367,12 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   fun `test course with language version`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
-    course.language = course.language + " 2"
-    val expectedLanguage = course.language
+    course.programmingLanguage = course.programmingLanguage + " 2"
+    val expectedLanguage = course.programmingLanguage
     pushCourse(course)
     val uploadedCourse = StudyTaskManager.getInstance(project).course as EduCourse
     val remoteCourse = getCourseFromStepik(uploadedCourse.id)
-    assertEquals(expectedLanguage, remoteCourse.language)
+    assertEquals(expectedLanguage, remoteCourse.programmingLanguage)
   }
 
   fun `test course with choice task`() {

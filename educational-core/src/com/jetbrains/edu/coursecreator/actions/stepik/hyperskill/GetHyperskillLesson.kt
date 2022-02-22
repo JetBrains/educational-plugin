@@ -61,7 +61,7 @@ class GetHyperskillLesson : DumbAwareAction(
           if (configurator == null) {
             val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
             showError(
-              EduCoreBundle.message("error.failed.to.create.lesson.no.configuration", course.language, environment),
+              EduCoreBundle.message("error.failed.to.create.lesson.no.configuration", course.programmingLanguage, environment),
               EduCoreBundle.message("error.failed.to.create.lesson")
             )
             return
@@ -106,7 +106,7 @@ class GetHyperskillLesson : DumbAwareAction(
       course.apply {
         name = hyperskillLessonName
         description = hyperskillLessonName
-        language = languageAndEnvironment.first
+        programmingLanguage = languageAndEnvironment.first
         environment = languageAndEnvironment.second
       }
 

@@ -91,7 +91,7 @@ class NavigatePlaceholderTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson2", "lesson2")
     val course = EduCourse()
     course.name = "Edu test course"
-    course.language = PlainTextLanguage.INSTANCE.id
+    course.programmingLanguage = PlainTextLanguage.INSTANCE.id
     val lesson1 = createLesson(1, 2)
     val lesson2 = createLesson(2, 3)
     course.addLesson(lesson1)

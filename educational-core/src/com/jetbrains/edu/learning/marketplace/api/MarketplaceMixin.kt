@@ -41,7 +41,7 @@ private class MarketplaceCourseBuilder(
       description = courseDescription
       learnersCount = downloads
       reviewScore = rating ?: 0.0
-      language = fields.programmingLanguage
+      programmingLanguage = fields.programmingLanguage
       languageCode = fields.language
       environment = fields.environment ?: DEFAULT_ENVIRONMENT
       marketplaceCourseVersion = version ?: 1

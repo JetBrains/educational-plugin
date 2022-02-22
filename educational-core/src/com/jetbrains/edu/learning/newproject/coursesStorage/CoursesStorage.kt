@@ -101,7 +101,7 @@ class CourseMetaInfo() : Course() {
     description = course.description
     courseMode = course.courseMode
     environment = course.environment
-    language = course.language
+    programmingLanguage = course.programmingLanguage
     languageCode = course.languageCode
     this.location = location
     this.tasksTotal = tasksTotal
@@ -137,17 +137,17 @@ class CourseMetaInfo() : Course() {
     return myId
   }
 
-  override var language: String
+  override var programmingLanguage: String
     @OptionTag(PROGRAMMING_LANGUAGE)
     get() {
       if (programmingLanguageVersion != null) {
         convertProgrammingLanguageVersion()
       }
-      return super.language
+      return super.programmingLanguage
     }
     @OptionTag(PROGRAMMING_LANGUAGE)
     set(value) {
-      super.language = value
+      super.programmingLanguage = value
     }
 
   override val humanLanguage: String
@@ -178,7 +178,7 @@ class CourseMetaInfo() : Course() {
   }
 
   private fun convertProgrammingLanguageVersion() {
-    language = "${super.language} $programmingLanguageVersion"
+    programmingLanguage = "${super.programmingLanguage} $programmingLanguageVersion"
     programmingLanguageVersion = null
   }
 

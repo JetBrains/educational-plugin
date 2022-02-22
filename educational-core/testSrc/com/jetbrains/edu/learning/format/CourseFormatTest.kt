@@ -158,6 +158,25 @@ class CourseFormatTest : EduTestCase() {
     }
   }
 
+  fun testCourseLanguageVersion() {
+    val course = course {}
+    course.programmingLanguage = "Python 3"
+    assertEquals("3", course.languageVersion)
+  }
+
+  fun testCourseLanguageVersionEmpty() {
+    val course = course {}
+    course.programmingLanguage = "Python"
+    assertNull(course.languageVersion)
+  }
+
+
+  fun testCourseLanguageVersionBlank() {
+    val course = course {}
+    course.programmingLanguage = "Python "
+    assertNull(course.languageVersion)
+  }
+
   private val courseFromJson: Course
     get() {
       val fileName = testFile

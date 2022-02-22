@@ -25,7 +25,7 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val contestParameters = ContestParameters(
         id = course.id,
-        languageId = course.language,
+        languageId = course.programmingLanguage,
         locale = course.languageCode,
         endDateTime = course.endDateTime
       )

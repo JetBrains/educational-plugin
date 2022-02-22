@@ -757,7 +757,7 @@ class YamlSerializationTest : YamlTestCase() {
     val course = course(courseMode = CCUtils.COURSE_MODE) {}
     course.languageCode = "ru"
     course.description = "sum"
-    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
       |title: Test Course
       |language: Russian
@@ -787,7 +787,7 @@ class YamlSerializationTest : YamlTestCase() {
     val course = course(courseMode = CCUtils.COURSE_MODE, courseProducer = ::CourseraCourse) {}
     course.languageCode = "ru"
     course.description = "sum"
-    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
       |type: coursera
       |title: Test Course
@@ -804,7 +804,7 @@ class YamlSerializationTest : YamlTestCase() {
     course.languageCode = "ru"
     course.description = "sum"
     course.submitManually = true
-    course.language = "${PlainTextLanguage.INSTANCE.id} 1.42"
+    course.programmingLanguage = "${PlainTextLanguage.INSTANCE.id} 1.42"
     doTest(course, """
       |type: coursera
       |title: Test Course

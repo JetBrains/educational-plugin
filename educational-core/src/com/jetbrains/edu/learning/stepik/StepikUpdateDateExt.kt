@@ -35,7 +35,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
   }
 
   val eduCourseInfo = StepikConnector.getInstance().getCourseInfo(id) ?: return isUpToDate
-  eduCourseInfo.language = language
+  eduCourseInfo.programmingLanguage = programmingLanguage
 
   // we should create courseInfo instance of a specific class here because otherwise if we are creating all courseInfo's
   // as EduCourses, getItemType() will return EduNames.PYCHARM, which won't let us get a correct configurator

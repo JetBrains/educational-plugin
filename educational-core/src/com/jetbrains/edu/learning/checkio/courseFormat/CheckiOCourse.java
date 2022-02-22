@@ -22,7 +22,7 @@ public class CheckiOCourse extends Course {
   public CheckiOCourse(@NotNull String name, @NotNull String languageID) {
     setName(name);
     setDescription(COURSE_DESCRIPTION);
-    setLanguage(languageID);
+    setProgrammingLanguage(languageID);
   }
 
   public void addStation(@NotNull CheckiOStation station) {

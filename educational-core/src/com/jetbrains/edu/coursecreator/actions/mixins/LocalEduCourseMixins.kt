@@ -102,7 +102,7 @@ abstract class LocalEduCourseMixin {
   private lateinit var description: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE)
-  private lateinit var language: String
+  private lateinit var programmingLanguage: String
 
   @JsonProperty(LANGUAGE)
   private lateinit var languageCode: String

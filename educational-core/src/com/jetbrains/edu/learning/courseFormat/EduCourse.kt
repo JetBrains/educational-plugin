@@ -21,7 +21,7 @@ import java.util.*
 open class EduCourse : Course() {
   //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
   @Suppress("LeakingThis") // TODO[ktisha]: remove `type` once we move all courses to the marketplace
-  var type: String = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $language"
+  var type: String = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $programmingLanguage"
   @Transient
   var isUpToDate: Boolean = true
   var learnersCount: Int = 0
@@ -39,10 +39,10 @@ open class EduCourse : Course() {
   var adminsGroup: String? = null
   var reviewSummary: Int = 0
 
-  override var language: String
-    get() = super.language
+  override var programmingLanguage: String
+    get() = super.programmingLanguage
     set(value) {
-      super.language = value
+      super.programmingLanguage = value
       updateType(value)
     }
 
@@ -106,7 +106,7 @@ open class EduCourse : Course() {
       sectionIds = emptyList()
       instructors = emptyList()
     }
-    type = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $language"
+    type = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $programmingLanguage"
     id = 0
     updateDate = Date(0)
   }

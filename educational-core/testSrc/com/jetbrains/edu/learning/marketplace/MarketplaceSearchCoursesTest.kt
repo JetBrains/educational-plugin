@@ -119,7 +119,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
-    assertEquals(expectedLanguage, course.language)
+    assertEquals(expectedLanguage, course.programmingLanguage)
     assertEquals(expectedHumanLanguage, course.humanLanguage)
     assertEquals(expectedDescription, course.description)
     assertEquals(expectedLearnersCount, course.learnersCount)

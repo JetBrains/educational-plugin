@@ -241,7 +241,7 @@ class CCNewCoursePanel(
 
     val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
                                                                courseData.language) ?: return
-    _course.language = courseData.language.id
+    _course.programmingLanguage = courseData.language.id
     _course.environment = courseData.environment
     languageSettings = configurator.courseBuilder.getLanguageSettings()
     languageSettings.addSettingsChangeListener { doValidation() }

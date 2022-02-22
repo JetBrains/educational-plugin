@@ -18,8 +18,8 @@ import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 
 class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
-  override fun setUp() {
-    super.setUp()
+  override fun tearDown() {
+    super.tearDown()
     CoursesStorage.getInstance().state.courses.clear()
   }
 

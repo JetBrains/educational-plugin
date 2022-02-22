@@ -47,8 +47,8 @@ interface CodeforcesLanguageProvider {
     /**
      * @return Proper language with languageVersion splitted with space from codeforces programming language.
      * If languageVersion isn't specified - then only language is returned in result
-     * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguageID]
-     * @see [com.jetbrains.edu.learning.courseFormat.Course.getLanguageVersion]
+     * @see [com.jetbrains.edu.learning.courseFormat.Course.languageID]
+     * @see [com.jetbrains.edu.learning.courseFormat.Course.languageVersion]
      */
     fun getLanguageIdAndVersion(codeforcesLanguage: String): String {
       EP_NAME.extensions.forEach {

@@ -99,7 +99,7 @@ public class CCStepikConnector {
     courseOnRemote.setAuthors(course.getAuthors());
     courseOnRemote.setCourseMode(COURSE_MODE);
     courseOnRemote.setEnvironment(course.getEnvironment());
-    courseOnRemote.setLanguage(course.getLanguage());
+    courseOnRemote.setProgrammingLanguage(course.getProgrammingLanguage());
 
     if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUserInfo)) {
       addJetBrainsUserAsAdmin(courseOnRemote.getAdminsGroup());
