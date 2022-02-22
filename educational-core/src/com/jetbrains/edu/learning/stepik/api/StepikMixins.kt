@@ -67,7 +67,7 @@ abstract class StepikEduCourseMixin {
   var isAdaptive = false
 
   @JsonProperty(COURSE_FORMAT)
-  lateinit var myType: String
+  lateinit var type: String
 
   @JsonProperty(SECTIONS)
   lateinit var sectionIds: List<Int>
@@ -97,7 +97,7 @@ abstract class StepikEduCourseMixin {
   lateinit var myLanguageCode: String
 
   @JsonProperty(ADMINS_GROUP)
-  lateinit var myAdminsGroup: String
+  lateinit var adminsGroup: String
 
   @JsonProperty(lEARNERS_COUNT)
   var learnersCount: Int = 0

@@ -12,32 +12,7 @@ import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 import java.util.*
 
 @JsonDeserialize(builder = MarketplaceCourseBuilder::class)
-abstract class MarketplaceEduCourseMixin {
-
-  @JsonProperty(ID)
-  var id: Int = 0
-
-  @JsonProperty(NAME)
-  var myName: String = ""
-
-  @JsonProperty(DESCRIPTION)
-  var description: String = ""
-
-  @JsonProperty(DOWNLOADS)
-  var learnersCount: Int = 0
-
-  @JsonProperty(RATING)
-  var reviewScore: Double? = 0.0
-
-  @JsonProperty(AUTHORS)
-  var authors: List<Author> = emptyList()
-
-  @JsonProperty(LINK)
-  var myFeedbackLink: String = ""
-
-  @JsonProperty(LICENSE)
-  var myLicense: String = ""
-}
+abstract class MarketplaceEduCourseMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 private class MarketplaceCourseBuilder(

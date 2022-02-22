@@ -89,11 +89,12 @@ class ExportStepikIdsTest : EduTestCase() {
   private fun EduCourse.generateUniqueIds() {
     id = 1
     sections[0].id = 2
+    val newSectionIds = mutableListOf<Int>()
     visitLessons { lesson ->
       val section = lesson.section
       val sectionId = section?.id ?: 1
       if (section == null) {
-        sectionIds.add(lesson.index)
+        newSectionIds.add(lesson.index)
       }
       lesson.id = 10 * sectionId + lesson.index
       lesson.unitId = lesson.id
@@ -101,5 +102,6 @@ class ExportStepikIdsTest : EduTestCase() {
         task.id = 10 * lesson.id + task.index
       }
     }
+    sectionIds = newSectionIds
   }
 }

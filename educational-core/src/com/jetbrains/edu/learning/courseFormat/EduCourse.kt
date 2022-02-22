@@ -1,207 +1,111 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.InProgressVisibility
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.stepik.StepikNames
+import org.jetbrains.annotations.NonNls
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
-
-
-public class EduCourse extends Course {
-  public static final String ENVIRONMENT_SEPARATOR = "#";
-
-  // Fields from stepik:
-  private boolean isCompatible = true;
-  private boolean isAdaptive = false;
+open class EduCourse : Course() {
   //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
-  protected String myType =
-    String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
-  // in CC mode is used to store top-level lessons section id
-  List<Integer> sectionIds = new ArrayList<>();
-  List<Integer> instructors = new ArrayList<>();
-  transient private boolean isUpToDate = true;
-  boolean isStepikPublic;
-  transient private String myAdminsGroup;
-  private int learnersCount = 0;
+  var type: String = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $language"
+  @Transient
+  var isUpToDate: Boolean = true
+  var learnersCount: Int = 0
+  var reviewScore: Double = 0.0
 
-  private int reviewSummary;
-  private double reviewScore;
+  // Fields that should be moved to StepikCourse:
+  var isCompatible: Boolean = true
+  var isAdaptive: Boolean = false
 
-  public String getType() {
-    return myType;
+  // in CC mode is used to store top-level lessons' section id
+  var sectionIds: List<Int> = emptyList()
+  var instructors: List<Int> = emptyList()
+  var isStepikPublic: Boolean = false
+  @Transient
+  var adminsGroup: String? = null
+  var reviewSummary: Int = 0
+
+  override fun setLanguage(language: String) {
+    super.setLanguage(language)
+    updateType(language)
   }
 
-  @Override
-  public void setLanguage(@NotNull final String language) {
-    super.setLanguage(language);
-    updateType(language);
-  }
-
-  public List<Integer> getSectionIds() {
-    return sectionIds;
-  }
-
-  public void setSectionIds(List<Integer> sectionIds) {
-    this.sectionIds = sectionIds;
-  }
-
-  public void setInstructors(List<Integer> instructors) {
-    this.instructors = instructors;
-  }
-
-  public List<Integer> getInstructors() {
-    return instructors;
-  }
-
-  @NotNull
-  @Override
-  public List<Tag> getTags() {
-    final List<Tag> tags = super.getTags();
-    if (getVisibility() instanceof CourseVisibility.FeaturedVisibility) {
-      tags.add(new FeaturedTag());
+  override fun getTags(): List<Tag> {
+    val tags = super.getTags()
+    if (visibility is FeaturedVisibility) {
+      tags.add(FeaturedTag())
     }
-    if (getVisibility() instanceof CourseVisibility.InProgressVisibility) {
-      tags.add(new InProgressTag());
+    if (visibility is InProgressVisibility) {
+      tags.add(InProgressTag())
     }
-    return tags;
+    return tags
   }
 
-  @NotNull
-  @Override
-  public String getItemType() {
-    if (isMarketplace()) return MARKETPLACE;
-    return super.getItemType();
+  override fun getItemType(): String {
+    return if (isMarketplace) MARKETPLACE else super.getItemType()
   }
 
-  public int getId() {
-    return myId;
+  override fun getId(): Int {
+    return myId
   }
 
-  private void updateType(String language) {
-    int formatVersion = getFormatVersion();
-
-    String environment = getEnvironment();
-    if (!environment.equals(EduNames.DEFAULT_ENVIRONMENT)) {
-      setType(String.format("%s%s %s%s%s", StepikNames.PYCHARM_PREFIX, formatVersion, language, ENVIRONMENT_SEPARATOR, environment));
+  private fun updateType(language: String) {
+    type = if (environment != EduNames.DEFAULT_ENVIRONMENT) {
+      "${StepikNames.PYCHARM_PREFIX}$formatVersion $language$ENVIRONMENT_SEPARATOR$environment"
     }
     else {
-      setType(String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, formatVersion, language));
+      "${StepikNames.PYCHARM_PREFIX}$formatVersion $language"
     }
   }
 
-  public int getFormatVersion() {
-    final int languageSeparator = myType.indexOf(" ");
-    if (languageSeparator != -1 && myType.contains(StepikNames.PYCHARM_PREFIX)) {
-      String formatVersion = myType.substring(StepikNames.PYCHARM_PREFIX.length(), languageSeparator);
-      try {
-        return Integer.parseInt(formatVersion);
-      } catch(NumberFormatException | NullPointerException e) {
-        return EduVersions.JSON_FORMAT_VERSION;
+  val formatVersion: Int
+    get() {
+      val languageSeparator = type.indexOf(" ")
+      if (languageSeparator != -1 && type.contains(StepikNames.PYCHARM_PREFIX)) {
+        val formatVersion = type.substring(StepikNames.PYCHARM_PREFIX.length, languageSeparator)
+        return try {
+          formatVersion.toInt()
+        }
+        catch (e: NumberFormatException) {
+          JSON_FORMAT_VERSION
+        }
       }
+      return JSON_FORMAT_VERSION
     }
-    return EduVersions.JSON_FORMAT_VERSION;
+
+  override fun isStepikRemote(): Boolean {
+    return id != 0 && !isMarketplace
   }
 
-  public void setType(String type) {
-    myType = type;
-  }
+  val isMarketplaceRemote: Boolean
+    get() = id != 0 && isMarketplace
 
-  public boolean isStepikPublic() {
-    return isStepikPublic;
-  }
-
-  public void setStepikPublic(boolean isPublic) {
-    this.isStepikPublic = isPublic;
-  }
-
-  public boolean isCompatible() {
-    return isCompatible;
-  }
-
-  public void setCompatible(boolean compatible) {
-    isCompatible = compatible;
-  }
-
-  public boolean isAdaptive() {
-    return isAdaptive;
-  }
-
-  public void setAdaptive(boolean adaptive) {
-    isAdaptive = adaptive;
-  }
-
-  public String getAdminsGroup() {
-    return myAdminsGroup;
-  }
-
-  public void setAdminsGroup(String adminsGroup) {
-    myAdminsGroup = adminsGroup;
-  }
-
-  public boolean isStepikRemote() {
-    return getId() != 0 && !isMarketplace();
-  }
-
-  public boolean isMarketplaceRemote() {
-    return getId() != 0 && isMarketplace();
-  }
-
-  public void convertToLocal() {
-    if (isMarketplace()) {
-      setMarketplaceCourseVersion(1);
+  fun convertToLocal() {
+    if (isMarketplace) {
+      marketplaceCourseVersion = 1
     }
     else {
-      isStepikPublic = false;
-      isCompatible = true;
-      sectionIds = new ArrayList<>();
-      instructors = new ArrayList<>();
+      isStepikPublic = false
+      isCompatible = true
+      sectionIds = emptyList()
+      instructors = emptyList()
     }
-    myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
-    setId(0);
-    setUpdateDate(new Date(0));
+    type = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $language"
+    id = 0
+    updateDate = Date(0)
   }
 
-  public boolean isUpToDate() {
-    return isUpToDate;
+  override fun isViewAsEducatorEnabled(): Boolean {
+    return super.isViewAsEducatorEnabled() && dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
   }
 
-  public void setUpToDate(boolean isUpToDateValue) {
-    isUpToDate = isUpToDateValue;
-  }
-
-  @Override
-  public boolean isViewAsEducatorEnabled() {
-    return super.isViewAsEducatorEnabled() &&
-           getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != Boolean.TRUE;
-  }
-
-  public int getLearnersCount() {
-    return learnersCount;
-  }
-
-  public void setLearnersCount(int learnersCount) {
-    this.learnersCount = learnersCount;
-  }
-
-  public double getReviewScore() {
-    return reviewScore;
-  }
-
-  public void setReviewScore(double reviewScore) {
-    this.reviewScore = reviewScore;
-  }
-
-  public int getReviewSummary() {
-    return reviewSummary;
-  }
-
-  public void setReviewSummary(int reviewSummary) {
-    this.reviewSummary = reviewSummary;
+  companion object {
+    @NonNls
+    const val ENVIRONMENT_SEPARATOR = "#"
   }
 }
