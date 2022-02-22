@@ -2,15 +2,12 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
@@ -44,7 +41,7 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
     when (val attemptResponse = HyperskillConnector.getInstance().postAttempt(task)) {
       is Err -> showErrorDetails(project, attemptResponse.error)
       is Ok -> {
-        val feedback = if (result.details == null) result.message else "${result.message}\n${result.details}"
+        val feedback = if (result.details == null) result.message.xmlUnescaped else "${result.message.xmlUnescaped}\n${result.details}"
         postEduSubmission(attemptResponse.value, project, task, feedback)
         checkStageToBeCompleted(task)
       }
