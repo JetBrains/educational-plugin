@@ -35,6 +35,8 @@
   <link rel="stylesheet" type="text/css" href="${codeforces_task}"></link>
   <link rel="stylesheet" type="text/css" href="${scrollbar_style_base}"></link>
   <link rel="stylesheet" type="text/css" href="${scrollbar_style_laf}"></link>
+  <link rel="stylesheet" type="text/css" href="${jetbrains_academy_style}"></link>
+  <link rel="stylesheet" type="text/css" href="${jetbrains_academy_style_base}"></link>
 
   <style>
     ${typography_color_style}
@@ -43,7 +45,7 @@
 </head>
 <body>
 <div class=wrapper>
-    ${content}
+  ${content}
 </div>
 
 </body>

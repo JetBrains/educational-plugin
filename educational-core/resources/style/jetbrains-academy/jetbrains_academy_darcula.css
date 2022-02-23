@@ -1,0 +1,14 @@
+.alert-danger {
+    background-color: #8B3C3C;
+    border-color: #466D94;
+}
+
+.alert-primary {
+    background-color: #1C3956;
+    border-color: #162f46;
+}
+
+.alert-warning {
+    background-color: #594E32;
+    border-color: #78550B;
+}

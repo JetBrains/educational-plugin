@@ -16,6 +16,10 @@ object StyleResourcesManager {
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
 
+  private const val JETBRAINS_ACADEMY_CSS_LIGHT: String = "/style/jetbrains-academy/jetbrains_academy_light.css"
+  private const val JETBRAINS_ACADEMY_CSS_DARK: String = "/style/jetbrains-academy/jetbrains_academy_darcula.css"
+  private const val JETBRAINS_ACADEMY_CSS_BASE: String = "/style/jetbrains-academy/jetbrains_academy_base.css"
+
   private const val HINT_BASE_CSS: String = "/style/hint/base.css"
   private const val HINT_SWING_BASE_CSS: String = "/style/hint/swing/base.css"
   private const val HINT_DARCULA_CSS: String = "/style/hint/darcula.css"
@@ -48,6 +52,9 @@ object StyleResourcesManager {
     CODEFORCES_TASK_CSS,
     EXTERNAL_LINK_ARROW_PNG,
     EXTERNAL_LINK_ARROW_DARK_PNG,
+    JETBRAINS_ACADEMY_CSS_DARK,
+    JETBRAINS_ACADEMY_CSS_LIGHT,
+    JETBRAINS_ACADEMY_CSS_BASE,
     HINT_BASE_CSS,
     HINT_SWING_BASE_CSS,
     HINT_DARCULA_CSS,
@@ -105,6 +112,14 @@ object StyleResourcesManager {
       else -> YAML_TAB_BASE_CSS
     }
 
+  private val jetbrainsAcademyStyle: String
+    get() = if (UIUtil.isUnderDarcula()) {
+      JETBRAINS_ACADEMY_CSS_DARK
+    }
+    else {
+      JETBRAINS_ACADEMY_CSS_LIGHT
+    }
+
   // update style/template.html.ft in case of changing key names
   fun getResources(content: String) = mapOf(
     resourcePair("base_css", BROWSER_CSS),
@@ -115,7 +130,9 @@ object StyleResourcesManager {
     resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
     resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),
-    resourcePair("yaml_base_css", yamlTabCss)
+    resourcePair("yaml_base_css", yamlTabCss),
+    resourcePair("jetbrains_academy_style", jetbrainsAcademyStyle),
+    resourcePair("jetbrains_academy_style_base", JETBRAINS_ACADEMY_CSS_BASE)
   )
     .plus(panelSpecificHintResources)
     .plus(VideoTaskResourcesManager().videoResources)
