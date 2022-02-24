@@ -45,10 +45,6 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import org.intellij.markdown.ast.ASTNode;
-import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor;
-import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.*;
 
 import java.io.FileOutputStream;
@@ -163,7 +159,7 @@ public class EduUtils {
     VirtualFile taskTextFile = getTaskTextFile(taskDirectory);
     String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getDescriptionText());
     if (taskTextFile != null && EduNames.TASK_MD.equals(taskTextFile.getName())) {
-      return convertToHtml(taskDescription);
+      return EduUtilsKt.convertToHtml(taskDescription);
     }
     return taskDescription;
   }
@@ -236,21 +232,6 @@ public class EduUtils {
       LOG.warn(e.getMessage());
     }
     return result;
-  }
-
-  public static String convertToHtml(@NotNull final String content) {
-    // markdown parser is supposed to work with normalized text from document
-    String normalizedContent = StringUtil.convertLineSeparators(content);
-
-    return generateMarkdownHtml(normalizedContent);
-  }
-
-  @NotNull
-  private static String generateMarkdownHtml(@NotNull String text) {
-    GFMFlavourDescriptor flavour = new GFMFlavourDescriptor();
-    final ASTNode parsedTree = new MarkdownParser(flavour).buildMarkdownTreeFromString(text);
-
-    return new HtmlGenerator(text, parsedTree, flavour, false).generateHtml();
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {

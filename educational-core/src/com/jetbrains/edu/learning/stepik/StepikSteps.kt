@@ -11,10 +11,8 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.FRAMEWORK
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -32,7 +30,6 @@ import com.jetbrains.edu.learning.submissions.NAME
 import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.submissions.TIME
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
-import com.jetbrains.edu.learning.toStudentFile
 import java.util.*
 
 const val SOURCE = "source"
@@ -101,7 +98,7 @@ class Step {
     CourseArchiveCreator.addDescriptions(project, task)
     text = if (task.descriptionFormat == DescriptionFormat.MD && task.course !is HyperskillCourse) {
       // convert to html because Stepik web site can't display markdown
-      EduUtils.convertToHtml(task.descriptionText)
+      EduUtilsKt.convertToHtml(task.descriptionText)
     }
     else task.descriptionText
 

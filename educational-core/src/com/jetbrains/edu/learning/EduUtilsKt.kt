@@ -10,6 +10,9 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
 import java.util.concurrent.Callable
 
 object EduUtilsKt {
@@ -26,6 +29,17 @@ object EduUtilsKt {
 
     val tooltipRelativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(this)
     balloon.show(tooltipRelativePoint, position)
+  }
+
+  @JvmStatic
+  fun convertToHtml(markdownText: String): String {
+    // Markdown parser is supposed to work with normalized text from document
+    val normalizedText = StringUtil.convertLineSeparators(markdownText)
+
+    val flavour = GFMFlavourDescriptor()
+    val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdownText)
+
+    return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()
   }
 }
 
