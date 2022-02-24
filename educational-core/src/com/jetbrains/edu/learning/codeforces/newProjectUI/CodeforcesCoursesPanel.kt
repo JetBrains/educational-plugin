@@ -1,9 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.newProjectUI
 
-import com.intellij.ide.DataManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
@@ -72,7 +69,7 @@ class CodeforcesCoursesPanel(
 
   private inner class CodeforcesLoginPanel : LoginPanel(isLoginNeeded(),
                                                         CodeforcesNames.CODEFORCES_TITLE,
-                                                        EduCoreBundle.message("course.dialog.to.sync.contest.progress"),
+                                                        EduCoreBundle.message("codeforces.login.to.codeforces.message"),
                                                         { handleLogin() })
 
   private fun handleLogin() {
