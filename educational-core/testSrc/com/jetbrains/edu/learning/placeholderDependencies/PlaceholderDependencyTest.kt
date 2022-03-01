@@ -57,7 +57,7 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
-    checkEditorNotification(virtualFile, UnsolvedDependenciesNotificationProvider.KEY, UnsolvedDependenciesNotificationProvider.getText(listOf("task1")))
+    checkEditorNotification<UnsolvedDependenciesNotificationProvider>(virtualFile, UnsolvedDependenciesNotificationProvider.getText(listOf("task1")))
 
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 0))
   }

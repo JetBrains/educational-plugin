@@ -12,13 +12,13 @@ class UpdateCourseNotificationProviderTest : NotificationsTestBase() {
   fun `test update course notification shown`() {
     val course = createCourse(isUpToDate = false)
     val virtualFile = getFirstTask(course)!!.getTaskFile("Task.txt")!!.getVirtualFile(project)!!
-    checkEditorNotification(virtualFile, UpdateCourseNotificationProvider.KEY)
+    checkEditorNotification<UpdateCourseNotificationProvider>(virtualFile)
   }
 
   fun `test update course notification not shown`() {
     val course = createCourse(isUpToDate = true)
     val virtualFile = getFirstTask(course)!!.getTaskFile("Task.txt")!!.getVirtualFile(project)!!
-    checkNoEditorNotification(virtualFile, UpdateCourseNotificationProvider.KEY)
+    checkNoEditorNotification<UpdateCourseNotificationProvider>(virtualFile)
   }
 
   private fun createCourse(isUpToDate: Boolean): EduCourse {

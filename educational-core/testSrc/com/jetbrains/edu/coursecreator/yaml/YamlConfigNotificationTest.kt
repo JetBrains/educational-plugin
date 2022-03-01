@@ -22,7 +22,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     val taskDir = task.getDir(project.courseDir)
     createConfigFiles(project)
     val configFile = taskDir!!.findChild(YamlFormatSettings.TASK_CONFIG)
-    checkNoEditorNotification(configFile!!, YamlConfigNotificationProvider.KEY)
+    checkNoEditorNotification<YamlConfigNotificationProvider>(configFile!!)
   }
 
   fun `test invalid config`() {
@@ -40,7 +40,7 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     withOriginalException {
       YamlLoader.loadItem(project, configFile!!)
     }
-    checkEditorNotification(configFile!!, YamlConfigNotificationProvider.KEY,
+    checkEditorNotification<YamlConfigNotificationProvider>(configFile!!,
                             "Failed to apply configuration: task type is not specified")
   }
 
