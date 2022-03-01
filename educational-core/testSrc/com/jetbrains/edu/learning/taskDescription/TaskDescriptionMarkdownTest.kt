@@ -26,7 +26,7 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
   """)
 
   fun `test text with header`() = doTest("""
-    #This is the markdown document.
+    # This is the markdown document.
 
     Write your task text here
     
