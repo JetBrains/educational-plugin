@@ -1,13 +1,14 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
-
 enum class CourseMode {
   STUDENT,
   EDUCATOR;
 
+  /**
+   * String constants are different from variable names to provide backward compatibility with old courses
+   */
   override fun toString(): String = when (this) {
-    STUDENT -> EduNames.STUDY
-    EDUCATOR -> EduNames.EDUCATOR
+    STUDENT -> "Study"
+    EDUCATOR -> "Course Creator"
   }
 }
