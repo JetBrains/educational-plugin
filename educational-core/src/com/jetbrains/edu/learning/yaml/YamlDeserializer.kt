@@ -306,9 +306,10 @@ object YamlDeserializer {
     }
   }
 
-  fun getCourseMode(courseConfigText: String): String? {
+  fun getCourseMode(courseConfigText: String): CourseMode? {
     val treeNode = MAPPER.readTree(courseConfigText)
-    return asText(treeNode.get(YamlMixinNames.MODE))
+    val courseModeText = asText(treeNode.get (YamlMixinNames.MODE))
+    return courseModeText?.let { CourseMode.valueOf(it) }
   }
 
   @VisibleForTesting
