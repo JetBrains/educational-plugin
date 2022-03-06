@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
@@ -88,9 +89,11 @@ object YamlDeserializer {
     }
   }
 
-  inline fun <reified T : StudyItem> StudyItem.deserializeContent(project: Project,
-                                                                  contentList: MutableList<T>,
-                                                                  mapper: ObjectMapper = MAPPER): List<T> {
+  inline fun <reified T : StudyItem> StudyItem.deserializeContent(
+    project: Project,
+    contentList: MutableList<T>,
+    mapper: ObjectMapper = MAPPER,
+  ): List<T> {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
@@ -286,10 +289,12 @@ object YamlDeserializer {
   private fun yamlParsingErrorNotificationMessage(problem: String?, line: Int?) =
     if (problem != null && line != null) "$problem at line ${line + 1}" else null
 
-  fun showError(project: Project,
-                originalException: Exception?,
-                configFile: VirtualFile,
-                cause: String = EduCoreBundle.message("yaml.editor.notification.invalid.config")) {
+  fun showError(
+    project: Project,
+    originalException: Exception?,
+    configFile: VirtualFile,
+    cause: String = EduCoreBundle.message("yaml.editor.notification.invalid.config"),
+  ) {
     // to make test failures more comprehensible
     if (isUnitTestMode && project.getUserData(YamlFormatSettings.YAML_TEST_THROW_EXCEPTION) == true) {
       if (originalException != null) {
@@ -308,8 +313,8 @@ object YamlDeserializer {
 
   fun getCourseMode(courseConfigText: String): CourseMode? {
     val treeNode = MAPPER.readTree(courseConfigText)
-    val courseModeText = asText(treeNode.get (YamlMixinNames.MODE))
-    return courseModeText?.let { CourseMode.valueOf(it) }
+    val courseModeText = asText(treeNode.get(YamlMixinNames.MODE))
+    return courseModeText?.toCourseMode()
   }
 
   @VisibleForTesting
