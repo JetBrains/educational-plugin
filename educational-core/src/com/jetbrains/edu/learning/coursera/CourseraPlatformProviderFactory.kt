@@ -15,11 +15,8 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
 import kotlinx.coroutines.CoroutineScope
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
 import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -60,17 +57,17 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
   }
 
   private fun getCourseLinks(): List<String> {
-    try {
+    return try {
       val url = URL(LINK)
       val conn = url.openConnection()
-      BufferedReader(InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)).use { reader ->
-        return reader.readLines().asSequence().map { s: String -> s.split("#")[0].trim() }.filter { it.isNotEmpty() }.toList()
+      conn.getInputStream().bufferedReader().useLines { lines ->
+        lines.map { s -> s.split("#")[0].trim() }.filter { it.isNotEmpty() }.toList()
       }
     }
     catch (e: IOException) {
       LOG.warn("Failed to get courses from ${LINK}")
+      emptyList()
     }
-    return emptyList()
   }
 
 
