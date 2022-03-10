@@ -145,7 +145,11 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     revalidate()
     repaint()
 
-    return settingsPanel.languageSettings
+    languageSettings?.addSettingsChangeListener {
+      doValidation()
+    }
+
+    return languageSettings
   }
 
   fun showEmptyState() {

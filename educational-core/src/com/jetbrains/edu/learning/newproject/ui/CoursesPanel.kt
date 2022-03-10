@@ -186,7 +186,7 @@ abstract class CoursesPanel(
   open fun processSelectionChanged() {
     val course = selectedCourse
     if (course != null) {
-      coursePanel.bindCourse(course)?.addSettingsChangeListener { doValidation() }
+      coursePanel.bindCourse(course)
     }
     else {
       coursePanel.showEmptyState()
