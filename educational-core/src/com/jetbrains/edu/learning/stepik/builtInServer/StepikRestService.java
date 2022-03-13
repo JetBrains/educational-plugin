@@ -24,12 +24,9 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.OAuthRestService;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -43,29 +40,19 @@ import org.jetbrains.io.Responses;
 import javax.swing.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.jetbrains.edu.learning.authUtils.RestServiceUtilsKt.createResponse;
 import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText;
-import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils.*;
 
 public class StepikRestService extends OAuthRestService {
   private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
-  private static final Pattern OPEN_COURSE_PATTERN = StepikConnector.getInstance().getServicePattern("\\?link=.+");
-  private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
   private static final Pattern OAUTH_CODE_PATTERN = StepikConnector.getInstance().getOAuthPattern();
   private static final Pattern OAUTH_ERROR_CODE_PATTERN = StepikConnector.getInstance().getOAuthPattern("\\?error=(\\w+)");
 
   public StepikRestService() {
     super(StepikNames.STEPIK);
-  }
-
-  @NotNull
-  private static String log(@NotNull String message) {
-    LOG.info(message);
-    return message;
   }
 
   @Override
@@ -91,11 +78,6 @@ public class StepikRestService extends OAuthRestService {
     throws IOException {
     String uri = urlDecoder.uri();
     LOG.info("Request: " + uri);
-
-    Matcher matcher = OPEN_COURSE_PATTERN.matcher(uri);
-    if (matcher.matches()) {
-      return openCourse(urlDecoder, request, context);
-    }
 
     Matcher errorCodeMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri);
     if (errorCodeMatcher.matches()) {
@@ -134,78 +116,9 @@ public class StepikRestService extends OAuthRestService {
     return StepikConnector.getInstance().getServiceName();
   }
 
-  @Nullable
-  private static String openCourse(@NotNull QueryStringDecoder urlDecoder, @NotNull FullHttpRequest request,
-                                   @NotNull ChannelHandlerContext context) {
-    String link = getStringParameter(StepikNames.LINK, urlDecoder);
-    if (link == null) {
-      return log("The link parameter was not found");
-    }
-
-    LOG.info("Try to open a course: " + link);
-
-    QueryStringDecoder linkDecoder = new QueryStringDecoder(link);
-    Matcher matcher = COURSE_PATTERN.matcher(linkDecoder.path());
-    if (!matcher.matches()) {
-      return log("Unrecognized the link parameter");
-    }
-
-    int lessonId;
-    int stepIndex;
-    try {
-      lessonId = Integer.parseInt(matcher.group(1));
-      stepIndex = Integer.parseInt(matcher.group(2));
-    }
-    catch (NumberFormatException e) {
-      return log("Unrecognized the link");
-    }
-
-    int unitId = getIntParameter("unit", linkDecoder);
-    if (unitId == -1) {
-      return log("Unrecognized the Unit id");
-    }
-
-    StepikConnector stepikConnector = StepikConnector.getInstance();
-    StepikUnit unit = stepikConnector.getUnit(unitId);
-    if (unit == null || unit.getId() == null || unit.getId() == 0) {
-      return log("Unrecognized the Unit id");
-    }
-
-    Section section = stepikConnector.getSection(unit.getSection());
-    if (section == null) {
-      return log("No section found with id " + unit.getSection());
-    }
-    int courseId = section.getCourseId();
-    if (courseId == 0) {
-      return log("Unrecognized the course id");
-    }
-    Lesson lesson = stepikConnector.getLesson(lessonId);
-    if (lesson == null) {
-      return log("No lesson found with id " + lessonId);
-    }
-    List<Integer> stepIds = lesson.steps;
-
-    if (stepIds.isEmpty()) {
-      return log("Unrecognized the step id");
-    }
-    int stepId = stepIds.get(stepIndex - 1);
-
-    LOG.info(String.format("Try to open a course: courseId=%s, stepId=%s", courseId, stepId));
-
-    if (focusOpenEduProject(courseId, stepId) || openRecentEduCourse(courseId, stepId) || createEduCourse(courseId, stepId)) {
-      RestService.sendOk(request, context);
-      LOG.info("Course opened: " + courseId);
-      return null;
-    }
-
-    RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel());
-    String message = "A project didn't found or created";
-    LOG.info(message);
-    return message;
-  }
-
   private static void focusOnApplicationWindow() {
     JFrame frame = WindowManager.getInstance().findVisibleFrame();
+    if (frame == null) return;
     ApplicationManager.getApplication().invokeLater(() -> {
       AppIcon.getInstance().requestFocus((IdeFrame)frame);
       frame.toFront();

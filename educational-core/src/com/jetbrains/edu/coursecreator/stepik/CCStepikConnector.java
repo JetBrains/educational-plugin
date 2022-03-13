@@ -152,7 +152,7 @@ public class CCStepikConnector {
       section.setPosition(i++);
       List<Lesson> lessons = section.getLessons();
 
-      final int sectionId = postSectionInfo(project, section, course.getId());
+      final int sectionId = postSectionInfo(project, section);
       success = sectionId != -1 && postLessons(project, sectionId, lessons) && success;
     }
     return success;
@@ -167,7 +167,7 @@ public class CCStepikConnector {
     Section section = new Section();
     section.setName(course.getName());
     section.setPosition(1);
-    int sectionId = postSectionInfo(project, section, course.getId());
+    int sectionId = postSectionInfo(project, section);
     course.setSectionIds(Collections.singletonList(sectionId));
     return sectionId;
   }
@@ -175,14 +175,13 @@ public class CCStepikConnector {
   public static boolean postSection(@NotNull Project project, @NotNull Section section) {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postSectionInfo(project, section, course.getId());
+    final int sectionId = postSectionInfo(project, section);
     return sectionId != -1 && postLessons(project, sectionId, section.getLessons());
   }
 
-  public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
+  public static int postSectionInfo(@NotNull Project project, @NotNull Section section) {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.SECTION_TYPE))) return -1;
 
-    section.setCourseId(courseId);
     final Section postedSection = StepikConnector.getInstance().postSection(section);
     if (postedSection == null) {
       showFailedToPostItemNotification(project, section, true);
@@ -318,8 +317,7 @@ public class CCStepikConnector {
     return updateSectionInfo(section);
   }
 
-  public static boolean updateSection(@NotNull Section section, @NotNull Course course, @NotNull Project project) {
-    section.setCourseId(course.getId());
+  public static boolean updateSection(@NotNull Section section, @NotNull Project project) {
     boolean updated = updateSectionInfo(section);
     if (!updated) {
       showFailedToPostItemNotification(project, section, false);

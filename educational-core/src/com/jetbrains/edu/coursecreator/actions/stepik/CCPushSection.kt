@@ -109,7 +109,7 @@ class CCPushSection : DumbAwareAction(
         )
         return
       }
-      val updated = CCStepikConnector.updateSection(section, course, project)
+      val updated = CCStepikConnector.updateSection(section, project)
       if (updated) {
         showNotification(
           project,

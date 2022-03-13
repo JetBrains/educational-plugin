@@ -11,7 +11,6 @@ public class Section extends LessonContainer {
   public Section() {}
 
   transient public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
-  private int courseId;
   private int position;
 
   transient private Course myCourse;
@@ -20,9 +19,6 @@ public class Section extends LessonContainer {
     myCourse = course;
     int index = 1;
 
-    if (course != null) {
-      this.courseId = course.getId();
-    }
     for (StudyItem lesson : items) {
       if (lesson instanceof Lesson) {
         lesson.setIndex(index);
@@ -32,16 +28,8 @@ public class Section extends LessonContainer {
     }
   }
 
-  public void setCourseId(int courseId) {
-    this.courseId = courseId;
-  }
-
   public void setPosition(int position) {
     this.position = position;
-  }
-
-  public int getCourseId() {
-    return courseId;
   }
 
   public int getPosition() {
