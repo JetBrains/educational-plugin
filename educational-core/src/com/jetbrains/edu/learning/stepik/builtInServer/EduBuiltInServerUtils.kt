@@ -4,23 +4,15 @@ import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.xmlb.XmlSerializationException
 import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
-import com.jetbrains.edu.learning.EduUtils.execCancelable
-import com.jetbrains.edu.learning.EduUtils.navigateToStep
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.StepikStartupActivity.Companion.STEP_ID
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -32,13 +24,6 @@ import java.io.File
 import java.io.IOException
 
 object EduBuiltInServerUtils {
-
-  @JvmStatic
-  fun focusOpenEduProject(courseId: Int, stepId: Int): Boolean {
-    val (project, course) = focusOpenProject { it is EduCourse && it.isStepikRemote && it.getId() == courseId } ?: return false
-    ApplicationManager.getApplication().invokeLater { navigateToStep(project, course, stepId) }
-    return true
-  }
 
   @JvmStatic
   fun focusOpenProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
@@ -96,13 +81,6 @@ object EduBuiltInServerUtils {
     }
   }
 
-  @JvmStatic
-  fun openRecentEduCourse(courseId: Int, stepId: Int): Boolean {
-    val course = openRecentProject { it is EduCourse && it.isStepikRemote && it.getId() == courseId }?.second ?: return false
-    course.dataHolder.putUserData(STEP_ID, stepId)
-    return true
-  }
-
   private fun readComponent(parser: SAXBuilder, projectPath: String): Element? {
     var component: Element? = null
     try {
@@ -133,31 +111,4 @@ object EduBuiltInServerUtils {
     return null
   }
 
-  @JvmStatic
-  fun createEduCourse(courseId: Int, stepId: Int): Boolean {
-    ApplicationManager.getApplication().invokeLater {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously({
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        execCancelable<Any> {
-          val course = StepikConnector.getInstance().getCourseInfo(courseId, true)
-          showDialog(course, stepId)
-          null
-        }
-      }, "Getting Course", true, null)
-    }
-
-    return true
-  }
-
-  private fun showDialog(course: Course?, stepId: Int) {
-    ApplicationManager.getApplication().invokeLater {
-      if (course != null) {
-        course.dataHolder.putUserData(STEP_ID, stepId)
-        JoinCourseDialog(course).show()
-      }
-      else {
-        Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course")
-      }
-    }
-  }
 }
