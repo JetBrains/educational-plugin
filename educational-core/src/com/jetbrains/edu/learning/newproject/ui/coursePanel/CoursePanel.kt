@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.LanguageSettings.SettingsChangeListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -71,6 +72,8 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   var errorState: ErrorState = ErrorState.NothingSelected
   val course: Course? get() = courseData?.course
+
+  private val settingsChangeListener: SettingsChangeListener = SettingsChangeListener { doValidation() }
 
   protected open val openButtonText: String
     get() = EduCoreBundle.message("course.dialog.open.button")
@@ -157,9 +160,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     revalidate()
     repaint()
 
-    languageSettings?.addSettingsChangeListener {
-      doValidation()
-    }
+    languageSettings?.addSettingsChangeListener(settingsChangeListener)
 
     return languageSettings
   }

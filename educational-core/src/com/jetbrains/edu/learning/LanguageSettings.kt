@@ -13,7 +13,7 @@ import javax.swing.JComponent
  * @param Settings container type holds project settings state
  */
 abstract class LanguageSettings<Settings : Any> {
-  protected val listeners: MutableList<SettingsChangeListener> = mutableListOf()
+  protected val listeners: MutableSet<SettingsChangeListener> = mutableSetOf()
 
   /**
    * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
@@ -32,6 +32,9 @@ abstract class LanguageSettings<Settings : Any> {
     return emptyList()
   }
 
+  /**
+   * If [listener] is already added, it won't be added again
+   */
   fun addSettingsChangeListener(listener: SettingsChangeListener) {
     listeners.add(listener)
   }
