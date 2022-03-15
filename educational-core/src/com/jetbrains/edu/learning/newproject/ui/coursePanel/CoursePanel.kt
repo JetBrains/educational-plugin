@@ -1,6 +1,10 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
+import com.intellij.ide.plugins.DynamicPluginListener
+import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
@@ -87,6 +91,11 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     layoutComponents()
     @Suppress("LeakingThis")
     setButtonsEnabled(canStartCourse())
+
+    ApplicationManager.getApplication()
+      .messageBus
+      .connect(parentDisposable)
+      .subscribe(DynamicPluginListener.TOPIC, PluginListener())
   }
 
   private fun layoutComponents() {
@@ -318,5 +327,21 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       }
     }
   }
-}
 
+  private inner class PluginListener : DynamicPluginListener {
+    override fun pluginLoaded(pluginDescriptor: IdeaPluginDescriptor) {
+      rebindCourse()
+    }
+
+    override fun pluginUnloaded(pluginDescriptor: IdeaPluginDescriptor, isUpdate: Boolean) {
+      rebindCourse()
+    }
+
+    private fun rebindCourse() {
+      val data = courseData ?: return
+      invokeLater {
+        bindCourse(data)
+      }
+    }
+  }
+}
