@@ -55,9 +55,8 @@ private val BorderColor: Color = JBColor.namedColor("BrowseCourses.Button.border
 
 class OpenCourseButton : CourseButtonBase() {
 
-  override fun actionListener(courseInfo: CourseInfo): ActionListener = ActionListener {
+  override fun actionListener(course: Course): ActionListener = ActionListener {
     invokeLater {
-      val course = courseInfo.course
       val coursesStorage = CoursesStorage.getInstance()
       val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeLater
       if (!FileUtil.exists(coursePath)) {
@@ -122,7 +121,7 @@ class OpenCourseButton : CourseButtonBase() {
   override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().hasCourse(course)
 }
 
-class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
+class StartCourseButton(joinCourse: (Course, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
   override val courseMode = CourseMode.STUDENT
 
   override fun isVisible(course: Course): Boolean {
@@ -153,7 +152,7 @@ class StartCourseButton(joinCourse: (CourseInfo, CourseMode) -> Unit, fill: Bool
 
 }
 
-class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCourseButtonBase(errorHandler) {
+class EditCourseButton(errorHandler: (Course, CourseMode) -> Unit) : StartCourseButtonBase(errorHandler) {
   override val courseMode = CourseMode.EDUCATOR
 
   init {
@@ -168,13 +167,13 @@ class EditCourseButton(errorHandler: (CourseInfo, CourseMode) -> Unit) : StartCo
  * inspired by [com.intellij.ide.plugins.newui.InstallButton]
  */
 abstract class StartCourseButtonBase(
-  private val joinCourse: (CourseInfo, CourseMode) -> Unit,
+  private val joinCourse: (Course, CourseMode) -> Unit,
   fill: Boolean = false
 ) : CourseButtonBase(fill) {
   abstract val courseMode: CourseMode
 
-  override fun actionListener(courseInfo: CourseInfo) = ActionListener {
-    joinCourse(courseInfo, courseMode)
+  override fun actionListener(course: Course) = ActionListener {
+    joinCourse(course, courseMode)
   }
 
 }
@@ -195,18 +194,18 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
 
   open fun canStartCourse(courseInfo: CourseInfo): Boolean = true
 
-  protected abstract fun actionListener(courseInfo: CourseInfo): ActionListener
+  protected abstract fun actionListener(course: Course): ActionListener
 
-  open fun update(courseInfo: CourseInfo) {
-    isVisible = isVisible(courseInfo.course)
-    addListener(courseInfo)
+  open fun update(course: Course) {
+    isVisible = isVisible(course)
+    addListener(course)
   }
 
-  fun addListener(courseInfo: CourseInfo) {
+  fun addListener(course: Course) {
     listener?.let { removeActionListener(listener) }
-    isVisible = isVisible(courseInfo.course)
+    isVisible = isVisible(course.course)
     if (isVisible) {
-      listener = actionListener(courseInfo)
+      listener = actionListener(course)
       addActionListener(listener)
     }
   }

@@ -63,8 +63,10 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   }
   protected val content = ContentPanel()
 
+  private var courseData: CourseBindData? = null
+
   var errorState: ErrorState = ErrorState.NothingSelected
-  var course: Course? = null
+  val course: Course? get() = courseData?.course
 
   protected open val openButtonText: String
     get() = EduCoreBundle.message("course.dialog.open.button")
@@ -130,17 +132,18 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   open fun validateSettings(it: Course) = settingsPanel.validateSettings(it)
 
-  fun bindCourse(course: Course, settings: CourseDisplaySettings = CourseDisplaySettings()): LanguageSettings<*>? {
+  fun bindCourse(course: Course): LanguageSettings<*>? = bindCourse(CourseBindData(course))
+
+  fun bindCourse(data: CourseBindData): LanguageSettings<*>? {
+    courseData = data
     (layout as CardLayout).show(this, CONTENT)
-    this.course = course
-    val courseInfo = CourseInfo(course, { settingsPanel.locationString }, { settingsPanel.languageSettings })
 
     doValidation()
 
     buttonsPanel.apply {
       setStartButtonText(startButtonText(course))
     }
-    content.update(courseInfo, settings)
+    content.update(data)
 
     revalidate()
     repaint()
@@ -223,8 +226,8 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   fun canStartCourse(): Boolean = errorState.courseCanBeStarted
 
-  private fun joinCourse(courseInfo: CourseInfo, courseMode: CourseMode) {
-    val currentLocation = courseInfo.location()
+  private fun joinCourse(course: Course, courseMode: CourseMode) {
+    val currentLocation = locationString
     val locationErrorState = when {
       // if it's null it means there's no location field and it's ok
       currentLocation == null -> ErrorState.None
@@ -236,6 +239,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       setError(locationErrorState)
     }
     else {
+      val courseInfo = CourseInfo(course, { locationString }, { languageSettings })
       joinCourseAction(courseInfo, courseMode)
     }
   }
@@ -244,9 +248,9 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
     @VisibleForTesting
     val buttons: List<CourseButtonBase> = mutableListOf(
-      StartCourseButton(joinCourse = { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }),
+      StartCourseButton(joinCourse = { course, courseMode -> joinCourse(course, courseMode) }),
       OpenCourseButton(),
-      EditCourseButton { courseInfo, courseMode -> joinCourse(courseInfo, courseMode) }
+      EditCourseButton { course, courseMode -> joinCourse(course, courseMode) }
     )
 
     init {
@@ -269,9 +273,9 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       buttons[1].text = text
     }
 
-    override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+    override fun onCourseSelectionChanged(data: CourseBindData) {
       buttons.forEach {
-        it.update(courseInfo)
+        it.update(data.course)
       }
     }
 
@@ -307,10 +311,10 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       return super.add(comp)
     }
 
-    fun update(courseInfo: CourseInfo, settings: CourseDisplaySettings) {
+    fun update(data: CourseBindData) {
       // we have to update settings prior to buttons
       components.forEach {
-        (it as CourseSelectionListener).onCourseSelectionChanged(courseInfo, settings)
+        (it as CourseSelectionListener).onCourseSelectionChanged(data)
       }
     }
   }

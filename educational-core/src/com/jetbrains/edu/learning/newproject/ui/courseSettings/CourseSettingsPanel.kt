@@ -95,12 +95,12 @@ class CourseSettingsPanel(
     locationField?.component?.textField?.document?.removeDocumentListener(listener)
   }
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    val (course, courseDisplaySettings) = data
     languageSettingsDisposable?.let(Disposer::dispose)
     val settingsDisposable = Disposer.newDisposable(parentDisposable, "languageSettingsDisposable")
     languageSettingsDisposable = settingsDisposable
 
-    val course = courseInfo.course
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
       it.component.text = nameToLocation(course)

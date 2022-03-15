@@ -23,8 +23,8 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
     border = null
   }
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-    val course = courseInfo.course
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    val (course, courseDisplaySettings) = data
     isVisible = courseDisplaySettings.showInstructorField && course.allAuthors.isNotEmpty()
     if (authorsLabel.isVisible) {
       authorsLabel.setBody("by ${course.allAuthors}")

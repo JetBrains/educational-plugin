@@ -32,10 +32,11 @@ class TagsPanel : NonOpaquePanel(HorizontalLayout(HORIZONTAL_OFFSET)), CourseSel
     }
   }
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    val (course, courseDisplaySettings) = data
     isVisible = courseDisplaySettings.showTagsPanel
     if (courseDisplaySettings.showTagsPanel) {
-      addTags(courseInfo.course)
+      addTags(course)
     }
   }
 }

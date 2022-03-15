@@ -70,7 +70,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
     if (codeforcesCourse.isRegistrationOpen && !codeforcesCourse.isOngoing) {
       val registrationLink = CodeforcesNames.CODEFORCES_URL + codeforcesCourse.registrationLink
-      register(codeforcesCourse.id, registrationLink, info)
+      register(codeforcesCourse.id, registrationLink, codeforcesCourse)
     }
     else {
       CodeforcesPlatformProvider().joinAction(info, mode, this)
@@ -93,30 +93,30 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
       add(hyperlinkLabel, BorderLayout.CENTER)
     }
 
-    override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-      val codeforcesCourse = courseInfo.course as? CodeforcesCourse ?: return
+    override fun onCourseSelectionChanged(data: CourseBindData) {
+      val codeforcesCourse = data.course as? CodeforcesCourse ?: return
       hyperlinkLabel.apply {
         isVisible = codeforcesCourse.isRegistrationOpen == true && codeforcesCourse.isOngoing
         setListener(LinkListener { _, course ->
           val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
-          register(codeforcesCourse.id, registrationLink, courseInfo)
+          register(codeforcesCourse.id, registrationLink, codeforcesCourse)
         }, codeforcesCourse)
       }
 
-      buttonsPanel.onCourseSelectionChanged(courseInfo, courseDisplaySettings)
+      buttonsPanel.onCourseSelectionChanged(data)
     }
   }
 
-  private fun register(contestId: Int, registrationLink: String, courseInfo: CourseInfo) {
+  private fun register(contestId: Int, registrationLink: String, course: Course) {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
-      registerFromIDE(contestId, registrationLink, courseInfo)
+      registerFromIDE(contestId, registrationLink, course)
     }
     else {
       BrowserUtil.browse(URL(registrationLink))
     }
   }
 
-  private fun registerFromIDE(id: Int, registrationLink: String, courseInfo: CourseInfo) {
+  private fun registerFromIDE(id: Int, registrationLink: String, course: Course) {
     val connector = CodeforcesConnector.getInstance()
     val registration = execCancelable(EduCoreBundle.message("course.dialog.registration.in.progress"))
     { connector.getRegistrationData(id) }
@@ -138,7 +138,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
       { connector.registerToContest(id, registration.token) }
 
       if (registrationCompleted) {
-        content.update(courseInfo, CourseDisplaySettings())
+        content.update(CourseBindData(course))
         Messages.showInfoMessage(EduCoreBundle.message("codeforces.registration.completed"),
                                  EduCoreBundle.message("codeforces.contest.registration"))
       }
@@ -252,8 +252,8 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
     font = font.deriveFont(Font.BOLD, 13.0f)
   }
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-    val codeforcesCourse = courseInfo.course as CodeforcesCourse
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    val codeforcesCourse = data.course as CodeforcesCourse
 
     val dateTimeFormatter = DateTimeFormatter.ofPattern(CourseDetailsPanel.DATE_TIME_PATTERN)
     startsLabel.text = codeforcesCourse.startDate?.format(dateTimeFormatter)
@@ -282,7 +282,7 @@ private class ContestDetailsPanel : NonOpaquePanel(), CourseSelectionListener {
                                 else -> ""
                               })
 
-    informationComponent.onCourseSelectionChanged(courseInfo, courseDisplaySettings)
+    informationComponent.onCourseSelectionChanged(data)
 
     updateVisibility(codeforcesCourse)
   }

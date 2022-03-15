@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -18,7 +19,7 @@ open class JoinCourseDialog(
   init {
     super.init()
     title = course.name
-    coursePanel.bindCourse(course, settings)
+    coursePanel.bindCourse(CourseBindData(course, settings))
     coursePanel.preferredSize = JBUI.size(500, 530)
   }
 

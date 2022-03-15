@@ -15,7 +15,7 @@ class CourseNameHtmlPanel : CourseHtmlPanel(), CourseSelectionListener {
 
   override fun getBodyFont(): Font = Font(TypographyManager().bodyFont, Font.BOLD, CoursesDialogFontManager.headerFontSize)
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-    super.bind(courseInfo.course)
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    super.bind(data.course)
   }
 }

@@ -57,8 +57,8 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
     add(JBScrollPane(descriptionPanel).apply { border = null }, BorderLayout.CENTER)
   }
 
-  override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-    val course = courseInfo.course
+  override fun onCourseSelectionChanged(data: CourseBindData) {
+    val course = data.course
     courseDetailsHeader.isVisible = !course.description.isNullOrEmpty()
     if (course is EduCourse) {
       val hasStatistics = courseStatisticsPanel.setStatistics(course)

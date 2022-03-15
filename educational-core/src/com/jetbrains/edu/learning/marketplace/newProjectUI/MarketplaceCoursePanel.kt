@@ -40,8 +40,8 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
       border = JBUI.Borders.empty(0, 16, 0, 0)
     }
 
-    override fun onCourseSelectionChanged(courseInfo: CourseInfo, courseDisplaySettings: CourseDisplaySettings) {
-      val course = courseInfo.course
+    override fun onCourseSelectionChanged(data: CourseBindData) {
+      val course = data.course
       val authors = course.authorFullNames.joinToString()
       val license = course.license
 

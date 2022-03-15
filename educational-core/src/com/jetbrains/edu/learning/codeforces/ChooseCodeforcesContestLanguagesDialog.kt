@@ -9,8 +9,7 @@ import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDisplaySettings
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import java.awt.event.ItemEvent
 import javax.swing.JCheckBox
@@ -64,7 +63,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
 
   private fun setLanguage() {
     codeforcesCourse.programmingLanguage = CodeforcesLanguageProvider.getLanguageIdAndVersion(selectedLanguage())
-    courseSettingsPanel.onCourseSelectionChanged(CourseInfo(codeforcesCourse), CourseDisplaySettings())
+    courseSettingsPanel.onCourseSelectionChanged(CourseBindData(codeforcesCourse))
   }
 
   override fun createCenterPanel(): JComponent = panel {
