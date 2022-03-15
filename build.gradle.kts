@@ -65,6 +65,8 @@ val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
 // BACKCOMPAT: 2021.2
 val isAtLeast213 = environmentName.toInt() >= 213
+// BACKCOMPAT: 2021.3
+val isAtLeast221 = environmentName.toInt() >= 221
 
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
@@ -78,7 +80,8 @@ val pythonPlugin = when {
 }
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
-val tomlPlugin = "org.toml.lang:${prop("tomlPluginVersion")}"
+// Since 2022.1 TOML plugin is bundled into IDEA and CLion
+val tomlPlugin = if (isAtLeast221 && (isIdeaIDE || isClionIDE)) "org.toml.lang" else "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val sqlPlugin = "com.intellij.database"
 val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
