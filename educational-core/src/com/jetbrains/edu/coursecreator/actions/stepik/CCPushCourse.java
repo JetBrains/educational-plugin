@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 
-import static com.jetbrains.edu.coursecreator.CCNotificationUtils.createPostStepikCourseNotificationListener;
 import static com.jetbrains.edu.coursecreator.CCUtils.askToWrapTopLevelLessons;
 import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE;
@@ -111,7 +110,7 @@ public class CCPushCourse extends DumbAwareAction {
       Notification notification =
         new Notification("EduTools", EduCoreBundle.message("error.failed.to.update"),
                          EduCoreBundle.message("error.failed.to.update.no.course", StepikNames.STEPIK, getUploadTitleText()),
-                         NotificationType.ERROR, createPostStepikCourseNotificationListener(project, course));
+                         NotificationType.ERROR);
       notification.notify(project);
       return;
     }

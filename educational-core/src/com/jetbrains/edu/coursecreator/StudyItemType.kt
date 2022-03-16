@@ -101,15 +101,6 @@ val StudyItemType.updateOnStepikTitleMessage: String
     TASK_TYPE -> message("item.update.on.0.task.title", STEPIK)
   }
 
-val StudyItemType.uploadToStepikMessage: String
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  get() = when (this) {
-    COURSE_TYPE -> message("item.upload.to.0.course", STEPIK)
-    SECTION_TYPE -> message("item.upload.to.0.section", STEPIK)
-    LESSON_TYPE -> message("item.upload.to.0.lesson", STEPIK)
-    TASK_TYPE -> message("item.upload.to.0.task", STEPIK)
-  }
-
 val StudyItemType.uploadToStepikTitleMessage: String
   @Nls(capitalization = Nls.Capitalization.Title)
   get() = when (this) {

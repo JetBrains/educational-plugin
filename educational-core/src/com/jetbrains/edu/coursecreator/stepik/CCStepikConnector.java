@@ -1,9 +1,7 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -16,14 +14,12 @@ import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.learning.EduBrowser;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepSource;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
@@ -31,7 +27,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikUnit;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,129 +34,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.CCNotificationUtils.*;
-import static com.jetbrains.edu.coursecreator.CCUtils.*;
-import static com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getHasSections;
+import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
+import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK;
 
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
-  private static final String JETBRAINS_USER_ID = "17813950";
-  private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
 
   private CCStepikConnector() { }
 
   // POST methods:
-
-  public static void postCourseWithProgress(@NotNull final Project project, @NotNull final EduCourse course) {
-    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(
-      project,
-      EduCoreBundle.message("course.creator.stepik.upload.course.titled"),
-      true
-    ) {
-      @Override
-      public void run(@NotNull final ProgressIndicator indicator) {
-        indicator.setIndeterminate(false);
-        if (checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.COURSE_TYPE))) {
-          postCourse(project, course);
-        }
-      }
-    });
-  }
-
-  public static void postCourse(@NotNull final Project project, @NotNull EduCourse course) {
-    final StepikConnector stepikConnector = StepikConnector.getInstance();
-    if (!stepikConnector.isLoggedIn()) {
-      // we check that user isn't null before `postCourse` call
-      LOG.warn("User is null when posting the course");
-      return;
-    }
-    updateProgress(EduCoreBundle.message("course.creator.stepik.upload.progress.title"));
-    final StepikUserInfo currentUserInfo = stepikConnector.getCurrentUserInfo();
-    if (currentUserInfo != null) {
-      final List<UserInfo> courseAuthors = course.getAuthors();
-      for (final UserInfo courseAuthor : courseAuthors) {
-        if (courseAuthor instanceof StepikUserInfo) {
-          final StepikUserInfo stepikAuthor = (StepikUserInfo)courseAuthor;
-          currentUserInfo.setFirstName(stepikAuthor.getFirstName());
-          currentUserInfo.setLastName(stepikAuthor.getLastName());
-        }
-      }
-      course.setAuthors(Collections.singletonList(currentUserInfo));
-    }
-
-    final EduCourse courseOnRemote = StepikConnector.getInstance().postCourse(course);
-    if (courseOnRemote == null) {
-      showErrorNotification(project, EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"), null,
-                            getShowLogAction());
-      return;
-    }
-    final List<StudyItem> items = course.getItems();
-    courseOnRemote.setItems(Lists.newArrayList(items));
-    courseOnRemote.setAuthors(course.getAuthors());
-    courseOnRemote.setCourseMode(CourseMode.EDUCATOR);
-    courseOnRemote.setEnvironment(course.getEnvironment());
-    courseOnRemote.setProgrammingLanguage(course.getProgrammingLanguage());
-
-    if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUserInfo)) {
-      addJetBrainsUserAsAdmin(courseOnRemote.getAdminsGroup());
-    }
-
-    boolean success = getHasSections(course) ? postSections(project, courseOnRemote) : postTopLevelLessons(project, courseOnRemote);
-    success = postCourseAdditionalInfo(course, project, courseOnRemote.getId()) && success;
-
-    StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
-    courseOnRemote.init(null, null, true);
-    String message = success
-                     ? EduCoreBundle.message("course.creator.stepik.published")
-                     : EduCoreBundle.message("course.creator.stepik.published.partially");
-    showNotification(project, message, openOnStepikAction("/course/" + courseOnRemote.getId()));
-  }
-
-  public static boolean postCourseAdditionalInfo(@NotNull EduCourse course, @NotNull final Project project, int courseId) {
-    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("course.creator.stepik.post.course.additional.information"))) {
-      return false;
-    }
-
-    updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
-    String errors = AdditionalFilesUtils.checkIgnoredFiles(project);
-    if (errors != null) {
-      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"), errors);
-      return false;
-    }
-    final List<TaskFile> additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(course, project);
-    CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
-    int code = StepikConnector.getInstance().postCourseAttachment(courseAdditionalInfo, courseId);
-    if (code != HttpStatus.SC_CREATED) {
-      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.additional.files"), null,
-                            getShowLogAction());
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * This method should be used for courses with sections only
-   */
-  private static boolean postSections(@NotNull Project project, @NotNull EduCourse course) {
-    course.sortItems();
-    final List<Section> sections = course.getSections();
-    assert course.getLessons().isEmpty() : "postSections method should be used for courses with sections only";
-    int i = 1;
-    boolean success = true;
-    for (Section section : sections) {
-      checkCanceled();
-      section.setPosition(i++);
-      List<Lesson> lessons = section.getLessons();
-
-      final int sectionId = postSectionInfo(project, section);
-      success = sectionId != -1 && postLessons(project, sectionId, lessons) && success;
-    }
-    return success;
-  }
-
-  private static boolean postTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
-    final int sectionId = postSectionForTopLevelLessons(project, course);
-    return sectionId != -1 && postLessons(project, sectionId, course.getLessons());
-  }
 
   public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
     Section section = new Section();
@@ -268,7 +149,7 @@ public class CCStepikConnector {
   // UPDATE methods:
 
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.COURSE_TYPE))) return false;
+    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("item.update.on.0.course.title", STEPIK))) return false;
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
     EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
@@ -282,7 +163,7 @@ public class CCStepikConnector {
     int responseCode = StepikConnector.getInstance().updateCourse(course);
 
     if (responseCode == HttpStatus.SC_FORBIDDEN) {
-      showNoRightsToUpdateOnStepikNotification(project, course);
+      showNoRightsToUpdateOnStepikNotification(project);
       return false;
     }
     if (responseCode != HttpStatus.SC_OK) {
@@ -315,25 +196,6 @@ public class CCStepikConnector {
     section.setPosition(1);
     section.setId(course.getSectionIds().get(0));
     return updateSectionInfo(section);
-  }
-
-  public static boolean updateSection(@NotNull Section section, @NotNull Project project) {
-    boolean updated = updateSectionInfo(section);
-    if (!updated) {
-      showFailedToPostItemNotification(project, section, false);
-      return false;
-    }
-    for (Lesson lesson : section.getLessons()) {
-      checkCanceled();
-      if (lesson.getId() > 0) {
-        updateLesson(project, lesson, false, section.getId());
-      }
-      else {
-        postLesson(project, lesson, lesson.getIndex(), section.getId());
-      }
-    }
-
-    return true;
   }
 
   public static boolean updateSectionInfo(@NotNull Section section) {
@@ -418,7 +280,6 @@ public class CCStepikConnector {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
     VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
-    final Course course = task.getLesson().getCourse();
 
     final int responseCode = StepikConnector.getInstance().updateTask(project, task);
 
@@ -436,7 +297,7 @@ public class CCStepikConnector {
         // TODO: support case when lesson was removed from Stepik too
         return postTask(project, task, task.getLesson().getId());
       case HttpStatus.SC_FORBIDDEN:
-        showNoRightsToUpdateOnStepikNotification(project, (EduCourse)course);
+        showNoRightsToUpdateOnStepikNotification(project);
         return false;
       default:
         showFailedToPostItemNotification(project, task, false);
@@ -453,17 +314,6 @@ public class CCStepikConnector {
 
   // helper methods:
 
-  private static boolean isTestAccount(@Nullable StepikUserInfo user) {
-    return user != null && TESTER_USER_IDS.contains(user.getId());
-  }
-
-  private static void addJetBrainsUserAsAdmin(@NotNull String groupId) {
-    final int responseCode = StepikConnector.getInstance().postMember(JETBRAINS_USER_ID, groupId);
-    if (responseCode != HttpStatus.SC_CREATED) {
-      LOG.warn("Failed to add JetBrains as admin ");
-    }
-  }
-
   @SuppressWarnings("UnstableApiUsage")
   private static void updateProgress(@NlsContexts.ProgressDetails @NotNull String text) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -474,7 +324,7 @@ public class CCStepikConnector {
   }
 
   public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
-    return new AnAction(EduCoreBundle.message("action.open.on.text", StepikNames.STEPIK)) {
+    return new AnAction(EduCoreBundle.message("action.open.on.text", STEPIK)) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         EduBrowser.getInstance().browse(StepikNames.getStepikUrl() + url);

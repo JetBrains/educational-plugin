@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -53,8 +52,10 @@ object CCNotificationUtils {
   }
 
   @JvmStatic
-  fun showNoRightsToUpdateOnStepikNotification(project: Project, course: EduCourse) {
-    showNoRightsToUpdateNotification(project, course) { CCStepikConnector.postCourseWithProgress(project, course) }
+  fun showNoRightsToUpdateOnStepikNotification(project: Project) {
+    showErrorNotification(project,
+                          EduCoreBundle.message("notification.course.creator.access.denied.title"),
+                          EduCoreBundle.message("notification.course.creator.access.denied.content"))
   }
 
   fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, action: () -> Unit) {
@@ -91,11 +92,6 @@ object CCNotificationUtils {
         action()
       }
     }
-  }
-
-  @JvmStatic
-  fun createPostStepikCourseNotificationListener(project: Project, course: EduCourse): NotificationListener.Adapter {
-    return createPostCourseNotificationListener(course) { CCStepikConnector.postCourseWithProgress(project, course) }
   }
 
   @JvmStatic
