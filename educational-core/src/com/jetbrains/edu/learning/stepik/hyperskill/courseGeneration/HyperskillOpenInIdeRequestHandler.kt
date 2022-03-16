@@ -100,15 +100,24 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val eduEnvironment = hyperskillProject.eduEnvironment
                          ?: return Err("Unsupported environment ${hyperskillProject.environment}")
 
-    if (request is HyperskillOpenStepRequest && hyperskillLanguage != hyperskillProject.language) {
-      return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+    if (request is HyperskillOpenStepRequest) {
+      // These condition is about opening e.g. Python problem with chosen Kotlin's project,
+      // otherwise - open Kotlin problem in current Kotlin project itself later below
+      if (hyperskillLanguage != hyperskillProject.language) {
+        return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+      }
+
+      // This is about opening Kotlin problem with currently chosen Android's project
+      // But all Android projects are always Kotlin one's
+      // So it should be possible to open problem in IntelliJ IDEA too e.g. (EDU-4641)
+      if (eduEnvironment == EduNames.ANDROID && hyperskillLanguage == EduNames.KOTLIN) {
+        return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+      }
     }
 
-    if (eduEnvironment == EduNames.ANDROID) {
-      if (!EduUtils.isAndroidStudio() && request is HyperskillOpenStageRequest) {
-        return Err(EduCoreBundle.message("rest.service.android.not.supported"))
-      }
-      return Ok(HyperskillCourse(hyperskillLanguage, eduLanguage))
+    // Android projects must be opened in Android Studio only
+    if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
+      return Err(EduCoreBundle.message("rest.service.android.not.supported"))
     }
 
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
