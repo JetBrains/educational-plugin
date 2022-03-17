@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 apply(from = "common.gradle.kts")
-apply(from = "changes.gradle.kts")
 
 val environmentName: String by project
 val pluginVersion: String by project
@@ -888,22 +887,6 @@ fun loadProperties(path: String): Properties {
   val properties = Properties()
   file(path).bufferedReader().use { properties.load(it) }
   return properties
-}
-
-/*
-Workflow is the following:
-
-1. Launch the task.
-2. Review changes in changes.html and edit if needed.
-3. Push.
- */
-task("generate-release-notes") {
-  doLast {
-    val notes = generateNotes(pluginVersion)
-    val changesFile = file(changesFile)
-    val oldChangeNotes = changesFile.readText()
-    changesFile.writeText("$notes\n$oldChangeNotes")
-  }
 }
 
 fun parseManifest(file: File): Node {
