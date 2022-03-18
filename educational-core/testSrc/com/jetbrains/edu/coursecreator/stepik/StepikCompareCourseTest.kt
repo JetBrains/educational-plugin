@@ -1,7 +1,9 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
@@ -11,8 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.slow.integration.stepik.addNewLesson
-import com.jetbrains.edu.slow.integration.stepik.addNewSection
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import junit.framework.TestCase.assertTrue
 
 class StepikCompareCourseTest : EduTestCase() {
@@ -650,4 +651,60 @@ private infix fun <T : StudyItem> Collection<T>.sameTo(collection: Collection<T>
   if (collection.size != this.size) return false
   val pairList = collection.zip(this)
   return pairList.all { (elt1, elt2) -> elt1.name == elt2.name }
+}
+
+internal fun addNewLesson(
+  project: Project,
+  name: String,
+  index: Int,
+  courseToInit: Course,
+  parent: LessonContainer,
+  virtualFile: VirtualFile
+): Lesson {
+  val course = course {
+    lesson(name) {
+      eduTask {
+        taskFile("fizz.kt")
+      }
+    }
+  }
+
+  val newLesson = course.getLesson(name)!!
+  newLesson.index = index
+  newLesson.init(courseToInit, parent, false)
+  parent.addLesson(newLesson)
+  if (parent is Course) {
+    GeneratorUtils.createLesson(project, newLesson, virtualFile)
+  }
+  else {
+    val sectionDir = virtualFile.findChild(parent.name)
+    GeneratorUtils.createLesson(project, newLesson, sectionDir!!)
+  }
+
+  return newLesson
+}
+
+internal fun addNewSection(
+  project: Project,
+  name: String,
+  index: Int,
+  courseToInit: Course,
+  virtualFile: VirtualFile
+): Section {
+  val course = course {
+    section(name) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt")
+        }
+      }
+    }
+  }
+
+  val newSection = course.getSection(name)!!
+  newSection.index = index
+  courseToInit.addSection(newSection)
+  courseToInit.init(null, null, false)
+  GeneratorUtils.createSection(project, newSection, virtualFile)
+  return newSection
 }
