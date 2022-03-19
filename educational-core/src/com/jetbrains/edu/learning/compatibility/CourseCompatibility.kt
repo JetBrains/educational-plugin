@@ -3,14 +3,20 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
+import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -62,6 +68,26 @@ sealed class CourseCompatibility {
       }
 
       return null
+    }
+
+    // projectLanguage parameter should be passed only for hyperskill courses because for Hyperskill
+    // it can differ from the course.programmingLanguage
+    fun Course.validateLanguage(projectLanguage: String = programmingLanguage): Result<Unit, String> {
+      val pluginCompatibility = pluginCompatibility()
+      if (pluginCompatibility is PluginsRequired) {
+        val requiredPluginsMessage = getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable)
+        val helpLink = "https://www.jetbrains.com/help/idea/managing-plugins.html"
+        return Err(
+          """$requiredPluginsMessage<a href="$helpLink">${EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")}.</a>"""
+        )
+      }
+
+      if (configurator == null) {
+        return Err(EduCoreBundle.message("rest.service.language.not.supported",
+                                         ApplicationNamesInfo.getInstance().productName,
+                                         projectLanguage.capitalize()))
+      }
+      return Ok(Unit)
     }
 
     fun Course.pluginCompatibility(): CourseCompatibility? {

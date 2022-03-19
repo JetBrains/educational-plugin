@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.courseGeneration
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.validateLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler

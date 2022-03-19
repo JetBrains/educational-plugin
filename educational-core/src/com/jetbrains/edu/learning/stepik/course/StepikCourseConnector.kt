@@ -1,7 +1,8 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.validateLanguage
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
@@ -51,16 +52,20 @@ object StepikCourseConnector : CourseConnector {
     return null
   }
 
-  fun getSupportedLanguages(remoteCourse: StepikCourse): List<EduLanguage> {
-    val languages = ArrayList<EduLanguage>()
+  fun getSupportedLanguages(remoteCourse: StepikCourse): Result<List<EduLanguage>, String> {
+    val languages = mutableListOf<EduLanguage>()
     try {
       val codeTemplates = getFirstCodeTemplates(remoteCourse)
       for (templateLanguage in codeTemplates.keys) {
         val stepikLanguage = StepikLanguage.langOfName(templateLanguage)
-        stepikLanguage.id ?: continue
+        val stepikLanguageId = stepikLanguage.id ?: continue
+
+        // set language to remoteCourse here, because otherwise it's python by default and no need to have language specific plugin
+        remoteCourse.programmingLanguage = stepikLanguageId
+        remoteCourse.validateLanguage().onError { return Err(it) }
+
         val eduLanguage = EduLanguage(stepikLanguage.id, stepikLanguage.version)
         val language = eduLanguage.language ?: continue
-
         if (language.id in EduConfiguratorManager.supportedEduLanguages) {
           languages.add(eduLanguage)
         }
@@ -70,7 +75,7 @@ object StepikCourseConnector : CourseConnector {
       LOG.warn(e.message)
     }
 
-    return languages
+    return Ok(languages)
   }
 
   private fun getFirstCodeTemplates(remoteCourse: StepikCourse): Map<String, String> {

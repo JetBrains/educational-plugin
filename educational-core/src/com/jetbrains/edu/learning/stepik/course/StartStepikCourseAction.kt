@@ -38,7 +38,10 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
   }
 
   private fun getLanguageForStepikCourse(course: StepikCourse): EduLanguage? {
-    val languages = getLanguagesUnderProgress(course)
+    val languages = getLanguagesUnderProgress(course).onError {
+      Messages.showErrorDialog(it, message("error.failed.to.import.course"))
+      return null
+    }
 
     if (languages.isEmpty()) {
       Messages.showErrorDialog(message("error.no.supported.languages", course.name), message("error.failed.to.import.course"))
@@ -83,8 +86,8 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
                              message("error.adaptive.courses.not.supported.title"))
   }
 
-  private fun getLanguagesUnderProgress(course: StepikCourse): List<EduLanguage> {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<EduLanguage>, RuntimeException>(
+  private fun getLanguagesUnderProgress(course: StepikCourse): Result<List<EduLanguage>, String> {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Result<List<EduLanguage>, String>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtils.execCancelable {
