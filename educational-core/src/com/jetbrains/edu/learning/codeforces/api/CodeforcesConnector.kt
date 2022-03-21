@@ -237,7 +237,7 @@ abstract class CodeforcesConnector {
       override fun onMessage(webSocket: WebSocket, text: String) {
         val wsResponse = objectMapper.readValue(text, object : TypeReference<CodeforcesWSResponse>() {})
         if (channel == wsResponse.channel) {
-          TaskDescriptionView.getInstance(project).checkStarted(task)
+          TaskDescriptionView.getInstance(project).checkStarted(task, true)
           val dataResponse = objectMapper.readValue(wsResponse.text, object : TypeReference<DataResponse>() {})
 
           val verdict = dataResponse.verdict
