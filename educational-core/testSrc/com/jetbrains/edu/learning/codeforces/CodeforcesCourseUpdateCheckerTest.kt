@@ -26,7 +26,7 @@ import java.util.*
 class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val expectedTaskADescription: String by lazy {
     val doc = Jsoup.parse(loadText(contest1211))
-    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN), doc)
+    val course = CodeforcesCourse(ContestParameters(1211, EduNames.KOTLIN, "48"), doc)
     course.allTasks.first().descriptionText
   }
   private val mockConnector: MockCodeforcesConnector get() = CodeforcesConnector.getInstance() as MockCodeforcesConnector

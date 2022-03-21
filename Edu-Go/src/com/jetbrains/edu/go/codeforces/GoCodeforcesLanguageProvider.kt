@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import javax.swing.Icon
 
 class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider {
-  override val codeforcesLanguageNamings: List<String> = listOf("Go")
   override val languageId: String = EduNames.GO
   override val templateFileName: String = "codeforces.Go main.go"
   override val displayTemplateName: String = "main.go"

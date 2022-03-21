@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import javax.swing.Icon
 
 class JsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
-  override val codeforcesLanguageNamings: List<String> = listOf("JavaScript", "Node.js")
   override val configurator: EduConfigurator<JsNewProjectSettings> = JsConfigurator()
   override val languageId: String = EduNames.JAVASCRIPT
   override val preferableCodeforcesLanguage: String = "JavaScript"

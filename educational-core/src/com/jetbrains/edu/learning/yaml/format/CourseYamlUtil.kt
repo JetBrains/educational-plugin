@@ -48,6 +48,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MARKETPLACE_COURSE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAM_TYPE_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
@@ -205,6 +206,7 @@ private class CourseBuilder(
   @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
   @JsonProperty(END_DATE_TIME) val codeforcesEndDateTime: ZonedDateTime?,
+  @JsonProperty(PROGRAM_TYPE_ID) val codeforcesProgramTypeId: String?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
 ) {
   @Suppress("unused") // used for deserialization
@@ -221,6 +223,7 @@ private class CourseBuilder(
       CODEFORCES_COURSE_TYPE -> {
         CodeforcesCourse().apply {
           endDateTime = codeforcesEndDateTime
+          programTypeId = codeforcesProgramTypeId
         }
       }
       EDU -> EduCourse()
@@ -310,6 +313,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     }
     if (deserializedItem is CodeforcesCourse && existingItem is CodeforcesCourse) {
       existingItem.endDateTime = deserializedItem.endDateTime
+      existingItem.programTypeId = deserializedItem.programTypeId
     }
   }
 }

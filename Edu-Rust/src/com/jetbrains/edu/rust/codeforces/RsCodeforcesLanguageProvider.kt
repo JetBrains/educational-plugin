@@ -15,7 +15,6 @@ import org.rust.lang.RsConstants.MAIN_RS_FILE
 import javax.swing.Icon
 
 class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
-  override val codeforcesLanguageNamings: List<String> = listOf("Rust 2021")
   override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
   override val languageId: String = EduNames.RUST
   override val templateFileName: String = "codeforces.Rust main.rs"

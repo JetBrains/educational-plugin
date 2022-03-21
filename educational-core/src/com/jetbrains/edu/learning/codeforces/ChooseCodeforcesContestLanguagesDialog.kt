@@ -63,6 +63,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
 
   private fun setLanguage() {
     codeforcesCourse.programmingLanguage = CodeforcesLanguageProvider.getLanguageIdAndVersion(selectedLanguage())
+    codeforcesCourse.programTypeId = CodeforcesLanguageProvider.getProgramTypeId(selectedLanguage())
     courseSettingsPanel.onCourseSelectionChanged(CourseBindData(codeforcesCourse))
   }
 

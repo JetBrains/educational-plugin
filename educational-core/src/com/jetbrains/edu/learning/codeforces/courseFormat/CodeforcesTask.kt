@@ -117,7 +117,7 @@ open class CodeforcesTask : Task() {
     fun codeforcesSubmitLink(task: Task): String {
       val course = task.course as CodeforcesCourse
       return "${course.getContestUrl()}/${CODEFORCES_SUBMIT}?locale=${course.languageCode}" +
-             (codeforcesProgramTypeId(course)?.let { "&programTypeId=$it" } ?: "") +
+             "&programTypeId=${course.programTypeId ?: codeforcesDefaultProgramTypeId(course)}" +
              "&submittedProblemIndex=${task.presentableName.substringBefore(".")}"
     }
 
@@ -126,7 +126,8 @@ open class CodeforcesTask : Task() {
       return "${course.getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${course.languageCode}"
     }
 
-    fun codeforcesProgramTypeId(course: CodeforcesCourse): Int? {
+    @Deprecated("Only for backwards compatibility. Use CodeforcesCourse.programTypeId")
+    fun codeforcesDefaultProgramTypeId(course: CodeforcesCourse): String? {
       val languageID = course.languageID
       val languageVersion = course.languageVersion
       return when {
@@ -143,7 +144,7 @@ open class CodeforcesTask : Task() {
           LOG.warn("Programming language was not detected: $languageID $languageVersion")
           null
         }
-      }
+      }?.toString()
     }
 
     private fun isStandardIOType(element: Element): Boolean {
@@ -151,6 +152,7 @@ open class CodeforcesTask : Task() {
       return text.contains(STANDARD_INPUT_REGEX)
     }
 
+    // Only for backwards compatibility. Don't use or update it
     private const val GO_TYPE_ID = 32
     private const val JAVA_8_TYPE_ID = 36
     private const val JAVA_11_TYPE_ID = 60

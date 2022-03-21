@@ -8,6 +8,7 @@ import java.time.ZonedDateTime
 data class ContestParameters(
   val id: Int,
   val languageId: String = PlainTextLanguage.INSTANCE.id,
+  val programTypeId: String? = null,
   val locale: String = "en",
   val endDateTime: ZonedDateTime? = null,
   val name: String = "",

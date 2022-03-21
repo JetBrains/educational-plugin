@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.codeforces.*
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getLanguageIdAndVersion
+import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider.Companion.getProgramTypeId
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
@@ -67,10 +68,12 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       }
 
       val languageIdAndVersion = getLanguageIdAndVersion(dialog.selectedLanguage())
+      val programTypeId = getProgramTypeId(dialog.selectedLanguage())
 
       val contestParameters = ContestParameters(
         codeforcesCourse.id,
         languageIdAndVersion,
+        programTypeId,
         dialog.selectedTaskTextLanguage().locale,
         codeforcesCourse.endDateTime,
         dialog.selectedLanguage()

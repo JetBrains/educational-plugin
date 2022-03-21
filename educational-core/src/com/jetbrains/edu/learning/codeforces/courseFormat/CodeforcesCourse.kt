@@ -24,6 +24,9 @@ open class CodeforcesCourse : Course {
   var length: Duration = Duration.ZERO
   var registrationLink: String? = null
   var availableLanguages: List<String> = emptyList()
+  var programTypeId: String? = null
+    get() = if (field != null) field else CodeforcesTask.codeforcesDefaultProgramTypeId(this).toString()
+
   var participantsNumber: Int = 0
   var registrationCountdown: Duration? = null
   var standingsLink: String? = null
@@ -53,6 +56,7 @@ open class CodeforcesCourse : Course {
     id = contestParameters.id
     programmingLanguage = contestParameters.languageId
     languageCode = contestParameters.locale
+    programTypeId = contestParameters.programTypeId
     endDateTime = contestParameters.endDateTime
     updateDate = Date()
     startDate = contestParameters.startDate

@@ -52,6 +52,9 @@ object YamlMixinNames {
   @NlsSafe
   const val END_DATE_TIME = "end_date_time"
 
+  @NlsSafe
+  const val PROGRAM_TYPE_ID = "program_type_id"
+
   //hyperskill course
   @NlsSafe
   const val HYPERSKILL_PROJECT = "hyperskill_project"

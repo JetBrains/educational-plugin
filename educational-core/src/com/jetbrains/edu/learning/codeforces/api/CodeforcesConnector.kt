@@ -173,7 +173,7 @@ abstract class CodeforcesConnector {
     val jSessionID = account.getSessionId() ?: return Err(EduCoreBundle.message("error.access.denied"))
     val contestId = task.course.id
     val languageCode = task.course.languageCode
-    val programTypeId = CodeforcesTask.codeforcesProgramTypeId(task.course as CodeforcesCourse)?.toString()
+    val programTypeId = (task.course as CodeforcesCourse).programTypeId
     val submittedProblemIndex = task.presentableName.substringBefore(".")
 
     val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, submittedProblemIndex,
