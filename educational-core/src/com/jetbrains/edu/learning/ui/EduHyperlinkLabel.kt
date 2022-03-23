@@ -4,6 +4,8 @@ import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
@@ -15,12 +17,14 @@ import javax.swing.event.HyperlinkListener
  * @param linkHandler action to perform on link click
  */
 class EduHyperlinkLabel(
-  text: String,
+  @Nls text: String,
   wrapWithLink: Boolean = false,
   private val linkHandler: ((HyperlinkEvent) -> Unit)? = null
 ) : JBLabel() {
   init {
-    setText(UIUtil.toHtml(if (wrapWithLink) """<a href="">$text</a>""" else text))
+    @NonNls
+    val formattedText = """<a href="">$text</a>"""
+    setText(UIUtil.toHtml(if (wrapWithLink) formattedText else text))
     setCopyable(true) // this enables hyperlinks support
   }
 

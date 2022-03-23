@@ -5,6 +5,7 @@ import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -56,7 +57,8 @@ class TermsOfAgreementDialog(
     }
 
     override fun setBody(text: String) {
-      setText("""
+      @NonNls
+      val formattedText = """
         <html>
         <head>
           <style>
@@ -68,7 +70,8 @@ class TermsOfAgreementDialog(
         $text
         </body>
         </html>
-      """.trimIndent())
+      """.trimIndent()
+      setText(formattedText)
     }
   }
 

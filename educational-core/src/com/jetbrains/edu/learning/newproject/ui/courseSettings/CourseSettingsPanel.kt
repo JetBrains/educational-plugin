@@ -25,7 +25,10 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat
@@ -80,11 +83,11 @@ class CourseSettingsPanel(
 
   private fun createLocationComponent(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton()
-    field.addBrowseFolderListener("Select Course Location",
-                                  "Select course location",
+    field.addBrowseFolderListener(EduCoreBundle.message("action.select.course.location.title"),
+                                  EduCoreBundle.message("action.select.course.location.description"),
                                   null,
                                   FileChooserDescriptorFactory.createSingleFolderDescriptor())
-    return LabeledComponent.create(field, "Location", BorderLayout.WEST)
+    return LabeledComponent.create(field, EduCoreBundle.message("action.select.course.location"), BorderLayout.WEST)
   }
 
   fun addLocationFieldDocumentListener(listener: DocumentListener) {

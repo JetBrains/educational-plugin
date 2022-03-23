@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 private const val ACTION_TEXT = "Change Hyperskill url"
 
@@ -14,7 +15,9 @@ private const val ACTION_TEXT = "Change Hyperskill url"
 class HyperskillChangeHost : DumbAwareAction(ACTION_TEXT), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val initialValue = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)
-    val result = Messages.showInputDialog("Enter Hyperskill url", "Enter Hyperskill url", null, initialValue, null)
+    val result = Messages.showInputDialog(EduCoreBundle.message("hyperskill.enter.url.description"),
+                                          EduCoreBundle.message("hyperskill.enter.url"),
+                                          null, initialValue, null)
     if (result != null) {
       PropertiesComponent.getInstance().setValue(HYPERSKILL_URL_PROPERTY, result)
     }

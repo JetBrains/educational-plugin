@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -67,7 +68,7 @@ private fun getVisibility(course: EduCourse): CourseVisibility {
 
 fun markTheoryTaskAsCompleted(task: Task, project: Project) {
   ProgressManager.getInstance().run(
-    object : Backgroundable(project, "Posting Theory to Stepik", false) {
+    object : Backgroundable(project, EduCoreBundle.message("stepik.post.theory"), false) {
       override fun run(progressIndicator: ProgressIndicator) {
         markStepAsSolved(task.lesson.id, task)
       }

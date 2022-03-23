@@ -9,6 +9,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.learning.handlers.HandlersUtils.isMoveForbidden;
@@ -38,7 +39,7 @@ public class EduMoveDelegate extends MoveHandlerDelegate {
                      PsiElement[] elements,
                      @Nullable PsiElement targetContainer,
                      @Nullable MoveCallback callback) {
-    Messages.showInfoMessage("This move operation can break the course", "Invalid Move Operation");
+    Messages.showInfoMessage(EduCoreBundle.message("messages.move.operation.description"), EduCoreBundle.message("messages.move.invalid"));
   }
 
   @Override

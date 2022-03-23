@@ -182,9 +182,12 @@ object CCUtils {
     for (placeholder in taskFile.answerPlaceholders) {
       replaceAnswerPlaceholder(document, placeholder)
     }
-    CommandProcessor.getInstance().executeCommand(project, {
-      runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
-    }, "Create Answer Document", "Create answer document")
+    CommandProcessor.getInstance().executeCommand(
+      project,
+      { runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) } },
+      EduCoreBundle.message("action.create.answer.document"),
+      "Edu Actions"
+    )
     taskFile.setText(document.text)
   }
 

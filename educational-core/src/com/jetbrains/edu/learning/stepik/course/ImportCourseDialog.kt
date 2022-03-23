@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
 abstract class ImportCourseDialog : DialogWrapper(false) {
@@ -14,7 +15,7 @@ abstract class ImportCourseDialog : DialogWrapper(false) {
   public override fun doValidate(): ValidationInfo? {
     val isValid = coursePanel.validate()
     if (!isValid) {
-      return ValidationInfo("Course link is invalid")
+      return ValidationInfo(EduCoreBundle.message("action.import.local.course.dialog.invalid.link"))
     }
 
     return null

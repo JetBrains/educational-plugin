@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeAllWithProgress
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.*
 import java.util.concurrent.Executors
 
@@ -115,7 +116,7 @@ object StepikCourseLoader {
       if (progressIndicator != null && updateIndicator) {
         progressIndicator.isIndeterminate = false
         val readableIndex = lessonIndex + 1
-        progressIndicator.text = "Loading lesson $readableIndex of $lessonCount"
+        progressIndicator.text = EduCoreBundle.message("stepik.loading.lessons", readableIndex, lessonCount)
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
       val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)

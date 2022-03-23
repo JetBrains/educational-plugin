@@ -46,7 +46,7 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
   else {
     """<br>
   <a href="">${
-      EduCoreBundle.message("yaml.invalid.config.notification.message.edit.link")
+      EduCoreBundle.message("edit")
     }</a>"""
   }
   return mainErrorMessage + editLink

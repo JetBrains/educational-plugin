@@ -186,7 +186,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     override fun actionPerformed(e: AnActionEvent) {
       val expected = DiffContentFactory.getInstance().create(diff.expected)
       val actual = DiffContentFactory.getInstance().create(diff.actual)
-      val request = SimpleDiffRequest(diff.title, expected, actual, "Expected", "Actual")
+      val request = SimpleDiffRequest(diff.title, expected, actual, EduCoreBundle.message("action.compare.outputs.expected"),
+                                      EduCoreBundle.message("action.compare.outputs.actual"))
       DiffManager.getInstance().showDiff(project, request, DiffDialogHints.FRAME)
     }
   }

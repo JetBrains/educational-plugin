@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
@@ -67,8 +68,11 @@ class StepikStartupActivity : StartupActivity {
     val statusBar = frame.statusBar ?: return
     val widget = statusBar.getWidget(StepikWidget.ID) as? CustomStatusBarWidget ?: return
     val widgetComponent = widget.component ?: return
-    val builder = JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder("<a href=\"\">Log in</a> to synchronize your study progress", MessageType.INFO, null)
+    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(
+      EduCoreBundle.message("stepik.log.in.message"),
+      MessageType.INFO,
+      null
+    )
     builder.setClickHandler({ StepikConnector.getInstance().doAuthorize() }, true)
     builder.setHideOnClickOutside(true)
     builder.setCloseButtonEnabled(true)

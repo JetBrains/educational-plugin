@@ -340,7 +340,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File) {
     var courseVersionMismatch = false
     invokeAndWaitIfNeeded {
-      uploadUnderProgress(message("action.push.course.updating")) {
+      uploadUnderProgress(message("action.push.course.updating.title")) {
         courseVersionMismatch = uploadCourseUpdate(project, course, file)
       }
     }

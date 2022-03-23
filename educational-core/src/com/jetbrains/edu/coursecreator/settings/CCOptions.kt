@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.settings
 
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
@@ -12,10 +13,18 @@ import com.jetbrains.edu.learning.settings.OptionsProvider
 import javax.swing.ButtonGroup
 import javax.swing.JComponent
 
+@Suppress("UnstableApiUsage")
+@NlsSafe
+private const val HTML = "Html"
+
+@Suppress("UnstableApiUsage")
+@NlsSafe
+private const val MARKDOWN = "Markdown"
+
 class CCOptions : OptionsProvider {
 
-  private val htmlRadioButton = JBRadioButton("Html", CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
-  private val markdownRadioButton = JBRadioButton("Markdown", !CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
+  private val htmlRadioButton = JBRadioButton(HTML, CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
+  private val markdownRadioButton = JBRadioButton(MARKDOWN, !CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
 
   private val copyTestsCheckBox = JBCheckBox(
     EduCoreBundle.message("ccoptions.copy.tests"),

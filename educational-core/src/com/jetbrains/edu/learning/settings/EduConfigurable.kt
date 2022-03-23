@@ -20,6 +20,7 @@ import com.intellij.openapi.options.CompositeConfigurable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -28,7 +29,7 @@ class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.W
   private val mainPanel: JPanel = JPanel(VerticalFlowLayout())
 
   @Nls
-  override fun getDisplayName(): String = "Education"
+  override fun getDisplayName(): String = EduCoreBundle.message("settings.educational")
   override fun getHelpTopic(): String = ID
 
   override fun createComponent(): JComponent {

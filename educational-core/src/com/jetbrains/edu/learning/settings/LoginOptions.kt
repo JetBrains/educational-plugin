@@ -8,6 +8,7 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.authUtils.Account
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -118,14 +119,14 @@ abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
     val selectedAccount = lastSavedAccount
 
     if (selectedAccount == null) {
-      browseProfileLabel.text = "You're not logged in"
-      loginLink.text = "Log in to $displayName"
+      browseProfileLabel.text = EduCoreBundle.message("not.logged.in")
+      loginLink.text = EduCoreBundle.message("log.in.to", displayName)
       loginListener = createAuthorizeListener()
     }
     else {
       val info = selectedAccount.userInfo
-      browseProfileLabel.text = "You're logged in as <a href=${profileUrl(selectedAccount)}>${info}</a>"
-      loginLink.text = "Log out"
+      browseProfileLabel.text = EduCoreBundle.message("logged.in.as.verbose", "<a href=${profileUrl(selectedAccount)}>${info}</a>")
+      loginLink.text = EduCoreBundle.message("log.out")
       loginListener = createLogOutListener()
     }
 

@@ -260,8 +260,12 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
         () -> ApplicationManager.getApplication().runWriteAction(() -> {
           Document document = TaskFileExt.getDocument(file, myProject);
           if (document == null) return;
-          CommandProcessor.getInstance().executeCommand(myProject,
-                                                        () -> document.setText(newDocumentText), "Change Test Text", "Edu Actions");
+          CommandProcessor.getInstance().executeCommand(
+            myProject,
+            () -> document.setText(newDocumentText),
+            EduCoreBundle.message("action.change.test.text"),
+            "Edu Actions"
+          );
           PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         })
       );

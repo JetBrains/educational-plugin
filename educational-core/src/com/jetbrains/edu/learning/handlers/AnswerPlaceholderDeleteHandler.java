@@ -4,6 +4,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.ReadonlyFragmentModificationHandler;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class AnswerPlaceholderDeleteHandler implements ReadonlyFragmentModificationHandler {
@@ -17,6 +18,6 @@ public class AnswerPlaceholderDeleteHandler implements ReadonlyFragmentModificat
   @Override
   public void handle(ReadOnlyFragmentModificationException e) {
     if (myEditor.isDisposed()) return;
-    HintManager.getInstance().showErrorHint(myEditor, "It's not allowed to delete answer placeholders");
+    HintManager.getInstance().showErrorHint(myEditor, EduCoreBundle.message("notification.text.error.hint.placeholder.delete"));
   }
 }

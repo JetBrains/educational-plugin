@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.findDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -57,7 +58,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       course.isUpToDate = true
       EduUtils.synchronize()
       ProjectView.getInstance(project).refresh()
-      CCNotificationUtils.showNotification(project, "Course updated", null)
+      CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), null)
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
       YamlFormatSynchronizer.saveAll(project)
     }

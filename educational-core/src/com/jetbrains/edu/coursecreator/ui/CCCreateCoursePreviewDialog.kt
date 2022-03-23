@@ -60,7 +60,7 @@ class CCCreateCoursePreviewDialog(
 
   override fun createActions(): Array<out Action> {
     val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand(
-      EduCoreBundle.message("course.creator.create.course.preview.close"))) {
+      EduCoreBundle.message("close"))) {
       override fun actionPerformed(e: ActionEvent) {
         close()
       }

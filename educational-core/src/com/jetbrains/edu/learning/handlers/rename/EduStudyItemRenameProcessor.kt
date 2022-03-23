@@ -62,7 +62,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
       return object : EduRenameDialogBase(project, element, nameSuggestionContext, editor) {
 
         init {
-          title = "Rename ${item.studyItemType.presentableTitleName}"
+          title = EduCoreBundle.message("action.rename", item.studyItemType.presentableTitleName)
         }
 
         override fun performRename(newName: String) {

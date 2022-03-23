@@ -12,6 +12,7 @@ import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.getContainingTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 
@@ -30,7 +31,7 @@ class UnsolvedDependenciesNotificationProvider : EditorNotifications.Provider<Ed
     }
     val panel = EditorNotificationPanel()
     panel.text = getText(taskDependencies.map { it.name })
-    panel.createActionLabel("Solve '${taskDependencies[0].name}'") {
+    panel.createActionLabel(EduCoreBundle.message("action.solve.task", taskDependencies[0].name)) {
       NavigationUtils.navigateToTask(project, taskDependencies[0], task)
       EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
     }

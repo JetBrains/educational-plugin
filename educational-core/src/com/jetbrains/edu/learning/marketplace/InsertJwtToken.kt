@@ -9,6 +9,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")
 class InsertJwtToken: DumbAwareAction(ACTION_TITLE) {
@@ -21,10 +22,12 @@ class InsertJwtToken: DumbAwareAction(ACTION_TITLE) {
         return
     }
 
-    val jwtToken = Messages.showInputDialog("JWT token:", ACTION_TITLE, null) ?: return
+    val jwtToken = Messages.showInputDialog("${EduCoreBundle.message("marketplace.inserted.jwt.token")}:", ACTION_TITLE, null) ?: return
     if (!MarketplaceSubmissionsConnector.getInstance().isJwtTokenValid(jwtToken)) {
-      Messages.showErrorDialog("Inserted JWT token is invalid. Please obtain a new one <a href=\"https://stgn.grazie.ai/auth/chrome/login/success\">here</a>",
-                               "Inserted JWT token is invalid")
+      val link = "https://stgn.grazie.ai/auth/chrome/login/success"
+      Messages.showErrorDialog(EduCoreBundle.message("marketplace.inserted.jwt.token.message", link),
+                               EduCoreBundle.message("marketplace.inserted.jwt.token.error")
+      )
       return
     }
     account.saveJwtToken(jwtToken)

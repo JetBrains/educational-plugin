@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10")
@@ -25,8 +26,19 @@ fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
 
 fun restartIDE(messageInfo: String) {
   val ideName = ApplicationNamesInfo.getInstance().fullProductName
-  val restartInfo = if (ApplicationManager.getApplication().isRestartCapable) "$ideName will be restarted" else "Restart $ideName"
-  val message = "$messageInfo. $restartInfo in order to apply changes"
+  val restartInfo = if (ApplicationManager.getApplication().isRestartCapable) {
+    EduCoreBundle.message("ide.restart.info.title", ideName)
+  }
+  else {
+    EduCoreBundle.message("ide.restart.message.title", ideName)
+  }
+
+  val message = if (ApplicationManager.getApplication().isRestartCapable) {
+    "$messageInfo. ${EduCoreBundle.message("ide.restart.info.message", ideName)}"
+  }
+  else {
+    "$messageInfo. ${EduCoreBundle.message("ide.restart.message", ideName)}"
+  }
 
   Messages.showInfoMessage(message, restartInfo)
   ApplicationManagerEx.getApplicationEx().restart(true)

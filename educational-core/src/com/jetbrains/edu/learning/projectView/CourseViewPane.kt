@@ -50,6 +50,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.ProgressUtil.createProgressBar
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -115,7 +116,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup) {
     actionGroup.removeAll()
-    val hideSolvedLessons = object: ToggleAction("Hide Solved Lessons"), DumbAware {
+    val hideSolvedLessons = object : ToggleAction(EduCoreBundle.message("action.hide.solved.lessons")), DumbAware {
       override fun isSelected(e: AnActionEvent): Boolean {
         return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
       }

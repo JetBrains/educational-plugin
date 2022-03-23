@@ -75,7 +75,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
   private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
 
   private inner class AdjustFontSize(private val project: Project) : DumbAwareAction(
-    "Adjust font size...") {
+    "${EduCoreBundle.message("action.adjust.font.size")}...") {
     override fun actionPerformed(e: AnActionEvent) {
       val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
       fontSizeSlider.minorTickSpacing = 1

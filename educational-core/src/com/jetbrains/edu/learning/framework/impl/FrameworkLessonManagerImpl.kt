@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.loadEncodedContent
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -250,9 +251,14 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val keepConflictingChanges = if (showDialogIfConflict) {
       val currentTaskName = "${currentTask.uiName} ${currentTask.index}"
       val targetTaskName = "${targetTask.uiName} ${targetTask.index}"
-      val message = "Changes from $currentTaskName conflict with the changes made on $targetTaskName.\n" +
-                    "Keep content of $targetTaskName or replace with the changes from $currentTaskName?"
-      Messages.showYesNoDialog(project, message, "Conflicting Changes", "Keep", "Replace", null)
+      val message = EduCoreBundle.message("framework.lesson.changes.conflict.message", currentTaskName, targetTaskName, targetTaskName,
+                                          currentTaskName)
+      Messages.showYesNoDialog(project,
+                               message,
+                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.title"),
+                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.yes"),
+                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.no"),
+                               null)
     }
     else {
       Messages.YES

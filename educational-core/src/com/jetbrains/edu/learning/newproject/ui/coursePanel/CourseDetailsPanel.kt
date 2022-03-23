@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -19,6 +20,8 @@ import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStyleshee
 import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import java.awt.Font
 import java.text.NumberFormat
@@ -97,12 +100,13 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
     return ""
   }
 
-  override fun setBody(text: String) {
+  override fun setBody(@Nls text: String) {
     if (text.isEmpty()) {
       setText("")
     }
     else {
-      setText("""
+      @NonNls
+      val htmlText = """
         <html>
         <head>
           <style>
@@ -113,7 +117,8 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
         $text
         </body>
         </html>
-      """.trimIndent())
+      """
+      setText(htmlText.trimIndent())
     }
   }
 
@@ -169,7 +174,10 @@ private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
     var hasStatistics = false
     rating.icon = AllIcons.Plugins.Rating
     if (course.reviewScore != 0.0) {
-      rating.text = "%.${1}f".format(course.reviewScore)
+      @Suppress("UnstableApiUsage")
+      @NlsSafe
+      val reviewScore = "%.${1}f".format(course.reviewScore)
+      rating.text = reviewScore
       hasStatistics = true
     }
     else {

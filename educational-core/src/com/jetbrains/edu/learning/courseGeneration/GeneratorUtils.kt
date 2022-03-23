@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
@@ -54,15 +55,15 @@ object GeneratorUtils {
       indicator.fraction = (i + 1).toDouble() / items.size
 
       if (item is Lesson) {
-        indicator.text = "Generating lesson ${i + 1} of ${items.size}"
+        indicator.text = EduCoreBundle.message("action.generate.lesson", i + 1, items.size)
         createLesson(project, item, baseDir)
       }
       else if (item is Section) {
-        indicator.text = "Generating section ${i + 1} of ${items.size}"
+        indicator.text = EduCoreBundle.message("action.generate.section", i + 1, items.size)
         createSection(project, item, baseDir)
       }
     }
-    indicator.text = "Generating additional files"
+    indicator.text = EduCoreBundle.message("action.generate.additional.files")
     createAdditionalFiles(project, course, baseDir)
     EduCounterUsageCollector.studyItemCreated(course)
   }

@@ -54,8 +54,9 @@ open class CompareWithAnswerAction : DumbAwareAction() {
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it)
       val solutionFileContent = DiffContentFactory.getInstance().create(solution, virtualFile.fileType)
-      SimpleDiffRequest(EduCoreBundle.message("action.Educational.CompareWithAnswer.description"), studentFileContent, solutionFileContent, virtualFile.name,
-                        "${virtualFile.name} Answer")
+      SimpleDiffRequest(EduCoreBundle.message("action.Educational.CompareWithAnswer.description"), studentFileContent, solutionFileContent,
+                        virtualFile.name,
+                        EduCoreBundle.message("action.compare.answer", virtualFile.name))
     }
     if (requests.isEmpty()) {
       val message = JBPopupFactory.getInstance()

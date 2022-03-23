@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
 class ChooseStepikCourseLanguageDialog(languages: List<EduLanguage>, name: String) : DialogWrapper(false) {
@@ -10,7 +11,7 @@ class ChooseStepikCourseLanguageDialog(languages: List<EduLanguage>, name: Strin
     override fun createCenterPanel(): JComponent? = panel.constructMainPanel()
 
     init {
-        title = "Choose Course Language"
+      title = EduCoreBundle.message("action.choose.course.language")
         init()
     }
 

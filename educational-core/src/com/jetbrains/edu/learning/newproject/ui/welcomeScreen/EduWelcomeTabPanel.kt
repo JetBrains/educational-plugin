@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import org.jetbrains.annotations.NonNls
 import java.awt.*
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -170,7 +171,10 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
   private fun createHeaderPanel(): JPanel {
     val scaledFont = CoursesDialogFontManager.headerFontSize
     val text = "<b>${EduCoreBundle.message("course.dialog.welcome.tab.title")}<b>"
-    val label = JBLabel(UIUtil.toHtml("<span style='font-size: $scaledFont'>$text</span>"))
+
+    @NonNls
+    val formattedText = "<span style='font-size: $scaledFont'>$text</span>"
+    val label = JBLabel(UIUtil.toHtml(formattedText))
     label.isOpaque = false
 
     return NonOpaquePanel(BorderLayout()).apply {

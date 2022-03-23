@@ -8,7 +8,9 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.errorBackgroundColor
 import com.intellij.util.ui.JBUI.CurrentTheme.Validator.warningBackgroundColor
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*

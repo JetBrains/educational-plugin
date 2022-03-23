@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.JBUI
@@ -30,7 +31,11 @@ private class EduCourseInfoComponent(course: EduCourse) : JPanel(HorizontalLayou
       border = JBUI.Borders.emptyRight(COURSE_CARD_BOTTOM_LABEL_H_GAP)
       if (course.reviewScore != 0.0) {
         icon = AllIcons.Plugins.Rating
-        text = "%.${1}f".format(course.reviewScore)
+
+        @Suppress("UnstableApiUsage")
+        @NlsSafe
+        val rating = "%.${1}f".format(course.reviewScore)
+        text = rating
       }
       else {
         text = EduCoreBundle.message("course.dialog.card.not.rated")

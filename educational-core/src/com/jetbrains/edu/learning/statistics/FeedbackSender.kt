@@ -10,6 +10,7 @@ import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkEvent
 
 fun showNotification(student : Boolean, course: Course, project: Project) {
@@ -33,7 +34,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
 }
 
 class MyNotification(content: String, feedbackUrl: String) :
-  Notification("EduTools", "Congratulations", content, NotificationType.INFORMATION),
+  Notification("EduTools", EduCoreBundle.message("check.correct.solution.no.exclamation"), content, NotificationType.INFORMATION),
   NotificationFullContent {
   init {
     setListener(object : NotificationListener.Adapter() {

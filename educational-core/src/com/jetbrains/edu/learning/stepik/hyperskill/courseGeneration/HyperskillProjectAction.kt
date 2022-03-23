@@ -13,6 +13,7 @@ import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.hyperskill.SELECT_PROJECT
@@ -22,7 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import java.net.URL
 import javax.swing.event.HyperlinkEvent
 
-class HyperskillProjectAction : DumbAwareAction("Open ${EduNames.JBA} Project") {
+class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()

@@ -91,7 +91,7 @@ fun notificationListener(project: Project,
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         updateAction()
       },
-      "Updating Course", true, project)
+      EduCoreBundle.message("action.push.course.updating"), true, project)
   }
 }
 

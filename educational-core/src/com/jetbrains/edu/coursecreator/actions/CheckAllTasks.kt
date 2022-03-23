@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
@@ -78,7 +79,12 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
     val notification = Notification(
       "EduTools",
       EduCoreBundle.message("notification.title.check"),
-      failedTasks.withIndex().joinToString("<br>") { "<a href=\"${it.index}\">${it.value.fullName}</a>" },
+      failedTasks.withIndex().joinToString("<br>") {
+        @Suppress("UnstableApiUsage")
+        @NlsSafe
+        val failedTask = "<a href=\"${it.index}\">${it.value.fullName}</a>"
+        failedTask
+      },
       NotificationType.WARNING
     )
       .setSubtitle(EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum))

@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.HtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import java.awt.Font
 
 class GrayTextHtmlPanel(private val infoText: String, private val style: String = "") : HtmlPanel() {
@@ -21,12 +23,13 @@ class GrayTextHtmlPanel(private val infoText: String, private val style: String 
    * Sets the text with the specific style applied. Do not set text with function setText().
    * The text set with setText() will be set without grey color and other styles.
    */
-  override fun setBody(text: String) {
+  override fun setBody(@Nls text: String) {
     if (text.isEmpty()) {
       setText("")
     }
     else {
-      setText("""
+      @NonNls
+      val formattedText = """
         <html>
         <head>
           <style>
@@ -40,7 +43,8 @@ class GrayTextHtmlPanel(private val infoText: String, private val style: String 
         $text
         </body>
         </html>
-      """.trimIndent())
+      """.trimIndent()
+      setText(formattedText)
     }
   }
 

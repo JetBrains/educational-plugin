@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
+import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
@@ -100,7 +101,7 @@ public abstract class CourseProjectGenerator<S> {
         StepikCourseLoader.loadCourseStructure(remoteCourse);
         myCourse = remoteCourse;
         return true;
-      }, "Loading Course", true, null);
+      }, EduCoreBundle.message("action.generate.project.loading.course"), true, null);
     }
     return true;
   }
@@ -228,7 +229,7 @@ public abstract class CourseProjectGenerator<S> {
         EduCounterUsageCollector.eduProjectCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
-      }, "Generating Course Structure", false, project);
+      }, EduCoreBundle.message("action.generate.project.generate.course.structure"), false, project);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
     }

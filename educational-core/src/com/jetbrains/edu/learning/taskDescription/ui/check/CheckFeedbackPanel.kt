@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.BorderLayout
@@ -48,10 +49,10 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
       }
 
       text = when (status) {
-        CheckStatus.Failed -> "Incorrect"
+        CheckStatus.Failed -> EduCoreBundle.message("check.incorrect")
         CheckStatus.Solved -> when (task) {
-          is IdeTask, is TheoryTask -> "Done"
-          else -> "Correct"
+          is IdeTask, is TheoryTask -> EduCoreBundle.message("check.done")
+          else -> EduCoreBundle.message("check.correct")
         }
         else -> ""
       }

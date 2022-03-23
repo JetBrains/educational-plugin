@@ -138,7 +138,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourse(Project project, @NotNull EduCourse course) {
-    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.course.updating"), true) {
+    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.course.updating.title"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(false);

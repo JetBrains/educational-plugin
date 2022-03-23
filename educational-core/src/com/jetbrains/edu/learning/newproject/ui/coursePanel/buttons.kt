@@ -156,7 +156,7 @@ class EditCourseButton(errorHandler: (Course, CourseMode) -> Unit) : StartCourse
   override val courseMode = CourseMode.EDUCATOR
 
   init {
-    text = "Edit"
+    text = EduCoreBundle.message("edit")
     setWidth72(this)
   }
 

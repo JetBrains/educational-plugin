@@ -104,7 +104,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
             synchronized(progressIndicator) {
               finishedTaskCount++
               progressIndicator.fraction = finishedTaskCount.toDouble() / tasksToUpdate.size
-              progressIndicator.text = "Loading solution $finishedTaskCount of ${tasksToUpdate.size}"
+              progressIndicator.text = EduCoreBundle.message("loading.solution.progress", finishedTaskCount, tasksToUpdate.size)
             }
           }
           invokeAndWaitIfNeeded {

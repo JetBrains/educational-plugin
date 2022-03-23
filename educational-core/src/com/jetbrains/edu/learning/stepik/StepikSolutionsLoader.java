@@ -169,7 +169,7 @@ public class StepikSolutionsLoader implements Disposable {
           try {
             if (progressIndicator != null) {
               progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
-              progressIndicator.setText(String.format("Loading solution %d of %d", progressIndex, tasksToUpdate.size()));
+              progressIndicator.setText(EduCoreBundle.message("loading.solution.progress", progressIndex, tasksToUpdate.size()));
             }
             return loadSolution(myProject, task);
           }

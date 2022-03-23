@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -65,7 +66,9 @@ class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? 
     val loadingPanel = JPanel(FlowLayout(FlowLayout.LEADING))
     val asyncProcessIcon = AsyncProcessIcon("Loading submissions")
     val loadingTextPane: JTextPane = createTextPane().apply {
-      text = "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}"
+      @NonNls
+      val styledText = "<a ${StyleManager().textStyleHeader}>${EduCoreBundle.message("submissions.loading", platformName)}"
+      text = styledText
     }
     loadingPanel.apply {
       background = TaskDescriptionView.getTaskDescriptionBackgroundColor()

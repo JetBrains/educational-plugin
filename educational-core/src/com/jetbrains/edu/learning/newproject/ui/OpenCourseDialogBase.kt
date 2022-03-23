@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
@@ -11,7 +12,7 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
   abstract val courseInfo: CourseInfo
 
   override fun createActions(): Array<out Action> {
-    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand("&Close")) {
+    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand(EduCoreBundle.message("close"))) {
       override fun actionPerformed(e: ActionEvent) {
         close()
       }
