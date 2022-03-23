@@ -41,7 +41,7 @@ class CCStudyItemDeleteProvider : DeleteProvider {
 
     val (containingTasks, dependentTasks) = when (studyItem) {
       is Section -> {
-        val allTasks = studyItem.lessons.flatMapTo(HashSet(), Lesson::getTaskList)
+        val allTasks = studyItem.lessons.flatMapTo(HashSet(), Lesson::taskList)
         allTasks to allTasks.flatMapTo(HashSet(), Task::getDependentTasks) - allTasks
       }
       is Lesson -> {

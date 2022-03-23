@@ -65,7 +65,7 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
   }
 
   override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
-    item.course = course
+    item.setCourse(course)
     if (parentItem is Section) {
       item.section = parentItem
     }

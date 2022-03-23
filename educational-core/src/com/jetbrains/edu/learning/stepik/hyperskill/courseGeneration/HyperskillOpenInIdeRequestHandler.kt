@@ -198,7 +198,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val lesson = Lesson()
     lesson.name = HYPERSKILL_PROBLEMS
     lesson.index = this.items.size + 1
-    lesson.course = this
+    lesson.setCourse(this)
     addLesson(lesson)
     return lesson
   }
@@ -263,7 +263,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     lesson.name = name
     lesson.index = this.items.size + 1
     lesson.section = this
-    lesson.course = course
+    lesson.setCourse(course)
     addLesson(lesson)
     return lesson
   }

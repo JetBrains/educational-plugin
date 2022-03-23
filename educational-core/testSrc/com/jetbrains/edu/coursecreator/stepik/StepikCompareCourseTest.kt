@@ -250,7 +250,8 @@ class StepikCompareCourseTest : EduTestCase() {
     }
     changedTask.name = newName
 
-    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = mutableListOf(lesson), tasksToUpdate = lesson.taskList)
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = mutableListOf(lesson),
+                                         tasksToUpdate = lesson.taskList.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -305,7 +306,8 @@ class StepikCompareCourseTest : EduTestCase() {
     lesson.items = listOf<StudyItem>(newTask)
     localCourse.init(null, null, false)
 
-    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList(), tasksToUpdate = lesson.taskList)
+    val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList(),
+                                         tasksToUpdate = lesson.taskList.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
 
@@ -600,7 +602,7 @@ class StepikCompareCourseTest : EduTestCase() {
     localLesson.getTask("task1")!!.solutionHidden = true
     localLesson.getTask("task2")!!.solutionHidden = false
 
-    val expectedChangedItems = StepikChangesInfo(tasksToUpdate = localLesson.taskList)
+    val expectedChangedItems = StepikChangesInfo(tasksToUpdate = localLesson.taskList.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedChangedItems)
   }
 

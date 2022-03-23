@@ -153,7 +153,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
 class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesson: T) {
 
   init {
-    lesson.course = course
+    lesson.setCourse(course)
     lesson.section = section
   }
 

@@ -76,7 +76,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     item.addDefaultTaskDescription()
 
     if (parentItem is FrameworkLesson) {
-      val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
+      val prevTask = parentItem.taskList.getOrNull(info.index - 2)
       val prevTaskDir = prevTask?.getDir(project.courseDir)
       if (prevTask == null || prevTaskDir == null) {
         initTask(project, course, item, info)
@@ -104,7 +104,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
       // to the corresponding task file in new task
-      parentItem.getTaskList().getOrNull(info.index - 1)
+      parentItem.taskList.getOrNull(info.index - 1)
         ?.placeholderDependencies
         ?.forEach { dependency ->
           if (dependency.resolve(course)?.taskFile?.task == prevTask) {

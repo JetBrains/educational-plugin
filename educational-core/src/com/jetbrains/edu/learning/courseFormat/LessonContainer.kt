@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.courseFormat.visitors.TaskVisitor
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 abstract class LessonContainer : ItemContainer() {
   open val lessons: List<Lesson>
@@ -49,7 +49,7 @@ abstract class LessonContainer : ItemContainer() {
     items.filterIsInstance<Section>().forEach(visit)
   }
 
-  fun visitTasks(visitor: TaskVisitor) {
-    visitLessons { it.visitTasks(visitor) }
+  fun visitTasks(visit: (Task) -> Unit) {
+    visitLessons { it.visitTasks(visit) }
   }
 }

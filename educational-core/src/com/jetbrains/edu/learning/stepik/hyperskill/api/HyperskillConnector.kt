@@ -150,7 +150,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
     val lesson = FrameworkLesson()
     lesson.index = 1
-    lesson.course = course
+    lesson.setCourse(course)
     progressIndicator?.checkCanceled()
     val stepSources = getStepSources(course.stages.map { it.stepId }).onError { emptyList() }
 

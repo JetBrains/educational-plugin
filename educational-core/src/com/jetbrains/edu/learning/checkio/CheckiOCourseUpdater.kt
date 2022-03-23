@@ -80,7 +80,7 @@ class CheckiOCourseUpdater(
   private fun updateExistingStations(stationsToUpdate: List<CheckiOStation>, stationsWithNewMissions: MutableSet<CheckiOStation>) {
     val stationById = course.stations.associateBy { it.id }
     stationsToUpdate.forEach {
-      it.course = course
+      it.setCourse(course)
       updateStation(it, stationById[it.id], stationsWithNewMissions)
     }
   }

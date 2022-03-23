@@ -111,11 +111,11 @@ public class CCStepikConnector {
       return null;
     }
     if (sectionId != -1) {
-      postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
+      postedLesson.setUnitId(postUnit(postedLesson.getId(), position, sectionId, project));
     }
 
     lesson.setId(postedLesson.getId());
-    lesson.unitId = postedLesson.unitId;
+    lesson.setUnitId(postedLesson.getUnitId());
     lesson.setUpdateDate(postedLesson.getUpdateDate());
     return postedLesson;
   }
@@ -209,7 +209,7 @@ public class CCStepikConnector {
                                      int sectionId) {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
     return postedLesson != null &&
-           updateLessonTasks(project, lesson, postedLesson.steps) &&
+           updateLessonTasks(project, lesson, postedLesson.getSteps()) &&
            updateLessonAdditionalInfo(lesson, project);
   }
 
@@ -225,7 +225,7 @@ public class CCStepikConnector {
       return null;
     }
     if (sectionId != -1) {
-      updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
+      updateUnit(lesson.getUnitId(), lesson.getId(), lesson.getIndex(), sectionId, project);
     }
 
     return updatedLesson;

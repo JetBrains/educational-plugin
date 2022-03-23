@@ -52,7 +52,7 @@ object YamlDeepLoader {
         }
         is Lesson -> {
           // set parent to correctly obtain dirs in deserializeContent method
-          deserializedItem.course = deserializedCourse
+          deserializedItem.setCourse(deserializedCourse)
           deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList, mapper)
           addNonEditableFilesToCourse(deserializedItem, deserializedCourse, project)
           deserializedItem.removeNonExistingTaskFiles(project)
