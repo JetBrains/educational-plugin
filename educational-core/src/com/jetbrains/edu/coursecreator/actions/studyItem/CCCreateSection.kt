@@ -45,7 +45,7 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
   }
 
   override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Section, info: NewStudyItemInfo) {
-    item.course = course
+    item.setCourse(course)
   }
 
   override val studyItemVariants: List<StudyItemVariant>

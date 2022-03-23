@@ -73,8 +73,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   override fun doAuthorize(
     vararg postLoginActions: Runnable,
-    authorizationPlace: EduCounterUsageCollector.AuthorizationPlace
-  ) {
+    authorizationPlace: EduCounterUsageCollector.AuthorizationPlace) {
     super.doAuthorize(*postLoginActions, authorizationPlace = authorizationPlace)
 
     // EDU-4767
@@ -237,7 +236,8 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.body()?.courses?.firstOrNull()
   }
 
-  fun postSection(section: Section): Section? {
+  fun postSection(section: Section, index: Int): Section? {
+    section.position = index
     val response = stepikEndpoints.section(SectionData(section)).executeHandlingExceptions()
     return response?.body()?.sections?.firstOrNull()
   }

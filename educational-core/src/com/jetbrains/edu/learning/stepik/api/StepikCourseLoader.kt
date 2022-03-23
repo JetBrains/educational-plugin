@@ -91,7 +91,7 @@ object StepikCourseLoader {
 
   private fun loadItemTask(remoteCourse: EduCourse, section: Section, index: Int): StudyItem? {
     val unitIds = section.units
-    if (unitIds.size <= 0) {
+    if (unitIds.isEmpty()) {
       return null
     }
     val lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false)

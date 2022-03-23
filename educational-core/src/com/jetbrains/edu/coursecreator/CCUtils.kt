@@ -22,26 +22,19 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.io.FileTooBigException
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
-import com.jetbrains.edu.learning.stepik.collectTaskFiles
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -191,7 +184,7 @@ object CCUtils {
     }
     CommandProcessor.getInstance().executeCommand(project, {
       runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
-    }, "Create answer document", "Create answer document")
+    }, "Create Answer Document", "Create answer document")
     taskFile.setText(document.text)
   }
 
@@ -223,7 +216,7 @@ object CCUtils {
     } ?: return null
 
     val section = createSection(lessonsToWrap, sectionName, minIndex)
-    section.course = course
+    section.setCourse(course)
 
     for (i in lessonsToWrap.indices) {
       val lesson = lessonsToWrap[i]

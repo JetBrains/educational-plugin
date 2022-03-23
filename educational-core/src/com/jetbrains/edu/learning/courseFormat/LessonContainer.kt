@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 abstract class LessonContainer : ItemContainer() {
-  open val lessons: List<Lesson>
+  val lessons: List<Lesson>
     get() = items.filterIsInstance<Lesson>()
 
   fun getLesson(name: String): Lesson? {

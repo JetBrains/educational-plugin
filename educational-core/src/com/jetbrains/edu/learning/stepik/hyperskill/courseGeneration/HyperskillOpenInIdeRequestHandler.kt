@@ -253,7 +253,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val section = Section()
     section.name = HYPERSKILL_TOPICS
     section.index = items.size + 1
-    section.course = this
+    section.setCourse(this)
     addSection(section)
     return section
   }

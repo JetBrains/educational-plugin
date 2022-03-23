@@ -159,7 +159,7 @@ public class StepikFormatTest extends EduTestCase {
     final SectionsList sectionsList = mapper.readValue(jsonText, SectionsList.class);
     assertNotNull(sectionsList);
     assertEquals(1, sectionsList.sections.size());
-    List<Integer> unitIds = sectionsList.sections.get(0).units;
+    List<Integer> unitIds = sectionsList.sections.get(0).getUnits();
     assertEquals(10, unitIds.size());
   }
 

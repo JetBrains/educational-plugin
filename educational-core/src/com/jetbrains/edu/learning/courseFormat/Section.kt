@@ -1,64 +1,44 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduNames
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class Section extends LessonContainer {
-  public Section() {}
+open class Section : LessonContainer() {
+  @Transient
+  private var myCourse: Course? = null
 
-  transient public List<Integer> units = new ArrayList<>();  // should be used only during deserialization from stepik
-  private int position;
+  // move to stepik
+  @Transient
+  var units: List<Int> = listOf()
+  var position = 0
 
-  transient private Course myCourse;
+  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+    myCourse = course
 
-  public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
-    myCourse = course;
-    int index = 1;
-
-    for (StudyItem lesson : getItems()) {
-      if (lesson instanceof Lesson) {
-        lesson.setIndex(index);
-        index++;
-        lesson.init(course, this, isRestarted);
-      }
+    for ((i, lesson) in lessons.withIndex()) {
+      lesson.index = i + 1
+      lesson.init(course, this, isRestarted)
     }
   }
 
-  public void setPosition(int position) {
-    this.position = position;
+  override fun getDir(baseDir: VirtualFile): VirtualFile? {
+    return baseDir.findChild(name)
   }
 
-  public int getPosition() {
-    return position;
+  override fun getCourse(): Course {
+    return myCourse ?: error("Course is null for section $name")
   }
 
-  @Override
-  @Nullable
-  public VirtualFile getDir(@NotNull final VirtualFile baseDir) {
-    return baseDir.findChild(getName());
+  fun setCourse(course: Course?) {
+    myCourse = course
   }
 
-  @NotNull
-  public Course getCourse() {
-    return myCourse;
+  override fun getParent(): StudyItem {
+    return myCourse ?: error("Parent is null for section $name")
   }
 
-  public void setCourse(Course course) {
-    myCourse = course;
-  }
-
-  @NotNull
-  @Override
-  public StudyItem getParent() {
-    return myCourse;
-  }
-
-  @Override
-  public String getItemType() {
-    return "section";
+  override fun getItemType(): String {
+    return EduNames.SECTION
   }
 }

@@ -20,10 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepSource;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
-import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikUnit;
+import com.jetbrains.edu.learning.stepik.api.*;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +44,7 @@ public class CCStepikConnector {
   public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
     Section section = new Section();
     section.setName(course.getName());
-    section.setPosition(1);
-    int sectionId = postSectionInfo(project, section);
+    int sectionId = postSectionInfo(project, section, 1);
     course.setSectionIds(Collections.singletonList(sectionId));
     return sectionId;
   }
@@ -56,14 +52,14 @@ public class CCStepikConnector {
   public static boolean postSection(@NotNull Project project, @NotNull Section section) {
     EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postSectionInfo(project, section);
+    final int sectionId = postSectionInfo(project, section, section.getIndex());
     return sectionId != -1 && postLessons(project, sectionId, section.getLessons());
   }
 
-  public static int postSectionInfo(@NotNull Project project, @NotNull Section section) {
+  public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int sectionIndex) {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.SECTION_TYPE))) return -1;
 
-    final Section postedSection = StepikConnector.getInstance().postSection(section);
+    final Section postedSection = StepikConnector.getInstance().postSection(section, sectionIndex);
     if (postedSection == null) {
       showFailedToPostItemNotification(project, section, true);
       return -1;
@@ -194,12 +190,13 @@ public class CCStepikConnector {
     Section section = new Section();
     section.setName(course.getName());
     section.setPosition(1);
+    section.setIndex(1);
     section.setId(course.getSectionIds().get(0));
     return updateSectionInfo(section);
   }
 
   public static boolean updateSectionInfo(@NotNull Section section) {
-    section.units.clear();
+    section.setPosition(section.getIndex());
     return StepikConnector.getInstance().updateSection(section) != null;
   }
 
