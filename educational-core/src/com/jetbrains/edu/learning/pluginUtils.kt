@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.4.10", true)
-private val KOTLIN_VERSION_PATTERN = """(\d+-)(\d+\.\d+(.\d+)?(-(eap-|M|rc-)\d+)?).*""".toRegex()
+private val KOTLIN_VERSION_PATTERN = """(\d+-)(?<version>\d+\.\d+(.\d+)?(?<nonRelease>-(eap-|M|rc-)\d+)?).*""".toRegex()
 
 fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
   return ids.filter { PluginManagerCore.isDisabled(it) }
@@ -37,8 +37,8 @@ fun pluginVersion(pluginId: String): String? = PluginManagerCore.getPlugin(Plugi
 fun kotlinVersion(): KotlinVersion {
   val kotlinPluginVersion = pluginVersion(KOTLIN_PLUGIN_ID) ?: return DEFAULT_KOTLIN_VERSION
   val matchResult = KOTLIN_VERSION_PATTERN.matchEntire(kotlinPluginVersion) ?: return DEFAULT_KOTLIN_VERSION
-  val version = matchResult.groupValues[2]
-  val kotlinVersion = KotlinVersion(version, matchResult.groups[4] == null)
+  val version = matchResult.groups["version"]?.value ?: return DEFAULT_KOTLIN_VERSION
+  val kotlinVersion = KotlinVersion(version, matchResult.groups["nonRelease"]?.value == null)
   return maxOf(kotlinVersion, DEFAULT_KOTLIN_VERSION)
 }
 
