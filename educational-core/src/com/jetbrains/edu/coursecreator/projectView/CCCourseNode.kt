@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
-import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseNode
 import com.jetbrains.edu.learning.projectView.LessonNode
@@ -60,7 +59,6 @@ class CCCourseNode(
     get() = "(${EduCoreBundle.message("course.creator.course.view.course.creation")})"
 
   companion object {
-    private val NAMES_TO_IGNORE: Collection<String> = ContainerUtil.newHashSet(
-      SETTINGS_GRADLE, LOCAL_PROPERTIES, GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN)
+    private val NAMES_TO_IGNORE: Collection<String> = ContainerUtil.newHashSet(LOCAL_PROPERTIES, GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN)
   }
 }
