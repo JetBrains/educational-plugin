@@ -128,6 +128,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
         }
       }
       file("build.gradle")
+      file("settings.gradle")
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }

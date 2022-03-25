@@ -90,6 +90,12 @@
                 "placeholders" : [ ],
                 "is_visible" : true,
                 "text" : "buildscript {\n    repositories {\n        mavenCentral()\n    }\n}\n\nsubprojects {\n    apply plugin: 'application'\n    apply plugin: 'java'\n\n    sourceCompatibility = 11\n\n    repositories {\n        mavenCentral()\n        maven { url \"https://jitpack.io\" }\n    }\n\n    dependencies {\n        testImplementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'\n    }\n\n    configurations.all {\n        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'\n    }\n\n    sourceSets {\n        main.java.srcDir 'src'\n        test.java.srcDir 'test'\n    }\n\n    test {\n        systemProperty \"file.encoding\", \"utf-8\"\n    }\n\n    compileJava.options.encoding = 'utf-8'\n    tasks.withType(JavaCompile) {\n        options.encoding = 'utf-8'\n    }\n}\n\nwrapper {\n    gradleVersion = '6.6.1'\n}"
+              },
+              {
+                "name": "settings.gradle",
+                "placeholders": [],
+                "is_visible": true,
+                "text": "buildscript {\n    repositories {\n        maven { url 'https://jitpack.io' }\n    }\n\n    dependencies {\n        classpath \"com.github.hyperskill:hs-gradle-plugin:release-SNAPSHOT\"\n    }\n\n    configurations.all {\n        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'\n    }\n}\n\nstatic String sanitizeName(String name) {\n    return name.replaceAll(\"[ /\\\\\\\\:<>\\\"?*|()]\", \"_\").replaceAll(\"(^[.]+)|([.]+\\$)\", \"\")\n}\n\nrootProject.projectDir.eachDirRecurse {\n    if (!isTaskDir(it) || it.path.contains(\".idea\")) {\n        return\n    }\n    def taskRelativePath = rootDir.toPath().relativize(it.toPath())\n    def parts = []\n    for (name in taskRelativePath) {\n        parts.add(sanitizeName(name.toString()))\n    }\n    def moduleName =  parts.join(\"-\")\n    include \"$moduleName\"\n    project(\":$moduleName\").projectDir = it\n}\n\ndef isTaskDir(File dir) {\n    return new File(dir, \"src\").exists() || new File(dir, \"test\").exists()\n}\n\ninclude 'util'"
               }
             ]
           },
