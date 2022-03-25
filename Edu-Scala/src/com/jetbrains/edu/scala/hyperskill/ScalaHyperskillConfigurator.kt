@@ -13,6 +13,7 @@ class ScalaHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSetti
 
   private class ScalaHyperskillCourseBuilder : ScalaGradleCourseBuilder() {
     override val buildGradleTemplateName: String = SCALA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
+    override val settingGradleTemplateName: String = HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
   }
 
   companion object {

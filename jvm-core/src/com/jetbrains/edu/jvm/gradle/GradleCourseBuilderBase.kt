@@ -11,19 +11,21 @@ import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
 
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
+  open val settingGradleTemplateName: String = SETTINGS_FILE_NAME
 
   /**
    * Map from config file name which should be created in project to template file name
    */
   val templates: Map<String, String>
     get() = mapOf(DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
-                  SETTINGS_FILE_NAME to SETTINGS_FILE_NAME)
+                  SETTINGS_FILE_NAME to settingGradleTemplateName)
 
   open fun templateVariables(project: Project): Map<String, Any> {
     val projectName = if (!isUnitTestMode) project.name else "Test project"
@@ -38,4 +40,9 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)
+
+  companion object {
+    @NonNls
+    const val HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME: String = "hyperskill-settings.gradle"
+  }
 }

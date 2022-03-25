@@ -26,6 +26,7 @@ class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>
 
   private class JHyperskillGradleCourseBuilder : JCourseBuilder() {
     override val buildGradleTemplateName: String = JAVA_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
+    override val settingGradleTemplateName: String = HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
   }
 
   private class JHyperskillCourseBuilder(private val gradleCourseBuilder: GradleCourseBuilderBase) :

@@ -16,6 +16,7 @@ class KtHyperskillConfigurator : HyperskillConfigurator<JdkProjectSettings>(KtCo
 
   private class KtHyperskillCourseBuilder : KtCourseBuilder() {
     override val buildGradleTemplateName: String = KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
+    override val settingGradleTemplateName: String = HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
   }
 
   companion object {

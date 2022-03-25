@@ -2,6 +2,7 @@ package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.kotlin.KtCourseBuilder.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.learning.EduTestCase
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
+import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
 
 class KtHyperskillCourseGenerationTest : EduTestCase() {
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
@@ -20,7 +22,9 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = KotlinLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
+    courseWithFiles(courseProducer = ::HyperskillCourse,
+                    language = KotlinLanguage.INSTANCE,
+                    courseMode = CourseMode.EDUCATOR,
                     settings = JdkProjectSettings.emptySettings()) {}
 
     checkFileTree {
@@ -47,5 +51,15 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
                                                                             getKotlinTemplateVariables())
 
     assertEquals(expectedBuildGradleContent, actualBuildGradleContent)
+  }
+
+  fun `test settings gradle file`() {
+    courseWithFiles(courseProducer = ::HyperskillCourse,
+                    language = KotlinLanguage.INSTANCE,
+                    settings = JdkProjectSettings.emptySettings()) {}
+    val actualSettingsGradleContent = findFile(SETTINGS_FILE_NAME).document.text
+    val expectedSettingsGradleContent = GeneratorUtils.getInternalTemplateText(HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME)
+
+    assertEquals(expectedSettingsGradleContent, actualSettingsGradleContent)
   }
 }
