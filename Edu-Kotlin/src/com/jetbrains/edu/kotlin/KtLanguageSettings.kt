@@ -25,6 +25,6 @@ class KtLanguageSettings : JdkLanguageSettings() {
   private val Course.kotlinVersion: KotlinVersion
     get() {
       val langVersion = course.languageVersion ?: return DEFAULT_KOTLIN_VERSION
-      return KotlinVersion(langVersion, true)
+      return KotlinVersion(langVersion)
     }
 }

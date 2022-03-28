@@ -25,8 +25,7 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
     fun getKotlinTemplateVariables(): Map<String, Any> {
       val kotlinVersion = kotlinVersion()
       return mapOf(
-        "KOTLIN_VERSION" to kotlinVersion.version,
-        "NEED_KOTLIN_EAP_REPOSITORY" to !kotlinVersion.isRelease
+        "KOTLIN_VERSION" to kotlinVersion.version
       )
     }
   }
