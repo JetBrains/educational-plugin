@@ -4,8 +4,6 @@ import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 
 object MockCheckiOOAuthConnector : CheckiOOAuthConnector() {
-  @get:Synchronized
-  @set:Synchronized
   override var account: CheckiOAccount? = null
 
   override val baseUrl: String = ""

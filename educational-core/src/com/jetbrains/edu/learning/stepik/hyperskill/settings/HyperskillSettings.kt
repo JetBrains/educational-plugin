@@ -18,6 +18,7 @@ private const val serviceName = "HyperskillSettings"
 class HyperskillSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
+  @field:Volatile
   var account: HyperskillAccount? = null
     set(account) {
       field = account

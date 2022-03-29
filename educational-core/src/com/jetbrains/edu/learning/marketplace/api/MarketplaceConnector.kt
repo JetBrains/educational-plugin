@@ -47,8 +47,6 @@ import java.net.MalformedURLException
 import java.net.URL
 
 abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
-  @get:Synchronized
-  @set:Synchronized
   override var account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
     set(account) {
