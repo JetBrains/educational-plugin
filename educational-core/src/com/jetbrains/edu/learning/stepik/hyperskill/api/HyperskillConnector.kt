@@ -35,8 +35,6 @@ import java.util.concurrent.TimeUnit
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
   override val platformName: String = HYPERSKILL
 
-  @get:Synchronized
-  @set:Synchronized
   override var account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
     set(account) {

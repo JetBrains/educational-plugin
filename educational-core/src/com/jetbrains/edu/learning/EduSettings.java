@@ -23,7 +23,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   @Nullable
-  private StepikUser myUser;
+  private volatile StepikUser myUser;
   @Property private JavaUILibrary javaUiLibrary = initialJavaUiLibrary();
 
   public EduSettings() {

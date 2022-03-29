@@ -17,7 +17,7 @@ public class JsCheckiOSettings implements PersistentStateComponent<Element> {
   protected static final String SERVICE_NAME = "JsCheckiOSettings";
   @Nullable
   @Tag("JsAccount")
-  private CheckiOAccount myCheckiOAccount;
+  private volatile CheckiOAccount myCheckiOAccount;
 
   @Nullable
   @Override

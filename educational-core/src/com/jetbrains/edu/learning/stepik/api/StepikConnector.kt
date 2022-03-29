@@ -34,8 +34,6 @@ import java.net.URL
 abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
   override val platformName: String = StepikNames.STEPIK
 
-  @get:Synchronized
-  @set:Synchronized
   override var account: StepikUser?
     get() = EduSettings.getInstance().user
     set(account) {

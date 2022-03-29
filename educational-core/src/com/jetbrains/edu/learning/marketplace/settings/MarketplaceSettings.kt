@@ -18,6 +18,7 @@ private const val serviceName = "MarketplaceSettings"
 class MarketplaceSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
+  @field:Volatile
   var account: MarketplaceAccount? = null
     set(account) {
       field = account

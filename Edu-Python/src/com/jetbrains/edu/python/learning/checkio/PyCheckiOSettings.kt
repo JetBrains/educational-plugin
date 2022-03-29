@@ -14,6 +14,7 @@ private const val serviceName = "PyCheckiOSettings"
 class PyCheckiOSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
+  @field:Volatile
   var account: CheckiOAccount? = null
     set(account) {
       field = account
