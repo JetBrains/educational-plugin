@@ -333,25 +333,25 @@ project(":") {
   }
 
   dependencies {
-    compileOnly(project(":educational-core"))
-    compileOnly(project(":code-insight"))
-    compileOnly(project(":code-insight:html"))
-    compileOnly(project(":code-insight:markdown"))
-    compileOnly(project(":code-insight:yaml"))
-    compileOnly(project(":jvm-core"))
-    compileOnly(project(":Edu-Java"))
-    compileOnly(project(":Edu-Kotlin"))
-    compileOnly(project(":Edu-Python"))
-    compileOnly(project(":Edu-Python:Idea"))
-    compileOnly(project(":Edu-Python:PyCharm"))
-    compileOnly(project(":Edu-Scala"))
-    compileOnly(project(":Edu-Android"))
-    compileOnly(project(":Edu-JavaScript"))
-    compileOnly(project(":Edu-Rust"))
-    compileOnly(project(":Edu-Cpp"))
-    compileOnly(project(":Edu-Go"))
-    compileOnly(project(":Edu-Php"))
-    compileOnly(project(":Edu-Sql"))
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
+    implementation(project(":code-insight:html"))
+    implementation(project(":code-insight:markdown"))
+    implementation(project(":code-insight:yaml"))
+    implementation(project(":jvm-core"))
+    implementation(project(":Edu-Java"))
+    implementation(project(":Edu-Kotlin"))
+    implementation(project(":Edu-Python"))
+    implementation(project(":Edu-Python:Idea"))
+    implementation(project(":Edu-Python:PyCharm"))
+    implementation(project(":Edu-Scala"))
+    implementation(project(":Edu-Android"))
+    implementation(project(":Edu-JavaScript"))
+    implementation(project(":Edu-Rust"))
+    implementation(project(":Edu-Cpp"))
+    implementation(project(":Edu-Go"))
+    implementation(project(":Edu-Php"))
+    implementation(project(":Edu-Sql"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -367,21 +367,44 @@ project(":") {
     }
   }
 
-  tasks {
-    jar {
-      from({
-        // Collect all `compileOnly` project dependencies and add their compilation output to jar.
-        // We need to put all plugin manifest files into single jar to make new plugin model work
-        val projectDependencies = project.configurations.compileOnly.get().allDependencies.withType<ProjectDependency>()
-        projectDependencies.map { it.dependencyProject.sourceSets.main.get().output }
-      })
+  // Collects all jars produced by compilation of project modules and merges them into singe one.
+  // We need to put all plugin manifest files into single jar to make new plugin model work
+  val mergePluginJarTask = task<Jar>("mergePluginJars") {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+
+    // The name differs from all module names to avoid collision during new jar file creation
+    archiveBaseName.set("EduTools")
+    val sandboxTask = tasks.prepareSandbox.get()
+    val pluginLibDir = sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
+    destinationDirectory.set(pluginLibDir)
+
+    exclude("META-INF/MANIFEST.MF")
+
+    val pluginJars by lazy {
+      pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
     }
+
+    doFirst {
+      for (file in pluginJars) {
+        from(zipTree(file))
+      }
+    }
+
+    doLast {
+      delete(pluginJars)
+    }
+  }
+
+  tasks {
     withType<PrepareSandboxTask> {
       from("$rootDir/twitter") {
         into("${pluginName.get()}/twitter")
         include("**/*.gif")
       }
       finalizedBy(removeIncompatiblePlugins)
+    }
+    prepareSandbox {
+      finalizedBy(mergePluginJarTask)
     }
     withType<RunIdeTask> {
       // Disable auto plugin reloading. See `com.intellij.ide.plugins.DynamicPluginVfsListener`
@@ -887,6 +910,15 @@ fun loadProperties(path: String): Properties {
   val properties = Properties()
   file(path).bufferedReader().use { properties.load(it) }
   return properties
+}
+
+fun File.isPluginJar(): Boolean {
+  if (!isFile) return false
+  if (extension != "jar") return false
+  return zipTree(this).files.any {
+    // TODO: make it more precise
+    it.extension == "xml" && it.readText().trimStart().startsWith("<idea-plugin")
+  }
 }
 
 fun parseManifest(file: File): Node {
