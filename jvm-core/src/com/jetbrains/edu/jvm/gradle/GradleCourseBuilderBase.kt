@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
@@ -28,8 +27,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
                   SETTINGS_FILE_NAME to settingGradleTemplateName)
 
   open fun templateVariables(project: Project): Map<String, Any> {
-    val projectName = if (!isUnitTestMode) project.name else "Test project"
-    return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName))
+    return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(project.name))
   }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
