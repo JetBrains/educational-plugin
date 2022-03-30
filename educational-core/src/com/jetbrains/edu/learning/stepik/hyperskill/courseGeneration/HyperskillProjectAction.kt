@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import java.net.URL
 import javax.swing.event.HyperlinkEvent
 
-class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project")) {
+class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project.text")) {
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()

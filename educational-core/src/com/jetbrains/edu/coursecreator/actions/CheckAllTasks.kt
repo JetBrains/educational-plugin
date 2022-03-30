@@ -79,12 +79,7 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
     val notification = Notification(
       "EduTools",
       EduCoreBundle.message("notification.title.check"),
-      failedTasks.withIndex().joinToString("<br>") {
-        @Suppress("UnstableApiUsage")
-        @NlsSafe
-        val failedTask = "<a href=\"${it.index}\">${it.value.fullName}</a>"
-        failedTask
-      },
+      notificationContent(failedTasks),
       NotificationType.WARNING
     )
       .setSubtitle(EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum))
@@ -107,6 +102,13 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
     }
     return notification
   }
+
+  @Suppress("UnstableApiUsage")
+  @NlsSafe
+  private fun notificationContent(failedTasks: List<Task>): String =
+    failedTasks.withIndex().joinToString("<br>") {
+      "<a href=\"${it.index}\">${it.value.fullName}</a>"
+    }
 
   private val Task.fullName: String
     get() = listOfNotNull(lesson.section, lesson, this).joinToString("/") { it.presentableName }

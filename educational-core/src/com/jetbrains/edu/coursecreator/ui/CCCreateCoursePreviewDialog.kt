@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.ui
 
+import com.intellij.CommonBundle
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
@@ -59,8 +60,7 @@ class CCCreateCoursePreviewDialog(
   override fun createCenterPanel(): JComponent = panel
 
   override fun createActions(): Array<out Action> {
-    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand(
-      EduCoreBundle.message("close"))) {
+    val closeAction = object : AbstractAction(UIUtil.replaceMnemonicAmpersand(CommonBundle.message("button.close"))) {
       override fun actionPerformed(e: ActionEvent) {
         close()
       }

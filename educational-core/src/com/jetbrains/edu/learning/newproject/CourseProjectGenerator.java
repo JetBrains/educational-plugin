@@ -101,7 +101,7 @@ public abstract class CourseProjectGenerator<S> {
         StepikCourseLoader.loadCourseStructure(remoteCourse);
         myCourse = remoteCourse;
         return true;
-      }, EduCoreBundle.message("action.generate.project.loading.course"), true, null);
+      }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null);
     }
     return true;
   }
@@ -229,7 +229,7 @@ public abstract class CourseProjectGenerator<S> {
         EduCounterUsageCollector.eduProjectCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
-      }, EduCoreBundle.message("action.generate.project.generate.course.structure"), false, project);
+      }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
     }

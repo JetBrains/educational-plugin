@@ -31,7 +31,7 @@ class UnsolvedDependenciesNotificationProvider : EditorNotifications.Provider<Ed
     }
     val panel = EditorNotificationPanel()
     panel.text = getText(taskDependencies.map { it.name })
-    panel.createActionLabel(EduCoreBundle.message("action.solve.task", taskDependencies[0].name)) {
+    panel.createActionLabel(EduCoreBundle.message("action.solve.task.text", taskDependencies[0].name)) {
       NavigationUtils.navigateToTask(project, taskDependencies[0], task)
       EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
     }

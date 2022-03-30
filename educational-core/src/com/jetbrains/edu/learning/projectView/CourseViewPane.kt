@@ -116,7 +116,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup) {
     actionGroup.removeAll()
-    val hideSolvedLessons = object : ToggleAction(EduCoreBundle.message("action.hide.solved.lessons")), DumbAware {
+    val hideSolvedLessons = object : ToggleAction(EduCoreBundle.message("action.hide.solved.lessons.text")), DumbAware {
       override fun isSelected(e: AnActionEvent): Boolean {
         return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
       }

@@ -11,23 +11,23 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
+private const val LINK = "https://stgn.grazie.ai/auth/chrome/login/success"
+
 @Suppress("ComponentNotRegistered")
-class InsertJwtToken: DumbAwareAction(ACTION_TITLE) {
+class InsertJwtToken : DumbAwareAction(ACTION_TITLE) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val account = MarketplaceSettings.INSTANCE.account
     if (account == null) {
       CCUtils.showLoginNeededNotification(project, e.presentation.text) { MarketplaceConnector.getInstance().doAuthorize() }
-        LOG.warn("User not logged in to Marketplace when inserting JWT token")
-        return
+      LOG.warn("User not logged in to Marketplace when inserting JWT token")
+      return
     }
 
-    val jwtToken = Messages.showInputDialog("${EduCoreBundle.message("marketplace.inserted.jwt.token")}:", ACTION_TITLE, null) ?: return
+    val jwtToken = Messages.showInputDialog(EduCoreBundle.message("marketplace.inserted.jwt.token"), ACTION_TITLE, null) ?: return
     if (!MarketplaceSubmissionsConnector.getInstance().isJwtTokenValid(jwtToken)) {
-      val link = "https://stgn.grazie.ai/auth/chrome/login/success"
-      Messages.showErrorDialog(EduCoreBundle.message("marketplace.inserted.jwt.token.message", link),
-                               EduCoreBundle.message("marketplace.inserted.jwt.token.error")
-      )
+      Messages.showErrorDialog(EduCoreBundle.message("marketplace.inserted.jwt.token.message", LINK),
+                               EduCoreBundle.message("marketplace.inserted.jwt.token.error"))
       return
     }
     account.saveJwtToken(jwtToken)

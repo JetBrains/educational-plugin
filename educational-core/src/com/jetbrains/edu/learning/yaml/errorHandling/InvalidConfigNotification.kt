@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.yaml.errorHandling
 
+import com.intellij.CommonBundle
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
@@ -46,7 +47,7 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
   else {
     """<br>
   <a href="">${
-      EduCoreBundle.message("edit")
+      CommonBundle.message("button.edit")
     }</a>"""
   }
   return mainErrorMessage + editLink

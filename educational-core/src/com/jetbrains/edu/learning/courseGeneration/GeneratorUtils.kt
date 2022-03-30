@@ -55,15 +55,15 @@ object GeneratorUtils {
       indicator.fraction = (i + 1).toDouble() / items.size
 
       if (item is Lesson) {
-        indicator.text = EduCoreBundle.message("action.generate.lesson", i + 1, items.size)
+        indicator.text = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
         createLesson(project, item, baseDir)
       }
       else if (item is Section) {
-        indicator.text = EduCoreBundle.message("action.generate.section", i + 1, items.size)
+        indicator.text = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
         createSection(project, item, baseDir)
       }
     }
-    indicator.text = EduCoreBundle.message("action.generate.additional.files")
+    indicator.text = EduCoreBundle.message("generate.additional.files.progress.text")
     createAdditionalFiles(project, course, baseDir)
     EduCounterUsageCollector.studyItemCreated(course)
   }

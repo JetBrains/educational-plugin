@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 
+import com.intellij.CommonBundle
 import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.DialogWrapper
@@ -156,7 +157,7 @@ class EditCourseButton(errorHandler: (Course, CourseMode) -> Unit) : StartCourse
   override val courseMode = CourseMode.EDUCATOR
 
   init {
-    text = EduCoreBundle.message("edit")
+    text = CommonBundle.message("button.edit")
     setWidth72(this)
   }
 

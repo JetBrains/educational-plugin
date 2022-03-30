@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 class LearnAndTeachFileMenuGroup: DefaultActionGroup(), DumbAware {
   override fun update(e: AnActionEvent) {
     e.presentation.icon = EducationalCoreIcons.CourseAction
-    e.presentation.text = EduCoreBundle.message("action.learn")
+    e.presentation.text = EduCoreBundle.message("action.learn.text")
     if (CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
-      e.presentation.text = EduCoreBundle.message("action.learn.and.teach")
+      e.presentation.text = EduCoreBundle.message("action.learn.and.teach.text")
     }
   }
 }

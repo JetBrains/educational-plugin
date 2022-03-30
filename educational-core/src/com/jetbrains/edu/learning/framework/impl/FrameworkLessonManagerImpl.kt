@@ -256,8 +256,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       Messages.showYesNoDialog(project,
                                message,
                                EduCoreBundle.message("framework.lesson.changes.conflicting.changes.title"),
-                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.yes"),
-                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.no"),
+                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.keep"),
+                               EduCoreBundle.message("framework.lesson.changes.conflicting.changes.replace"),
                                null)
     }
     else {
