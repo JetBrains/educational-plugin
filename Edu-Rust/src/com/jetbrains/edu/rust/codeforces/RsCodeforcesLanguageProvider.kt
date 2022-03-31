@@ -14,7 +14,7 @@ import org.rust.cargo.CargoConstants.MANIFEST_FILE
 import org.rust.lang.RsConstants.MAIN_RS_FILE
 import javax.swing.Icon
 
-class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider {
+class RsCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<RsProjectSettings> = RsConfigurator()
   override val languageId: String = EduNames.RUST
   override val templateFileName: String = "codeforces.Rust main.rs"

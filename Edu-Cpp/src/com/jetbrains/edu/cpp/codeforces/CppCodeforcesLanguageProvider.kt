@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import javax.swing.Icon
 
-class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
+class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<CppProjectSettings> = CppConfigurator()
   override val languageId: String = EduNames.CPP
   override val preferableCodeforcesLanguage: String = "GNU C++17"

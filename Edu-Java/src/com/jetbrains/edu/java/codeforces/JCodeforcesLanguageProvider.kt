@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import javax.swing.Icon
 
-class JCodeforcesLanguageProvider : CodeforcesLanguageProvider {
+class JCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<JdkProjectSettings> = JConfigurator()
   override val languageId: String = EduNames.JAVA
   override val preferableCodeforcesLanguage: String = "Java 8"

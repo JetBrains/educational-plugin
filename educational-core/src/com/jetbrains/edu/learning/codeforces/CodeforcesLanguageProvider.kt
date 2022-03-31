@@ -11,29 +11,48 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import java.io.IOException
 import java.net.URL
 import javax.swing.Icon
 
-interface CodeforcesLanguageProvider {
-  val codeforcesLanguageNamings: List<String>
-    get() = codeforcesLanguages[languageId]?.map { it.key } ?: emptyList()
-  val configurator: EduConfigurator<*>?
+abstract class CodeforcesLanguageProvider {
+  open val codeforcesLanguageNamings: List<String> by lazy { codeforcesLanguages.map { it.languageIdWithVersion } }
+  open val configurator: EduConfigurator<*>?
     get() {
       return EduConfiguratorManager.allExtensions().find { it.language == languageId }?.instance
     }
-  val languageId: String
-  val preferableCodeforcesLanguage: String
+  abstract val languageId: String
+  open val preferableCodeforcesLanguage: String
     get() = codeforcesLanguageNamings.first()
-  val templateFileName: String
-  val displayTemplateName: String
-  val languageIcon: Icon
+  abstract val templateFileName: String
+  abstract val displayTemplateName: String
+  abstract val languageIcon: Icon
 
-  fun getLanguageVersion(codeforcesLanguage: String): String? = codeforcesLanguages.asSequence()
-    .fold(mutableMapOf<String, String?>())
-    { acc, item -> acc.also { newMap -> newMap.putAll(item.value.map { it.key to it.value.version }) } }[codeforcesLanguage]
+  //FIXME: upload to repo and change link before merge
+  private val LANGUAGES_LINK = "https://raw.githubusercontent.com/DonHalkon/test/main/README.md"
 
-  fun createTaskFiles(task: Task): List<TaskFile> {
+  private val codeforcesLanguages: List<CodeforcesLanguage> by lazy {
+    downloadCodeforcesLanguages()
+  }
+
+  private fun downloadCodeforcesLanguages(): List<CodeforcesLanguage> {
+    return try {
+      val mapper = ObjectMapper()
+      val typeRef = object : TypeReference<Map<String, List<CodeforcesLanguage>>>() {}
+      val conn = URL(LANGUAGES_LINK).openConnection()
+      val jsonText = conn.getInputStream().bufferedReader().readText()
+      mapper.readValue(jsonText, typeRef).filter { it.key == languageId }.flatMap { it.value }
+    }
+    catch (e: Exception) {
+      LOG.error("Failed to get languages list from ${LANGUAGES_LINK}")
+      emptyList()
+    }
+  }
+
+  fun getLanguageVersion(languageIdWithVersion: String): String? = codeforcesLanguages.findLanguage(languageIdWithVersion)?.version
+
+  fun getProgramTypeId(languageIdWithVersion: String): String? = codeforcesLanguages.findLanguage(languageIdWithVersion)?.programTypeId
+
+  open fun createTaskFiles(task: Task): List<TaskFile> {
     val text = GeneratorUtils.getJ2eeTemplateText(templateFileName)
     return listOf(TaskFile(GeneratorUtils.joinPaths(task.sourceDir, displayTemplateName), text))
   }
@@ -41,31 +60,8 @@ interface CodeforcesLanguageProvider {
   companion object {
     val EP_NAME: ExtensionPointName<CodeforcesLanguageProvider> =
       ExtensionPointName.create("Educational.codeforcesLanguageProvider")
-    //FIXME: upload to repo and change link before merge
-    private const val LANGUAGES_LINK = "https://raw.githubusercontent.com/DonHalkon/test/main/README.md"
 
-    // Map<LanguageID, Map<LanguageIDWithVersion, CodeforcesLanguage>>
-    private val codeforcesLanguages: Map<String, Map<String, CodeforcesLanguage>>
-    private val mapper = ObjectMapper()
-    private val typeRef = object : TypeReference<Map<String, List<CodeforcesLanguage>>>() {}
     private val LOG = logger<CodeforcesLanguageProvider>()
-
-    init {
-      codeforcesLanguages = getCodeforcesLanguages()
-    }
-
-    // Map<LanguageID, Map<LanguageIDWithVersion, CodeforcesLanguage>>
-    private fun getCodeforcesLanguages(): Map<String, Map<String, CodeforcesLanguage>> {
-      return try {
-        val conn = URL(LANGUAGES_LINK).openConnection()
-        val jsonText = conn.getInputStream().bufferedReader().readText()
-        mapper.readValue(jsonText, typeRef).map { entry -> entry.key to entry.value.associateBy { it.name } }.toMap()
-      }
-      catch (e: IOException) {
-        LOG.warn("Failed to get languages list from ${LANGUAGES_LINK}")
-        emptyMap()
-      }
-    }
 
     fun getSupportedLanguages(): List<String> {
       return EP_NAME.extensions.flatMap { it.codeforcesLanguageNamings }
@@ -99,9 +95,15 @@ interface CodeforcesLanguageProvider {
       error("Failed to get language and id from codeForces $codeforcesLanguage")
     }
 
-    fun getProgramTypeId(codeforcesLanguage: String): String? = codeforcesLanguages.asSequence()
-      .fold(mutableMapOf<String, String>())
-      { acc, item -> acc.also { newMap -> newMap.putAll(item.value.map { it.key to it.value.programTypeId }) } }[codeforcesLanguage]
+    fun getProgramTypeId(codeforcesLanguage: String): String {
+      EP_NAME.extensions.forEach {
+        val programTypeId = it.getProgramTypeId(codeforcesLanguage)
+        if (programTypeId != null) {
+          return programTypeId
+        }
+      }
+      error("Failed to get ProgramTypeId for '$codeforcesLanguage'")
+    }
 
     fun generateTaskFiles(task: Task): List<TaskFile>? =
       EP_NAME.extensions
@@ -114,6 +116,9 @@ interface CodeforcesLanguageProvider {
   }
 }
 
-private data class CodeforcesLanguage(@JsonProperty var name: String = "",
+private data class CodeforcesLanguage(@JsonProperty var languageIdWithVersion: String = "",
                                       @JsonProperty var programTypeId: String = "",
                                       @JsonProperty var version: String? = null)
+
+private fun List<CodeforcesLanguage>.findLanguage(languageIdWithVersion: String) =
+  this.firstOrNull { it.languageIdWithVersion == languageIdWithVersion }

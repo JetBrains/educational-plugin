@@ -8,7 +8,7 @@ import com.jetbrains.edu.python.learning.PyNewConfigurator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import javax.swing.Icon
 
-class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider {
+class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<PyNewProjectSettings> = PyNewConfigurator()
   override val languageId: String = EduNames.PYTHON
   override val preferableCodeforcesLanguage: String = "Python 3"

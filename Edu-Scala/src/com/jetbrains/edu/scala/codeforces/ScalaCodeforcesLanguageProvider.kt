@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator
 import javax.swing.Icon
 
-class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider {
+class ScalaCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<JdkProjectSettings> = ScalaGradleConfigurator()
   override val languageId: String = EduNames.SCALA
   override val templateFileName: String = "codeforces.Scala Main.scala"
