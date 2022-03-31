@@ -16,10 +16,9 @@ import java.util.*
 
 @JsonPropertyOrder(TYPE, ID, UPDATE_DATE, ATTEMPT)
 abstract class RemoteDataTaskYamlMixin : RemoteStudyItemYamlMixin() {
-  @JsonProperty(TYPE)
-  private fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(ATTEMPT)
   private var attempt: DataTaskAttempt? = null

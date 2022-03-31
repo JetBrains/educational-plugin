@@ -364,6 +364,6 @@ fun StudyItem.getConfigDir(project: Project): VirtualFile {
     lesson.getDir(project.courseDir)?.findChild(name) ?: error(errorMessageToLog)
   }
   else {
-    getDir(project.courseDir)
+    getDir(project.courseDir) ?: error("Config for '$this' not found")
   }
 }

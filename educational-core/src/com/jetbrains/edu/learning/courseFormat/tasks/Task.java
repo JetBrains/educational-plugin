@@ -75,7 +75,7 @@ public abstract class Task extends StudyItem {
 
   public Task(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
     super(name);
-    myId = id;
+    setId(id);
     setIndex(position);
     setUpdateDate(updateDate);
     myStatus = status;
@@ -271,8 +271,8 @@ public abstract class Task extends StudyItem {
     myFeedbackLink = feedbackLink;
   }
 
-  @Override
   @Nullable
+  @Override
   public VirtualFile getDir(@NotNull final VirtualFile courseDir) {
     if (myLesson == null) {
       LOG.warn("Lesson is null for task " + getName() + " (id " + getId() + ")");
@@ -303,7 +303,7 @@ public abstract class Task extends StudyItem {
 
   @NotNull
   @Override
-  public StudyItem getParent() {
+  public ItemContainer getParent() {
     return myLesson;
   }
 

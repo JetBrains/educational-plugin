@@ -220,7 +220,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
     if (isToEncodeContent) {
       if (task.lesson is FrameworkLesson && length >= EduUtils.getBinaryFileLimit()) {
-        throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, EduUtils.getBinaryFileLimit().toLong(), true)
+        throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, EduUtils.getBinaryFileLimit().toLong(), true)
       }
       taskFile.setText(loadEncodedContent(isToEncodeContent = true))
       return taskFile
@@ -247,7 +247,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     return taskFile
   }
   catch (e: FileTooBigException) {
-    throw HugeBinaryFileException("${task.pathInCourse}/${name}", length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
+    throw HugeBinaryFileException("${task.getPathInCourse()}/${name}", length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
   }
   catch (e: IOException) {
     LOG.error("Failed to convert `${path}` to student file")

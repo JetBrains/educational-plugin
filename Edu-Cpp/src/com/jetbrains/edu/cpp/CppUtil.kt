@@ -10,7 +10,8 @@ import com.jetbrains.cmake.CMakeListsFileType
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getDefaultName
@@ -36,7 +37,7 @@ fun Task.addCMakeList(projectName: String, cppStandard: String = ""): TaskFile {
 }
 
 fun getCMakeProjectName(task: Task): String {
-  val nameExtractor = if (task.course is StepikCourse) ::getDefaultName else StudyItem::getName
+  val nameExtractor = if (task.course is StepikCourse) ::getDefaultName else StudyItem::name
 
   val lesson = task.lesson
   val section = lesson.section

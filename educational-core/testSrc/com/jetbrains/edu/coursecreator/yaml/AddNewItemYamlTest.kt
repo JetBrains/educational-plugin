@@ -152,7 +152,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   private fun doToParentAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size
     val lastChild = itemContainer.items.last()
-    val lastChildConfig = lastChild.getDir(project.courseDir).findChild(lastChild.configFileName)!!
+    val lastChildConfig = lastChild.getDir(project.courseDir)?.findChild(lastChild.configFileName)!!
     itemContainer.removeLastItem()
 
     loadAndDispatchEvents(lastChildConfig)
@@ -162,7 +162,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   private fun doNotAddedTest(itemContainer: ItemContainer) {
     val expectedSize = itemContainer.items.size - 1
     val lastChild = itemContainer.items.last()
-    val lastChildConfig = lastChild.getDir(project.courseDir).findChild(lastChild.configFileName)!!
+    val lastChildConfig = lastChild.getDir(project.courseDir)?.findChild(lastChild.configFileName)!!
     itemContainer.removeLastItem()
 
     saveItemAndDispatchEvents(itemContainer)

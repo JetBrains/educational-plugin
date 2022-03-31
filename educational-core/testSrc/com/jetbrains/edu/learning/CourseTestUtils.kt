@@ -48,21 +48,21 @@ fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUC
 @Suppress("UNUSED_PARAMETER", "unused") // used for correct updateDate deserialization from json test data
 abstract class TestRemoteLessonMixin : RemoteLessonMixin() {
   @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for correct updateDate deserialization from json test data
 abstract class TestRemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
   @JsonAlias(STEPIK_ID)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for correct updateDate deserialization from json test data
 abstract class TestRemoteSectionMixin : RemoteSectionMixin() {
   @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 }

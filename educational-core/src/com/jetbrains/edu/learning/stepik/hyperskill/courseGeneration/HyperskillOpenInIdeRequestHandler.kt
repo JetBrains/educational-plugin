@@ -53,7 +53,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
           }
           hyperskillCourse.init(null, null, false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
-          val courseDir = hyperskillCourse.getDir(project.courseDir)
+          val courseDir = hyperskillCourse.getDir(project.courseDir) ?: return false
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
           GeneratorUtils.createAdditionalFiles(project, course, courseDir)
           YamlFormatSynchronizer.saveAll(project)
@@ -317,7 +317,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     problemsLesson.init(course, null, false)
 
     if (createLessonDir) {
-      GeneratorUtils.createLesson(project, problemsLesson, course.getDir(project.courseDir))
+      GeneratorUtils.createLesson(project, problemsLesson, project.courseDir)
       YamlFormatSynchronizer.saveAll(project)
     }
     else if (createTaskDir) {
@@ -370,7 +370,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     topicLesson: Lesson,
     tasks: List<Task>
   ) {
-    GeneratorUtils.createSection(project, topicsSection, course.getDir(project.courseDir))
+    GeneratorUtils.createSection(project, topicsSection, project.courseDir)
     tasks.forEach { task -> YamlFormatSynchronizer.saveItemWithRemoteInfo(task) }
     YamlFormatSynchronizer.saveItem(topicLesson)
     YamlFormatSynchronizer.saveItem(topicsSection)

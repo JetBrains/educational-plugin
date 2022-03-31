@@ -19,7 +19,7 @@ class StringTask : AnswerTask {
               status: CheckStatus = CheckStatus.Unchecked
   ) : super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = STRING_TASK_TYPE
+  override val itemType: String = STRING_TASK_TYPE
 
   companion object {
     const val STRING_TASK_TYPE: String = "string"

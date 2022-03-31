@@ -55,7 +55,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private val step: Step = stepSource.block ?: error("Step is empty")
   private val stepId: Int = stepSource.id
   private val stepPosition: Int = stepSource.position
-  private val updateDate = stepSource.updateDate ?: Date(0)
+  private val updateDate = stepSource.updateDate
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
     // lexicographical order

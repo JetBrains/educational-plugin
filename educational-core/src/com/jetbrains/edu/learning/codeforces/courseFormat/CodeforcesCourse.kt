@@ -70,8 +70,7 @@ open class CodeforcesCourse : Course {
   override val icon: Icon
     get() = EducationalCoreIcons.CODEFORCES_SMALL
 
-  override fun getId(): Int = myId
-  override fun getItemType(): String = CODEFORCES_COURSE_TYPE
+  override val itemType: String = CODEFORCES_COURSE_TYPE
   override val checkAction: CheckAction
     get() = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
 

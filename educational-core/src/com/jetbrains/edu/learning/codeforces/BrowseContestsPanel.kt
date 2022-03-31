@@ -34,7 +34,7 @@ class BrowseContestsPanel(courses: List<Course>) : JPanel(BorderLayout()) {
     scrollPane.horizontalScrollBar.isOpaque = true
     ScrollingUtil.installActions(coursesList)
 
-    val listWithFilter = ListWithFilter.wrap(coursesList, scrollPane, Course::getName, true)
+    val listWithFilter = ListWithFilter.wrap(coursesList, scrollPane, Course::name, true)
 
     add(listWithFilter, BorderLayout.CENTER)
 

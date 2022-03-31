@@ -14,7 +14,7 @@ class IdeTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType() = IDE_TASK_TYPE
+  override val itemType: String = IDE_TASK_TYPE
 
   override fun getIcon(): Icon {
     if (myStatus == CheckStatus.Unchecked) {

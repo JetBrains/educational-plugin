@@ -110,25 +110,17 @@ abstract class Course : LessonContainer() {
     return sections.firstOrNull { predicate(it) }
   }
 
-  override fun getId(): Int {
-    return 0
-  }
-
-  override fun getDir(baseDir: VirtualFile): VirtualFile {
+  override fun getDir(baseDir: VirtualFile): VirtualFile? {
     return baseDir
   }
 
-  override fun getCourse(): Course {
-    return this
-  }
+  override val course: Course
+    get() = this
+  override val parent: ItemContainer
+    get() = this
 
-  override fun getParent(): StudyItem {
-    return this
-  }
 
-  override fun getItemType(): String {
-    return EduNames.PYCHARM //"PyCharm" is used here for historical reasons
-  }
+  override val itemType: String = EduNames.PYCHARM //"PyCharm" is used here for historical reasons
 
   open val checkAction: CheckAction
     get() = CheckAction()

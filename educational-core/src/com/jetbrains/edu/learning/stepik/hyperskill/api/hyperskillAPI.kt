@@ -7,7 +7,6 @@ import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
@@ -196,7 +195,7 @@ class HyperskillStepSource : StepSource() {
   var isRemoteTested: Boolean = false
 
   @JsonProperty(TITLE)
-  var title: String? = null
+  var title: String = ""
 
   @JsonProperty(TOPIC)
   var topic: Int? = null
@@ -205,7 +204,7 @@ class HyperskillStepSource : StepSource() {
   var topicTheory: Int? = null
 
   @JsonProperty(UPDATED_AT)
-  override var updateDate: Date? = null
+  override var updateDate: Date = Date(0)
 
 }
 

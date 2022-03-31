@@ -20,7 +20,7 @@ abstract class HyperskillCourseMixin {
   @Suppress("unused")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
   @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 
   @JsonProperty(STAGES)
   var stages: List<HyperskillStage> = mutableListOf()
@@ -36,7 +36,7 @@ abstract class HyperskillProjectMixin {
   private var myId: Int = 0
 
   @JsonIgnore
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 
   @JsonProperty(ID)
   var id: Int = -1

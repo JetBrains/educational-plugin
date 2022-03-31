@@ -62,7 +62,7 @@ fun checkConfigsExistAndNotEmpty(project: Project, course: Course) {
 private fun checkConfig(project: Project, item: StudyItem) {
   val itemDir = item.getDir(project.courseDir)
   val configFileName = item.configFileName
-  val configFile = itemDir.findChild(configFileName)!!
+  val configFile = itemDir?.findChild(configFileName)!!
   val configText = FileDocumentManager.getInstance().getDocument(configFile)!!.text
   UsefulTestCase.assertNotNull("Config file shouldn't be null", configFile)
   UsefulTestCase.assertTrue("Config file should not be empty: ${configFile.name}", configText.isNotEmpty())

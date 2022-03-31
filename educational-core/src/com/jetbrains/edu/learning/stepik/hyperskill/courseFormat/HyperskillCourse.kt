@@ -21,6 +21,10 @@ class HyperskillCourse : Course {
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
   var hyperskillProject: HyperskillProject? = null
+    set(value) {
+      field = value
+      id = value?.id ?: 0
+    }
 
   constructor(hyperskillProject: HyperskillProject, languageID: String, environment: String) {
     this.hyperskillProject = hyperskillProject
@@ -28,6 +32,7 @@ class HyperskillCourse : Course {
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)
     programmingLanguage = languageID
     this.environment = environment
+    id = hyperskillProject.id
   }
 
   constructor(languageName: String, languageID: String) {
@@ -107,11 +112,7 @@ class HyperskillCourse : Course {
     return """<br/><br/>Learn more at <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
   }
 
-  override fun getItemType(): String = HYPERSKILL
-
-  override fun getId(): Int {
-    return hyperskillProject?.id ?: super.getId()
-  }
+  override val itemType: String = HYPERSKILL
 
   override val isViewAsEducatorEnabled: Boolean
     get() = false

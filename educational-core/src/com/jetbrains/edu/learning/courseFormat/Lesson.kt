@@ -23,8 +23,8 @@ open class Lesson : ItemContainer() {
   var isPublic = false
   var unitId = 0
 
-  override fun init(course: Course?, section: StudyItem?, isRestarted: Boolean) {
-    this.section = if (section is Section) section else null
+  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+    this.section = if (parentItem is Section) parentItem else null
     setCourse(course)
 
     for ((i, task) in taskList.withIndex()) {
@@ -39,17 +39,11 @@ open class Lesson : ItemContainer() {
   val taskList: List<Task>
     get() = items.filterIsInstance<Task>()
 
-  override fun getCourse(): Course {
-    return myCourse ?: error("Course is null for lesson $name")
-  }
-
-  override fun getParent(): StudyItem {
-    return container
-  }
-
-  override fun getItemType(): String {
-    return EduNames.LESSON
-  }
+  override val course: Course
+    get() = myCourse ?: error("Course is null for lesson $name")
+  override val parent: ItemContainer
+    get() = container
+  override val itemType: String = EduNames.LESSON
 
   fun setCourse(course: Course?) {
     myCourse = course

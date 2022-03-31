@@ -35,8 +35,6 @@ open class EduCourse : Course() {
   var sectionIds: List<Int> = emptyList()
   var instructors: List<Int> = emptyList()
   var isStepikPublic: Boolean = false
-  @Transient
-  var adminsGroup: String? = null
   var reviewSummary: Int = 0
 
   override var programmingLanguage: String
@@ -58,13 +56,8 @@ open class EduCourse : Course() {
       return tags
     }
 
-  override fun getItemType(): String {
-    return if (isMarketplace) MARKETPLACE else super.getItemType()
-  }
-
-  override fun getId(): Int {
-    return myId
-  }
+  override val itemType: String
+    get() = if (isMarketplace) MARKETPLACE else super.itemType
 
   private fun updateType(language: String) {
     type = if (environment != EduNames.DEFAULT_ENVIRONMENT) {

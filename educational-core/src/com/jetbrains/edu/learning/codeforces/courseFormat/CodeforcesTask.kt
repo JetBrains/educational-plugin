@@ -25,7 +25,7 @@ open class CodeforcesTask : Task() {
   open val outputFileName: String = "output.txt"
   open val latestOutputFileName: String = "latest_output.txt"
 
-  override fun getItemType(): String = CODEFORCES_TASK_TYPE
+  override val itemType: String = CODEFORCES_TASK_TYPE
 
   fun getTestFolders(project: Project): Array<out VirtualFile> {
     return getDir(project.courseDir)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()

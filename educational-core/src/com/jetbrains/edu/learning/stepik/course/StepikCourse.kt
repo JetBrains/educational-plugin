@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  * Stepik courses do not contain pycharm tasks.
  */
 class StepikCourse : EduCourse() {
-  override fun getItemType(): String = StepikNames.STEPIK_TYPE
+  override val itemType: String = StepikNames.STEPIK_TYPE
   override val isViewAsEducatorEnabled: Boolean
     get() = ApplicationManager.getApplication().isInternal
 }

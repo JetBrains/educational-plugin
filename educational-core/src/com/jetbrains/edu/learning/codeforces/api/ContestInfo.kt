@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.codeforces.api
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSetter
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.time.Duration
@@ -12,20 +12,8 @@ import java.time.ZonedDateTime
  * There are more fields in Codeforces API, see [Contest](https://codeforces.com/apiHelp/objects#Contest)
  * but we don't need so much of them right now
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class ContestInfo : Course() {
-  override fun getId(): Int {
-    return super.myId
-  }
-
-  @JsonSetter("id")
-  override fun setId(id: Int) {
-    super.setId(id)
-  }
-
-  @JsonSetter("name")
-  override fun setName(name: String?) {
-    super.setName(name)
-  }
 
   @JsonProperty("type")
   lateinit var typeString: String

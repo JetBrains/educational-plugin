@@ -15,7 +15,7 @@ class VideoTask : TheoryTask {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType() = VIDEO_TASK_TYPE
+  override val itemType: String = VIDEO_TASK_TYPE
 
   override fun isPluginTaskType() = false
 

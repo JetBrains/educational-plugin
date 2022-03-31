@@ -26,19 +26,14 @@ open class Section : LessonContainer() {
     return baseDir.findChild(name)
   }
 
-  override fun getCourse(): Course {
-    return myCourse ?: error("Course is null for section $name")
-  }
+  override val course: Course
+    get() = myCourse ?: error("Course is null for section $name")
+  override val parent: ItemContainer
+    get() = course
+  override val itemType: String = EduNames.SECTION
 
   fun setCourse(course: Course?) {
     myCourse = course
   }
 
-  override fun getParent(): StudyItem {
-    return myCourse ?: error("Parent is null for section $name")
-  }
-
-  override fun getItemType(): String {
-    return EduNames.SECTION
-  }
 }

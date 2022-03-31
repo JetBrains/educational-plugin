@@ -179,8 +179,8 @@ object StepikCourseLoader {
   private fun unpackTopLevelLessons(remoteCourse: EduCourse, sections: List<StudyItem>): ArrayList<StudyItem> {
     val itemsWithTopLevelLessons = ArrayList<StudyItem>()
     for (item in sections) {
-      if (item is Section && item.getName() == remoteCourse.name) {
-        remoteCourse.sectionIds = listOf(item.getId())
+      if (item is Section && item.name == remoteCourse.name) {
+        remoteCourse.sectionIds = listOf(item.id)
         itemsWithTopLevelLessons.addAll(item.lessons)
         item.lessons.forEach { loadAndFillLessonAdditionalInfo(it) }
       }

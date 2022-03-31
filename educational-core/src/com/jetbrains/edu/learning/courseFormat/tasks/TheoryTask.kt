@@ -18,7 +18,7 @@ open class TheoryTask : Task {
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) :
     super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = THEORY_TASK_TYPE
+  override val itemType: String = THEORY_TASK_TYPE
 
   override fun getCheckAction(): CheckAction {
     return CheckAction(lazyMessage("action.check.run.text"), lazyMessage("action.check.run.description"))

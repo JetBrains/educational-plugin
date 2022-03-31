@@ -17,7 +17,7 @@ class OutputTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType() = OUTPUT_TASK_TYPE
+  override val itemType: String = OUTPUT_TASK_TYPE
 
   override fun isToSubmitToRemote(): Boolean {
     return myStatus != CheckStatus.Unchecked

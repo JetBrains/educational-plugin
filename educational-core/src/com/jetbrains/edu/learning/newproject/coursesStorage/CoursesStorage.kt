@@ -107,24 +107,9 @@ class CourseMetaInfo() : Course() {
     this.tasksSolved = tasksSolved
   }
 
-  @Transient
-  override fun getItemType(): String {
-    return type
-  }
-
-  @Transient
-  override fun getIndex(): Int {
-    return super.getIndex()
-  }
-
-  @Transient
-  override fun setIndex(index: Int) {
-    super.setIndex(index)
-  }
-
-  override fun getId(): Int {
-    return myId
-  }
+  override val itemType
+    @Transient
+    get() = type
 
   override var programmingLanguage: String
     @OptionTag(PROGRAMMING_LANGUAGE)

@@ -76,7 +76,7 @@ class YamlRenameTest : YamlCodeInsightTest() {
   }
 
   private fun openConfigFile(item: StudyItem) {
-    val configFile = item.getDir(project.courseDir).findChild(item.configFileName)!!
+    val configFile = item.getDir(project.courseDir)?.findChild(item.configFileName)!!
     myFixture.openFileInEditor(configFile)
   }
 }

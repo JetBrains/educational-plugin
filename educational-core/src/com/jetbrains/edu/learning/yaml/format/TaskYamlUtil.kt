@@ -32,10 +32,9 @@ import org.jetbrains.annotations.NonNls
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)
 abstract class TaskYamlMixin {
-  @JsonProperty(TYPE)
-  private fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(FILES)
   open fun getTaskFileValues(): Collection<TaskFile> {
@@ -53,7 +52,7 @@ abstract class TaskYamlMixin {
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private var myCustomPresentableName: String? = null
+  private var customPresentableName: String? = null
 
   @JsonProperty(SOLUTION_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_NULL)

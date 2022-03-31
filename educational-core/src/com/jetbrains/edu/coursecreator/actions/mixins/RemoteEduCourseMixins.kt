@@ -23,6 +23,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_PRIVATE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
@@ -31,6 +32,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
@@ -74,20 +76,21 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonProperty(UPDATE_DATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private lateinit var feedbackLink: String
 }
 
+@JsonPropertyOrder(TITLE, TAGS, TASK_LIST, IS_TEMPLATE_BASED, TYPE)
 abstract class RemoteFrameworkLessonMixin : RemoteLessonMixin() {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
-  @JsonProperty(JsonMixinNames.IS_TEMPLATE_BASED)
+  @JsonProperty(IS_TEMPLATE_BASED)
   private var isTemplateBased: Boolean = true
 }
 
@@ -95,21 +98,21 @@ abstract class RemoteFrameworkLessonMixin : RemoteLessonMixin() {
 abstract class RemoteLessonMixin : LocalLessonMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myId: Int = 0
+  private var id: Int = 0
 }
 
 @JsonPropertyOrder(ID)
 abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myId: Int = 0
+  private var id: Int = 0
 }
 
 @JsonPropertyOrder(ID, TITLE, TAGS, ITEMS, TYPE)
 abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
-  private var myId: Int = 0
+  private var id: Int = 0
 }
 
 private class PluginVersionPropertyWriter : VirtualBeanPropertyWriter {

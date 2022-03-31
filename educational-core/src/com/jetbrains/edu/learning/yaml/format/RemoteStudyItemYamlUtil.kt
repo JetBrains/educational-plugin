@@ -14,9 +14,9 @@ import java.util.*
 @JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteStudyItemYamlMixin {
   @JsonProperty(ID)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEE, dd MMM yyyy HH:mm:ss zzz")
   @JsonProperty(UPDATE_DATE)
-  private lateinit var myUpdateDate: Date
+  private lateinit var updateDate: Date
 }

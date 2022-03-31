@@ -59,7 +59,7 @@ object YamlLoader {
       val itemDir = configFile.parent
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
-      val parentConfig = parentItem.getDir(project.courseDir).findChild(parentItem.configFileName) ?: return
+      val parentConfig = parentItem.getDir(project.courseDir)?.findChild(parentItem.configFileName) ?: return
       val deserializedParent = YamlDeserializer.deserializeItem(parentConfig, project, mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)

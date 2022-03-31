@@ -26,5 +26,5 @@ class FrameworkLesson() : Lesson() {
    */
   fun currentTask(): Task? = taskList.getOrNull(currentTaskIndex)
 
-  override fun getItemType(): String = EduNames.FRAMEWORK
+  override val itemType: String = EduNames.FRAMEWORK
 }

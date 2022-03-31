@@ -149,7 +149,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val baseDir = project.courseDir
     for (section in newSections) {
       val sectionDir = baseDir.findChild(section.name)
-      if (sectionDir != null && directoryAlreadyExists(sectionDir)) {
+      if (sectionDir != null) {
         saveExistingDirectory(sectionDir, section)
       }
 
@@ -228,7 +228,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   private fun createNewLessons(newLessons: List<Lesson>, parentDir: VirtualFile) {
     for (lesson in newLessons) {
       val lessonDir = lesson.getDir(project.courseDir)
-      if (lessonDir != null && directoryAlreadyExists(lessonDir)) {
+      if (lessonDir != null) {
         saveExistingDirectory(lessonDir, lesson)
       }
 
@@ -296,11 +296,12 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
   private fun constructDir(newItem: StudyItem, currentItem: StudyItem): VirtualFile {
     if (!renamed(currentItem, newItem)) {
-      return currentItem.getDir(project.courseDir)
+      return currentItem.getDir(project.courseDir) ?: error("Dir for $currentItem is null")
     }
 
-    if (directoryAlreadyExists(newItem.getDir(project.courseDir))) {
-      saveExistingDirectory(newItem.getDir(project.courseDir), newItem)
+    val itemDir = newItem.getDir(project.courseDir)
+    if (itemDir != null) {
+      saveExistingDirectory(itemDir, newItem)
     }
 
     val currentItemDir = getCurrentItemDir(currentItem)
@@ -319,7 +320,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       savedDir
     }
     else {
-      val oldItemDirectory = item.getDir(project.courseDir)
+      val oldItemDirectory = item.getDir(project.courseDir) ?: error("Dir is null for $item")
       oldItemDirectory
     }
   }
@@ -342,10 +343,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   }
 
   private fun renamed(currentItem: StudyItem, newItem: StudyItem) = currentItem.name != newItem.name
-
-  private fun directoryAlreadyExists(directory: VirtualFile?): Boolean {
-    return directory != null
-  }
 
   private fun rename(dirToRename: VirtualFile, s: String) {
     invokeAndWaitIfNeeded {

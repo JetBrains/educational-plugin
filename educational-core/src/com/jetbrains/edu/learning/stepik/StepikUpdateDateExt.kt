@@ -38,7 +38,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
   eduCourseInfo.programmingLanguage = programmingLanguage
 
   // we should create courseInfo instance of a specific class here because otherwise if we are creating all courseInfo's
-  // as EduCourses, getItemType() will return EduNames.PYCHARM, which won't let us get a correct configurator
+  // as EduCourses, `itemType` will return EduNames.PYCHARM, which won't let us get a correct configurator
   // for C++ courses and we will get `Throwable: Could not find configurator for course` in fillItems
   val courseInfo = if (this is StepikCourse) {
     stepikCourseFromRemote(eduCourseInfo)

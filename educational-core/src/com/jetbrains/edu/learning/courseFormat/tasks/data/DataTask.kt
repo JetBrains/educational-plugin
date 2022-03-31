@@ -33,7 +33,7 @@ class DataTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = DATA_TASK_TYPE
+  override val itemType: String = DATA_TASK_TYPE
 
   override fun getCheckAction(): CheckAction = CheckAction(lazyMessage("send.answer"))
 

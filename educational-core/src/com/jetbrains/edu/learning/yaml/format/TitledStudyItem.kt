@@ -2,37 +2,26 @@ package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 /**
  * Placeholder for any StudyItem, should be filled with actual content later
  */
 class TitledStudyItem(title: String) : StudyItem(title) {
-  override fun getItemType(): String {
-    throw NotImplementedError()
-  }
-
-  override fun getParent(): StudyItem {
-    throw NotImplementedError()
-  }
 
   override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
     throw NotImplementedError()
   }
 
-  override fun setName(name: String?) {
+  override fun getDir(baseDir: VirtualFile): VirtualFile? {
     throw NotImplementedError()
   }
 
-  override fun getId(): Int {
-    throw NotImplementedError()
-  }
-
-  override fun getDir(baseDir: VirtualFile): VirtualFile {
-    throw NotImplementedError()
-  }
-
-  override fun getCourse(): Course {
-    throw NotImplementedError()
-  }
+  override val course: Course
+    get() = throw NotImplementedError()
+  override val parent: ItemContainer
+    get() = throw NotImplementedError()
+  override val itemType: String
+    get() = throw NotImplementedError()
 }

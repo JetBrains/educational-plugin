@@ -34,7 +34,7 @@ class ChoiceTask : Task {
 
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = CHOICE_TASK_TYPE
+  override val itemType: String = CHOICE_TASK_TYPE
 
   override fun isPluginTaskType() = false
 

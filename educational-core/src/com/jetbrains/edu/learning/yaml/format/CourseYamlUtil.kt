@@ -68,14 +68,13 @@ import java.util.*
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
-  @JsonSerialize(converter = CourseTypeSerializationConverter::class)
-  @JsonProperty(TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonSerialize(converter = CourseTypeSerializationConverter::class)
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(TITLE)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(SUMMARY)
   private lateinit var description: String
@@ -177,10 +176,9 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 @JsonPropertyOrder(TYPE, ID, UPDATE_DATE)
 abstract class CodeforcesCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
-  @JsonProperty(TYPE)
-  private fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 }
 
 private class TopLevelLessonsSectionSerializer : StdConverter<List<Int>, Int?>() {

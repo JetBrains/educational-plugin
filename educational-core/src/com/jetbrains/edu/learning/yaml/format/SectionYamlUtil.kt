@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 abstract class SectionYamlMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private var myCustomPresentableName: String? = null
+  private var customPresentableName: String? = null
 
   @JsonProperty(CONTENT)
   @JsonSerialize(contentConverter = StudyItemConverter::class)

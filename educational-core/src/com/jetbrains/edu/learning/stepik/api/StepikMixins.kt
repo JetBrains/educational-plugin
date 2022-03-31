@@ -76,10 +76,10 @@ abstract class StepikEduCourseMixin {
   lateinit var instructors: List<Int>
 
   @JsonProperty(ID)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonProperty(UPDATE_DATE)
-  lateinit var myUpdateDate: Date
+  lateinit var updateDate: Date
 
   @JsonProperty(IS_PUBLIC)
   var isStepikPublic: Boolean = false
@@ -88,7 +88,7 @@ abstract class StepikEduCourseMixin {
   lateinit var description: String
 
   @JsonProperty(TITLE)
-  lateinit var myName: String
+  lateinit var name: String
 
   @JsonProperty(PROGRAMMING_LANGUAGE)
   lateinit var programmingLanguage: String
@@ -114,21 +114,21 @@ class StepikSectionMixin {
   var courseId: Int = 0
 
   @JsonProperty(TITLE)
-  lateinit var myName: String
+  lateinit var name: String
 
   @JsonProperty(POSITION)
   var position: Int = 0
 
   @JsonProperty(ID)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonProperty(UPDATE_DATE)
-  lateinit var myUpdateDate: Date
+  lateinit var updateDate: Date
 }
 
 class StepikLessonMixin {
   @JsonProperty(ID)
-  var myId: Int = 0
+  var id: Int = 0
 
   @JsonProperty(STEPS)
   lateinit var steps: MutableList<Int>
@@ -137,10 +137,10 @@ class StepikLessonMixin {
   var is_public: Boolean = false
 
   @JsonProperty(UPDATE_DATE)
-  lateinit var myUpdateDate: Date
+  lateinit var updateDate: Date
 
   @JsonProperty(TITLE)
-  lateinit var myName: String
+  lateinit var name: String
 
   @JsonProperty(UNIT_ID)
   var unitId: Int = 0
@@ -207,21 +207,20 @@ class StepikAnswerPlaceholderDependencyMixin {
 
 open class StepikTaskMixin {
   @JsonProperty(NAME)
-  var myName: String? = null
+  var name: String? = null
 
   @JsonProperty(STATUS)
   var myStatus = CheckStatus.Unchecked
 
   @JsonProperty(STEPIK_ID)
-  private var myId: Int = 0
+  private var id: Int = 0
 
   @JsonProperty(FILES)
   private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
 
-  @JsonProperty(TASK_TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TASK_TYPE)
+    get() = throw NotImplementedInMixin()
 }
 
 class StepikChoiceTaskMixin : StepikTaskMixin() {

@@ -35,7 +35,6 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_EDITABLE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
@@ -57,7 +56,6 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUBMIT_MANU
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
@@ -90,7 +88,7 @@ import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
 @JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class)])
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(AUTHORS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -111,10 +109,9 @@ abstract class LocalEduCourseMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   lateinit var environment: String
 
-  @JsonProperty(COURSE_TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(COURSE_TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(ITEMS)
   private lateinit var _items: List<StudyItem>
@@ -176,15 +173,14 @@ abstract class PluginInfoMixin : PluginInfo() {
 @JsonPropertyOrder(TITLE, TAGS, ITEMS, TYPE)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(ITEMS)
   private lateinit var _items: List<StudyItem>
 
-  @JsonProperty(TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -193,30 +189,23 @@ abstract class LocalSectionMixin {
 
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(TASK_LIST)
   private lateinit var _items: List<StudyItem>
 
-  @JsonProperty(TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var contentTags: List<String>
 }
 
-abstract class FrameworkLessonMixin : LocalLessonMixin() {
-  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
-  @JsonProperty(IS_TEMPLATE_BASED)
-  private var isTemplateBased: Boolean = true
-}
-
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(FILES)
   private lateinit var myTaskFiles: MutableMap<String, TaskFile>
@@ -233,16 +222,15 @@ abstract class LocalTaskMixin {
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private var myCustomPresentableName: String? = null
+  private var customPresentableName: String? = null
 
   @JsonProperty(SOLUTION_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var solutionHidden: Boolean? = null
 
-  @JsonProperty(TASK_TYPE)
-  fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(JsonMixinNames.TASK_TYPE)
+    get() = throw NotImplementedInMixin()
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)

@@ -13,7 +13,7 @@ open class EduTask : Task {
   constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) :
     super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = EDU_TASK_TYPE
+  override val itemType: String = EDU_TASK_TYPE
 
   override fun isToSubmitToRemote(): Boolean {
     return myStatus != CheckStatus.Unchecked

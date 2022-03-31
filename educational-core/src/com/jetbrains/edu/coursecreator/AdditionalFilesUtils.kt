@@ -160,7 +160,7 @@ object AdditionalFilesUtils {
   @Suppress("deprecation", "https://youtrack.jetbrains.com/issue/EDU-4930")
   fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
     val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
-    val taskInfo = nonPluginTasks.associateBy(Task::getId) {
+    val taskInfo = nonPluginTasks.associateBy(Task::id) {
       TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
     }
     val courseFiles: List<TaskFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()

@@ -1,151 +1,70 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.util.UserDataHolder;
-import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.StudyItemType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import java.util.*
 
 /**
- * Base class for all items of course: section, lessons, tasks, etc.
+ * Base class for all items in course: section, lesson, task
  *
- * For each base type of study item ({@code Section}, {@code Lesson}, etc.)
- * there is the corresponding element in {@code StudyItemType} enum.
+ * For each base type of study item (`Course`, `Section`, `Lesson`, `Task`)
+ * there is the corresponding element in `StudyItemType` enum.
  *
  * @see Section
  * @see Lesson
  * @see FrameworkLesson
  * @see com.jetbrains.edu.learning.courseFormat.tasks.Task
- * @see StudyItemType
+ *
+ * @see com.jetbrains.edu.coursecreator.StudyItemType
  */
-public abstract class StudyItem {
+abstract class StudyItem() {
   // from 1 to number of items
-  private int myIndex = -1;
-  private String myName;
-  protected int myId;
-  private Date myUpdateDate = new Date(0);
-  private transient final UserDataHolder myDataHolder = new UserDataHolderBase();
-  private List<String> contentTags = new ArrayList<>();
+  var index: Int = -1
+  var name: String = ""
+  var updateDate: Date = Date(0)
+  var id: Int = 0 // id on remote resource (Stepik, CheckIO, Codeforces)
 
-  public UserDataHolder getDataHolder() {
-    return myDataHolder;
-  }
+  @Transient
+  val dataHolder: UserDataHolder = UserDataHolderBase()
+  var contentTags: List<String> = listOf()
+
+  abstract val course: Course
+  abstract val parent: ItemContainer
+  abstract val itemType: String     // used in json/yaml serialization/deserialization
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
   // but original non unique name is displayed
-  @Nullable private String myCustomPresentableName = null;
+  @get:Deprecated("Should be used only for deserialization. Use {@link StudyItem#getPresentableName()} instead")
+  var customPresentableName: String? = null
+  val presentableName: String
+    get() = customPresentableName ?: name
 
-  public StudyItem() {}
-
-  public StudyItem(@NotNull String name) {
-    myName = name;
+  constructor(name: String) : this() {
+    this.name = name
   }
 
-  /**
-   * Initializes state of StudyItem
-   */
-  public abstract void init(@Nullable final Course course, @Nullable final StudyItem parentItem, boolean isRestarted);
+  abstract fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean)
 
-  public String getName() {
-    return myName;
-  }
+  abstract fun getDir(baseDir: VirtualFile): VirtualFile?
 
-  public void setName(String name) {
-    myName = name;
-  }
-
-  /**
-   *
-   * @deprecated Should be used only for deserialization. Use {@link StudyItem#getPresentableName()} instead
-   */
-  @Deprecated
-  @Nullable
-  public String getCustomPresentableName() {
-    return myCustomPresentableName;
-  }
-
-  public void setCustomPresentableName(@Nullable String customPresentableName) {
-    myCustomPresentableName = customPresentableName;
-  }
-
-  public String getPresentableName() {
-    return myCustomPresentableName != null ? myCustomPresentableName : getName();
-  }
-
-  public int getIndex() {
-    return myIndex;
-  }
-
-  public void setIndex(int index) {
-    myIndex = index;
-  }
-
-  /**
-   * @return id on remote resource (Stepik, CheckIO, Codeforces)
-   */
-  public int getId() {
-    return myId;
-  }
-
-  public void setId(int id) {
-    myId = id;
-  }
-
-  public abstract VirtualFile getDir(@NotNull final VirtualFile baseDir);
-
-  @NotNull
-  public abstract Course getCourse();
-
-  @NotNull
-  public abstract StudyItem getParent();
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
-  }
-
-  public void setUpdateDate(Date updateDate) {
-    myUpdateDate = updateDate;
-  }
-
-  // used in json/yaml serialization/deserialization
-  public abstract String getItemType();
-
-  public void generateId() {
-    if (myId == 0) {
-      myId = System.identityHashCode(this);
+  fun generateId() {
+    if (id == 0) {
+      id = System.identityHashCode(this)
     }
   }
 
-  public String getPathInCourse() {
-    List<String> parents = new ArrayList<>();
-    StudyItem parent = getParent();
-    while (!(parent instanceof Course)) {
-      parents.add(parent.getName());
-      parent = parent.getParent();
+  fun getPathInCourse(): String {
+    val parents = mutableListOf<String>()
+    var currentParent = parent
+    while (currentParent !is Course) {
+      parents.add(currentParent.name)
+      currentParent = currentParent.parent
     }
-    Collections.reverse(parents);
-
-    String parentsLine = StringUtil.join(parents, VfsUtilCore.VFS_SEPARATOR);
-    if (parentsLine.isEmpty()) {
-      return getName();
-    }
-    return parentsLine + VfsUtilCore.VFS_SEPARATOR + getName();
-  }
-
-  @NotNull
-  public List<String> getContentTags() {
-    return contentTags;
-  }
-
-  public void setContentTags(@NotNull List<String> tags) {
-    this.contentTags = tags;
+    parents.reverse()
+    if (parents.isEmpty()) return name
+    parents.add(name)
+    return parents.joinToString(VfsUtilCore.VFS_SEPARATOR)
   }
 }

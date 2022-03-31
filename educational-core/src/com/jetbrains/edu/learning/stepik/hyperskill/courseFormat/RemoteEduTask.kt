@@ -19,7 +19,7 @@ class RemoteEduTask : EduTask {
    */
   var checkProfile: String = ""
 
-  override fun getItemType(): String = REMOTE_EDU_TASK_TYPE
+  override val itemType: String = REMOTE_EDU_TASK_TYPE
 
   companion object {
     @NonNls

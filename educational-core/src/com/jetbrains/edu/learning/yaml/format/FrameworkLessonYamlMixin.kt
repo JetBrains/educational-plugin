@@ -22,10 +22,9 @@ abstract class FrameworkLessonYamlMixin : LessonYamlMixin() {
   @JsonProperty(IS_TEMPLATE_BASED)
   private val isTemplateBased: Boolean = true
 
-  @JsonProperty(TYPE)
-  private fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() = throw NotImplementedInMixin()
 }
 
 @JsonPOJOBuilder(withPrefix = "")

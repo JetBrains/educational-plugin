@@ -24,7 +24,7 @@ object CCNotificationUtils {
 
   @JvmStatic
   fun showFailedToPostItemNotification(project: Project, item: StudyItem, isNew: Boolean) {
-    val pathInCourse = item.pathInCourse
+    val pathInCourse = item.getPathInCourse()
 
     val title = if (isNew) EduCoreBundle.message("notification.course.creator.failed.to.upload.item.title")
     else EduCoreBundle.message("notification.course.creator.failed.to.update.item.title")

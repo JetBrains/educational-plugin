@@ -21,7 +21,7 @@ class NumberTask : AnswerTask {
               status: CheckStatus = CheckStatus.Unchecked
   ) : super(name, id, position, updateDate, status)
 
-  override fun getItemType(): String = NUMBER_TASK_TYPE
+  override val itemType: String = NUMBER_TASK_TYPE
 
   override fun validateAnswer(project: Project): String? {
     val answer = getInputAnswer(project)
