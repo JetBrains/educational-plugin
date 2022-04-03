@@ -11,10 +11,6 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
  * - Handle yaml deserialization [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson]
  */
 open class Lesson : ItemContainer() {
-  @Transient
-  private var myCourse: Course? = null
-  @Transient
-  var section: Section? = null
 
   // TODO: move to stepik
   @Transient
@@ -24,8 +20,8 @@ open class Lesson : ItemContainer() {
   var unitId = 0
 
   override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
-    this.section = if (parentItem is Section) parentItem else null
-    setCourse(course)
+    require(parentItem is LessonContainer) { "Parent for lesson $name should be either course or section" }
+    parent = parentItem
 
     for ((i, task) in taskList.withIndex()) {
       task.index = i + 1
@@ -40,14 +36,11 @@ open class Lesson : ItemContainer() {
     get() = items.filterIsInstance<Task>()
 
   override val course: Course
-    get() = myCourse ?: error("Course is null for lesson $name")
-  override val parent: ItemContainer
-    get() = container
-  override val itemType: String = EduNames.LESSON
+    get() = parent.course
+  val section: Section?
+    get() = parent as? Section
 
-  fun setCourse(course: Course?) {
-    myCourse = course
-  }
+  override val itemType: String = EduNames.LESSON
 
   fun addTask(task: Task) {
     addItem(task)
@@ -73,12 +66,12 @@ open class Lesson : ItemContainer() {
     get() = section ?: course
 
   override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    return if (section == null) {
-      baseDir.findChild(name)
+    return if (parent is Section) {
+      val sectionDir = baseDir.findChild(parent.name) ?: error("Section dir for lesson not found")
+      sectionDir.findChild(name)
     }
     else {
-      val sectionDir = baseDir.findChild(section!!.name) ?: error("Section dir for lesson not found")
-      sectionDir.findChild(name)
+      baseDir.findChild(name)
     }
   }
 

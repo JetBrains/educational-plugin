@@ -13,7 +13,7 @@ class CppCodeforcesTaskNamesTest : CodeforcesTestCase() {
   fun `test codeforces contest Global Round 8 Cpp`() {
     val doc = Jsoup.parse(loadText("Contest 1368.html"))
     val course = CodeforcesCourse(ContestParameters(1368, EduNames.CPP, startDate = ZonedDateTime.now()), doc)
-    val lesson = Lesson().apply { setCourse(course) }
+    val lesson = Lesson().apply { parent = course }
     course.addLesson(lesson)
 
     val task = course.findTask("Problems", "task1") as CodeforcesTask

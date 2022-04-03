@@ -98,7 +98,6 @@ class StudentCourseUpdateTest : CourseUpdateTestBase() {
     doTest(expectedFileTree, "testData/stepik/updateCourse/lessons_rearranged_in_section")
   }
 
-
   fun `test lesson renamed`() {
     val expectedFileTree = fileTree {
       dir("lesson1_renamed") {
@@ -116,6 +115,7 @@ class StudentCourseUpdateTest : CourseUpdateTestBase() {
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_renamed")
   }
+
   fun `test task added`() {
     val expectedFileTree = fileTree {
       dir("lesson1") {
@@ -197,7 +197,6 @@ class StudentCourseUpdateTest : CourseUpdateTestBase() {
     doTest(expectedFileTree, "testData/stepik/updateCourse/theory_task_text_changed")
   }
 
-
   fun `test task in section added`() {
     val expectedFileTree = fileTree {
       dir("section1") {
@@ -226,7 +225,6 @@ class StudentCourseUpdateTest : CourseUpdateTestBase() {
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_in_section_added")
   }
-
 
   fun `test task renamed`() {
     val expectedFileTree = fileTree {
@@ -363,7 +361,6 @@ class StudentCourseUpdateTest : CourseUpdateTestBase() {
 
     doTest(expectedFileTree, "testData/stepik/updateCourse/task_file_in_section_text_changed")
   }
-
 
   fun `test section added`() {
     val expectedFileTree = fileTree {

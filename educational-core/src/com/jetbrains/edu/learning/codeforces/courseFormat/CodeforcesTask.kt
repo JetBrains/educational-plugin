@@ -78,7 +78,7 @@ open class CodeforcesTask : Task() {
         val outputFileName = htmlElement.selectFirst("div.output-file").ownText()
         CodeforcesTaskWithFileIO(inputFileName, outputFileName)
       }
-      task.lesson = lesson
+      task.parent = lesson
       task.index = index
       // We don't have original problems ids here, so we have to use index to bind them with solutions
       task.id = index

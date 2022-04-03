@@ -123,7 +123,7 @@ public class CCTaskMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate {
     CCUtils.updateHigherElements(targetDirectory.getChildren(), file -> finalTargetLesson.getTask(file.getName()), newItemIndex - 1, 1);
 
     taskToMove.setIndex(newItemIndex);
-    taskToMove.setLesson(targetLesson);
+    taskToMove.setParent(targetLesson);
     targetLesson.addTask(taskToMove);
     targetLesson.sortItems();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {

@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 /**
@@ -19,8 +18,6 @@ class RemoteStudyItem : StudyItem() {
   }
 
   override val course: Course
-    get() = throw NotImplementedError()
-  override val parent: ItemContainer
     get() = throw NotImplementedError()
   override val itemType: String
     get() = throw NotImplementedError()

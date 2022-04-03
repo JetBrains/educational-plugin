@@ -62,6 +62,7 @@ abstract class Course : LessonContainer() {
   open var programmingLanguage: String = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
 
   override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+    parent = this
     for ((i, item) in items.withIndex()) {
       item.index = i + 1
       item.init(this, this, isRestarted)
@@ -116,9 +117,6 @@ abstract class Course : LessonContainer() {
 
   override val course: Course
     get() = this
-  override val parent: ItemContainer
-    get() = this
-
 
   override val itemType: String = EduNames.PYCHARM //"PyCharm" is used here for historical reasons
 

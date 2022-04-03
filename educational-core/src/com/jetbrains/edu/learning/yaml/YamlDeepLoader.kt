@@ -43,16 +43,16 @@ object YamlDeepLoader {
       when (deserializedItem) {
         is Section -> {
           // set parent to correctly obtain dirs in deserializeContent method
-          deserializedItem.setCourse(deserializedCourse)
+          deserializedItem.parent = deserializedCourse
           deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items, mapper)
           deserializedItem.lessons.forEach {
-            it.section = deserializedItem
+            it.parent = deserializedItem
             it.items = it.deserializeContent(project, it.taskList, mapper)
           }
         }
         is Lesson -> {
           // set parent to correctly obtain dirs in deserializeContent method
-          deserializedItem.setCourse(deserializedCourse)
+          deserializedItem.parent = deserializedCourse
           deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList, mapper)
           addNonEditableFilesToCourse(deserializedItem, deserializedCourse, project)
           deserializedItem.removeNonExistingTaskFiles(project)
@@ -95,7 +95,7 @@ object YamlDeepLoader {
         continue
       }
       // set parent to get dir
-      task.lesson = this
+      task.parent = this
       val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
         .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name)}.map { it.key }

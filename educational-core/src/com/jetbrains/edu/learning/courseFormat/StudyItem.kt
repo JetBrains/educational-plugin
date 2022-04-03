@@ -27,11 +27,22 @@ abstract class StudyItem() {
   var id: Int = 0 // id on remote resource (Stepik, CheckIO, Codeforces)
 
   @Transient
+  private var _parent: ItemContainer? = null
+
+  var parent: ItemContainer
+    @com.intellij.util.xmlb.annotations.Transient
+    get() = _parent ?: error("Parent is null for StudyItem $name")
+    @com.intellij.util.xmlb.annotations.Transient
+    set(value) {
+      _parent = value
+    }
+
+
+  @Transient
   val dataHolder: UserDataHolder = UserDataHolderBase()
   var contentTags: List<String> = listOf()
 
   abstract val course: Course
-  abstract val parent: ItemContainer
   abstract val itemType: String     // used in json/yaml serialization/deserialization
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,

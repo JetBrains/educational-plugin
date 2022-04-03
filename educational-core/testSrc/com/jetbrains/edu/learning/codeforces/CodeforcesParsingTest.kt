@@ -24,7 +24,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
       id = 1211
       languageCode = "en"
     }
-    val lesson = Lesson().apply { setCourse(course) }
+    val lesson = Lesson().apply { parent = course }
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()
@@ -40,7 +40,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
       id = 1211
       languageCode = "en"
     }
-    val lesson = Lesson().apply { setCourse(course) }
+    val lesson = Lesson().apply { parent = course }
     course.addLesson(lesson)
 
     val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[6]

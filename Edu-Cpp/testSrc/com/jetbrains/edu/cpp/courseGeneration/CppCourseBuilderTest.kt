@@ -40,6 +40,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test create new cc edu Catch course`() {
@@ -68,6 +69,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test study edu course structure with top-level lesson`() {
@@ -100,6 +102,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test study edu course structure with section`() {
@@ -134,6 +137,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test study course structure with top-level section and lesson`() {
@@ -185,6 +189,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test study edu course structure with different tasks`() {
@@ -244,6 +249,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       file("CMakeLists.txt.in")
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
 
@@ -290,6 +296,7 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 
   fun `test study Stepik course structure with custom names`() {
@@ -335,5 +342,6 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
       file("CMakeLists.txt")
     }.assertEquals(rootDir)
+
   }
 }

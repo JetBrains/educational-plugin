@@ -97,7 +97,7 @@ public class CCLessonMoveHandlerDelegate extends CCStudyItemMoveHandlerDelegate 
     CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
-    sourceLesson.setSection(targetSection);
+    sourceLesson.setParent(targetContainer);
 
     sourceContainer.removeLesson(sourceLesson);
     targetContainer.addLesson(sourceLesson);

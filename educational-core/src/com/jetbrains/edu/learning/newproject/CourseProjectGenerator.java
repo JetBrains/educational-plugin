@@ -85,7 +85,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   public boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof EduCourse) || !((EduCourse)myCourse).isStepikRemote()) return true;
+    if (!(myCourse instanceof EduCourse) || !myCourse.isStepikRemote()) return true;
     final EduCourse remoteCourse = (EduCourse) this.myCourse;
     if (remoteCourse.getId() > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
@@ -221,7 +221,7 @@ public abstract class CourseProjectGenerator<S> {
         }
         GeneratorUtils.createCourse(project, myCourse, baseDir, indicator);
         if (myCourse instanceof EduCourse &&
-            (((EduCourse)myCourse).isStepikRemote() || ((EduCourse)myCourse).isMarketplaceRemote()) &&
+            (myCourse.isStepikRemote() || ((EduCourse)myCourse).isMarketplaceRemote()) &&
             CCUtils.isCourseCreator(project)) {
           checkIfAvailableOnRemote();
         }
@@ -254,7 +254,7 @@ public abstract class CourseProjectGenerator<S> {
   private void loadSolutions(@NotNull Project project, @NotNull Course course) {
     if (course.isStudy() &&
         course instanceof EduCourse &&
-        ((EduCourse)course).isStepikRemote() &&
+        course.isStepikRemote() &&
         EduSettings.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       if (alreadyEnrolled) {

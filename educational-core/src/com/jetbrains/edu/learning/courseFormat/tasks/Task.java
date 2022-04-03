@@ -32,9 +32,7 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
- *
  * Update {@link StepikChangeRetriever#taskFilesChanged and StepikChangeRetriever#taskInfoChanged} if you added new property that has to be compared
- *
  * To implement new task there are 5 steps to be done:
  * - Extend {@link Task} class
  * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
@@ -59,7 +57,6 @@ public abstract class Task extends StudyItem {
   @Nullable
   private Boolean solutionHidden;
   private int myRecord = -1;
-  transient private Lesson myLesson;
   private boolean isUpToDate = true;
   // Used for marketplace courses. We need to store a meta-entity id (corresponding to list of submissions) to correctly process submissions
   // storage on grazie platform
@@ -67,7 +64,7 @@ public abstract class Task extends StudyItem {
   private String submissionsId;
 
   //used for deserialization
-  public Task() {}
+  public Task() { }
 
   public Task(@NotNull final String name) {
     super(name);
@@ -82,7 +79,8 @@ public abstract class Task extends StudyItem {
   }
 
   public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
-    setLesson(parentItem instanceof Lesson ? (Lesson)parentItem : null);
+    if (!(parentItem instanceof Lesson)) throw new IllegalStateException("Parent for task should be lesson");
+    setParent((Lesson)parentItem);
     for (TaskFile taskFile : getTaskFileValues()) {
       taskFile.initTaskFile(this, isRestarted);
     }
@@ -171,11 +169,13 @@ public abstract class Task extends StudyItem {
   }
 
   public Lesson getLesson() {
-    return myLesson;
-  }
-
-  public void setLesson(Lesson lesson) {
-    myLesson = lesson;
+    ItemContainer parent = getParent();
+    if (parent instanceof Lesson) {
+      return (Lesson)parent;
+    }
+    else {
+      return null;
+    }
   }
 
   @Override
@@ -196,7 +196,7 @@ public abstract class Task extends StudyItem {
 
   @Override
   public int hashCode() {
-    int result = getName() != null ? getName().hashCode() : 0;
+    int result = getName().hashCode();
     result = 31 * result + getIndex();
     result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
     result = 31 * result + descriptionText.hashCode();
@@ -274,18 +274,14 @@ public abstract class Task extends StudyItem {
   @Nullable
   @Override
   public VirtualFile getDir(@NotNull final VirtualFile courseDir) {
-    if (myLesson == null) {
-      LOG.warn("Lesson is null for task " + getName() + " (id " + getId() + ")");
-      return null;
-    }
-    final VirtualFile lessonDir = myLesson.getDir(courseDir);
+    final VirtualFile lessonDir = getLesson().getDir(courseDir);
     return TaskExt.findDir(this, lessonDir);
   }
 
   @NotNull
   @Override
   public Course getCourse() {
-    return myLesson.getCourse();
+    return getLesson().getCourse();
   }
 
   @NotNull
@@ -299,12 +295,6 @@ public abstract class Task extends StudyItem {
     for (TaskFile taskFile : taskFiles) {
       this.myTaskFiles.put(taskFile.getName(), taskFile);
     }
-  }
-
-  @NotNull
-  @Override
-  public ItemContainer getParent() {
-    return myLesson;
   }
 
   public int getRecord() {

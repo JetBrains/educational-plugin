@@ -219,7 +219,7 @@ object CCUtils {
     } ?: return null
 
     val section = createSection(lessonsToWrap, sectionName, minIndex)
-    section.setCourse(course)
+    section.parent = course
 
     for (i in lessonsToWrap.indices) {
       val lesson = lessonsToWrap[i]
@@ -227,7 +227,7 @@ object CCUtils {
       if (lessonDir != null) {
         moveLesson(lessonDir, sectionDir)
         lesson.index = i + 1
-        lesson.section = section
+        lesson.parent = section
       }
       course.removeLesson(lesson)
     }

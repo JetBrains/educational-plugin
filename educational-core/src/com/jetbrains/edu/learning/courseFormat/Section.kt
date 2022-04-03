@@ -5,8 +5,6 @@ import com.jetbrains.edu.learning.EduNames
 
 
 open class Section : LessonContainer() {
-  @Transient
-  private var myCourse: Course? = null
 
   // move to stepik
   @Transient
@@ -14,7 +12,8 @@ open class Section : LessonContainer() {
   var position = 0
 
   override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
-    myCourse = course
+    require(course is Course) { "Course is null for section $name" }
+    parent = course
 
     for ((i, lesson) in lessons.withIndex()) {
       lesson.index = i + 1
@@ -27,13 +26,7 @@ open class Section : LessonContainer() {
   }
 
   override val course: Course
-    get() = myCourse ?: error("Course is null for section $name")
-  override val parent: ItemContainer
-    get() = course
+    get() = parent as? Course ?: error("Course is null for section $name")
   override val itemType: String = EduNames.SECTION
-
-  fun setCourse(course: Course?) {
-    myCourse = course
-  }
 
 }

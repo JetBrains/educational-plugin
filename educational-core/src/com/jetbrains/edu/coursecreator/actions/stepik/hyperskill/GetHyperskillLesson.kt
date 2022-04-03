@@ -110,6 +110,7 @@ class GetHyperskillLesson : DumbAwareAction(
         environment = languageAndEnvironment.second
       }
 
+      lesson.parent = course
       val hyperskillLesson = FrameworkLesson(lesson)
       course.addItem(0, hyperskillLesson)
       loadAndFillAdditionalCourseInfo(course)

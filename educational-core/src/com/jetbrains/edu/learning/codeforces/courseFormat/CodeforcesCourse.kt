@@ -97,7 +97,7 @@ open class CodeforcesCourse : Course {
 
     val lesson = Lesson()
     lesson.name = CodeforcesNames.CODEFORCES_PROBLEMS
-    lesson.setCourse(this)
+    lesson.parent = this
 
     addLesson(lesson)
     problems.forEachIndexed { index, task -> lesson.addTask(CodeforcesTask.create(task, lesson, index + 1)) }

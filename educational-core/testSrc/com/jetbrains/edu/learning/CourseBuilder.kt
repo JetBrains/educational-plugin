@@ -136,7 +136,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
 
 class SectionBuilder(course: Course, val section: Section = Section()) : LessonOwnerBuilder(course) {
   init {
-    section.setCourse(course)
+    section.parent = course
   }
 
   override val nextLessonIndex: Int get() = section.lessons.size + 1
@@ -153,8 +153,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
 class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesson: T) {
 
   init {
-    lesson.setCourse(course)
-    lesson.section = section
+    lesson.parent = section ?: course
   }
 
   fun withName(name: String) {
@@ -358,7 +357,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   val explicitVisibility: Map<String, Boolean> get() = _explicitVisibility
 
   init {
-    task.lesson = lesson
+    task.parent = lesson
   }
 
   fun withName(name: String) {

@@ -197,6 +197,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
 
     SubmissionsManager.getInstance(project).course = course
+    course.init(null, null, false)
     return course
   }
 

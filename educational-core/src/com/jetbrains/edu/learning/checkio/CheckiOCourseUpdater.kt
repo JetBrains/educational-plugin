@@ -80,7 +80,7 @@ class CheckiOCourseUpdater(
   private fun updateExistingStations(stationsToUpdate: List<CheckiOStation>, stationsWithNewMissions: MutableSet<CheckiOStation>) {
     val stationById = course.stations.associateBy { it.id }
     stationsToUpdate.forEach {
-      it.setCourse(course)
+      it.parent = course
       updateStation(it, stationById[it.id], stationsWithNewMissions)
     }
   }
@@ -114,7 +114,7 @@ class CheckiOCourseUpdater(
                                stationsWithNewMissions: MutableSet<CheckiOStation>) {
     val lessonDir = oldStation.getDir(project.courseDir) ?: error("Failed to find station dir: ${oldStation.name}")
     try {
-      newMission.lesson = newStation
+      newMission.parent = newStation
       GeneratorUtils.createTask(project, newMission, lessonDir)
       stationsWithNewMissions.add(newStation)
     }

@@ -129,8 +129,8 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
       val sectionContentChanged = newLessons.isNotEmpty()
       if (sectionContentChanged) {
-        val currentSectionDir = constructDir(sectionFromServer, currentSection)
-        createNewLessons(newLessons, currentSectionDir)
+        constructDir(sectionFromServer, currentSection)
+        createNewLessons(newLessons, currentSection)
       }
       else if (renamed(currentSection, sectionFromServer)) {
         constructDir(sectionFromServer, currentSection)
@@ -167,7 +167,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   private fun processNewLessons(courseFromServer: Course) {
     val newLessons = courseFromServer.lessons.filter { course.getLesson(it.id) == null }
     if (newLessons.isNotEmpty()) {
-      createNewLessons(newLessons, project.courseDir)
+      createNewLessons(newLessons, course)
     }
   }
 
@@ -189,7 +189,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   @Throws(URISyntaxException::class, IOException::class)
   private fun processModifiedLessons(lessonsFromServer: List<Lesson>, parent: LessonContainer) {
     for (lessonFromServer in lessonsFromServer) {
-
+      lessonFromServer.parent = parent
       lessonFromServer.taskList.withIndex().forEach { (index, task) -> task.index = index + 1 }
       val lessonFromServerId = lessonFromServer.id
       val currentLesson = parent.getLesson(lessonFromServerId) ?: error("Local lesson with id $lessonFromServerId not found")
@@ -207,7 +207,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
         constructDir(lessonFromServer, currentLesson)
       }
 
-      lessonFromServer.init(course, lessonFromServer.section, false)
+      lessonFromServer.init(course, parent, false)
     }
   }
 
@@ -225,14 +225,15 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       .map { (_, taskId) -> taskId }
   }
 
-  private fun createNewLessons(newLessons: List<Lesson>, parentDir: VirtualFile) {
+  private fun createNewLessons(newLessons: List<Lesson>, parentItem: StudyItem) {
+    val parentDir = parentItem.getDir(project.courseDir) ?: error("Failed to get dir for parent item")
     for (lesson in newLessons) {
+      lesson.init(course, parentItem, false)
       val lessonDir = lesson.getDir(project.courseDir)
       if (lessonDir != null) {
         saveExistingDirectory(lessonDir, lesson)
       }
 
-      lesson.init(course, lesson.section, false)
       GeneratorUtils.createLesson(project, lesson, parentDir)
     }
   }

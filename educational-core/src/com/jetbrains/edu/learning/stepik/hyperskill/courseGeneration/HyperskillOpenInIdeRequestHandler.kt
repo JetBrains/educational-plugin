@@ -198,7 +198,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val lesson = Lesson()
     lesson.name = HYPERSKILL_PROBLEMS
     lesson.index = this.items.size + 1
-    lesson.setCourse(this)
+    lesson.parent = this
     addLesson(lesson)
     return lesson
   }
@@ -253,7 +253,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val section = Section()
     section.name = HYPERSKILL_TOPICS
     section.index = items.size + 1
-    section.setCourse(this)
+    section.parent = this
     addSection(section)
     return section
   }
@@ -262,8 +262,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val lesson = Lesson()
     lesson.name = name
     lesson.index = this.items.size + 1
-    lesson.section = this
-    lesson.setCourse(course)
+    lesson.parent = this
     addLesson(lesson)
     return lesson
   }
@@ -314,7 +313,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       createTaskDir = true
     }
 
-    problemsLesson.init(course, null, false)
+    problemsLesson.init(course, course, false)
 
     if (createLessonDir) {
       GeneratorUtils.createLesson(project, problemsLesson, project.courseDir)

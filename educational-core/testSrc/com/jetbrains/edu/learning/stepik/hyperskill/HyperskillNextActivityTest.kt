@@ -52,9 +52,11 @@ class HyperskillNextActivityTest : EduTestCase() {
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
+    val theoryTask = TheoryTask()
+    theoryTask.parent = task.lesson
     mockConnector.configureResponses(
       StepMockResponse(step2.path, task) { topic = topic1.id },
-      StepMockResponse(topic1.path, TheoryTask()) {
+      StepMockResponse(topic1.path, theoryTask) {
         topic = topic1.id
         isCompleted = true
         id = step5.id
@@ -70,9 +72,12 @@ class HyperskillNextActivityTest : EduTestCase() {
     createHyperskillProblemsProject()
     val task = findTask(0, 0, 1)
 
+    val choiceTask = ChoiceTask()
+    choiceTask.parent = task.parent
+    
     mockConnector.configureResponses(
       StepMockResponse(step2.path, task) { topic = topic1.id },
-      StepMockResponse(topic1.path, ChoiceTask()) {
+      StepMockResponse(topic1.path, choiceTask) {
         topic = topic1.id
         id = step5.id
         block!!.name = StepikTaskBuilder.StepikTaskType.TABLE.type

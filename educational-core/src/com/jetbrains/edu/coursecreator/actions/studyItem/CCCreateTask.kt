@@ -72,7 +72,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     require(parentItem is Lesson) {
       "parentItem should be Lesson, found `$parentItem`"
     }
-    item.lesson = parentItem
+    item.parent = parentItem
     item.addDefaultTaskDescription()
 
     if (parentItem is FrameworkLesson) {

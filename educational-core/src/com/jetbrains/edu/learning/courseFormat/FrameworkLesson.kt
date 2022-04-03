@@ -12,7 +12,7 @@ class FrameworkLesson() : Lesson() {
     updateDate = lesson.updateDate
     name = lesson.name
     items = lesson.items
-    section = lesson.section
+    parent = lesson.parent
     index = lesson.index
     @Suppress("DEPRECATION")
     customPresentableName = lesson.customPresentableName
