@@ -78,7 +78,7 @@ public abstract class Task extends StudyItem {
     myStatus = status;
   }
 
-  public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
+  public void init(@NotNull final ItemContainer parentItem, boolean isRestarted) {
     if (!(parentItem instanceof Lesson)) throw new IllegalStateException("Parent for task should be lesson");
     setParent((Lesson)parentItem);
     for (TaskFile taskFile : getTaskFileValues()) {

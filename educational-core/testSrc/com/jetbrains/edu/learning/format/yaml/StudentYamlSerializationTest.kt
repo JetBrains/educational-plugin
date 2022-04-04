@@ -366,7 +366,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       this.status = status
     }
     lesson.addTask(codeforcesTask)
-    course.init(course, course, false)
+    course.init(course, false)
 
     codeforcesTask.addTaskFile(TaskFile(taskFileName, taskSolution).apply { isVisible = true })
 

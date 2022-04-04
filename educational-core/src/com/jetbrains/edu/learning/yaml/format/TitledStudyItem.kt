@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.yaml.format
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 /**
@@ -9,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
  */
 class TitledStudyItem(title: String) : StudyItem(title) {
 
-  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     throw NotImplementedError()
   }
 

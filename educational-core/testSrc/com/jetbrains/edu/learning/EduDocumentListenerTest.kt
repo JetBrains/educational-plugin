@@ -335,7 +335,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson1 = createLesson(1, 2)
     course.addLesson(lesson1)
-    course.init(null, null, false)
+    course.init(false)
     PsiDocumentManager.getInstance(project).commitAllDocuments()
   }
 

@@ -51,7 +51,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           }
-          hyperskillCourse.init(null, null, false)
+          hyperskillCourse.init(false)
           val projectLesson = hyperskillCourse.getProjectLesson()!!
           val courseDir = hyperskillCourse.getDir(project.courseDir) ?: return false
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
@@ -313,7 +313,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       createTaskDir = true
     }
 
-    problemsLesson.init(course, course, false)
+    problemsLesson.init(this, false)
 
     if (createLessonDir) {
       GeneratorUtils.createLesson(project, problemsLesson, project.courseDir)
@@ -347,7 +347,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       }
 
       val tasks = localTopicLesson.addProblems(stepSources).onError { return@computeUnderProgress Err(it) }
-      localTopicsSection.init(course, null, false)
+      localTopicsSection.init(this, false)
 
       when {
         createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)

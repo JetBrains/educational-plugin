@@ -37,7 +37,7 @@ class TaskFeedbackLinksTest : EduTestCase() {
       isMarketplace = isMarketplaceCourse
     }
     remoteCourse.items = course.items
-    remoteCourse.init(null, null, false)
+    remoteCourse.init(false)
 
     return (remoteCourse.items[0] as Lesson).taskList[0]
   }

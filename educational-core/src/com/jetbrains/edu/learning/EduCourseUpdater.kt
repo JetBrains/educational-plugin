@@ -141,7 +141,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       // because of difference in names
       processLessonsAfterUpdate(sectionFromServer.lessons, currentSection.lessons.associateBy { it.id })
       processModifiedLessons(lessonsToUpdate, currentSection)
-      sectionFromServer.init(course, course, false)
+      sectionFromServer.init(course, false)
     }
   }
 
@@ -153,7 +153,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
         saveExistingDirectory(sectionDir, section)
       }
 
-      section.init(course, course, false)
+      section.init(course, false)
       GeneratorUtils.createSection(project, section, baseDir)
     }
   }
@@ -207,7 +207,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
         constructDir(lessonFromServer, currentLesson)
       }
 
-      lessonFromServer.init(course, parent, false)
+      lessonFromServer.init(parent, false)
     }
   }
 
@@ -225,10 +225,10 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       .map { (_, taskId) -> taskId }
   }
 
-  private fun createNewLessons(newLessons: List<Lesson>, parentItem: StudyItem) {
+  private fun createNewLessons(newLessons: List<Lesson>, parentItem: ItemContainer) {
     val parentDir = parentItem.getDir(project.courseDir) ?: error("Failed to get dir for parent item")
     for (lesson in newLessons) {
-      lesson.init(course, parentItem, false)
+      lesson.init(parentItem, false)
       val lessonDir = lesson.getDir(project.courseDir)
       if (lessonDir != null) {
         saveExistingDirectory(lessonDir, lesson)
@@ -251,7 +251,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
         removeExistingDir(currentTask, lessonDir)
       }
 
-      taskFromServer.init(course, currentLesson, false)
+      taskFromServer.init(currentLesson, false)
 
       createTaskDirectories(project, lessonDir, taskFromServer)
     }

@@ -11,14 +11,9 @@ open class Section : LessonContainer() {
   var units: List<Int> = listOf()
   var position = 0
 
-  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
-    require(course is Course) { "Course is null for section $name" }
-    parent = course
-
-    for ((i, lesson) in lessons.withIndex()) {
-      lesson.index = i + 1
-      lesson.init(course, this, isRestarted)
-    }
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
+    require(parentItem is Course) { "Course is null for section $name" }
+    super.init(parentItem, isRestarted)
   }
 
   override fun getDir(baseDir: VirtualFile): VirtualFile? {

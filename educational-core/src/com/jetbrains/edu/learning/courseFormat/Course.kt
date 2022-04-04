@@ -61,12 +61,13 @@ abstract class Course : LessonContainer() {
    */
   open var programmingLanguage: String = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
 
-  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
-    parent = this
-    for ((i, item) in items.withIndex()) {
-      item.index = i + 1
-      item.init(this, this, isRestarted)
-    }
+  fun init(isRestarted: Boolean) {
+    init(this, isRestarted)
+  }
+
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
+    require(parentItem is Course)
+    super.init(parentItem, isRestarted)
   }
 
   val languageById: Language?

@@ -97,7 +97,7 @@ object YamlLoader {
     addItem(deserializedItem)
     sortItems()
     // we need parent to be set to obtain directories for children config files
-    init(course, parent, false)
+    deserializedItem.parent = this
     deserializedItem.deserializeChildrenIfNeeded(project, course)
   }
 
@@ -109,7 +109,7 @@ object YamlLoader {
     val mapper = course.mapper
     items = deserializeContent(project, items, mapper)
     // set parent to deserialize content correctly
-    items.forEach { it.init(course, this, false) }
+    items.forEach { it.init(this, false) }
     items.filterIsInstance(ItemContainer::class.java).forEach {
       it.items = it.deserializeContent(project, it.items, mapper)
     }

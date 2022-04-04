@@ -112,7 +112,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
             placeholder.placeholderDependency = dependency.copy(taskName = item.name)
           }
         }
-      item.init(course, parentItem, false)
+      item.init(parentItem, false)
     } else {
       initTask(project, course, item, info)
     }

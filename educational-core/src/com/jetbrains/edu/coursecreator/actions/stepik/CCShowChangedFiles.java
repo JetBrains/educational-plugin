@@ -72,7 +72,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
           return;
         }
         StepikCourseLoader.loadCourseStructure(remoteCourse);
-        remoteCourse.init(null, null, false);
+        remoteCourse.init(false);
 
         String message = buildChangeMessage((EduCourse)course, remoteCourse, project);
         ApplicationManager.getApplication().invokeLater(

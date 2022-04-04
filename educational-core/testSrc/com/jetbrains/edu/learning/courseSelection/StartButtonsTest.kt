@@ -45,7 +45,7 @@ class StartButtonsTest : EduTestCase() {
 
   fun `test course preview`() {
     val course = course { }
-    course.init(course, course, false)
+    course.init(course, false)
     val coursePanel = CCCreateCoursePreviewDialog(myFixture.project, course, PlainTextConfigurator()).panel
     val startButton = coursePanel.buttonsPanel.buttons.first()
     assertTrue(startButton.isVisible)

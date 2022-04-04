@@ -32,7 +32,7 @@ fun <T : StudyItem, K : T> T.copyAs(clazz: Class<K>): K {
   try {
     val jsonText = MAPPER.writeValueAsString(this)
     val copy = MAPPER.readValue(jsonText, clazz)
-    copy.init(null, parent, true)
+    copy.init(parent, true)
     return copy
   }
   catch (e: JsonProcessingException) {

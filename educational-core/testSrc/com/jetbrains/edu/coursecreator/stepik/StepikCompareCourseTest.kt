@@ -120,7 +120,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.lessons[1], localCourse.lessons[0])
-    localCourse.init(null, null, false)
+    localCourse.init(false)
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons.toMutableList())
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
   }
@@ -164,7 +164,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as EduCourse
     localCourse.items = mutableListOf<StudyItem>(localCourse.sections[1], localCourse.sections[0])
-    localCourse.init(null, null, false)
+    localCourse.init(false)
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections.toMutableList())
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -286,7 +286,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val lesson = localCourse.lessons.single()
     lesson.items = listOf<StudyItem>(lesson.taskList[2], lesson.taskList[1], lesson.taskList[0])
-    localCourse.init(null, null, false)
+    localCourse.init(false)
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(lesson.taskList[0], lesson.taskList[2]))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -304,7 +304,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val newTask = EduTask("task")
     newTask.id = 1
     lesson.items = listOf<StudyItem>(newTask)
-    localCourse.init(null, null, false)
+    localCourse.init(false)
 
     val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = localCourse.lessons.toMutableList(),
                                          tasksToUpdate = lesson.taskList.toMutableList())
@@ -673,7 +673,7 @@ internal fun addNewLesson(
 
   val newLesson = course.getLesson(name)!!
   newLesson.index = index
-  newLesson.init(courseToInit, parent, false)
+  newLesson.init(parent, false)
   parent.addLesson(newLesson)
   if (parent is Course) {
     GeneratorUtils.createLesson(project, newLesson, virtualFile)
@@ -706,7 +706,7 @@ internal fun addNewSection(
   val newSection = course.getSection(name)!!
   newSection.index = index
   courseToInit.addSection(newSection)
-  courseToInit.init(null, null, false)
+  courseToInit.init(false)
   GeneratorUtils.createSection(project, newSection, virtualFile)
   return newSection
 }

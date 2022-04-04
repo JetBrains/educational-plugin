@@ -46,7 +46,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       stages = stagesFromServer
       val lessonFromServer = connector.getLesson(this, hyperskillProject.ideFiles)
       addLesson(lessonFromServer)
-      init(this, null, false)
+      init(this, false)
     }
   }
 
@@ -229,7 +229,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
           }
         }
       }
-      task.init(course, lesson, false)
+      task.init(lesson, false)
     }
 
     val flm = FrameworkLessonManager.getInstance(project)

@@ -43,7 +43,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   private fun <T : ItemContainer> changeType(project: Project, existingItem: T, deserializedItem: T) {
     if (deserializedItem is EduCourse || deserializedItem is CourseraCourse || deserializedItem is HyperskillCourse) {
       deserializedItem.items = existingItem.items
-      deserializedItem.init(null, null, false)
+      deserializedItem.init(deserializedItem, false)
       StudyTaskManager.getInstance(project).course = deserializedItem as Course
       return
     }
@@ -53,7 +53,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
       deserializedItem.index = existingItem.index
       deserializedItem.items = existingItem.items
 
-      val parentItem = existingItem.parent as ItemContainer
+      val parentItem = existingItem.parent
       parentItem.removeItem(existingItem)
       parentItem.addItemAsNew(project, deserializedItem)
       return
@@ -87,7 +87,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
     }
     // update items so as removed items are no longer in the course
     existingItem.items = preservedChildren
-    existingItem.init(existingItem.course, existingItem.parent, false)
+    existingItem.init(existingItem.parent, false)
   }
 }
 

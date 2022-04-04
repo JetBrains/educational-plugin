@@ -91,5 +91,5 @@ private fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
       HyperskillStage(i + 1, testStageName(i + 1), task.id, isStageCompleted = completeStages)
     }
   }
-  init(this, this, false)
+  init(this, false)
 }

@@ -56,7 +56,7 @@ abstract class StudyItem() {
     this.name = name
   }
 
-  abstract fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean)
+  abstract fun init(parentItem: ItemContainer, isRestarted: Boolean)
 
   abstract fun getDir(baseDir: VirtualFile): VirtualFile?
 

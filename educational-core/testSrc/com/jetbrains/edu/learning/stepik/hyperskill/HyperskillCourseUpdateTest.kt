@@ -555,7 +555,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun <T: Task> T.toTaskUpdate(changeTask: T.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
     val remoteTask = copyAs(this::class.java)
     remoteTask.changeTask()
-    remoteTask.init(course, parent, false)
+    remoteTask.init(parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
   }
 
@@ -570,7 +570,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
     val remoteCourse = course.copyAs(HyperskillCourse::class.java)
     remoteCourse.getTopicsSection()?.let { remoteCourse.removeSection(it) }
-    remoteCourse.init(null, null, false)
+    remoteCourse.init(false)
     remoteCourse.changeCourse()
     return remoteCourse
   }

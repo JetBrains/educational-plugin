@@ -230,7 +230,7 @@ object GeneratorUtils {
 
   @JvmStatic
   fun initializeCourse(project: Project, course: Course) {
-    course.init(null, null, false)
+    course.init(false)
     StudyTaskManager.getInstance(project).course = course
   }
 

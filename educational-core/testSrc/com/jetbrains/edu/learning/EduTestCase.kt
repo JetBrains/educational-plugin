@@ -197,7 +197,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
 
     SubmissionsManager.getInstance(project).course = course
-    course.init(null, null, false)
+    course.init(false)
     return course
   }
 
@@ -305,7 +305,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     if (!hasSections) {
       remoteCourse.sectionIds = listOf(1)
     }
-    remoteCourse.init(null, null, true)
+    remoteCourse.init(true)
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
   }

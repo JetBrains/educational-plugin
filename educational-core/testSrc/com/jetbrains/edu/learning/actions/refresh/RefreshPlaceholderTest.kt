@@ -82,7 +82,7 @@ class RefreshPlaceholderTest : EduTestCase() {
     StudyTaskManager.getInstance(myFixture.project).course = course
     val lesson1 = createLesson(1, 3)
     course.addLesson(lesson1)
-    course.init(null, null, false)
+    course.init(false)
   }
 
   override fun getTestDataPath(): String {

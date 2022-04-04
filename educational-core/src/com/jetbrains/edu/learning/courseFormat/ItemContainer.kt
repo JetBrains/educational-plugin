@@ -10,6 +10,13 @@ abstract class ItemContainer : StudyItem() {
     }
 
   private var _items = mutableListOf<StudyItem>()
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
+    parent = parentItem
+    for ((i, item) in items.withIndex()) {
+      item.index = i + 1
+      item.init(this, isRestarted)
+    }
+  }
 
   fun getItem(name: String): StudyItem? {
     return items.firstOrNull { it.name == name }

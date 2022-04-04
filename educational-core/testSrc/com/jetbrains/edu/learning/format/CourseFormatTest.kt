@@ -187,7 +187,7 @@ class CourseFormatTest : EduTestCase() {
   private val firstEduTask: EduTask
     get() {
       val course = courseFromJson
-      course.init(null, null, false)
+      course.init(false)
       course.createCourseFiles(project, module, LightPlatformTestCase.getSourceRoot(), Any())
       val lessons = course.lessons
       assertFalse("No lessons found", lessons.isEmpty())

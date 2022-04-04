@@ -19,14 +19,9 @@ open class Lesson : ItemContainer() {
   var isPublic = false
   var unitId = 0
 
-  override fun init(course: Course?, parentItem: StudyItem?, isRestarted: Boolean) {
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     require(parentItem is LessonContainer) { "Parent for lesson $name should be either course or section" }
-    parent = parentItem
-
-    for ((i, task) in taskList.withIndex()) {
-      task.index = i + 1
-      task.init(course, this, isRestarted)
-    }
+    super.init(parentItem, isRestarted)
   }
 
   /**

@@ -61,7 +61,7 @@ class CheckiOCourseUpdater(
     val (existingStations, stationsToCreate) = stationsFromServer.partition(course.stations::contains)
     updateExistingStations(existingStations, stationsWithNewMissions)
     course.items = stationsFromServer
-    course.init(null, null, false)
+    course.init(false)
     createNewStations(stationsToCreate)
     newStations.addAll(stationsToCreate)
   }
