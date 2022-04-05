@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.runInEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
@@ -22,9 +23,7 @@ class ImportStepikCoursePanel(
   private val errorComponent = ErrorComponent(getHyperlinkListener()) { doValidation() }
 
   init {
-    errorComponent.setErrorMessage(ValidationMessage("",
-                                                     "Log in",
-                                                     " to Stepik to import course",
+    errorComponent.setErrorMessage(ValidationMessage(EduCoreBundle.message("stepik.log.in.to.import.message"),
                                                      type = ValidationMessageType.ERROR))
     errorComponent.border = JBUI.Borders.empty(1)
     panel.add(errorComponent, BorderLayout.SOUTH)

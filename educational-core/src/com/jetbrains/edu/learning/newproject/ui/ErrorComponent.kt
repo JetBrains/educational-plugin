@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui
 
-import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -12,7 +11,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
-import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
 import javax.swing.Icon
 import javax.swing.JTextPane
@@ -64,11 +62,10 @@ class ErrorComponent(
       val text = """
         <style>
           ${createCourseDescriptionStylesheet()}
+          ${createErrorStylesheet()}
         </style>
         <body>
-          <span>${validationMessage.beforeLink}</span>
-          <a style=color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=>${validationMessage.linkText}</a>
-          <span>${validationMessage.afterLink}</span>
+          ${validationMessage.message}
         </body>
       """.trimIndent()
       messageType = validationMessage.type

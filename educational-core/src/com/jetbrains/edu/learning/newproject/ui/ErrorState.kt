@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
 import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
+import org.jetbrains.annotations.Nls
 import java.awt.Color
 
 sealed class ErrorState(
@@ -35,29 +36,56 @@ sealed class ErrorState(
   object NothingSelected : ErrorState(OK, null, Color.BLACK, false)
   object None : ErrorState(OK, null, Color.BLACK, true)
 
-  object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED, ValidationMessage("", "Log in", " to Stepik to synchronize your progress across multiple devices", type = WARNING), warningTextForeground, true)
+  object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED,
+                                  ValidationMessage(EduCoreBundle.message("validation.stepik.log.in.needed"), type = WARNING),
+                                  warningTextForeground,
+                                  true)
 
-  object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR, ValidationMessage("", linkText = "Log in", afterLink = " to ${EduNames.JBA} account to open a project"), errorTextForeground, false)
+  object JetBrainsAcademyLoginNeeded : ErrorState(LOGIN_ERROR,
+                                                  ValidationMessage(EduCoreBundle.message("validation.hyperskill.login.needed")),
+                                                  errorTextForeground,
+                                                  false)
 
-  abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR, ValidationMessage("", "", messageText, type = ERROR), errorTextForeground, false)
-  object EmptyLocation : LocationError("Enter course location")
-  object InvalidLocation : LocationError("Can't create course at this location")
+  abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR,
+                                                                 ValidationMessage(messageText, type = ERROR),
+                                                                 errorTextForeground,
+                                                                 false)
 
-  abstract class LoginRequired(platformName: String) : ErrorState(LOGIN_ERROR, ValidationMessage("", "Log in", " to $platformName to start this course"), errorTextForeground, false)
+  object EmptyLocation : LocationError(EduCoreBundle.message("validation.empty.location"))
+  object InvalidLocation : LocationError(EduCoreBundle.message("validation.cannot.create.course.at.location"))
+
+  abstract class LoginRequired(
+    platformName: String
+  ) : ErrorState(LOGIN_ERROR,
+                 ValidationMessage(EduCoreBundle.message("validation.log.in.to.start.course", platformName)),
+                 errorTextForeground,
+                 false)
+
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
-  class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName) // Name of CheckiO course equals corresponding CheckiO platform name
+
+  // Name of CheckiO course equals corresponding CheckiO platform name
+  class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName)
+
   //TODO: remove it?
   object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
-  class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null) :
-    ErrorState(LOGIN_ERROR, ValidationMessage(beforeLink, link, afterLink), errorTextForeground, false)
+  class CustomSevereError(message: String, val action: Runnable? = null) :
+    ErrorState(LOGIN_ERROR, ValidationMessage(message), errorTextForeground, false)
 
   class LanguageSettingsError(message: ValidationMessage) : ErrorState(LANGUAGE_SETTINGS_ERROR, message, errorTextForeground, false)
 
-  object JCEFRequired : ErrorState(NO_JCEF, ValidationMessage("No JCEF found. Please ", "switch", " to JetBrains Runtime to start the course"), errorTextForeground, false)
+  object JCEFRequired : ErrorState(NO_JCEF, ValidationMessage(
+    EduCoreBundle.message("validation.no.jcef")), errorTextForeground, false)
 
-  object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage("", "Update", " plugin to start this course"), errorTextForeground, false)
-  data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessage(pluginIds), errorTextForeground, false)
-  object RestartNeeded : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage("", "Restart", " to activate plugin updates"), errorTextForeground, false)
+  object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugin.required")),
+                                          errorTextForeground, false)
+
+  data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessage(pluginIds),
+                                                                          errorTextForeground, false)
+
+  object RestartNeeded : ErrorState(PLUGIN_UPDATE_REQUIRED,
+                                    ValidationMessage(EduCoreBundle.message("validation.plugins.restart.to.activate.plugin")),
+                                    errorTextForeground,
+                                    false)
 
   class UnsupportedCourse(message: String) : ErrorState(UNSUPPORTED_COURSE, ValidationMessage(message), errorTextForeground, false)
 
@@ -112,22 +140,23 @@ sealed class ErrorState(
 
     private fun errorMessage(plugins: Collection<PluginInfo>, limit: Int = 3): ValidationMessage {
       val message = getRequiredPluginsMessage(plugins, limit)
-      return ValidationMessage(message, EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"), "")
+      return ValidationMessage(message + EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"))
     }
 
     @JvmStatic
     fun errorMessage(disabledPluginIds: Collection<PluginId>): ValidationMessage {
       val pluginName = if (disabledPluginIds.size == 1) {
         PluginManagerCore.getPlugin(disabledPluginIds.first())?.name
-      } else {
+      }
+      else {
         null
       }
-      val beforeLink = if (pluginName != null) {
-        "Required \"$pluginName\" plugin is disabled. "
-      } else {
-        "Some required plugins are not installed or disabled. "
+      return if (pluginName != null) {
+        ValidationMessage(EduCoreBundle.message("validation.plugins.disabled.plugin", pluginName))
       }
-      return ValidationMessage(beforeLink, EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"), "")
+      else {
+        ValidationMessage(EduCoreBundle.message("validation.plugins.disabled.or.not.installed.plugins"))
+      }
     }
 
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
@@ -165,9 +194,7 @@ private enum class ErrorSeverity {
 }
 
 data class ValidationMessage @JvmOverloads constructor(
-  val beforeLink: String,
-  val linkText: String = "",
-  val afterLink: String = "",
+  @Nls val message: String,
   val hyperlinkAddress: String? = null,
   val type: ValidationMessageType = ERROR
 )

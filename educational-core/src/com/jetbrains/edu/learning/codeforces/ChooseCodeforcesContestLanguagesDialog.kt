@@ -49,7 +49,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
 
     val validationMessage = courseSettingsPanel.languageSettings?.validate(codeforcesCourse, courseSettingsPanel.locationString)
     if (validationMessage != null) {
-      val message = validationMessage.beforeLink + validationMessage.linkText + validationMessage.afterLink
+      val message = validationMessage.message
       setErrorText(message)
       return ValidationInfo(message, courseSettingsPanel.settingsPanel)
     }

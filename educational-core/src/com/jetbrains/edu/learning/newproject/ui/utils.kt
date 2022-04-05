@@ -6,6 +6,7 @@ import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
@@ -22,11 +23,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
-import kotlinx.css.CSSBuilder
-import kotlinx.css.body
+import com.jetbrains.edu.learning.ui.EduColors
+import kotlinx.css.*
 import kotlinx.css.properties.lh
-import kotlinx.css.pt
-import kotlinx.css.px
 import org.jetbrains.annotations.NonNls
 import java.awt.Color
 import java.awt.Component
@@ -116,6 +115,15 @@ fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
     lineHeight = (JBUI.scaleFontSize(16.0f)).px.lh
   }
 }
+
+fun createErrorStylesheet() = CSSBuilder().apply {
+  a {
+    color = EduColors.hyperlinkColor.asCssColor()
+  }
+}
+
+fun Color.asCssColor(): kotlinx.css.Color = Color("#${ColorUtil.toHex(this)}")
+
 
 fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel {
   val action = actionWrapper.action

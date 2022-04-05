@@ -5,6 +5,7 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
+import com.jetbrains.edu.learning.newproject.ui.asCssColor
 import kotlinx.css.*
 import kotlinx.css.properties.lh
 
@@ -24,8 +25,6 @@ class StyleManager {
   val codeBackground = if (isJCEF()) codeBackground() else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}pt"
-
-  private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
 
   private fun bodyColor(): Color {
     return if (UIUtil.isUnderDarcula()) {

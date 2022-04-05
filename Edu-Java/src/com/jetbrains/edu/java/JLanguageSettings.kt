@@ -54,8 +54,6 @@ class JLanguageSettings : JdkLanguageSettings() {
       }
       return ValidationMessage(
         EduJavaBundle.message("error.old.java", courseJavaVersionDescription),
-        EduJavaBundle.message("download.java"),
-        "",
         "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
       )
     }

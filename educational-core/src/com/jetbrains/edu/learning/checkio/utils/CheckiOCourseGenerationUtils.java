@@ -33,14 +33,12 @@ public final class CheckiOCourseGenerationUtils {
   private static ErrorState getErrorState(@NotNull Exception e, @Nullable CheckiOAccount account, String link) {
     if (e instanceof HttpException &&
         ((HttpException)e).getResponse().code() == 401 && account != null) {
-      return new ErrorState.CustomSevereError("",
-                                              EduCoreBundle.message("validation.open.checkio.to.verify.account.link"),
-                                              EduCoreBundle.message("validation.open.checkio.to.verify.account.after"),
+      return new ErrorState.CustomSevereError(EduCoreBundle.message("validation.open.checkio.to.verify.account"),
                                               () -> EduBrowser.getInstance().browse(link + "/login/checkio/"));
     }
     else if (e instanceof NetworkException) {
-      return new ErrorState.CustomSevereError(EduCoreBundle.message("error.failed.to.connect"), "", "", null);
+      return new ErrorState.CustomSevereError(EduCoreBundle.message("error.failed.to.connect"), null);
     }
-    return new ErrorState.CustomSevereError(e.getMessage(), "", "", null);
+    return new ErrorState.CustomSevereError(e.getMessage(), null);
   }
 }

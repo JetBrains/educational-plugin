@@ -178,9 +178,9 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     showError(errorState)
   }
 
-  private fun setError(message: ValidationMessage) {
-    errorComponent.setErrorMessage(message)
-    buttonsPanel.setButtonToolTip(message.beforeLink + message.linkText + message.afterLink)
+  private fun setError(validationMessage: ValidationMessage) {
+    errorComponent.setErrorMessage(validationMessage)
+    buttonsPanel.setButtonToolTip(validationMessage.message)
   }
 
   protected open fun showError(errorState: ErrorState) {
