@@ -76,10 +76,10 @@ sealed class ErrorState(
   object JCEFRequired : ErrorState(NO_JCEF, ValidationMessage(
     EduCoreBundle.message("validation.no.jcef")), errorTextForeground, false)
 
-  object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugin.required")),
+  object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugins.required")),
                                           errorTextForeground, false)
 
-  data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessage(pluginIds),
+  data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessageForRequiredPlugins(pluginIds),
                                                                           errorTextForeground, false)
 
   object RestartNeeded : ErrorState(PLUGIN_UPDATE_REQUIRED,
@@ -138,9 +138,8 @@ sealed class ErrorState(
         return if (isCheckiOLoginRequired(this)) CheckiOLoginRequired(name) else None
       }
 
-    private fun errorMessage(plugins: Collection<PluginInfo>, limit: Int = 3): ValidationMessage {
-      val message = getRequiredPluginsMessage(plugins, limit)
-      return ValidationMessage(message + EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"))
+    private fun errorMessageForRequiredPlugins(plugins: Collection<PluginInfo>): ValidationMessage {
+      return ValidationMessage(getRequiredPluginsMessage(plugins))
     }
 
     @JvmStatic

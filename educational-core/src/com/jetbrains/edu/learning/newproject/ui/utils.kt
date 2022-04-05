@@ -5,7 +5,7 @@ import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyMan
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.css.*
 import kotlinx.css.properties.lh
-import org.jetbrains.annotations.NonNls
 import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
@@ -37,6 +36,9 @@ import javax.swing.JPanel
 import javax.swing.UIManager
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
+
+@NlsSafe
+private const val HELP_LINK = "https://www.jetbrains.com/help/idea/managing-plugins.html"
 
 const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
 val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
@@ -84,18 +86,22 @@ fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessa
   return ErrorState.forCourse(course).merge(languageError)
 }
 
-fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, limit: Int = 3): String {
-  require(limit > 1)
-
-  val names = if (plugins.size == 1) {
-    plugins.single().displayName
-  }
-  else {
-    val suffix = if (plugins.size <= limit) " and ${plugins.last().displayName}" else " and ${plugins.size - limit + 1} more"
-    plugins.take(minOf(limit - 1, plugins.size - 1)).joinToString { it.displayName ?: it.stringId } + suffix
+fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>): String {
+  if (plugins.isEmpty()) {
+    return ""
   }
 
-  return "$names ${StringUtil.pluralize("plugin", plugins.size)} required. "
+
+  val names = plugins.map { it.displayName ?: it.stringId }
+  return when (names.size) {
+    1 -> EduCoreBundle.message("validation.plugins.required.plugins.one", names[0], HELP_LINK)
+    2 -> EduCoreBundle.message("validation.plugins.required.plugins.two", names[0], names[1], HELP_LINK)
+    3 -> EduCoreBundle.message("validation.plugins.required.plugins.three", names[0], names[1], names[2], HELP_LINK)
+    else -> {
+      val restPluginsNumber = plugins.size - 2
+      EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber, HELP_LINK)
+    }
+  }
 }
 
 fun browseHyperlink(message: ValidationMessage?) {

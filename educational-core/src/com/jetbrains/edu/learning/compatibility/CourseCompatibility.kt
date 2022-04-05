@@ -75,11 +75,7 @@ sealed class CourseCompatibility {
     fun Course.validateLanguage(projectLanguage: String = programmingLanguage): Result<Unit, String> {
       val pluginCompatibility = pluginCompatibility()
       if (pluginCompatibility is PluginsRequired) {
-        val requiredPluginsMessage = getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable)
-        val helpLink = "https://www.jetbrains.com/help/idea/managing-plugins.html"
-        return Err(
-          """$requiredPluginsMessage<a href="$helpLink">${EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")}.</a>"""
-        )
+        return Err(getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable))
       }
 
       if (configurator == null) {
