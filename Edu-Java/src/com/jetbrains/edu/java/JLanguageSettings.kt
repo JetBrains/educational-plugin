@@ -39,7 +39,7 @@ class JLanguageSettings : JdkLanguageSettings() {
   override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (course != null) {
+    return if (course != null) {
       val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
       val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
                               ?: return ValidationMessage(EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription))
@@ -59,7 +59,7 @@ class JLanguageSettings : JdkLanguageSettings() {
         "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
       )
     }
-    return super.validate(course, courseLocation)
+    else super.validate(null, courseLocation)
   }
 
   override fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
