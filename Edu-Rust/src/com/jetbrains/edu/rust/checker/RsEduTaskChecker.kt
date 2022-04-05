@@ -48,7 +48,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
     val configurations = createTestConfigurationsForTestDirectories().filter { it.configuration.type == preferredConfigurationType }
 
-    return if (configurations.isEmpty()) {
+    return configurations.ifEmpty {
       val pkg = findCargoPackage() ?: return emptyList()
       val cmd = CargoCommandLine.forPackage(pkg, "test")
 
@@ -58,10 +58,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
       cmd.mergeWithDefault(configuration)
       configuration.setFromCmd(cmd)
 
-      listOf(configurationSetting)
-    }
-    else {
-      configurations
+      return@ifEmpty listOf(configurationSetting)
     }
   }
 

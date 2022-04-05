@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import org.jetbrains.annotations.Nls
 import java.io.IOException
 
 /**
@@ -204,6 +205,7 @@ interface EduCourseBuilder<Settings : Any> {
    *
    * @see [com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator]
    */
+  @Nls
   fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? {
     return null
   }

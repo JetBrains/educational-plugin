@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.codeforces.run.InvalidCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import org.jetbrains.annotations.Nls
 
 /**
  * Interface for code execution classes
@@ -38,6 +39,6 @@ interface CodeExecutor {
     InvalidCodeforcesRunConfiguration(project, factory)
 
   companion object {
-    fun resultUnchecked(msg: String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
+    fun resultUnchecked(msg: @Nls String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }

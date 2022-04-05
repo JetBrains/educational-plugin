@@ -50,7 +50,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     disposable: Disposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, "Toolchain", BorderLayout.WEST))
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
