@@ -37,7 +37,7 @@ class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
     textArea.lineWrap = true
 
     val scrollPane = JBScrollPane(textArea)
-    scrollPane.border = null
+    scrollPane.border = JBUI.Borders.empty()
     scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
     panel = panel {
       row { scrollPane() }

@@ -146,7 +146,7 @@ open class InsertShortcutAction : AnAction(
     private fun createScrollPane(): JScrollPane {
       val scrollPane = ScrollPaneFactory.createScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
-      scrollPane.border = null
+      scrollPane.border = JBUI.Borders.empty()
       ScrollingUtil.installActions(list, searchField)
       return scrollPane
     }

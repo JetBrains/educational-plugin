@@ -4,6 +4,7 @@ import com.intellij.ide.plugins.newui.ListPluginComponent
 import com.intellij.ui.FilterComponent
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -24,7 +25,7 @@ class CoursesFilterComponent(
   }
 
   fun removeBorder() {
-    textEditor.border = null
+    textEditor.border = JBUI.Borders.empty()
   }
 
   fun resetSearchField() {

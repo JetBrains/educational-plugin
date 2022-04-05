@@ -20,7 +20,7 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
 
   init {
     setViewportView(authorsLabel)
-    border = null
+    border = JBUI.Borders.empty()
   }
 
   override fun onCourseSelectionChanged(data: CourseBindData) {

@@ -32,7 +32,7 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
     val scrollPane = JBScrollPane(infoPanel).apply {
       verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
       horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-      border = null
+      border = JBUI.Borders.empty()
     }
     add(scrollPane, BorderLayout.CENTER)
     UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)

@@ -34,7 +34,7 @@ class CoursesListDecorator(private val mainPanel: CoursesListPanel,
                                   ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
     scrollPane.apply {
-      border = null
+      border = JBUI.Borders.empty()
       background = MAIN_BG_COLOR
     }
 

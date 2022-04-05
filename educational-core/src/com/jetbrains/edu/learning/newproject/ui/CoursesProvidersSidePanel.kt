@@ -69,7 +69,7 @@ class CoursesProvidersSidePanel(private val myCoursesProvider: MyCoursesProvider
       isRootVisible = false
       rowHeight = 0 // force row to calculate size basing on its content
       showsRootHandles = false
-      border = null
+      border = JBUI.Borders.empty()
       cellRenderer = ProviderWithIconCellRenderer()
       TreeUtil.expandAll(this)
       focusListeners.forEach { removeFocusListener(it) }

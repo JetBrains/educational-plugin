@@ -52,7 +52,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     editorKit.styleSheet = null
     taskInfoTextPane = createTextPane(editorKit)
     val scrollPane = JBScrollPane(taskInfoTextPane)
-    scrollPane.border = null
+    scrollPane.border = JBUI.Borders.empty()
     taskInfoPanel.add(scrollPane, BorderLayout.CENTER)
     taskInfoTextPane.border = JBUI.Borders.empty(20, 0, 0, 10)
     val toolWindowLinkHandler = HintElementLinkHandler()

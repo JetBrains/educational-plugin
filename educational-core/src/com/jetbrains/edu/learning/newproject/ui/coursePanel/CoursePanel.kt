@@ -109,7 +109,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
     val scrollPane = JBScrollPane(content, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER).apply {
-      border = null
+      border = JBUI.Borders.empty()
     }
 
     add(scrollPane, CONTENT)

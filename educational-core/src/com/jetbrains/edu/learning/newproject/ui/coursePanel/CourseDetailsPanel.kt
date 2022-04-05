@@ -57,7 +57,7 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
 
     add(courseDetailsHeader, BorderLayout.PAGE_START)
     add(courseStatisticsPanel)
-    add(JBScrollPane(descriptionPanel).apply { border = null }, BorderLayout.CENTER)
+    add(JBScrollPane(descriptionPanel).apply { border = JBUI.Borders.empty() }, BorderLayout.CENTER)
   }
 
   override fun onCourseSelectionChanged(data: CourseBindData) {
