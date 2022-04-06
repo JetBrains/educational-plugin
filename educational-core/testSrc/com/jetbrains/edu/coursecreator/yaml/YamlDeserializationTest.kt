@@ -3,6 +3,8 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -198,6 +200,46 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertEquals(contentTags, course.contentTags)
+  }
+
+  fun `test codeforces course with programTypeId`() {
+    val name = "Test Course"
+    val programmingLanguage = "Plain text"
+    val programTypeId = "1000"
+    val yamlContent = """
+      |type: ${CodeforcesNames.CODEFORCES_COURSE_TYPE}
+      |title: $name
+      |language: English
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |program_type_id: $programTypeId
+      |programming_language: $programmingLanguage
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent) as CodeforcesCourse
+    assertEquals(name, course.name)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
+    assertEquals(programTypeId, course.programTypeId)
+    assertNotNull(course.description)
+  }
+
+  fun `test codeforces course without programTypeId`() {
+    val name = "Test Course"
+    val programmingLanguage = "Plain text"
+    val yamlContent = """
+      |type: ${CodeforcesNames.CODEFORCES_COURSE_TYPE}
+      |title: $name
+      |language: English
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: $programmingLanguage
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent) as CodeforcesCourse
+    assertEquals(name, course.name)
+    assertEquals(programmingLanguage, course.languageById!!.displayName)
+    assertEquals("0", course.programTypeId)
+    assertNotNull(course.description)
   }
 
   fun `test section`() {

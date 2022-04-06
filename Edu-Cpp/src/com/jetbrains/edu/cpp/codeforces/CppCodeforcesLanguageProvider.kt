@@ -15,7 +15,6 @@ import javax.swing.Icon
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<CppProjectSettings> = CppConfigurator()
   override val languageId: String = EduNames.CPP
-  override val preferableCodeforcesLanguage: String = "GNU C++17"
   override val templateFileName: String = "codeforces.CPP main.cpp"
   override val displayTemplateName: String = "main.cpp"
   override val languageIcon: Icon = EducationalCoreIcons.CppLogo

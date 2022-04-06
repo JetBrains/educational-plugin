@@ -1,6 +1,7 @@
 package com.jetbrains.edu.go.codeforces
 
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.go.GoConfigurator
 import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoCourseBuilder.Companion.FORBIDDEN_SYMBOLS
@@ -13,6 +14,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import javax.swing.Icon
 
 class GoCodeforcesLanguageProvider  : CodeforcesLanguageProvider() {
+  override val configurator: GoConfigurator = GoConfigurator()
   override val languageId: String = EduNames.GO
   override val templateFileName: String = "codeforces.Go main.go"
   override val displayTemplateName: String = "main.go"

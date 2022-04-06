@@ -652,6 +652,42 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  fun `test codeforces course with programTypeId`() {
+    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
+    course.apply {
+      languageCode = "en"
+      programTypeId = "0"
+    }
+
+    doTest(course, """
+      |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |program_type_id: 0
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
+  fun `test codeforces course without programTypeId`() {
+    val course = course(courseProducer = ::CodeforcesCourse) {} as CodeforcesCourse
+    course.apply {
+      languageCode = "en"
+    }
+
+    doTest(course, """
+      |type: codeforces
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |
+    """.trimMargin())
+  }
+
   fun `test coursera course feedback link not serialized`() {
     val courseLink = "https://course_link.com"
     val course = course(courseProducer = ::CourseraCourse) {

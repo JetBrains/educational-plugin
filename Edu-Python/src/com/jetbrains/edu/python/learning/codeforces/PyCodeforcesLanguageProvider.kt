@@ -11,7 +11,6 @@ import javax.swing.Icon
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<PyNewProjectSettings> = PyNewConfigurator()
   override val languageId: String = EduNames.PYTHON
-  override val preferableCodeforcesLanguage: String = "Python 3"
   override val templateFileName: String = "codeforces.Python main.py"
   override val displayTemplateName: String = "main.py"
   override val languageIcon: Icon = EducationalCoreIcons.PythonLogo

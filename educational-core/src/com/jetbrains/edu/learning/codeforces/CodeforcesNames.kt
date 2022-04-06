@@ -16,6 +16,9 @@ object CodeforcesNames {
   const val CONTESTS_RULES = "$CODEFORCES_URL/blog/entry/4088"
   const val THIRD_PARTY_CODE_RULE_CHANGING = "$CODEFORCES_URL/blog/entry/8790"
 
+  //FIXME: upload to repo and change link before merge
+  const val LANGUAGES_LINK = "https://raw.githubusercontent.com/DonHalkon/test/main/README.md"
+
   const val CODEFORCES_TASK_TYPE: String = CODEFORCES
   const val CODEFORCES_TASK_TYPE_WITH_FILE_IO: String = "${CODEFORCES}_file_io"
   val CODEFORCES_COURSE_TYPE: String = CODEFORCES.capitalize()

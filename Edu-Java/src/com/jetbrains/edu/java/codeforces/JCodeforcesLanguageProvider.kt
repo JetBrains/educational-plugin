@@ -11,9 +11,7 @@ import javax.swing.Icon
 class JCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
   override val configurator: EduConfigurator<JdkProjectSettings> = JConfigurator()
   override val languageId: String = EduNames.JAVA
-  override val preferableCodeforcesLanguage: String = "Java 8"
   override val templateFileName: String = "codeforces.Java Main.java"
   override val displayTemplateName: String = "Main.java"
   override val languageIcon: Icon = EducationalCoreIcons.JavaLogo
-
 }
