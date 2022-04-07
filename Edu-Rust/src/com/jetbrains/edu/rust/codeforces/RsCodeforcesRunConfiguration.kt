@@ -10,8 +10,7 @@ import org.rust.cargo.runconfig.command.CargoCommandConfiguration
 class RsCodeforcesRunConfiguration(
   project: Project,
   factory: ConfigurationFactory
-) : CargoCommandConfiguration(project,
-                              CodeforcesRunConfigurationType.CONFIGURATION_ID, factory),
+) : CargoCommandConfiguration(project, CodeforcesRunConfigurationType.CONFIGURATION_ID, factory),
     CodeforcesRunConfiguration {
 
   override fun getInputRedirectOptions(): InputRedirectAware.InputRedirectOptions {

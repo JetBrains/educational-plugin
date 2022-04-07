@@ -49,7 +49,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     val configurations = createTestConfigurationsForTestDirectories().filter { it.configuration.type == preferredConfigurationType }
 
     return configurations.ifEmpty {
-      val pkg = findCargoPackage() ?: return emptyList()
+      val pkg = findCargoPackage() ?: return@ifEmpty emptyList()
       val cmd = CargoCommandLine.forPackage(pkg, "test")
 
       val configurationSetting = RunManager.getInstance(project)
@@ -58,7 +58,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
       cmd.mergeWithDefault(configuration)
       configuration.setFromCmd(cmd)
 
-      return@ifEmpty listOf(configurationSetting)
+      listOf(configurationSetting)
     }
   }
 
