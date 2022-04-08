@@ -39,8 +39,6 @@ import javax.swing.UIManager
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
 
-@NonNls
-private const val CONTEXT_HELP_ACTION_PLACE = "ContextHelp"
 const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
 val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
