@@ -35,9 +35,11 @@ class DataTask : Task {
 
   override val itemType: String = DATA_TASK_TYPE
 
-  override fun getCheckAction(): CheckAction = CheckAction(lazyMessage("send.answer"))
+  override val checkAction: CheckAction
+    get() = CheckAction(lazyMessage("send.answer"))
 
-  override fun supportSubmissions(): Boolean = false
+  override val supportSubmissions: Boolean
+    get() = false
 
   fun isRunning(): Boolean {
     if (status != CheckStatus.Unchecked) return false

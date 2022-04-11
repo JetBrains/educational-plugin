@@ -70,16 +70,14 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
     val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
 
-    val taskFiles = task.taskFiles
-
     fun rename(oldPath: String, newPath: String) {
-      val taskFile = taskFiles.remove(oldPath) ?: return
+      val taskFile = task.removeTaskFile(oldPath) ?: return
       taskFile.name = newPath
       task.addTaskFile(taskFile)
     }
 
     if (event.file.isDirectory) {
-      val changedPaths = taskFiles.keys.filter { it.startsWith(oldPath) }
+      val changedPaths = task.taskFiles.keys.filter { it.startsWith(oldPath) }
       for (oldObjectPath in changedPaths) {
         val newObjectPath = oldObjectPath.replaceFirst(oldPath, newPath)
         rename(oldObjectPath, newObjectPath)
@@ -105,7 +103,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     val oldPaths = task.taskFiles.keys.filter { it.startsWith(oldPath) }
 
     for (path in oldPaths) {
-      val taskFile = task.taskFiles.remove(path) ?: continue
+      val taskFile = task.removeTaskFile(path) ?: continue
       PlaceholderPainter.hidePlaceholders(taskFile)
       affectedFiles += taskFile
     }

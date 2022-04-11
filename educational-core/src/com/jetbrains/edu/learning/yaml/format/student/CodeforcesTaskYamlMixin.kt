@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK)
 abstract class CodeforcesTaskYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
-  override var myRecord: Int = -1
+  override var record: Int = -1
 
   @JsonIgnore
   override lateinit var contentTags: List<String>

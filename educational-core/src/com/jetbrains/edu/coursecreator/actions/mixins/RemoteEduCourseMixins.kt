@@ -19,20 +19,27 @@ import com.fasterxml.jackson.databind.util.Annotations
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_FORMAT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_PRIVATE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_TEMPLATE_BASED
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
@@ -101,7 +108,7 @@ abstract class RemoteLessonMixin : LocalLessonMixin() {
   private var id: Int = 0
 }
 
-@JsonPropertyOrder(ID)
+@JsonPropertyOrder(ID, NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN, TASK_TYPE)
 abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)

@@ -114,7 +114,7 @@ object CourseViewUtils {
       is Lesson -> {
         if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
       }
-      is Task -> item.icon
+      is Task -> item.getIcon()
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
   }

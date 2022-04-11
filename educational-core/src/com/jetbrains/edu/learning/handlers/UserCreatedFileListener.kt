@@ -11,7 +11,7 @@ class UserCreatedFileListener(project: Project) : EduVirtualFileListener(project
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
     val (task, pathInTask) = fileInfo as? FileInfo.FileInTask ?: return
     if (!task.shouldBeEmpty(pathInTask)) {
-      task.taskFiles.remove(pathInTask)
+      task.removeTaskFile(pathInTask)
     }
   }
 

@@ -88,7 +88,7 @@ open class YamlUndoTest : YamlTestCase() {
   private fun getCourseElements(): Triple<Task, TaskFile, AnswerPlaceholder> {
     val course = StudyTaskManager.getInstance(project).course!!
     val task = course.lessons.first().taskList.first()
-    val taskFile = task.getFile(TASK_FILE_NAME)!!
+    val taskFile = task.getTaskFile(TASK_FILE_NAME)!!
     val placeholder = taskFile.answerPlaceholders.first()
     return Triple(task, taskFile, placeholder)
   }
@@ -104,7 +104,7 @@ open class YamlUndoTest : YamlTestCase() {
     val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG)!!
     val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
     val deserializedTask = MAPPER.deserializeTask(document.text)
-    val deserializedPlaceholder = deserializedTask.getFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
+    val deserializedPlaceholder = deserializedTask.getTaskFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
     assertEquals(expectedStartOffset, deserializedPlaceholder.offset)
     assertEquals(expectedEndOffset, deserializedPlaceholder.endOffset)
   }

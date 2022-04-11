@@ -25,5 +25,5 @@ abstract class StudentChoiceTaskYamlMixin : ChoiceTaskYamlMixin() {
   private var selectedVariants = mutableListOf<Int>()
 
   @JsonProperty(RECORD)
-  private var myRecord: Int = -1
+  private var record: Int = -1
 }

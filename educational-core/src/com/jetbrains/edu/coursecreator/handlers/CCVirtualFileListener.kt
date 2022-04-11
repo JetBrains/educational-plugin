@@ -69,14 +69,13 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
   private fun deleteFileInTask(info: FileInfo.FileInTask, file: VirtualFile) {
     val (task, pathInTask) = info
 
-    val taskFiles = task.taskFiles
     if (file.isDirectory) {
-      val toRemove = taskFiles.keys.filter { it.startsWith(pathInTask) }
+      val toRemove = task.taskFiles.keys.filter { it.startsWith(pathInTask) }
       for (path in toRemove) {
-        taskFiles.remove(path)
+        task.removeTaskFile(path)
       }
     } else {
-      taskFiles.remove(pathInTask)
+      task.removeTaskFile(pathInTask)
     }
     YamlFormatSynchronizer.saveItem(task)
   }

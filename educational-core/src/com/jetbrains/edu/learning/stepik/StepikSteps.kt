@@ -138,7 +138,7 @@ open class PyCharmStepOptions : StepOptions {
   var descriptionText: String? = null
 
   @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
-  var descriptionFormat: DescriptionFormat? = null
+  var descriptionFormat: DescriptionFormat = DescriptionFormat.HTML
 
   @JsonProperty(FILES)
   var files: MutableList<TaskFile>? = null

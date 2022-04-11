@@ -50,7 +50,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   fun `test new task file added`() {
     val course = StudyTaskManager.getInstance(project).course!!
     val task = course.lessons.first().taskList.first()
-    task.taskFiles.remove("test2.txt")
+    task.removeTaskFile("test2.txt")
 
     val configFile = task.getDir(project.courseDir)!!.findChild(task.configFileName)!!
     loadAndDispatchEvents(configFile)
@@ -61,7 +61,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   fun `test unexpected task file isn't added`() {
     val course = StudyTaskManager.getInstance(project).course!!
     val task = course.lessons.first().taskList.first()
-    task.taskFiles.remove("test2.txt")
+    task.removeTaskFile("test2.txt")
 
     saveItemAndDispatchEvents(task)
 

@@ -249,8 +249,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     val keepConflictingChanges = if (showDialogIfConflict) {
-      val currentTaskName = "${currentTask.uiName} ${currentTask.index}"
-      val targetTaskName = "${targetTask.uiName} ${targetTask.index}"
+      val currentTaskName = "${currentTask.getUIName()} ${currentTask.index}"
+      val targetTaskName = "${targetTask.getUIName()} ${targetTask.index}"
       val message = EduCoreBundle.message("framework.lesson.changes.conflict.message", currentTaskName, targetTaskName, targetTaskName,
                                           currentTaskName)
       Messages.showYesNoDialog(project,

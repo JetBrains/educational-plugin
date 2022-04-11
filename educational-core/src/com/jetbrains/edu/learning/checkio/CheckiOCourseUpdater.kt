@@ -125,7 +125,7 @@ class CheckiOCourseUpdater(
   }
 
   private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission) {
-    val oldTaskFile = oldMission.taskFile
+    val oldTaskFile = oldMission.getTaskFile()
 
     val oldMissionDir = oldMission.getDir(project.courseDir)
                         ?: return LOG.error("Directory is not found for mission [${oldMission.id}; ${oldMission.name}]")
@@ -142,7 +142,7 @@ class CheckiOCourseUpdater(
       } ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
 
       runWriteAction {
-        newMission.taskFile.apply {
+        newMission.getTaskFile().apply {
           isTrackChanges = false
           oldDocument.setText(text)
           isTrackChanges = true
@@ -156,7 +156,7 @@ class CheckiOCourseUpdater(
         descriptionDocument.setText(newMission.descriptionText)
       }
     } else {
-      newMission.taskFile.setText(oldTaskFile.text)
+      newMission.getTaskFile().setText(oldTaskFile.text)
     }
   }
 

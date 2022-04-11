@@ -15,11 +15,11 @@ open class EduTask : Task {
 
   override val itemType: String = EDU_TASK_TYPE
 
-  override fun isToSubmitToRemote(): Boolean {
-    return myStatus != CheckStatus.Unchecked
-  }
+  override val isToSubmitToRemote: Boolean
+    get() = checkStatus != CheckStatus.Unchecked
 
-  override fun supportSubmissions(): Boolean = true
+  override val supportSubmissions: Boolean
+    get() = true
 
   companion object {
     @NonNls

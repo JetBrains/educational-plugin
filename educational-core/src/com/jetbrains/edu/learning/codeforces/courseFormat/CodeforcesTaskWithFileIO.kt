@@ -18,5 +18,6 @@ class CodeforcesTaskWithFileIO : CodeforcesTask {
 
   override val itemType = CODEFORCES_TASK_TYPE_WITH_FILE_IO
 
-  override fun getCheckAction(): CheckAction = CheckAction(EduCoreBundle.lazyMessage("codeforces.copy.and.submit"))
+  override val checkAction: CheckAction
+    get() = CheckAction(EduCoreBundle.lazyMessage("codeforces.copy.and.submit"))
 }

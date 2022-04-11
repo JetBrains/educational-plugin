@@ -130,7 +130,7 @@ class CheckiOMissionCheck(private val project: Project,
   }
 
   private fun getCodeFromTask(): String {
-    val taskFile = (task as CheckiOMission).taskFile
+    val taskFile = (task as CheckiOMission).getTaskFile()
     val missionDir = task.getDir(project.courseDir)
                      ?: throw IOException("Directory is not found for mission: ${task.id}, ${task.name}")
     val virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir)

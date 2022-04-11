@@ -106,7 +106,7 @@ object YamlDeepLoader {
       val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
         .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name)}.map { it.key }
-      invalidTaskFilesNames.forEach { task.taskFiles.remove(it) }
+      invalidTaskFilesNames.forEach { task.removeTaskFile(it) }
     }
   }
 

@@ -17,7 +17,8 @@ class VideoTask : TheoryTask {
 
   override val itemType: String = VIDEO_TASK_TYPE
 
-  override fun isPluginTaskType() = false
+  override val isPluginTaskType
+    get() = false
 
   companion object {
     const val VIDEO_TASK_TYPE: String = "video"

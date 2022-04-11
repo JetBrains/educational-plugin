@@ -137,8 +137,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
   private fun createTaskFile(lessonIndex: Int, task: Task, taskFilePath: String) {
     val taskFile = TaskFile()
     taskFile.task = task
-    task.taskFiles[taskFilePath] = taskFile
     taskFile.name = taskFilePath
+    task.addTaskFile(taskFile)
 
     val fileName = "lesson" + lessonIndex + "/" + task.name + "/" + taskFilePath
     val file = myFixture.findFileInTempDir(fileName)

@@ -36,9 +36,11 @@ class ChoiceTask : Task {
 
   override val itemType: String = CHOICE_TASK_TYPE
 
-  override fun isPluginTaskType() = false
+  override val isPluginTaskType: Boolean
+    get() = false
 
-  override fun isChangedOnFailed(): Boolean = !canCheckLocally
+  override val isChangedOnFailed: Boolean
+    get() = !canCheckLocally
 
   //Is called from choiceTask.html.ft
   @Suppress("unused")

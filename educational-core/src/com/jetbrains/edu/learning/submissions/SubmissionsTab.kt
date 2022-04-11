@@ -42,7 +42,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
     get() = innerTextPanel as SwingTextPanel
 
   override fun update(task: Task) {
-    if (!task.supportSubmissions()) return
+    if (!task.supportSubmissions) return
 
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()

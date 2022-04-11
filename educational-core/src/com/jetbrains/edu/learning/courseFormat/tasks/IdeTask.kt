@@ -17,15 +17,14 @@ class IdeTask : Task {
   override val itemType: String = IDE_TASK_TYPE
 
   override fun getIcon(): Icon {
-    if (myStatus == CheckStatus.Unchecked) {
+    if (checkStatus == CheckStatus.Unchecked) {
       return EducationalCoreIcons.IdeTask
     }
-    return if (myStatus == CheckStatus.Solved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.TaskFailed
+    return if (checkStatus == CheckStatus.Solved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.TaskFailed
   }
 
-  override fun isToSubmitToRemote(): Boolean {
-    return myStatus != CheckStatus.Unchecked
-  }
+  override val isToSubmitToRemote: Boolean
+    get() = checkStatus != CheckStatus.Unchecked
 
   companion object {
     const val IDE_TASK_TYPE: String = "ide"

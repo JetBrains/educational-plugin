@@ -93,7 +93,7 @@ class TabManagerImpl(private val project: Project, private val contentManager: C
       if (course is HyperskillCourse && course.isTaskInProject(this)) {
         result.add(TOPICS_TAB)
       }
-      if (supportSubmissions() && SubmissionsManager.getInstance(project).submissionsSupported()) {
+      if (supportSubmissions && SubmissionsManager.getInstance(project).submissionsSupported()) {
         result.add(SUBMISSIONS_TAB)
       }
       if (course is HyperskillCourse && course.isTaskInTopicsSection(this) && this !is TheoryTask) {

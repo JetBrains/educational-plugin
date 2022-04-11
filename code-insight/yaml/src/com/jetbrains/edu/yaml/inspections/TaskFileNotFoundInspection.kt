@@ -71,7 +71,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
       } catch (e: IOException) {
         LOG.warn(e)
         // Remove added task file to keep correct task structure
-        task.taskFiles.remove(path)
+        task.removeTaskFile(path)
         ApplicationManager.getApplication().invokeLater {
           Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path),
                                    EduYAMLBundle.message("failed.create.file.title"))

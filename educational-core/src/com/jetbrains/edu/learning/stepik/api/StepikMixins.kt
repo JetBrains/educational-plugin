@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -154,18 +155,19 @@ class StepikAnswerPlaceholderMixin {
   private var mySelected = false
 }
 
+@JsonPropertyOrder(NAME, STEPIK_ID, STATUS, FILES, TASK_TYPE)
 open class StepikTaskMixin {
   @JsonProperty(NAME)
   var name: String? = null
 
   @JsonProperty(STATUS)
-  var myStatus = CheckStatus.Unchecked
+  var checkStatus = CheckStatus.Unchecked
 
   @JsonProperty(STEPIK_ID)
   private var id: Int = 0
 
   @JsonProperty(FILES)
-  private var myTaskFiles: MutableMap<String, TaskFile>? = LinkedHashMap()
+  private var _taskFiles: MutableMap<String, TaskFile> = LinkedHashMap()
 
   val itemType: String
     @JsonProperty(TASK_TYPE)

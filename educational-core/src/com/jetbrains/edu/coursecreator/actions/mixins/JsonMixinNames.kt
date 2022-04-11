@@ -42,6 +42,11 @@ object JsonMixinNames {
   const val TASK_TYPE = "task_type"
   const val CUSTOM_NAME = "custom_name"
   const val SOLUTION_HIDDEN = "solution_hidden"
+  const val CHOICE_OPTIONS = "choiceOptions"
+  const val IS_MULTIPLE_CHOICE = "isMultipleChoice"
+  const val MESSAGE_CORRECT = "messageCorrect"
+  const val MESSAGE_INCORRECT = "messageIncorrect"
+  const val QUIZ_HEADER = "quizHeader"
 
   // task file
   const val TEXT = "text"

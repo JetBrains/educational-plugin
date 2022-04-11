@@ -17,10 +17,12 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 @JsonDeserialize(builder = StationBuilder::class)
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CONTENT)
 class CheckiOStationYamlMixin : LessonYamlMixin() {
-  @JsonProperty(TYPE)
-  private fun getItemType(): String {
-    throw NotImplementedInMixin()
-  }
+
+  val itemType: String
+    @JsonProperty(TYPE)
+    get() {
+      throw NotImplementedInMixin()
+    }
 
   @JsonIgnore
   override lateinit var contentTags: List<String>

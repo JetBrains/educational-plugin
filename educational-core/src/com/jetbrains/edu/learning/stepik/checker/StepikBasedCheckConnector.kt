@@ -57,7 +57,7 @@ abstract class StepikBasedCheckConnector {
     }
 
     if (lastSubmission.status != EVALUATION_STATUS) {
-      if (task.supportSubmissions()) {
+      if (task.supportSubmissions) {
         SubmissionsManager.getInstance(project).addToSubmissions(task.id, lastSubmission)
       }
       return lastSubmission.toCheckResult()

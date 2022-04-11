@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.util.Annotations
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CHOICE_OPTIONS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DEPENDENCY
@@ -36,12 +37,15 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LI
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_EDITABLE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_MULTIPLE_CHOICE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LESSON
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MAX_VERSION
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MESSAGE_CORRECT
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MESSAGE_INCORRECT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.OFFSET
@@ -53,6 +57,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SECTION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
@@ -61,6 +66,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
@@ -208,12 +214,14 @@ abstract class LocalLessonMixin {
   private lateinit var contentTags: List<String>
 }
 
+@JsonPropertyOrder(NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN,
+                   TASK_TYPE)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
 
   @JsonProperty(FILES)
-  private lateinit var myTaskFiles: MutableMap<String, TaskFile>
+  private lateinit var _taskFiles: MutableMap<String, TaskFile>
 
   @JsonProperty(DESCRIPTION_TEXT)
   private lateinit var descriptionText: String
@@ -223,7 +231,7 @@ abstract class LocalTaskMixin {
 
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private lateinit var myFeedbackLink: String
+  private lateinit var feedbackLink: String
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -234,7 +242,7 @@ abstract class LocalTaskMixin {
   private var solutionHidden: Boolean? = null
 
   val itemType: String
-    @JsonProperty(JsonMixinNames.TASK_TYPE)
+    @JsonProperty(TASK_TYPE)
     get() = throw NotImplementedInMixin()
 
   @JsonProperty(TAGS)
@@ -242,6 +250,8 @@ abstract class LocalTaskMixin {
   private lateinit var contentTags: List<String>
 }
 
+@JsonPropertyOrder(CHOICE_OPTIONS, IS_MULTIPLE_CHOICE, MESSAGE_CORRECT, MESSAGE_INCORRECT, QUIZ_HEADER,
+                   NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN, TASK_TYPE)
 abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty

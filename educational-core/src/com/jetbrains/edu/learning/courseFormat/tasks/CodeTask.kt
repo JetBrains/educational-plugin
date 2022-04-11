@@ -14,9 +14,11 @@ class CodeTask : Task {
 
   override val itemType: String = CODE_TASK_TYPE
 
-  override fun supportSubmissions(): Boolean = true
+  override val supportSubmissions: Boolean
+    get() = true
 
-  override fun isPluginTaskType(): Boolean = false
+  override val isPluginTaskType: Boolean
+    get() = false
 
   companion object {
     const val CODE_TASK_TYPE: String = "code"

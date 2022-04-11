@@ -1,127 +1,62 @@
-package com.jetbrains.edu.learning.checkio.courseFormat;
+package com.jetbrains.edu.learning.checkio.courseFormat
 
-import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-import java.util.Collection;
-
-public class CheckiOMission extends EduTask {
-  public static final String CHECK_IO_MISSION_TASK_TYPE = "checkiO";
-
-  @NotNull
+class CheckiOMission : EduTask() {
+  @get:Transient
+  @set:Transient
   @Transient // used to get missions from server
-  private CheckiOStation myStation;
+  var station: CheckiOStation = CheckiOStation()
+  var code = ""
+  var slug = ""
+  var secondsFromLastChangeOnServer: Long = 0
 
-  @NotNull
-  @NonNls
-  private String myCode;
-
-  @NotNull
-  @NonNls
-  private String mySlug;
-
-  private long mySecondsFromLastChangeOnServer;
-
-  public CheckiOMission() {
-    myCode = "";
-    mySlug = "";
-    myStation = new CheckiOStation();
+  fun getTaskFile(): TaskFile {
+    val taskFiles = taskFiles.values
+    require(taskFiles.isNotEmpty())
+    return taskFiles.first()
   }
 
-  @Transient
-  @NotNull
-  public CheckiOStation getStation() {
-    return myStation;
-  }
-
-  @Transient
-  public void setStation(@NotNull CheckiOStation station) {
-    myStation = station;
-  }
-
-  public void setSecondsFromLastChangeOnServer(long secondsFromLastChangeOnServer) {
-    mySecondsFromLastChangeOnServer = secondsFromLastChangeOnServer;
-  }
-
-  public long getSecondsFromLastChangeOnServer() {
-    return mySecondsFromLastChangeOnServer;
-  }
-
-  @NotNull
-  @NonNls
-  public String getCode() {
-    return myCode;
-  }
-
-  public void setCode(@NotNull @NonNls String code) {
-    myCode = code;
-  }
-
-  @NotNull
-  @NonNls
-  public String getSlug() {
-    return mySlug;
-  }
-
-  public void setSlug(@NotNull @NonNls String slug) {
-    mySlug = slug;
-  }
-
-  @NotNull
-  public TaskFile getTaskFile() {
-    final Collection<TaskFile> taskFiles = getTaskFiles().values();
-    assert !taskFiles.isEmpty();
-
-    return taskFiles.iterator().next();
-  }
-
-  @Override
-  public void setStatus(@NotNull CheckStatus status) {
-    if (myStatus == CheckStatus.Unchecked) {
-      myStatus = status;
+  override var status: CheckStatus
+    get() = super.status
+    set(status) {
+      if (checkStatus == CheckStatus.Unchecked) {
+        checkStatus = status
+      }
+      else if (checkStatus == CheckStatus.Failed && status == CheckStatus.Solved) {
+        checkStatus = CheckStatus.Solved
+      }
     }
-    else if (myStatus == CheckStatus.Failed && status == CheckStatus.Solved) {
-      myStatus = CheckStatus.Solved;
-    }
+
+  override val isToSubmitToRemote: Boolean
+    get() = false
+  override val itemType: String
+    get() = CHECK_IO_MISSION_TASK_TYPE
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    return id == (other as CheckiOMission).id
   }
 
-  @Override
-  public boolean isToSubmitToRemote() {
-    return false;
+  override fun hashCode(): Int {
+    return id
   }
 
-  @Override
-  @NonNls
-  public String getItemType() {
-    return CHECK_IO_MISSION_TASK_TYPE;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    CheckiOMission other = (CheckiOMission)o;
-    return getId() == other.getId();
-  }
-
-  @Override
-  public int hashCode() {
-    return getId();
-  }
-
-  @Override
-  public String toString() {
+  override fun toString(): String {
     return "CheckiOMission{" +
-           "id=" + getId() +
-           ", stationId=" + myStation.getId() +
-           ", stationName='" + myStation.getName() + "'" +
-           ", title='" + getName() + "'" +
-           ", secondsPast=" + getSecondsFromLastChangeOnServer() +
-           "}";
+           "id=" + id +
+           ", stationId=" + station.id +
+           ", stationName='" + station.name + "'" +
+           ", title='" + name + "'" +
+           ", secondsPast=" + secondsFromLastChangeOnServer +
+           "}"
+  }
+
+  companion object {
+    const val CHECK_IO_MISSION_TASK_TYPE = "checkiO"
   }
 }

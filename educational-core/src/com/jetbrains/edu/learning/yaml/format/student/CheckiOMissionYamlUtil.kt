@@ -15,17 +15,17 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, STATUS, FEEDBACK, CODE, SECONDS_FROM_CHANGE)
 abstract class CheckiOMissionYamlMixin : StudentTaskYamlMixin() {
   @JsonIgnore
-  override lateinit var myFeedbackLink: String
+  override lateinit var feedbackLink: String
 
   @JsonIgnore
-  override var myRecord: Int = -1
+  override var record: Int = -1
 
   @JsonIgnore
   override lateinit var contentTags: List<String>
 
   @JsonProperty(CODE)
-  private lateinit var myCode: String
+  private lateinit var code: String
 
   @JsonProperty(SECONDS_FROM_CHANGE)
-  private var mySecondsFromLastChangeOnServer: Long = 0
+  private var secondsFromLastChangeOnServer: Long = 0
 }

@@ -71,7 +71,7 @@ class StudentChangeApplierTest() : YamlTestCase() {
     val deserializedItem = EduTask("task1")
     deserializedItem.customPresentableName = "custom name"
     deserializedItem.feedbackLink = "test"
-    deserializedItem.taskFiles = mapOf("taskFile.txt" to TaskFile("taskFile.txt", "new code"))
+    deserializedItem.taskFiles = linkedMapOf("taskFile.txt" to TaskFile("taskFile.txt", "new code"))
 
     getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)
 

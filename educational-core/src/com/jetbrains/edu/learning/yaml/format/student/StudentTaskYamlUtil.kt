@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format.student
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
@@ -17,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
+import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ACTUAL
@@ -36,14 +35,17 @@ import java.util.*
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD, TAGS)
 abstract class StudentTaskYamlMixin : TaskYamlMixin() {
 
-  @JsonProperty(STATUS)
-  private lateinit var myStatus: CheckStatus
+  protected var checkStatus: CheckStatus
+    @JsonGetter(STATUS)
+    get() = throw NotImplementedInMixin()
+    @JsonSetter(STATUS)
+    set(value) { throw NotImplementedInMixin() }
 
   @JsonProperty(FEEDBACK)
-  private lateinit var myFeedback: CheckFeedback
+  private lateinit var feedback: CheckFeedback
 
   @JsonProperty(RECORD)
-  protected open var myRecord: Int = -1
+  protected open var record: Int = -1
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization

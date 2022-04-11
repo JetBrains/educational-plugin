@@ -1,367 +1,232 @@
-package com.jetbrains.edu.learning.courseFormat.tasks;
+package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.EducationalCoreIcons;
-import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
-import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
-import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
-import com.jetbrains.edu.learning.submissions.SubmissionsManager;
-import com.jetbrains.edu.learning.yaml.YamlDeserializer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.io.IOException;
-import java.util.*;
-
-import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.presentableName
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.findDir
+import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
+import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import java.io.IOException
+import java.util.*
+import javax.swing.Icon
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
- * Update {@link StepikChangeRetriever#taskFilesChanged and StepikChangeRetriever#taskInfoChanged} if you added new property that has to be compared
+ * Update [and StepikChangeRetriever#taskInfoChanged][com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever.taskFilesChanged] if you added new property that has to be compared
  * To implement new task there are 5 steps to be done:
- * - Extend {@link Task} class
- * - Update {@link StepikJacksonDeserializersKt#doDeserializeTask} to handle json serialization
- * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
- * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder.StepikTaskType} otherwise
+ * - Extend [Task] class
+ * - Update [com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt.doDeserializeTask] to handle json serialization
+ * - Update [com.jetbrains.edu.learning.checker.TaskCheckerProvider.getTaskChecker] and provide default checker for new task
+ * - Update [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.pluginTaskTypes] for the tasks we do not have separately on stepik
+ *   and [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType] otherwise
  * - Handle yaml deserialization:
- *    - add type in {@link YamlDeserializer#deserializeTask(ObjectMapper, String)}
- *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
+ * - add type in [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask]
+ * - add yaml mixins for course creator and student fields [com.jetbrains.edu.learning.yaml.format]
  */
-public abstract class Task extends StudyItem {
-  protected static final Logger LOG = Logger.getInstance(Task.class);
-  @NotNull
-  protected CheckStatus myStatus = CheckStatus.Unchecked;
-  @Nullable
-  private CheckFeedback myFeedback;
-  private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
-  @NotNull
-  private String descriptionText = "";
-  private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
-  @Nullable
-  private String myFeedbackLink = null;
-  @Nullable
-  private Boolean solutionHidden;
-  private int myRecord = -1;
-  private boolean isUpToDate = true;
+abstract class Task : StudyItem {
+  private var _taskFiles: MutableMap<String, TaskFile> = LinkedHashMap()
+  var taskFiles: Map<String, TaskFile>
+    get() = _taskFiles
+    set(value) {
+      require(value is LinkedHashMap<String, TaskFile>) // taskFiles is supposed to be ordered
+      _taskFiles = value
+    }
+
+  var feedback: CheckFeedback? = null
+  var descriptionText: String = ""
+  var descriptionFormat: DescriptionFormat = EduUtils.getDefaultTaskDescriptionFormat()
+  var feedbackLink: String? = null
+
+  /**
+   * null means that behaviour for this particular Task hasn't been configured by a user and [Course.solutionsHidden] should be used instead
+   */
+  var solutionHidden: Boolean? = null
+  var record: Int = -1
+  var isUpToDate: Boolean = true
+
   // Used for marketplace courses. We need to store a meta-entity id (corresponding to list of submissions) to correctly process submissions
   // storage on grazie platform
-  @Nullable
-  private String submissionsId;
+  var submissionsId: String? = null
 
-  //used for deserialization
-  public Task() { }
+  protected var checkStatus: CheckStatus = CheckStatus.Unchecked
 
-  public Task(@NotNull final String name) {
-    super(name);
-  }
-
-  public Task(@NotNull final String name, int id, int position, @NotNull Date updateDate, @NotNull CheckStatus status) {
-    super(name);
-    setId(id);
-    setIndex(position);
-    setUpdateDate(updateDate);
-    myStatus = status;
-  }
-
-  public void init(@NotNull final ItemContainer parentItem, boolean isRestarted) {
-    if (!(parentItem instanceof Lesson)) throw new IllegalStateException("Parent for task should be lesson");
-    setParent((Lesson)parentItem);
-    for (TaskFile taskFile : getTaskFileValues()) {
-      taskFile.initTaskFile(this, isRestarted);
-    }
-  }
-
-  public Map<String, TaskFile> getTaskFiles() {
-    return myTaskFiles;
-  }
-
-  // Use carefully. taskFiles is supposed to be ordered so use LinkedHashMap
-  public void setTaskFiles(Map<String, TaskFile> taskFiles) {
-    this.myTaskFiles = taskFiles;
-  }
-
-  @NotNull
-  public String getDescriptionText() {
-    return descriptionText;
-  }
-
-  public void setDescriptionText(@NotNull String descriptionText) {
-    this.descriptionText = descriptionText;
-  }
-
-  public DescriptionFormat getDescriptionFormat() {
-    return descriptionFormat;
-  }
-
-  public void setDescriptionFormat(DescriptionFormat descriptionFormat) {
-    this.descriptionFormat = descriptionFormat;
-  }
-
-  public boolean isUpToDate() {
-    return isUpToDate;
-  }
-
-  public void setUpToDate(boolean upToDate) {
-    isUpToDate = upToDate;
-  }
-
-  @Nullable
-  public TaskFile getTaskFile(@Nullable final String name) {
-    return name != null ? myTaskFiles.get(name) : null;
-  }
-
-  public TaskFile addTaskFile(@NotNull final String name, boolean isVisible) {
-    TaskFile taskFile = new TaskFile();
-    taskFile.setTask(this);
-    taskFile.setName(name);
-    taskFile.setVisible(isVisible);
-    myTaskFiles.put(name, taskFile);
-    return taskFile;
-  }
-
-  public TaskFile addTaskFile(@NotNull final String name) {
-    return addTaskFile(name, true);
-  }
-
-  public void addTaskFile(@NotNull final TaskFile taskFile) {
-    taskFile.setTask(this);
-    myTaskFiles.put(taskFile.getName(), taskFile);
-  }
-
-  public void addTaskFile(@NotNull final TaskFile taskFile, int position) {
-    taskFile.setTask(this);
-    if (position < 0 || position > myTaskFiles.size()) {
-      throw new IndexOutOfBoundsException();
-    }
-    Map<String, TaskFile> newTaskFileMap = new LinkedHashMap<>(myTaskFiles.size() + 1);
-    int currentIndex = 0;
-    for (Map.Entry<String, TaskFile> entry : myTaskFiles.entrySet()) {
-      if (currentIndex == position) {
-        newTaskFileMap.put(taskFile.getName(), taskFile);
+  open var status: CheckStatus
+    get() = checkStatus
+    set(status) {
+      for (taskFile in _taskFiles.values) {
+        for (placeholder in taskFile.answerPlaceholders) {
+          placeholder.status = status
+        }
       }
-      newTaskFileMap.put(entry.getKey(), entry.getValue());
-      currentIndex++;
+      if (checkStatus !== status) {
+        feedback = null
+      }
+      checkStatus = status
+    }
+
+  val lesson: Lesson
+    get() = parent as? Lesson ?: error("Lesson is null for task $name")
+
+  open val checkAction: CheckAction
+    get() = course.checkAction
+  open val isPluginTaskType: Boolean
+    get() = true
+  open val supportSubmissions: Boolean
+    get() = false
+  open val isToSubmitToRemote: Boolean
+    get() = false
+  open val isChangedOnFailed: Boolean // For retry button: true means task description changes after failing
+    get() = false
+
+  override val course: Course
+    get() = lesson.course
+
+  constructor() // used for deserialization
+  constructor(name: String) : super(name)
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name) {
+    this.id = id
+    this.index = position
+    this.updateDate = updateDate
+    checkStatus = status
+  }
+
+  override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
+    parent = parentItem
+    for (taskFile in _taskFiles.values) {
+      taskFile.initTaskFile(this, isRestarted)
+    }
+  }
+
+  fun getTaskFile(name: String): TaskFile? {
+    return _taskFiles[name]
+  }
+
+  @JvmOverloads
+  fun addTaskFile(name: String, isVisible: Boolean = true): TaskFile {
+    val taskFile = TaskFile()
+    taskFile.task = this
+    taskFile.name = name
+    taskFile.isVisible = isVisible
+    _taskFiles[name] = taskFile
+    return taskFile
+  }
+
+  fun addTaskFile(taskFile: TaskFile) {
+    taskFile.task = this
+    _taskFiles[taskFile.name] = taskFile
+  }
+
+  fun addTaskFile(taskFile: TaskFile, position: Int) {
+    taskFile.task = this
+    if (position < 0 || position > _taskFiles.size) {
+      throw IndexOutOfBoundsException()
+    }
+    val newTaskFileMap = LinkedHashMap<String, TaskFile>(_taskFiles.size + 1)
+    var currentIndex = 0
+    for ((key, value) in _taskFiles) {
+      if (currentIndex == position) {
+        newTaskFileMap[taskFile.name] = taskFile
+      }
+      newTaskFileMap[key] = value
+      currentIndex++
     }
     if (currentIndex == position) {
-      newTaskFileMap.put(taskFile.getName(), taskFile);
+      newTaskFileMap[taskFile.name] = taskFile
     }
-    myTaskFiles = newTaskFileMap;
+    _taskFiles = newTaskFileMap
   }
 
-  @Nullable
-  public TaskFile getFile(@NotNull final String fileName) {
-    return myTaskFiles.get(fileName);
-  }
-
-  public Lesson getLesson() {
-    ItemContainer parent = getParent();
-    if (parent instanceof Lesson) {
-      return (Lesson)parent;
-    }
-    else {
-      return null;
+  //used for yaml deserialization
+  private fun setTaskFileValues(taskFiles: List<TaskFile>) {
+    _taskFiles.clear()
+    for (taskFile in taskFiles) {
+      _taskFiles[taskFile.name] = taskFile
     }
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Task task = (Task)o;
-
-    if (getIndex() != task.getIndex()) return false;
-    if (!Objects.equals(getName(), task.getName())) return false;
-    if (!Objects.equals(myTaskFiles, task.myTaskFiles)) return false;
-    if (!descriptionText.equals(task.descriptionText)) return false;
-    if (!Objects.equals(descriptionFormat, task.descriptionFormat)) return false;
-
-    return true;
+  fun getTaskFileValues(): Collection<TaskFile> {
+    return _taskFiles.values
   }
 
-  @Override
-  public int hashCode() {
-    int result = getName().hashCode();
-    result = 31 * result + getIndex();
-    result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
-    result = 31 * result + descriptionText.hashCode();
-    result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
-    return result;
+  fun removeTaskFile(taskFile: String): TaskFile? {
+    return _taskFiles.remove(taskFile)
   }
 
-  public @NotNull CheckStatus getStatus() {
-    return myStatus;
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other == null || javaClass != other.javaClass) return false
+    val task = other as Task
+    if (index != task.index) return false
+    if (name != task.name) return false
+    if (_taskFiles != task._taskFiles) return false
+    if (descriptionText != task.descriptionText) return false
+    return descriptionFormat == task.descriptionFormat
   }
 
-  public void setStatus(@NotNull CheckStatus status) {
-    for (TaskFile taskFile : myTaskFiles.values()) {
-      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-        placeholder.setStatus(status);
-      }
-    }
-    if (myStatus != status) {
-      myFeedback = null;
-    }
-    myStatus = status;
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + index
+    result = 31 * result + _taskFiles.hashCode()
+    result = 31 * result + descriptionText.hashCode()
+    result = 31 * result + descriptionFormat.hashCode()
+    return result
   }
 
-  @NotNull
-  public Task copy() {
-    return CopyUtilKt.copyAs(this, getClass());
+  fun copy(): Task {
+    return copyAs(javaClass)
   }
 
-  public int getPosition() {
-    final Lesson lesson = getLesson();
-    return lesson.getTaskList().indexOf(this) + 1;
-  }
-
-  public boolean isValid(@NotNull Project project) {
-    VirtualFile taskDir = getDir(OpenApiExtKt.getCourseDir(project));
-    if (taskDir == null) return false;
-    for (TaskFile taskFile : getTaskFileValues()) {
-      VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (file == null) continue;
+  fun isValid(project: Project): Boolean {
+    val taskDir = getDir(project.courseDir) ?: return false
+    for (taskFile in _taskFiles.values) {
+      val file = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       try {
-        String text = VfsUtilCore.loadText(file);
-        if (!taskFile.isValid(text)) return false;
+        val text = VfsUtilCore.loadText(file)
+        if (!taskFile.isValid(text)) return false
       }
-      catch (IOException e) {
-        return false;
+      catch (e: IOException) {
+        return false
       }
     }
-    return true;
+    return true
   }
 
-  public boolean isToSubmitToRemote() {
-    return false;
-  }
-
-  public Icon getIcon() {
-    if (myStatus == CheckStatus.Unchecked) {
-      return EducationalCoreIcons.Task;
+  open fun getIcon(): Icon {
+    if (checkStatus === CheckStatus.Unchecked) {
+      return EducationalCoreIcons.Task
     }
-    Project project = CourseExt.getProject(getCourse());
-    if (project != null && SubmissionsManager.getInstance(project).containsCorrectSubmission(getId())) {
-      return EducationalCoreIcons.TaskSolved;
+    val project = course.project
+    if (project != null && getInstance(project).containsCorrectSubmission(id)) {
+      return EducationalCoreIcons.TaskSolved
     }
-    return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
+    return if (checkStatus === CheckStatus.Solved) EducationalCoreIcons.TaskSolved else EducationalCoreIcons.TaskFailed
   }
 
-  @Nullable
-  public String getFeedbackLink() {
-    return myFeedbackLink;
+  override fun getDir(baseDir: VirtualFile): VirtualFile? {
+    val lessonDir = lesson.getDir(baseDir)
+    return findDir(lessonDir)
   }
 
-  public void setFeedbackLink(@Nullable String feedbackLink) {
-    myFeedbackLink = feedbackLink;
+  fun getUIName(): String = if (course is HyperskillCourse) {
+    if (this is CodeTask) message("item.task.challenge") else message("item.task.stage")
+  }
+  else {
+    StudyItemType.TASK_TYPE.presentableName
   }
 
-  @Nullable
-  @Override
-  public VirtualFile getDir(@NotNull final VirtualFile courseDir) {
-    final VirtualFile lessonDir = getLesson().getDir(courseDir);
-    return TaskExt.findDir(this, lessonDir);
-  }
-
-  @NotNull
-  @Override
-  public Course getCourse() {
-    return getLesson().getCourse();
-  }
-
-  @NotNull
-  private Collection<TaskFile> getTaskFileValues() {
-    return getTaskFiles().values();
-  }
-
-  @SuppressWarnings("unused") //used for yaml deserialization
-  private void setTaskFileValues(List<TaskFile> taskFiles) {
-    this.myTaskFiles.clear();
-    for (TaskFile taskFile : taskFiles) {
-      this.myTaskFiles.put(taskFile.getName(), taskFile);
-    }
-  }
-
-  public int getRecord() {
-    return myRecord;
-  }
-
-  public void setRecord(int record) {
-    myRecord = record;
-  }
-
-  @Nullable
-  public CheckFeedback getFeedback() {
-    return myFeedback;
-  }
-
-  public void setFeedback(@Nullable CheckFeedback feedback) {
-    myFeedback = feedback;
-  }
-
-  @NotNull
-  public String getUIName() {
-    if (getCourse() instanceof HyperskillCourse) {
-      if (this instanceof CodeTask) return EduCoreBundle.message("item.task.challenge");
-      return EduCoreBundle.message("item.task.stage");
-    }
-    return StudyItemTypeKt.getPresentableName(TASK_TYPE);
-  }
-
-  public boolean supportSubmissions() {
-    return false;
-  }
-
-  /**
-   * @return null means that behaviour for this particular Task hasn't been configured by a user
-   * and {@link Course#getSolutionsHidden()} should be used instead
-   */
-  @Nullable
-  public Boolean getSolutionHidden() {
-    return solutionHidden;
-  }
-
-  public void setSolutionHidden(@Nullable Boolean solutionHidden) {
-    this.solutionHidden = solutionHidden;
-  }
-
-  public boolean isPluginTaskType() {
-    return true;
-  }
-
-  @NotNull
-  public CheckAction getCheckAction() {
-    return getCourse().getCheckAction();
-  }
-
-  @Nullable
-  public String getSubmissionsId() {
-    return submissionsId;
-  }
-
-  public void setSubmissionsId(@Nullable String submissionsId) {
-    this.submissionsId = submissionsId;
-  }
-
-  /**
-   * If task description changes after failing, then method returns true. For retry button
-   */
-  public boolean isChangedOnFailed() {
-    return false;
+  companion object {
+    @JvmStatic
+    protected val LOG = Logger.getInstance(Task::class.java)
   }
 }

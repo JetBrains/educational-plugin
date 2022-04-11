@@ -142,7 +142,7 @@ open class ToolWindowLinkHandler(val project: Project) {
 
         return when (container) {
           is Task -> {
-            val taskFile = container.getFile(remainingPath) ?: return null
+            val taskFile = container.getTaskFile(remainingPath) ?: return null
             val file = taskFile.getVirtualFile(project) ?: return null
             ParsedInCourseLink.FileInTask(container, file)
           }

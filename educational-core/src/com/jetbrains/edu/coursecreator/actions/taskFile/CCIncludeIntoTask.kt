@@ -33,6 +33,6 @@ private class IncludeFileIntoTask(private val info: FileInfo.FileInTask) : State
   }
 
   override fun restoreState(project: Project) {
-    info.task.taskFiles.remove(info.pathInTask)
+    info.task.removeTaskFile(info.pathInTask)
   }
 }

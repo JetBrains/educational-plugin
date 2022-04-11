@@ -230,7 +230,7 @@ sealed class Change {
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
-      task.taskFiles.remove(path)
+      task.removeTaskFile(path)
     }
 
     override fun apply(state: MutableMap<String, String>) {

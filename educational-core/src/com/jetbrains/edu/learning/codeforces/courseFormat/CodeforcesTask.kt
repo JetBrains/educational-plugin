@@ -70,7 +70,8 @@ open class CodeforcesTask : Task() {
     addTaskFile(TaskFile(path, text))
   }
 
-  override fun supportSubmissions(): Boolean = true
+  override val supportSubmissions: Boolean
+    get() = true
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)

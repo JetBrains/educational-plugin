@@ -48,7 +48,7 @@ abstract class TaskYamlMixin {
 
   @JsonProperty(value = FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  protected open lateinit var myFeedbackLink: String
+  protected open lateinit var feedbackLink: String
 
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)

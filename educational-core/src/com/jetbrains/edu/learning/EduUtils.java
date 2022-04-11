@@ -126,7 +126,7 @@ public class EduUtils {
 
   @Nullable
   public static String getTaskTextFromTask(@NotNull final Project project, @Nullable final Task task) {
-    if (task == null || task.getLesson() == null) {
+    if (task == null) {
       return null;
     }
     Lesson lesson = task.getLesson();

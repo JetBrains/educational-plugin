@@ -20,9 +20,8 @@ open class TheoryTask : Task {
 
   override val itemType: String = THEORY_TASK_TYPE
 
-  override fun getCheckAction(): CheckAction {
-    return CheckAction(lazyMessage("action.check.run.text"), lazyMessage("action.check.run.description"))
-  }
+  override val checkAction: CheckAction
+    get() = CheckAction(lazyMessage("action.check.run.text"), lazyMessage("action.check.run.description"))
 
   companion object {
     const val THEORY_TASK_TYPE: String = "theory"
