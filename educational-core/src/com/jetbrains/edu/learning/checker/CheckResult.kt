@@ -4,11 +4,12 @@ import com.jetbrains.edu.learning.EduNames.FAILED_TO_CHECK_URL
 import com.jetbrains.edu.learning.EduNames.NO_TESTS_URL
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkListener
 
 data class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
-  val message: String = "",
+  @Nls val message: String = "",
   val details: String? = null,
   val diff: CheckResultDiff? = null,
   val severity: CheckResultSeverity = CheckResultSeverity.Info,
