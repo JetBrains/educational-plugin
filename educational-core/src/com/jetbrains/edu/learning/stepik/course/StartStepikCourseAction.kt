@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.validateLanguage
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -27,8 +29,13 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
       language?.let {
         course.type = "${StepikNames.PYCHARM_PREFIX}${JSON_FORMAT_VERSION} ${language.id}"
         course.programmingLanguage = "${language.id} ${language.version}".trim()
-        return course
       }
+      course.validateLanguage().onError {
+        Messages.showErrorDialog(it, message("error.failed.to.import.course"))
+        return null
+      }
+      if (language?.language == null || language.language?.id !in EduConfiguratorManager.supportedEduLanguages) return null
+      return course
     }
     else if (isCompatibleEduCourse(course)) {
       return course
@@ -71,7 +78,8 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
       languages[0]
     }
     else {
-      val chooseLanguageDialog = ChooseStepikCourseLanguageDialog(languages, course.name)
+      val supportedLanguages = languages.filter { it.language?.id in EduConfiguratorManager.supportedEduLanguages }
+      val chooseLanguageDialog = ChooseStepikCourseLanguageDialog(supportedLanguages, course.name)
       if (chooseLanguageDialog.showAndGet()) {
         chooseLanguageDialog.selectedLanguage()
       }

@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.validateLanguage
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikLanguage
@@ -60,15 +60,8 @@ object StepikCourseConnector : CourseConnector {
         val stepikLanguage = StepikLanguage.langOfName(templateLanguage)
         val stepikLanguageId = stepikLanguage.id ?: continue
 
-        // set language to remoteCourse here, because otherwise it's python by default and no need to have language specific plugin
-        remoteCourse.programmingLanguage = stepikLanguageId
-        remoteCourse.validateLanguage().onError { return Err(it) }
-
-        val eduLanguage = EduLanguage(stepikLanguage.id, stepikLanguage.version)
-        val language = eduLanguage.language ?: continue
-        if (language.id in EduConfiguratorManager.supportedEduLanguages) {
-          languages.add(eduLanguage)
-        }
+        val eduLanguage = EduLanguage(stepikLanguageId, stepikLanguage.version)
+        languages.add(eduLanguage)
       }
     }
     catch (e: IOException) {
