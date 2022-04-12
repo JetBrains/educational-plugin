@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
+import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Point
 import java.awt.event.MouseEvent
@@ -29,8 +30,8 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
-                                                      private val title: String,
-                                                      tooltipText: String,
+                                                      @Nls private val title: String,
+                                                      @Nls tooltipText: String,
                                                       private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
   abstract val connector: EduOAuthConnector<T, *>

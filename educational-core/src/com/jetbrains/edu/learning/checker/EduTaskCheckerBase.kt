@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
+import org.jetbrains.annotations.Nls
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
   TaskChecker<EduTask>(task, project) {
@@ -197,6 +198,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   /**
    * Returns message for test error that will be shown to a user in Check Result panel
    */
+  @Nls
   protected open fun getErrorMessage(node: SMTestProxy): String = node.errorMessage ?: EduCoreBundle.message("error.execution.failed")
 
   /**

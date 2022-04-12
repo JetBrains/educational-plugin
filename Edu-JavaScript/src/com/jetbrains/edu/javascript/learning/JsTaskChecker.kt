@@ -26,6 +26,9 @@ open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
   override fun getComparisonErrorMessage(node: SMTestProxy): String = extractComparisonErrorMessage(node)
 
   override fun getErrorMessage(node: SMTestProxy): String {
+    // we suppress the hardcoded string literal inspection here because the failedMessageStart is not visible for users,
+    // but is highlighted by the inspection when passed to the function `substringAfter`
+    @Suppress("HardCodedStringLiteral")
     val failedMessageStart = "Failed: \""
     val errorMessage = node.errorMessage.orEmpty()
     return if (errorMessage.startsWith(failedMessageStart)) {
