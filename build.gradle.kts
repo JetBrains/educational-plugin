@@ -96,7 +96,7 @@ plugins {
   idea
   kotlin("jvm") version "1.6.10"
   id("org.jetbrains.intellij") version "1.6.0"
-  id("de.undercouch.download") version "4.0.4"
+  id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
 }
@@ -814,12 +814,13 @@ fun downloadStudioIfNeededAndGetPath(): String {
   val (archiveType, fileTreeMethod) = if (osFamily == "linux") "tar.gz" to this::tarTree else "zip" to this::zipTree
   val studioArchive = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${osFamily}.$archiveType")
   if (!studioArchive.exists()) {
-    download {
+    download.run {
       src(studioArtifactDownloadPath(archiveType))
       retries(2)
       readTimeout(3 * 60 * 1000) // 3 min
       dest(studioArchive)
     }
+    println("Download completed")
   }
 
   val studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion")
@@ -893,15 +894,6 @@ fun <T : ModuleDependency> T.excludeKotlinDeps() {
   exclude(module = "kotlin-stdlib")
   exclude(module = "kotlin-stdlib-common")
   exclude(module = "kotlin-stdlib-jdk8")
-}
-
-// TODO: find way how to use existing functionality
-fun download(configure: DownloadSpec.() -> Unit) {
-  with(DownloadAction(project)) {
-    configure()
-    execute()
-    println("Download completed")
-  }
 }
 
 fun loadProperties(path: String): Properties {
