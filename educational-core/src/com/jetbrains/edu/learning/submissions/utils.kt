@@ -7,12 +7,15 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.CLOSE_PLACEHOLDER_TAG
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.OPEN_PLACEHOLDER_TAG
+import java.util.*
 
 private const val MAX_FILE_SIZE: Int = 5 * 1024 * 1024 // 5 Mb
 private val LOG: Logger = Logger.getInstance(EduUtils::class.java.name)
@@ -55,4 +58,18 @@ fun List<SolutionFile>.checkNotEmpty(): List<SolutionFile> {
     error("No files were collected to post solution")
   }
   else return this
+}
+
+fun isVersionCompatible(submissionFormatVersion: Int): Boolean {
+  if (submissionFormatVersion > JSON_FORMAT_VERSION) {
+    // TODO: show notification with suggestion to update plugin
+    LOG.warn("The plugin supports versions of submission reply not greater than $JSON_FORMAT_VERSION. The current version is `$submissionFormatVersion`")
+    return false
+  }
+  return true
+}
+
+internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
+  val diff = time - otherDate.time
+  return diff > Time.MINUTE
 }

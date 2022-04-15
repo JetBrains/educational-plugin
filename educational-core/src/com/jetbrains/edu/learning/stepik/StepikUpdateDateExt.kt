@@ -3,7 +3,6 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -16,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.fillItems
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
-import java.util.*
+import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 
 fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
   // disable update for courses with framework lessons as now it's unsupported
@@ -128,11 +127,6 @@ fun EduCourse.setUpdated(courseFromServer: EduCourse) {
     val sectionFromServer = sectionsById[it.id] ?: error("Section with id ${it.id} not found")
     it.setUpdated(sectionFromServer)
   }
-}
-
-internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
-  val diff = time - otherDate.time
-  return diff > Time.MINUTE
 }
 
 private fun EduCourse.hasNewOrRemovedSections(courseFromStepik: EduCourse): Boolean {

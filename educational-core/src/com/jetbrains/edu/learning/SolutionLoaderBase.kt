@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
@@ -18,15 +18,17 @@ import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.hasSolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
@@ -39,7 +41,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private var futures: Map<Int, Future<Boolean>> = HashMap()
 
-  fun loadSolutionsInBackground() {
+  open fun loadSolutionsInBackground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
     ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
       override fun run(progressIndicator: ProgressIndicator) {
@@ -59,8 +61,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   @VisibleForTesting
   @JvmOverloads
   fun loadAndApplySolutions(course: Course, progressIndicator: ProgressIndicator? = null) {
-    val tasksToUpdate = provideTasksToUpdate(course)
-    loadAndApplySolutions(course, tasksToUpdate, progressIndicator)
+    loadAndApplySolutions(course, course.allTasks, progressIndicator)
   }
 
   private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null,
@@ -200,10 +201,18 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   open fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean = false): Boolean {
     val taskSolutions = loadSolution(task, submissions)
     ProgressManager.checkCanceled()
-    if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
+    if (task is TheoryTask && taskSolutions.checkStatus == CheckStatus.Solved) {
+      applyCheckStatus(task, taskSolutions.checkStatus)
+    }
+    else if (!taskSolutions.hasIncompatibleSolutions && taskSolutions.solutions.isNotEmpty()) {
       applySolutions(project, task, taskSolutions, force)
     }
     return taskSolutions.hasIncompatibleSolutions
+  }
+
+  private fun applyCheckStatus(task: TheoryTask, checkStatus: CheckStatus) {
+    task.status = checkStatus
+    YamlFormatSynchronizer.saveItem(task)
   }
 
   override fun dispose() {
@@ -213,7 +222,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   private fun loadSubmissions(tasks: List<Task>): List<Submission>? = SubmissionsManager.getInstance(project).getSubmissions(tasks)
 
   protected abstract fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions
-  abstract fun provideTasksToUpdate(course: Course): List<Task>
 
   companion object {
 

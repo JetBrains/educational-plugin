@@ -6,7 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeAllWithProgress
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
+import com.jetbrains.edu.learning.stepik.StepSource
+import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import java.util.concurrent.Executors
 
 object StepikCourseLoader {

@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.annotations.VisibleForTesting
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
@@ -21,6 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.checkNotEmpty
+import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
 import okhttp3.ConnectionPool
 import org.apache.commons.httpclient.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -54,11 +59,13 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun createSubmissionsDocument(project: Project,
-                                submissionDocument: SubmissionDocument,
-                                task: Task,
-                                submissionId: Int,
-                                showErrorNotification: Boolean = true) {
+  private fun createSubmissionsDocument(
+    project: Project,
+    submissionDocument: SubmissionDocument,
+    task: Task,
+    submissionId: Int,
+    showErrorNotification: Boolean = true
+  ) {
     if (!isUserAuthorizedWithJwtToken()) return
     LOG.info("Creating new submission document for task ${task.name}")
     val response = submissionsService.createDocument(submissionDocument).executeParsingErrors(true)
@@ -82,7 +89,7 @@ class MarketplaceSubmissionsConnector {
       LOG.info("Submission document for task ${task.name} successfully created")
   }
 
-  fun updateSubmissionsDocument(project: Project, submissionDocument: SubmissionDocument, task: Task) {
+  private fun updateSubmissionsDocument(project: Project, submissionDocument: SubmissionDocument, task: Task) {
     if (!isUserAuthorizedWithJwtToken()) return
     LOG.info("Updating submission document with documentId = ${task.submissionsId} for task ${task.name}")
     submissionsService.updateDocument(submissionDocument).executeParsingErrors(true)
@@ -228,6 +235,36 @@ class MarketplaceSubmissionsConnector {
       LOG.error("Invalid token: $token inserted")
       false
     }
+  }
+
+  fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
+    val submission = MarketplaceSubmission(task.id, task.status, getSolutionFiles(project, task), task.course.marketplaceCourseVersion)
+    val submissionDocument = SubmissionDocument(docId = task.submissionsId,
+                                                submissionContent = objectMapper.writeValueAsString(submission).trimIndent())
+    if (task.submissionsId == null) {
+      val submissionId = submission.id ?: error("Submission id not generated at creation")
+      createSubmissionsDocument(project, submissionDocument, task, submissionId)
+    }
+    else {
+      updateSubmissionsDocument(project, submissionDocument, task)
+    }
+    return submission
+  }
+
+  private fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
+    val files = mutableListOf<SolutionFile>()
+    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find task directory ${task.name}")
+
+    for (taskFile in task.taskFiles.values) {
+      val virtualFile = findTaskFileInDirWithSizeCheck(taskFile, taskDir) ?: continue
+
+      runReadAction {
+        val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
+        files.add(SolutionFile(taskFile.name, document.text, taskFile.isVisible, taskFile.answerPlaceholders))
+      }
+    }
+
+    return files.checkNotEmpty()
   }
 
   companion object {

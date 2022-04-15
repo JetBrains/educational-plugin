@@ -6,16 +6,15 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.SolutionLoaderBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -27,7 +26,8 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
     val lastSubmission: Submission = submissions.firstOrNull { it.taskId == task.id } ?: return TaskSolutions.EMPTY
-    if (lastSubmission !is StepikBasedSubmission) error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of Submission class")
+    if (lastSubmission !is StepikBasedSubmission)
+      error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of ${StepikBasedSubmission::class.simpleName} class")
 
     val files: Map<String, Solution> = when (task) {
       is EduTask -> lastSubmission.eduTaskFiles
@@ -40,7 +40,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     }.filter { (_, solution) -> solution.isVisible }
 
     return if (files.isEmpty()) TaskSolutions.EMPTY
-    else TaskSolutions(lastSubmission.time, lastSubmission.status.toCheckStatus(), files)
+    else TaskSolutions(lastSubmission.time, lastSubmission.status?.toCheckStatus() ?: CheckStatus.Unchecked, files)
   }
 
   private val StepikBasedSubmission.eduTaskFiles: Map<String, Solution>
@@ -51,16 +51,6 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     val configurator = task.course.configurator as? HyperskillConfigurator ?: return emptyMap()
     val taskFile = configurator.getCodeTaskFile(project, task) ?: return emptyMap()
     return mapOf(taskFile.name to Solution(codeFromServer, true, emptyList()))
-  }
-
-  override fun provideTasksToUpdate(course: Course): List<Task> {
-    return course.items.asSequence().flatMap {
-      when (it) {
-        is Lesson -> sequenceOf(it)
-        is Section -> it.items.asSequence().filterIsInstance<Lesson>()
-        else -> emptySequence()
-      }
-    }.flatMap { it.taskList.asSequence() }.toList()
   }
 
   override fun updateTasks(course: Course,
@@ -80,12 +70,6 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
       markStageAsCompleted(task)
     }
     return super.updateTask(project, task, submissions, force)
-  }
-
-  private fun String?.toCheckStatus(): CheckStatus = when (this) {
-    EduNames.WRONG -> CheckStatus.Failed
-    EduNames.CORRECT -> CheckStatus.Solved
-    else -> CheckStatus.Unchecked
   }
 
   companion object {

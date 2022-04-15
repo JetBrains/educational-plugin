@@ -2,21 +2,19 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
+import com.jetbrains.edu.learning.SolutionLoadingTestBase
 import com.jetbrains.edu.learning.actions.NextTaskAction
-import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.testAction
-import junit.framework.TestCase
 import java.text.SimpleDateFormat
 
-class StepikSolutionLoadingTest : NavigationTestBase() {
+class StepikSolutionLoadingTest : SolutionLoadingTestBase() {
 
   private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
 
@@ -279,10 +277,6 @@ class StepikSolutionLoadingTest : NavigationTestBase() {
     for (task in course.allTasks) {
       task.updateDate = updateDate
     }
-  }
-
-  private fun checkTaskStatuses(tasks: List<Task>, expectedStatuses: List<CheckStatus>) {
-    tasks.zip(expectedStatuses) { task, status -> TestCase.assertEquals(status, task.status) }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/loadSolutions/"

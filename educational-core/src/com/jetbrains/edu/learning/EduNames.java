@@ -89,6 +89,7 @@ public class EduNames {
   // Submissions status
   public static final String CORRECT = "correct";
   public static final String WRONG = "wrong";
+  public static final String UNCHECKED = "unchecked";
 
   // Troubleshooting guide links
   public static final String TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/troubleshooting-guide.html";

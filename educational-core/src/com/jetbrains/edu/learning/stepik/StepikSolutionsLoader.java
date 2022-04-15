@@ -54,6 +54,7 @@ import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStepikSubmission;
 import static com.jetbrains.edu.learning.submissions.SubmissionUtils.getSolutionFiles;
+import static com.jetbrains.edu.learning.submissions.SubmissionUtils.isVersionCompatible;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -383,10 +384,7 @@ public class StepikSolutionsLoader implements Disposable {
       return TaskSolutions.EMPTY;
     }
 
-    if (formatVersion > EduVersions.JSON_FORMAT_VERSION) {
-      // TODO: show notification with suggestion to update plugin
-      LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
-                             EduVersions.JSON_FORMAT_VERSION, formatVersion));
+    if (!isVersionCompatible(formatVersion)) {
       return TaskSolutions.INCOMPATIBLE;
     }
 
@@ -428,8 +426,8 @@ public class StepikSolutionsLoader implements Disposable {
 
   @NotNull
   private static CheckStatus getCheckStatus(@Nullable Submission submission) {
-    if (submission == null) return CheckStatus.Unchecked;
-    return EduNames.CORRECT.equals(submission.getStatus()) ? CheckStatus.Solved : CheckStatus.Failed;
+    if (submission == null || submission.getStatus() == null) return CheckStatus.Unchecked;
+    return CheckStatus.toCheckStatus(submission.getStatus());
   }
 
   @Nullable
@@ -553,7 +551,6 @@ public class StepikSolutionsLoader implements Disposable {
     result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
     return result;
   }
-
 
   @Nullable
   static String getSolutionTextForStepikAssignment(@NotNull Task task,

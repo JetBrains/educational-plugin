@@ -146,7 +146,7 @@ fun Task.canShowSolution(): Boolean {
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
 
-fun Task.hasSolutions(): Boolean = this !is TheoryTask && this !is DataTask
+fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask
 
 fun Task.getCodeTaskFile(project: Project): TaskFile? {
   val files = taskFiles.values

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.va
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
+import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.checkForUpdates
 import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
@@ -43,5 +44,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
       return
     }
     course.checkForUpdates(project, true) {}
+
+    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
   }
 }

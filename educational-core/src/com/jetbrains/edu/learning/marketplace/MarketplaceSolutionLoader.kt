@@ -1,60 +1,64 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.SolutionLoaderBase
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
-import com.jetbrains.edu.learning.marketplace.api.SubmissionDocument
-import com.jetbrains.edu.learning.stepik.SolutionLoaderBase
-import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.submissions.Submission
-import com.jetbrains.edu.learning.submissions.checkNotEmpty
-import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
+import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
+  override fun loadSolutionsInBackground() {
+    val account = MarketplaceSettings.INSTANCE.account ?: return
+    if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && account.isJwtTokenProvided()) {
+      super.loadSolutionsInBackground()
+    }
+  }
+
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
-    TODO("Not yet implemented")
-  }
+    // make sure the first submission is the latest after switching to a separate service on grazie
+    val lastSubmission = submissions.firstOrNull { it.taskId == task.id }
+    val formatVersion = lastSubmission?.formatVersion ?: return TaskSolutions.EMPTY
 
-  override fun provideTasksToUpdate(course: Course): List<Task> {
-    TODO("Not yet implemented")
-  }
+    if (!isVersionCompatible(formatVersion)) return TaskSolutions.INCOMPATIBLE
 
-  fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
-    val submission = MarketplaceSubmission(task.id, task.status, getSolutionFiles(project, task), task.course.marketplaceCourseVersion)
-    val connector = MarketplaceSubmissionsConnector.getInstance()
-    val submissionDocument = SubmissionDocument(docId = task.submissionsId,
-                                                submissionContent = connector.objectMapper.writeValueAsString(submission).trimIndent())
-    if (task.submissionsId == null) {
-      val submissionId = submission.id ?: error("Submission id not generated at creation")
-      connector.createSubmissionsDocument(project, submissionDocument, task, submissionId)
+    if (lastSubmission !is MarketplaceSubmission)
+      error("Marketplace submission ${lastSubmission.id} for task ${task.name} is not instance " +
+            "of ${MarketplaceSubmission::class.simpleName} class")
+
+    if (lastSubmission.courseVersion != task.course.marketplaceCourseVersion) {
+      LOG.info("Marketplace submission ${lastSubmission.id} for task ${task.name} is not up to date. " +
+               "Submission course version: ${lastSubmission.courseVersion}, course version: ${task.course.marketplaceCourseVersion}")
+      return TaskSolutions.INCOMPATIBLE
     }
-    else {
-      connector.updateSubmissionsDocument(project, submissionDocument, task)
-    }
-    return submission
-  }
 
-  private fun getSolutionFiles(project: Project, task: Task): List<SolutionFile> {
-    val files = mutableListOf<SolutionFile>()
-    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find task directory ${task.name}")
-
-    for (taskFile in task.taskFiles.values) {
-      val virtualFile = findTaskFileInDirWithSizeCheck(taskFile, taskDir) ?: continue
-
-      ApplicationManager.getApplication().runReadAction {
-        val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return@runReadAction
-        files.add(SolutionFile(taskFile.name, document.text, taskFile.isVisible, taskFile.answerPlaceholders))
+    val files =
+      when (task) {
+        is TheoryTask,
+        is ChoiceTask -> emptyMap()
+        is EduTask -> lastSubmission.eduTaskFiles()
+        else -> {
+          LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
+          emptyMap()
+        }
       }
-    }
 
-    return files.checkNotEmpty()
+    return if (files.isEmpty() && task !is TheoryTask && task !is ChoiceTask) TaskSolutions.EMPTY
+    else TaskSolutions(lastSubmission.time, lastSubmission.status?.toCheckStatus() ?: CheckStatus.Unchecked, files)
+  }
+
+  private fun MarketplaceSubmission.eduTaskFiles(): Map<String, Solution> {
+    return solutionFiles?.associate { it.name to Solution(it.text, it.isVisible, it.placeholders ?: emptyList()) } ?: emptyMap()
   }
 
   companion object {

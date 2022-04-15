@@ -295,12 +295,12 @@ class MarketplaceSubmission : Submission {
   // used to mark TheoryTasks solved
   constructor(task: TheoryTask) : this(task.id, CheckStatus.Solved, null, task.course.marketplaceCourseVersion)
 
-  constructor(taskId: Int, status: CheckStatus, files: List<SolutionFile>?, courseVersion: Int) {
+  constructor(taskId: Int, checkStatus: CheckStatus, files: List<SolutionFile>?, courseVersion: Int) {
     time = Date()
     id = this.hashCode()
     solutionFiles = files?.filter { it.isVisible }
     this.taskId = taskId
-    this.status = status.toString()
+    this.status = checkStatus.rawStatus
     this.courseVersion = courseVersion
   }
 }

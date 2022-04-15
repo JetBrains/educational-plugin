@@ -1,30 +1,19 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-class HyperskillLoadingTest : NavigationTestBase() {
-  override fun setUp() {
-    super.setUp()
-    logInFakeHyperskillUser()
-  }
+class HyperskillLoadingTest : SolutionLoadingTestBase() {
+  override fun doLoginFakeUser() = logInFakeHyperskillUser()
 
-  override fun tearDown() {
-    logOutFakeHyperskillUser()
-    super.tearDown()
-  }
+  override fun doLogout() = logOutFakeHyperskillUser()
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
@@ -71,15 +60,7 @@ class HyperskillLoadingTest : NavigationTestBase() {
     val course = createHyperskillCourse()
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 
-    val file = findFileInTask(0, 1, "src/Task.kt")
-    val newText = "lalala"
-
-    // hack: timestamps don't change in tests
-    runWriteAction { VfsUtil.saveText(file, newText) }
-    (file as VirtualFileSystemEntry).timeStamp = System.currentTimeMillis()
-
-    //explicitly mark as existing project
-    project.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, false)
+    val newText = makeLocalChanges(findFileInTask(0, 1, "src/Task.kt"))
 
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(course)
 

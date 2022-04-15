@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -30,8 +31,14 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     } as EduCourse
   }
 
-  fun `test marketplace edu task submission serialization`() {
+  fun `test test creating submission for solved edu task`() = createSubmission(EduNames.CORRECT, CheckStatus.Solved)
+  fun `test test creating submission for failed edu task`() = createSubmission(EduNames.WRONG, CheckStatus.Failed)
+  fun `test correct submission deserialization`() = deserializeSubmission(EduNames.CORRECT, CheckStatus.Solved)
+  fun `test wrong submission deserialization`() = deserializeSubmission(EduNames.WRONG, CheckStatus.Failed)
+
+  private fun createSubmission(submissionStatus: String, checkStatus: CheckStatus) {
     val eduTask = course.allTasks[0]
+    eduTask.status = checkStatus
     val solutionFiles = getSolutionFiles(project, eduTask)
     val firstSolutionFile = solutionFiles.first()
     val placeholder = AnswerPlaceholder(2, "placeholder text")
@@ -44,7 +51,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     doTest(submission, """
       |id: $submissionId
       |time: ${submissionTime.time}
-      |status: Unchecked
+      |status: $submissionStatus
       |course_version: 3
       |task_id: 1
       |solution:
@@ -60,13 +67,13 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |      offset: 2
       |    initialized_from_dependency: false
       |    selected: false
-      |    status: Unchecked
+      |    status: $checkStatus
       |version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())
   }
 
-  fun `test marketplace submission deserialization`() {
+  private fun deserializeSubmission(submissionStatus: String, checkStatus: CheckStatus) {
     val submissionId = 21556587
     val submissionTime = Date()
     val courseVersion = 3
@@ -75,21 +82,21 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       |id: $submissionId
       |time: ${submissionTime.time}
       |task_id: $taskId
-      |status: Solved
+      |status: $submissionStatus
       |solution:
       |- name: src/Task.kt
       |  text: solution file text
       |  is_visible: true
       |  placeholders:
       |  - offset: 2
-      |    length: 17
+      |    length: 16
       |    placeholder_text: placeholder text
       |    initial_state:
       |      length: 16
       |      offset: 2
       |    initialized_from_dependency: false
       |    selected: false
-      |    status: Unchecked
+      |    status: $checkStatus
       |- name: src/Test.kt
       |  text: test file text
       |  is_visible: false
@@ -103,11 +110,12 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     assertEquals(submissionId, submission.id)
     assertEquals(taskId, submission.taskId)
     assertEquals(submissionTime, submission.time)
-    assertEquals(CheckStatus.Solved.name, submission.status)
+    assertEquals(submissionStatus, submission.status)
     assertEquals(JSON_FORMAT_VERSION, submission.formatVersion)
     assertEquals(courseVersion, submission.courseVersion)
     val firstSolutionFile = SolutionFile("src/Task.kt", "solution file text", true)
     val placeholder = AnswerPlaceholder(2, "placeholder text")
+    placeholder.status = checkStatus
     firstSolutionFile.placeholders = listOf(placeholder)
     val expectedSolutionFilesList = listOf(firstSolutionFile, SolutionFile("src/Test.kt", "test file text", false))
     checkSolutionFiles(expectedSolutionFilesList, submission.solutionFiles)
@@ -125,7 +133,14 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
       if (expected.placeholders.isNullOrEmpty()) continue
       checkNotNull(actual.placeholders)
       assertEquals(expected.placeholders!!.size, actual.placeholders!!.size)
-      assertEquals(expected.placeholders!!.first().placeholderText, actual.placeholders!!.first().placeholderText)
+      val expectedPlaceholder = expected.placeholders!!.first()
+      val actualPlaceholder = actual.placeholders!!.first()
+      assertEquals(expectedPlaceholder.placeholderText, actualPlaceholder.placeholderText)
+      assertEquals(expectedPlaceholder.status, actualPlaceholder.status)
+      assertEquals(expectedPlaceholder.possibleAnswer, actualPlaceholder.possibleAnswer)
+      assertEquals(expectedPlaceholder.length, actualPlaceholder.length)
+      assertEquals(expectedPlaceholder.placeholderDependency, actualPlaceholder.placeholderDependency)
+      assertEquals(expectedPlaceholder.offset, actualPlaceholder.offset)
     }
   }
 

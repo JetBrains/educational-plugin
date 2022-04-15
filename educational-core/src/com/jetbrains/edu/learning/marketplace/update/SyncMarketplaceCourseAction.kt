@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.runInBackground
@@ -28,6 +29,8 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
         showNotification(project, message("notification.course.up.to.date"), null)
       }
     }
+
+    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }

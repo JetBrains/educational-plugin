@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.stepik.PostSolutionCheckListener
 
@@ -18,7 +19,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
   }
 
   override fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
-    return MarketplaceSolutionLoader.getInstance(project).postSubmission(project, task)
+    return MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task)
   }
 
   override fun isUpToDate(course: EduCourse, task: Task): Boolean = course.isUpToDate

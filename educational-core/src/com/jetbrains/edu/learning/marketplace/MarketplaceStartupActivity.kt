@@ -30,7 +30,7 @@ class MarketplaceStartupActivity : StartupActivity {
 
     val account = MarketplaceSettings.INSTANCE.account
     if (account != null && account.isJwtTokenProvided()) {
-      submissionsManager.prepareSubmissionsContent()
+      submissionsManager.prepareSubmissionsContent { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
     }
     else {
       val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)

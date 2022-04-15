@@ -25,8 +25,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
+import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.CourseUpdater
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException

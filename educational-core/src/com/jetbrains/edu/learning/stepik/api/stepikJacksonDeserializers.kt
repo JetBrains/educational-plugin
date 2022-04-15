@@ -12,8 +12,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
@@ -135,8 +133,6 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
                                                               vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Task? {
-    val module = SimpleModule()
-    module.addDeserializer(AnswerPlaceholder::class.java, StepikSubmissionAnswerPlaceholderDeserializer(replyVersion, language))
     val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     node.migrate(replyVersion, JSON_FORMAT_VERSION, language)
     return doDeserializeTask(node, jp.codec)
@@ -201,48 +197,6 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
 
     private fun ObjectNode.to10Version() {
       To10VersionLocalCourseConverter.convertTaskObject(this)
-    }
-  }
-}
-
-private class StepikSubmissionAnswerPlaceholderDeserializer @JvmOverloads constructor(
-  private val replyVersion: Int,
-  private val language: String?,
-  vc: Class<*>? = null) : StdDeserializer<AnswerPlaceholder>(vc) {
-
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): AnswerPlaceholder? {
-    val placeholderObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
-    placeholderObject.migrate(replyVersion, language)
-    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
-    val placeholder = objectMapper.treeToValue(placeholderObject, AnswerPlaceholder::class.java)
-
-    if (placeholderObject.has(SerializationUtils.Json.SELECTED)) {
-      placeholder.selected = placeholderObject.get(SerializationUtils.Json.SELECTED).asBoolean()
-    }
-
-    if (placeholderObject.has(SerializationUtils.STATUS)) {
-      placeholder.status = CheckStatus.valueOf(placeholderObject.get(SerializationUtils.STATUS).asText())
-    }
-
-    return placeholder
-  }
-
-  companion object {
-    private fun ObjectNode.migrate(version: Int, language: String?) {
-      @Suppress("NAME_SHADOWING")
-      var version = version
-      while (version < JSON_FORMAT_VERSION) {
-        when (version) {
-          1 -> ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(this)
-          6 -> {
-            val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
-            if (taskFilesRoot != null) {
-              ToSeventhVersionJsonStepOptionConverter.convertPlaceholder(this, taskFilesRoot)
-            }
-          }
-        }
-        version++
-      }
     }
   }
 }

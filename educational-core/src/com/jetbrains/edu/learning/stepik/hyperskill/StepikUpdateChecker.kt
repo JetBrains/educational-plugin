@@ -11,9 +11,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.checkIsStepikUpToDate
-import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.stepik.updateCourseOnStepik
+import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 
 @Service

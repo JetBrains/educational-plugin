@@ -97,7 +97,7 @@ class SubmissionsManager(private val project: Project) {
 
   fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {
     if (submission == null || checkStatus == CheckStatus.Unchecked) return
-    submission.status = if (checkStatus == CheckStatus.Solved) EduNames.CORRECT else EduNames.WRONG
+    submission.status = checkStatus.rawStatus
     addToSubmissions(taskId, submission)
   }
 
