@@ -41,7 +41,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
     else {
       course.updateDate = remoteCourse.updateDate
-      showNotification(project, object: AnAction(message("course.dialog.learn.more")) {
+      showNotification(project, object: AnAction(message("course.dialog.learn.more.title")) {
         override fun actionPerformed(e: AnActionEvent) {
           getInstance().browse(MARKETPLACE_COURSES_HELP)
         }

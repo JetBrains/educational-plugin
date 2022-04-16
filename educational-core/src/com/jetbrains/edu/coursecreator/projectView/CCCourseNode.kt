@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseNode
 import com.jetbrains.edu.learning.projectView.LessonNode
 import com.jetbrains.edu.learning.projectView.SectionNode
+import org.jetbrains.annotations.Nls
 
 class CCCourseNode(
   project: Project,
@@ -56,7 +57,7 @@ class CCCourseNode(
   }
 
   override val additionalInfo: String
-    get() = "(${EduCoreBundle.message("course.creator.course.view.course.creation")})"
+    @Nls get() = "(${EduCoreBundle.message("course.creator.course.view.course.creation")})"
 
   companion object {
     private val NAMES_TO_IGNORE: Collection<String> = ContainerUtil.newHashSet(LOCAL_PROPERTIES, GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN)

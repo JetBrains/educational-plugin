@@ -11,10 +11,9 @@ import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
-
-import static com.jetbrains.edu.learning.EduNames.COURSE_IGNORE;
 
 /**
  * Add to the file name postfix "course.creator.course.view.excluded" from EduCoreBundle.properties
@@ -40,8 +39,9 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
     myName = isExcluded ? excludedName(name) : name;
   }
 
+  @Nls
   private static String excludedName(String name) {
-    return String.format("%s (%s)", name, EduCoreBundle.message("course.creator.course.view.excluded"));
+    return EduCoreBundle.message("course.creator.course.view.excluded", name);
   }
 
   @Override

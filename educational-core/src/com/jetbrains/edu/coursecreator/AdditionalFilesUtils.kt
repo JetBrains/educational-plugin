@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
 import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.jetbrains.annotations.Nls
 import java.io.IOException
 
 object AdditionalFilesUtils {
@@ -39,14 +40,19 @@ object AdditionalFilesUtils {
     val filesNotFound = excludedFiles.filter { project.courseDir.findFileByRelativePath(it) == null }
 
     return if (filesNotFound.isNotEmpty()) {
-      buildString {
-        appendLine("${EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)}:")
-        appendLine()
-        appendLine(filesNotFound.joinToString())
-      }
+      getFilesNotFoundErrorMessage("${EduCoreBundle.message("course.creator.error.ignored.files.not.found", EduNames.COURSE_IGNORE)}:",
+                                   filesNotFound)
     }
     else null
   }
+
+  @Nls
+  private fun getFilesNotFoundErrorMessage(text: @Nls String, filesNotFound: List<String>): String =
+    buildString {
+      appendLine(text)
+      appendLine()
+      appendLine(filesNotFound.joinToString())
+    }
 
   /**
    * Create list with additional files for course.

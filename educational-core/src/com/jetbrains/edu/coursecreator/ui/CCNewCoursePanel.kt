@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
+import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -251,9 +252,13 @@ class CCNewCoursePanel(
     this.settings.setSettingsComponents(settings)
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
-    descriptionTextArea.text = _course.description.nullize() ?: EduCoreBundle.message("dialog.message.create.course",
-                                                                                      _course.technologyName ?: _course.languageDisplayName)
+    descriptionTextArea.text = _course.description.nullize() ?: getCreateCourseDialogMessage()
     doValidation()
+  }
+
+  @Nls
+  private fun getCreateCourseDialogMessage(): String {
+    return EduCoreBundle.message("dialog.message.create.course", _course.technologyName ?: _course.languageDisplayName)
   }
 
   private fun collectCoursesData(course: Course?): List<CourseData> {

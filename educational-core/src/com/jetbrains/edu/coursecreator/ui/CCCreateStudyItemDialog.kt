@@ -11,6 +11,7 @@ import com.jetbrains.edu.coursecreator.createItemTitleMessage
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 abstract class CCCreateStudyItemDialogBase(
@@ -30,13 +31,7 @@ abstract class CCCreateStudyItemDialogBase(
   override fun postponeValidation(): Boolean = false
 
   override fun createCenterPanel(): JComponent {
-    addTextValidator(nameField) { text ->
-      when {
-        text.isNullOrEmpty() -> EduCoreBundle.message("course.creator.new.study.item.empty.name")
-        !validator.checkInput(text) -> validator.getErrorText(text)
-        else -> null
-      }
-    }
+    addTextValidator(nameField) { it.getValidatorText() }
     return panel {
       if (showNameField()) {
         row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") { nameField() }
@@ -44,6 +39,14 @@ abstract class CCCreateStudyItemDialogBase(
       createAdditionalFields(this)
     }
   }
+
+  @Nls
+  private fun String?.getValidatorText() =
+    when {
+      isNullOrEmpty() -> EduCoreBundle.message("course.creator.new.study.item.empty.name")
+      !validator.checkInput(this) -> validator.getErrorText(this)
+      else -> null
+    }
 
   override fun getPreferredFocusedComponent(): JComponent? = nameField
 

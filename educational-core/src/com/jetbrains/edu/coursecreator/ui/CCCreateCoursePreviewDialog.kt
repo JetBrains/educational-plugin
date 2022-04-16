@@ -77,7 +77,6 @@ class CCCreateCoursePreviewDialog(
     return DialogStyle.COMPACT
   }
 
-
   @VisibleForTesting
   inner class CourseArchivePanel(parentDisposable: Disposable) : CoursePanel(parentDisposable, false) {
 

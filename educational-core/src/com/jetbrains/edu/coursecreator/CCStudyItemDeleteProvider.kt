@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import org.jetbrains.annotations.Nls
 import java.util.*
 
 class CCStudyItemDeleteProvider : DeleteProvider {
@@ -49,23 +50,14 @@ class CCStudyItemDeleteProvider : DeleteProvider {
         allTasks to allTasks.flatMapTo(HashSet(), Task::getDependentTasks) - allTasks
       }
       is Task -> setOf(studyItem) to studyItem.getDependentTasks()
-      else -> emptySet<Task>() to emptySet<Task>()
+      else -> emptySet<Task>() to emptySet()
     }
 
     val title = IdeBundle.message("prompt.delete.elements", itemType)
-    val message = buildString {
-      append(IdeBundle.message("warning.delete.all.files.and.subdirectories", studyItem.name))
-      if (dependentTasks.isNotEmpty()) {
-        // TODO: show dependent task in more convenient way. See https://youtrack.jetbrains.com/issue/EDU-1465
-        appendLine()
-        appendLine(EduCoreBundle.message("course.creator.warning.removing.dependencies"))
-        appendLine("${EduCoreBundle.message("course.creator.warning.dependent.tasks")}:")
-        appendLine()
-        for (task in dependentTasks) {
-          appendLine("• ${taskMessageName(task)}")
-        }
-      }
-    }
+    val message = getDeleteItemsDialogMessage(dependentTasks,
+                                              IdeBundle.message("warning.delete.all.files.and.subdirectories", studyItem.name),
+                                              EduCoreBundle.message("course.creator.warning.removing.dependencies"),
+                                              "${EduCoreBundle.message("course.creator.warning.dependent.tasks")}:")
 
     val result = showOkCancelDialog(project, message, title, getOkButton(), getCancelButton(), getQuestionIcon())
     if (result != OK) return
@@ -82,6 +74,27 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       CommandProcessor.getInstance().executeCommand(project, {
         virtualFile.delete(CCStudyItemDeleteProvider::class.java)
       }, "", Object())
+    }
+  }
+
+  private fun getDeleteItemsDialogMessage(
+    dependentTasks: Set<Task>,
+    allItemsDeletedWarning: @Nls String,
+    removingPlaceholderDependenciesWarning: @Nls String,
+    dependentTasksWarning: @Nls String
+  ): String {
+    return buildString {
+      append(allItemsDeletedWarning)
+      if (dependentTasks.isNotEmpty()) {
+        // TODO: show dependent task in more convenient way. See https://youtrack.jetbrains.com/issue/EDU-1465
+        appendLine()
+        appendLine(removingPlaceholderDependenciesWarning)
+        appendLine(dependentTasksWarning)
+        appendLine()
+        for (task in dependentTasks) {
+          appendLine("• ${taskMessageName(task)}")
+        }
+      }
     }
   }
 

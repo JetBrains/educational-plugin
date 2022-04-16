@@ -9,18 +9,22 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.tab.AdditionalTab
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.YAML_HELP_TAB
 import org.apache.commons.lang.text.StrSubstitutor
+import org.jetbrains.annotations.Nls
 
 class YamlHelpTab(project: Project) : AdditionalTab(project, YAML_HELP_TAB) {
   override val plainText: Boolean = true
 
   init {
     init()
-    val template = loadText(YAML_TAB_TEMPLATE_FILE) ?: EduCoreBundle.message("course.creator.cannot.load.yaml.documentation")
+    val template = loadText(YAML_TAB_TEMPLATE_FILE) ?: getCannotLoadYamlDocumentationText()
     val text = StrSubstitutor(StyleManager.resources()).replace(template)
     setText(text)
   }
 
   override fun update(task: Task) {}
+
+  @Nls
+  private fun getCannotLoadYamlDocumentationText(): String = EduCoreBundle.message("course.creator.cannot.load.yaml.documentation")
 
   companion object {
     private const val YAML_TAB_TEMPLATE_FILE = "/style/yaml-tab/yaml-tab-template.html.ft"

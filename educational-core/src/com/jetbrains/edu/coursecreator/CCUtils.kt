@@ -357,7 +357,7 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun checkIfAuthorizedToStepik(project: Project, failedActionTitle: String): Boolean {
+  fun checkIfAuthorizedToStepik(project: Project, @Nls(capitalization = Nls.Capitalization.Title) failedActionTitle: String): Boolean {
     return checkIfAuthorized(project, failedActionTitle, EduSettings.isLoggedIn()) {
       StepikConnector.getInstance().doAuthorize()
     }
