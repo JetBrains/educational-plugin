@@ -1,11 +1,14 @@
 package com.jetbrains.edu.coursecreator
 
+import com.google.common.collect.Lists
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 
 class CopyStudyItemTest : EduTestCase() {
 
@@ -50,6 +53,21 @@ class CopyStudyItemTest : EduTestCase() {
 
     val stepikCourse = localCourse.copyAs(StepikCourse::class.java)
     checkItems(localCourse, stepikCourse)
+  }
+
+  fun `test copy course no init`() {
+    val remoteCourse = EduCourse()
+    remoteCourse.id = 1
+    remoteCourse.name = "Test Course"
+    remoteCourse.courseMode = CourseMode.EDUCATOR
+    remoteCourse.items = Lists.newArrayList()
+    remoteCourse.programmingLanguage = PlainTextLanguage.INSTANCE.id
+    remoteCourse.description = "Test Course Description"
+
+    val stepikCourse = stepikCourseFromRemote(remoteCourse)
+    assertEquals(remoteCourse.name, stepikCourse.name)
+    assertEquals(remoteCourse.index, stepikCourse.index)
+    assertEquals(remoteCourse.id, stepikCourse.id)
   }
 
   fun `test copy edu task`() {

@@ -17,6 +17,7 @@ class StepikCourse : EduCourse() {
 }
 
 fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse {
+  remoteCourse.parent = remoteCourse
   val stepikCourse = remoteCourse.copyAs(StepikCourse::class.java)
   stepikCourse.description = remoteCourse.description + descriptionNote(stepikCourse.id)
   return stepikCourse
