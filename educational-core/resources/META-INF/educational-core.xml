@@ -125,8 +125,6 @@
 
     <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
 
-    <action id="Educational.Educator.UpdateAdditionalMaterials" class="com.jetbrains.edu.coursecreator.actions.stepik.UpdateAdditionalMaterials"/>
-
     <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
       <action id="Educational.Educator.ShowToStudent" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToLearner"/>
@@ -143,7 +141,6 @@
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <reference id="Educational.Educator.CheckAllTasks"/>
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
-      <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 
@@ -155,7 +152,6 @@
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <reference id="Educational.Educator.CheckAllTasks"/>
       <reference id="Educational.Educator.PackCourse"/>
-      <reference id="Educational.Educator.PushCourse"/>
       <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
     </group>
 

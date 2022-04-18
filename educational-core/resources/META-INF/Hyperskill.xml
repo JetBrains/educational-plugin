@@ -54,12 +54,12 @@
         <add-to-group group-id="Educational.LearnAndTeachFileMenu" relative-to-action="Educational.Educator.NewCourse" anchor="after"/>
     </action>
     <action id="Educational.Educator.PushHyperskillLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson">
-      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PackCourse" anchor="after"/>
     </action>
     <action id="Educational.Educator.GetHyperskillLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson"/>
     <action id="Educational.Educator.ApplyHyperskillSubmission"
             class="com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskillSubmission">
-      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PushCourse" anchor="after"/>
+      <add-to-group group-id="Educational.Educator.ProjectView" relative-to-action="Educational.Educator.PackCourse" anchor="after"/>
     </action>
     <action id="Hyperskill.UpdateCourse" class="com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction"/>
     <action id="Hyperskill.DownloadDataset" class="com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction"/>

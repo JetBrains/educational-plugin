@@ -14,13 +14,15 @@ import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
 import com.jetbrains.edu.learning.EduBrowser;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepSource;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
@@ -146,62 +148,6 @@ public class CCStepikConnector {
   }
 
   // UPDATE methods:
-
-  public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
-    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("item.update.on.0.course.title", STEPIK))) return false;
-    // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
-    // so we get actual info here
-    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
-    if (courseInfo != null) {
-      course.setStepikPublic(courseInfo.isStepikPublic());
-      course.setCompatible(courseInfo.isCompatible());
-    }
-    else {
-      LOG.warn("Failed to get current course info");
-    }
-    int responseCode = StepikConnector.getInstance().updateCourse(course);
-
-    if (responseCode == HttpStatus.SC_FORBIDDEN) {
-      showNoRightsToUpdateOnStepikNotification(project);
-      return false;
-    }
-    if (responseCode != HttpStatus.SC_OK) {
-      showErrorNotification(project, EduCoreBundle.message("notification.course.creator.failed.to.update.course.title"), null,
-                            getShowLogAction());
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean updateCourseAdditionalInfo(@NotNull Project project, @NotNull Course course) {
-    if (!checkIfAuthorizedToStepik(project, EduCoreBundle.message("action.update.additional.materials.text"))) return false;
-
-    EduCourse courseInfo = StepikConnector.getInstance().getCourseInfo(course.getId());
-    assert courseInfo != null;
-    updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.additional.data"));
-    String errors = AdditionalFilesUtils.checkIgnoredFiles(project);
-    if (errors != null) {
-      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.update.additional.files"), errors);
-      return false;
-    }
-    final List<TaskFile> additionalFiles = AdditionalFilesUtils.collectAdditionalFiles(courseInfo, project);
-    CourseAdditionalInfo courseAdditionalInfo = new CourseAdditionalInfo(additionalFiles, course.getSolutionsHidden());
-    return StepikConnector.getInstance().updateCourseAttachment(courseAdditionalInfo, courseInfo) == HttpStatus.SC_CREATED;
-  }
-
-  public static boolean updateSectionForTopLevelLessons(@NotNull EduCourse course) {
-    Section section = new Section();
-    section.setName(course.getName());
-    section.setPosition(1);
-    section.setIndex(1);
-    section.setId(course.getSectionIds().get(0));
-    return updateSectionInfo(section);
-  }
-
-  public static boolean updateSectionInfo(@NotNull Section section) {
-    section.setPosition(section.getIndex());
-    return StepikConnector.getInstance().updateSection(section) != null;
-  }
 
   public static boolean updateLesson(@NotNull final Project project,
                                      @NotNull final Lesson lesson,
