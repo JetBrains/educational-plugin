@@ -374,17 +374,19 @@ project(":") {
 
     // The name differs from all module names to avoid collision during new jar file creation
     archiveBaseName.set("EduTools")
-    val sandboxTask = tasks.prepareSandbox.get()
-    val pluginLibDir = sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
-    destinationDirectory.set(pluginLibDir)
 
     exclude("META-INF/MANIFEST.MF")
 
+    val pluginLibDir by lazy {
+      val sandboxTask = tasks.prepareSandbox.get()
+      sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
+    }
     val pluginJars by lazy {
       pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
     }
 
     doFirst {
+      destinationDirectory.set(pluginLibDir)
       for (file in pluginJars) {
         from(zipTree(file))
       }
