@@ -27,7 +27,7 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
     val (course, courseDisplaySettings) = data
     isVisible = courseDisplaySettings.showInstructorField && course.allAuthors.isNotEmpty()
     if (authorsLabel.isVisible) {
-      authorsLabel.setBody("by ${course.allAuthors}")
+      authorsLabel.setBody(course.allAuthors)
     }
   }
 }
