@@ -4,6 +4,10 @@
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <content>
-    <module name="Edu-Python"/>
+    <!-- Two python modules provide the same integration
+     and only needed to fix https://youtrack.jetbrains.com/issue/EDU-4512
+     caused by https://youtrack.jetbrains.com/issue/IDEA-292661 -->
+    <module name="Edu-Python-Community"/>
+    <module name="Edu-Python-Pro"/>
   </content>
 </idea-plugin>
