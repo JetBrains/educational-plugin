@@ -36,20 +36,27 @@ def main():
                 continue
 
         print(f"Upload {filename} to https://repo.labs.intellij.net/edu-tools")
-        with open(filename, 'rb') as data:
-            requests.put(f"https://repo.labs.intellij.net/edu-tools/{filename}", data=data, headers={"X-JFrog-Art-Api": args.apiKey})
+        upload_file(filename, args.apiKey)
 
         os.remove(filename)
 
 
 def download_file(request, filename):
+    import shutil
+
+    file_size = int(request.headers["Content-length"])
     with open(filename, 'wb') as f:
-        with tqdm(total=int(request.headers["Content-length"]), unit="B", unit_scale=True) as progress:
-            for chunk in request.iter_content(chunk_size=8 * 1024):
-                if chunk:  # filter out keep-alive new chunks
-                    f.write(chunk)
-                    f.flush()
-                    progress.update(len(chunk))
+        with tqdm.wrapattr(request.raw, "read", total=file_size) as wrapped_data:
+            shutil.copyfileobj(wrapped_data, f)
+    print()
+
+
+def upload_file(filename, api_key):
+    file_size = os.stat(filename).st_size
+    with open(filename, "rb") as f:
+        with tqdm.wrapattr(f, "read", total=file_size) as wrapped_file:
+            requests.put(f"https://repo.labs.intellij.net/edu-tools/{filename}", data=wrapped_file, headers={"X-JFrog-Art-Api": api_key})
+    print()
 
 
 if __name__ == '__main__':
