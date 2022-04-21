@@ -26,8 +26,6 @@ val clionVersion: String by project
 val pycharmVersion: String by project
 val studioVersion: String by project
 
-val studioBuildVersion: String by project
-
 val secretProperties: String by extra
 val inJetBrainsNetwork: () -> Boolean by extra
 val generateNotes: (String) -> String by extra
@@ -188,12 +186,6 @@ allprojects {
         runIde {
           jbrVersion.set(it)
         }
-      }
-    }
-
-    if (isStudioIDE) {
-      withType<IntelliJInstrumentCodeTask> {
-        compilerVersion.set(studioBuildVersion)
       }
     }
 
@@ -675,12 +667,6 @@ project(":Edu-Android") {
     localPath.set(studioPath)
     val pluginsList = jvmPlugins + "android"
     plugins.set(pluginsList)
-  }
-
-  tasks {
-    withType<IntelliJInstrumentCodeTask> {
-      compilerVersion.set(studioBuildVersion)
-    }
   }
 
   dependencies {
