@@ -48,9 +48,8 @@ class CheckiOCoursesPanel(
     return EduCoreBundle.message("checkio.courses.explanation", linkText, EduNames.PYTHON, EduNames.JAVASCRIPT)
   }
 
-  private inner class CheckiOLoginPanel : LoginPanel(true,
-                                                     CheckiONames.CHECKIO,
-                                                     EduCoreBundle.message("course.dialog.log.in.label.before.link"),
+  private inner class CheckiOLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.checkio.label.text"),
+                                                     true,
                                                      {
                                                        val checkiOConnectorProvider = (selectedCourse?.configurator as CheckiOConnectorProvider?)!!
                                                        val checkiOOAuthConnector = checkiOConnectorProvider.oAuthConnector

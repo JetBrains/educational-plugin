@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -39,14 +39,17 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
   }
 }
 
-open class LoginPanel(isVisible: Boolean, platformName: String, afterLinkText: String, loginHandler: () -> Unit) : JPanel(BorderLayout()) {
+open class LoginPanel(
+  @Suppress("UnstableApiUsage") @NlsContexts.LinkLabel text: String,
+  isVisible: Boolean,
+  loginHandler: () -> Unit
+) : JPanel(BorderLayout()) {
   private val BACKGROUND_COLOR = JBColor(0xE6EEF7, 0x1C3956)
 
   init {
     val hyperlinkLabel = HyperlinkLabel().apply {
-      val linkText = EduCoreBundle.message("course.dialog.log.in.to.title", platformName)
       @Suppress("UnstableApiUsage")
-      setTextWithHyperlink("<hyperlink>$linkText</hyperlink> $afterLinkText")
+      setTextWithHyperlink(text)
       addHyperlinkListener { loginHandler() }
       setIcon(AllIcons.General.BalloonInformation)
       font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.fontSize)

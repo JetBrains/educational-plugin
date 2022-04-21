@@ -56,9 +56,8 @@ class JetBrainsAcademyCoursesPanel(
     }
   }
 
-  private inner class JetBrainsAcademyLoginPanel : LoginPanel(isLoginNeeded(),
-                                                              EduNames.JBA,
-                                                              EduCoreBundle.message("course.dialog.jba.log.in.label.before.link"),
+  private inner class JetBrainsAcademyLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.jba.label.text"),
+                                                              isLoginNeeded(),
                                                               { handleLogin() })
 
   override fun isLoginNeeded() = HyperskillSettings.INSTANCE.account == null

@@ -67,15 +67,14 @@ class CodeforcesCoursesPanel(
     return CodeforcesLoginPanel()
   }
 
-  private inner class CodeforcesLoginPanel : LoginPanel(isLoginNeeded(),
-                                                        CodeforcesNames.CODEFORCES_TITLE,
-                                                        EduCoreBundle.message("codeforces.login.to.codeforces.message"),
+  private inner class CodeforcesLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.codeforces.label.text"),
+                                                        isLoginNeeded(),
                                                         { handleLogin() })
 
   private fun handleLogin() {
-      if (LoginDialog().showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
-        hideLoginPanel()
-      }
+    if (LoginDialog().showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
+      hideLoginPanel()
+    }
   }
 
   override fun isLoginNeeded(): Boolean = !CodeforcesSettings.getInstance().isLoggedIn()

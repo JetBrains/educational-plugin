@@ -51,9 +51,8 @@ class StepikCoursesPanel(
     return StepikLoginPanel()
   }
 
-  private inner class StepikLoginPanel : LoginPanel(isLoginNeeded(),
-                                                    StepikNames.STEPIK,
-                                                    EduCoreBundle.message("course.dialog.log.in.label.before.link"),
+  private inner class StepikLoginPanel : LoginPanel(EduCoreBundle.message("course.dialog.log.in.to.stepik.label.text"),
+                                                    isLoginNeeded(),
                                                     { handleLogin() })
 
   private fun handleLogin() {
@@ -87,7 +86,7 @@ class StepikCoursesPanel(
     private fun showLogInDialog() {
       val result = Messages.showOkCancelDialog(
         EduCoreBundle.message("stepik.auth.required.message", StepikNames.STEPIK),
-        EduCoreBundle.message("course.dialog.log.in.to.title", StepikNames.STEPIK),
+        EduCoreBundle.message("course.dialog.log.in.to.stepik.text"),
         EduCoreBundle.message("stepik.log.in.dialog.ok"),
         Messages.getCancelButton(),
         null
