@@ -385,8 +385,9 @@ project(":") {
       pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
     }
 
+    destinationDirectory.set(project.layout.dir(provider { pluginLibDir }))
+
     doFirst {
-      destinationDirectory.set(pluginLibDir)
       for (file in pluginJars) {
         from(zipTree(file))
       }
