@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import javax.swing.ScrollPaneConstants
 
@@ -15,9 +14,6 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
     border = JBUI.Borders.empty(INFO_PANEL_TOP_OFFSET, HORIZONTAL_MARGIN, 0, 0)
   }
 
-  private val Course.allAuthors: String
-    get() = course.authorFullNames.joinToString()
-
   init {
     setViewportView(authorsLabel)
     border = JBUI.Borders.empty()
@@ -25,9 +21,10 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
 
   override fun onCourseSelectionChanged(data: CourseBindData) {
     val (course, courseDisplaySettings) = data
-    isVisible = courseDisplaySettings.showInstructorField && course.allAuthors.isNotEmpty()
+    val allAuthors = course.authorFullNames.joinToString()
+    isVisible = courseDisplaySettings.showInstructorField && allAuthors.isNotEmpty()
     if (authorsLabel.isVisible) {
-      authorsLabel.setBody(course.allAuthors)
+      authorsLabel.setBody(allAuthors)
     }
   }
 }
