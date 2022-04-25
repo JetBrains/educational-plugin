@@ -62,7 +62,7 @@ abstract class CodeforcesLanguageProvider {
     }
 
     fun getPreferableCodeforcesLanguage(languageId: String): String? =
-      EP_NAME.extensions.filter { it.languageId == languageId }.map { it.languageId }.firstOrNull()
+      EP_NAME.extensions.filter { it.languageId == languageId }.map { it.codeforcesLanguages.first().languageIdWithVersion }.firstOrNull()
 
     /**
      * @return Proper language with languageVersion splitted with space from codeforces programming language.
