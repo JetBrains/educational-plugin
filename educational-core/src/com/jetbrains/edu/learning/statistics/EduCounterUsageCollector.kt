@@ -55,7 +55,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   }
 
   enum class AuthorizationPlace {
-    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB, UNKNOWN
+    SETTINGS, WIDGET, START_COURSE_DIALOG, SUBMISSIONS_TAB, TASK_DESCRIPTION_HEADER, UNKNOWN
   }
 
   private enum class HintEvent {
@@ -156,7 +156,8 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
                                                             "Stepik",
                                                             "Js_CheckiO",
                                                             "Py_CheckiO",
-                                                            "Marketplace"
+                                                            "Marketplace",
+                                                            "Codeforces"
                                                           )),
                                                           enumField<AuthorizationPlace>(SOURCE))
     private val SHOW_FULL_OUTPUT_EVENT = GROUP.registerEvent("show.full.output")

@@ -9,12 +9,14 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.JComponent
 
-class LoginDialog : DialogWrapper(false) {
+class LoginDialog(private val authorizationPlace: AuthorizationPlace) : DialogWrapper(false) {
   val loginField = JBTextField()
   val passwordField = JBPasswordField()
   private val fieldSize = JBUI.size(350, 15)
@@ -47,13 +49,14 @@ class LoginDialog : DialogWrapper(false) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        val success = EduUtils.execCancelable {
+        val account = EduUtils.execCancelable {
           CodeforcesConnector.getInstance().login(loginField.text, String(passwordField.password)).onError {
             setErrorText(it)
-            false
+            null
           }
         }
-        if (success != null && success) {
+        if (account != null) {
+          CodeforcesSettings.getInstance().login(account, authorizationPlace)
           ApplicationManager.getApplication().invokeLater { super.doOKAction() }
         }
       }, EduCoreBundle.message("codeforces.authorizing.on.codeforces"), true, null)

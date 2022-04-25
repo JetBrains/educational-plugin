@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.LoginPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
@@ -72,9 +73,9 @@ class CodeforcesCoursesPanel(
                                                         { handleLogin() })
 
   private fun handleLogin() {
-    if (LoginDialog().showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
-      hideLoginPanel()
-    }
+      if (LoginDialog(AuthorizationPlace.START_COURSE_DIALOG).showAndGet() && CodeforcesSettings.getInstance().isLoggedIn()) {
+        hideLoginPanel()
+      }
   }
 
   override fun isLoginNeeded(): Boolean = !CodeforcesSettings.getInstance().isLoggedIn()

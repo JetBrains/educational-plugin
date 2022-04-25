@@ -22,21 +22,19 @@ class CodeforcesStartupActivity : StartupActivity {
         updateCheckStatus(project)
       }
     }
-    else {
-      project.messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
-        override fun userLoggedIn() {
-          if (CodeforcesSettings.getInstance().isLoggedIn()) {
-            submissionsManager.prepareSubmissionsContent {
-              updateCheckStatus(project)
-            }
+    project.messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
+      override fun userLoggedIn() {
+        if (CodeforcesSettings.getInstance().isLoggedIn()) {
+          submissionsManager.prepareSubmissionsContent {
+            updateCheckStatus(project)
           }
         }
+      }
 
-        override fun userLoggedOut() {
-          TaskDescriptionView.getInstance(project).updateTab(TabType.SUBMISSIONS_TAB)
-        }
-      })
-    }
+      override fun userLoggedOut() {
+        TaskDescriptionView.getInstance(project).updateTab(TabType.SUBMISSIONS_TAB)
+      }
+    })
     CodeforcesCourseUpdateChecker.getInstance(project).check()
   }
 }

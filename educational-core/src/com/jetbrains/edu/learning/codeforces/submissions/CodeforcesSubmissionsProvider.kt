@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
@@ -30,6 +31,6 @@ class CodeforcesSubmissionsProvider : SubmissionsProvider {
 
   override fun getPlatformName(): String = CodeforcesNames.CODEFORCES
 
-  override fun doAuthorize() = LoginDialog().show()
+  override fun doAuthorize() = LoginDialog(AuthorizationPlace.SUBMISSIONS_TAB).show()
 
 }

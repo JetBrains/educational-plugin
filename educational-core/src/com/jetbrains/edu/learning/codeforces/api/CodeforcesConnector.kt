@@ -104,7 +104,7 @@ abstract class CodeforcesConnector {
   }
 
   @Suppress("UNNECESSARY_SAFE_CALL")
-  fun login(userName: String, password: String): Result<Boolean, String> {
+  fun login(userName: String, password: String): Result<CodeforcesAccount, String> {
     if (userName.isEmpty() || password.isEmpty()) {
       return Err(EduCoreBundle.message("error.empty.handle.or.password"))
     }
@@ -135,8 +135,7 @@ abstract class CodeforcesConnector {
       val account = CodeforcesAccount(userInfo)
       account.saveSessionId(jSessionId)
       account.savePassword(password)
-      CodeforcesSettings.getInstance().account = account
-      return Ok(true)
+      return Ok(account)
     }
     return Err(EduCoreBundle.message("error.unknown.error"))
   }

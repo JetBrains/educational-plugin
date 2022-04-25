@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.CodeforcesUtils.updateCheckStatus
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.ClickableLabel
@@ -72,13 +73,13 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     val accountActionLabel = if (account != null) {
       ClickableLabel(EduCoreBundle.message("account.widget.logout")) {
         popup.closeOk(null)
-        CodeforcesSettings.getInstance().account = null
+        CodeforcesSettings.getInstance().login(null, AuthorizationPlace.TASK_DESCRIPTION_HEADER)
       }
     }
     else {
       ClickableLabel(EduCoreBundle.message("notification.content.authorization.action")) {
         popup.closeOk(null)
-        LoginDialog().show()
+        LoginDialog(AuthorizationPlace.TASK_DESCRIPTION_HEADER).show()
       }
     }
 

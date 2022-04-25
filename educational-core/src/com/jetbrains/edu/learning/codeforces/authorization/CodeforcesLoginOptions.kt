@@ -4,7 +4,6 @@ import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.settings.LoginOptions
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.event.HyperlinkEvent
 
@@ -13,7 +12,7 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
   override fun getCurrentAccount(): CodeforcesAccount? = CodeforcesSettings.getInstance().account
 
   override fun setCurrentAccount(account: CodeforcesAccount?) {
-    CodeforcesSettings.getInstance().account = account
+   CodeforcesSettings.getInstance().login(account, AuthorizationPlace.SETTINGS)
   }
 
   override fun profileUrl(account: CodeforcesAccount): String {
@@ -23,11 +22,10 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
   override fun createAuthorizeListener(): HyperlinkAdapter =
     object : HyperlinkAdapter() {
       override fun hyperlinkActivated(e: HyperlinkEvent?) {
-        if (LoginDialog().showAndGet()) {
+        if (LoginDialog(AuthorizationPlace.SETTINGS).showAndGet()) {
           if (CodeforcesSettings.getInstance().isLoggedIn()) {
             lastSavedAccount = getCurrentAccount()
             updateLoginLabels()
-            EduCounterUsageCollector.loggedIn(displayName, AuthorizationPlace.SETTINGS)
           }
         }
       }
@@ -39,7 +37,6 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
         lastSavedAccount = null
         setCurrentAccount(null)
         updateLoginLabels()
-        EduCounterUsageCollector.loggedOut(displayName, AuthorizationPlace.SETTINGS)
       }
     }
 

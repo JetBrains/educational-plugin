@@ -20,6 +20,8 @@ import com.jetbrains.edu.learning.codeforces.authorization.CodeforcesUserInfo
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jdom.Element
 import javax.swing.Icon
@@ -32,7 +34,7 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   var account: CodeforcesAccount? = null
-    set(value) {
+  private set(value) {
       if (value == null) {
         if (Messages.showOkCancelDialog(
             EduCoreBundle.message("dialog.message.are.you.sure"),
@@ -63,6 +65,12 @@ class CodeforcesSettings : PersistentStateComponent<Element> {
           }
         }
       }
+  }
+
+  fun login(account: CodeforcesAccount?, authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
+    this.account = account
+    if (account != null) EduCounterUsageCollector.logInSucceed(CodeforcesNames.CODEFORCES, authorizationPlace)
+    else EduCounterUsageCollector.logOutSucceed(CodeforcesNames.CODEFORCES, authorizationPlace)
   }
 
   override fun getState(): Element? {
