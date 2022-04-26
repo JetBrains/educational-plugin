@@ -15,9 +15,7 @@ import com.jetbrains.edu.learning.EduBrowser;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
@@ -30,7 +28,6 @@ import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,46 +42,6 @@ public class CCStepikConnector {
   private CCStepikConnector() { }
 
   // POST methods:
-
-  public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
-    Section section = new Section();
-    section.setName(course.getName());
-    int sectionId = postSectionInfo(project, section, 1);
-    course.setSectionIds(Collections.singletonList(sectionId));
-    return sectionId;
-  }
-
-  public static boolean postSection(@NotNull Project project, @NotNull Section section) {
-    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-    final int sectionId = postSectionInfo(project, section, section.getIndex());
-    return sectionId != -1 && postLessons(project, sectionId, section.getLessons());
-  }
-
-  public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int sectionIndex) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.SECTION_TYPE))) return -1;
-
-    final Section postedSection = StepikConnector.getInstance().postSection(section, sectionIndex);
-    if (postedSection == null) {
-      showFailedToPostItemNotification(project, section, true);
-      return -1;
-    }
-    section.setId(postedSection.getId());
-    section.setUpdateDate(postedSection.getUpdateDate());
-    return postedSection.getId();
-  }
-
-  private static boolean postLessons(@NotNull Project project, int sectionId, @NotNull List<Lesson> lessons) {
-    int position = 1;
-    boolean success = true;
-    for (Lesson lesson : lessons) {
-      updateProgress(EduCoreBundle.message("course.creator.stepik.uploading.lesson", lesson.getIndex()));
-      success = postLesson(project, lesson, position, sectionId) && success;
-      checkCanceled();
-      position += 1;
-    }
-    return success;
-  }
 
   public static boolean postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);

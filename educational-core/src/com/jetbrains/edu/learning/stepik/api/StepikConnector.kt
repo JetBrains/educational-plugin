@@ -219,12 +219,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Post requests:
 
-  fun postSection(section: Section, index: Int): Section? {
-    section.position = index
-    val response = stepikEndpoints.section(SectionData(section)).executeHandlingExceptions()
-    return response?.body()?.sections?.firstOrNull()
-  }
-
   fun postLesson(lesson: Lesson): Lesson? {
     val response = stepikEndpoints.lesson(LessonData(lesson)).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
