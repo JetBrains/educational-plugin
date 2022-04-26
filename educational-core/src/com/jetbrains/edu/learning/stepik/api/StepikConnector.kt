@@ -153,11 +153,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.body()?.lessons?.firstOrNull()
   }
 
-  fun getUnit(unitId: Int): StepikUnit? {
-    val response = stepikEndpoints.units(unitId).executeHandlingExceptions()
-    return response?.body()?.units?.firstOrNull()
-  }
-
   fun getLessonUnit(lessonId: Int): StepikUnit? {
     val response = stepikEndpoints.lessonUnit(lessonId).executeHandlingExceptions()
     return response?.body()?.units?.firstOrNull()
@@ -210,11 +205,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
   }
 
-  fun getAttempts(stepId: Int, userId: Int): List<Attempt>? {
-    val response = stepikEndpoints.attempts(stepId, userId).executeHandlingExceptions()
-    return response?.body()?.attempts
-  }
-
   fun getCourseReviewSummaries(ids: List<Int>): List<CourseReviewSummary> {
     val courseIdsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
     val allReviewSummaries = mutableListOf<CourseReviewSummary>()
@@ -228,11 +218,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   // Post requests:
-
-  fun postCourse(course: EduCourse): EduCourse? {
-    val response = stepikEndpoints.course(CourseData(course)).executeHandlingExceptions()
-    return response?.body()?.courses?.firstOrNull()
-  }
 
   fun postSection(section: Section, index: Int): Section? {
     section.position = index
@@ -297,11 +282,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
   }
 
-  fun postMember(userId: String, group: String): Int {
-    val response = stepikEndpoints.members(MemberData(userId, group)).executeHandlingExceptions()
-    return response?.code() ?: -1
-  }
-
   fun enrollToCourse(courseId: Int) {
     val response = stepikEndpoints.enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
     if (response?.code() != HttpStatus.SC_CREATED) {
@@ -309,19 +289,14 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     }
   }
 
-  private fun postAttachment(info: AdditionalInfo, courseId: Int?, lessonId: Int?): Int {
+  private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) : Int {
     val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(info))
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_INFO, fileBody)
-    val courseBody = if (courseId != null) RequestBody.create(MediaType.parse("text/plain"), courseId.toString()) else null
-    val lessonBody = if (lessonId != null) RequestBody.create(MediaType.parse("text/plain"), lessonId.toString()) else null
+    val lessonBody = RequestBody.create(MediaType.parse("text/plain"), lessonId.toString())
 
-    val response = stepikEndpoints.attachment(fileData, courseBody, lessonBody).executeHandlingExceptions()
+    val response = stepikEndpoints.attachment(fileData, lessonBody).executeHandlingExceptions()
     return response?.code() ?: -1
   }
-
-  fun postCourseAttachment(info: CourseAdditionalInfo, courseId: Int) = postAttachment(info, courseId, null)
-
-  private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) = postAttachment(info, null, lessonId)
 
   // Update requests:
 
@@ -332,15 +307,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
       course.updateDate = postedCourse.updateDate
     }
     return response?.code() ?: -1
-  }
-
-  fun updateSection(section: Section): Section? {
-    val response = stepikEndpoints.section(section.id, SectionData(section)).executeHandlingExceptions()
-    val postedSection = response?.body()?.sections?.firstOrNull()
-    if (postedSection != null) {
-      section.updateDate = postedSection.updateDate
-    }
-    return postedSection
   }
 
   fun updateLesson(lesson: Lesson): Lesson? {
@@ -377,22 +343,14 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.code() ?: -1
   }
 
-  fun updateCourseAttachment(info: CourseAdditionalInfo, course: Course): Int {
-    deleteAttachment(course.id)
-    updateCourse(course)  // Needed to push forward update_date in course
-    return postCourseAttachment(info, course.id)
-  }
-
   fun updateLessonAttachment(info: LessonAdditionalInfo, lesson: Lesson): Int {
-    deleteAttachment(null, lesson.id)
+    deleteLessonAttachment(lesson.id)
     updateLesson(lesson) // Needed to push forward update_date in lesson
     return postLessonAttachment(info, lesson.id)
   }
 
-  fun deleteLessonAttachment(lessonId: Int) = deleteAttachment(null, lessonId)
-
-  private fun deleteAttachment(courseId: Int?, lessonId: Int? = null) {
-    val attachments = stepikEndpoints.attachments(courseId, lessonId).executeHandlingExceptions(true)?.body()
+  fun deleteLessonAttachment(lessonId: Int) {
+    val attachments = stepikEndpoints.attachments(lessonId).executeHandlingExceptions(true)?.body()
     if (attachments != null && attachments.attachments.isNotEmpty()) {
       val attachmentId = attachments.attachments.firstOrNull { StepikNames.ADDITIONAL_INFO == it.name }?.id
       if (attachmentId != null) {
@@ -402,18 +360,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   // Delete requests:
-
-  fun deleteSection(sectionId: Int) {
-    stepikEndpoints.deleteSection(sectionId).executeHandlingExceptions(true)
-  }
-
-  fun deleteLesson(lessonId: Int) {
-    stepikEndpoints.deleteLesson(lessonId).executeHandlingExceptions(true)
-  }
-
-  fun deleteUnit(unitId: Int) {
-    stepikEndpoints.deleteUnit(unitId).executeHandlingExceptions(true)
-  }
 
   fun deleteTask(taskId: Int) {
     stepikEndpoints.deleteStepSource(taskId).executeHandlingExceptions(true)

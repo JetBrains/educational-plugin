@@ -65,8 +65,7 @@ interface StepikEndpoints {
   fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
 
   @GET("api/attachments")
-  fun attachments(@Query("course") courseId: Int?,
-                  @Query("lesson") lessonId: Int? = null): Call<AttachmentsList>
+  fun attachments(@Query("lesson") lessonId: Int? = null): Call<AttachmentsList>
 
   @GET("api/step-sources/{id}")
   fun choiceStepSource(@Path("id") stepId: Int): Call<ChoiceStepSourcesList>
@@ -106,13 +105,9 @@ interface StepikEndpoints {
   @POST("api/views")
   fun view(@Body viewData: ViewData): Call<ResponseBody>
 
-  @POST("api/members")
-  fun members(@Body membersData: MemberData): Call<ResponseBody>
-
   @Multipart
   @POST("api/attachments")
-  fun attachment(@Part file: MultipartBody.Part, @Part("course") course: RequestBody?,
-                 @Part("lesson") lesson: RequestBody? = null): Call<ResponseBody>
+  fun attachment(@Part file: MultipartBody.Part, @Part("lesson") lesson: RequestBody? = null): Call<ResponseBody>
 
   // PUT requests:
 
@@ -132,15 +127,6 @@ interface StepikEndpoints {
   fun stepSource(@Path("id") stepSourceId: Int, @Body stepSourceData: StepSourceData): Call<StepSourcesList>
 
   // DELETE requests:
-
-  @DELETE("api/sections/{id}")
-  fun deleteSection(@Path("id") sectionId: Int): Call<Any>
-
-  @DELETE("api/lessons/{id}")
-  fun deleteLesson(@Path("id") lessonId: Int): Call<Any>
-
-  @DELETE("api/units/{id}")
-  fun deleteUnit(@Path("id") unitId: Int): Call<Any>
 
   @DELETE("api/step-sources/{id}")
   fun deleteStepSource(@Path("id") taskId: Int): Call<Any>
