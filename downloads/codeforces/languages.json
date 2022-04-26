@@ -1,0 +1,121 @@
+{
+  "ObjectiveC":
+  [
+    {
+      "languageIdWithVersion": "GNU C++17",
+      "programTypeId": "54",
+      "version": "17"
+    },
+    {
+      "languageIdWithVersion": "GNU C11",
+      "programTypeId": "43",
+      "version": "11"
+    },
+    {
+      "languageIdWithVersion": "GNU C++14",
+      "programTypeId": "50",
+      "version": "14"
+    },
+    {
+      "languageIdWithVersion": "Clang++17 Diagnostics",
+      "programTypeId": "52",
+      "version": "17"
+    },
+    {
+      "languageIdWithVersion": "MS C++ 2017",
+      "programTypeId": "59",
+      "version": "17"
+    }
+  ],
+  "Python":
+  [
+    {
+      "languageIdWithVersion": "Python 3",
+      "programTypeId": "31",
+      "version": "3.x"
+    },
+    {
+      "languageIdWithVersion": "Python 2",
+      "programTypeId": "7",
+      "version": "2.x"
+    },
+    {
+      "languageIdWithVersion": "PyPy 2",
+      "programTypeId": "40",
+      "version": "2.x"
+    },
+    {
+      "languageIdWithVersion": "PyPy 3",
+      "programTypeId": "41",
+      "version": "3.x"
+    },
+    {
+      "languageIdWithVersion": "PyPy 3-64",
+      "programTypeId": "70",
+      "version": "3.x"
+    }
+  ],
+  "Rust":
+  [
+    {
+      "languageIdWithVersion": "Rust 2021",
+      "programTypeId": "75",
+      "version": null
+    }
+  ],
+  "go":
+  [
+    {
+      "languageIdWithVersion": "Go",
+      "programTypeId": "32",
+      "version": null
+    }
+  ],
+  "JAVA":
+  [
+    {
+      "languageIdWithVersion": "Java 8",
+      "programTypeId": "36",
+      "version": "8"
+    },
+    {
+      "languageIdWithVersion": "Java 11",
+      "programTypeId": "60",
+      "version": "11"
+    }
+  ],
+  "JavaScript":
+  [
+    {
+      "languageIdWithVersion": "JavaScript",
+      "programTypeId": "34",
+      "version": null
+    },
+    {
+      "languageIdWithVersion": "Node.js",
+      "programTypeId": "55",
+      "version": null
+    }
+  ],
+  "kotlin":
+  [
+    {
+      "languageIdWithVersion": "Kotlin 1.5",
+      "programTypeId": "72",
+      "version": "1.5.10"
+    },
+    {
+      "languageIdWithVersion": "Kotlin 1.4",
+      "programTypeId": "48",
+      "version": "1.4.10"
+    }
+  ],
+  "Scala":
+  [
+    {
+      "languageIdWithVersion": "Scala",
+      "programTypeId": "20",
+      "version": null
+    }
+  ]
+}
