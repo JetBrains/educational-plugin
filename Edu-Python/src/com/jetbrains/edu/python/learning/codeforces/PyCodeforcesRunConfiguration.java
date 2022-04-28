@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.run.PythonRunConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class PyCodeforcesRunConfiguration extends PythonRunConfiguration impleme
   public void checkConfiguration() throws RuntimeConfigurationException {
     super.checkConfiguration();
     if (!isRedirectInput() || getInputFile().isEmpty()) {
-      throw new RuntimeConfigurationException("Redirect input is not set for Codeforces Run Configuration");
+      throw new RuntimeConfigurationException(EduPythonBundle.message("error.redirect.input.not.set"));
     }
   }
 

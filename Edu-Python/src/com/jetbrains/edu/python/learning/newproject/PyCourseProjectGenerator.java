@@ -72,7 +72,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
       final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
-      final Sdk sdk = PySdkExtKt.createSdkByGenerateTask(new Task.WithResult<String, ExecutionException>(
+      final Sdk sdk = PySdkExtKt.createSdkByGenerateTask(new Task.WithResult<>(
         project,
         EduPythonBundle.message("creating.virtual.environment"),
         false) {

@@ -56,8 +56,4 @@ class PyTestRunner {
     }
     return null;
   }
-
-  GeneralCommandLine getCommandLine() {
-    return myCommandLine;
-  }
 }

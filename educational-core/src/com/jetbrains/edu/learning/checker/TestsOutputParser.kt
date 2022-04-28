@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.xmlEscaped
+import org.jetbrains.annotations.Nls
 import java.util.regex.Pattern
 
 class TestsOutputParser {
@@ -44,7 +45,7 @@ class TestsOutputParser {
     }
   }
 
-  fun processMessage(message: String, processor: (TestMessage) -> Unit) {
+  fun processMessage(message: @Nls String, processor: (TestMessage) -> Unit) {
     // Pass each line of output to processor as is to show them in console, for example
     processor(TestMessage.TextLine(message))
     if (!message.startsWith(STUDY_PREFIX)) {
@@ -86,7 +87,7 @@ class TestsOutputParser {
     val fullMessage = pendingFailedTestMessage.toString()
     // Our custom python test framework produces test name before `TEST_FAILED`
     val rawTestName = fullMessage.substringBefore(TEST_FAILED, "").trim()
-    val testName = if (rawTestName.isEmpty()) "test" else rawTestName
+    val testName = rawTestName.ifEmpty { "test" }
     val message = fullMessage.substringAfter(TEST_FAILED)
     val matcher = TEST_FAILED_PATTERN.matcher(message)
     val testMessage = if (matcher.find()) {
@@ -111,9 +112,9 @@ class TestsOutputParser {
   }
 
   sealed class TestMessage {
-    class TextLine(val text: String): TestMessage()
+    class TextLine(val text: @Nls String): TestMessage()
     class Ok(val testName: String): TestMessage()
-    class Failed(val testName: String, val message: String, val expected: String? = null, val actual: String? = null): TestMessage()
-    class Congrats(val congratulations: String): TestMessage()
+    class Failed(val testName: String, val message: @Nls String, val expected: String? = null, val actual: String? = null): TestMessage()
+    class Congrats(val congratulations: @Nls String): TestMessage()
   }
 }

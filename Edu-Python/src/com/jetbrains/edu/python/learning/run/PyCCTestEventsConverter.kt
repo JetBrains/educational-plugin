@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.TestMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor
+import org.jetbrains.annotations.Nls
 
 class PyCCTestEventsConverter(
   testFrameworkName: String,
@@ -23,7 +24,7 @@ class PyCCTestEventsConverter(
   private var nextId = 2
   private var isStarted = false
 
-  override fun processServiceMessages(text: String, outputType: Key<*>, visitor: ServiceMessageVisitor): Boolean {
+  override fun processServiceMessages(text: @Nls String, outputType: Key<*>, visitor: ServiceMessageVisitor): Boolean {
     val messages = mutableListOf<ServiceMessageBuilder>()
     val processor: (TestMessage) -> Unit = { message ->
       when (message) {
@@ -53,7 +54,7 @@ class PyCCTestEventsConverter(
       isStarted = true
     }
     parser.processMessage(text, processor)
-    if (getProcessFinishedMessage() in text) {
+    if (getProcessFinishedMessage().toRegex() in text) {
       if (nextId == 2) {
         // `nextId == 2` means that converter didn't receive any test result
         val failedMessage = TestMessage.Failed(ROOT_SUITE_NAME, CheckResult.noTestsRun.message)
@@ -119,8 +120,9 @@ class PyCCTestEventsConverter(
     private const val ACTUAL: String = "actual"
     private const val EXPECTED: String = "expected"
 
-    private fun getProcessFinishedMessage(): Regex {
-      return IdeCoreBundle.message("finished.with.exit.code.text.message", "\\d+").toRegex()
+    @Nls
+    private fun getProcessFinishedMessage(): String {
+      return IdeCoreBundle.message("finished.with.exit.code.text.message", "\\d+")
     }
   }
 }

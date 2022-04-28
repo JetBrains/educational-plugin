@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.learning.run;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class PyCCSettingsEditor extends SettingsEditor<PyCCRunTestConfiguration> {
   private AbstractPyCommonOptionsForm myForm;
-  private Project myProject;
+  private final Project myProject;
   private JTextField myPathToTestFileField;
   private JPanel myPanel;
 
@@ -31,7 +30,7 @@ public class PyCCSettingsEditor extends SettingsEditor<PyCCRunTestConfiguration>
   }
 
   @Override
-  protected void applyEditorTo(@NotNull PyCCRunTestConfiguration s) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull PyCCRunTestConfiguration s) {
     AbstractPythonRunConfiguration.copyParams(myForm, s);
     s.setPathToTest(myPathToTestFileField.getText());
   }

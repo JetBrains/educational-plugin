@@ -22,9 +22,9 @@ import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProducer<PyCCRunTestConfiguration> {
 
   @Override
-  protected boolean setupConfigurationFromContext(PyCCRunTestConfiguration configuration,
+  protected boolean setupConfigurationFromContext(@NotNull PyCCRunTestConfiguration configuration,
                                                   ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     Project project = context.getProject();
     String testsPath = getTestPath(context);
     if (testsPath == null) {
@@ -63,7 +63,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
 
   @Nullable
   private static String getTestPath(@NotNull ConfigurationContext context) {
-    Location location = context.getLocation();
+    Location<?> location = context.getLocation();
     if (location == null) {
       return null;
     }
@@ -90,7 +90,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
   }
 
   @Override
-  public boolean isConfigurationFromContext(PyCCRunTestConfiguration configuration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull PyCCRunTestConfiguration configuration, @NotNull ConfigurationContext context) {
     String path = getTestPath(context);
     return path != null && path.equals(configuration.getPathToTest());
   }

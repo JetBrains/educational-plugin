@@ -64,6 +64,7 @@ public class PyEduInterpreterInspection extends PyInspection {
       super(holder, session);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void visitPyFile(@NotNull PyFile node) {
       super.visitPyFile(node);
@@ -112,7 +113,7 @@ public class PyEduInterpreterInspection extends PyInspection {
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Configure python interpreter";
+      return EduPythonBundle.message("python.interpreter.configure");
     }
 
     @Override
@@ -122,7 +123,7 @@ public class PyEduInterpreterInspection extends PyInspection {
 
     @Override
     public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
-      ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project Interpreter");
+      ShowSettingsUtil.getInstance().showSettingsDialog(project, EduPythonBundle.message("project.interpreter"));
     }
   }
 }

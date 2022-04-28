@@ -16,6 +16,7 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -107,11 +108,14 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.version }
     }
 
-    private class NoApplicablePythonError(requiredVersion: Int) : Err<String>(
-      EduPythonBundle.message("error.incorrect.python", requiredVersion))
+    private class NoApplicablePythonError(requiredVersion: Int,
+                                          errorMessage: @Nls String = EduPythonBundle.message("error.incorrect.python",
+                                                                                              requiredVersion)) : Err<String>(errorMessage)
 
-    private class SpecificPythonRequiredError(requiredVersion: String) : Err<String>(
-      EduPythonBundle.message("error.old.python", requiredVersion))
+    private class SpecificPythonRequiredError(requiredVersion: String,
+                                              errorMessage: @Nls String = EduPythonBundle.message("error.old.python",
+                                                                                                  requiredVersion)) : Err<String>(
+      errorMessage)
 
     private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
       val baseSdk = getBaseSdk(course, context) ?: return null

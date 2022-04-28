@@ -12,6 +12,7 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 
 class PyShowTutorialStartupActivity : StartupActivity {
 
+  @Suppress("UnstableApiUsage")
   override fun runActivity(project: Project) {
     if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN) || !PlatformUtils.isPyCharmEducational()) return
 

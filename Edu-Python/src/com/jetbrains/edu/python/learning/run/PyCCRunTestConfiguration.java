@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.run.PythonRunConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PyCCRunTestConfiguration extends PythonRunConfiguration {
   public static final String PATH_ATTR = "studyTest";
-  private Project myProject;
+  private final Project myProject;
   private String myPathToTest;
 
   public PyCCRunTestConfiguration(Project project, ConfigurationFactory factory) {
@@ -64,18 +65,17 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     super.checkConfiguration();
-    String message = "Select valid path to the file with tests";
     VirtualFile testsFile = LocalFileSystem.getInstance().findFileByPath(myPathToTest);
     if (testsFile == null) {
-      throw new RuntimeConfigurationException(message);
+      throw new RuntimeConfigurationException(EduPythonBundle.message("error.invalid.path.to.file"));
     }
     Task task = VirtualFileExt.getContainingTask(testsFile, myProject);
     if (task == null) {
-      throw new RuntimeConfigurationException(message);
+      throw new RuntimeConfigurationException(EduPythonBundle.message("error.invalid.path.to.file"));
     }
     VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(myProject));
     if (taskDir == null) {
-      throw new RuntimeConfigurationException(message);
+      throw new RuntimeConfigurationException(EduPythonBundle.message("error.invalid.path.to.file"));
     }
   }
 }

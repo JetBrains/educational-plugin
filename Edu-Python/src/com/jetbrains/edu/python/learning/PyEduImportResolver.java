@@ -7,11 +7,12 @@ import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.python.psi.impl.PyImportResolver;
 import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PyEduImportResolver implements PyImportResolver {
   @Nullable
-  public PsiElement resolveImportReference(QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots) {
+  public PsiElement resolveImportReference(@NotNull QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots) {
     if (StudyTaskManager.getInstance(context.getProject()).getCourse() == null) {
       return null;
     }
