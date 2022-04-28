@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.Task
 import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
 import com.jetbrains.cidr.cpp.toolchains.CMakeExecutableTool
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
+import com.jetbrains.edu.cpp.messages.EduCppBundle
 
 const val GTEST_VERSION_KEY: String = "GTEST_VERSION"
 const val GTEST_VERSION_VALUE: String = "release-1.8.1"
@@ -34,7 +35,7 @@ val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
     progressManager.runProcess(cMakeVersionExtractor, null)
   }
   else {
-    progressManager.run(object : Task.WithResult<String, Nothing>(null, "Getting CMake Minimum Required Version", false) {
+    progressManager.run(object : Task.WithResult<String, Nothing>(null, EduCppBundle.message("progress.getting.c.make.version"), false) {
       override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
     })
   }

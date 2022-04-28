@@ -27,9 +27,7 @@ class CppCodeExecutor : DefaultCodeExecutor() {
           LOG.warn("Cannot get a virtual file from the task file '${taskFile.name}'")
         }
         file
-      }
-      .mapNotNull { file -> findMainFunction(file, project) }
-      .firstOrNull()
+      }.firstNotNullOfOrNull { file -> findMainFunction(file, project) }
 
     if (mainFunction == null) {
       return null

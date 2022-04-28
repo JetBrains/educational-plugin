@@ -14,19 +14,19 @@ import javax.swing.Icon
 
 class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
   override val codeforcesLanguageNamings: List<String> =
-    listOf("GNU C11", "GNU C++11", "GNU C++14", "MS C++", "Clang++17 Diagnostics", "GNU C++17", "MS C++ 2017")
+    listOf(GNU_C_11, GNU_C_PLUS_11, GNU_C_PLUS_14, MS_C_PLUS, CLANG_PLUS_17, GNU_C_PLUS_17, MS_C_PLUS_2017)
   override val configurator: EduConfigurator<CppProjectSettings> = CppConfigurator()
   override val languageId: String = EduNames.CPP
-  override val preferableCodeforcesLanguage: String = "GNU C++17"
+  override val preferableCodeforcesLanguage: String = GNU_C_PLUS_17
   override val templateFileName: String = "codeforces.CPP main.cpp"
   override val displayTemplateName: String = "main.cpp"
   override val languageIcon: Icon = EducationalCoreIcons.CppLogo
 
   override fun getLanguageVersion(codeforcesLanguage: String): String? =
     when (codeforcesLanguage) {
-      in listOf("GNU C11", "GNU C++11") -> "11"
-      in listOf("GNU C++14", "MS C++") -> "14"
-      in listOf("Clang++17 Diagnostics", "GNU C++17", "MS C++ 2017") -> "17"
+      in listOf(GNU_C_11, GNU_C_PLUS_11) -> "11"
+      in listOf(GNU_C_PLUS_14, MS_C_PLUS) -> "14"
+      in listOf(CLANG_PLUS_17, GNU_C_PLUS_17, MS_C_PLUS_2017) -> "17"
       else -> null
     }
 
@@ -36,5 +36,15 @@ class CppCodeforcesLanguageProvider : CodeforcesLanguageProvider {
     task.name = moduleName
     task.addCMakeList(moduleName)
     return super.createTaskFiles(task)
+  }
+
+  companion object {
+    private const val GNU_C_11 = "GNU C11"
+    private const val GNU_C_PLUS_11 = "GNU C++11"
+    private const val GNU_C_PLUS_14 = "GNU C++14"
+    private const val MS_C_PLUS = "MS C++"
+    private const val CLANG_PLUS_17 = "Clang++17 Diagnostics"
+    private const val GNU_C_PLUS_17 = "GNU C++17"
+    private const val MS_C_PLUS_2017 = "MS C++ 2017"
   }
 }

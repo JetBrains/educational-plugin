@@ -16,6 +16,7 @@ import com.jetbrains.edu.cpp.getCMakeProjectName
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.getTaskFile
+import org.jetbrains.annotations.Nls
 
 class NoTaskProjectNameInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -36,6 +37,7 @@ class NoTaskProjectNameInspection : LocalInspectionTool() {
   private class AddDefaultProjectNameFix(file: PsiFile, val taskFile: TaskFile) : LocalQuickFixOnPsiElement(file) {
     override fun getFamilyName(): String = "CMake"
 
+    @Nls
     override fun getText(): String = EduCppBundle.message("project.name.not.set.fix.description")
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {

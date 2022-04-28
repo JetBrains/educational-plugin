@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -53,7 +52,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   }
 
   companion object {
-    @NonNls
     private const val CPP_STANDARD_PREFIX = "C++ Standard"
   }
 }
