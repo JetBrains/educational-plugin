@@ -21,12 +21,18 @@ data class CheckResult @JvmOverloads constructor(
   val isSolved: Boolean get() = status == CheckStatus.Solved
 
   companion object {
-    @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")
-    @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
-    @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
-    @JvmField val SOLVED = CheckResult(CheckStatus.Solved, "")
-    @JvmField val CANCELED = CheckResult(CheckStatus.Unchecked, "Canceled")
-    @JvmField val UNCHECKED = CheckResult(CheckStatus.Unchecked, "")
+    @JvmField
+    val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.local.check.unavailable"))
+    @JvmField
+    val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
+    @JvmField
+    val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.connection.failed"))
+    @JvmField
+    val SOLVED = CheckResult(CheckStatus.Solved)
+    @JvmField
+    val CANCELED = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.canceled"))
+    @JvmField
+    val UNCHECKED = CheckResult(CheckStatus.Unchecked)
 
     val noTestsRun: CheckResult
       get() = CheckResult(

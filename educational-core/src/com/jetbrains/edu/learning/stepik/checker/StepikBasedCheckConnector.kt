@@ -172,8 +172,7 @@ abstract class StepikBasedCheckConnector {
     protected fun Task.checkId(): CheckResult? {
       if (id == 0) {
         val link = feedbackLink ?: return CheckResult.failedToCheck
-        val message = """Corrupted task (no id): please, click "Solve in IDE" on <a href="$link">${EduNames.JBA}</a> one more time"""
-        return CheckResult(CheckStatus.Unchecked, message)
+        return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.corrupted.task", link))
       }
       return null
     }

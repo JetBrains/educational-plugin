@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -17,12 +18,14 @@ open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val projec
   open fun onTaskFailed() {
   }
 
-  open fun check(indicator: ProgressIndicator) = CheckResult(CheckStatus.Unchecked, "Check for ${task.itemType} task isn't available")
+  open fun check(indicator: ProgressIndicator) =
+    CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.for.task.not.available", task.itemType))
 
   open fun clearState() {}
 
   companion object {
     const val EP_NAME = "Educational.taskChecker"
+
     @JvmField
     val LOG = Logger.getInstance(TaskChecker::class.java)
   }
