@@ -21,6 +21,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions.ActionDescription;
+import com.intellij.openapi.util.NlsActions.ActionText;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -76,11 +78,11 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     this(EduCoreBundle.lazyMessage("action.check.text"), EduCoreBundle.lazyMessage("action.check.description"));
   }
 
-  public CheckAction(Supplier<String> dynamicText) {
+  public CheckAction(Supplier<@ActionText String> dynamicText) {
     this(dynamicText, dynamicText);
   }
 
-  public CheckAction(Supplier<String> dynamicText, Supplier<String> dynamicDescription) {
+  public CheckAction(Supplier<@ActionText String> dynamicText, Supplier<@ActionDescription String> dynamicDescription) {
     super(dynamicText, dynamicDescription);
     setUpSpinnerPanel(PROCESS_MESSAGE);
   }

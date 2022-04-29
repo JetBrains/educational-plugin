@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.util.NlsActions.ActionDescription
+import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.NonNls
@@ -12,8 +14,12 @@ abstract class ActionWithProgressIcon : AnAction {
   var spinnerPanel: JPanel? = null
     private set
 
-  protected constructor(actionText: Supplier<String>) : super(actionText)
-  protected constructor(actionText: Supplier<String>, descriptionText: Supplier<String>) : super(actionText, descriptionText, null)
+  protected constructor(actionText: Supplier<@ActionText String>) : super(actionText)
+
+  protected constructor(
+    actionText: Supplier<@ActionText String>,
+    descriptionText: Supplier<@ActionDescription String>
+  ) : super(actionText, descriptionText, null)
 
   protected fun setUpSpinnerPanel(@NonNls message: String) {
     val asyncProcessIcon = AsyncProcessIcon(message)

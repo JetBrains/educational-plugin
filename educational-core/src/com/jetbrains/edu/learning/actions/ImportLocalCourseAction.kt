@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,7 +30,7 @@ import java.awt.Component
 import java.util.function.Supplier
 
 open class ImportLocalCourseAction(
-  text: Supplier<String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.title")
+  text: Supplier<@ActionText String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.text")
 ) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)

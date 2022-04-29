@@ -8,8 +8,12 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.*
+import com.intellij.openapi.util.NlsActions.ActionText
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager.remoteCheckerForTask
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -20,13 +24,13 @@ import org.jetbrains.annotations.NonNls
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
 
-class RetryAction(actionText: Supplier<String>,
+class RetryAction(actionText: Supplier<@ActionText String>,
                   private val processMessage: String = PROCESS_MESSAGE,
                   private val expectedTaskStatus: CheckStatus = CheckStatus.Failed
 ) : ActionWithProgressIcon(actionText),
     DumbAware {
 
-  constructor() : this(EduCoreBundle.lazyMessage("action.retry.try.again")) {
+  constructor() : this(EduCoreBundle.lazyMessage("action.retry.try.again.text")) {
     setUpSpinnerPanel(processMessage)
   }
 

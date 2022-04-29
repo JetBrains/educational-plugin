@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.IntNode
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 
@@ -18,8 +17,8 @@ import org.jdom.Element
 // All user-specific information should be stored in userInfo
 abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
 
-  private val serviceNameForAccessToken @NlsSafe get() = "$serviceName access token"
-  private val serviceNameForRefreshToken @NlsSafe get() = "$serviceName refresh token"
+  private val serviceNameForAccessToken get() = "$serviceName access token"
+  private val serviceNameForRefreshToken get() = "$serviceName refresh token"
 
   var tokenExpiresIn: Long = -1
 

@@ -212,7 +212,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryLink = RetryHyperlinkComponent(EduCoreBundle.message("action.retry.try.again"),
+      val retryLink = RetryHyperlinkComponent(EduCoreBundle.message("action.retry.try.again.description"),
                                               ActionManager.getInstance().getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon)
       add(retryLink, BorderLayout.WEST)
     }

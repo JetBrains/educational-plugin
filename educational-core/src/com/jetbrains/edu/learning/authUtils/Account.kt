@@ -6,7 +6,6 @@ import com.intellij.credentialStore.generateServiceName
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
@@ -18,7 +17,7 @@ private const val SERVICE_DISPLAY_NAME_PREFIX = "EduTools"
 
 abstract class Account<UserInfo : Any> {
   protected abstract val servicePrefix: String
-  protected val serviceName @NlsSafe get() = "$servicePrefix Integration"
+  protected val serviceName get() = "$servicePrefix Integration"
 
   @field:Transient
   @get:Transient

@@ -30,8 +30,8 @@ public class SyncStepikCourseAction extends SyncCourseAction {
   public static final String ACTION_ID = "Educational.Stepik.UpdateCourse";
 
   public SyncStepikCourseAction() {
-    super(EduCoreBundle.lazyMessage("action.synchronize.course"),
-          EduCoreBundle.lazyMessage("action.synchronize.course"),
+    super(EduCoreBundle.lazyMessage("action.synchronize.course.text"),
+          EduCoreBundle.lazyMessage("action.synchronize.course.description"),
           EducationalCoreIcons.StepikRefresh);
   }
 
@@ -77,7 +77,7 @@ public class SyncStepikCourseAction extends SyncCourseAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course instanceof EduCourse && ((EduCourse)course).isStepikRemote()) {
+    if (course instanceof EduCourse && (course).isStepikRemote()) {
       return true;
     }
     return false;
