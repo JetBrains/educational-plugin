@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.io.FileUtilRt
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
@@ -131,7 +132,9 @@ class GetHyperskillLesson : DumbAwareAction(
       showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
     }
 
-    private fun showError(message: String, title: String) {
+    @Suppress("UnstableApiUsage")
+    private fun showError(@NlsContexts.DialogMessage message: String,
+                          @NlsContexts.DialogTitle title : String) {
       runInEdt {
         Messages.showErrorDialog(message, title)
       }

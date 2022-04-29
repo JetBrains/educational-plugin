@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.OpenApiExtKt;
@@ -16,7 +17,8 @@ import java.util.function.Supplier;
 
 abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
 
-  protected CCAnswerPlaceholderAction(@NotNull Supplier<String> text, @NotNull Supplier<String> description) {
+  protected CCAnswerPlaceholderAction(@NotNull Supplier<@NlsActions.ActionText String> text,
+                                      @NotNull Supplier<@NlsActions.ActionDescription String> description) {
     super(text, description, null);
   }
 

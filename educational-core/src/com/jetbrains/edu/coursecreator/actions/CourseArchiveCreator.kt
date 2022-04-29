@@ -151,6 +151,8 @@ class CourseArchiveCreator(
         return prettyPrinter
       }
 
+    // suppressing deprecation for ObjectMapper#disable()
+    @Suppress("DEPRECATION")
     fun commonMapperSetup(mapper: ObjectMapper, course: Course) {
       if (course is CourseraCourse) {
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
@@ -228,7 +230,7 @@ class CourseArchiveCreator(
 
       }
       else {
-        LOG.warn(String.format("Can't find description file for task `%s`", task.name))
+        LOG.warn("Can't find description file for task ${task.name}")
       }
     }
 

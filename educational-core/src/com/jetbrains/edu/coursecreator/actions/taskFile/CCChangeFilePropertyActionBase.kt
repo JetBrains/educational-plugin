@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -15,12 +16,13 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
-import org.jetbrains.annotations.Nls
 import java.util.function.Supplier
 
-abstract class CCChangeFilePropertyActionBase(private val name: Supplier<String>) : DumbAwareAction(name) {
+abstract class CCChangeFilePropertyActionBase(
+  private val name: Supplier<@NlsActions.ActionText String>
+) : DumbAwareAction(name) {
 
-  constructor(@Nls(capitalization = Nls.Capitalization.Title) name: String) : this(Supplier { name })
+  constructor(@NlsActions.ActionText name: String) : this(Supplier { name })
 
   override fun update(e: AnActionEvent) {
     val project = e.project

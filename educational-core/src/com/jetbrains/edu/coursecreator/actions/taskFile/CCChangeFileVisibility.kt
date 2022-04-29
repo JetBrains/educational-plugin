@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -9,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathRelativeToTask
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
@@ -27,9 +27,12 @@ class CCHideFromLearner : CCChangeFileVisibility(EduCoreBundle.lazyMessage("acti
   }
 }
 
-abstract class CCChangeFileVisibility(val name: Supplier<String>, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
+abstract class CCChangeFileVisibility(
+  val name: Supplier<@NlsActions.ActionText String>,
+  val requiredVisibility: Boolean
+) : CCChangeFilePropertyActionBase(name) {
 
-  constructor(@Nls(capitalization = Nls.Capitalization.Title) name: String, requiredVisibility: Boolean)
+  constructor(@NlsActions.ActionText name: String, requiredVisibility: Boolean)
     : this(Supplier { name }, requiredVisibility)
 
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {

@@ -11,6 +11,7 @@ import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -82,9 +83,10 @@ public class CCShowChangedFiles extends DumbAwareAction {
     });
   }
 
+  @SuppressWarnings({"TestOnlyProblems", "UnstableApiUsage"})
   @VisibleForTesting
   @NotNull
-  public static String buildChangeMessage(@NotNull EduCourse course, EduCourse remoteCourse, Project project) {
+  public static @NlsContexts.DialogMessage String buildChangeMessage(@NotNull EduCourse course, EduCourse remoteCourse, Project project) {
     StringBuilder builder = new StringBuilder();
     StepikChangeRetriever changeRetriever = new StepikChangeRetriever(project, course, remoteCourse);
     StepikChangesInfo changedItems = changeRetriever.getChangedItems();

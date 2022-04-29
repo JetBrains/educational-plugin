@@ -6,6 +6,7 @@ import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.Nls
 import javax.swing.JPanel
 
 interface ContextHelpProvider {
@@ -13,6 +14,7 @@ interface ContextHelpProvider {
 
   fun getHelpRelativePath(): String = ""
 
+  @Nls
   fun getTooltipText(): String
 
   fun createContextHelpComponent(): JPanel {

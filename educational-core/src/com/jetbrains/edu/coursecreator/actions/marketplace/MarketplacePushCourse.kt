@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
@@ -20,13 +21,15 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
 
 @Suppress("ComponentNotRegistered") // Marketplace.xml
-class MarketplacePushCourse(private val updateTitle: String = message("item.update.on.0.course.title", MARKETPLACE),
-                            private val uploadTitle: String = message("item.upload.to.0.course.title", MARKETPLACE)) : DumbAwareAction(
-  EduCoreBundle.lazyMessage("gluing.slash", updateTitle, uploadTitle)) {
+class MarketplacePushCourse(
+  private val updateTitle: @NlsActions.ActionText String = message("item.update.on.0.course.title", MARKETPLACE),
+  private val uploadTitle: @NlsActions.ActionText String = message("item.upload.to.0.course.title", MARKETPLACE)
+) : DumbAwareAction(EduCoreBundle.lazyMessage("gluing.slash", updateTitle, uploadTitle)) {
 
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation
@@ -87,7 +90,7 @@ class MarketplacePushCourse(private val updateTitle: String = message("item.upda
     }
   }
 
-  private fun showConfirmationDialog(actionTitle: String) = Messages.showOkCancelDialog(
+  private fun showConfirmationDialog(actionTitle: @Nls(capitalization = Nls.Capitalization.Title) String) = Messages.showOkCancelDialog(
     message("marketplace.push.course.confirmation.dialog.message", actionTitle),
     actionTitle,
     actionTitle,

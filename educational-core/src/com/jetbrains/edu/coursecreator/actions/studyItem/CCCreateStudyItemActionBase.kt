@@ -154,14 +154,14 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     val suggestedName: String
     if (isAddedAsLast(project, course, sourceDirectory)) {
       index = ITEM_INDEX.getData(dataContext) ?: getSiblingsSize(course, parentItem)
-      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemType.presentableName + (index + 1)
+      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: (itemType.presentableName + (index + 1))
     }
     else {
       val thresholdItem = getThresholdItem(project, course, sourceDirectory) ?: return
       val defaultIndex = ITEM_INDEX.getData(dataContext)
       index = defaultIndex ?: thresholdItem.index
       val itemName = itemType.presentableName
-      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: itemName + (index + 1)
+      suggestedName = SUGGESTED_NAME.getData(dataContext) ?: (itemName + (index + 1))
     }
     if (parentItem == null) {
       return
