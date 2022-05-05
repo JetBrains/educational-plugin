@@ -44,8 +44,8 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
 
   private class CreateTaskFileFix(element: YAMLScalar) : LocalQuickFixOnPsiElement(element) {
 
-    override fun getFamilyName(): String = "Create file"
-    override fun getText(): String = EduYAMLBundle.message("create.file")
+    override fun getFamilyName(): String = EduYAMLBundle.message("create.file.quick.fix.family.name")
+    override fun getText(): String = EduYAMLBundle.message("create.file.quick.fix.family.name")
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar

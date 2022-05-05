@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.yaml.ItemContainerContentReferenceProvider
+import com.jetbrains.edu.yaml.messages.EduYAMLBundle
 import org.jetbrains.yaml.psi.YAMLScalar
 import org.jetbrains.yaml.psi.YAMLSequenceItem
 
@@ -63,7 +64,7 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
 
   private class CreateStudyItemQuickFix(element: YAMLScalar, private val itemType: StudyItemType) : LocalQuickFixOnPsiElement(element) {
 
-    override fun getFamilyName(): String = "Create study item"
+    override fun getFamilyName(): String = EduYAMLBundle.message("create.study.item.quick.fix.family.name")
     override fun getText(): String = itemType.createItemMessage
     // We show dialog in `invoke` so quick have to be launched not in write action
     // otherwise, this dialog will block all codeinsight in whole IDE
