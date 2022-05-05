@@ -13,110 +13,95 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.newproject;
+package com.jetbrains.edu.learning.newproject
 
-import com.google.common.annotations.VisibleForTesting;
-import com.intellij.ide.RecentProjectsManager;
-import com.intellij.ide.impl.TrustedProjects;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.idea.ActionsBundle;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager;
-import com.intellij.projectImport.ProjectOpenedCallback;
-import com.intellij.util.PathUtil;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog;
-import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.PluginUtils;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepik.StepikUser;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-
-import static com.jetbrains.edu.learning.marketplace.MarketplaceNamesKt.MARKETPLACE;
-import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.isNewTrustedProjectApiAvailable;
-import static com.jetbrains.edu.learning.newproject.TrustedProjectUtils.setProjectPathTrusted;
+import com.google.common.annotations.VisibleForTesting
+import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.impl.setTrusted
+import com.intellij.ide.util.PropertiesComponent
+import com.intellij.idea.ActionsBundle
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
+import com.intellij.projectImport.ProjectOpenedCallback
+import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.setUpPluginDependencies
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.synchronizeCourse
+import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.io.File
+import java.io.IOException
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
  * @see HyperskillCourseProjectGenerator
  */
-public abstract class CourseProjectGenerator<S> {
+abstract class CourseProjectGenerator<S : Any>(
+  protected val myCourseBuilder: EduCourseBuilder<S>,
+  protected var myCourse: Course
+) {
+  private var alreadyEnrolled = false
 
-  public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");
-  public static final Key<CourseMode> COURSE_MODE_TO_CREATE = Key.create("edu.courseModeToCreate");
-  public static final Key<String> COURSE_LANGUAGE_ID_TO_CREATE = Key.create("edu.courseLanguageIdToCreate");
+  open fun beforeProjectGenerated(): Boolean {
+    if (myCourse !is EduCourse || !myCourse.isStepikRemote) return true
+    val remoteCourse = myCourse as EduCourse
 
-  private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
-
-  @NotNull protected final EduCourseBuilder<S> myCourseBuilder;
-  @NotNull protected Course myCourse;
-  private boolean alreadyEnrolled;
-
-  public CourseProjectGenerator(@NotNull EduCourseBuilder<S> builder, @NotNull final Course course) {
-    myCourseBuilder = builder;
-    myCourse = course;
-  }
-
-  public boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof EduCourse) || !myCourse.isStepikRemote()) return true;
-    final EduCourse remoteCourse = (EduCourse) this.myCourse;
-    if (remoteCourse.getId() > 0) {
-      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-
-        final StepikUser user = EduSettings.getInstance().getUser();
+    if (remoteCourse.id <= 0) return true
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Boolean, RuntimeException>(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        val user = EduSettings.getInstance().user
         if (user != null) {
-          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.getId());
+          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.id)
           if (!alreadyEnrolled) {
-            StepikConnector.getInstance().enrollToCourse(remoteCourse.getId());
+            StepikConnector.getInstance().enrollToCourse(remoteCourse.id)
           }
         }
-        StepikCourseLoader.loadCourseStructure(remoteCourse);
-        myCourse = remoteCourse;
-        return true;
-      }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null);
-    }
-    return true;
+        loadCourseStructure(remoteCourse)
+        myCourse = remoteCourse
+        true
+      }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null)
   }
 
-  public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
-    StatusBarWidgetsManager statusBarWidgetsManager = project.getService(StatusBarWidgetsManager.class);
-    statusBarWidgetsManager.updateAllWidgets();
+  open fun afterProjectGenerated(project: Project, projectSettings: S) {
+    val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
+    statusBarWidgetsManager.updateAllWidgets()
 
-    PluginUtils.setUpPluginDependencies(project, myCourse);
+    setUpPluginDependencies(project, myCourse)
 
-    loadSolutions(project, myCourse);
-    EduUtils.openFirstTask(myCourse, project);
+    loadSolutions(project, myCourse)
+    EduUtils.openFirstTask(myCourse, project)
 
-    YamlFormatSynchronizer.saveAll(project);
-    YamlFormatSynchronizer.startSynchronization(project);
+    YamlFormatSynchronizer.saveAll(project)
+    YamlFormatSynchronizer.startSynchronization(project)
   }
 
   /**
@@ -129,59 +114,53 @@ public abstract class CourseProjectGenerator<S> {
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little bit differently
   // we use Object instead of S and cast to S when it needed
-  @SuppressWarnings("unchecked")
-  @Nullable
-  public final Project doCreateCourseProject(@NotNull String location, @NotNull Object projectSettings) {
+  fun doCreateCourseProject(location: String, projectSettings: Any): Project? {
     if (!beforeProjectGenerated()) {
-      return null;
+      return null
     }
-    S castedProjectSettings = (S) projectSettings;
-    Project createdProject = createProject(location, castedProjectSettings);
-    if (createdProject == null) return null;
-    afterProjectGenerated(createdProject, castedProjectSettings);
-    return createdProject;
+    @Suppress("UNCHECKED_CAST")
+    val castedProjectSettings = projectSettings as S
+    val createdProject = createProject(location, castedProjectSettings) ?: return null
+    afterProjectGenerated(createdProject, castedProjectSettings)
+    return createdProject
   }
 
   /**
    * Create new project in given location.
-   * To create course structure: modules, folders, files, etc. use {@link CourseProjectGenerator#createCourseStructure(Project, Module, VirtualFile, Object)}
+   * To create course structure: modules, folders, files, etc. use [CourseProjectGenerator.createCourseStructure]
    *
    * @param locationString location of new project
    * @param projectSettings new project settings
    * @return project of new course or null if new project can't be created
    */
-  @Nullable
-  private Project createProject(@NotNull String locationString, @NotNull S projectSettings) {
-    final File location = new File(FileUtil.toSystemDependentName(locationString));
+  private fun createProject(locationString: String, projectSettings: S): Project? {
+    val location = File(FileUtil.toSystemDependentName(locationString))
     if (!location.exists() && !location.mkdirs()) {
-      String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.getAbsolutePath());
-      Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"));
-      return null;
+      val message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.absolutePath)
+      Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"))
+      return null
     }
-
-    final VirtualFile baseDir = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location));
+    val baseDir = WriteAction.compute<VirtualFile?, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location) }
     if (baseDir == null) {
-      LOG.error("Couldn't find '" + location + "' in VFS");
-      return null;
+      LOG.error("Couldn't find '$location' in VFS")
+      return null
     }
-    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir);
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
 
-    RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
+    RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
-    baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.getCourseMode());
-    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.getLanguageID());
+    baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.courseMode)
+    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.languageID)
 
-    boolean isNewCourseCreatorCourse = isNewCourseCreatorCourse();
-    if (isNewTrustedProjectApiAvailable() && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
-      setProjectPathTrusted(location.toPath());
+    val isNewCourseCreatorCourse = isNewCourseCreatorCourse
+    if (isNewTrustedProjectApiAvailable && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+      setProjectPathTrusted(location.toPath())
     }
 
-    ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, module, baseDir, projectSettings);
-    Project project = OpenProjectUtils.openNewProject(location.toPath(), callback);
-    if (project != null) {
-      project.putUserData(EDU_PROJECT_CREATED, true);
-    }
-    return project;
+    val callback = ProjectOpenedCallback { p, module -> createCourseStructure(p, module, baseDir, projectSettings) }
+    val project = openNewProject(location.toPath(), callback)
+    project?.putUserData(EDU_PROJECT_CREATED, true)
+    return project
   }
 
   /**
@@ -192,75 +171,68 @@ public abstract class CourseProjectGenerator<S> {
    * @param settings project settings
    */
   @VisibleForTesting
-  public void createCourseStructure(@NotNull Project project,
-                                    @NotNull Module module,
-                                    @NotNull VirtualFile baseDir,
-                                    @NotNull S settings) {
-    GeneratorUtils.initializeCourse(project, myCourse);
-
-    boolean isNewCourseCreatorCourse = isNewCourseCreatorCourse();
+  open fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: S) {
+    GeneratorUtils.initializeCourse(project, myCourse)
+    val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
     // BACKCOMPAT: 2021.3. Drop it because project is marked as trusted in `createProject`
-    if (!isNewTrustedProjectApiAvailable() && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
-      //noinspection UnstableApiUsage
-      TrustedProjects.setTrusted(project, true);
+    if (!isNewTrustedProjectApiAvailable && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+      @Suppress("UnstableApiUsage")
+      project.setTrusted(true)
     }
-
     if (isNewCourseCreatorCourse) {
-      final Lesson lesson = myCourseBuilder.createInitialLesson(project, myCourse);
+      val lesson = myCourseBuilder.createInitialLesson(project, myCourse)
       if (lesson != null) {
-        myCourse.addLesson(lesson);
+        myCourse.addLesson(lesson)
       }
     }
-
     try {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        if (CCUtils.isCourseCreator(project)) {
-          CCUtils.initializeCCPlaceholders(project, myCourse);
-        }
-        GeneratorUtils.createCourse(project, myCourse, baseDir, indicator);
-        if (myCourse instanceof EduCourse &&
-            (myCourse.isStepikRemote() || ((EduCourse)myCourse).isMarketplaceRemote()) &&
-            CCUtils.isCourseCreator(project)) {
-          checkIfAvailableOnRemote();
-        }
-        createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse);
-        EduCounterUsageCollector.eduProjectCreated(myCourse);
-
-        return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
-      }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project);
-    } catch (IOException e) {
-      LOG.error("Failed to generate course", e);
+      ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>(
+        {
+          val indicator = ProgressManager.getInstance().progressIndicator
+          if (CCUtils.isCourseCreator(project)) {
+            CCUtils.initializeCCPlaceholders(project, myCourse)
+          }
+          GeneratorUtils.createCourse(project, myCourse, baseDir, indicator)
+          if (myCourse is EduCourse &&
+              (myCourse.isStepikRemote || (myCourse as EduCourse).isMarketplaceRemote) &&
+              CCUtils.isCourseCreator(project)) {
+            checkIfAvailableOnRemote()
+          }
+          createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse)
+          EduCounterUsageCollector.eduProjectCreated(myCourse)
+        }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project)
+    }
+    catch (e: IOException) {
+      LOG.error("Failed to generate course", e)
     }
   }
 
-  private void checkIfAvailableOnRemote() {
-    EduCourse remoteCourse;
-    if (myCourse.isMarketplace()) {
-      remoteCourse = MarketplaceConnector.getInstance().searchCourse(myCourse.getId(), myCourse.isMarketplacePrivate());
+  private fun checkIfAvailableOnRemote() {
+    val remoteCourse = if (myCourse.isMarketplace) {
+      MarketplaceConnector.getInstance().searchCourse(myCourse.id, myCourse.isMarketplacePrivate)
     }
     else {
-      remoteCourse = StepikConnector.getInstance().getCourseInfo(myCourse.getId(), null, true);
+      StepikConnector.getInstance().getCourseInfo(myCourse.id, null, true)
     }
     if (remoteCourse == null) {
-      String platformName = myCourse.isMarketplace() ? MARKETPLACE: StepikNames.STEPIK;
-      LOG.warn("Failed to get "+ platformName + " course for imported from zip course with id: " + myCourse.getId());
-      LOG.info("Converting course to local. Course id: " + myCourse.getId());
-      ((EduCourse)myCourse).convertToLocal();
+      val platformName = if (myCourse.isMarketplace) MARKETPLACE else StepikNames.STEPIK
+      LOG.warn("Failed to get $platformName course for imported from zip course with id: ${myCourse.id}")
+      LOG.info("Converting course to local. Course id: ${myCourse.id}")
+      (myCourse as EduCourse).convertToLocal()
     }
   }
 
-  private void loadSolutions(@NotNull Project project, @NotNull Course course) {
-    if (course.isStudy() &&
-        course instanceof EduCourse &&
-        course.isStepikRemote() &&
+  private fun loadSolutions(project: Project, course: Course) {
+    if (course.isStudy &&
+        course is EduCourse &&
+        course.isStepikRemote &&
         EduSettings.isLoggedIn()) {
-      PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+      PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false)
       if (alreadyEnrolled) {
-        StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
-        stepikSolutionsLoader.loadSolutionsInBackground();
-        EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION);
+        val stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project)
+        stepikSolutionsLoader.loadSolutionsInBackground()
+        synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION)
       }
     }
   }
@@ -270,25 +242,33 @@ public abstract class CourseProjectGenerator<S> {
    *
    * @param project course project
    * @param baseDir base directory of project
-   * @param isNewCourse {@code true} if course is new one, {@code false} otherwise
+   * @param isNewCourse `true` if course is new one, `false` otherwise
    *
    * @throws IOException
    */
-  public void createAdditionalFiles(@NotNull Project project,
-                                    @NotNull VirtualFile baseDir,
-                                    boolean isNewCourse) throws IOException {}
+  @Throws(IOException::class)
+  open fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {}
 
-  private boolean isNewCourseCreatorCourse() {
-    return myCourse.getCourseMode().equals(CourseMode.EDUCATOR) && myCourse.getItems().isEmpty();
-  }
+  private val isNewCourseCreatorCourse: Boolean
+    get() = myCourse.courseMode == CourseMode.EDUCATOR && myCourse.items.isEmpty()
 
-  // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
-  // See https://youtrack.jetbrains.com/issue/EDU-4182
-  private static boolean isCourseTrusted(@NotNull Course course, boolean isNewCourseCreatorCourse) {
-    if (isNewCourseCreatorCourse) return true;
-    if (!(course instanceof EduCourse)) return true;
-    if (course.getVisibility() instanceof CourseVisibility.FeaturedVisibility) return true;
-    if (course.getDataHolder().getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == Boolean.TRUE) return true;
-    return false;
+  companion object {
+    private val LOG: Logger = Logger.getInstance(CourseProjectGenerator::class.java)
+
+    @JvmField
+    val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
+    @JvmField
+    val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
+    val COURSE_LANGUAGE_ID_TO_CREATE = Key.create<String>("edu.courseLanguageIdToCreate")
+
+
+    // TODO: provide more precise heuristic for Gradle, sbt and other "dangerous" build systems
+    // See https://youtrack.jetbrains.com/issue/EDU-4182
+    private fun isCourseTrusted(course: Course, isNewCourseCreatorCourse: Boolean): Boolean {
+      if (isNewCourseCreatorCourse) return true
+      if (course !is EduCourse) return true
+      if (course.visibility is FeaturedVisibility) return true
+      return course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+    }
   }
 }

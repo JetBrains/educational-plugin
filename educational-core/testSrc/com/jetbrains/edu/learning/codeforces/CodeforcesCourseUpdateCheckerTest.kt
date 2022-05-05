@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecke
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.EDU_PROJECT_CREATED
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator.Companion.EDU_PROJECT_CREATED
 import com.jetbrains.edu.learning.update.CourseUpdateChecker
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
 import org.jsoup.Jsoup
