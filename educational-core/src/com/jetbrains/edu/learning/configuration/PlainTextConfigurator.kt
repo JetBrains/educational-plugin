@@ -1,3 +1,5 @@
+@file:Suppress("HardCodedStringLiteral")
+
 package com.jetbrains.edu.learning.configuration
 
 import com.intellij.icons.AllIcons
@@ -18,12 +20,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import javax.swing.Icon
 
 
-@NonNls // used in tests only
 open class PlainTextConfigurator : EduConfigurator<Unit> {
   override val courseBuilder: EduCourseBuilder<Unit>
     get() = PlainTextCourseBuilder()
