@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.panels.NonOpaquePanel
@@ -59,17 +60,20 @@ class ErrorComponent(
     }
 
     fun setErrorMessage(validationMessage: ValidationMessage) {
-      val text = """
-        <style>
-          ${createCourseDescriptionStylesheet()}
-          ${createErrorStylesheet()}
-        </style>
-        <body>
-          ${validationMessage.message}
-        </body>
+      @Suppress("UnstableApiUsage")
+      @NlsSafe
+      val wrappedMessage = """
+      <style>
+        ${createCourseDescriptionStylesheet()}
+        ${createErrorStylesheet()}
+      </style>
+      <body>
+        ${validationMessage.message}
+      </body>
       """.trimIndent()
+
       messageType = validationMessage.type
-      errorTextPane.text = text
+      errorTextPane.text = wrappedMessage
       errorTextPane.background = getComponentColor()
     }
 
