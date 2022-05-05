@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
+import com.jetbrains.edu.yaml.messages.EduYAMLBundle
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.extension.SchemaType
@@ -23,22 +24,22 @@ import org.jetbrains.yaml.psi.YAMLMapping
 
 class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   override fun getProviders(project: Project): List<StudyItemConfigSchemaProvider> {
-    val tasksWithSpecificProvider = setOf(ChoiceTask.CHOICE_TASK_TYPE)
 
     return listOf(
-      StudyItemConfigSchemaProvider(project, EduNames.COURSE),
-      StudyItemConfigSchemaProvider(project, SECTION),
+      CourseConfigSchemaProvider(project),
+      SectionConfigSchemaProvider(project),
       LessonConfigSchemaProvider(project),
       FrameworkLessonConfigSchemaProvider(project),
-      TaskGeneralConfigSchemaProvider(project, tasksWithSpecificProvider),
-      *tasksWithSpecificProvider
+      TaskGeneralConfigSchemaProvider(project),
+      *getTaskSpecificProviderNames().keys
         .map { TaskSpecificConfigSchemaProvider(project, it) }
         .toTypedArray()
     )
   }
 
-  open class StudyItemConfigSchemaProvider(protected val project: Project, protected val itemKind: String) : JsonSchemaFileProvider {
-    override fun getName(): String = "${itemKind.replaceFirstChar { it.titlecaseChar() }} Configuration"
+  abstract class StudyItemConfigSchemaProvider(protected val project: Project) : JsonSchemaFileProvider {
+
+    abstract val itemKind: String
 
     override fun isAvailable(file: VirtualFile): Boolean = CCUtils.isCourseCreator(project)
                                                            && YamlFormatSettings.getLocalConfigFileName(itemKind) == file.name
@@ -55,10 +56,33 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     open fun getSchemaResourcePath(): String = "/yaml/${itemKind}-schema.json"
   }
 
-  class TaskSpecificConfigSchemaProvider(project: Project, private val taskType: String)
-    : StudyItemConfigSchemaProvider(project, TASK) {
+  class CourseConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project) {
 
-    override fun getName(): String = "${taskType.replaceFirstChar { it.titlecaseChar() }} ${super.getName()}"
+    override val itemKind: String = EduNames.COURSE
+
+    override fun getName(): String {
+      return EduYAMLBundle.message("yaml.schema.provider.for.course.name")
+    }
+  }
+
+  class SectionConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project) {
+
+    override val itemKind: String = SECTION
+
+    override fun getName(): String {
+      return EduYAMLBundle.message("yaml.schema.provider.for.section.name")
+    }
+
+  }
+
+  class TaskSpecificConfigSchemaProvider(project: Project, private val taskType: String)
+    : StudyItemConfigSchemaProvider(project) {
+
+    override val itemKind: String = TASK
+
+    override fun getName(): String {
+      return getTaskSpecificProviderNames()[taskType] ?: error("Task specific provider wasn't found for $taskType")
+    }
 
     override fun isAvailable(file: VirtualFile): Boolean {
       val task = file.getContainingTask(project) ?: return false
@@ -69,20 +93,26 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun getSchemaResourcePath(): String = "/yaml/${taskType}-${itemKind}-schema.json"
   }
 
-  class TaskGeneralConfigSchemaProvider(project: Project, private val tasksWithSpecificProvider: Collection<String>)
-    : StudyItemConfigSchemaProvider(project, TASK) {
+  class TaskGeneralConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project) {
 
+    override val itemKind: String = TASK
     override fun isAvailable(file: VirtualFile): Boolean {
       // We need to exclude task types with specific Config Schema Provider
       // to make providers mapped one to one for every yaml file.
       val task = file.getContainingTask(project) ?: return false
-      return super.isAvailable(file) && !tasksWithSpecificProvider.contains(task.itemType)
+      return super.isAvailable(file) && task.itemType !in getTaskSpecificProviderNames()
+    }
+
+    override fun getName(): String {
+      return EduYAMLBundle.message("yaml.schema.provider.for.task.name")
     }
   }
 
-  class FrameworkLessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, LESSON) {
+  class FrameworkLessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project) {
 
-    override fun getName(): String = "Framework Lesson Configuration"
+    override val itemKind: String = LESSON
+
+    override fun getName(): String = EduYAMLBundle.message("yaml.schema.provider.for.framework.lesson.name")
 
     override fun isAvailable(file: VirtualFile): Boolean {
       if (!super.isAvailable(file)) return false
@@ -92,11 +122,24 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun getSchemaResourcePath(): String = "/yaml/framework-lesson-schema.json"
   }
 
-  class LessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, LESSON) {
+  class LessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project) {
+
+    override val itemKind: String = LESSON
+
     override fun isAvailable(file: VirtualFile): Boolean {
       if (!super.isAvailable(file)) return false
       return !file.isFrameworkLessonConfig(project)
     }
+
+    override fun getName(): String {
+      return EduYAMLBundle.message("yaml.schema.provider.for.lesson.name")
+    }
+  }
+
+  companion object {
+    private fun getTaskSpecificProviderNames(): Map<String, String> = mapOf(
+      ChoiceTask.CHOICE_TASK_TYPE to EduYAMLBundle.message("yaml.schema.provider.for.choice.task.name")
+    )
   }
 }
 
