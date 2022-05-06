@@ -38,15 +38,17 @@ import java.util.concurrent.TimeUnit
 object CheckUtils {
   const val STUDY_PREFIX = "#educational_plugin"
   const val CHECKER_VERSION = "#educational_plugin_checker_version "
-  const val CONGRATULATIONS = "Congratulations!"
   const val TEST_OK = "test OK"
   const val TEST_FAILED = "FAILED + "
   const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+
   private val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
-  const val COMPILATION_FAILED_MESSAGE = "Compilation Failed"
-  const val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
-  const val LOGIN_NEEDED_MESSAGE = "Please, login to check the task"
-  const val SYNTAX_ERROR_MESSAGE = "Syntax Error"
+
+  val CONGRATULATIONS = EduCoreBundle.message("check.correct.solution")
+  val COMPILATION_FAILED_MESSAGE = EduCoreBundle.message("check.error.compilation.failed")
+  val NOT_RUNNABLE_MESSAGE = EduCoreBundle.message("check.error.solution.not.runnable")
+  val LOGIN_NEEDED_MESSAGE = EduCoreBundle.message("check.error.login.needed")
+  val SYNTAX_ERROR_MESSAGE = EduCoreBundle.message("check.error.syntax.error")
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduCoreBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE)
 
   private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
