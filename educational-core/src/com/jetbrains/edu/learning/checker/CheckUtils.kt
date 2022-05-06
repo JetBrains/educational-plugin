@@ -36,12 +36,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 object CheckUtils {
-  const val STUDY_PREFIX = "#educational_plugin"
-  const val CHECKER_VERSION = "#educational_plugin_checker_version "
-  const val TEST_OK = "test OK"
-  const val TEST_FAILED = "FAILED + "
-  const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
-
   private val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
 
   val CONGRATULATIONS = EduCoreBundle.message("check.correct.solution")

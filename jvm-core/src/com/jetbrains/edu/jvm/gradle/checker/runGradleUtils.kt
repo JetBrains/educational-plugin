@@ -16,13 +16,12 @@ import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils.CHECKER_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
-import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TestsOutputParser
+import com.jetbrains.edu.learning.checker.TestsOutputParser.Companion.STUDY_PREFIX
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -35,9 +34,12 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.TestRunner
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
+
 // TODO: consider to use init scripts (https://docs.gradle.org/current/userguide/init_scripts.html) for customization
 // Should be passed to gradle command to add `#educational_plugin` prefix for `run` task output
 const val EDUCATIONAL_RUN_PROPERTY = "-PeducationalRun=true"
+
+const val CHECKER_VERSION = "#educational_plugin_checker_version "
 
 const val TEST_TASK_NAME = "test"
 

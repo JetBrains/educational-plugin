@@ -1,14 +1,11 @@
 package com.jetbrains.edu.learning.checker
 
-import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATS_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
-import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
-import com.jetbrains.edu.learning.checker.CheckUtils.TEST_FAILED
-import com.jetbrains.edu.learning.checker.CheckUtils.TEST_OK
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.regex.Pattern
 
 class TestsOutputParser {
@@ -107,8 +104,19 @@ class TestsOutputParser {
     if (expected != null && actual != null) CheckResultDiff(expected, actual, message) else null
 
   companion object {
+    const val STUDY_PREFIX = "#educational_plugin"
+
     private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)",
                                                                Pattern.MULTILINE or Pattern.DOTALL)
+
+    @VisibleForTesting
+    const val TEST_OK = "test OK"
+
+    @VisibleForTesting
+    const val TEST_FAILED = "FAILED + "
+
+    @VisibleForTesting
+    const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
   }
 
   sealed class TestMessage {
