@@ -59,7 +59,15 @@ const val CUSTOM_NAME = "custom_name"
 const val SOLUTION_HIDDEN = "solution_hidden"
 private const val TASK_TYPE = "task_type"
 
-abstract class StepikEduCourseMixin {
+open class StepikItemMixin {
+  @JsonProperty(ID)
+  var id: Int = 0
+
+  @JsonProperty(UPDATE_DATE)
+  lateinit var updateDate: Date
+}
+
+abstract class StepikEduCourseMixin : StepikItemMixin() {
   @JsonProperty(IS_IDEA_COMPATIBLE)
   var isCompatible = true
 
@@ -74,12 +82,6 @@ abstract class StepikEduCourseMixin {
 
   @JsonProperty(INSTRUCTORS)
   lateinit var instructors: List<Int>
-
-  @JsonProperty(ID)
-  private var id: Int = 0
-
-  @JsonProperty(UPDATE_DATE)
-  lateinit var updateDate: Date
 
   @JsonProperty(IS_PUBLIC)
   var isStepikPublic: Boolean = false
@@ -106,7 +108,7 @@ abstract class StepikEduCourseMixin {
   var reviewSummary: Int = 0
 }
 
-class StepikSectionMixin {
+class StepikSectionMixin : StepikItemMixin() {
   @JsonProperty(UNITS)
   lateinit var units: List<Int>
 
@@ -118,23 +120,11 @@ class StepikSectionMixin {
 
   @JsonProperty(POSITION)
   var position: Int = 0
-
-  @JsonProperty(ID)
-  private var id: Int = 0
-
-  @JsonProperty(UPDATE_DATE)
-  lateinit var updateDate: Date
 }
 
-class StepikLessonMixin {
-  @JsonProperty(ID)
-  var id: Int = 0
-
+class StepikLessonMixin : StepikItemMixin() {
   @JsonProperty(STEPS)
   lateinit var steps: MutableList<Int>
-
-  @JsonProperty(UPDATE_DATE)
-  lateinit var updateDate: Date
 
   @JsonProperty(TITLE)
   lateinit var name: String
