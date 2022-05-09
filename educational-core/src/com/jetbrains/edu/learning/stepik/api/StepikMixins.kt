@@ -133,9 +133,6 @@ class StepikLessonMixin {
   @JsonProperty(STEPS)
   lateinit var steps: MutableList<Int>
 
-  @JsonProperty(IS_PUBLIC)
-  var is_public: Boolean = false
-
   @JsonProperty(UPDATE_DATE)
   lateinit var updateDate: Date
 

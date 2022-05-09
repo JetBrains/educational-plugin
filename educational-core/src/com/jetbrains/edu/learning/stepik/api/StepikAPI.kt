@@ -187,7 +187,6 @@ class LessonData(lesson: Lesson) {
     this.lesson.name = lesson.name
     this.lesson.id = lesson.id
     this.lesson.steps = ArrayList()
-    this.lesson.isPublic = true
   }
 }
 

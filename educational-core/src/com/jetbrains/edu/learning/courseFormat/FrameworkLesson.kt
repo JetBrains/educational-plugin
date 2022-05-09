@@ -8,7 +8,6 @@ class FrameworkLesson() : Lesson() {
   constructor(lesson: Lesson): this() {
     id = lesson.id
     steps = lesson.steps
-    isPublic = lesson.isPublic
     updateDate = lesson.updateDate
     name = lesson.name
     items = lesson.items

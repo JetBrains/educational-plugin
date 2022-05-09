@@ -15,8 +15,6 @@ open class Lesson : ItemContainer() {
   // TODO: move to stepik
   @Transient
   var steps: List<Int> = listOf()
-  @Transient
-  var isPublic = false
   var unitId = 0
 
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
