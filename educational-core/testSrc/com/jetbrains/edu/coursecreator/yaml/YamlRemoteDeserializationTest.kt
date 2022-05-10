@@ -4,10 +4,10 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
@@ -134,7 +134,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
-    val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as Lesson
+    val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as StepikLesson
     assertEquals(1, lesson.id)
     assertEquals(1, lesson.unitId)
     assertEquals(Date(0), lesson.updateDate)

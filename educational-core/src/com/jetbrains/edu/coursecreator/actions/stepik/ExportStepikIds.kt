@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
@@ -48,7 +49,7 @@ class ExportStepikIds : DumbAwareAction(
         val itemsName = if (item is Lesson) "task_list" else "items"
         jsonObject.addChildren(itemsName, item.items, serializeStudyItem)
       }
-      if (item is Lesson) {
+      if (item is StepikLesson) {
         jsonObject.addProperty("unit_id", item.unitId)
       }
       if (item is EduCourse && item.isStepikRemote) {

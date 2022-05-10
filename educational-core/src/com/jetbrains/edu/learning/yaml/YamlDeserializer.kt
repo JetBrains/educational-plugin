@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
@@ -52,6 +53,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlFormatSettings.localConfigNameToRemote
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
@@ -72,11 +74,12 @@ object YamlDeserializer {
   fun deserializeItem(configFile: VirtualFile, project: Project?, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configName = configFile.name
     val configFileText = configFile.document.text
+    val remoteConfigFile = configFile.parent?.findChild(localConfigNameToRemote(configName))
     return try {
       when (configName) {
         COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
         SECTION_CONFIG -> mapper.deserializeSection(configFileText)
-        LESSON_CONFIG -> mapper.deserializeLesson(configFileText)
+        LESSON_CONFIG -> mapper.deserializeLesson(configFileText, remoteConfigFile)
         TASK_CONFIG -> mapper.deserializeTask(configFileText)
         else -> loadingError(unknownConfigMessage(configFile.name))
       }
@@ -133,13 +136,25 @@ object YamlDeserializer {
   }
 
   @VisibleForTesting
-  fun ObjectMapper.deserializeLesson(configFileText: String): Lesson {
+  fun ObjectMapper.deserializeLesson(configFileText: String, remoteConfigFile: VirtualFile? = null): Lesson {
     val treeNode = readNode(configFileText)
-    val type = asText(treeNode.get("type"))
+
+    val type = asText(treeNode.get(YamlMixinNames.TYPE))
     val clazz = when (type) {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
       CheckiOStation().itemType -> CheckiOStation::class.java // for student projects only
-      Lesson().itemType, null -> Lesson::class.java
+      StepikLesson().itemType -> StepikLesson::class.java
+      null, Lesson().itemType -> {
+        // migration: previously we stored remote info for lessons from Stepik in `Lesson` items
+        if (remoteConfigFile != null) {
+          val remoteTreeNode = REMOTE_MAPPER.readTree(remoteConfigFile.document.text)
+          val unit = remoteTreeNode.get(YamlMixinNames.UNIT)
+          if (unitIsEmpty(unit)) Lesson::class.java else StepikLesson::class.java
+        }
+        else {
+          Lesson::class.java
+        }
+      }
       else -> formatError(unsupportedItemTypeMessage(type, EduNames.LESSON))
     }
     return treeToValue(treeNode, clazz)
@@ -148,7 +163,7 @@ object YamlDeserializer {
   @VisibleForTesting
   fun ObjectMapper.deserializeTask(configFileText: String): Task {
     val treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
-    val type = asText(treeNode.get("type")) ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
+    val type = asText(treeNode.get(YamlMixinNames.TYPE)) ?: formatError(EduCoreBundle.message("yaml.editor.invalid.task.type.not.specified"))
 
     val clazz = when (type) {
       EDU_TASK_TYPE -> EduTask::class.java
@@ -176,7 +191,7 @@ object YamlDeserializer {
     val configFileText = configFile.document.text
     return when (configName) {
       REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
-      REMOTE_LESSON_CONFIG -> REMOTE_MAPPER.readValue(configFileText, Lesson::class.java)
+      REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)
       REMOTE_SECTION_CONFIG -> REMOTE_MAPPER.readValue(configFileText, RemoteStudyItem::class.java)
       REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
       else -> loadingError(unknownConfigMessage(configName))
@@ -185,7 +200,7 @@ object YamlDeserializer {
 
   private fun deserializeCourseRemoteInfo(configFileText: String): Course {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)
-    val type = asText(treeNode.get("type"))
+    val type = asText(treeNode.get(YamlMixinNames.TYPE))
 
     val clazz = when {
       type == CodeforcesNames.CODEFORCES_COURSE_TYPE -> CodeforcesCourse::class.java
@@ -195,6 +210,16 @@ object YamlDeserializer {
 
     return REMOTE_MAPPER.treeToValue(treeNode, clazz)
   }
+
+  private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {
+    val treeNode = REMOTE_MAPPER.readTree(configFileText)
+    val unit = treeNode.get(YamlMixinNames.UNIT)
+    val clazz = if (unitIsEmpty(unit)) RemoteStudyItem::class.java else StepikLesson::class.java
+
+    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
+  }
+
+  private fun unitIsEmpty(unit: JsonNode?) = unit == null || unit.asInt() == 0
 
   private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)

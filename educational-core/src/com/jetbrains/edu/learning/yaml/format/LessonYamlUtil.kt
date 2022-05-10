@@ -1,4 +1,5 @@
 @file:JvmName("LessonYamlUtil")
+@file:Suppress("unused")
 
 package com.jetbrains.edu.learning.yaml.format
 
@@ -15,15 +16,11 @@ import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UNIT
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 
 /**
  * Mixin class is used to deserialize [Lesson] item.
  * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonPropertyOrder(CUSTOM_NAME, CONTENT, TAGS)
 @JsonDeserialize(builder = LessonBuilder::class)
 abstract class LessonYamlMixin {
@@ -45,7 +42,6 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
                          @JsonProperty(CUSTOM_NAME) val customName: String? = null,
                          @JsonProperty(TAGS) val contentTags: List<String> = emptyList()
 ) {
-  @Suppress("unused") //used for deserialization
   private fun build(): Lesson {
     val lesson = createLesson()
     val taskList = content.mapIndexed { index: Int, title: String? ->
@@ -65,21 +61,3 @@ open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emp
 
   protected open fun createLesson(): Lesson = Lesson()
 }
-
-/**
- * Mixin class is used to deserialize remote information of [Lesson] item stored on Stepik.
- */
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
-@JsonPropertyOrder(ID, UPDATE_DATE, UNIT)
-abstract class RemoteLessonYamlMixin : RemoteStudyItemYamlMixin() {
-  @JsonProperty(UNIT)
-  private var unitId: Int = 0
-}
-
-class RemoteLessonChangeApplier : RemoteInfoChangeApplierBase<Lesson>() {
-  override fun applyChanges(existingItem: Lesson, deserializedItem: Lesson) {
-    super.applyChanges(existingItem, deserializedItem)
-    existingItem.unitId = deserializedItem.unitId
-  }
-}
-

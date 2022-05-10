@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduBrowser;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ItemContainer;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -24,6 +25,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikUnit;
+import com.jetbrains.edu.learning.stepik.course.StepikLesson;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +48,9 @@ public class CCStepikConnector {
   public static boolean postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
     if (postedLesson == null) return false;
+    postedLesson.setIndex(lesson.getIndex());
+    postedLesson.setItems(lesson.getItems());
+    postedLesson.setParent(lesson.getParent());
 
     boolean success = true;
     for (Task task : lesson.getTaskList()) {
@@ -56,6 +61,10 @@ public class CCStepikConnector {
       showFailedToPostItemNotification(project, lesson, true);
       return false;
     }
+    ItemContainer parent = lesson.getParent();
+    parent.removeItem(lesson);
+    parent.addItem(lesson.getIndex(), postedLesson);
+
     return success;
   }
 
@@ -63,7 +72,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final Lesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
+    final StepikLesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
     if (postedLesson == null) {
       showFailedToPostItemNotification(project, lesson, true);
       return null;
@@ -72,9 +81,6 @@ public class CCStepikConnector {
       postedLesson.setUnitId(postUnit(postedLesson.getId(), position, sectionId, project));
     }
 
-    lesson.setId(postedLesson.getId());
-    lesson.setUnitId(postedLesson.getUnitId());
-    lesson.setUpdateDate(postedLesson.getUpdateDate());
     return postedLesson;
   }
 
@@ -110,25 +116,27 @@ public class CCStepikConnector {
                                      @NotNull final Lesson lesson,
                                      boolean showNotification,
                                      int sectionId) {
-    Lesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
+    StepikLesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
     return postedLesson != null &&
            updateLessonTasks(project, lesson, postedLesson.getSteps()) &&
            updateLessonAdditionalInfo(lesson, project);
   }
 
-  public static Lesson updateLessonInfo(@NotNull final Project project,
-                                        @NotNull final Lesson lesson,
-                                        boolean showNotification, int sectionId) {
+  public static StepikLesson updateLessonInfo(@NotNull final Project project,
+                                              @NotNull final Lesson lesson,
+                                              boolean showNotification, int sectionId) {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
     // TODO: support case when lesson was removed from Stepik
 
-    final Lesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
-    if (updatedLesson == null && showNotification) {
-      showFailedToPostItemNotification(project, lesson, false);
+    final StepikLesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
+    if (updatedLesson == null) {
+      if (showNotification) {
+        showFailedToPostItemNotification(project, lesson, false);
+      }
       return null;
     }
     if (sectionId != -1) {
-      updateUnit(lesson.getUnitId(), lesson.getId(), lesson.getIndex(), sectionId, project);
+      updateUnit(updatedLesson.getUnitId(), lesson.getId(), lesson.getIndex(), sectionId, project);
     }
 
     return updatedLesson;

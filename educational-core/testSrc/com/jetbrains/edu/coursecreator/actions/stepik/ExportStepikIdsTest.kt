@@ -5,6 +5,8 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
@@ -19,8 +21,8 @@ class ExportStepikIdsTest : EduTestCase() {
 
   fun `test export stepik ids`() {
     val course = courseWithFiles {
-      lesson { eduTask { } }
-      section { lesson { eduTask { } } }
+      stepikLesson { eduTask { } }
+      section { stepikLesson { eduTask { } } }
     }
 
     val remoteCourse = convertToRemoteCourse(course)
@@ -79,7 +81,7 @@ class ExportStepikIdsTest : EduTestCase() {
   }
 
   private fun convertToRemoteCourse(course: Course): EduCourse {
-    val remoteCourse = EduCourse()
+    val remoteCourse = StepikCourse()
     remoteCourse.name = course.name
     remoteCourse.courseMode = CourseMode.EDUCATOR
     remoteCourse.items = course.items
@@ -97,7 +99,9 @@ class ExportStepikIdsTest : EduTestCase() {
         newSectionIds.add(lesson.index)
       }
       lesson.id = 10 * sectionId + lesson.index
-      lesson.unitId = lesson.id
+      if (lesson is StepikLesson) {
+        lesson.unitId = lesson.id
+      }
       for (task in lesson.taskList) {
         task.id = 10 * lesson.id + task.index
       }

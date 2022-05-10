@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import org.intellij.lang.annotations.Language
@@ -74,6 +75,11 @@ abstract class LessonOwnerBuilder(val course: Course) {
   fun frameworkLesson(name: String? = null, isTemplateBased: Boolean = true, buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}) {
     val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
     lesson(name, lesson, buildLesson)
+  }
+
+  fun stepikLesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {
+    val stepikLesson = StepikLesson()
+    lesson(name, stepikLesson, buildLesson)
   }
 
   fun lesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {

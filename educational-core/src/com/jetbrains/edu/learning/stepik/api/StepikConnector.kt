@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -148,7 +149,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.body()?.sections?.firstOrNull()
   }
 
-  fun getLesson(lessonId: Int): Lesson? {
+  fun getLesson(lessonId: Int): StepikLesson? {
     val response = stepikEndpoints.lessons(lessonId).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
   }
@@ -219,7 +220,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Post requests:
 
-  fun postLesson(lesson: Lesson): Lesson? {
+  fun postLesson(lesson: Lesson): StepikLesson? {
     val response = stepikEndpoints.lesson(LessonData(lesson)).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
   }
@@ -303,7 +304,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return response?.code() ?: -1
   }
 
-  fun updateLesson(lesson: Lesson): Lesson? {
+  fun updateLesson(lesson: Lesson): StepikLesson? {
     val response = stepikEndpoints.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
     val postedLesson = response?.body()?.lessons?.firstOrNull()
     if (postedLesson != null) {
@@ -385,9 +386,9 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return allSections
   }
 
-  fun getLessons(lessonIds: List<Int>): List<Lesson> {
+  fun getLessons(lessonIds: List<Int>): List<StepikLesson> {
     val lessonsIdsChunks = lessonIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allLessons = mutableListOf<Lesson>()
+    val allLessons = mutableListOf<StepikLesson>()
     lessonsIdsChunks
       .mapNotNull {
         val response = stepikEndpoints.lessons(*it.toIntArray()).executeHandlingExceptions()
@@ -473,7 +474,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     fun createObjectMapper(module: SimpleModule): ObjectMapper {
       val objectMapper = ConnectorUtils.createMapper()
       objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
-      objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
+      objectMapper.addMixIn(StepikLesson::class.java, StepikLessonMixin::class.java)
       objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
       objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)

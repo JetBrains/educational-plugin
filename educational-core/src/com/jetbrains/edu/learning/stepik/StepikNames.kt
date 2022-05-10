@@ -14,7 +14,6 @@ object StepikNames {
   const val STEPIK_RELEASE_URL = "https://release.stepik.org"
 
   const val PYCHARM_PREFIX = "pycharm"
-  const val LINK = "link"
 
   const val PYCHARM_ADDITIONAL = "PyCharm additional materials"
   const val ADDITIONAL_INFO = "additional_files.json"

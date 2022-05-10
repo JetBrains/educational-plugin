@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -102,8 +103,8 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
   fun `test lesson`() {
     val lesson = course {
-      lesson()
-    }.lessons.first()
+      stepikLesson()
+    }.lessons.first() as StepikLesson
 
     lesson.id = 1
     lesson.updateDate = Date(0)

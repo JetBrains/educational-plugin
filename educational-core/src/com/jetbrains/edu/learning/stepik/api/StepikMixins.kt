@@ -34,7 +34,6 @@ const val UNITS = "units"
 const val COURSE = "course"
 const val POSITION = "position"
 const val STEPS = "steps"
-const val UNIT_ID = "unit_id"
 const val NUMBER = "number"
 const val OFFSET = "offset"
 const val LENGTH = "length"
@@ -115,8 +114,6 @@ class StepikLessonMixin : StepikItemMixin() {
   @JsonProperty(TITLE)
   lateinit var name: String
 
-  @JsonProperty(UNIT_ID)
-  var unitId: Int = 0
 }
 
 class StepikTaskFileMixin {

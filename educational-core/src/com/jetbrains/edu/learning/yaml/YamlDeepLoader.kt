@@ -159,9 +159,9 @@ object YamlDeepLoader {
   }
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
-    val courseWithRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
-    if (courseWithRemoteInfo.id > 0 || courseWithRemoteInfo is HyperskillCourse) {
-      getRemoteChangeApplierForItem(courseWithRemoteInfo).applyChanges(this, courseWithRemoteInfo)
+    val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
+    if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
+      getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
     }
   }
 

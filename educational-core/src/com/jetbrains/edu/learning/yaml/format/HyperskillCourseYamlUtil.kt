@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonFormat

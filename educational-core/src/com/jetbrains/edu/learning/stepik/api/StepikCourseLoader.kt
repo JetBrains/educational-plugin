@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
 import java.util.concurrent.Executors
 
@@ -119,23 +120,26 @@ object StepikCourseLoader {
 
     val lessonCount = lessonsFromUnits.size
     for (lessonIndex in 0 until lessonCount) {
-      var lesson = lessonsFromUnits[lessonIndex]
-      lesson.unitId = unitIds[lessonIndex]
+      val stepikLesson = lessonsFromUnits[lessonIndex]
+      stepikLesson.unitId = unitIds[lessonIndex]
       if (progressIndicator != null && updateIndicator) {
         progressIndicator.isIndeterminate = false
         val readableIndex = lessonIndex + 1
         progressIndicator.text = EduCoreBundle.message("stepik.loading.lessons", readableIndex, lessonCount)
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(stepikLesson.steps)
 
+      var frameworkLesson: FrameworkLesson? = null
       if (allStepSources.isNotEmpty()) {
         val options = allStepSources[0].block!!.options
         if (options is PyCharmStepOptions && options.lessonType != null) {
           // TODO: find a better way to get framework lessons from stepik
-          lesson = FrameworkLesson(lesson)
+          frameworkLesson = FrameworkLesson(stepikLesson)
         }
       }
+
+      val lesson = frameworkLesson ?: stepikLesson
       val tasks = getTasks(remoteCourse, lesson, allStepSources)
       for (task in tasks) {
         lesson.addTask(task)
@@ -146,7 +150,7 @@ object StepikCourseLoader {
     return result
   }
 
-  fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
+  fun getLessonsFromUnitIds(unitIds: List<Int>): List<StepikLesson> {
     val units = StepikConnector.getInstance().getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
     val lessons = StepikConnector.getInstance().getLessons(lessonIds)
@@ -165,7 +169,7 @@ object StepikCourseLoader {
    * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
    * So we need to sort lesson by units to keep correct course structure
    */
-  private fun sortLessonsByUnits(units: List<StepikUnit>, lessons: List<Lesson>): List<Lesson> {
+  private fun sortLessonsByUnits(units: List<StepikUnit>, lessons: List<StepikLesson>): List<StepikLesson> {
     val idToLesson = lessons.associateBy { it.id }
     return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }
