@@ -23,6 +23,8 @@ object YamlFormatSettings {
    */
   fun getLocalConfigFileName(itemKind: String): String = "$itemKind-info.yaml"
 
+  fun localConfigNameToRemote(fileName: String): String = "${fileName.substringBefore("-")}-remote-info.yaml"
+
   @NonNls
   const val REMOTE_COURSE_CONFIG = "course-remote-info.yaml"
 

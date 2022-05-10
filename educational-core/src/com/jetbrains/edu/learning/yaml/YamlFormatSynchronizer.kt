@@ -46,6 +46,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillTopic
@@ -135,6 +136,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
+    mapper.addMixIn(StepikLesson::class.java, StepikLessonYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
     mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
@@ -148,7 +150,8 @@ object YamlFormatSynchronizer {
   private fun addRemoteMixIns(mapper: ObjectMapper) {
     mapper.addMixIn(EduCourse::class.java, EduCourseRemoteInfoYamlMixin::class.java)
     mapper.addMixIn(CodeforcesCourse::class.java, CodeforcesCourseRemoteInfoYamlMixin::class.java)
-    mapper.addMixIn(Lesson::class.java, RemoteLessonYamlMixin::class.java)
+    mapper.addMixIn(Lesson::class.java, RemoteStudyItemYamlMixin::class.java)
+    mapper.addMixIn(StepikLesson::class.java, StepikLessonRemoteYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(DataTask::class.java, RemoteDataTaskYamlMixin::class.java)

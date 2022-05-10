@@ -12,11 +12,6 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
  */
 open class Lesson : ItemContainer() {
 
-  // TODO: move to stepik
-  @Transient
-  var steps: List<Int> = listOf()
-  var unitId = 0
-
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     require(parentItem is LessonContainer) { "Parent for lesson $name should be either course or section" }
     super.init(parentItem, isRestarted)

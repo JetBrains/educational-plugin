@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
 import org.jetbrains.annotations.TestOnly
@@ -87,7 +88,7 @@ class SectionsList {
 
 class LessonsList {
   @JsonProperty(LESSONS)
-  lateinit var lessons: List<Lesson>
+  lateinit var lessons: List<StepikLesson>
 }
 
 class UnitsList {
@@ -181,7 +182,7 @@ class SectionData(@field:JsonProperty(SECTION) var section: Section)
 
 class LessonData(lesson: Lesson) {
   @JsonProperty(LESSON)
-  var lesson: Lesson = Lesson()
+  var lesson: StepikLesson = StepikLesson()
 
   init {
     this.lesson.name = lesson.name

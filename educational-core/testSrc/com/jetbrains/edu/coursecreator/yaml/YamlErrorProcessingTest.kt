@@ -114,7 +114,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
            "Task type is not specified", InvalidYamlFormatException::class.java)
   }
 
-  fun `test negtive placeholder length`() {
+  fun `test negative placeholder length`() {
     doTest("""
     |type: edu
     |files:
