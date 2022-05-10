@@ -16,24 +16,24 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 @JsonPropertyOrder(SECTION, LESSON, TASK, FILE, PLACEHOLDER, IS_VISIBLE)
 abstract class AnswerPlaceholderDependencyYamlMixin {
   @JsonProperty(SECTION)
-  private var mySectionName: String? = null
+  private var sectionName: String? = null
 
   @JsonProperty(LESSON)
-  private lateinit var myLessonName: String
+  private lateinit var lessonName: String
 
   @JsonProperty(TASK)
-  private lateinit var myTaskName: String
+  private lateinit var taskName: String
 
   @JsonProperty(FILE)
-  private lateinit var myFileName: String
+  private lateinit var fileName: String
 
   @JsonProperty(PLACEHOLDER)
   @JsonSerialize(converter = InternalIndexToUserVisibleConverter::class)
   @JsonDeserialize(converter = UserVisibleIndexToInternalConverter::class)
-  private var myPlaceholderIndex: Int = -1
+  private var placeholderIndex: Int = -1
 
   @JsonProperty(IS_VISIBLE)
-  private var myIsVisible = true
+  private var isVisible = true
 }
 
 private class InternalIndexToUserVisibleConverter : StdConverter<Int, Int>() {

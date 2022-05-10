@@ -33,16 +33,19 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_EDITABLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LESSON
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MAX_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.OFFSET
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER_TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
@@ -50,11 +53,13 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_ID
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_NAME
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SECTION
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
@@ -311,23 +316,23 @@ abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 abstract class AnswerPlaceholderDependencyMixin {
-  @JsonProperty("section")
-  private lateinit var mySectionName: String
+  @JsonProperty(SECTION)
+  private lateinit var sectionName: String
 
-  @JsonProperty("lesson")
-  private lateinit var myLessonName: String
+  @JsonProperty(LESSON)
+  private lateinit var lessonName: String
 
-  @JsonProperty("task")
-  private lateinit var myTaskName: String
+  @JsonProperty(TASK)
+  private lateinit var taskName: String
 
-  @JsonProperty("file")
-  private lateinit var myFileName: String
+  @JsonProperty(FILE)
+  private lateinit var fileName: String
 
-  @JsonProperty("placeholder")
-  private var myPlaceholderIndex: Int = -1
+  @JsonProperty(PLACEHOLDER)
+  private var placeholderIndex: Int = -1
 
-  @JsonProperty("is_visible")
-  private var myIsVisible = true
+  @JsonProperty(IS_VISIBLE)
+  private var isVisible = true
 }
 
 class VersionPropertyWriter : VirtualBeanPropertyWriter {

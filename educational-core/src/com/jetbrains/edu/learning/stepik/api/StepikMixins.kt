@@ -157,27 +157,6 @@ class StepikAnswerPlaceholderMixin {
   private var mySelected = false
 }
 
-class StepikAnswerPlaceholderDependencyMixin {
-
-  @JsonProperty(SECTION)
-  lateinit var mySectionName: String
-
-  @JsonProperty(LESSON)
-  lateinit var myLessonName: String
-
-  @JsonProperty(TASK)
-  lateinit var myTaskName: String
-
-  @JsonProperty(FILE)
-  lateinit var myFileName: String
-
-  @JsonProperty(PLACEHOLDER)
-  var myPlaceholderIndex: Int = 0
-
-  @JsonProperty(IS_VISIBLE)
-  var myIsVisible = true
-}
-
 open class StepikTaskMixin {
   @JsonProperty(NAME)
   var name: String? = null

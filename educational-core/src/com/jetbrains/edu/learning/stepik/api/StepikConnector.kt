@@ -7,6 +7,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
@@ -476,7 +477,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
       objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
       objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
-      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
+      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
       objectMapper.registerModule(module)
       return objectMapper
     }

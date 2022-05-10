@@ -59,6 +59,13 @@ object JsonMixinNames {
   const val POSSIBLE_ANSWER = "possible_answer"
   const val DEPENDENCY = "dependency"
 
+  // placeholder dependency
+  const val SECTION = "section"
+  const val LESSON = "lesson"
+  const val TASK = "task"
+  const val FILE = "file"
+  const val PLACEHOLDER = "placeholder"
+
   // remote study item
   const val UPDATE_DATE = "update_date"
   const val ID = "id"
