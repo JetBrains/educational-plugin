@@ -82,7 +82,7 @@ class CoursesList {
 
 class SectionsList {
   @JsonProperty(SECTIONS)
-  lateinit var sections: List<Section>
+  lateinit var sections: List<StepikSection>
 }
 
 class LessonsList {
@@ -224,6 +224,20 @@ class TaskData {
 }
 
 // Auxiliary:
+
+class StepikSection {
+  @JsonProperty(UNITS)
+  var units: List<Int> = listOf()
+
+  @JsonProperty(TITLE)
+  lateinit var name: String
+
+  @JsonProperty(ID)
+  var id: Int = 0
+
+  @JsonProperty(UPDATE_DATE)
+  lateinit var updateDate: Date
+}
 
 class Member(@field:JsonProperty(USER) var user: String, @field:JsonProperty(GROUP) var group: String)
 

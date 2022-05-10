@@ -142,7 +142,7 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return this
   }
 
-  fun getSection(sectionId: Int): Section? {
+  fun getSection(sectionId: Int): StepikSection? {
     val response = stepikEndpoints.sections(sectionId).executeHandlingExceptions()
     return response?.body()?.sections?.firstOrNull()
   }
@@ -372,9 +372,9 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return allUsers
   }
 
-  fun getSections(sectionIds: List<Int>): List<Section> {
+  fun getSections(sectionIds: List<Int>): List<StepikSection> {
     val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allSections = mutableListOf<Section>()
+    val allSections = mutableListOf<StepikSection>()
     sectionIdsChunks
       .mapNotNull {
         val response = stepikEndpoints.sections(*it.toIntArray()).executeHandlingExceptions()
@@ -472,7 +472,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     fun createObjectMapper(module: SimpleModule): ObjectMapper {
       val objectMapper = ConnectorUtils.createMapper()
       objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
-      objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
       objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
       objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
       objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)

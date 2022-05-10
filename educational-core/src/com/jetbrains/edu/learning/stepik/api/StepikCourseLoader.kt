@@ -42,7 +42,7 @@ object StepikCourseLoader {
     fillAdditionalMaterials(remoteCourse, allSections.firstOrNull { it.name == StepikNames.PYCHARM_ADDITIONAL })
   }
 
-  private fun fillAdditionalMaterials(course: EduCourse, additionalSection: Section?) {
+  private fun fillAdditionalMaterials(course: EduCourse, additionalSection: StepikSection?) {
     loadAndFillAdditionalCourseInfo(course)
     if (course.additionalFiles.isEmpty() && additionalSection != null) {
       // load the old way for compatibility with old courses
@@ -58,7 +58,7 @@ object StepikCourseLoader {
     }
   }
 
-  private fun addTopLevelLessons(remoteCourse: EduCourse, allSections: List<Section>) {
+  private fun addTopLevelLessons(remoteCourse: EduCourse, allSections: List<StepikSection>) {
     val unitIds = allSections.flatMap { section -> section.units }.distinct()
     if (unitIds.isNotEmpty()) {
       val lessons = getLessonsFromUnits(remoteCourse, unitIds, true)
@@ -73,16 +73,16 @@ object StepikCourseLoader {
     return sections.flatMap { section -> section.units }.distinct()
   }
 
-  private fun getOrderedListOfSections(allSections: List<Section>, remoteCourse: EduCourse): List<StudyItem> {
-    val tasks = allSections.mapIndexed { index, section ->
-      { loadItemTask(remoteCourse, section, index + 1) }
+  private fun getOrderedListOfSections(allSections: List<StepikSection>, remoteCourse: EduCourse): List<Section> {
+    val loadSectionTasks = allSections.mapIndexed { index, section ->
+      { loadSection(remoteCourse, section, index + 1) }
     }
 
-    val sections = invokeAllWithProgress(tasks, EXECUTOR_SERVICE)
+    val sections = invokeAllWithProgress(loadSectionTasks, EXECUTOR_SERVICE)
     return sections.sortedBy { it.index }
   }
 
-  private fun hasVisibleSections(sections: List<Section>, courseName: String): Boolean {
+  private fun hasVisibleSections(sections: List<StepikSection>, courseName: String): Boolean {
     if (sections.isEmpty()) {
       return false
     }
@@ -94,16 +94,20 @@ object StepikCourseLoader {
     return true
   }
 
-  private fun loadItemTask(remoteCourse: EduCourse, section: Section, index: Int): StudyItem? {
-    val unitIds = section.units
+  private fun loadSection(remoteCourse: EduCourse, stepikSection: StepikSection, index: Int): Section? {
+    val unitIds = stepikSection.units
     if (unitIds.isEmpty()) {
       return null
     }
     val lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false)
 
     lessonsFromUnits.forEachIndexed { i, lesson -> lesson.index = i + 1 }
-    section.addLessons(lessonsFromUnits)
+    val section = Section()
+    section.name = stepikSection.name
+    section.updateDate = stepikSection.updateDate
+    section.id = stepikSection.id
     section.index = index
+    section.addLessons(lessonsFromUnits)
     return section
   }
 
@@ -180,16 +184,16 @@ object StepikCourseLoader {
     return tasks
   }
 
-  private fun unpackTopLevelLessons(remoteCourse: EduCourse, sections: List<StudyItem>): ArrayList<StudyItem> {
+  private fun unpackTopLevelLessons(remoteCourse: EduCourse, sections: List<Section>): ArrayList<StudyItem> {
     val itemsWithTopLevelLessons = ArrayList<StudyItem>()
-    for (item in sections) {
-      if (item is Section && item.name == remoteCourse.name) {
-        remoteCourse.sectionIds = listOf(item.id)
-        itemsWithTopLevelLessons.addAll(item.lessons)
-        item.lessons.forEach { loadAndFillLessonAdditionalInfo(it) }
+    for (section in sections) {
+      if (section.name == remoteCourse.name) {
+        remoteCourse.sectionIds = listOf(section.id)
+        itemsWithTopLevelLessons.addAll(section.lessons)
+        section.lessons.forEach { loadAndFillLessonAdditionalInfo(it) }
       }
       else {
-        itemsWithTopLevelLessons.add(item)
+        itemsWithTopLevelLessons.add(section)
       }
     }
     return itemsWithTopLevelLessons

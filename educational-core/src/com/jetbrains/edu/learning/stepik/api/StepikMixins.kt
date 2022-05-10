@@ -108,20 +108,6 @@ abstract class StepikEduCourseMixin : StepikItemMixin() {
   var reviewSummary: Int = 0
 }
 
-class StepikSectionMixin : StepikItemMixin() {
-  @JsonProperty(UNITS)
-  lateinit var units: List<Int>
-
-  @JsonProperty(COURSE)
-  var courseId: Int = 0
-
-  @JsonProperty(TITLE)
-  lateinit var name: String
-
-  @JsonProperty(POSITION)
-  var position: Int = 0
-}
-
 class StepikLessonMixin : StepikItemMixin() {
   @JsonProperty(STEPS)
   lateinit var steps: MutableList<Int>

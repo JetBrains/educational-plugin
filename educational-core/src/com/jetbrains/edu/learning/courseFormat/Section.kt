@@ -6,11 +6,6 @@ import com.jetbrains.edu.learning.EduNames
 
 open class Section : LessonContainer() {
 
-  // move to stepik
-  @Transient
-  var units: List<Int> = listOf()
-  var position = 0
-
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     require(parentItem is Course) { "Course is null for section $name" }
     super.init(parentItem, isRestarted)
