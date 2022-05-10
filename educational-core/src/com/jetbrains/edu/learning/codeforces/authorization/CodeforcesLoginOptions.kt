@@ -12,7 +12,7 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
   override fun getCurrentAccount(): CodeforcesAccount? = CodeforcesSettings.getInstance().account
 
   override fun setCurrentAccount(account: CodeforcesAccount?) {
-   CodeforcesSettings.getInstance().login(account, AuthorizationPlace.SETTINGS)
+   CodeforcesSettings.getInstance().account = account
   }
 
   override fun profileUrl(account: CodeforcesAccount): String {
@@ -35,7 +35,7 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
     object : HyperlinkAdapter() {
       override fun hyperlinkActivated(event: HyperlinkEvent) {
         lastSavedAccount = null
-        setCurrentAccount(null)
+        CodeforcesSettings.getInstance().setAccountWithStatisticsEvent(null, AuthorizationPlace.SETTINGS)
         updateLoginLabels()
       }
     }

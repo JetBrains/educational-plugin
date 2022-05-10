@@ -56,7 +56,7 @@ class LoginDialog(private val authorizationPlace: AuthorizationPlace) : DialogWr
           }
         }
         if (account != null) {
-          CodeforcesSettings.getInstance().login(account, authorizationPlace)
+          CodeforcesSettings.getInstance().setAccountWithStatisticsEvent(account, authorizationPlace)
           ApplicationManager.getApplication().invokeLater { super.doOKAction() }
         }
       }, EduCoreBundle.message("codeforces.authorizing.on.codeforces"), true, null)

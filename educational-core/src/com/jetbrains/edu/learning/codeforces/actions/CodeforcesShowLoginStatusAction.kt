@@ -73,7 +73,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     val accountActionLabel = if (account != null) {
       ClickableLabel(EduCoreBundle.message("account.widget.logout")) {
         popup.closeOk(null)
-        CodeforcesSettings.getInstance().login(null, AuthorizationPlace.TASK_DESCRIPTION_HEADER)
+        CodeforcesSettings.getInstance().setAccountWithStatisticsEvent(null, AuthorizationPlace.TASK_DESCRIPTION_HEADER)
       }
     }
     else {
