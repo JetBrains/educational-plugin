@@ -303,24 +303,24 @@ abstract class TaskFileMixin {
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
-  private var myOffset: Int = -1
+  private var offset: Int = -1
 
   @JsonProperty(LENGTH)
-  private var myLength: Int = -1
+  private var length: Int = -1
 
   @JsonProperty(DEPENDENCY)
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
+  private lateinit var placeholderDependency: AnswerPlaceholderDependency
 
   @JsonProperty(PLACEHOLDER_TEXT)
-  private lateinit var myPlaceholderText: String
+  private lateinit var placeholderText: String
 }
 
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderWithAnswerMixin : AnswerPlaceholderMixin() {
   @JsonProperty(POSSIBLE_ANSWER)
   @Encrypt
-  private lateinit var myPossibleAnswer: String
+  private lateinit var possibleAnswer: String
 }
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

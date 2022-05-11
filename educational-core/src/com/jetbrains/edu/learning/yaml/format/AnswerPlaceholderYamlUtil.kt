@@ -15,26 +15,22 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LENGTH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OFFSET
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER_TEXT
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY)
 @JsonDeserialize(builder = AnswerPlaceholderBuilder::class)
 abstract class AnswerPlaceholderYamlMixin {
   @JsonProperty(OFFSET)
-  private var myOffset: Int? = -1
+  private var offset: Int = -1
 
   @JsonProperty(LENGTH)
-  private fun getLength(): Int {
-    throw NotImplementedInMixin()
-  }
+  private var length: Int = -1
 
   @JsonProperty(PLACEHOLDER_TEXT)
   @JsonInclude(JsonInclude.Include.ALWAYS)
-  private fun getPlaceholderText(): String {
-    throw NotImplementedInMixin()
-  }
+  private lateinit var placeholderText: String
 
   @JsonProperty(DEPENDENCY)
-  private var myPlaceholderDependency: AnswerPlaceholderDependency? = null
+  private var placeholderDependency: AnswerPlaceholderDependency? = null
 }
 
 @JsonPOJOBuilder(withPrefix = "")

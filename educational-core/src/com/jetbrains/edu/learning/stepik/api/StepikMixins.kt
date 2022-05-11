@@ -41,7 +41,6 @@ const val NUMBER = "number"
 const val OFFSET = "offset"
 const val LENGTH = "length"
 const val DEPENDENCY = "dependency"
-const val HINTS = "hints"
 const val POSSIBLE_ANSWER = "possible_answer"
 const val PLACEHOLDER_TEXT = "placeholder_text"
 const val SELECTED = "selected"
@@ -136,25 +135,22 @@ class StepikTaskFileMixin {
 
 class StepikAnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
-  var myOffset = -1
+  var offset = -1
 
   @JsonProperty(LENGTH)
-  private var myLength = -1
+  private var length = -1
 
   @JsonProperty(DEPENDENCY)
-  lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
-
-  @JsonProperty(HINTS)
-  lateinit var myHints: List<String>
+  lateinit var placeholderDependency: AnswerPlaceholderDependency
 
   @JsonProperty(POSSIBLE_ANSWER)
-  lateinit var myPossibleAnswer : String
+  lateinit var possibleAnswer : String
 
   @JsonProperty(PLACEHOLDER_TEXT)
-  lateinit var myPlaceholderText: String
+  lateinit var placeholderText: String
 
   @JsonProperty(SELECTED)
-  private var mySelected = false
+  private var selected = false
 }
 
 @JsonPropertyOrder(NAME, STEPIK_ID, STATUS, FILES, TASK_TYPE)

@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
 class CCSolveAllTasksBeforeAction : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.solve.all.tasks.before.text"),
   EduCoreBundle.lazyMessage("action.solve.all.tasks.before.description"),
@@ -70,11 +69,8 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction(
       }
       for (placeholder in taskFile.answerPlaceholders) {
         if (placeholder.isInitializedFromDependency) continue
-        val possibleAnswer = placeholder.possibleAnswer
-        val start = placeholder.offset
-        val end = placeholder.endOffset
         runUndoTransparentWriteAction {
-          document.replaceString(start, end, possibleAnswer)
+          document.replaceString(placeholder.offset, placeholder.endOffset, placeholder.possibleAnswer)
         }
       }
       runWriteAction {

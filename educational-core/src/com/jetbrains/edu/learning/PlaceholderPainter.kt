@@ -41,7 +41,7 @@ object PlaceholderPainter {
   @JvmStatic
   fun showPlaceholder(project: Project, placeholder: AnswerPlaceholder, editors: List<Editor>? = null) {
     if (project.isDisposed) return
-    val taskFile = placeholder.taskFile ?: return
+    val taskFile = placeholder.taskFile
 
     @Suppress("NAME_SHADOWING")
     val editors = editors ?: taskFile.getEditors(project)
@@ -67,7 +67,7 @@ object PlaceholderPainter {
 
       override fun executePaint(component: Component?, g: Graphics2D) {
         if (isStudentProject && !placeholder.isVisible) return
-        g.color = placeholder.color
+        g.color = placeholder.getColor()
         g.stroke = BasicStroke(STROKE_WIDTH)
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()
         if (!isVisible(shape, editor)) return

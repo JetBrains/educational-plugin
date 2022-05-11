@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
 
   override fun addItem(course: Course, item: Task) {
@@ -183,9 +182,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     newPlaceholder.possibleAnswer = possibleAnswer
     newPlaceholder.index = index
     val state = initialState
-    if (state != null) {
-      newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
-    }
+    newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
     val taskFile = taskFile
     val task = taskFile.task
     val lesson = task.lesson

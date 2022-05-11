@@ -49,7 +49,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     val taskFiles = getTaskFiles(task)
     putSelectedTaskFileFirst(taskFiles, taskFile)
 
-    val requests = taskFiles.mapNotNull {
+    val requests = taskFiles.map {
       val virtualFile = it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found")
       val studentFileContent = DiffContentFactory.getInstance().create(VfsUtil.loadText(virtualFile), virtualFile.fileType)
       val solution = getSolution(it)
@@ -79,7 +79,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
     val fullAnswer = StringBuilder(taskFile.text)
 
     taskFile.answerPlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
-      placeholder.possibleAnswer?.let { answer ->
+      placeholder.possibleAnswer.let { answer ->
         fullAnswer.replace(placeholder.initialState.offset,
                            placeholder.initialState.offset + placeholder.initialState.length, answer)
       }

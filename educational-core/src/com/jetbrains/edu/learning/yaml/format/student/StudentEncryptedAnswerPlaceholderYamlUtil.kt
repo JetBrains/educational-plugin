@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STUDENT_ANSWER
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = EduAnswerPlaceholderBuilder::class)
 @JsonPropertyOrder(OFFSET, LENGTH, PLACEHOLDER_TEXT, DEPENDENCY, INITIAL_STATE, INIT_FROM_DEPENDENCY, POSSIBLE_ANSWER, SELECTED, STATUS,
                    STUDENT_ANSWER, LENGTH, OFFSET)
@@ -24,6 +24,6 @@ abstract class StudentEncryptedAnswerPlaceholderYamlMixin : StudentAnswerPlaceho
 
   @JsonProperty(ENCRYPTED_POSSIBLE_ANSWER)
   @Encrypt
-  private var myPossibleAnswer = ""
+  private var possibleAnswer = ""
 
 }
