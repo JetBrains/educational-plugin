@@ -96,7 +96,7 @@ abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
     target.name = source.name
     target.answerPlaceholders = answerPlaceholdersCopy
 
-    target.setText(source.text)
+    target.text = source.text
     target.task = source.task
     source.answerPlaceholders.forEachIndexed { i, taskFilePlaceholder ->
       run {

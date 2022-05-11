@@ -27,7 +27,7 @@ abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
   }
 
   @JsonProperty(LEARNER_CREATED)
-  private var myLearnerCreated = false
+  private var isLearnerCreated = false
 }
 
 class StudentTaskFileBuilder(
@@ -42,10 +42,10 @@ class StudentTaskFileBuilder(
   override fun createTaskFile(): TaskFile {
     return super.createTaskFile().apply {
       if (encryptedTextFromConfig != null) {
-        setText(encryptedTextFromConfig)
+        text = encryptedTextFromConfig
       }
-      else {
-        setText(textFromConfig)
+      else if (textFromConfig != null){
+        text = textFromConfig
       }
       isLearnerCreated = learnerCreated
     }

@@ -57,8 +57,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     updateCourse {
       taskList[0].apply {
         updateDate = Date(100)
-        taskFiles["src/Task.kt"]!!.setText(taskText)
-        taskFiles["test/Tests1.kt"]!!.setText(testText)
+        taskFiles["src/Task.kt"]!!.text = taskText
+        taskFiles["test/Tests1.kt"]!!.text = testText
       }
     }
 
@@ -105,8 +105,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     updateCourse {
       taskList[0].apply {
         updateDate = Date(100)
-        taskFiles["src/Task.kt"]!!.setText(taskText)
-        taskFiles["test/Tests1.kt"]!!.setText(testText)
+        taskFiles["src/Task.kt"]!!.text = taskText
+        taskFiles["test/Tests1.kt"]!!.text = testText
       }
     }
 
@@ -148,11 +148,11 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     updateCourse {
       taskList[0].apply {
         updateDate = Date(100)
-        taskFiles["src/Task.kt"]!!.setText("fun foo2() {}")
-        taskFiles["test/Tests1.kt"]!!.setText("""
+        taskFiles["src/Task.kt"]!!.text = "fun foo2() {}"
+        taskFiles["test/Tests1.kt"]!!.text = """
           fun test1() {}
           fun test2() {}
-        """.trimIndent())
+        """.trimIndent()
       }
     }
 
@@ -196,8 +196,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     updateCourse {
       taskList[1].apply {
         updateDate = Date(100)
-        taskFiles["src/Task.kt"]!!.setText(taskText)
-        taskFiles["test/Tests2.kt"]!!.setText(testText)
+        taskFiles["src/Task.kt"]!!.text = taskText
+        taskFiles["test/Tests2.kt"]!!.text = testText
       }
     }
 
@@ -259,8 +259,8 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
     updateCourse {
       taskList[1].apply {
         updateDate = Date(100)
-        taskFiles["src/Task.kt"]!!.setText(taskText)
-        taskFiles["test/Tests2.kt"]!!.setText(testText)
+        taskFiles["src/Task.kt"]!!.text = taskText
+        taskFiles["test/Tests2.kt"]!!.text = testText
       }
     }
 
@@ -370,7 +370,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       it.toTaskUpdate {
         descriptionText = newText
         updateDate = Date(100)
-        getTaskFile(taskFileName)!!.setText(newText)
+        getTaskFile(taskFileName)!!.text = newText
       }
     })
 
@@ -408,7 +408,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       it.toTaskUpdate {
         descriptionText = newText
         updateDate = Date(100)
-        getTaskFile(taskFileName)!!.setText(newText)
+        getTaskFile(taskFileName)!!.text = newText
       }
     })
 
@@ -447,7 +447,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       it.toTaskUpdate {
         descriptionText = newText
         updateDate = Date(100)
-        getTaskFile(taskFileName)!!.setText(newText)
+        getTaskFile(taskFileName)!!.text = newText
       }
     })
 
@@ -486,7 +486,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
       it.toTaskUpdate {
         descriptionText = newText
         updateDate = Date(100)
-        getTaskFile(taskFileName)!!.setText(newText)
+        getTaskFile(taskFileName)!!.text = newText
       }
     })
 
@@ -529,7 +529,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
         descriptionText = newText
         checkProfile = newCheckProfile
         updateDate = Date(100)
-        getTaskFile(taskFileName)!!.setText(newText)
+        getTaskFile(taskFileName)!!.text = newText
       }
     })
 

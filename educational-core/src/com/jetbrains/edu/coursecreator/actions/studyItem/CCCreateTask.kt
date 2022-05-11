@@ -168,7 +168,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     val newTaskFile = TaskFile()
     newTaskFile.name = name
     val text = course()?.configurator?.courseBuilder?.getTextForNewTask(this, taskDir, newTask) ?: ""
-    newTaskFile.setText(text)
+    newTaskFile.text = text
     newTaskFile.isVisible = isVisible
     newTaskFile.isEditable = isEditable
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile() }
@@ -182,10 +182,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     newPlaceholder.length = length
     newPlaceholder.possibleAnswer = possibleAnswer
     newPlaceholder.index = index
-    val state = initialState
-    if (state != null) {
-      newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(state.offset, state.length)
-    }
+    newPlaceholder.initialState = AnswerPlaceholder.MyInitialState(initialState.offset, initialState.length)
     val taskFile = taskFile
     val task = taskFile.task
     val lesson = task.lesson

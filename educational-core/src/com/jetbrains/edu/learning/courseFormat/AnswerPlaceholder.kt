@@ -44,7 +44,7 @@ class AnswerPlaceholder {
     this.placeholderText = placeholderText
   }
 
-  fun initAnswerPlaceholder(file: TaskFile, isRestarted: Boolean) {
+  fun init(file: TaskFile, isRestarted: Boolean) {
     taskFile = file
     if (isRestarted) return
     if (placeholderDependency != null) {

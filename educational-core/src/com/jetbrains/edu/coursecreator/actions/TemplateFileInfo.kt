@@ -10,7 +10,7 @@ data class TemplateFileInfo(val templateName: String, val path: String, val isVi
     val template = GeneratorUtils.getInternalTemplateText(templateName, params)
     val taskFile = TaskFile()
     taskFile.name = path
-    taskFile.setText(template)
+    taskFile.text = template
     taskFile.isVisible = isVisible
     return taskFile
   }

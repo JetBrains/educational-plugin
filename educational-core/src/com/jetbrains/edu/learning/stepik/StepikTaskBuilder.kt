@@ -43,7 +43,6 @@ import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
-import java.util.*
 import java.util.Collections.unmodifiableList
 
 open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
@@ -353,7 +352,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     }
     val taskFilePath = GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
     val taskFile = TaskFile()
-    taskFile.setText(editorText)
+    taskFile.text = editorText
     taskFile.name = taskFilePath
     task.addTaskFile(taskFile)
   }

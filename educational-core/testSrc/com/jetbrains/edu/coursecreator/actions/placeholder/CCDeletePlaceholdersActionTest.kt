@@ -23,7 +23,7 @@ class CCDeletePlaceholdersActionTest : CCAnswerPlaceholderTestBase() {
     }
     val taskFile = course.findTask("lesson1", "task1").getTaskFile(taskFileName) ?: error("Failed to find `$taskFileName` task file")
     val taskFileExpected = copy(taskFile)
-    taskFileExpected.answerPlaceholders = emptyList()
+    taskFileExpected.answerPlaceholders = mutableListOf()
 
     val action = getActionById<CCDeleteAnswerPlaceholder>(CCDeleteAnswerPlaceholder.ACTION_ID)
     doTest("lesson1/task1/Task.kt", action, taskFile, taskFileExpected)

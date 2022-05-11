@@ -15,7 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.submissions.*
+import com.jetbrains.edu.learning.submissions.IS_VISIBLE
+import com.jetbrains.edu.learning.submissions.PLACEHOLDERS
+import com.jetbrains.edu.learning.submissions.STATUS
+import com.jetbrains.edu.learning.submissions.TEXT
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
@@ -119,19 +122,20 @@ class StepikLessonMixin : StepikItemMixin() {
 
 }
 
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
 class StepikTaskFileMixin {
   @JsonProperty(NAME)
-  lateinit var myName: String
+  lateinit var name: String
 
   @JsonProperty(PLACEHOLDERS)
-  lateinit var myAnswerPlaceholders: MutableList<AnswerPlaceholder>
+  lateinit var _answerPlaceholders: MutableList<AnswerPlaceholder>
 
   @JsonProperty(IS_VISIBLE)
-  var myVisible = true
+  var isVisible = true
 
   @JsonProperty(TEXT)
   @JsonDeserialize(using = TaskFileTextDeserializer::class)
-  lateinit var myText : String
+  lateinit var text : String
 }
 
 class StepikAnswerPlaceholderMixin {
