@@ -283,21 +283,21 @@ abstract class ChoiceOptionLocalMixin {
 @JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
 abstract class TaskFileMixin {
   @JsonProperty(NAME)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(PLACEHOLDERS)
-  private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
+  private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 
   @JsonProperty(IS_VISIBLE)
-  var myVisible: Boolean = true
+  var isVisible: Boolean = true
 
   @JsonProperty(TEXT)
   @Encrypt
-  private lateinit var myText: String
+  private lateinit var text: String
 
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_EDITABLE)
-  var myEditable: Boolean = true
+  var isEditable: Boolean = true
 }
 
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)

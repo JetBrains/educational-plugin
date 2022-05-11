@@ -354,7 +354,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     }
     val taskFilePath = GeneratorUtils.joinPaths(configurator.sourceDir, fileName)
     val taskFile = TaskFile()
-    taskFile.setText(editorText)
+    taskFile.text = editorText
     taskFile.name = taskFilePath
     task.addTaskFile(taskFile)
   }

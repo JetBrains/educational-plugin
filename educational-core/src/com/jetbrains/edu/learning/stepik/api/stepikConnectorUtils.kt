@@ -110,7 +110,7 @@ fun loadAndFillLessonAdditionalInfo(lesson: Lesson, course: Course? = null) {
     lesson.getTask(id)?.apply {
       name = task.name
       customPresentableName = task.customName
-      taskFiles = task.taskFiles.associateBy(TaskFile::getName) { it }
+      taskFiles = task.taskFiles.associateBy(TaskFile::name) { it }
     }
   }
 

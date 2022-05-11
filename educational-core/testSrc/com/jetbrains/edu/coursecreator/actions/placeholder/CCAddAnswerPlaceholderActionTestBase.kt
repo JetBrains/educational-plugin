@@ -32,7 +32,7 @@ abstract class CCAddAnswerPlaceholderActionTestBase : CCAnswerPlaceholderTestBas
     placeholderExpected.index = index
     placeholderExpected.taskFile = this
     placeholderExpected.placeholderText = text
-    answerPlaceholders.add(placeholderExpected)
+    addAnswerPlaceholder(placeholderExpected)
     return placeholderExpected
   }
 }

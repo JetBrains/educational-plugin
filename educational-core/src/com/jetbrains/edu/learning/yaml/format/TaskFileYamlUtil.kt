@@ -24,17 +24,17 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 @JsonDeserialize(builder = TaskFileBuilder::class)
 abstract class TaskFileYamlMixin {
   @JsonProperty(NAME)
-  private lateinit var myName: String
+  private lateinit var name: String
 
   @JsonProperty(PLACEHOLDERS)
-  private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
+  private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 
   @JsonProperty(VISIBLE)
-  private var myVisible = true
+  private var isVisible = true
 
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(EDITABLE)
-  private var myEditable = true
+  private var isEditable = true
 }
 
 @JsonPOJOBuilder(withPrefix = "")
@@ -52,7 +52,7 @@ open class TaskFileBuilder(@JsonProperty(NAME) val name: String?,
 
   protected open fun createTaskFile(): TaskFile {
     val taskFile = TaskFile()
-    taskFile.name = name
+    taskFile.name = name ?: ""
     taskFile.answerPlaceholders = placeholders
     taskFile.isVisible = visible
     taskFile.isEditable = editable

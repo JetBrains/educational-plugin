@@ -11,7 +11,7 @@ import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.TaskFile.LOG
+import com.jetbrains.edu.learning.courseFormat.TaskFile.Companion.LOG
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 
@@ -25,7 +25,7 @@ fun TaskFile.getVirtualFile(project: Project): VirtualFile? {
   return EduUtils.findTaskFileInDir(this, taskDir)
 }
 
-fun TaskFile.course() = task?.lesson?.course
+fun TaskFile.course() = task.lesson.course
 
 fun TaskFile.getText(project: Project): String? = getDocument(project)?.text
 

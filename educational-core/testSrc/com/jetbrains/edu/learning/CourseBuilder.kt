@@ -552,7 +552,9 @@ class TaskFileBuilder(val task: Task? = null) {
   val taskFile = TaskFile()
 
   init {
-    taskFile.task = task
+    if (task != null) {
+      taskFile.task = task
+    }
   }
 
   fun withName(name: String) {
@@ -560,7 +562,7 @@ class TaskFileBuilder(val task: Task? = null) {
   }
 
   fun withText(text: String) {
-    taskFile.setText(text)
+    taskFile.text = text
   }
 
   fun withPlaceholders(placeholders: List<AnswerPlaceholder>) {

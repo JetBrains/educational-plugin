@@ -157,7 +157,7 @@ class CheckiOCourseUpdater(
         descriptionDocument.setText(newMission.descriptionText)
       }
     } else {
-      newMission.getTaskFile().setText(oldTaskFile.text)
+      newMission.getTaskFile().text = oldTaskFile.text
     }
   }
 

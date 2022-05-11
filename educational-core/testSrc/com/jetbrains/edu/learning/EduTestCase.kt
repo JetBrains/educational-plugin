@@ -144,7 +144,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
     val fileName = "lesson" + lessonIndex + "/" + task.name + "/" + taskFilePath
     val file = myFixture.findFileInTempDir(fileName)
-    taskFile.setText(VfsUtilCore.loadText(file))
+    taskFile.text = VfsUtilCore.loadText(file)
 
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     try {

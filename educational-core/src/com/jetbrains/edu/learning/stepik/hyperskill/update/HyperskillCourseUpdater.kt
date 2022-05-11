@@ -215,7 +215,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       for ((path, remoteTaskFile) in remoteTaskFiles) {
         val taskFile = taskFiles[path]
         val currentTaskFile = if (taskFile != null) {
-          taskFile.setText(remoteTaskFile.text)
+          taskFile.text = remoteTaskFile.text
           taskFile
         }
         else {

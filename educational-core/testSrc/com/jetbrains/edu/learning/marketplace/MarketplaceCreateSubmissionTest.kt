@@ -43,7 +43,7 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     val solutionFiles = getSolutionFiles(project, eduTask)
     val firstSolutionFile = solutionFiles.first()
     val placeholder = AnswerPlaceholder(2, "placeholder text")
-    placeholder.initAnswerPlaceholder(eduTask.taskFiles["src/Task.kt"]!!, false)
+    placeholder.init(eduTask.taskFiles["src/Task.kt"]!!, false)
     firstSolutionFile.placeholders = listOf(placeholder)
     val submission = MarketplaceSubmission(eduTask.id, eduTask.status, solutionFiles, course.marketplaceCourseVersion)
     val submissionTime = submission.time ?: error("Time must be specified")

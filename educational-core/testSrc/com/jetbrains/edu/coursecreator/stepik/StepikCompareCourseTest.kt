@@ -412,7 +412,7 @@ class StepikCompareCourseTest : EduTestCase() {
     runWriteAction {
       VfsUtil.saveText(findFileInTask(0, 0, "taskFile.txt"), "text")
     }
-    changedTask.taskFiles.values.single().setText("text")
+    changedTask.taskFiles.values.single().text = "text"
 
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(changedTask))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
