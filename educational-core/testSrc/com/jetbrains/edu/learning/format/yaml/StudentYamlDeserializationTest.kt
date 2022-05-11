@@ -355,7 +355,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     val placeholder = taskFile.answerPlaceholders.first()
     val initialState = placeholder.initialState
     assertNotNull("Initial state is null", initialState)
-    assertEquals(0, initialState.offset)
+    assertEquals(0, initialState!!.offset)
     assertEquals(1, initialState.length)
   }
 

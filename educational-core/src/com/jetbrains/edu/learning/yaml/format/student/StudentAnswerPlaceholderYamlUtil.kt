@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.jetbrains.edu.learning.yaml.format.student
 
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -28,23 +30,23 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STUDENT_ANSWER
 abstract class StudentAnswerPlaceholderYamlMixin : AnswerPlaceholderYamlMixin() {
 
   @JsonProperty(INITIAL_STATE)
-  private var myInitialState: AnswerPlaceholder.MyInitialState? = null
+  private var initialState: AnswerPlaceholder.MyInitialState? = null
 
   @JsonProperty(INIT_FROM_DEPENDENCY)
-  private var myIsInitializedFromDependency = false
+  private var isInitializedFromDependency = false
 
   @JsonProperty(ENCRYPTED_POSSIBLE_ANSWER)
   @Encrypt
-  private var myPossibleAnswer = ""
+  private var possibleAnswer = ""
 
   @JsonProperty(SELECTED)
-  private var mySelected = false
+  private var selected = false
 
   @JsonProperty(STATUS)
-  private var myStatus = CheckStatus.Unchecked
+  private var status = CheckStatus.Unchecked
 
   @JsonProperty(STUDENT_ANSWER)
-  private var myStudentAnswer: String? = null
+  private var studentAnswer: String? = null
 }
 
 class InitialStateMixin {

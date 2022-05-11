@@ -24,6 +24,6 @@ abstract class StudentEncryptedAnswerPlaceholderYamlMixin : StudentAnswerPlaceho
 
   @JsonProperty(ENCRYPTED_POSSIBLE_ANSWER)
   @Encrypt
-  private var myPossibleAnswer = ""
+  private var possibleAnswer = ""
 
 }

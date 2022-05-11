@@ -37,7 +37,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
     for (AnswerPlaceholder existingAnswerPlaceholder : answerPlaceholders) {
       int twStart = existingAnswerPlaceholder.getOffset();
-      int twEnd = existingAnswerPlaceholder.getPossibleAnswerLength() + twStart;
+      int twEnd = existingAnswerPlaceholder.getPossibleAnswer().length() + twStart;
       if ((start >= twStart && start < twEnd) || (end > twStart && end <= twEnd) ||
           (twStart >= start && twStart < end) || (twEnd > start && twEnd <= end)) {
         return true;

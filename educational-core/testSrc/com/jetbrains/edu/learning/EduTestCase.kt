@@ -378,7 +378,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
               answerPlaceholder.possibleAnswer = possibleAnswer
               answerPlaceholder.length = possibleAnswer.length
             }
-            length = answerPlaceholder.possibleAnswerLength
+            length = answerPlaceholder.possibleAnswer.length
           }
           document.deleteString(closingMatcher.start(), closingMatcher.end())
           document.deleteString(openingMatcher.start(), openingMatcher.end())
