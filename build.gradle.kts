@@ -648,6 +648,20 @@ project(":Edu-Scala") {
     plugins.set(pluginsList)
   }
 
+  if (!isAtLeast213) {
+    configurations {
+      all {
+        // Allows using IDE dependencies instead of plugin dependencies
+        // as opposed to the default strategy in the project
+        // Otherwise, tests will use `jna-5.3.1` library from 212 Scala plugin
+        // which fails to load macOS native libraries starting with Big Sur (macOS 11)
+        // The bug was fixed in https://github.com/java-native-access/jna/issues/1215 and included in `jna-5.6.0`,
+        // and 212 platform already contains fixed version (`jna-5.6.0` more specifically)
+        resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.CONSUMER_FIRST)
+      }
+    }
+  }
+
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
