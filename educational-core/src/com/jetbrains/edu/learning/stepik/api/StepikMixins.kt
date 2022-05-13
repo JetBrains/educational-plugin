@@ -210,17 +210,6 @@ open class StepikTaskMixin {
     get() = throw NotImplementedInMixin()
 }
 
-class StepikChoiceTaskMixin : StepikTaskMixin() {
-  @JsonProperty(CHOICE_VARIANTS)
-  lateinit var myChoiceVariants: List<String>
-
-  @JsonProperty(IS_MULTICHOICE)
-  var myIsMultipleChoice: Boolean = false
-
-  @JsonProperty(SELECTED_VARIANTS)
-  lateinit var mySelectedVariants: List<Int>
-}
-
 class TaskFileTextDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<String>(vc) {
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): String {
     return StringUtil.convertLineSeparators(jp.valueAsString)
