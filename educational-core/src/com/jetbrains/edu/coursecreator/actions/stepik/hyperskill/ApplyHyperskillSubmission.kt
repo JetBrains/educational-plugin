@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.annotations.NonNls
@@ -56,15 +56,13 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     val id = Integer.valueOf(idText) // valid int because of validator
 
     computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
-      val submission = StepikConnector.getInstance().getSubmission(id).onError {
+      val submission = HyperskillConnector.getInstance().getSubmission(id).onError {
         runInEdt {
           Messages.showErrorDialog(EduCoreBundle.message("error.submission.failed.to.retrieve", id),
                                    EduCoreBundle.message("error.submission.not.applied"))
         }
         return@computeUnderProgress
       }
-      // there is no information about step id in Stepik submissions, so we have to assume that it's a submission for current task
-      submission.taskId = task.id
       HyperskillSolutionLoader.getInstance(project).updateTask(project, task, listOf(submission), true)
     }
   }

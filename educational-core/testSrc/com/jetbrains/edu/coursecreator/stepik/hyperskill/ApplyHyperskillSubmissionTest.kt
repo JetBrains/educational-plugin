@@ -5,15 +5,15 @@ import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.ApplyHyperskill
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
+import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.intellij.lang.annotations.Language
 
 class ApplyHyperskillSubmissionTest: EduActionTestCase() {
-  private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
+  private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   fun `test apply web submission`() = doTest(submissionFromWeb)
 
@@ -115,6 +115,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
           {
             "id": 1,
             "status": "correct",
+            "step": 1,
             "score": 1,
             "hint": "",
             "feedback": "",
@@ -156,6 +157,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
           {
             "id": 1,
             "status": "wrong",
+            "step": 1,
             "score": 0,
             "hint": "hint",
             "feedback": {
