@@ -25,7 +25,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
     return isUpToDate
   }
 
-  if (updateDate == null || id == 0 || course.isMarketplace) {
+  if (id == 0 || course.isMarketplace) {
     return isUpToDate
   }
 
@@ -51,7 +51,7 @@ fun EduCourse.checkIsStepikUpToDate(): CourseUpdateInfo {
 
 @VisibleForTesting
 fun EduCourse.isUpToDate(courseFromStepik: EduCourse): Boolean {
-  val dateFromServer = courseFromStepik.updateDate ?: return true
+  val dateFromServer = courseFromStepik.updateDate
 
   if (!isUnitTestMode) {
     fillItems(courseFromStepik)
@@ -76,7 +76,7 @@ private fun Section.isUpToDate(sectionFromStepik: Section?): Boolean {
   if (sectionFromStepik == null) {
     return false
   }
-  if (id == 0 || sectionFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0) {
     return true
   }
 
@@ -92,7 +92,7 @@ private fun Lesson.isUpToDate(lessonFromStepik: Lesson?): Boolean {
     return false
   }
 
-  if (id == 0 || lessonFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0) {
     return true
   }
 
@@ -107,7 +107,7 @@ private fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
   if (tasksFromServer == null) {
     return false
   }
-  if (id == 0 || tasksFromServer.updateDate == null || updateDate == null) {
+  if (id == 0) {
     return true
   }
 
