@@ -7,28 +7,32 @@ import com.intellij.ui.DocumentAdapter
 import javax.swing.event.DocumentEvent
 import javax.swing.text.JTextComponent
 
-abstract class CCDialogWrapperBase : DialogWrapper {
+abstract class CCDialogWrapperBase : DialogWrapper, Validator {
 
-  private val textValidators: MutableMap<JTextComponent, (String?) -> String?> = HashMap()
+  protected val textValidators = mutableListOf<JTextComponent>()
 
   constructor(project: Project?) : super(project)
   constructor(canBeParent: Boolean) : super(canBeParent)
 
-  protected fun addTextValidator(component: JTextComponent, validator: (String?) -> String?) {
+  protected fun addTextValidator(component: JTextComponent) {
     component.document.addDocumentListener(object : DocumentAdapter() {
       override fun textChanged(e: DocumentEvent) {
         updateErrorInfo(doValidateAll())
       }
     })
-    textValidators[component] = validator
+    textValidators.add(component)
   }
 
   override fun doValidateAll(): List<ValidationInfo> {
     val validationInfos = ArrayList(super.doValidateAll())
-    for ((component, validator) in textValidators) {
-      val errorMessage = validator(component.text) ?: continue
+    for (component in textValidators) {
+      val errorMessage = validate(component.text) ?: continue
       validationInfos += ValidationInfo(errorMessage, component)
     }
     return validationInfos
   }
+}
+
+interface Validator {
+  fun validate(componentText: String?): String?
 }

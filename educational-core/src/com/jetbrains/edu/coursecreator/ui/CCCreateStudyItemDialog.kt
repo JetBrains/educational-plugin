@@ -30,8 +30,16 @@ abstract class CCCreateStudyItemDialogBase(
 
   override fun postponeValidation(): Boolean = false
 
+  override fun validate(componentText: String?): String? {
+    return when {
+      componentText.isNullOrEmpty() -> EduCoreBundle.message("course.creator.new.study.item.empty.name")
+      !validator.checkInput(componentText) -> validator.getErrorText(componentText)
+      else -> null
+    }
+  }
+
   override fun createCenterPanel(): JComponent {
-    addTextValidator(nameField) { it.getValidatorText() }
+    addTextValidator(nameField)
     return panel {
       if (showNameField()) {
         row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") { nameField() }
@@ -39,14 +47,6 @@ abstract class CCCreateStudyItemDialogBase(
       createAdditionalFields(this)
     }
   }
-
-  @Nls
-  private fun String?.getValidatorText() =
-    when {
-      isNullOrEmpty() -> EduCoreBundle.message("course.creator.new.study.item.empty.name")
-      !validator.checkInput(this) -> validator.getErrorText(this)
-      else -> null
-    }
 
   override fun getPreferredFocusedComponent(): JComponent? = nameField
 

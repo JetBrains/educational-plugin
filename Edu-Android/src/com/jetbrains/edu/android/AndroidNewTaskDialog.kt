@@ -51,6 +51,12 @@ class AndroidNewTaskAfterPopupDialog(
   }
 
   override fun showNameField(): Boolean = false
+
+  override fun validate(componentText: String?): String? {
+      return if (componentText == null) EduAndroidBundle.message("error.no.package")
+      else AndroidUtils.validateAndroidPackageName(componentText)
+  }
+
   override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
@@ -58,15 +64,12 @@ class AndroidNewTaskAfterPopupDialog(
     androidVersionsInfo.loadLocalVersions()
     androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel, Consumer { items ->
       val nonPreviewItems = items.filter { it.androidTarget?.version?.isPreview != true }
-      val maxSdkVersion = nonPreviewItems.map { it.minApiLevel }.maxOrNull() ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
+      val maxSdkVersion = nonPreviewItems.maxOfOrNull { it.minApiLevel } ?: SdkVersionInfo.HIGHEST_KNOWN_STABLE_API
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
       comboBoxWrapper.init(FormFactor.MOBILE, nonPreviewItems)
       comboBoxWrapper.combobox.isEnabled = true
     })
-    addTextValidator(packageNameField) { text ->
-      if (text == null) return@addTextValidator EduAndroidBundle.message("error.no.package")
-      AndroidUtils.validateAndroidPackageName(text)
-    }
+    addTextValidator(packageNameField)
 
     with(builder) {
       row(EduAndroidBundle.message("package.colon")) { packageNameField() }
