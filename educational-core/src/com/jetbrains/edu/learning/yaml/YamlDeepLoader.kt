@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -11,7 +13,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
@@ -71,15 +72,21 @@ object YamlDeepLoader {
   }
 
   @JvmStatic
-  private fun addNonEditableFilesToCourse(taskContainer: ItemContainer, course: Course, project: Project) {
-    taskContainer.items.filterIsInstance<Task>().forEach { task ->
-      for (taskFile in task.taskFiles.values) {
-        if (!taskFile.isEditable) {
-          project.courseDir
-            .findChild(taskContainer.name)
-            ?.findChild(task.name)
-            ?.findFileByRelativePath(taskFile.name)
-            ?.let { virtualTaskFile -> GeneratorUtils.addNonEditableFileToCourse(course, virtualTaskFile) }
+  private fun addNonEditableFilesToCourse(taskContainer: Lesson, course: Course, project: Project) {
+    val nonEditableFile = taskContainer.taskList.flatMap { task ->
+      task.taskFiles.values.mapNotNull { taskFile ->
+        if (!taskFile.isEditable) return@mapNotNull null
+        project.courseDir
+          .findChild(taskContainer.name)
+          ?.findChild(task.name)
+          ?.findFileByRelativePath(taskFile.name)
+      }
+    }
+    invokeLater {
+      if (project.isDisposed) return@invokeLater
+      runWriteAction {
+        for (virtualFile in nonEditableFile) {
+          GeneratorUtils.addNonEditableFileToCourse(course, virtualFile)
         }
       }
     }

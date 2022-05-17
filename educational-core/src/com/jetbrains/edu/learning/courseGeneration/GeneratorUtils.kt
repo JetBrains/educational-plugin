@@ -2,7 +2,10 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.fileTemplates.FileTemplateUtil
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
@@ -200,13 +203,10 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   fun addNonEditableFileToCourse(course: Course, virtualTaskFile: VirtualFile) {
+    ApplicationManager.getApplication().assertWriteAccessAllowed()
     if (course.isStudy) {
       course.addNonEditableFile(virtualTaskFile.path)
-      invokeLater {
-        WriteAction.run<IOException> {
-          ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
-        }
-      }
+      ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
     }
   }
 
