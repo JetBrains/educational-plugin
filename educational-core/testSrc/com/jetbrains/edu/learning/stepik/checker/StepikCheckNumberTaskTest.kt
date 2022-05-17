@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.checker
 
+import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
@@ -8,6 +9,7 @@ import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.http.HttpStatus
+import org.intellij.lang.annotations.Language
 
 class StepikCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
   override val defaultResponseCode: Int = HttpStatus.SC_CREATED
@@ -17,6 +19,10 @@ class StepikCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
 
   override fun setUp() {
     super.setUp()
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      // Can be called from `StepikStartupActivity` after login
+      if (request.path.startsWith("/api/submissions?")) MockResponseFactory.fromString(EMPTY_SUBMISSIONS) else null
+    }
     loginFakeStepikUser()
   }
 
@@ -62,4 +68,18 @@ class StepikCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
       }
     }
   }.apply { id = 1 }
+
+  companion object {
+    @Language("JSON")
+    private const val EMPTY_SUBMISSIONS = """
+      {
+        "meta": {
+          "page": 1,
+          "has_next": false,
+          "has_previous": false
+        },
+        "submissions": []
+      }
+    """
+  }
 }
