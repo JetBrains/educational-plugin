@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.inspections.PyInspection;
+import com.jetbrains.python.inspections.PyInspectionVisitor;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.sdk.PythonSdkUtil;
@@ -57,11 +58,11 @@ public class PyEduInterpreterInspection extends PyInspection {
     return new Visitor(holder, session);
   }
 
-  private static class Visitor extends PyEduInspectionVisitor {
+  private static class Visitor extends PyInspectionVisitor {
 
     public Visitor(@Nullable ProblemsHolder holder,
                    @NotNull LocalInspectionToolSession session) {
-      super(holder, session);
+      super(holder, getContext(session));
     }
 
     @SuppressWarnings("UnstableApiUsage")

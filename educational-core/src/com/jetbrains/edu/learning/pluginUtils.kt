@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
+import com.intellij.ide.plugins.PluginEnabler
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -11,6 +12,7 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.installAndEnable
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
@@ -69,3 +71,13 @@ fun setUpPluginDependencies(project: Project, course: Course) {
 
   ExternalDependenciesManager.getInstance(project).setAllDependencies(allDependencies)
 }
+
+fun installAndEnablePlugin(pluginIds: Set<PluginId>, onSuccess: Runnable) = installAndEnable(null, pluginIds, true, onSuccess = onSuccess)
+
+fun enablePlugins(pluginsId: List<PluginId>) {
+  val descriptors = pluginsId.mapNotNull { pluginId -> PluginManagerCore.getPlugin(pluginId) }
+  @Suppress("UnstableApiUsage")
+  PluginEnabler.HEADLESS.enable(descriptors)
+  restartIDE(EduCoreBundle.message("required.plugin.were.enabled"))
+}
+

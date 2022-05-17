@@ -6,6 +6,7 @@ import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
@@ -216,7 +217,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
-    val buildNumber = getBuildNumberForRequests()
+    val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginsCompatibleBuild
 
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
 

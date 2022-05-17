@@ -6,7 +6,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
+import com.jetbrains.edu.learning.installAndEnablePlugin
 import javax.swing.event.HyperlinkEvent
 
 class UpdateNotification @Suppress("UnstableApiUsage") constructor(

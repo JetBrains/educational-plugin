@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.marketplace.installAndEnablePlugin
+import com.jetbrains.edu.learning.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.browseHyperlink
