@@ -8,16 +8,13 @@ import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import org.hamcrest.CoreMatchers
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Assert.assertThat
 
-class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
-
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
   override fun setUp() {
     super.setUp()

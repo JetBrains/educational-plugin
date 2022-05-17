@@ -1,15 +1,12 @@
 package com.jetbrains.edu.kotlin.courseGeneration
 
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
-
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")

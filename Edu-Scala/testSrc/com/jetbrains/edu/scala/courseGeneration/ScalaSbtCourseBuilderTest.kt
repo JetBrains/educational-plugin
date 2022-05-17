@@ -1,14 +1,11 @@
 package com.jetbrains.edu.scala.courseGeneration
 
-import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
 
-class ScalaSbtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
-
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/scala_course_sbt.json")
