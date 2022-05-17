@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -39,9 +38,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
           LOG.warn("Couldn't retrieve Node interpreter version")
           @Suppress("UnstableApiUsage")
           val requester = ModuleManager.getInstance(project).modules[0].moduleFile
-          // BACKCOMPAT: 2021.2
-          @Suppress("DEPRECATION")
-          ShowSettingsUtil.getInstance().editConfigurable(project, NodeSettingsConfigurable(project, requester, true))
+          NodeSettingsConfigurable.showSettingsDialog(project, requester)
         }
       }
     }

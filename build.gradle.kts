@@ -60,8 +60,6 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
-// BACKCOMPAT: 2021.2
-val isAtLeast213 = environmentName.toInt() >= 213
 // BACKCOMPAT: 2021.3
 val isAtLeast221 = environmentName.toInt() >= 221
 
@@ -427,17 +425,10 @@ project(":") {
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
-    // BACKCOMPAT: 2021.2. Update value to 213 and this comment
+    // BACKCOMPAT: 2021.3. Update value to 221 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
-    environment("IDEA_BUILD_NUMBER", "212")
-
-    // BACKCOMPAT: 2021.2
-    doFirst {
-      if (!isAtLeast213) {
-        throw GradleException("`buildEventsScheme` task is supported only for 213 platform or higher. Please, change `environmentName` property value")
-      }
-    }
+    environment("IDEA_BUILD_NUMBER", "213")
   }
 
   task("configureIdea") {
@@ -640,20 +631,6 @@ project(":Edu-Scala") {
     plugins.set(pluginsList)
   }
 
-  if (!isAtLeast213) {
-    configurations {
-      all {
-        // Allows using IDE dependencies instead of plugin dependencies
-        // as opposed to the default strategy in the project
-        // Otherwise, tests will use `jna-5.3.1` library from 212 Scala plugin
-        // which fails to load macOS native libraries starting with Big Sur (macOS 11)
-        // The bug was fixed in https://github.com/java-native-access/jna/issues/1215 and included in `jna-5.6.0`,
-        // and 212 platform already contains fixed version (`jna-5.6.0` more specifically)
-        resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.CONSUMER_FIRST)
-      }
-    }
-  }
-
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
@@ -688,7 +665,7 @@ project(":Edu-Python") {
       pythonPlugin,
       if (isJvmCenteredIDE) "java" else null,
       // needed only for tests, actually
-      if (isAtLeast213) "platform-images" else null
+      "platform-images"
     )
     plugins.set(pluginList)
   }
