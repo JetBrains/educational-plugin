@@ -1,5 +1,6 @@
 package com.jetbrains.edu.scala.sbt
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
@@ -20,7 +21,9 @@ import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
 class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
   override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: JdkProjectSettings) {
-    GeneratorUtils.removeModule(project, module)
+    invokeAndWaitIfNeeded {
+      GeneratorUtils.removeModule(project, module)
+    }
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
     super.createCourseStructure(project, module, baseDir, settings)
   }

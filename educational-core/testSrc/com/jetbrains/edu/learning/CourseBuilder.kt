@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -61,10 +62,13 @@ fun Course.createCourseFiles(
   @Suppress("UNCHECKED_CAST")
   val configurator = configurator as? EduConfigurator<Any>
 
-  configurator
-    ?.courseBuilder
-    ?.getCourseProjectGenerator(this)
-    ?.createCourseStructure(project, module, baseDir, settings)
+  @Suppress("HardCodedStringLiteral")
+  ProgressManager.getInstance().runProcessWithProgressSynchronously(Runnable {
+    configurator
+      ?.courseBuilder
+      ?.getCourseProjectGenerator(this)
+      ?.createCourseStructure(project, module, baseDir, settings)
+  }, "Course structure generation", false, project)
 }
 
 abstract class LessonOwnerBuilder(val course: Course) {

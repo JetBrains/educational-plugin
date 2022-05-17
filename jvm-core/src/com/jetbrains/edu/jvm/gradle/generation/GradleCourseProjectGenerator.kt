@@ -1,6 +1,7 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -17,7 +18,9 @@ open class GradleCourseProjectGenerator(
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
   override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: JdkProjectSettings) {
+    invokeAndWaitIfNeeded {
       GeneratorUtils.removeModule(project, module)
+    }
 
     PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
     super.createCourseStructure(project, module, baseDir, settings)

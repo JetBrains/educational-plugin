@@ -24,6 +24,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -33,7 +34,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
-import com.intellij.projectImport.ProjectOpenedCallback
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
@@ -59,6 +59,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillC
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
 import java.io.IOException
+import kotlin.system.measureTimeMillis
 
 /**
  * If you add any new public methods here, please do not forget to add it also to
@@ -157,8 +158,9 @@ abstract class CourseProjectGenerator<S : Any>(
       setProjectPathTrusted(location.toPath())
     }
 
-    val callback = ProjectOpenedCallback { p, module -> createCourseStructure(p, module, baseDir, projectSettings) }
-    val project = openNewProject(location.toPath(), callback)
+    val project = openNewProject(location.toPath()) { module ->
+      createCourseStructure(module.project, module, baseDir, projectSettings)
+    }
     project?.putUserData(EDU_PROJECT_CREATED, true)
     return project
   }
@@ -186,26 +188,44 @@ abstract class CourseProjectGenerator<S : Any>(
         myCourse.addLesson(lesson)
       }
     }
+
+    val indicator = ProgressManager.getInstance().progressIndicator
     try {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>(
-        {
-          val indicator = ProgressManager.getInstance().progressIndicator
-          if (CCUtils.isCourseCreator(project)) {
-            CCUtils.initializeCCPlaceholders(project, myCourse)
-          }
-          GeneratorUtils.createCourse(project, myCourse, baseDir, indicator)
-          if (myCourse is EduCourse &&
-              (myCourse.isStepikRemote || (myCourse as EduCourse).isMarketplaceRemote) &&
-              CCUtils.isCourseCreator(project)) {
-            checkIfAvailableOnRemote()
-          }
-          createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse)
-          EduCounterUsageCollector.eduProjectCreated(myCourse)
+      if (indicator == null) {
+        ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
+          generateCourseContent(project, baseDir, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
         }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project)
+      } else {
+        indicator.text = EduCoreBundle.message("generate.project.generate.course.structure.progress.text")
+        generateCourseContent(project, baseDir, isNewCourseCreatorCourse, indicator)
+      }
     }
     catch (e: IOException) {
       LOG.error("Failed to generate course", e)
     }
+  }
+
+  @Throws(IOException::class)
+  private fun generateCourseContent(
+    project: Project,
+    baseDir: VirtualFile,
+    isNewCourseCreatorCourse: Boolean,
+    indicator: ProgressIndicator
+  ) {
+    val duration = measureTimeMillis {
+      if (CCUtils.isCourseCreator(project)) {
+        CCUtils.initializeCCPlaceholders(project, myCourse)
+      }
+      GeneratorUtils.createCourse(project, myCourse, baseDir, indicator)
+      if (myCourse is EduCourse &&
+          (myCourse.isStepikRemote || (myCourse as EduCourse).isMarketplaceRemote) &&
+          CCUtils.isCourseCreator(project)) {
+        checkIfAvailableOnRemote()
+      }
+      createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse)
+      EduCounterUsageCollector.eduProjectCreated(myCourse)
+    }
+    LOG.info("Course content generation: $duration ms")
   }
 
   private fun checkIfAvailableOnRemote() {

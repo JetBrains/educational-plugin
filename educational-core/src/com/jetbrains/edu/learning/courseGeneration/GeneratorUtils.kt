@@ -48,23 +48,29 @@ object GeneratorUtils {
     indicator: ProgressIndicator
   ) {
     indicator.isIndeterminate = false
-    indicator.fraction = 0.0
+    val initialFraction = indicator.fraction
+    val remainingFraction = 1 - initialFraction
 
-    val items = course.items
-    for ((i, item) in items.withIndex()) {
-      indicator.fraction = (i + 1).toDouble() / items.size
+    try {
+      val items = course.items
+      for ((i, item) in items.withIndex()) {
+        indicator.fraction = initialFraction + ((i + 1).toDouble() / items.size) * remainingFraction
 
-      if (item is Lesson) {
-        indicator.text = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
-        createLesson(project, item, baseDir)
+        if (item is Lesson) {
+          indicator.text2 = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
+          createLesson(project, item, baseDir)
+        }
+        else if (item is Section) {
+          indicator.text2 = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
+          createSection(project, item, baseDir)
+        }
       }
-      else if (item is Section) {
-        indicator.text = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
-        createSection(project, item, baseDir)
-      }
+      indicator.text2 = EduCoreBundle.message("generate.additional.files.progress.text")
+      createAdditionalFiles(project, course, baseDir)
     }
-    indicator.text = EduCoreBundle.message("generate.additional.files.progress.text")
-    createAdditionalFiles(project, course, baseDir)
+    finally {
+      indicator.text2 = ""
+    }
     EduCounterUsageCollector.studyItemCreated(course)
   }
 
