@@ -2,11 +2,11 @@ package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.`in`
+import com.jetbrains.edu.learning.yaml.YamlDeserializerFactory
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.configFileName
 
@@ -25,8 +25,10 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-        val item = YamlDeserializer.deserializeItem(taskConfigFile, project, YamlFormatSynchronizer.STUDENT_MAPPER) as EduTask
-        val deserializedTaskFile = item.getTaskFile(taskFile.name) ?: error("Learner config file doesn't contain `${taskFile.name}` task file")
+        val item = YamlDeserializerFactory.getDefaultDeserializer().deserializeItem(taskConfigFile, project,
+                                                                                    YamlFormatSynchronizer.STUDENT_MAPPER) as EduTask
+        val deserializedTaskFile = item.getTaskFile(taskFile.name) ?: error(
+          "Learner config file doesn't contain `${taskFile.name}` task file")
         assertEquals(true, deserializedTaskFile.isLearnerCreated)
       })
     }

@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
@@ -14,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.yaml.YamlDeserializerBase
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -102,8 +101,7 @@ open class YamlUndoTest : YamlTestCase() {
     assertEquals(expectedEndOffset, placeholder.endOffset)
 
     val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG)!!
-    val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
-    val deserializedTask = MAPPER.deserializeTask(document.text)
+    val deserializedTask = YamlDeserializerBase().deserializeItem(taskConfig, null, MAPPER) as Task
     val deserializedPlaceholder = deserializedTask.getFile(TASK_FILE_NAME)!!.answerPlaceholders.first()
     assertEquals(expectedStartOffset, deserializedPlaceholder.offset)
     assertEquals(expectedEndOffset, deserializedPlaceholder.endOffset)

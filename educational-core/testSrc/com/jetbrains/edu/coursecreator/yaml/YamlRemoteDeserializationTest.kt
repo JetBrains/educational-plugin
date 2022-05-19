@@ -6,11 +6,13 @@ import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializerFactory
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
@@ -30,7 +32,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = deserializeRemoteItem(configFile) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertEquals(listOf(1), course.sectionIds)
@@ -45,7 +47,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = deserializeRemoteItem(configFile) as EduCourse
     assertEquals(1, course.id)
     assertEquals(5, course.marketplaceCourseVersion)
   }
@@ -75,7 +77,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     """.trimMargin()
 
     val configFile = createConfigFile(yamlContent, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as HyperskillCourse
+    val course = deserializeRemoteItem(configFile, HYPERSKILL_TYPE) as HyperskillCourse
 
     val hyperskillProject = course.hyperskillProject!!
     assertEquals(id, hyperskillProject.id)
@@ -106,7 +108,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    val course = deserializeRemoteItem(configFile) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
     assertTrue(course.sectionIds.isEmpty())
@@ -120,7 +122,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_SECTION_CONFIG)
-    val section = YamlDeserializer.deserializeRemoteItem(configFile)
+    val section = deserializeRemoteItem(configFile)
     assertEquals(1, section.id)
     assertEquals(Date(0), section.updateDate)
   }
@@ -134,7 +136,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
-    val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as StepikLesson
+    val lesson = deserializeRemoteItem(configFile, StepikNames.STEPIK_TYPE) as StepikLesson
     assertEquals(1, lesson.id)
     assertEquals(1, lesson.unitId)
     assertEquals(Date(0), lesson.updateDate)
@@ -147,7 +149,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as RemoteStudyItem
+    val task = deserializeRemoteItem(configFile) as RemoteStudyItem
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
   }
@@ -160,7 +162,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as DataTask
+    val task = deserializeRemoteItem(configFile, HYPERSKILL_TYPE) as DataTask
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
   }
@@ -177,7 +179,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile) as DataTask
+    val task = deserializeRemoteItem(configFile, HYPERSKILL_TYPE) as DataTask
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
     val attempt = Attempt(2, Date(0), 300).toDataTaskAttempt()
@@ -189,4 +191,8 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     runWriteAction { VfsUtil.saveText(configFile, yamlText) }
     return configFile
   }
+
+
+  private fun deserializeRemoteItem(configFile: LightVirtualFile, courseType: String = "") =
+    YamlDeserializerFactory.getDeserializer(courseType).deserializeRemoteItem(configFile)
 }

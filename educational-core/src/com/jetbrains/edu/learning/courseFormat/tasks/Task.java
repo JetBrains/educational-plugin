@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.submissions.SubmissionsManager;
-import com.jetbrains.edu.learning.yaml.YamlDeserializer;
+import com.jetbrains.edu.learning.yaml.YamlDeserializerBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,8 +39,8 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE;
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder.StepikTaskType} otherwise
  * - Handle yaml deserialization:
- *    - add type in {@link YamlDeserializer#deserializeTask(ObjectMapper, String)}
- *    - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
+ * - add type in {@link YamlDeserializerBase#deserializeTask(ObjectMapper, String)}
+ * - add yaml mixins for course creator and student fields {@link com.jetbrains.edu.learning.yaml.format}
  */
 public abstract class Task extends StudyItem {
   protected static final Logger LOG = Logger.getInstance(Task.class);

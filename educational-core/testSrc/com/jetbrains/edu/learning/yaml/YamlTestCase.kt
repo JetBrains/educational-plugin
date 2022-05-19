@@ -5,6 +5,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -57,6 +59,12 @@ fun checkConfigsExistAndNotEmpty(project: Project, course: Course) {
       }
     }
   }
+}
+
+fun createConfigFile(configName: String, yamlContent: String): LightVirtualFile {
+  val configFile = LightVirtualFile(configName)
+  runWriteAction { VfsUtil.saveText(configFile, yamlContent) }
+  return configFile
 }
 
 private fun checkConfig(project: Project, item: StudyItem) {

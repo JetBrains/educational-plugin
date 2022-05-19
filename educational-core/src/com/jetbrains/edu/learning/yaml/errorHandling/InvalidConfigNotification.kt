@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
+import com.jetbrains.edu.learning.yaml.YamlDeserializationHelper
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import javax.swing.event.HyperlinkEvent
 
@@ -35,7 +35,7 @@ private fun messageWithEditLink(project: Project, configFile: VirtualFile, cause
     project.courseDir.findChild(COURSE_CONFIG)
   } ?: error(EduCoreBundle.message("yaml.editor.invalid.format.cannot.find.config"))
 
-  val mode = YamlDeserializer.getCourseMode(courseConfig.document.text)
+  val mode = YamlDeserializationHelper.getCourseMode(courseConfig.document.text)
 
   val mainErrorMessage = "${
     EduCoreBundle.message("yaml.invalid.config.notification.message", pathToConfig(project, configFile))

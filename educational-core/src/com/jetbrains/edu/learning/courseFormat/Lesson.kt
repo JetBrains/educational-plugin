@@ -3,12 +3,11 @@ package com.jetbrains.edu.learning.courseFormat
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 
 /**
  * To introduce new lesson type it's required to:
  * - Extend Lesson class
- * - Handle yaml deserialization [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson]
+ * - Handle yaml deserialization [com.jetbrains.edu.learning.yaml.YamlDeserializerBase.deserializeLesson]
  */
 open class Lesson : ItemContainer() {
 

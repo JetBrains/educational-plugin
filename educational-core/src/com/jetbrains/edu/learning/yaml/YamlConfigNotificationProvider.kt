@@ -15,7 +15,7 @@ class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Pro
   private var cause: String? = null
 
   init {
-    project.messageBus.connect().subscribe(YamlDeserializer.YAML_LOAD_TOPIC,
+    project.messageBus.connect().subscribe(YamlDeserializerBase.YAML_LOAD_TOPIC,
                                            object : YamlListener {
                                              override fun beforeYamlLoad(configFile: VirtualFile) {
                                                cause = null

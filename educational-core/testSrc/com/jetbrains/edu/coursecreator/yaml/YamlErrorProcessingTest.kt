@@ -5,15 +5,9 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.intellij.lang.Language
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.MAPPER
-import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
 
 class YamlErrorProcessingTest : YamlTestCase() {
@@ -175,8 +169,12 @@ class YamlErrorProcessingTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-        MAPPER.deserializeCourse(yamlContent)
+      deserializeCourse(yamlContent)
     })
+  }
+
+  private fun deserializeCourse(yamlContent: String, courseType: String = "") {
+    YamlDeserializerFactory.getDeserializer(courseType).deserializeCourse(MAPPER, yamlContent)
   }
 
   private fun <T : Exception> doTest(yamlContent: String,
@@ -185,21 +183,15 @@ class YamlErrorProcessingTest : YamlTestCase() {
                                      expectedExceptionClass: Class<T>) {
     try {
       val configFile = createConfigFile(configName, yamlContent)
-      YamlDeserializer.deserializeItem(configFile, project)
+      YamlDeserializerFactory.getDefaultDeserializer().deserializeItem(configFile, project)
     }
     catch (e: Exception) {
-      assertInstanceOf(e, YamlDeserializer.ProcessedException::class.java)
+      assertInstanceOf(e, YamlDeserializerBase.ProcessedException::class.java)
       assertInstanceOf(e.cause, expectedExceptionClass)
       assertEquals(expectedErrorMessage, e.message)
       return
     }
 
     fail("Exception wasn't thrown")
-  }
-
-  private fun createConfigFile(configName: String, yamlContent: String): LightVirtualFile {
-    val configFile = LightVirtualFile(configName)
-    runWriteAction { VfsUtil.saveText(configFile, yamlContent) }
-    return configFile
   }
 }

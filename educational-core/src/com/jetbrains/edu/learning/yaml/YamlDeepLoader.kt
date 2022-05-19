@@ -13,47 +13,50 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
+import com.jetbrains.edu.learning.yaml.YamlDeserializationHelper.getCourseType
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.edu.learning.yaml.format.getRemoteChangeApplierForItem
-import org.jetbrains.annotations.NonNls
 
 object YamlDeepLoader {
   private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
   private val LOG = Logger.getInstance(YamlDeepLoader::class.java)
 
+  private fun getYamlDeserializer(courseType: String) = YamlDeserializerFactory.getDeserializer(courseType)
+
   @JvmStatic
   fun loadCourse(project: Project): Course? {
     val projectDir = project.courseDir
 
-    @NonNls
-    val errorMessageToLog = "Course yaml config cannot be null"
-    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error(errorMessageToLog)
+    val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: error("Course yaml config cannot be null")
 
-    val deserializedCourse = YamlDeserializer.deserializeItem(courseConfig, project) as? Course ?: return null
+    val courseType = getCourseType(courseConfig.document.text) ?: ""
+    val deserializer = getYamlDeserializer(courseType)
+
+    val deserializedCourse = deserializer.deserializeItem(courseConfig, project) as? Course ?: return null
     val mapper = deserializedCourse.mapper
 
-    deserializedCourse.items = deserializedCourse.deserializeContent(project, deserializedCourse.items, mapper)
+    deserializedCourse.items = deserializer.deserializeContent(project, deserializedCourse, deserializedCourse.items, mapper)
     deserializedCourse.items.forEach { deserializedItem ->
       when (deserializedItem) {
         is Section -> {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.parent = deserializedCourse
-          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.items, mapper)
+          deserializedItem.items = deserializer.deserializeContent(project, deserializedItem, deserializedItem.items, mapper)
           deserializedItem.lessons.forEach {
             it.parent = deserializedItem
-            it.items = it.deserializeContent(project, it.taskList, mapper)
+            it.items = deserializer.deserializeContent(project, it, it.taskList, mapper)
           }
         }
         is Lesson -> {
           // set parent to correctly obtain dirs in deserializeContent method
           deserializedItem.parent = deserializedCourse
-          deserializedItem.items = deserializedItem.deserializeContent(project, deserializedItem.taskList, mapper)
+          deserializedItem.items = deserializer.deserializeContent(project, deserializedItem, deserializedItem.taskList, mapper)
           addNonEditableFilesToCourse(deserializedItem, deserializedCourse, project)
           deserializedItem.removeNonExistingTaskFiles(project)
         }
@@ -63,7 +66,7 @@ object YamlDeepLoader {
     // we init course before setting description and remote info, as we have to set parent item
     // to obtain description/remote config file to set info from
     deserializedCourse.init(true)
-    deserializedCourse.loadRemoteInfoRecursively(project)
+    deserializedCourse.loadRemoteInfoRecursively(project, deserializer)
     if (!deserializedCourse.isStudy) {
       deserializedCourse.setDescriptionInfo(project)
     }
@@ -98,19 +101,19 @@ object YamlDeepLoader {
       task.parent = this
       val taskDir = task.getDir(project.courseDir)
       val invalidTaskFilesNames = task.taskFiles
-        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name)}.map { it.key }
+        .filter { (name, _) -> taskDir?.findFileByRelativePath(name) == null && !task.shouldBeEmpty(name) }.map { it.key }
       invalidTaskFilesNames.forEach { task.taskFiles.remove(it) }
     }
   }
 
-  private fun Course.loadRemoteInfoRecursively(project: Project) {
-    loadRemoteInfo(project)
-    sections.forEach { section -> section.loadRemoteInfo(project) }
+  private fun Course.loadRemoteInfoRecursively(project: Project, deserializer: YamlDeserializer) {
+    loadRemoteInfo(project, deserializer)
+    sections.forEach { section -> section.loadRemoteInfo(project, deserializer) }
 
     // top-level and from sections
     visitLessons { lesson ->
-      lesson.loadRemoteInfo(project)
-      lesson.taskList.forEach { task -> task.loadRemoteInfo(project) }
+      lesson.loadRemoteInfo(project, deserializer)
+      lesson.taskList.forEach { task -> task.loadRemoteInfo(project, deserializer) }
     }
 
     if (this is HyperskillCourse && hyperskillProject == null) {
@@ -143,7 +146,7 @@ object YamlDeepLoader {
     }
   }
 
-  private fun StudyItem.loadRemoteInfo(project: Project) {
+  private fun StudyItem.loadRemoteInfo(project: Project, deserializer: YamlDeserializer) {
     val itemDir = getConfigDir(project)
     val remoteConfigFile = itemDir.findChild(remoteConfigFileName)
     if (remoteConfigFile == null) {
@@ -155,11 +158,11 @@ object YamlDeepLoader {
       else return
     }
 
-    loadRemoteInfo(remoteConfigFile)
+    loadRemoteInfo(remoteConfigFile, deserializer)
   }
 
-  fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
-    val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile)
+  fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile, deserializer: YamlDeserializer) {
+    val itemRemoteInfo = deserializer.deserializeRemoteItem(remoteConfigFile)
     if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
       getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
     }

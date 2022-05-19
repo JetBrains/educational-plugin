@@ -3,6 +3,9 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
+import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -10,13 +13,13 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
+import com.jetbrains.edu.learning.yaml.YamlDeserializerFactory
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 import junit.framework.TestCase
 import java.time.ZonedDateTime
@@ -34,7 +37,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    val course = deserializeCourse(yamlContent)
     assertNotNull(course)
     assertEquals(CourseMode.STUDENT, course.courseMode)
   }
@@ -50,7 +53,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |end_date_time: ${endDateTime.toEpochSecond()}.000000000
       |mode: Study
       |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    val course = deserializeCourse(yamlContent, CODEFORCES)
     assertNotNull(course)
     assertTrue(course is CodeforcesCourse)
     assertEquals(endDateTime.toEpochSecond(), (course as CodeforcesCourse).endDateTime?.toEpochSecond())
@@ -65,7 +68,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |programming_language: Plain text
       |mode: Study
       |""".trimMargin()
-    val course = STUDENT_MAPPER.deserializeCourse(yamlContent)
+    val course = deserializeCourse(yamlContent, "marketplace")
     assertNotNull(course)
     assertTrue(course is EduCourse)
   }
@@ -79,7 +82,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin()
-    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    val lesson = deserializeLesson(yamlContent, CHECKIO_TYPE)
     assertTrue(lesson is CheckiOStation)
     assertEquals(listOf(firstTask, secondTask), lesson.taskList.map { it.name })
   }
@@ -93,7 +96,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |seconds_from_change: 1
     |
     """.trimMargin()
-    val task = STUDENT_MAPPER.deserializeTask(yamlContent)
+    val task = deserializeTask(yamlContent, CHECKIO_TYPE)
     assertNotNull(task)
     assertInstanceOf(task, CheckiOMission::class.java)
     assertEquals("code", (task as CheckiOMission).code)
@@ -109,7 +112,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |current_task: 1
     |
     """.trimMargin("|")
-    val lesson = STUDENT_MAPPER.deserializeLesson(yamlContent)
+    val lesson = deserializeLesson(yamlContent)
     assertNotNull(lesson)
     assertInstanceOf(lesson, FrameworkLesson::class.java)
     assertEquals(1, (lesson as FrameworkLesson).currentTaskIndex)
@@ -126,7 +129,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |status: $status
     |""".trimMargin()
 
-    val task = deserializeTask(yamlContent)
+    val task = deserializeTask(yamlContent, CODEFORCES_COURSE_TYPE)
     assertNotNull(task)
     assertInstanceOf(task, CodeforcesTask::class.java)
     assertEquals(feedbackUrl, task.feedbackLink)
@@ -155,7 +158,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |output_file: $outputFileName
     |""".trimMargin()
 
-    val task = deserializeTask(yamlContent)
+    val task = deserializeTask(yamlContent, CODEFORCES_COURSE_TYPE)
     assertNotNull(task)
     assertInstanceOf(task, CodeforcesTaskWithFileIO::class.java)
 
@@ -287,7 +290,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |record: 1
     |""".trimMargin("|")
 
-    val task = deserializeTask(yamlContent)
+    val task = deserializeTask(yamlContent, STEPIK_TYPE)
     assertTrue(task is VideoTask)
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
@@ -524,5 +527,18 @@ class StudentYamlDeserializationTest : EduTestCase() {
     TestCase.assertFalse(taskFile.isEditable)
   }
 
-  private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)
+
+  private fun deserializeCourse(yamlContent: String, courseType: String = ""): Course {
+    return YamlDeserializerFactory.getDeserializer(courseType).deserializeCourse(STUDENT_MAPPER, yamlContent)
+  }
+
+  private fun deserializeLesson(yamlContent: String, courseType: String = ""): Lesson {
+    return YamlDeserializerFactory.getDeserializer(courseType).deserializeLesson(STUDENT_MAPPER, yamlContent)
+  }
+
+  private fun deserializeTask(yamlContent: String, courseType: String = ""): Task {
+    return YamlDeserializerFactory.getDeserializer(courseType).deserializeTask(STUDENT_MAPPER, yamlContent)
+  }
+
+
 }

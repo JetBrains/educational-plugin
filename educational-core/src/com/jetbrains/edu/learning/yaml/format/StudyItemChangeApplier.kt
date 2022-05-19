@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.getConfigFileForChild
+import com.jetbrains.edu.learning.yaml.YamlDeserializationHelper.getConfigFileForChild
+import com.jetbrains.edu.learning.yaml.YamlDeserializerFactory
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unexpectedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.student.StudentTaskChangeApplier
 
 /**
- * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.learning.yaml.YamlDeserializer],
+ * Specific instance of this class applies changes from deserialized item, see [com.jetbrains.edu.learning.yaml.YamlDeserializerBase],
  * to already existing course item.
  */
 abstract class StudyItemChangeApplier<T : StudyItem> {
@@ -55,6 +55,9 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
 
       val parentItem = existingItem.parent
       parentItem.removeItem(existingItem)
+
+      val course = StudyTaskManager.getInstance(project).course ?: error("Course is null")
+      val deserializer = YamlDeserializerFactory.getDeserializer(course)
       parentItem.addItemAsNew(project, deserializedItem)
       return
     }
@@ -76,8 +79,10 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // this code adding new child item if it was added in config and there's a dir
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
+        val course = StudyTaskManager.getInstance(project).course ?: error("Course is null")
+        val deserializer = YamlDeserializerFactory.getDeserializer(course)
 
-        val deserializedChild = YamlDeserializer.deserializeItem(configFile, project, existingItem.course.mapper) ?: continue
+        val deserializedChild = deserializer.deserializeItem(configFile, project, existingItem.course.mapper) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.parent = existingItem.parent
