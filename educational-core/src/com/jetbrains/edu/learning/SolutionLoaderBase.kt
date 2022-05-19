@@ -145,7 +145,11 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     runInEdt {
       if (project.isDisposed) return@runInEdt
       if (needToShowNotification) {
-        UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(project)
+        // Suppression needed here because DialogTitleCapitalization is demanded by the superclass constructor, but the plugin naming with
+        // the capital letters used in the notification title
+        @Suppress("DialogTitleCapitalization")
+        UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
+                           EduCoreBundle.message("notification.update.plugin.content")).notify(project)
       }
       EduUtils.synchronize()
       ProjectView.getInstance(project).refresh()
@@ -226,9 +230,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   companion object {
 
     private val LOG = Logger.getInstance(SolutionLoaderBase::class.java)
-
-    private const val NOTIFICATION_TITLE = "Outdated EduTools Plugin"
-    private const val NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" + "<a href=\"\">Update plugin</a> to avoid compatibility problems.\n"
 
     private fun updatePlaceholders(taskFile: TaskFile, updatedPlaceholders: List<AnswerPlaceholder>) {
       val answerPlaceholders = taskFile.answerPlaceholders

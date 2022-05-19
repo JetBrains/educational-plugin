@@ -61,9 +61,6 @@ public class StepikSolutionsLoader implements Disposable {
   public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   public static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
-  private static final String NOTIFICATION_TITLE = "Outdated EduTools Plugin";
-  private static final String NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" +
-                                                     "<a href=\"\">Update plugin</a> to avoid compatibility problems.\n";
   private static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
 
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
@@ -200,7 +197,11 @@ public class StepikSolutionsLoader implements Disposable {
       final boolean needToShowNotification = needToShowUpdateNotification();
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         if (needToShowNotification) {
-          new UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(myProject);
+          // Suppression needed here because DialogTitleCapitalization is demanded by the superclass constructor, but the plugin naming with
+          // the capital letters used in the notification title
+          //noinspection DialogTitleCapitalization
+          new UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
+                                 EduCoreBundle.message("notification.update.plugin.content")).notify(myProject);
         }
         EduUtils.synchronize();
         if (mySelectedTask != null) {
