@@ -132,7 +132,7 @@ class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
             file(SOME_FILE_TXT)
             dir(DATA_FOLDER_NAME) {
               dir(DATASET_FOLDER_NAME) {
-                file(INPUT_FILE_NAME, TASK_3_NEW_DATASET_TEXT)
+                file(INPUT_FILE_NAME, TASK_1_DATASET_TEXT)
               }
             }
           }
