@@ -109,7 +109,7 @@ abstract class StepikEduCourseMixin : StepikItemMixin() {
 
 class StepikLessonMixin : StepikItemMixin() {
   @JsonProperty(STEPS)
-  lateinit var steps: MutableList<Int>
+  lateinit var stepIds: MutableList<Int>
 
   @JsonProperty(TITLE)
   lateinit var name: String

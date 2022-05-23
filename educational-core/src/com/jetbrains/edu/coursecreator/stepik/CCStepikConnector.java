@@ -118,7 +118,7 @@ public class CCStepikConnector {
                                      int sectionId) {
     StepikLesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
     return postedLesson != null &&
-           updateLessonTasks(project, lesson, postedLesson.getSteps()) &&
+           updateLessonTasks(project, lesson, postedLesson.getStepIds()) &&
            updateLessonAdditionalInfo(lesson, project);
   }
 

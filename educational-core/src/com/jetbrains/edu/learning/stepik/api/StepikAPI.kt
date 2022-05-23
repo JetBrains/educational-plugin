@@ -187,7 +187,7 @@ class LessonData(lesson: Lesson) {
   init {
     this.lesson.name = lesson.name
     this.lesson.id = lesson.id
-    this.lesson.steps = ArrayList()
+    this.lesson.stepIds = ArrayList()
   }
 }
 

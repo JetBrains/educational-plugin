@@ -88,7 +88,7 @@ class GetHyperskillLesson : DumbAwareAction(
         showIncorrectCredentialsError()
         return null
       }
-      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.stepIds)
       val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
       for (task in tasks) {
         lesson.addTask(task)

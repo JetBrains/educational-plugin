@@ -128,7 +128,7 @@ object StepikCourseLoader {
         progressIndicator.text = EduCoreBundle.message("stepik.loading.lessons", readableIndex, lessonCount)
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = StepikConnector.getInstance().getStepSources(stepikLesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(stepikLesson.stepIds)
 
       var frameworkLesson: FrameworkLesson? = null
       if (allStepSources.isNotEmpty()) {

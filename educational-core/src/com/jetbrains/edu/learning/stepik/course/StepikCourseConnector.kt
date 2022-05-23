@@ -75,7 +75,7 @@ object StepikCourseConnector : CourseConnector {
     val unitsIds = StepikCourseLoader.getUnitsIds(remoteCourse)
     val lessons = StepikCourseLoader.getLessonsFromUnitIds(unitsIds)
     for (lesson in lessons) {
-      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.steps)
+      val allStepSources = StepikConnector.getInstance().getStepSources(lesson.stepIds)
 
       for (stepSource in allStepSources) {
         val step = stepSource.block
