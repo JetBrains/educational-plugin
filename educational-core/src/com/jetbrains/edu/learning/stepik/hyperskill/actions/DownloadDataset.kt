@@ -22,15 +22,18 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtils.execCancelable
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.document
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.toPsiFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.awt.Point
@@ -67,7 +70,13 @@ class DownloadDataset(
     }
 
     val connector = task.getStepikBasedConnector()
-    val retrievedAttempt = connector.getActiveAttemptOrPostNew(task, submitNewAttempt).onError { error ->
+    val attemptResult = if (submitNewAttempt) {
+      connector.postAttempt(task)
+    }
+    else {
+      connector.getActiveAttemptOrPostNew(task)
+    }
+    val retrievedAttempt = attemptResult.onError { error ->
       processError(project, "Error getting attempt for task with ${task.id} id: $error")
       return
     }

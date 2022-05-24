@@ -12,12 +12,10 @@ interface StepikBasedConnector {
 
   fun getActiveAttempt(task: Task): Result<Attempt?, String>
 
-  fun getActiveAttemptOrPostNew(task: Task, postNew: Boolean = false): Result<Attempt, String> {
-    if (!postNew) {
-      val activeAttempt = getActiveAttempt(task)
-      if (activeAttempt is Ok && activeAttempt.value != null) {
-        return Ok(activeAttempt.value)
-      }
+  fun getActiveAttemptOrPostNew(task: Task): Result<Attempt, String> {
+    val activeAttempt = getActiveAttempt(task)
+    if (activeAttempt is Ok && activeAttempt.value != null) {
+      return Ok(activeAttempt.value)
     }
     return postAttempt(task)
   }
