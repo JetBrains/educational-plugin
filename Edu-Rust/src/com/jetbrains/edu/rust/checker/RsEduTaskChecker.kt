@@ -29,7 +29,8 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     val pkg = findCargoPackage() ?: return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))
-    val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run"))
+    // `--color never` is needed to avoid unexpected color escape codes in output
+    val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run", "--color", "never"))
 
     val disposable = StudyTaskManager.getInstance(project)
     val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
