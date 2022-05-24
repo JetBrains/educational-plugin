@@ -158,11 +158,9 @@ abstract class CourseProjectGenerator<S : Any>(
       setProjectPathTrusted(location.toPath())
     }
 
-    val project = openNewProject(location.toPath()) { module ->
+    return openNewProject(location.toPath()) { module ->
       createCourseStructure(module.project, module, baseDir, projectSettings)
     }
-    project?.putUserData(EDU_PROJECT_CREATED, true)
-    return project
   }
 
   /**

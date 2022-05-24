@@ -15,6 +15,9 @@ fun openNewProject(location: Path, callback: (Module) -> Unit): Project? {
     isNewProject = true,
     runConfigurators = true,
     isProjectCreatedWithWizard = true,
+    beforeInit = {
+      it.putUserData(CourseProjectGenerator.EDU_PROJECT_CREATED, true)
+    },
     preparedToOpen = callback
   )
 
