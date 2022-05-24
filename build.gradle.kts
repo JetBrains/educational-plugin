@@ -756,6 +756,14 @@ project(":Edu-Rust") {
     plugins.set(listOf(rustPlugin, tomlPlugin))
   }
 
+  configurations {
+    // Rust plugin contains own versions of some libs (for example, markdown) incompatible with libs from EduTools plugin
+    // Let's use Rust plugin libs in this module not to fail tests
+    all {
+      resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.CONSUMER_FIRST)
+    }
+  }
+
   dependencies {
     implementation(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))

@@ -200,7 +200,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
       assertEquals(CheckStatus.Failed, checkResult.status)
       val (messageMatcher, diffMatcher) = when (task.name) {
         "EduCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE) to nullValue()
-        "EduTestFailed" -> equalTo("assertion failed: foo() == String::from(\"foo\")") to nullValue()
+        "EduTestFailed" -> equalTo("""assertion failed: foo() == String::from(\"foo\")""") to nullValue()
         "EduTestFailedWithMessage" -> equalTo("Test error message") to nullValue()
         "EduTestFailedWithMultilineMessage" -> equalTo("Test\nerror\nmessage") to nullValue()
         "EduComparisonTestFailed" -> equalTo(EduCoreBundle.message("check.incorrect")) to

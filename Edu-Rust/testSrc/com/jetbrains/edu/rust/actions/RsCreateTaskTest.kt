@@ -77,7 +77,7 @@ private object RsProjectDescriptor : LightProjectDescriptor() {
   private fun testCargoProject(contentRoot: String): CargoWorkspace {
     val packages = listOf(testCargoPackage(contentRoot))
     return CargoWorkspace.deserialize(Paths.get("${Urls.newFromIdea(contentRoot).path}/Cargo.toml"),
-                                      CargoWorkspaceData(packages, emptyMap(), emptyMap()), CfgOptions.DEFAULT)
+                                      CargoWorkspaceData(packages, emptyMap(), emptyMap()), cfgOptions = CfgOptions.DEFAULT)
   }
 
   private fun testCargoPackage(contentRoot: String): CargoWorkspaceData.Package = CargoWorkspaceData.Package(
