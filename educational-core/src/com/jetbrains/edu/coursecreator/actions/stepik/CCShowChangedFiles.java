@@ -12,6 +12,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsContexts.DialogTitle;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -21,28 +22,27 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
+@SuppressWarnings({"ComponentNotRegistered", "UnstableApiUsage"}) // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
 
-  @Nls
+  @DialogTitle
   private static String getStatusInfoChanged() {
     return EduCoreBundle.message("action.show.changed.files.status.info.changed");
   }
 
-  @Nls
+  @DialogTitle
   private static String getStatusAdditionalInfoChanged() {
     return EduCoreBundle.message("action.show.changed.files.status.additional.info.changed");
   }
 
-  @Nls
+  @DialogTitle
   private static String getStatusRemoved() {
     return EduCoreBundle.message("action.show.changed.files.status.removed");
   }
 
-  @Nls
+  @DialogTitle
   private static String getStatusNew() {
     return EduCoreBundle.message("action.show.changed.files.status.new");
   }
@@ -139,7 +139,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
     appendChangeLine(item, stringBuilder, EduCoreBundle.message("action.show.changed.files.status.changed"));
   }
 
-  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @Nls String status) {
+  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @DialogTitle String status) {
     stringBuilder
       .append(item.getPathInCourse())
       .append(" ")

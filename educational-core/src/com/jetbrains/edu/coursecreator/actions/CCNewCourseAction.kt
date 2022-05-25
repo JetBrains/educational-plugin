@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 

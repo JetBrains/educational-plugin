@@ -205,7 +205,7 @@ interface EduCourseBuilder<Settings : Any> {
    *
    * @see [com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator]
    */
-  @Nls
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? {
     return null
   }

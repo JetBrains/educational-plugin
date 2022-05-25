@@ -8,6 +8,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions.ActionDescription;
+import com.intellij.openapi.util.NlsActions.ActionText;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
@@ -19,7 +21,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,22 +35,22 @@ import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt.HYP
 public class PushHyperskillLesson extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
+  @ActionDescription
   public static String getUpdateText() {
     return EduCoreBundle.message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Title)
+  @ActionText
   public static String getUpdateTitleText() {
     return EduCoreBundle.message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
+  @ActionDescription
   public static String getUploadText() {
     return EduCoreBundle.message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Title)
+  @ActionText
   public static String getUploadTitleText() {
     return EduCoreBundle.message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
   }

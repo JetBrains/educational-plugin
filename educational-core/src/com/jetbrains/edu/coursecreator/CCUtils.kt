@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsContexts.Button
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -37,6 +38,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
+
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.*
@@ -281,9 +283,10 @@ object CCUtils {
     }
   }
 
+  @Suppress("UnstableApiUsage")
   @JvmStatic
   @JvmOverloads
-  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, @Nls yesText: String = EduCoreBundle.message("label.wrap")): Boolean {
+  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, @Button yesText: String = EduCoreBundle.message("label.wrap")): Boolean {
     val result = Messages.showYesNoDialog(
       project,
       EduCoreBundle.message("notification.wrap.lessons.into.section.message"),

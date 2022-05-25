@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.twitter
 
+import com.intellij.openapi.util.NlsContexts.ConfigurableName
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
-import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 class TwitterOptionsProvider : OptionsProvider {
@@ -15,7 +15,8 @@ class TwitterOptionsProvider : OptionsProvider {
     TwitterSettings.getInstance().askToTweet()
   )
 
-  @Nls
+  @Suppress("UnstableApiUsage")
+  @ConfigurableName
   override fun getDisplayName(): String = EduCoreBundle.message("twitter.configurable.name")
 
   override fun isModified(): Boolean {

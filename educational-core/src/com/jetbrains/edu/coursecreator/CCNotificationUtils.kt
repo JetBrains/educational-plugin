@@ -8,13 +8,14 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsContexts
+import com.intellij.openapi.util.NlsContexts.NotificationContent
+import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jetbrains.annotations.Nls
 import javax.swing.event.HyperlinkEvent
 
+@Suppress("UnstableApiUsage")
 object CCNotificationUtils {
   private val LOG = Logger.getInstance(CCNotificationUtils::class.java)
 
@@ -35,12 +36,11 @@ object CCNotificationUtils {
     showErrorNotification(project, title, content, showLogAction)
   }
 
-  @Suppress("UnstableApiUsage")
   @JvmStatic
   @JvmOverloads
   fun showErrorNotification(project: Project,
-                            @NlsContexts.NotificationTitle title: String,
-                            @NlsContexts.NotificationContent message: String? = null,
+                            @NotificationTitle title: String,
+                            @NotificationContent message: String? = null,
                             action: AnAction? = null
   ) {
     LOG.info(message)
@@ -96,15 +96,15 @@ object CCNotificationUtils {
 
   @JvmStatic
   fun showNotification(project: Project,
-                       @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
+                       @NotificationContent title: String,
                        action: AnAction?) {
   showNotification(project, action, title, "")
   }
 
   fun showNotification(project: Project,
                        action: AnAction?,
-                       @Nls(capitalization = Nls.Capitalization.Sentence) title: String,
-                       @Nls(capitalization = Nls.Capitalization.Sentence) message: String,
+                       @NotificationTitle title: String,
+                       @NotificationContent message: String,
                        notificationType: NotificationType = NotificationType.INFORMATION) {
     val notification = Notification("EduTools", title, message, notificationType)
     if (action != null) {

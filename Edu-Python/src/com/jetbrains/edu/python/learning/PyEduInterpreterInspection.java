@@ -43,7 +43,7 @@ import static com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION;
 
 public class PyEduInterpreterInspection extends PyInspection {
 
-  @Nls
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   public String getDisplayName() {
     return EduPythonBundle.message("error.wrong.interpreter.title");

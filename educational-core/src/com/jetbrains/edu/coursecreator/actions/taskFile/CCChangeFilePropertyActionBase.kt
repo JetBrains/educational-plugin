@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsActions
+import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -19,10 +19,10 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import java.util.function.Supplier
 
 abstract class CCChangeFilePropertyActionBase(
-  private val name: Supplier<@NlsActions.ActionText String>
+  private val name: Supplier<@ActionText String>
 ) : DumbAwareAction(name) {
 
-  constructor(@NlsActions.ActionText name: String) : this(Supplier { name })
+  constructor(@ActionText name: String) : this(Supplier { name })
 
   override fun update(e: AnActionEvent) {
     val project = e.project

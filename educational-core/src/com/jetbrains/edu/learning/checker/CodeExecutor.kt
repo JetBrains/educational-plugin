@@ -39,6 +39,8 @@ interface CodeExecutor {
     InvalidCodeforcesRunConfiguration(project, factory)
 
   companion object {
-    fun resultUnchecked(msg: @Nls String): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
+    fun resultUnchecked(
+      msg: @Nls(capitalization = Nls.Capitalization.Sentence) String
+    ): Err<CheckResult> = Err(CheckResult(CheckStatus.Unchecked, msg))
   }
 }

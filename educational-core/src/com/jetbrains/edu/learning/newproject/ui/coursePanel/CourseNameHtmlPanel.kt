@@ -11,7 +11,7 @@ class CourseNameHtmlPanel : CourseHtmlPanel(), CourseSelectionListener {
   @Nls
   override fun getBody(): String {
     course?.let {
-      return wrapWithTags(it.name ?: "")
+      return wrapWithTags(it.name)
     }
     return ""
   }

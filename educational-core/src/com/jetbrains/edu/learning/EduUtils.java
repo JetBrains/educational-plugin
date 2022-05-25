@@ -18,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts.Command;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -315,8 +316,9 @@ public class EduUtils {
     return taskRef.get();
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   public static void runUndoableAction(Project project,
-                                       @Nls(capitalization = Nls.Capitalization.Title) String name,
+                                       @Command String name,
                                        UndoableAction action,
                                        UndoConfirmationPolicy confirmationPolicy) {
     try {

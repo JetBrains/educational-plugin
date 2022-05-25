@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsActions
+import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -28,11 +28,11 @@ class CCHideFromLearner : CCChangeFileVisibility(EduCoreBundle.lazyMessage("acti
 }
 
 abstract class CCChangeFileVisibility(
-  val name: Supplier<@NlsActions.ActionText String>,
+  val name: Supplier<@ActionText String>,
   val requiredVisibility: Boolean
 ) : CCChangeFilePropertyActionBase(name) {
 
-  constructor(@NlsActions.ActionText name: String, requiredVisibility: Boolean)
+  constructor(@ActionText name: String, requiredVisibility: Boolean)
     : this(Supplier { name }, requiredVisibility)
 
   override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.ui
 
+import com.intellij.openapi.util.NlsContexts.Label
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
@@ -17,7 +17,7 @@ import javax.swing.event.HyperlinkListener
  * @param linkHandler action to perform on link click
  */
 class EduHyperlinkLabel(
-  @Nls text: String,
+  @Suppress("UnstableApiUsage") @Label text: String,
   wrapWithLink: Boolean = false,
   private val linkHandler: ((HyperlinkEvent) -> Unit)? = null
 ) : JBLabel() {

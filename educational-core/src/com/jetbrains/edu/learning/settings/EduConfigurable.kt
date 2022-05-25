@@ -20,15 +20,16 @@ import com.intellij.openapi.options.CompositeConfigurable
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.openapi.util.NlsContexts.ConfigurableName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 import javax.swing.JPanel
 
 class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.WithEpDependencies {
   private val mainPanel: JPanel = JPanel(VerticalFlowLayout())
 
-  @Nls
+  @Suppress("UnstableApiUsage")
+  @ConfigurableName
   override fun getDisplayName(): String = EduCoreBundle.message("settings.educational")
   override fun getHelpTopic(): String = ID
 

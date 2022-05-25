@@ -8,6 +8,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationTitle
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.EduUtils.updateToolWindows
@@ -20,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.jetbrains.annotations.Nls
 import java.io.IOException
 
 class CheckiOCourseUpdater(
@@ -46,9 +46,10 @@ class CheckiOCourseUpdater(
     }
   }
 
+  @Suppress("UnstableApiUsage")
   private fun showNewContentUnlockedNotification(
     stations: Collection<CheckiOStation>,
-    @Nls(capitalization = Nls.Capitalization.Sentence) title: String
+    @NotificationTitle title: String
   ) {
     if (stations.isNotEmpty()) {
       Notifications.Bus.notify(CheckiONotifications.info(title, "", stations.joinToString("\n") { it.name }))
