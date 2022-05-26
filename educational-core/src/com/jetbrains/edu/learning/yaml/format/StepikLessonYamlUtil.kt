@@ -3,6 +3,7 @@
 
 package com.jetbrains.edu.learning.yaml.format
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -32,6 +33,7 @@ open class StepikLessonBuilder(
 @JsonPropertyOrder(ID, UPDATE_DATE, UNIT)
 abstract class StepikLessonRemoteYamlMixin : RemoteStudyItemYamlMixin() {
   @JsonProperty(UNIT)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var unitId: Int = 0
 }
 

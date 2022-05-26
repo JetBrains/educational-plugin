@@ -24,10 +24,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
 
     course.id = 1
     course.sectionIds = listOf(1)
-    course.updateDate = Date(0)
+    course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(course, """
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |default_section: 1
     |""".trimMargin())
   }
@@ -40,7 +40,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       isTemplateBased = true
     }
     course.hyperskillProject = hyperskillProject
-    course.updateDate = Date(0)
+    course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
 
     course.stages = listOf(HyperskillStage(1, "First", 11, true),
                            HyperskillStage(2, "Second", 22)
@@ -57,7 +57,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       |  ide_files: ${hyperskillProject.ideFiles}
       |  is_template_based: ${hyperskillProject.isTemplateBased}
       |  use_ide: true
-      |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+      |update_date: Fri, 01 Jan 2010 00:00:00 UTC
       |stages:
       |- id: 1
       |  step: 11
@@ -81,10 +81,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     } as EduCourse
 
     course.id = 1
-    course.updateDate = Date(0)
+    course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(course, """
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |""".trimMargin())
   }
 
@@ -94,10 +94,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     }.sections.first()
 
     section.id = 1
-    section.updateDate = Date(0)
+    section.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(section, """
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |""".trimMargin())
   }
 
@@ -111,8 +111,19 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     lesson.unitId = 1
     doTest(lesson, """
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     |unit: 1
+    |""".trimMargin())
+  }
+
+  fun `test lesson default unit`() {
+    val lesson = course {
+      stepikLesson()
+    }.lessons.first() as StepikLesson
+
+    lesson.id = 1
+    lesson.updateDate = Date(0)
+    doTest(lesson, """
+    |id: 1
     |""".trimMargin())
   }
 
@@ -124,24 +135,24 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     }.lessons.first().taskList.first()
 
     task.id = 1
-    task.updateDate = Date(0)
+    task.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(task, """
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |""".trimMargin())
   }
 
   fun `test data task without attempt`() {
     val task = course {
       lesson {
-        dataTask(stepId = 1, updateDate = Date(0))
+        dataTask(stepId = 1, updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC"))
       }
     }.lessons.first().taskList.first() as DataTask
 
     doTest(task, """
     |type: dataset
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |""".trimMargin())
   }
 
@@ -150,7 +161,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       lesson {
         dataTask(
           stepId = 1,
-          updateDate = Date(0),
+          updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC"),
           attempt = Attempt(2, Date(0), 300).toDataTaskAttempt()
         )
       }
@@ -159,7 +170,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: dataset
     |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
+    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
     |attempt:
     |  id: 2
     |  end_date_time: Thu, 01 Jan 1970 00:05:00 UTC
