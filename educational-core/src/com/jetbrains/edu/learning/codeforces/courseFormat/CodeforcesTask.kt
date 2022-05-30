@@ -5,7 +5,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames.*
+import com.jetbrains.edu.learning.EduNames.GO
+import com.jetbrains.edu.learning.EduNames.JAVA
+import com.jetbrains.edu.learning.EduNames.JAVASCRIPT
+import com.jetbrains.edu.learning.EduNames.KOTLIN
+import com.jetbrains.edu.learning.EduNames.PYTHON
+import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
+import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.EduNames.RUST
+import com.jetbrains.edu.learning.EduNames.SCALA
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_SUBMIT
