@@ -41,6 +41,7 @@ object EduUtilsKt {
 
     return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()
   }
+
 }
 
 class NumericInputValidator(val emptyInputMessage: String, val notNumericMessage: String) : InputValidatorEx {

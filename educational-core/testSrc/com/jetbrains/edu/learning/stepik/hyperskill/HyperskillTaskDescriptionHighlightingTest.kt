@@ -57,7 +57,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     doHtmlTest("""
       <html>
        <body>
-        <code class="language-${language.id.toLowerCase()}">$codeSample</code>
+        <code class="language-${language.id.lowercase()}">$codeSample</code>
        </body>
       </html>
     """, """

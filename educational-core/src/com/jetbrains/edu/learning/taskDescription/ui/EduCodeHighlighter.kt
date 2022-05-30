@@ -57,7 +57,7 @@ class EduCodeHighlighter {
       }
       if (lang.isEmpty()) return null
 
-      return if (lang == noHighlight) PlainTextLanguage.INSTANCE else Language.getRegisteredLanguages().find { it.id.toLowerCase() == lang }
+      return if (lang == noHighlight) PlainTextLanguage.INSTANCE else Language.getRegisteredLanguages().find { it.id.lowercase() == lang }
     }
   }
 }

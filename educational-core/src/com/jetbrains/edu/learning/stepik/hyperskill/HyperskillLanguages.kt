@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import capitalize
 import com.jetbrains.edu.learning.EduNames
 
 
@@ -34,7 +35,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
    */
   open val requestLanguage: String = languageName
 
-  override fun toString(): String = id.toLowerCase().capitalize()
+  override fun toString(): String = id.lowercase().capitalize()
 
   companion object {
     @JvmStatic

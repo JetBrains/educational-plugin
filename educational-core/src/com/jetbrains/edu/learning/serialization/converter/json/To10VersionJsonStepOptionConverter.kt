@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.DESCRIPT
 class To10VersionJsonStepOptionConverter : JsonStepOptionsConverter {
   override fun convert(stepOptionsJson: ObjectNode): ObjectNode {
     val descriptionFormat = stepOptionsJson.get(DESCRIPTION_FORMAT).asText()
-    stepOptionsJson.put(DESCRIPTION_FORMAT, descriptionFormat.toUpperCase())
+    stepOptionsJson.put(DESCRIPTION_FORMAT, descriptionFormat.uppercase())
     return stepOptionsJson
   }
 }

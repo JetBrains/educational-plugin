@@ -82,7 +82,7 @@ abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiO
   companion object {
     @JvmStatic
     protected fun getCheckiOServiceName(language: String): String {
-      return listOf(EduNames.EDU_PREFIX, CheckiONames.CHECKIO.toLowerCase(), OAUTH_SUFFIX, language).joinToString("/")
+      return listOf(EduNames.EDU_PREFIX, CheckiONames.CHECKIO.lowercase(), OAUTH_SUFFIX, language).joinToString("/")
     }
   }
 }

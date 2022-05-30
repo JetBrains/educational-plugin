@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.compatibility
 
+import capitalize
 import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
@@ -79,8 +80,7 @@ sealed class CourseCompatibility {
       }
 
       if (configurator == null) {
-        return Err(EduCoreBundle.message("rest.service.language.not.supported",
-                                         ApplicationNamesInfo.getInstance().productName,
+        return Err(EduCoreBundle.message("rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
                                          projectLanguage.capitalize()))
       }
       return Ok(Unit)

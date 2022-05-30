@@ -43,7 +43,7 @@ class To10VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
     fun convertTaskObject(taskObject: ObjectNode) {
       val descriptionFormat = taskObject.get(DESCRIPTION_FORMAT)?.asText()
       if (descriptionFormat != null) {
-        taskObject.put(DESCRIPTION_FORMAT, descriptionFormat.toUpperCase())
+        taskObject.put(DESCRIPTION_FORMAT, descriptionFormat.uppercase())
       }
     }
   }

@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.codeforces
 
+import capitalize
+
+
 // TODO: move to message bundle
 object CodeforcesNames {
   const val CODEFORCES: String = "codeforces"

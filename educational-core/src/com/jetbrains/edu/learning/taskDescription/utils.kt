@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.taskDescription
 
+import capitalize
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil

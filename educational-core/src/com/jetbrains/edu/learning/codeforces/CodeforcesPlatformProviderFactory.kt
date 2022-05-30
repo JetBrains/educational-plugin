@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces
 
+import capitalize
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.EducationalCoreIcons

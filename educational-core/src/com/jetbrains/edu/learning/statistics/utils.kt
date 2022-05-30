@@ -6,5 +6,5 @@ import java.util.*
 
 @Suppress("UnstableApiUsage")
 inline fun <reified T : Enum<*>> enumField(name: String = "value") : EventField<T> {
-  return EventFields.Enum(name) { it.toString().toLowerCase(Locale.ENGLISH) }
+  return EventFields.Enum(name) { it.toString().lowercase(Locale.ENGLISH) }
 }

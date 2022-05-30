@@ -62,7 +62,7 @@ class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0,
 
   override fun onCourseSelectionChanged(data: CourseBindData) {
     val course = data.course
-    courseDetailsHeader.isVisible = !course.description.isNullOrEmpty()
+    courseDetailsHeader.isVisible = course.description.isNotEmpty()
     if (course is EduCourse) {
       val hasStatistics = courseStatisticsPanel.setStatistics(course)
       courseStatisticsPanel.isVisible = hasStatistics
@@ -90,7 +90,7 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
 
   override fun getBody(): String {
     course?.let {
-      var description = it.description ?: ""
+      var description = it.description
       if (it.needsVerification) {
         description += NOT_VERIFIED_NOTE
       }

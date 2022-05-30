@@ -65,7 +65,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   private var submissionTabListener: EduLogInListener? = null
 
   open val serviceName: String by lazy {
-    "${EduNames.EDU_PREFIX}/${platformName.toLowerCase()}"
+    "${EduNames.EDU_PREFIX}/${platformName.lowercase()}"
   }
 
   protected open val oAuthServicePath: String by lazy {

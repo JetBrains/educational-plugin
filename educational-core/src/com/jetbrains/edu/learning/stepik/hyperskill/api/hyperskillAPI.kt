@@ -295,7 +295,7 @@ enum class HyperskillFrontendEventType {
    *  see mapper settings in [com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.objectMapper]
    */
   override fun toString(): String {
-    return name.toLowerCase()
+    return name.lowercase()
   }
 }
 

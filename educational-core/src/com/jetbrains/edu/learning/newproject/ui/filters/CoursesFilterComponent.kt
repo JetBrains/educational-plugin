@@ -44,7 +44,7 @@ class CoursesFilterComponent(
       return true
     }
     val filterParts = getFilterParts(filter)
-    val courseName = course.name.toLowerCase(Locale.getDefault())
+    val courseName = course.name.lowercase(Locale.getDefault())
     for (filterPart in filterParts) {
       if (courseName.contains(filterPart)) return true
       for (tag in course.tags) {
@@ -53,7 +53,7 @@ class CoursesFilterComponent(
         }
       }
       for (authorName in course.authorFullNames) {
-        if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
+        if (authorName.lowercase(Locale.getDefault()).contains(filterPart)) {
           return true
         }
       }
@@ -62,6 +62,6 @@ class CoursesFilterComponent(
   }
 
   private fun getFilterParts(@NonNls filter: String): Set<String> {
-    return HashSet(listOf(*filter.toLowerCase().split(" ".toRegex()).toTypedArray()))
+    return HashSet(listOf(*filter.lowercase().split(" ".toRegex()).toTypedArray()))
   }
 }

@@ -9,6 +9,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.ui.YamlHelpTab
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import decapitalize
 import org.jetbrains.annotations.NonNls
 
 class YamlConfigNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {

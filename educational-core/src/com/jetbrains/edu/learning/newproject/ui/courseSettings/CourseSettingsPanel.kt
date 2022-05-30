@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui.courseSettings
 
+import capitalize
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -145,7 +146,7 @@ class CourseSettingsPanel(
       val language = course.languageDisplayName
       val humanLanguage = course.humanLanguage
       var name = courseName
-      if (!IOUtil.isAscii(name!!)) {
+      if (!IOUtil.isAscii(name)) {
         //there are problems with venv creation for python course
         name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
       }

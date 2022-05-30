@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.api
 
+import capitalize
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -240,7 +241,7 @@ abstract class CodeforcesConnector {
           val dataResponse = objectMapper.readValue(wsResponse.text, object : TypeReference<DataResponse>() {})
 
           val verdict = dataResponse.verdict
-          val checkResult = CheckResult(verdict.toCheckStatus(), verdict.name.replace("_", " ").toLowerCase().capitalize())
+          val checkResult = CheckResult(verdict.toCheckStatus(), verdict.name.replace("_", " ").lowercase().capitalize())
 
           task.feedback = CheckFeedback(Date(), checkResult)
           task.status = verdict.toCheckStatus()

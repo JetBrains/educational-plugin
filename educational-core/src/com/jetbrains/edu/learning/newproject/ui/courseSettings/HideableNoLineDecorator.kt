@@ -92,9 +92,9 @@ class HideableNoLineDecorator(private val myPanel: JPanel, @Nls(capitalization =
     }
 
     myPanel.actionMap.put(ACTION_KEY, ExpandAction())
-    val mnemonic = UIUtil.removeMnemonic(title).toUpperCase(Locale.getDefault())[mnemonicIndex]
+    val mnemonic = UIUtil.removeMnemonic(title).uppercase(Locale.getDefault())[mnemonicIndex]
     val inputMap = myPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-    val keyStroke = KeyStroke.getKeyStroke(mnemonic.toInt(), InputEvent.ALT_DOWN_MASK, false)
+    val keyStroke = KeyStroke.getKeyStroke(mnemonic.code, InputEvent.ALT_DOWN_MASK, false)
     inputMap.put(keyStroke, ACTION_KEY)
   }
 

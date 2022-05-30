@@ -6,11 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -85,10 +81,10 @@ class HyperskillTaskBuilder(
           name = stepSource.title
         }
         is TheoryTask -> {
-          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title ?: name)
+          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title)
         }
         is ChoiceTask, is StringTask, is NumberTask -> {
-          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title ?: name)
+          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title)
           name = stepSource.title
         }
       }

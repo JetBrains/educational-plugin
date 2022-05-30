@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.statistics
 
+import capitalize
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
@@ -27,7 +28,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
 
   content = content.replace("\$PRODUCT", product)
                    .replace("\$URL", feedbackUrl)
-                   .replace("\$LANGUAGE", language.toLowerCase().capitalize())
+                   .replace("\$LANGUAGE", language.lowercase().capitalize())
   val notification = MyNotification(content, feedbackUrl)
   PropertiesComponent.getInstance().setValue(feedbackAsked, true)
   notification.notify(project)
