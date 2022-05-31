@@ -51,6 +51,10 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     else -> null
   }
 
+  override fun getLanguageVersions(): List<String> {
+    return values().map { it.standard }
+  }
+
   companion object {
     private const val CPP_STANDARD_PREFIX = "C++ Standard"
   }
