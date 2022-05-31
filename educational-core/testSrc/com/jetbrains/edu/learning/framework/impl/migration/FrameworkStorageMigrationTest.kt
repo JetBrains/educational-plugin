@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.framework.impl.migration
 
+import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.framework.impl.Change
@@ -17,7 +18,7 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test migrate from 0 to current`() {
-    val storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
+    val storage = createStorage()
     val oldChanges = UserChanges0(listOf(Change.AddFile("foo/bar.txt", "FooBar")))
 
     val record = storage.createRecordWithData(oldChanges)
@@ -30,7 +31,7 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun `test migrate from 0 to 1`() {
-    val storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
+    val storage = createStorage()
     val oldChanges = UserChanges0(listOf(Change.AddFile("foo/bar.txt", "FooBar")))
 
     val record = storage.createRecordWithData(oldChanges)
@@ -40,6 +41,12 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
 
     assertEquals(oldChanges.changes, newChanges.changes)
     assertEquals(-1, newChanges.timestamp)
+  }
+
+  private fun createStorage(): FrameworkStorage {
+    val storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
+    Disposer.register(testRootDisposable, storage)
+    return storage
   }
 
   private fun FrameworkStorage.createRecordWithData(data: FrameworkStorageData): Int {
