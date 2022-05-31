@@ -43,7 +43,7 @@ class PhpCourseProjectGenerator(
       return
     }
 
-    val interpreterId = myCourseBuilder.getLanguageSettings().getSettings().phpInterpreter?.id
+    val interpreterId = courseBuilder.getLanguageSettings().getSettings().phpInterpreter?.id
     val file = ComposerUtils.downloadPhar(project, null, project.basePath)
     val pharComposerExecution = if (file != null) {
       PharComposerExecution(interpreterId, file.path, false)

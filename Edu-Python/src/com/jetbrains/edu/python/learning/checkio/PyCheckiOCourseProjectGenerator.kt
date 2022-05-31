@@ -7,7 +7,7 @@ import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
-class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, val course: Course) : PyCourseProjectGenerator(builder, course) {
+class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
 
   override fun beforeProjectGenerated(): Boolean = true
 

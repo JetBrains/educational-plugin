@@ -1,18 +1,3 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jetbrains.edu.learning.newproject
 
 import com.google.common.annotations.VisibleForTesting
@@ -66,28 +51,27 @@ import kotlin.system.measureTimeMillis
  * @see HyperskillCourseProjectGenerator
  */
 abstract class CourseProjectGenerator<S : Any>(
-  protected val myCourseBuilder: EduCourseBuilder<S>,
-  protected var myCourse: Course
+  protected val courseBuilder: EduCourseBuilder<S>,
+  protected var course: Course
 ) {
   private var alreadyEnrolled = false
 
   open fun beforeProjectGenerated(): Boolean {
-    if (myCourse !is EduCourse || !myCourse.isStepikRemote) return true
-    val remoteCourse = myCourse as EduCourse
+    if (course !is EduCourse || !course.isStepikRemote) return true
+    val remoteCourse = course as EduCourse
 
     if (remoteCourse.id <= 0) return true
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<Boolean, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        val user = EduSettings.getInstance().user
-        if (user != null) {
+        if (EduSettings.getInstance().user != null) {
           alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.id)
           if (!alreadyEnrolled) {
             StepikConnector.getInstance().enrollToCourse(remoteCourse.id)
           }
         }
         loadCourseStructure(remoteCourse)
-        myCourse = remoteCourse
+        course = remoteCourse
         true
       }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null)
   }
@@ -96,21 +80,15 @@ abstract class CourseProjectGenerator<S : Any>(
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
     statusBarWidgetsManager.updateAllWidgets()
 
-    setUpPluginDependencies(project, myCourse)
+    setUpPluginDependencies(project, course)
 
-    loadSolutions(project, myCourse)
-    EduUtils.openFirstTask(myCourse, project)
+    loadSolutions(project, course)
+    EduUtils.openFirstTask(course, project)
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
   }
 
-  /**
-   * Generate new project and create course structure for created project
-   *
-   * @param location location of new course project
-   * @param projectSettings new project settings
-   */
   // 'projectSettings' must have S type but due to some reasons:
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little bit differently
@@ -150,11 +128,10 @@ abstract class CourseProjectGenerator<S : Any>(
 
     RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
-    baseDir.putUserData(COURSE_MODE_TO_CREATE, myCourse.courseMode)
-    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, myCourse.languageID)
+    baseDir.putUserData(COURSE_MODE_TO_CREATE, course.courseMode)
+    baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, course.languageID)
 
-    val isNewCourseCreatorCourse = isNewCourseCreatorCourse
-    if (isNewTrustedProjectApiAvailable && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+    if (isNewTrustedProjectApiAvailable && isCourseTrusted(course, isNewCourseCreatorCourse)) {
       setProjectPathTrusted(location.toPath())
     }
 
@@ -172,18 +149,18 @@ abstract class CourseProjectGenerator<S : Any>(
    */
   @VisibleForTesting
   open fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: S) {
-    GeneratorUtils.initializeCourse(project, myCourse)
+    GeneratorUtils.initializeCourse(project, course)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
     // BACKCOMPAT: 2021.3. Drop it because project is marked as trusted in `createProject`
-    if (!isNewTrustedProjectApiAvailable && isCourseTrusted(myCourse, isNewCourseCreatorCourse)) {
+    if (!isNewTrustedProjectApiAvailable && isCourseTrusted(course, isNewCourseCreatorCourse)) {
       @Suppress("UnstableApiUsage")
       project.setTrusted(true)
     }
     if (isNewCourseCreatorCourse) {
-      val lesson = myCourseBuilder.createInitialLesson(project, myCourse)
+      val lesson = courseBuilder.createInitialLesson(project, course)
       if (lesson != null) {
-        myCourse.addLesson(lesson)
+        course.addLesson(lesson)
       }
     }
 
@@ -212,32 +189,32 @@ abstract class CourseProjectGenerator<S : Any>(
   ) {
     val duration = measureTimeMillis {
       if (CCUtils.isCourseCreator(project)) {
-        CCUtils.initializeCCPlaceholders(project, myCourse)
+        CCUtils.initializeCCPlaceholders(project, course)
       }
-      GeneratorUtils.createCourse(project, myCourse, baseDir, indicator)
-      if (myCourse is EduCourse &&
-          (myCourse.isStepikRemote || (myCourse as EduCourse).isMarketplaceRemote) &&
+      GeneratorUtils.createCourse(project, course, baseDir, indicator)
+      if (course is EduCourse &&
+          (course.isStepikRemote || (course as EduCourse).isMarketplaceRemote) &&
           CCUtils.isCourseCreator(project)) {
         checkIfAvailableOnRemote()
       }
       createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse)
-      EduCounterUsageCollector.eduProjectCreated(myCourse)
+      EduCounterUsageCollector.eduProjectCreated(course)
     }
     LOG.info("Course content generation: $duration ms")
   }
 
   private fun checkIfAvailableOnRemote() {
-    val remoteCourse = if (myCourse.isMarketplace) {
-      MarketplaceConnector.getInstance().searchCourse(myCourse.id, myCourse.isMarketplacePrivate)
+    val remoteCourse = if (course.isMarketplace) {
+      MarketplaceConnector.getInstance().searchCourse(course.id, course.isMarketplacePrivate)
     }
     else {
-      StepikConnector.getInstance().getCourseInfo(myCourse.id, null, true)
+      StepikConnector.getInstance().getCourseInfo(course.id, null, true)
     }
     if (remoteCourse == null) {
-      val platformName = if (myCourse.isMarketplace) MARKETPLACE else StepikNames.STEPIK
-      LOG.warn("Failed to get $platformName course for imported from zip course with id: ${myCourse.id}")
-      LOG.info("Converting course to local. Course id: ${myCourse.id}")
-      (myCourse as EduCourse).convertToLocal()
+      val platformName = if (course.isMarketplace) MARKETPLACE else StepikNames.STEPIK
+      LOG.warn("Failed to get $platformName course for imported from zip course with id: ${course.id}")
+      LOG.info("Converting course to local. Course id: ${course.id}")
+      (course as EduCourse).convertToLocal()
     }
   }
 
@@ -268,7 +245,7 @@ abstract class CourseProjectGenerator<S : Any>(
   open fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {}
 
   private val isNewCourseCreatorCourse: Boolean
-    get() = myCourse.courseMode == CourseMode.EDUCATOR && myCourse.items.isEmpty()
+    get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CourseProjectGenerator::class.java)

@@ -43,7 +43,7 @@ class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>
     GradleCourseProjectGenerator(builder, course) {
 
     override fun getJdk(settings: JdkProjectSettings): Sdk? {
-      return super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(myCourse, settings.model)
+      return super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(course, settings.model)
     }
   }
 

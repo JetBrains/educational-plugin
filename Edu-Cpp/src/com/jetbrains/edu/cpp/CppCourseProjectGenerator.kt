@@ -29,8 +29,8 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
       return false
     }
 
-    if (myCourse is StepikCourse) {
-      myCourse.items.forEach(::deepRename)
+    if (course is StepikCourse) {
+      course.items.forEach(::deepRename)
     }
 
     return true
@@ -39,15 +39,15 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
-    val mainCMakeTemplateInfo = getCppTemplates(myCourse).mainCMakeList
+    val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList
     GeneratorUtils.createChildFile(
       project,
       baseDir,
       mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name), myCourse.languageVersion ?: "")
+      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name), course.languageVersion ?: "")
     )
 
-    getCppTemplates(myCourse).extraTopLevelFiles.forEach { templateInfo ->
+    getCppTemplates(course).extraTopLevelFiles.forEach { templateInfo ->
       GeneratorUtils.createChildFile(project, baseDir, templateInfo.generatedFileName,
                                      templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
     }
@@ -64,8 +64,8 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings) {
-    if (myCourse is StepikCourse) {
-      myCourse.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
+    if (course is StepikCourse) {
+      course.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
     }
 
     val googleTestSrc = FileUtil.join(project.courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE, GTEST_SOURCE_DIR_VALUE)

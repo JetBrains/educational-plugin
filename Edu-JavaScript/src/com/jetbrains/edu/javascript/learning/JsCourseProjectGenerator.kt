@@ -47,7 +47,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
   @Throws(IOException::class)
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
     var packageJsonFile = baseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
-    if (packageJsonFile == null && !myCourse.isStudy) {
+    if (packageJsonFile == null && !course.isStudy) {
       val templateText = getInternalTemplateText(NodeModuleNamesUtil.PACKAGE_JSON)
       packageJsonFile = createChildFile(project, baseDir, NodeModuleNamesUtil.PACKAGE_JSON, templateText)
     }

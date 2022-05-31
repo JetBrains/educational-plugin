@@ -23,7 +23,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     }
 
     if (!project.isSingleWorkspaceProject) {
-      myCourse.visitLessons {
+      course.visitLessons {
         for (task in it.taskList) {
           val manifestFile = task.getDir(project.courseDir)?.findChild(CargoConstants.MANIFEST_FILE) ?: continue
           project.cargoProjects.attachCargoProject(manifestFile.pathAsPath)
