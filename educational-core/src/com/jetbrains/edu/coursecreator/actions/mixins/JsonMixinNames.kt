@@ -79,6 +79,4 @@ object JsonMixinNames {
   const val PLUGIN_VERSION = "edu_plugin_version"
   const val VENDOR = "vendor"
   const val IS_PRIVATE = "is_private"
-  const val URL = "url"
-  const val EMAIL = "email"
 }
