@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.codeforces.api
 
-import capitalize
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule

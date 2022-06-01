@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import capitalize
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.capitalize
 
 
 enum class HyperskillLanguages(private val id: String, private val languageName: String) {

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
-import capitalize
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson

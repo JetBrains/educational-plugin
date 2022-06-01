@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import capitalize
 import com.intellij.ide.util.PropertiesComponent
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 
 const val HYPERSKILL = "Hyperskill"

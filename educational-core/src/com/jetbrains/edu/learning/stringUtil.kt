@@ -1,3 +1,5 @@
+package com.jetbrains.edu.learning
+
 import java.util.*
 
 fun String.capitalize(locale: Locale): String {

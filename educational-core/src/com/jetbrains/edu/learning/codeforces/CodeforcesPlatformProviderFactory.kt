@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.codeforces
 
-import capitalize
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector

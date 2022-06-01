@@ -1,16 +1,12 @@
 package com.jetbrains.edu.learning.compatibility
 
-import capitalize
 import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider

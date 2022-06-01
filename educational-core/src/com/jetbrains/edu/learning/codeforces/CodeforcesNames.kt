@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.codeforces
 
-import capitalize
-
+import com.jetbrains.edu.learning.capitalize
 
 // TODO: move to message bundle
 object CodeforcesNames {

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.statistics
 
-import capitalize
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
@@ -9,6 +8,7 @@ import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
