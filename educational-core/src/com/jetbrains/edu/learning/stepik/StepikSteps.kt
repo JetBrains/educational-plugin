@@ -14,7 +14,9 @@ import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TIME
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -26,9 +28,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.submissions.ID
 import com.jetbrains.edu.learning.submissions.TEXT
-import com.jetbrains.edu.learning.submissions.TIME
 import com.jetbrains.edu.learning.taskDescription.replaceEncodedShortcuts
 import java.util.*
 

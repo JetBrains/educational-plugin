@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
@@ -60,7 +61,6 @@ const val COURSE_REVIEW_SUMMARIES = "course-review-summaries"
 const val ADDITIONAL_FILES = "additional_files"
 const val TASK_FILES = "task_files"
 const val TASKS_INFO = "tasks_info"
-const val TIME_LEFT = "time_left"
 const val MEMORY = "memory"
 const val AVERAGE = "average"
 const val FIRST_NAME = "first_name"

@@ -2,16 +2,16 @@ package com.jetbrains.edu.learning.submissions
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TIME
 import java.util.*
 
-const val ID = "id"
 const val IS_VISIBLE = "is_visible"
 const val PLACEHOLDERS = "placeholders"
 const val STATUS = "status"
 const val SUBMISSION = "submission"
 const val TEXT = "text"
-const val TIME = "time"
 
 abstract class Submission {
   @JsonProperty(ID)

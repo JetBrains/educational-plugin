@@ -3,16 +3,16 @@ package com.jetbrains.edu.learning.stepik;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.UserInfo;
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.jetbrains.edu.learning.stepik.api.StepikAPIKt.*;
-import static com.jetbrains.edu.learning.submissions.SubmissionsAPIKt.ID;
 
 public class StepikUserInfo implements UserInfo {
-  @JsonProperty(ID)
+  @JsonProperty(EduFormatNames.ID)
   private int id = -1;
 
   @JsonProperty(FIRST_NAME)
