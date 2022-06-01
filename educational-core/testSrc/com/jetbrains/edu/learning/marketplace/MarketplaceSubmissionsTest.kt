@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.withFeature
@@ -46,7 +46,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test submission document created after edu task check`() {
-    doTestSubmissionAddedAfterTaskCheck(1, EduNames.CORRECT)
+    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
     val firstTask = findTask(0, 0)
     assertEquals("f53a097b-1486-43ae-8597-d464e74fe6a7", firstTask.submissionsId)
   }
@@ -55,7 +55,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val firstTask = findTask(0, 0)
     firstTask.submissionsId = "f53a097b-1486-43ae-8597-d464e74fe6a7"
 
-    doTestSubmissionAddedAfterTaskCheck(1, EduNames.CORRECT)
+    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
   }
 
   fun `test versions list loaded for document id`() {
@@ -71,7 +71,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     val submission = MarketplaceSubmissionsConnector.getInstance().getSubmission("1", version)
     checkNotNull(submission) { "Content is null" }
     assertEquals(Date.from(Instant.ofEpochSecond(version.timestamp)), submission.time)
-    assertEquals(EduNames.CORRECT, submission.status)
+    assertEquals(CORRECT, submission.status)
     assertEquals("solution text", submission.solutionFiles?.get(0)?.text)
   }
 

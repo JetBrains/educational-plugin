@@ -54,11 +54,6 @@ object EduNames {
   const val PYTHON_2_VERSION = "2.x"
   const val PYTHON_3_VERSION = "3.x"
 
-  // Submissions status
-  const val CORRECT = "correct"
-  const val WRONG = "wrong"
-  const val UNCHECKED = "unchecked"
-
   // Troubleshooting guide links
   private const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"

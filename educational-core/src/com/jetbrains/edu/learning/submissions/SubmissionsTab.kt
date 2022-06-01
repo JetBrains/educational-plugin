@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -172,7 +172,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     private fun getImageUrl(status: String?): URL? {
       val icon = when (status) {
-        EduNames.CORRECT -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskSolvedNoFrameHighContrast else EducationalCoreIcons.TaskSolvedNoFrame
+        CORRECT -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskSolvedNoFrameHighContrast else EducationalCoreIcons.TaskSolvedNoFrame
         else -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskFailedNoFrameHighContrast else EducationalCoreIcons.TaskFailedNoFrame
       }
       @Suppress("UnstableApiUsage")
@@ -181,7 +181,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     private fun getLinkColor(submission: Submission): String {
       return when (submission.status) {
-        EduNames.CORRECT -> getCorrectLinkColor()
+        CORRECT -> getCorrectLinkColor()
         else -> getWrongLinkColor()
       }
     }

@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -54,7 +54,7 @@ object CodeforcesUtils {
       val submissions = submissionsManager.getSubmissions(task)
       val currentStatus = task.status
       if (submissions.isNotEmpty()) {
-        task.status = if (submissions.any { it.taskId == task.id && it.status == EduNames.CORRECT }) {
+        task.status = if (submissions.any { it.taskId == task.id && it.status == CORRECT }) {
           CheckStatus.Solved
         }
         else {

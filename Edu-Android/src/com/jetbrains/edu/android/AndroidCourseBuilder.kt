@@ -21,6 +21,7 @@ import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -71,7 +72,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   }
 
   override fun createInitialLesson(project: Project, course: Course): Lesson {
-    val lessonInfo = NewStudyItemInfo(EduNames.LESSON + 1, 1, ::FrameworkLesson)
+    val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::FrameworkLesson)
     val lesson = CCCreateLesson().createAndInitItem(project, course, null, lessonInfo)
 
     val taskInfo = NewStudyItemInfo(EduNames.TASK + 1, 1, ::EduTask).apply {

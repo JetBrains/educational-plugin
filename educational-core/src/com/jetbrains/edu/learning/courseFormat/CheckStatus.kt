@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduNames.CORRECT
-import com.jetbrains.edu.learning.EduNames.UNCHECKED
-import com.jetbrains.edu.learning.EduNames.WRONG
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.UNCHECKED
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 
 
 enum class CheckStatus(val rawStatus: String) {

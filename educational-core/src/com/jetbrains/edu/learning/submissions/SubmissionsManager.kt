@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -92,7 +93,7 @@ class SubmissionsManager(private val project: Project) {
 
   fun containsCorrectSubmission(stepId: Int): Boolean {
     val submissions = getSubmissionsFromMemory(setOf(stepId)) ?: return false
-    return submissions.any { it.status == EduNames.CORRECT }
+    return submissions.any { it.status == CORRECT }
   }
 
   fun addToSubmissionsWithStatus(taskId: Int, checkStatus: CheckStatus, submission: Submission?) {

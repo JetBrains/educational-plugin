@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.codeforces.api
 
-import com.jetbrains.edu.learning.EduNames.CORRECT
-import com.jetbrains.edu.learning.EduNames.WRONG
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 
 enum class CodeforcesVerdict(val stringVerdict: String) {
   OK(CORRECT),

@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.loginFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
@@ -71,7 +71,7 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
       mockResponse("submissions_response_2.json", HttpStatus.SC_CREATED)
     }
 
-    doTestSubmissionAddedAfterTaskCheck(1, EduNames.CORRECT)
+    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/loadSolutions/"

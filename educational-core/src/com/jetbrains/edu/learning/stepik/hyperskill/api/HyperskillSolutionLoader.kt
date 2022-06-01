@@ -5,11 +5,11 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.SolutionLoaderBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -66,7 +66,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun updateTask(project: Project, task: Task, submissions: List<Submission>, force: Boolean): Boolean {
     val course = task.course as HyperskillCourse
-    if (course.isStudy && task.lesson == course.getProjectLesson() && submissions.any { it.taskId == task.id && it.status == EduNames.CORRECT }) {
+    if (course.isStudy && task.lesson == course.getProjectLesson() && submissions.any { it.taskId == task.id && it.status == CORRECT }) {
       markStageAsCompleted(task)
     }
     return super.updateTask(project, task, submissions, force)

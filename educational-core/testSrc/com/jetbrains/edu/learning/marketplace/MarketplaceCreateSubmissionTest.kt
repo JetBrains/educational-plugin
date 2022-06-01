@@ -1,12 +1,13 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -31,10 +32,10 @@ class MarketplaceCreateSubmissionTest : EduTestCase() {
     } as EduCourse
   }
 
-  fun `test test creating submission for solved edu task`() = createSubmission(EduNames.CORRECT, CheckStatus.Solved)
-  fun `test test creating submission for failed edu task`() = createSubmission(EduNames.WRONG, CheckStatus.Failed)
-  fun `test correct submission deserialization`() = deserializeSubmission(EduNames.CORRECT, CheckStatus.Solved)
-  fun `test wrong submission deserialization`() = deserializeSubmission(EduNames.WRONG, CheckStatus.Failed)
+  fun `test test creating submission for solved edu task`() = createSubmission(CORRECT, CheckStatus.Solved)
+  fun `test test creating submission for failed edu task`() = createSubmission(WRONG, CheckStatus.Failed)
+  fun `test correct submission deserialization`() = deserializeSubmission(CORRECT, CheckStatus.Solved)
+  fun `test wrong submission deserialization`() = deserializeSubmission(WRONG, CheckStatus.Failed)
 
   private fun createSubmission(submissionStatus: String, checkStatus: CheckStatus) {
     val eduTask = course.allTasks[0]

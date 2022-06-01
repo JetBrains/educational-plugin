@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -111,7 +112,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
         }
       }
     }
-    doTestSubmissionAddedAfterTaskCheck(3, EduNames.CORRECT)
+    doTestSubmissionAddedAfterTaskCheck(3, CORRECT)
   }
 
   fun `test submission added after code task check with periodically check`() {
@@ -157,7 +158,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
 
-    doTestSubmissionAddedAfterTaskCheck(4, EduNames.WRONG)
+    doTestSubmissionAddedAfterTaskCheck(4, WRONG)
   }
 
   @Language("JSON")

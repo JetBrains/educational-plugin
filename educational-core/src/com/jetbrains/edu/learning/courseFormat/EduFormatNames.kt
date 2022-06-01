@@ -8,4 +8,10 @@ object EduFormatNames {
   const val SECTION = "section"
   const val LESSON = "lesson"
   const val FRAMEWORK = "framework"
+
+  // Submissions status
+  const val CORRECT = "correct"
+  const val WRONG = "wrong"
+  const val UNCHECKED = "unchecked"
+
 }
