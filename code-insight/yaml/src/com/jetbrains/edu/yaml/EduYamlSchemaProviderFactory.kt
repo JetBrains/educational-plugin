@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
@@ -77,7 +78,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     }
   }
 
-  class FrameworkLessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, EduNames.LESSON) {
+  class FrameworkLessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, LESSON) {
 
     override fun getName(): String = "Framework Lesson Configuration"
 

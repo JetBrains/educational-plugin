@@ -6,4 +6,5 @@ object EduFormatNames {
   const val URL = "url"
 
   const val SECTION = "section"
+  const val LESSON = "lesson"
 }

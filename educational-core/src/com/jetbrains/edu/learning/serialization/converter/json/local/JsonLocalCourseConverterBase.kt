@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.serialization.converter.json.local
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LESSON
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SECTION
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 
 abstract class JsonLocalCourseConverterBase : JsonLocalCourseConverter {
@@ -14,7 +14,7 @@ abstract class JsonLocalCourseConverterBase : JsonLocalCourseConverter {
     for (item in localCourse.getJsonObjectList(SerializationUtils.Json.ITEMS)) {
       val type = item.get(SerializationUtils.Json.ITEM_TYPE)?.asText()
       when (type) {
-        null, EduNames.LESSON, SerializationUtils.Json.FRAMEWORK_TYPE -> convertLesson(item, language)
+        null, LESSON, SerializationUtils.Json.FRAMEWORK_TYPE -> convertLesson(item, language)
         SECTION -> convertSection(item, language)
       }
     }

@@ -59,6 +59,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.REMOTE_MAPPER
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.RemoteStudyItem
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import org.jetbrains.annotations.NonNls
 
 /**
@@ -155,7 +156,7 @@ object YamlDeserializer {
           Lesson::class.java
         }
       }
-      else -> formatError(unsupportedItemTypeMessage(type, EduNames.LESSON))
+      else -> formatError(unsupportedItemTypeMessage(type, LESSON))
     }
     return treeToValue(treeNode, clazz)
   }

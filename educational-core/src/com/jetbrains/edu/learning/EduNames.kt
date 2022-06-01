@@ -7,7 +7,7 @@ object EduNames {
   const val TASK_HTML = "task.html"
   const val TASK_MD = "task.md"
   const val HINTS = "hints"
-  const val LESSON = "lesson"
+
   const val FRAMEWORK_LESSON = "framework lesson"
   const val FRAMEWORK = "framework"
   const val TASK = "task"

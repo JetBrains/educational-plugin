@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 
@@ -28,7 +28,7 @@ open class Lesson : ItemContainer() {
   val section: Section?
     get() = parent as? Section
 
-  override val itemType: String = EduNames.LESSON
+  override val itemType: String = LESSON
 
   fun addTask(task: Task) {
     addItem(task)

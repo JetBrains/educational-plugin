@@ -71,7 +71,6 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.courseFormat.*
@@ -406,7 +405,7 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
     else {
       val itemType = jsonObject.get(ITEM_TYPE).asText()
       when (itemType) {
-        EduNames.LESSON -> codec.treeToValue(jsonObject, Lesson::class.java)
+        LESSON -> codec.treeToValue(jsonObject, Lesson::class.java)
         FRAMEWORK_TYPE -> codec.treeToValue(jsonObject, FrameworkLesson::class.java)
         SECTION -> codec.treeToValue(jsonObject, Section::class.java)
         else -> throw IllegalArgumentException("Unsupported item type: $itemType")

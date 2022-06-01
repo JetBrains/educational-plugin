@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -359,7 +360,7 @@ object GeneratorUtils {
   fun getDefaultName(item: StudyItem) = when (item) {
     is Section -> "${SECTION}${item.index}"
     is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
-    is Lesson -> "${EduNames.LESSON}${item.index}"
+    is Lesson -> "${LESSON}${item.index}"
     is Task -> "${EduNames.TASK}${item.index}"
     else -> "NonCommonStudyItem${item.index}"
   }
