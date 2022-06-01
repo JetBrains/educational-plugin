@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import org.jetbrains.annotations.NonNls
 
 object YamlFormatSettings {
@@ -18,7 +19,7 @@ object YamlFormatSettings {
   val LESSON_CONFIG = getLocalConfigFileName(LESSON)
 
   @JvmField
-  val TASK_CONFIG = getLocalConfigFileName(EduNames.TASK)
+  val TASK_CONFIG = getLocalConfigFileName(TASK)
 
   /**
    * @param itemKind Course/Section/Lesson/Task

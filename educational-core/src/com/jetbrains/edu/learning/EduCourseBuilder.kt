@@ -13,6 +13,7 @@ import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.checker.OutputTaskChecker.Companion.OUTPUT_PATTERN_NAME
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -59,7 +60,7 @@ interface EduCourseBuilder<Settings : Any> {
   fun createInitialLesson(project: Project, course: Course): Lesson? {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::Lesson)
     val lesson = CCCreateLesson().createAndInitItem(project, course, course, lessonInfo)
-    val taskInfo = NewStudyItemInfo(EduNames.TASK + 1, 1, ::EduTask)
+    val taskInfo = NewStudyItemInfo(TASK + 1, 1, ::EduTask)
     val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)
     lesson.addTask(task)
     return lesson

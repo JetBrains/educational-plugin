@@ -18,10 +18,10 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -75,7 +75,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::FrameworkLesson)
     val lesson = CCCreateLesson().createAndInitItem(project, course, null, lessonInfo)
 
-    val taskInfo = NewStudyItemInfo(EduNames.TASK + 1, 1, ::EduTask).apply {
+    val taskInfo = NewStudyItemInfo(TASK + 1, 1, ::EduTask).apply {
       initAndroidProperties(SdkVersionInfo.HIGHEST_KNOWN_STABLE_API)
     }
     val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)

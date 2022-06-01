@@ -320,7 +320,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     course.description = "my summary"
     createConfigFiles(project)
 
-    val task = course.lessons.first().taskList.first() ?: error("Cannot find task")
+    val task = course.lessons.first().taskList.first()
     val placeholder = task.taskFiles["fizz.kt"]?.answerPlaceholders?.firstOrNull() ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 

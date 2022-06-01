@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.extension.SchemaType
@@ -55,7 +56,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   }
 
   class TaskSpecificConfigSchemaProvider(project: Project, private val taskType: String)
-    : StudyItemConfigSchemaProvider(project, EduNames.TASK) {
+    : StudyItemConfigSchemaProvider(project, TASK) {
 
     override fun getName(): String = "${taskType.replaceFirstChar { it.titlecaseChar() }} ${super.getName()}"
 
@@ -69,7 +70,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
   }
 
   class TaskGeneralConfigSchemaProvider(project: Project, private val tasksWithSpecificProvider: Collection<String>)
-    : StudyItemConfigSchemaProvider(project, EduNames.TASK) {
+    : StudyItemConfigSchemaProvider(project, TASK) {
 
     override fun isAvailable(file: VirtualFile): Boolean {
       // We need to exclude task types with specific Config Schema Provider

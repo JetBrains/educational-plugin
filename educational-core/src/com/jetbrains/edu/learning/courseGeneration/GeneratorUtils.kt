@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
@@ -363,7 +364,7 @@ object GeneratorUtils {
     is Section -> "${SECTION}${item.index}"
     is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
     is Lesson -> "${LESSON}${item.index}"
-    is Task -> "${EduNames.TASK}${item.index}"
+    is Task -> "${TASK}${item.index}"
     else -> "NonCommonStudyItem${item.index}"
   }
 }

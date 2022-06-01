@@ -70,9 +70,6 @@ object YamlMixinNames {
   const val VENDOR = "vendor"
 
   @NlsSafe
-  const val IS_MARKETPLACE = "is_marketplace"
-
-  @NlsSafe
   const val IS_PRIVATE = "is_private"
 
   @NlsSafe
@@ -131,10 +128,6 @@ object YamlMixinNames {
   @NlsSafe
   const val SELECTED_OPTIONS = "selected_options"
   const val QUIZ_HEADER = "quiz_header"
-
-  // data task
-  @NlsSafe
-  const val ATTEMPT = "attempt"
 
   // video task
   @NlsSafe

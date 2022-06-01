@@ -12,14 +12,18 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.isTestsFile
+import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -34,7 +38,7 @@ val Task.testDirs: List<String> get() = course.testDirs
 
 val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
-val Task.dirName: String get() = if (isFrameworkTask && course.isStudy) EduNames.TASK else name
+val Task.dirName: String get() = if (isFrameworkTask && course.isStudy) TASK else name
 
 fun Task.findDir(lessonDir: VirtualFile?): VirtualFile? {
   return lessonDir?.findChild(dirName)
@@ -207,7 +211,7 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
 }
 
 fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
-  val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, EduNames.TASK))
+  val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, TASK))
   val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
   return file ?: error("No task description file for $name")
 }

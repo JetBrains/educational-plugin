@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.jetbrains.edu.learning.EduNames.TASK;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.EDU_TASK;
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
+import static com.jetbrains.edu.learning.stepik.api.StepikMixinsKt.TASK;
 
 public class StepikFormatTest extends EduTestCase {
 

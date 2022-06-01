@@ -24,6 +24,7 @@ import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
@@ -168,7 +169,7 @@ fun VirtualFile.getTaskDir(project: Project): VirtualFile? {
     val lessonDirCandidate = taskDir.parent ?: return null
     val lesson = lessonDirCandidate.getLesson(project)
     if (lesson != null) {
-      if (lesson is FrameworkLesson && EduNames.TASK == taskDir.name || lesson.getTask(taskDir.name) != null) {
+      if (lesson is FrameworkLesson && TASK == taskDir.name || lesson.getTask(taskDir.name) != null) {
         return taskDir
       }
     }

@@ -11,8 +11,8 @@ class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, course: Course) 
 
   override fun beforeProjectGenerated(): Boolean = true
 
-  override fun afterProjectGenerated(project: Project, settings: PyNewProjectSettings) {
-    super.afterProjectGenerated(project, settings)
+  override fun afterProjectGenerated(project: Project, projectSettings: PyNewProjectSettings) {
+    super.afterProjectGenerated(project, projectSettings)
     reformatCodeInAllTaskFiles(project, course)
   }
 }

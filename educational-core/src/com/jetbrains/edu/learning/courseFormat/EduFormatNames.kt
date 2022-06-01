@@ -4,6 +4,7 @@ object EduFormatNames {
   const val SECTION = "section"
   const val LESSON = "lesson"
   const val FRAMEWORK = "framework"
+  const val TASK = "task"
 
   // vendor
   const val EMAIL = "email"

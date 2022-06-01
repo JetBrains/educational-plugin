@@ -4,7 +4,7 @@ import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -48,7 +48,7 @@ class FrameworkLessonNode private constructor(
     ): FrameworkLessonNode? {
       val task = lesson.currentTask()
       val dir = if (task != null) {
-        val taskBaseDirectory = lessonDirectory.findSubdirectory(EduNames.TASK) ?: return null
+        val taskBaseDirectory = lessonDirectory.findSubdirectory(TASK) ?: return null
         CourseViewUtils.findTaskDirectory(project, taskBaseDirectory, task) ?: return null
       }
       else {
