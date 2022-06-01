@@ -9,7 +9,6 @@ object EduNames {
   const val HINTS = "hints"
 
   const val FRAMEWORK_LESSON = "framework lesson"
-  const val FRAMEWORK = "framework"
   const val TASK = "task"
   const val COURSE = "course"
   const val ITEM = "item"

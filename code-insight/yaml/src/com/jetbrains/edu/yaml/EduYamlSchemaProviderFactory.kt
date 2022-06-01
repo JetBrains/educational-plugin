@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -103,6 +104,6 @@ private fun VirtualFile.isFrameworkLessonConfig(project: Project): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(this) as? YAMLFile ?: return@runReadAction false
     val mapping = psiFile.documents.firstOrNull()?.topLevelValue as? YAMLMapping ?: return@runReadAction false
     val typeKeyValue = mapping.getKeyValueByKey("type") ?: return@runReadAction false
-    typeKeyValue.valueText == EduNames.FRAMEWORK
+    typeKeyValue.valueText == FRAMEWORK
   }
 }

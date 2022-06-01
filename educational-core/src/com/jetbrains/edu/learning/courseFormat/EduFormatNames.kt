@@ -7,4 +7,5 @@ object EduFormatNames {
 
   const val SECTION = "section"
   const val LESSON = "lesson"
+  const val FRAMEWORK = "framework"
 }

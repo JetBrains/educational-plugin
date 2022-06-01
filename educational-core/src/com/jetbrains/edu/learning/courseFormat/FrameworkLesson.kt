@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class FrameworkLesson() : Lesson() {
@@ -24,5 +24,5 @@ class FrameworkLesson() : Lesson() {
    */
   fun currentTask(): Task? = taskList.getOrNull(currentTaskIndex)
 
-  override val itemType: String = EduNames.FRAMEWORK
+  override val itemType: String = FRAMEWORK
 }

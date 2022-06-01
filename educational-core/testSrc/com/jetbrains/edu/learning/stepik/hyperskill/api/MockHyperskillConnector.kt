@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FRAMEWORK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -119,7 +120,7 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
       descriptionText = task.descriptionText
       files = task.taskFiles.values.toMutableList()
       taskType = task.itemType
-      lessonType = if (task.lesson is FrameworkLesson) EduNames.FRAMEWORK else null
+      lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
     }
 
     return HyperskillStepSource().apply {
