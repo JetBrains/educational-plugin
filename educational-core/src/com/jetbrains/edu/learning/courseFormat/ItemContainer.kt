@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduUtils
-
 abstract class ItemContainer : StudyItem() {
   var items: List<StudyItem>
     get() = _items
@@ -35,6 +33,6 @@ abstract class ItemContainer : StudyItem() {
   }
 
   open fun sortItems() {
-    _items.sortWith(EduUtils.INDEX_COMPARATOR)
+    _items.sortBy { it.index }
   }
 }
