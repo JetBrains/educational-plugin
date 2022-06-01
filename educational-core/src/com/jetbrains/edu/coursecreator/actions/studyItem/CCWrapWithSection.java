@@ -28,6 +28,7 @@ import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitleName;
 import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION;
 
+@SuppressWarnings("ComponentNotRegistered")  // registered in educational-core.xml
 public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
   @NonNls

@@ -9,7 +9,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -74,7 +73,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   public static StepikSolutionsLoader getInstance(@NotNull Project project) {
-    StepikSolutionsLoader service = ServiceManager.getService(project, StepikSolutionsLoader.class);
+    StepikSolutionsLoader service = project.getService(StepikSolutionsLoader.class);
     if (service != null) {
       service.init();
     }
@@ -110,6 +109,7 @@ public class StepikSolutionsLoader implements Disposable {
     ProgressManager.getInstance().run(new Backgroundable(myProject, EduCoreBundle.message("update.process")) {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {
+        if (myProject == null) return;
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         loadSolutions(course, progressIndicator);
       }
@@ -228,7 +228,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private void cancelUnfinishedTasks() {
-    for (Future future : myFutures.values()) {
+    for (Future<Boolean> future : myFutures.values()) {
       if (!future.isDone()) {
         future.cancel(true);
       }
@@ -282,7 +282,7 @@ public class StepikSolutionsLoader implements Disposable {
           Task task = taskFile.getTask();
           if (myFutures.containsKey(task.getId())) {
             VirtualFileExt.startLoading(file, myProject);
-            Future future = myFutures.get(task.getId());
+            Future<Boolean> future = myFutures.get(task.getId());
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
             }
@@ -292,7 +292,7 @@ public class StepikSolutionsLoader implements Disposable {
     });
   }
 
-  private void enableEditorWhenFutureDone(@NotNull Future future) {
+  private void enableEditorWhenFutureDone(@NotNull Future<Boolean> future) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         future.get();
@@ -511,7 +511,7 @@ public class StepikSolutionsLoader implements Disposable {
    *
    * @param taskFile for which we're updating placeholders
    * @param solutionFile from Stepik with text of last submission
-   * @return false if there're invalid placeholders
+   * @return false if there are invalid placeholders
    */
   static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull SolutionFile solutionFile) {
     int lastIndex = 0;

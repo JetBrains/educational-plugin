@@ -37,8 +37,6 @@ import java.util.concurrent.atomic.AtomicReference
 
 object GeneratorUtils {
 
-  private val LOG: Logger = Logger.getInstance(GeneratorUtils::class.java)
-
   private val INVALID_SYMBOLS: Regex = """[/\\:<>"?*|;&]""".toRegex()
   private val INVALID_TRAILING_SYMBOLS: CharArray = charArrayOf(' ', '.', '!')
 
@@ -144,10 +142,6 @@ object GeneratorUtils {
     val descriptionFileName = when (task.descriptionFormat) {
       HTML -> EduNames.TASK_HTML
       MD -> EduNames.TASK_MD
-      else -> {
-        LOG.warn("Description format for task `${task.name}` is null. Use html format")
-        EduNames.TASK_HTML
-      }
     }
 
     return createChildFile(project, taskDir, descriptionFileName, task.descriptionText)
