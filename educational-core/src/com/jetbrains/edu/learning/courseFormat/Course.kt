@@ -58,7 +58,7 @@ abstract class Course : LessonContainer() {
    * This method is needed to serialize language and its version as one property
    * Consider using [languageID] and [languageVersion] properties instead
    */
-  open var programmingLanguage: String = EduNames.PYTHON // language and optional version in form "Language Version" (as "Python 3.7")
+  open var programmingLanguage: String = "" // language and optional version in form "Language Version" (as "Python 3.7")
 
   fun init(isRestarted: Boolean) {
     init(this, isRestarted)
