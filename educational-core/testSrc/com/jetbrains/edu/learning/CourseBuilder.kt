@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -98,7 +99,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected fun <T : Lesson> lesson(name: String? = null, lesson: T, buildLesson: LessonBuilder<T>.() -> Unit) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
-    lessonBuilder.withName(name ?: (EduNames.LESSON + nextLessonIndex))
+    lessonBuilder.withName(name ?: (LESSON + nextLessonIndex))
     addLesson(lesson)
     lessonBuilder.buildLesson()
   }

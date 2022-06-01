@@ -91,7 +91,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
     override fun getSchemaResourcePath(): String = "/yaml/framework-lesson-schema.json"
   }
 
-  class LessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, EduNames.LESSON) {
+  class LessonConfigSchemaProvider(project: Project) : StudyItemConfigSchemaProvider(project, LESSON) {
     override fun isAvailable(file: VirtualFile): Boolean {
       if (!super.isAvailable(file)) return false
       return !file.isFrameworkLessonConfig(project)
