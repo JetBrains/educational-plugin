@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.jetbrains.edu.learning.EduNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
 import com.jetbrains.edu.learning.marketplace.REVIEWS
 import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString

@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -174,7 +175,7 @@ val HyperskillProject.eduEnvironment: String?
   get() {
     val hyperskillEnvironment = environment
     if (hyperskillEnvironment.isNullOrEmpty()) {
-      return EduNames.DEFAULT_ENVIRONMENT
+      return DEFAULT_ENVIRONMENT
     }
     return HYPERSKILL_ENVIRONMENTS[hyperskillEnvironment]
   }

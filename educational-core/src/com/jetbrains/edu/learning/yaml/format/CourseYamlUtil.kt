@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -238,7 +239,7 @@ private class CourseBuilder(
     course.apply {
       name = title
       description = summary
-      environment = yamlEnvironment ?: EduNames.DEFAULT_ENVIRONMENT
+      environment = yamlEnvironment ?: DEFAULT_ENVIRONMENT
       vendor = yamlVendor
       isMarketplacePrivate = yamlIsPrivate ?: false
       feedbackLink = yamlFeedbackLink

@@ -16,6 +16,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
@@ -67,7 +68,7 @@ fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
 val Course.unsupportedCourseMessage: String get() {
   val type = when (val environment = course.environment) {
     EduNames.ANDROID -> environment
-    EduNames.DEFAULT_ENVIRONMENT -> course.languageDisplayName
+    DEFAULT_ENVIRONMENT -> course.languageDisplayName
     else -> null
   }
   return if (type != null) {

@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.newproject
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
@@ -31,7 +33,7 @@ class JetBrainsAcademyCourse : Course() {
 
   val supportedLanguages: List<String>
     get() = FEATURED_LANGUAGES.mapNotNull { languageId ->
-      CourseCompatibilityProviderEP.find(languageId, EduNames.DEFAULT_ENVIRONMENT)?.technologyName
+      CourseCompatibilityProviderEP.find(languageId, DEFAULT_ENVIRONMENT)?.technologyName
     }
 
   override val isViewAsEducatorEnabled: Boolean

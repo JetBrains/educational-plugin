@@ -11,6 +11,7 @@ import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
@@ -33,7 +34,7 @@ class EduYamlCompletionContributor : CompletionContributor() {
     extendCompletionForKey(ENVIRONMENT) { yamlFile ->
       val language = yamlFile.programmingLanguage ?: return@extendCompletionForKey emptyList()
       // "null" for default environment will be added by schema completion
-      EduConfiguratorManager.supportedEnvironments(language).filter { it != EduNames.DEFAULT_ENVIRONMENT }
+      EduConfiguratorManager.supportedEnvironments(language).filter { it != DEFAULT_ENVIRONMENT }
     }
   }
 
@@ -47,7 +48,7 @@ class EduYamlCompletionContributor : CompletionContributor() {
     extendCompletionForKey(PROGRAMMING_LANGUAGE_VERSION) { yamlFile ->
       val language = yamlFile.programmingLanguage ?: return@extendCompletionForKey emptyList()
       val languageSettings =
-        EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT, language)?.courseBuilder?.getLanguageSettings()
+        EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, DEFAULT_ENVIRONMENT, language)?.courseBuilder?.getLanguageSettings()
       return@extendCompletionForKey languageSettings?.getLanguageVersions().orEmpty()
     }
   }

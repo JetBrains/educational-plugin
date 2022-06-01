@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.NonNls
@@ -46,7 +46,7 @@ open class EduCourse : Course() {
     get() = if (isMarketplace) MARKETPLACE else super.itemType
 
   private fun updateType(language: String) {
-    type = if (environment != EduNames.DEFAULT_ENVIRONMENT) {
+    type = if (environment != DEFAULT_ENVIRONMENT) {
       "${StepikNames.PYCHARM_PREFIX}$formatVersion $language$ENVIRONMENT_SEPARATOR$environment"
     }
     else {

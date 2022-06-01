@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Map;
 
+import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT;
+
 class PyTestRunner {
   private static final Logger LOG = Logger.getInstance(PyTestRunner.class);
   private static final String PYTHONPATH = "PYTHONPATH";
@@ -31,7 +33,7 @@ class PyTestRunner {
 
   Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
     final Sdk sdk = PythonSdkUtil.findPythonSdk(ModuleManager.getInstance(project).getModules()[0]);
-    EduConfigurator<?> configurator = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, EduNames.DEFAULT_ENVIRONMENT,
+    EduConfigurator<?> configurator = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, DEFAULT_ENVIRONMENT,
                                                                               PythonLanguage.getInstance());
     if (configurator == null) {
       LOG.warn("Plugin configurator for Python is null");

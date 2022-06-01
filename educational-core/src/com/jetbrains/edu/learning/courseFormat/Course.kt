@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
 import javax.swing.Icon
@@ -23,7 +24,7 @@ import javax.swing.Icon
  */
 abstract class Course : LessonContainer() {
   var description: String = ""
-  var environment: String = EduNames.DEFAULT_ENVIRONMENT
+  var environment: String = DEFAULT_ENVIRONMENT
   var courseMode: CourseMode = CourseMode.STUDENT //this field is used to distinguish study and course creator modes
   var solutionsHidden: Boolean = false
 

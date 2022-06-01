@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -31,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered") // Hyperskill.xml
 class GetHyperskillLesson : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
   EduCoreBundle.lazyMessage("action.get.lesson.description", HYPERSKILL, StepikNames.STEPIK),
@@ -50,7 +50,7 @@ class GetHyperskillLesson : DumbAwareAction(
       EduCoreBundle.message("action.get.lesson.text", HYPERSKILL, StepikNames.STEPIK),
       EducationalCoreIcons.JB_ACADEMY
     )
-    if (lessonId != null && lessonId.isNotEmpty()) {
+    if (!lessonId.isNullOrEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(
         project,
         EduCoreBundle.message("action.get.course.loading"),
@@ -60,7 +60,7 @@ class GetHyperskillLesson : DumbAwareAction(
           val course = createCourse(lessonId) ?: return
           val configurator = course.configurator
           if (configurator == null) {
-            val environment = if (course.environment == EduNames.DEFAULT_ENVIRONMENT) "default" else course.environment
+            val environment = if (course.environment == DEFAULT_ENVIRONMENT) "default" else course.environment
             showError(
               EduCoreBundle.message("error.failed.to.create.lesson.no.configuration", course.programmingLanguage, environment),
               EduCoreBundle.message("error.failed.to.create.lesson")
@@ -147,18 +147,18 @@ class GetHyperskillLesson : DumbAwareAction(
           return EduNames.KOTLIN to EduNames.ANDROID
         }
         if (taskFiles.any { it.name == "tests.py" }) {
-          return EduNames.PYTHON to EduNames.DEFAULT_ENVIRONMENT
+          return EduNames.PYTHON to DEFAULT_ENVIRONMENT
         }
         for (taskFile in taskFiles) {
           if (!taskFile.isVisible) {
             continue
           }
           val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
-            "java" -> EduNames.JAVA to EduNames.DEFAULT_ENVIRONMENT
+            "java" -> EduNames.JAVA to DEFAULT_ENVIRONMENT
             "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
-            "kt" -> EduNames.KOTLIN to EduNames.DEFAULT_ENVIRONMENT
-            "js", "html" -> EduNames.JAVASCRIPT to EduNames.DEFAULT_ENVIRONMENT
-            "scala" -> EduNames.SCALA to EduNames.DEFAULT_ENVIRONMENT
+            "kt" -> EduNames.KOTLIN to DEFAULT_ENVIRONMENT
+            "js", "html" -> EduNames.JAVASCRIPT to DEFAULT_ENVIRONMENT
+            "scala" -> EduNames.SCALA to DEFAULT_ENVIRONMENT
             else -> null
           }
 

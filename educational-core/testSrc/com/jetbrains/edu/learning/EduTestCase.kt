@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleHyperskillConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -315,7 +316,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     configuratorClass: Class<*>,
     language: Language,
     courseType: String = EduNames.PYCHARM,
-    environment: String = EduNames.DEFAULT_ENVIRONMENT
+    environment: String = DEFAULT_ENVIRONMENT
   ) {
     val extension = EducationalExtensionPoint<EduConfigurator<*>>()
     extension.language = language.id

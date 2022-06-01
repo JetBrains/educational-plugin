@@ -21,7 +21,6 @@ object EduNames {
   const val ADDITIONAL_MATERIALS = "Edu additional materials"
   const val PROJECT_NAME = "PROJECT_NAME"
   const val RUN_CONFIGURATION_DIR = "runConfigurations"
-  const val DEFAULT_ENVIRONMENT = ""
 
   // Used as course type only
   const val PYCHARM = "PyCharm"

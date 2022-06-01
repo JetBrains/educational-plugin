@@ -20,4 +20,5 @@ object EduFormatNames {
   const val ID = "id"
   const val TIME = "time"
 
+  const val DEFAULT_ENVIRONMENT = ""
 }

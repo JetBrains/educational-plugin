@@ -8,9 +8,11 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
+@Suppress("ComponentNotRegistered")  // registered in educational-core.xml
 class CreateNewYouTrackIssue : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.Educational.CreateNewIssue.text"),
   EduCoreBundle.lazyMessage("action.Educational.CreateNewIssue.description"),
@@ -77,7 +79,7 @@ class CreateNewYouTrackIssue : DumbAwareAction(
             append(" ")
           }
           append(itemType)
-          if (environment != EduNames.DEFAULT_ENVIRONMENT) {
+          if (environment != DEFAULT_ENVIRONMENT) {
             append(" (")
             append(environment)
             append(")")

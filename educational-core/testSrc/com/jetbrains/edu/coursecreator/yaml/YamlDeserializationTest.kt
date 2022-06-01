@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
@@ -56,7 +57,7 @@ class YamlDeserializationTest : YamlTestCase() {
     assertEquals(solutionsHidden, course.solutionsHidden)
     assertNull(course.languageVersion)
     assertNotNull(course.description)
-    assertEquals(EduNames.DEFAULT_ENVIRONMENT, course.environment)
+    assertEquals(DEFAULT_ENVIRONMENT, course.environment)
     assertTrue(course is EduCourse)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
     assertFalse(course.isMarketplace)
@@ -282,7 +283,6 @@ class YamlDeserializationTest : YamlTestCase() {
     """.trimMargin()
     val section = MAPPER.deserializeSection(yamlContent)
     assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
-    @Suppress("DEPRECATION")
     assertEquals(contentTags, section.contentTags)
   }
 
