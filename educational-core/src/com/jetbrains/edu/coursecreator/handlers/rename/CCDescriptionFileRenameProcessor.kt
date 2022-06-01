@@ -7,10 +7,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.rename.RenameDialog
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.handlers.rename.EduRenameDialogBase
@@ -60,7 +61,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
         override fun canRun() {
           if (!EduUtils.isTaskDescriptionFile(newName)) {
             throw ConfigurationException(
-              EduCoreBundle.message("dialog.message.incorrect.description.file.name", EduNames.TASK_HTML, EduNames.TASK_MD)
+              EduCoreBundle.message("dialog.message.incorrect.description.file.name", TASK_HTML, TASK_MD)
             )
           }
         }

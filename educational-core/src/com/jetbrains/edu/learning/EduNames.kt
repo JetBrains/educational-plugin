@@ -4,8 +4,6 @@ object EduNames {
   const val PLUGIN_ID = "com.jetbrains.edu"
   const val JBA = "JetBrains Academy"
   const val EDU_PREFIX = "edu"
-  const val TASK_HTML = "task.html"
-  const val TASK_MD = "task.md"
   const val HINTS = "hints"
 
   const val FRAMEWORK_LESSON = "framework lesson"

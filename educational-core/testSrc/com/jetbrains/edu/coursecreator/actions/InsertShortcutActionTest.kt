@@ -8,9 +8,9 @@ import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.testAction
 import java.awt.event.KeyEvent
 
@@ -26,7 +26,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
     }
 
     val task = findTask(0, 0)
-    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(EduNames.TASK_MD) ?: error("No task description file")
+    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(TASK_MD) ?: error("No task description file")
 
     myFixture.openFileInEditor(taskDescriptionFile)
 
@@ -72,7 +72,7 @@ class InsertShortcutActionTest : EduActionTestCase() {
     }
 
     val task = findTask(0, 0)
-    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(EduNames.TASK_MD) ?: error("No task description file")
+    val taskDescriptionFile = task.getDir(project.courseDir)?.findChild(TASK_MD) ?: error("No task description file")
 
     checkActionNotAvailable(taskDescriptionFile)
   }

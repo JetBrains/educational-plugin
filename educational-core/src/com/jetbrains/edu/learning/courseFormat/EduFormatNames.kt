@@ -21,4 +21,8 @@ object EduFormatNames {
   const val TIME = "time"
 
   const val DEFAULT_ENVIRONMENT = ""
+
+  // description format
+  const val TASK_HTML = "task.html"
+  const val TASK_MD = "task.md"
 }

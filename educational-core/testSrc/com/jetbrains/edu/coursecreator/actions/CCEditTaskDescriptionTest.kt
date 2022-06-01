@@ -5,10 +5,10 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.testAction
 
@@ -49,7 +49,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     findTask(0, 0).descriptionText = ""
     doOpenTaskDescription()
 
-    val defaultTaskDescriptionText = getInternalTemplateText(EduNames.TASK_MD)
+    val defaultTaskDescriptionText = getInternalTemplateText(TASK_MD)
     assertEquals(defaultTaskDescriptionText, getCurrentlyOpenedText())
   }
 
@@ -81,6 +81,6 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     assertFalse("Task Description file wasn't deleted", descriptionFile.exists())
   }
 
-  private fun findTaskDescriptionFile() = findTask(0, 0).getDir(project.courseDir)?.findChild(EduNames.TASK_MD)
+  private fun findTaskDescriptionFile() = findTask(0, 0).getDir(project.courseDir)?.findChild(TASK_MD)
                                           ?: error("Task description file not found")
 }

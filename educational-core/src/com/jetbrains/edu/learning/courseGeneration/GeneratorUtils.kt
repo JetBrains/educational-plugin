@@ -25,6 +25,8 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
@@ -141,8 +143,8 @@ object GeneratorUtils {
   @JvmStatic
   fun createDescriptionFile(project: Project, taskDir: VirtualFile, task: Task): VirtualFile? {
     val descriptionFileName = when (task.descriptionFormat) {
-      HTML -> EduNames.TASK_HTML
-      MD -> EduNames.TASK_MD
+      HTML -> TASK_HTML
+      MD -> TASK_MD
     }
 
     return createChildFile(project, taskDir, descriptionFileName, task.descriptionText)

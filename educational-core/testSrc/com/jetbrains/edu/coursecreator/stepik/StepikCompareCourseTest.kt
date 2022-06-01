@@ -4,11 +4,11 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -50,7 +50,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val courseFromServer = localCourse.copy() as EduCourse
-    val newLesson = addNewLesson(project, "lesson2", 2, localCourse, localCourse, project.courseDir)
+    val newLesson = addNewLesson(project, "lesson2", 2, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newLessons = arrayListOf(newLesson))
 
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -367,7 +367,7 @@ class StepikCompareCourseTest : EduTestCase() {
     val courseFromServer = localCourse.copy() as EduCourse
     val changedTask = localCourse.lessons.single().taskList[0]
 
-    val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(EduNames.TASK_MD)
+    val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(TASK_MD)
                               ?: error("Failed to find task description file")
 
     runWriteAction {
@@ -659,7 +659,6 @@ internal fun addNewLesson(
   project: Project,
   name: String,
   index: Int,
-  courseToInit: Course,
   parent: LessonContainer,
   virtualFile: VirtualFile
 ): Lesson {

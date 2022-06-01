@@ -55,6 +55,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML;
+import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD;
+
 public class EduUtils {
 
   private EduUtils() {
@@ -159,7 +162,7 @@ public class EduUtils {
 
     VirtualFile taskTextFile = getTaskTextFile(taskDirectory);
     String taskDescription = ObjectUtils.chooseNotNull(getTextFromTaskTextFile(taskTextFile), task.getDescriptionText());
-    if (taskTextFile != null && EduNames.TASK_MD.equals(taskTextFile.getName())) {
+    if (taskTextFile != null && TASK_MD.equals(taskTextFile.getName())) {
       return EduUtilsKt.convertToHtml(taskDescription);
     }
     return taskDescription;
@@ -167,9 +170,9 @@ public class EduUtils {
 
   @Nullable
   private static VirtualFile getTaskTextFile(@NotNull VirtualFile taskDirectory) {
-    VirtualFile taskTextFile = taskDirectory.findChild(EduNames.TASK_HTML);
+    VirtualFile taskTextFile = taskDirectory.findChild(TASK_HTML);
     if (taskTextFile == null) {
-      taskTextFile = taskDirectory.findChild(EduNames.TASK_MD);
+      taskTextFile = taskDirectory.findChild(TASK_MD);
     }
     return taskTextFile;
   }
@@ -236,7 +239,7 @@ public class EduUtils {
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {
-    return EduNames.TASK_HTML.equals(fileName) || EduNames.TASK_MD.equals(fileName);
+    return TASK_HTML.equals(fileName) || TASK_MD.equals(fileName);
   }
 
   @Nullable

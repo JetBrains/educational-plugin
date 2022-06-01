@@ -14,6 +14,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -200,12 +202,12 @@ fun Task.shouldBeEmpty(path: String): Boolean {
 }
 
 fun Task.shouldGenerateTestsOnTheFly(): Boolean {
-  val course = lesson?.course ?: return false
+  val course = lesson.course
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }
 
 fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
   val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, EduNames.TASK))
-  val file = taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
+  val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
   return file ?: error("No task description file for $name")
 }
