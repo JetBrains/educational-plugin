@@ -6,7 +6,6 @@
     <plugin id="com.intellij.css"/>
   </dependencies>
 
-  <xi:include href="/META-INF/CheckiO-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/Hyperskill-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
