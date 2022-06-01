@@ -408,7 +408,7 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
       when (itemType) {
         EduNames.LESSON -> codec.treeToValue(jsonObject, Lesson::class.java)
         FRAMEWORK_TYPE -> codec.treeToValue(jsonObject, FrameworkLesson::class.java)
-        EduNames.SECTION -> codec.treeToValue(jsonObject, Section::class.java)
+        SECTION -> codec.treeToValue(jsonObject, Section::class.java)
         else -> throw IllegalArgumentException("Unsupported item type: $itemType")
       }
     }

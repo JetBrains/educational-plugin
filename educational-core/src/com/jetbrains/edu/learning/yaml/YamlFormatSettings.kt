@@ -5,13 +5,14 @@ import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import org.jetbrains.annotations.NonNls
 
 object YamlFormatSettings {
   @JvmField
   val COURSE_CONFIG = getLocalConfigFileName(EduNames.COURSE)
   @JvmField
-  val SECTION_CONFIG = getLocalConfigFileName(EduNames.SECTION)
+  val SECTION_CONFIG = getLocalConfigFileName(SECTION)
   @JvmField
   val LESSON_CONFIG = getLocalConfigFileName(EduNames.LESSON)
 

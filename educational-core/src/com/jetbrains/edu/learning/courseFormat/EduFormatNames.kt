@@ -1,5 +1,9 @@
 package com.jetbrains.edu.learning.courseFormat
 
-const val EMAIL = "email"
-const val NAME = "name"
-const val URL = "url"
+object EduFormatNames {
+  const val EMAIL = "email"
+  const val NAME = "name"
+  const val URL = "url"
+
+  const val SECTION = "section"
+}

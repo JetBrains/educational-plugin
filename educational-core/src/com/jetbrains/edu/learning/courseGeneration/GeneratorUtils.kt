@@ -7,7 +7,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
@@ -363,7 +363,7 @@ object GeneratorUtils {
   fun gradleSanitizeName(name: String): String = name.replace(GRADLE_INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
 
   fun getDefaultName(item: StudyItem) = when (item) {
-    is Section -> "${EduNames.SECTION}${item.index}"
+    is Section -> "${SECTION}${item.index}"
     is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
     is Lesson -> "${EduNames.LESSON}${item.index}"
     is Task -> "${EduNames.TASK}${item.index}"

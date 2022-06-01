@@ -2,11 +2,11 @@ package com.jetbrains.edu.learning.submissions
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import java.util.*
 
 const val ID = "id"
 const val IS_VISIBLE = "is_visible"
-const val NAME = "name"
 const val PLACEHOLDERS = "placeholders"
 const val STATUS = "status"
 const val SUBMISSION = "submission"

@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin

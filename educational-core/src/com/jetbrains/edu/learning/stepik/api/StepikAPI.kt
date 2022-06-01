@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource

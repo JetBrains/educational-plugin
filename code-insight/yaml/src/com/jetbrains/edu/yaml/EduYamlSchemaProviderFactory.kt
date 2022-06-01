@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.extension.SchemaType
@@ -23,7 +24,7 @@ class EduYamlSchemaProviderFactory : JsonSchemaProviderFactory {
 
     return listOf(
       StudyItemConfigSchemaProvider(project, EduNames.COURSE),
-      StudyItemConfigSchemaProvider(project, EduNames.SECTION),
+      StudyItemConfigSchemaProvider(project, SECTION),
       LessonConfigSchemaProvider(project),
       FrameworkLessonConfigSchemaProvider(project),
       TaskGeneralConfigSchemaProvider(project, tasksWithSpecificProvider),
@@ -104,4 +105,3 @@ private fun VirtualFile.isFrameworkLessonConfig(project: Project): Boolean {
     typeKeyValue.valueText == EduNames.FRAMEWORK
   }
 }
-

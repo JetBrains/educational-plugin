@@ -10,7 +10,6 @@ object EduNames {
   const val LESSON = "lesson"
   const val FRAMEWORK_LESSON = "framework lesson"
   const val FRAMEWORK = "framework"
-  const val SECTION = "section"
   const val TASK = "task"
   const val COURSE = "course"
   const val ITEM = "item"

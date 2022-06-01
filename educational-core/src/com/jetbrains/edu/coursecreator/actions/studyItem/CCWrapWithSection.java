@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE;
 import static com.jetbrains.edu.coursecreator.StudyItemTypeKt.getPresentableTitleName;
+import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION;
 
 public class CCWrapWithSection extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
@@ -89,7 +89,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     int sectionIndex = course.getSections().size() + 1;
     InputValidator validator = new CCStudyItemPathInputValidator(project, course, SECTION_TYPE, OpenApiExtKt.getCourseDir(project));
     String sectionName = Messages.showInputDialog(EduCoreBundle.message("action.wrap.with.section.enter.name"),
-                                                  getPresentableTitleName(SECTION_TYPE), null, EduNames.SECTION + sectionIndex, validator);
+                                                  getPresentableTitleName(SECTION_TYPE), null, SECTION + sectionIndex, validator);
     if (sectionName == null) {
       return;
     }

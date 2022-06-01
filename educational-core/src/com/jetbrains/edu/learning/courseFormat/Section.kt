@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 
 
 open class Section : LessonContainer() {
@@ -17,6 +17,6 @@ open class Section : LessonContainer() {
 
   override val course: Course
     get() = parent as? Course ?: error("Course is null for section $name")
-  override val itemType: String = EduNames.SECTION
+  override val itemType: String = SECTION
 
 }

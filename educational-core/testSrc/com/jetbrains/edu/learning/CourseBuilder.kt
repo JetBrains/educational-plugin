@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -129,7 +130,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     val section = sectionBuilder.section
     section.index = course.items.size + 1
     val nextSectionIndex = course.items.size + 1
-    sectionBuilder.withName(name ?: (EduNames.SECTION + nextSectionIndex))
+    sectionBuilder.withName(name ?: (SECTION + nextSectionIndex))
     course.addSection(section)
     sectionBuilder.buildSection()
   }
