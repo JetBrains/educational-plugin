@@ -7,14 +7,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.intellij.openapi.util.text.StringUtil
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
@@ -31,7 +30,7 @@ const val TITLE = "title"
 const val PROGRAMMING_LANGUAGE = "programming_language"
 const val LANGUAGE = "language"
 const val ADMINS_GROUP = "admins_group"
-const val lEARNERS_COUNT = "learners_count"
+const val LEARNERS_COUNT = "learners_count"
 const val REVIEW_SUMMARY = "review_summary"
 const val UNITS = "units"
 const val COURSE = "course"
@@ -68,45 +67,50 @@ open class StepikItemMixin {
   lateinit var updateDate: Date
 }
 
-abstract class StepikEduCourseMixin : StepikItemMixin() {
-  @JsonProperty(IS_IDEA_COMPATIBLE)
-  var isCompatible = true
+@JsonDeserialize(builder = StepikCourseBuilder::class)
+abstract class StepikEduCourseMixin
 
-  @JsonProperty(IS_ADAPTIVE)
-  var isAdaptive = false
+@JsonPOJOBuilder(withPrefix = "")
+private class StepikCourseBuilder(
+  @JsonProperty(ID) val jsonId: Int,
+  @JsonProperty(UPDATE_DATE) val jsonUpdateDate: Date,
+  @JsonProperty(IS_IDEA_COMPATIBLE) val ideaCompatible: Boolean,
+  @JsonProperty(IS_ADAPTIVE) val jsonIsAdaptive: Boolean,
+  @JsonProperty(COURSE_FORMAT) val jsonCourseFormat: String,
+  @JsonProperty(SECTIONS) val jsonSectionIds: List<Int>,
+  @JsonProperty(INSTRUCTORS) val jsonInstructors: List<Int>,
+  @JsonProperty(IS_PUBLIC) val isPublic: Boolean,
+  @JsonProperty(SUMMARY) val summary: String,
+  @JsonProperty(TITLE) val title: String,
+  @JsonProperty(LANGUAGE) val jsonLanguageCode: String,
+  @JsonProperty(LEARNERS_COUNT) val jsonLearnersCount: Int = 0,
+  @JsonProperty(REVIEW_SUMMARY) val jsonReviewSummary: Int = 0
+) {
+  private fun build(): Course {
+    val course = if (ideaCompatible) {
+      EduCourse()
+    }
+    else {
+      StepikCourse().apply {
+        isAdaptive = jsonIsAdaptive
+      }
+    }
 
-  @JsonProperty(COURSE_FORMAT)
-  lateinit var type: String
-
-  @JsonProperty(SECTIONS)
-  lateinit var sectionIds: List<Int>
-
-  @JsonProperty(INSTRUCTORS)
-  lateinit var instructors: List<Int>
-
-  @JsonProperty(IS_PUBLIC)
-  var isStepikPublic: Boolean = false
-
-  @JsonProperty(SUMMARY)
-  lateinit var description: String
-
-  @JsonProperty(TITLE)
-  lateinit var name: String
-
-  @JsonProperty(PROGRAMMING_LANGUAGE)
-  lateinit var programmingLanguage: String
-
-  @JsonProperty(LANGUAGE)
-  lateinit var languageCode: String
-
-  @JsonProperty(ADMINS_GROUP)
-  lateinit var adminsGroup: String
-
-  @JsonProperty(lEARNERS_COUNT)
-  var learnersCount: Int = 0
-
-  @JsonProperty(REVIEW_SUMMARY)
-  var reviewSummary: Int = 0
+    course.apply {
+      id = jsonId
+      updateDate = jsonUpdateDate
+      type = jsonCourseFormat
+      sectionIds = jsonSectionIds
+      instructors = jsonInstructors
+      isStepikPublic = isPublic
+      description = summary
+      name = title
+      languageCode = jsonLanguageCode
+      learnersCount = jsonLearnersCount
+      reviewSummary = jsonReviewSummary
+    }
+    return course
+  }
 }
 
 class StepikLessonMixin : StepikItemMixin() {

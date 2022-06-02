@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
-import com.jetbrains.edu.learning.stepik.course.stepikCourseFromRemote
 import kotlinx.coroutines.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -134,6 +133,7 @@ class StepikCoursesProvider : CoroutineScope {
     }
   }
 
+  // Loads predefined set of StepikCourses
   private fun loadListedStepikCourses(): List<StepikCourse> {
     val listedCoursesIds = StepikListedCoursesIdsLoader.featuredStepikCourses.keys + StepikListedCoursesIdsLoader.inProgressCourses
     val courses = StepikConnector.getInstance().getCourses(listedCoursesIds) ?: return emptyList()
@@ -143,11 +143,11 @@ class StepikCoursesProvider : CoroutineScope {
       val languages = StepikListedCoursesIdsLoader.featuredStepikCourses[courseId]
 
       fun addCourse() {
-        val remoteCourse = stepikCourseFromRemote(course)
+        require(course is StepikCourse)
         if (StepikListedCoursesIdsLoader.inProgressCourses.contains(courseId)) {
-          remoteCourse.visibility = CourseVisibility.InProgressVisibility(StepikListedCoursesIdsLoader.inProgressCourses.indexOf(courseId))
+          course.visibility = CourseVisibility.InProgressVisibility(StepikListedCoursesIdsLoader.inProgressCourses.indexOf(courseId))
         }
-        remoteCourse.let { result.add(it) }
+        course.let { result.add(it) }
       }
 
       if (languages.isNullOrEmpty()) {

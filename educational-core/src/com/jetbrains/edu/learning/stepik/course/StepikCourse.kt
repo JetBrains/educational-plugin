@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.copyAs
 import com.jetbrains.edu.learning.stepik.StepikNames
 
 /**
@@ -11,16 +10,11 @@ import com.jetbrains.edu.learning.stepik.StepikNames
  * Stepik courses do not contain pycharm tasks.
  */
 class StepikCourse : EduCourse() {
+  var isAdaptive: Boolean = false
+
   override val itemType: String = StepikNames.STEPIK_TYPE
   override val isViewAsEducatorEnabled: Boolean
     get() = ApplicationManager.getApplication().isInternal
-}
-
-fun stepikCourseFromRemote(remoteCourse: EduCourse): StepikCourse {
-  remoteCourse.parent = remoteCourse
-  val stepikCourse = remoteCourse.copyAs(StepikCourse::class.java)
-  stepikCourse.description = remoteCourse.description + descriptionNote(stepikCourse.id)
-  return stepikCourse
 }
 
 private fun descriptionNote(courseId: Int): String =

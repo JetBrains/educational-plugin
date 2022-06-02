@@ -25,10 +25,6 @@ open class EduCourse : Course() {
   var learnersCount: Int = 0
   var reviewScore: Double = 0.0
 
-  // Fields that should be moved to StepikCourse:
-  var isCompatible: Boolean = true
-  var isAdaptive: Boolean = false
-
   // in CC mode is used to store top-level lessons' section id
   var sectionIds: List<Int> = emptyList()
   var instructors: List<Int> = emptyList()
@@ -81,7 +77,6 @@ open class EduCourse : Course() {
     }
     else {
       isStepikPublic = false
-      isCompatible = true
       sectionIds = emptyList()
       instructors = emptyList()
     }

@@ -44,10 +44,7 @@ object StepikCourseConnector : CourseConnector {
     }
 
     if (courseId != -1) {
-      val info = StepikConnector.getInstance().getCourseInfo(courseId) ?: return null
-
-      // do not convert idea_compatible courses to StepikCourse
-      return if (info.isCompatible) info else stepikCourseFromRemote(info)
+      return StepikConnector.getInstance().getCourseInfo(courseId)
     }
     return null
   }

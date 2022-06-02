@@ -19,7 +19,7 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
 
   override fun importCourse(): EduCourse? {
     val course = super.importCourse() ?: return null
-    if (course.isAdaptive) {
+    if (course is StepikCourse && course.isAdaptive) {
       showAdaptiveCoursesAreNotSupportedNotification(course.name)
       return null
     }
