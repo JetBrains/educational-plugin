@@ -158,7 +158,7 @@ fun showErrorDetails(project: Project, error: String) {
 }
 
 object HyperskillLoginListener : HyperlinkAdapter() {
-  override fun hyperlinkActivated(e: HyperlinkEvent?) {
+  override fun hyperlinkActivated(e: HyperlinkEvent) {
     doLogin()
   }
 

@@ -48,7 +48,7 @@ open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
       val packageJson = project.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON) ?: return null
       val message = """${EduCoreBundle.message("check.no.tests")}. ${EduJavaScriptBundle.message("install.dependencies")}."""
       CheckResult(CheckStatus.Unchecked, message, hyperlinkListener = object : HyperlinkAdapter() {
-        override fun hyperlinkActivated(e: HyperlinkEvent?) {
+        override fun hyperlinkActivated(e: HyperlinkEvent) {
           installNodeDependencies(project, packageJson)
         }
       })

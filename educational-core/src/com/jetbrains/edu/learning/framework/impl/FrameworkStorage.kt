@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.framework.impl
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.util.io.PagePool
 import com.intellij.util.io.UnsyncByteArrayInputStream
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import com.intellij.util.io.storage.AbstractRecordsTable
-import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
 import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
 import java.io.DataInputStream
@@ -14,14 +12,14 @@ import java.io.IOException
 import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
-class FrameworkStorage(storagePath: Path) : AbstractStorage(storagePath, true) {
+class FrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) {
 
   constructor(storageFilePath: Path, version: Int) : this(storageFilePath) {
     setVersion(version)
   }
 
-  override fun createRecordsTable(pool: PagePool, recordsFile: Path): AbstractRecordsTable =
-    FrameworkRecordsTable(recordsFile, pool)
+  override fun createRecordsTable(@Suppress("UnstableApiUsage") context: StorageContext, recordsFile: Path): AbstractRecordsTable =
+    FrameworkRecordsTable(recordsFile, context)
 
   @Throws(IOException::class)
   fun updateUserChanges(record: Int, changes: UserChanges): Int {

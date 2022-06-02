@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.framework.impl
 
-import com.intellij.util.io.PagePool
 import com.intellij.util.io.storage.AbstractRecordsTable
 import java.nio.file.Path
 
-class FrameworkRecordsTable(storageFilePath: Path, pool: PagePool) : AbstractRecordsTable(storageFilePath, pool) {
+@Suppress("UnstableApiUsage")
+class FrameworkRecordsTable(storageFilePath: Path, context: StorageContext) : AbstractRecordsTable(storageFilePath, context) {
 
   override fun getImplVersion(): Int = 1
 

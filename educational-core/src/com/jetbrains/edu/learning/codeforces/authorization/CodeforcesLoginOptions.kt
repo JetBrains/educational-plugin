@@ -21,7 +21,7 @@ class CodeforcesLoginOptions : LoginOptions<CodeforcesAccount>() {
 
   override fun createAuthorizeListener(): HyperlinkAdapter =
     object : HyperlinkAdapter() {
-      override fun hyperlinkActivated(e: HyperlinkEvent?) {
+      override fun hyperlinkActivated(e: HyperlinkEvent) {
         if (LoginDialog(AuthorizationPlace.SETTINGS).showAndGet()) {
           if (CodeforcesSettings.getInstance().isLoggedIn()) {
             lastSavedAccount = getCurrentAccount()

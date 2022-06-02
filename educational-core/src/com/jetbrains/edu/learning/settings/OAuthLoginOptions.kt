@@ -17,7 +17,7 @@ abstract class OAuthLoginOptions <T : OAuthAccount<out Any>> : LoginOptions<T>()
 
   override fun createAuthorizeListener(): HyperlinkAdapter =
     object : HyperlinkAdapter() {
-      override fun hyperlinkActivated(e: HyperlinkEvent?) {
+      override fun hyperlinkActivated(e: HyperlinkEvent) {
         connector.doAuthorize(
           Runnable {
             lastSavedAccount = getCurrentAccount()

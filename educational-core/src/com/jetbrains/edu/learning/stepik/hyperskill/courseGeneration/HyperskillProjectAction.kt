@@ -86,7 +86,7 @@ class HSHyperlinkListener(private val authorize: Boolean) : NotificationListener
     }
   }
 
-  override fun hyperlinkActivated(e: HyperlinkEvent?) {
-    authorizeOrBrowse(e?.url)
+  override fun hyperlinkActivated(e: HyperlinkEvent) {
+    authorizeOrBrowse(e.url)
   }
 }
