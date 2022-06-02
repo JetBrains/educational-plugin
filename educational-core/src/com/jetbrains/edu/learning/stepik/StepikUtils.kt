@@ -20,8 +20,6 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -31,29 +29,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
-private val LOG: Logger = logger<StepikConnector>()
-
-fun setCourseLanguageEnvironment(info: EduCourse) {
-  val courseFormat = info.type
-  val languageIndex = courseFormat.indexOf(" ")
-  if (languageIndex != -1) {
-    val environmentIndex = courseFormat.indexOf(EduCourse.ENVIRONMENT_SEPARATOR, languageIndex + 1)
-    if (environmentIndex != -1) {
-      info.programmingLanguage = courseFormat.substring(languageIndex + 1, environmentIndex)
-      info.environment = courseFormat.substring(environmentIndex + 1)
-    }
-    else {
-      info.programmingLanguage = courseFormat.substring(languageIndex + 1)
-    }
-  }
-  else {
-    LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
-                           info.name, courseFormat))
-  }
-}
 
 fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"

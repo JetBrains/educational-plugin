@@ -7,7 +7,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -27,7 +26,7 @@ private val LOG = Logger.getInstance(StepikConnector::class.java.name)
 
 fun getAvailableCourses(coursesList: CoursesList): List<EduCourse> {
   val availableCourses = coursesList.courses.filter {
-    !StringUtil.isEmptyOrSpaces(it.type) && it.compatibility != CourseCompatibility.Unsupported
+    it.compatibility != CourseCompatibility.Unsupported
   }
 
   availableCourses.forEach { it.visibility = getVisibility(it) }

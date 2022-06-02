@@ -4,8 +4,6 @@ import com.intellij.ide.plugins.InstalledPluginsState
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -15,7 +13,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.plugins.PluginInfo
-import com.jetbrains.edu.learning.stepik.StepikNames
 
 sealed class CourseCompatibility {
   object Compatible : CourseCompatibility()
@@ -24,8 +21,6 @@ sealed class CourseCompatibility {
   class PluginsRequired(val toInstallOrEnable: List<PluginInfo>) : CourseCompatibility()
 
   companion object {
-
-    private val LOG: Logger = Logger.getInstance(CourseCompatibility::class.java)
 
     @JvmStatic
     fun forCourse(courseInfo: Course): CourseCompatibility {
@@ -43,26 +38,10 @@ sealed class CourseCompatibility {
 
     private fun Course.versionCompatibility(): CourseCompatibility? {
       if (this !is EduCourse) return null
+      if (programmingLanguage.isEmpty())
+        return Unsupported
 
-      val typeLanguage = StringUtil.split(type, " ")
-      if (typeLanguage.size < 2) {
-        return Unsupported
-      }
-      val prefix = typeLanguage[0]
-      if (!prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
-        return Unsupported
-      }
-
-      val versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length)
-      if (versionString.isEmpty()) return null
-      try {
-        val version = Integer.valueOf(versionString)
-        if (version > JSON_FORMAT_VERSION) IncompatibleVersion
-      }
-      catch (e: NumberFormatException) {
-        LOG.info("Wrong version format", e)
-        return Unsupported
-      }
+      if (formatVersion > JSON_FORMAT_VERSION) IncompatibleVersion
 
       return null
     }
@@ -82,7 +61,7 @@ sealed class CourseCompatibility {
       return Ok(Unit)
     }
 
-    fun Course.pluginCompatibility(): CourseCompatibility? {
+    private fun Course.pluginCompatibility(): CourseCompatibility? {
       val requiredPlugins = mutableListOf<PluginInfo>()
       compatibilityProvider?.requiredPlugins()?.let { requiredPlugins.addAll(it) }
       for (pluginInfo in course.pluginDependencies) {

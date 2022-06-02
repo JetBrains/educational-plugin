@@ -26,7 +26,7 @@ fun getDisabledPlugins(ids: List<PluginId>): List<PluginId> {
   return ids.filter { PluginManagerCore.isDisabled(it) }
 }
 
-fun restartIDE(messageInfo: String) {
+private fun restartIDE(messageInfo: String) {
   val ideName = ApplicationNamesInfo.getInstance().fullProductName
   val restartInfo = if (ApplicationManager.getApplication().isRestartCapable) {
     EduCoreBundle.message("ide.restart.info.title", ideName)

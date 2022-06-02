@@ -27,7 +27,6 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
     if (course is StepikCourse) {
       val language = getLanguageForStepikCourse(course)
       language?.let {
-        course.type = "${StepikNames.PYCHARM_PREFIX}${JSON_FORMAT_VERSION} ${language.id}"
         course.programmingLanguage = "${language.id} ${language.version}".trim()
       }
       course.validateLanguage().onError {

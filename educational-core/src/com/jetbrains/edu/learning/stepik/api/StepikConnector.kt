@@ -122,26 +122,18 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
     val response = stepikEndpoints.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
-    return response?.body()?.apply { courses.withLanguageEnvironment() }
+    return response?.body()
   }
 
   fun getCourses(ids: Set<Int>): List<EduCourse>? {
     val response = stepikEndpoints.courses(*ids.toIntArray()).executeHandlingExceptions()
-    return response?.body()?.courses?.withLanguageEnvironment()
+    return response?.body()?.courses
   }
 
   @JvmOverloads
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
     val response = stepikEndpoints.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
-    return response?.body()?.courses?.withLanguageEnvironment()?.firstOrNull()
-  }
-
-  // TODO: move this logic into custom deserializer
-  private fun List<EduCourse>.withLanguageEnvironment(): List<EduCourse> {
-    for (course in this) {
-      setCourseLanguageEnvironment(course)
-    }
-    return this
+    return response?.body()?.courses?.firstOrNull()
   }
 
   fun getSection(sectionId: Int): StepikSection? {

@@ -9,8 +9,12 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
@@ -77,8 +81,8 @@ private class StepikCourseBuilder(
   @JsonProperty(IS_IDEA_COMPATIBLE) val ideaCompatible: Boolean,
   @JsonProperty(IS_ADAPTIVE) val jsonIsAdaptive: Boolean,
   @JsonProperty(COURSE_FORMAT) val jsonCourseFormat: String,
-  @JsonProperty(SECTIONS) val jsonSectionIds: List<Int>,
-  @JsonProperty(INSTRUCTORS) val jsonInstructors: List<Int>,
+  @JsonProperty(SECTIONS) val jsonSectionIds: List<Int>?,
+  @JsonProperty(INSTRUCTORS) val jsonInstructors: List<Int>?,
   @JsonProperty(IS_PUBLIC) val isPublic: Boolean,
   @JsonProperty(SUMMARY) val summary: String,
   @JsonProperty(TITLE) val title: String,
@@ -99,9 +103,8 @@ private class StepikCourseBuilder(
     course.apply {
       id = jsonId
       updateDate = jsonUpdateDate
-      type = jsonCourseFormat
-      sectionIds = jsonSectionIds
-      instructors = jsonInstructors
+      sectionIds = jsonSectionIds ?: emptyList()
+      instructors = jsonInstructors ?: emptyList()
       isStepikPublic = isPublic
       description = summary
       name = title
@@ -109,7 +112,36 @@ private class StepikCourseBuilder(
       learnersCount = jsonLearnersCount
       reviewSummary = jsonReviewSummary
     }
+    course.setCourseLanguageEnvironment(jsonCourseFormat)
     return course
+  }
+}
+
+fun EduCourse.setCourseLanguageEnvironment(courseFormat: String) {
+  // courseFormat format: "pycharm<version> <language>$ENVIRONMENT_SEPARATOR<environment>"
+  val languageIndex = courseFormat.indexOf(" ")
+  if (languageIndex != -1) {
+    val environmentIndex = courseFormat.indexOf(EduCourse.ENVIRONMENT_SEPARATOR, languageIndex + 1)
+    if (environmentIndex != -1) {
+      programmingLanguage = courseFormat.substring(languageIndex + 1, environmentIndex)
+      environment = courseFormat.substring(environmentIndex + 1)
+    }
+    else {
+      programmingLanguage = courseFormat.substring(languageIndex + 1)
+    }
+
+    if (courseFormat.contains(StepikNames.PYCHARM_PREFIX)) {
+      val formatVersionString = courseFormat.substring(StepikNames.PYCHARM_PREFIX.length, languageIndex)
+      formatVersion = try {
+        formatVersionString.toInt()
+      }
+      catch (e: NumberFormatException) {
+        JSON_FORMAT_VERSION
+      }
+    }
+  }
+  else {
+    LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course", name, courseFormat))
   }
 }
 
@@ -134,7 +166,7 @@ class StepikTaskFileMixin {
 
   @JsonProperty(TEXT)
   @JsonDeserialize(using = TaskFileTextDeserializer::class)
-  lateinit var myText : String
+  lateinit var myText: String
 }
 
 class StepikAnswerPlaceholderMixin {
@@ -181,3 +213,5 @@ class TaskFileTextDeserializer @JvmOverloads constructor(vc: Class<*>? = null) :
     return StringUtil.convertLineSeparators(jp.valueAsString)
   }
 }
+
+private val LOG: Logger = logger<StepikConnector>()

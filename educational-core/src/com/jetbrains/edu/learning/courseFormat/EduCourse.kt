@@ -4,7 +4,6 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
-import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
@@ -17,9 +16,6 @@ import java.util.*
  * - [com.jetbrains.edu.learning.yaml.format.CourseYamlMixin]
  */
 open class EduCourse : Course() {
-  //course type in format "pycharm<version> <language> <version>$ENVIRONMENT_SEPARATOR<environment>"
-  @Suppress("LeakingThis") // TODO[ktisha]: remove `type` once we move all courses to the marketplace
-  var type: String = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $programmingLanguage"
   @Transient
   var isUpToDate: Boolean = true
   var learnersCount: Int = 0
@@ -31,39 +27,10 @@ open class EduCourse : Course() {
   var isStepikPublic: Boolean = false
   var reviewSummary: Int = 0
 
-  override var programmingLanguage: String
-    get() = super.programmingLanguage
-    set(value) {
-      super.programmingLanguage = value
-      updateType(value)
-    }
-
   override val itemType: String
     get() = if (isMarketplace) MARKETPLACE else super.itemType
 
-  private fun updateType(language: String) {
-    type = if (environment != DEFAULT_ENVIRONMENT) {
-      "${StepikNames.PYCHARM_PREFIX}$formatVersion $language$ENVIRONMENT_SEPARATOR$environment"
-    }
-    else {
-      "${StepikNames.PYCHARM_PREFIX}$formatVersion $language"
-    }
-  }
-
-  val formatVersion: Int
-    get() {
-      val languageSeparator = type.indexOf(" ")
-      if (languageSeparator != -1 && type.contains(StepikNames.PYCHARM_PREFIX)) {
-        val formatVersion = type.substring(StepikNames.PYCHARM_PREFIX.length, languageSeparator)
-        return try {
-          formatVersion.toInt()
-        }
-        catch (e: NumberFormatException) {
-          JSON_FORMAT_VERSION
-        }
-      }
-      return JSON_FORMAT_VERSION
-    }
+  var formatVersion: Int = JSON_FORMAT_VERSION
 
   override val isStepikRemote: Boolean
     get() = id != 0 && !isMarketplace
@@ -80,7 +47,6 @@ open class EduCourse : Course() {
       sectionIds = emptyList()
       instructors = emptyList()
     }
-    type = "${StepikNames.PYCHARM_PREFIX}$JSON_FORMAT_VERSION $programmingLanguage"
     id = 0
     updateDate = Date(0)
   }
