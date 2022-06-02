@@ -1,4 +1,4 @@
-@file:Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@file:Suppress("unused", "PropertyName") // used for json serialization
 
 package com.jetbrains.edu.learning.stepik.api
 

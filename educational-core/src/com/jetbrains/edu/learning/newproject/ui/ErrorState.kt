@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
@@ -160,8 +161,7 @@ sealed class ErrorState(
 
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
 
-    private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean =
-      selectedCourse.isStepikRemote && !selectedCourse.isCompatible
+    private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean = selectedCourse is StepikCourse
 
     private fun isCheckiOLoginRequired(selectedCourse: CheckiOCourse): Boolean {
       if (CoursesStorage.getInstance().hasCourse(selectedCourse)) {
