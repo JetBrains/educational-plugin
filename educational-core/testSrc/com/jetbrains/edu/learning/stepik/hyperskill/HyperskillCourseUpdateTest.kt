@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.copyAs
+import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -553,7 +553,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun <T: Task> T.toTaskUpdate(changeTask: T.() -> Unit): HyperskillCourseUpdater.TaskUpdate {
-    val remoteTask = copyAs(this::class.java)
+    val remoteTask = copy()
     remoteTask.changeTask()
     remoteTask.init(parent, false)
     return HyperskillCourseUpdater.TaskUpdate(this, remoteTask)
@@ -568,7 +568,7 @@ class HyperskillCourseUpdateTest : NavigationTestBase() {
   }
 
   private fun toRemoteCourse(changeCourse: HyperskillCourse.() -> Unit): HyperskillCourse {
-    val remoteCourse = course.copyAs(HyperskillCourse::class.java)
+    val remoteCourse = course.copy()
     remoteCourse.getTopicsSection()?.let { remoteCourse.removeSection(it) }
     remoteCourse.init(false)
     remoteCourse.changeCourse()

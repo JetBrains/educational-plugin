@@ -179,10 +179,6 @@ abstract class Task : StudyItem {
     return result
   }
 
-  fun copy(): Task {
-    return copyAs(javaClass)
-  }
-
   fun isValid(project: Project): Boolean {
     val taskDir = getDir(project.courseDir) ?: return false
     for (taskFile in _taskFiles.values) {

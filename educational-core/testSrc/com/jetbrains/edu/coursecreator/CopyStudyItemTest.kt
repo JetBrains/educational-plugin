@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
 
 class CopyStudyItemTest : EduTestCase() {
 
@@ -27,31 +26,8 @@ class CopyStudyItemTest : EduTestCase() {
       }
     }.asRemote()
 
-    checkItems(localCourse, localCourse.copyAs(EduCourse::class.java))
+    checkItems(localCourse, localCourse.copy())
   }
-
-  fun `test copy course as stepik course`() {
-    val choiceOptions = mapOf("1" to ChoiceOptionStatus.CORRECT, "2" to ChoiceOptionStatus.INCORRECT)
-    val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      section {
-        lesson {
-          eduTask { }
-          outputTask { }
-          theoryTask { }
-        }
-      }
-      section {
-        lesson {
-          eduTask { }
-          choiceTask(isMultipleChoice = false, choiceOptions = choiceOptions)
-        }
-      }
-    }.asRemote()
-
-    val stepikCourse = localCourse.copyAs(StepikCourse::class.java)
-    checkItems(localCourse, stepikCourse)
-  }
-
 
   fun `test copy edu task`() {
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {

@@ -1,3 +1,5 @@
+@file:JvmName("CopyUtils")
+
 package com.jetbrains.edu.learning.courseFormat
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
@@ -28,17 +30,17 @@ private val MAPPER: ObjectMapper by lazy {
   mapper
 }
 
-fun <T : StudyItem, K : T> T.copyAs(clazz: Class<K>): K {
+fun <T : StudyItem> T.copy(): T {
   try {
     val jsonText = MAPPER.writeValueAsString(this)
-    val copy = MAPPER.readValue(jsonText, clazz)
+    val copy = MAPPER.readValue(jsonText, javaClass)
     copy.init(parent, true)
     return copy
   }
   catch (e: JsonProcessingException) {
-    LOG.error("Failed to create study item copy: $javaClass as $clazz", e)
+    LOG.error("Failed to create study item copy", e)
   }
-  error("Failed to create study item copy: $javaClass as $clazz")
+  error("Failed to create study item copy")
 }
 
 

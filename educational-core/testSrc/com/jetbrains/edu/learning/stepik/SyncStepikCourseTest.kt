@@ -118,10 +118,10 @@ class SyncStepikCourseTest : EduTestCase() {
             taskFile("task.html")
           }
         }
-      }.asEduCourse().asRemote()
+      }.asRemote()
     }
     else {
-      courseWithFiles(id = 1) { }.asEduCourse().asRemote()
+      courseWithFiles(id = 1) { }.asRemote()
     }
     course.apply {
       updateDate = courseUpdateDate

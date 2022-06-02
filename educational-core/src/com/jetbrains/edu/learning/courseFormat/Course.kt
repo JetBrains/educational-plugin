@@ -124,10 +124,6 @@ abstract class Course : LessonContainer() {
   open val checkAction: CheckAction
     get() = CheckAction()
 
-  fun copy(): Course {
-    return copyAs(javaClass)
-  }
-
   val isStudy: Boolean
     get() = CourseMode.STUDENT == courseMode
 

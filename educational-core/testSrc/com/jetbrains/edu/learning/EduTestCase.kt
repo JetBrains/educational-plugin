@@ -269,10 +269,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
   }
 
-  protected fun Course.asEduCourse(): EduCourse {
-    return copyAs(EduCourse::class.java)
-  }
-
   protected fun Course.asRemote(courseMode: CourseMode = CourseMode.EDUCATOR): EduCourse {
     val remoteCourse = EduCourse()
     remoteCourse.id = 1
