@@ -361,10 +361,10 @@ object GeneratorUtils {
   fun gradleSanitizeName(name: String): String = name.replace(GRADLE_INVALID_SYMBOLS, "_").replace(LEADING_AND_TRAILING_DOTS, "")
 
   fun getDefaultName(item: StudyItem) = when (item) {
-    is Section -> "${SECTION}${item.index}"
+    is Section -> "$SECTION${item.index}"
     is FrameworkLesson -> "${EduNames.FRAMEWORK_LESSON}${item.index}"
-    is Lesson -> "${LESSON}${item.index}"
-    is Task -> "${TASK}${item.index}"
+    is Lesson -> "$LESSON${item.index}"
+    is Task -> "$TASK${item.index}"
     else -> "NonCommonStudyItem${item.index}"
   }
 }

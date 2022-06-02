@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.marketplace
 
-const val MARKETPLACE = "Marketplace"
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+
+const val MARKETPLACE = EduFormatNames.MARKETPLACE
 const val HUB_AUTH_URL = "https://hub.jetbrains.com"
 const val HUB_API_PATH = "/api/rest"
 const val JB_ACCOUNT_URL = "https://account.jetbrains.com"
