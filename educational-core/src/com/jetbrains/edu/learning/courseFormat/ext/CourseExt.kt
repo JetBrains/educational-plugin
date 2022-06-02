@@ -5,11 +5,12 @@ package com.jetbrains.edu.learning.courseFormat.ext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 
@@ -56,4 +57,31 @@ val Course.supportedTechnologies: List<String>
       is JetBrainsAcademyCourse -> this.supportedLanguages
       else -> if (technologyName != null) listOf(technologyName!!) else emptyList()
     }
+  }
+
+val Course.tags: List<Tag>
+  get() {
+    if (course is CodeforcesCourse) {
+      return emptyList()
+    }
+
+    val tags = mutableListOf<Tag>()
+    if (course is JetBrainsAcademyCourse) {
+      tags.addAll((this as JetBrainsAcademyCourse).supportedLanguages.map { ProgrammingLanguageTag(it) })
+      tags.add(HumanLanguageTag(humanLanguage))
+      return tags
+    }
+
+    technologyName?.let { tags.add(ProgrammingLanguageTag(it)) }
+    tags.add(HumanLanguageTag(humanLanguage))
+
+    if (course is EduCourse) {
+      if (visibility is CourseVisibility.FeaturedVisibility) {
+        tags.add(FeaturedTag())
+      }
+      if (visibility is CourseVisibility.InProgressVisibility) {
+        tags.add(InProgressTag())
+      }
+    }
+    return tags
   }

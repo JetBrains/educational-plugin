@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility.InProgressVisibility
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames
 import org.jetbrains.annotations.NonNls
@@ -42,18 +40,6 @@ open class EduCourse : Course() {
     set(value) {
       super.programmingLanguage = value
       updateType(value)
-    }
-
-  override val tags: List<Tag>
-    get() {
-      val tags = super.tags.toMutableList()
-      if (visibility is FeaturedVisibility) {
-        tags.add(FeaturedTag())
-      }
-      if (visibility is InProgressVisibility) {
-        tags.add(InProgressTag())
-      }
-      return tags
     }
 
   override val itemType: String

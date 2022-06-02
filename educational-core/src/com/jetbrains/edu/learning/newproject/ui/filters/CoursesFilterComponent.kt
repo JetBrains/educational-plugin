@@ -7,6 +7,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.StatusText
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.tags
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import org.jetbrains.annotations.NonNls
 import java.util.*

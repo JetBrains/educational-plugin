@@ -2,7 +2,8 @@ package com.jetbrains.edu.learning.newproject
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
 
 /**
@@ -26,16 +27,6 @@ class JetBrainsAcademyCourse : Course() {
      
      <a href="${wrapWithUtm("https://www.jetbrains.com/academy/", "browse-courses")}">Learn more</a>
    """.trimIndent()
-  }
-
-  override val tags: List<Tag>
-    get() {
-    val tags = mutableListOf<Tag>()
-
-    tags.addAll(supportedLanguages.map { ProgrammingLanguageTag(it) })
-    tags.add(HumanLanguageTag(humanLanguage))
-
-    return tags
   }
 
   val supportedLanguages: List<String>

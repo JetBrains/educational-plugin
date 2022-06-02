@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Tag
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
@@ -81,9 +80,6 @@ open class CodeforcesCourse : Course {
   override val isViewAsEducatorEnabled: Boolean
     get() = false
 
-  override val tags: List<Tag>
-    get() = emptyList()
-
   override val compatibility: CourseCompatibility
     get() = CourseCompatibility.Compatible
 
@@ -91,7 +87,6 @@ open class CodeforcesCourse : Course {
 
   private fun parseResponseToAddContent(doc: Document) {
     @NonNls val error = "Parsing failed. Unable to find CSS elements:"
-    @Suppress("UNNECESSARY_SAFE_CALL")
     name = doc.selectFirst(".caption")?.text() ?: error("$error caption")
     val problems = doc.select(".problem-statement") ?: error("$error problem-statement")
 

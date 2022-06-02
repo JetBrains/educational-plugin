@@ -5,6 +5,7 @@ import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.tags
 
 
 private const val TAGS_TOP_OFFSET = 15

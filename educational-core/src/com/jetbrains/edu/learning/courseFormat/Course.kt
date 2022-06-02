@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
-import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
 import javax.swing.Icon
@@ -143,14 +142,6 @@ abstract class Course : LessonContainer() {
   val authorFullNames: List<String>
     get() {
       return organization?.let { listOf(it) } ?: authors.map { it.getFullName() }
-    }
-
-  open val tags: List<Tag>
-    get() {
-      val tags = mutableListOf<Tag>()
-      technologyName?.let { tags.add(ProgrammingLanguageTag(it)) }
-      tags.add(HumanLanguageTag(humanLanguage))
-      return tags
     }
 
   open val humanLanguage: String
