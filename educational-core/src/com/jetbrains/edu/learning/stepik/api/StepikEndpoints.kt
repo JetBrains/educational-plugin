@@ -78,12 +78,6 @@ interface StepikEndpoints {
 
   // POST requests:
 
-  @POST("api/courses")
-  fun course(@Body sectionData: CourseData): Call<CoursesList>
-
-  @POST("api/sections")
-  fun section(@Body sectionData: SectionData): Call<SectionsList>
-
   @POST("api/lessons")
   fun lesson(@Body lessonData: LessonData): Call<LessonsList>
 
@@ -110,12 +104,6 @@ interface StepikEndpoints {
   fun attachment(@Part file: MultipartBody.Part, @Part("lesson") lesson: RequestBody? = null): Call<ResponseBody>
 
   // PUT requests:
-
-  @PUT("api/courses/{id}")
-  fun course(@Path("id") courseId: Int, @Body courseData: CourseData): Call<CoursesList>
-
-  @PUT("api/sections/{id}")
-  fun section(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
 
   @PUT("api/lessons/{id}")
   fun lesson(@Path("id") lessonId: Int, @Body lessonData: LessonData): Call<LessonsList>

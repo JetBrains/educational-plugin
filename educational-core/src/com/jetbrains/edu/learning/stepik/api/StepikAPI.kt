@@ -162,23 +162,6 @@ class ViewData(assignment: Int, step: Int) {
   var view: View = View(assignment, step)
 }
 
-class CourseData(course: Course) {
-  @JsonProperty(COURSE)
-  var course: EduCourse = EduCourse()
-
-  init {
-    this.course.name = course.name
-    this.course.environment = course.environment
-    this.course.programmingLanguage = course.programmingLanguage
-    this.course.description = course.description
-    this.course.authors = course.authors
-    if (course is EduCourse && course.isStepikRemote) {
-      this.course.instructors = course.instructors
-      this.course.isStepikPublic = course.isStepikPublic
-    }
-  }
-}
-
 class SectionData(@field:JsonProperty(SECTION) var section: Section)
 
 class LessonData(lesson: Lesson) {

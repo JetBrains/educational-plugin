@@ -287,15 +287,6 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   // Update requests:
 
-  fun updateCourse(course: Course): Int {
-    val response = stepikEndpoints.course(course.id, CourseData(course)).executeHandlingExceptions()
-    val postedCourse = response?.body()?.courses?.firstOrNull()
-    if (postedCourse != null) {
-      course.updateDate = postedCourse.updateDate
-    }
-    return response?.code() ?: -1
-  }
-
   fun updateLesson(lesson: Lesson): StepikLesson? {
     val response = stepikEndpoints.lesson(lesson.id, LessonData(lesson)).executeHandlingExceptions()
     val postedLesson = response?.body()?.lessons?.firstOrNull()
