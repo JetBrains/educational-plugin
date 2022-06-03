@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import org.jetbrains.annotations.NonNls
 import java.util.*

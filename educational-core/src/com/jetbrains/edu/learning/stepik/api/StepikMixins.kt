@@ -141,7 +141,7 @@ fun EduCourse.setCourseLanguageEnvironment(courseFormat: String) {
     }
   }
   else {
-    LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course", name, courseFormat))
+    LOG.info("Language for course `$name` with `$courseFormat` type can't be set because it isn't `pycharm` course")
   }
 }
 

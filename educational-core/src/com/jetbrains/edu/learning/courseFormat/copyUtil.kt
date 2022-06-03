@@ -43,7 +43,6 @@ fun <T : StudyItem> T.copy(): T {
   error("Failed to create study item copy")
 }
 
-
 class StudyItemCopySerializer : JsonSerializer<StudyItem>() {
   override fun serialize(value: StudyItem, jgen: JsonGenerator, provider: SerializerProvider) {
     jgen.writeStartObject()

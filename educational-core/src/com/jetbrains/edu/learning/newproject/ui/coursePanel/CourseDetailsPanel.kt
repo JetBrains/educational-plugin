@@ -11,14 +11,11 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
-import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
-import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -28,17 +25,6 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-// TODO: remove when new UI is implemented
-private const val NOT_VERIFIED_NOTE = """
-  
-  
-                                      Note: This course has not been verified by the JetBrains team.
-                                      If you want to join it, keep in mind we are not responsible for the content provided.
-                                      If you are the owner of the course and you want it to be 
-                                      featured, please <a href="mailto:academy@jetbrains.com">get in touch with us</a>
-                                      and we would be glad to verify it with you.
-                                      """
 
 class CourseDetailsPanel(leftMargin: Int) : NonOpaquePanel(VerticalFlowLayout(0, 5)), CourseSelectionListener {
   @Suppress("DialogTitleCapitalization")
@@ -90,11 +76,7 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
 
   override fun getBody(): String {
     course?.let {
-      var description = it.description
-      if (it.needsVerification) {
-        description += NOT_VERIFIED_NOTE
-      }
-      return description.replace("\n", "<br>")
+      return it.description.replace("\n", "<br>")
     }
 
     return ""
@@ -126,17 +108,6 @@ private class CourseDescriptionHtmlPanel : CourseHtmlPanel() {
     TypographyManager().bodyFont,
     Font.PLAIN,
     JBUI.scaleFontSize(EditorColorsManager.getInstance().globalScheme.editorFontSize.toFloat()))
-
-
-  private val Course.needsVerification: Boolean
-    get() {
-      return this is EduCourse
-             && isStepikRemote
-             && isStepikPublic
-             && !StepikListedCoursesIdsLoader.featuredCommunityCourses.contains(id)
-             && this !is StepikCourse
-             && !StepikListedCoursesIdsLoader.inProgressCourses.contains(id)
-    }
 }
 
 private class CourseStatisticsPanel : NonOpaquePanel(HorizontalLayout(0)) {
