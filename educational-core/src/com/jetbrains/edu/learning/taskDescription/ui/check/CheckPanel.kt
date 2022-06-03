@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.codeforces.actions.SubmitCodeforcesSolutionAct
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -198,7 +199,10 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   }
 
   private fun JPanel.addNextTaskButton(task: Task) {
-    if (!(task.status == CheckStatus.Solved || task is TheoryTask || task.course is HyperskillCourse)) {
+    if (!(task.status == CheckStatus.Solved
+          || task is TheoryTask
+          || task.course is HyperskillCourse
+          || task.course.courseMode == CourseMode.EDUCATOR)) {
       return
     }
 
