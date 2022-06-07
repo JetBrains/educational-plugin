@@ -6,6 +6,7 @@ import com.intellij.util.io.UnsyncByteArrayOutputStream
 import com.intellij.util.io.storage.AbstractRecordsTable
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
 import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
+import org.jetbrains.annotations.TestOnly
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
@@ -88,6 +89,16 @@ class FrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) {
     }
 
     writeBytes(recordId, output.toByteArraySequence(), false)
+  }
+
+  @TestOnly
+  @Throws(IOException::class)
+  fun createRecordWithData(data: FrameworkStorageData): Int {
+    return withWriteLock<Int, IOException> {
+      val record = createNewRecord()
+      writeStream(record).use(data::write)
+      record
+    }
   }
 }
 

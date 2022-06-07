@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
-import com.jetbrains.edu.learning.framework.impl.FrameworkStorageData
 
 class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
 
@@ -47,11 +46,5 @@ class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
     val storage = FrameworkStorage(FrameworkLessonManagerImpl.constructStoragePath(project))
     Disposer.register(testRootDisposable, storage)
     return storage
-  }
-
-  private fun FrameworkStorage.createRecordWithData(data: FrameworkStorageData): Int {
-    val record = createNewRecord()
-    writeStream(record).use(data::write)
-    return record
   }
 }
