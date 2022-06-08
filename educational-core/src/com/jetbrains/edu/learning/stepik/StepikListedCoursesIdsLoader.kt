@@ -12,7 +12,6 @@ const val STEPIK_LISTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBra
 object StepikListedCoursesIdsLoader {
   private val LOG = Logger.getInstance(StepikListedCoursesIdsLoader::class.java)
   val featuredCommunityCourses: List<Int>
-  val inProgressCourses: List<Int>
   val featuredStepikCourses: Map<Int, MutableList<String>>
 
   init {
@@ -32,7 +31,6 @@ object StepikListedCoursesIdsLoader {
     }
 
     featuredCommunityCourses = getCoursesIds(listedCoursesTexts[CoursesListName.Community])
-    inProgressCourses = getCoursesIds(listedCoursesTexts[CoursesListName.InProgress])
     featuredStepikCourses = getCourseIdsWithLanguage(listedCoursesTexts[CoursesListName.Stepik])
   }
 

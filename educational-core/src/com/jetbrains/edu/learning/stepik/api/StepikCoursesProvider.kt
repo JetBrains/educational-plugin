@@ -5,8 +5,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.stepik.StepikListedCoursesIdsLoader
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import kotlinx.coroutines.*
@@ -133,31 +133,26 @@ class StepikCoursesProvider : CoroutineScope {
     }
   }
 
-  // Loads predefined set of StepikCourses
   private fun loadListedStepikCourses(): List<StepikCourse> {
-    val listedCoursesIds = StepikListedCoursesIdsLoader.featuredStepikCourses.keys + StepikListedCoursesIdsLoader.inProgressCourses
+    val listedCoursesIds = StepikListedCoursesIdsLoader.featuredStepikCourses.keys
     val courses = StepikConnector.getInstance().getCourses(listedCoursesIds) ?: return emptyList()
     val result = mutableListOf<StepikCourse>()
+
+    // each course in this list is `StepikCourse` because we Load only a predefined set of courses here.
+    // We'll make `StepikConnector.getCourses` return `StepikCourse` once we remove all EduCourses from there
     courses.forEach { course ->
+      check(course is StepikCourse)
       val courseId = course.id
       val languages = StepikListedCoursesIdsLoader.featuredStepikCourses[courseId]
 
-      fun addCourse() {
-        require(course is StepikCourse)
-        if (StepikListedCoursesIdsLoader.inProgressCourses.contains(courseId)) {
-          course.visibility = CourseVisibility.InProgressVisibility(StepikListedCoursesIdsLoader.inProgressCourses.indexOf(courseId))
-        }
-        course.let { result.add(it) }
-      }
-
       if (languages.isNullOrEmpty()) {
-        addCourse()
+        result.add(course)
       }
       else {
         languages.forEach { language ->
           course.programmingLanguage = language
-          // as course is copied to become Stepik type, it's ok to use the same loaded course for different languages
-          addCourse()
+          course.parent = course
+          result.add(course.copy())
         }
       }
     }

@@ -16,6 +16,3 @@ class StepikCourse : EduCourse() {
   override val isViewAsEducatorEnabled: Boolean
     get() = ApplicationManager.getApplication().isInternal
 }
-
-private fun descriptionNote(courseId: Int): String =
-  """<br/><br/>Learn more at <a href="${StepikNames.STEPIK_DEFAULT_URL}/course/$courseId">${StepikNames.STEPIK_DEFAULT_URL}/course/$courseId</a>"""

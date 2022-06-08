@@ -27,5 +27,3 @@ class ProgrammingLanguageTag(language: String) : Tag(language, PROGRAMMING_LANGU
 class HumanLanguageTag(languageName: String) : Tag(languageName, LANGUAGE_TAG_SEARCH_OPTION)
 
 class FeaturedTag : Tag(EduCoreBundle.message("course.dialog.tags.featured"))
-
-class InProgressTag : Tag(EduCoreBundle.message("course.dialog.tags.in.progress"))

@@ -12,11 +12,6 @@
 72488 # Beam Katas - Kotlin
 55498 # Scala Tutorial
 59778 # Rustlings
-##InProgress
-6858 # Java. Introduction
-6859 # Java. Statements and Arrays
-6864 # Java. Classes
-6860 # Java. Collections
 ##Stepik
 3432 # JavaScript # JavaScript for Beginners
 16243 # Scala # Введение в Scala

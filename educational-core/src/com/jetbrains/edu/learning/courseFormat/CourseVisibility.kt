@@ -21,16 +21,11 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
 
   class FeaturedVisibility(internal val inGroup: Int) : CourseVisibility(1)
 
-  class InProgressVisibility(internal val inGroup: Int) : CourseVisibility(2)
-
   override fun compareTo(other: CourseVisibility): Int {
     if (weight != other.weight) {
       return weight.compareTo(other.weight)
     }
     if (this is FeaturedVisibility && other is FeaturedVisibility) {
-      return inGroup.compareTo(other.inGroup)
-    }
-    if (this is InProgressVisibility && other is InProgressVisibility) {
       return inGroup.compareTo(other.inGroup)
     }
     return 0

@@ -79,9 +79,6 @@ val Course.tags: List<Tag>
       if (visibility is CourseVisibility.FeaturedVisibility) {
         tags.add(FeaturedTag())
       }
-      if (visibility is CourseVisibility.InProgressVisibility) {
-        tags.add(InProgressTag())
-      }
     }
     return tags
   }
