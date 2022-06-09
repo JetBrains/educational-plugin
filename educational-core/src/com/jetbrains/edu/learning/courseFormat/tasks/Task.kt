@@ -5,16 +5,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.presentableName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.io.IOException
@@ -216,13 +212,6 @@ abstract class Task : StudyItem {
   override fun getDir(baseDir: VirtualFile): VirtualFile? {
     val lessonDir = lesson.getDir(baseDir)
     return findDir(lessonDir)
-  }
-
-  fun getUIName(): String = if (course is HyperskillCourse) {
-    if (this is CodeTask) message("item.task.challenge") else message("item.task.stage")
-  }
-  else {
-    StudyItemType.TASK_TYPE.presentableName
   }
 
   companion object {
