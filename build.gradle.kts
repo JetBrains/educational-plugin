@@ -5,7 +5,6 @@ import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
-import org.jetbrains.intellij.tasks.IntelliJInstrumentCodeTask
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.RunIdeTask
@@ -212,6 +211,12 @@ allprojects {
         apiVersion = "1.5"
         freeCompilerArgs = listOf("-Xjvm-default=all")
       }
+    }
+
+    jar {
+      // Starting from gradle-intellij-plugin 1.6.0, test runs produces `classpath.index` file in `class` directory
+      // But this file shouldn't be included into final module artifact at all, so exclude it manually for now
+      exclude("**/classpath.index")
     }
 
     val verifyClasses = task("verifyClasses") {
