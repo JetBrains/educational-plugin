@@ -143,6 +143,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
         Task
       ) {
         val task = ChoiceTask()
+        task.canCheckLocally = true
         task.choiceOptions = listOf(
           ChoiceOption("Correct", ChoiceOptionStatus.CORRECT),
           ChoiceOption("Incorrect", ChoiceOptionStatus.INCORRECT)

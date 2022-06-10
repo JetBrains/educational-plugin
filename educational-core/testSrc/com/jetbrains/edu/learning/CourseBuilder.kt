@@ -258,6 +258,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
   ) {
     val choiceTask = ChoiceTask()
     task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    if (stepId != 0) choiceTask.canCheckLocally = false
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
     choiceTask.selectedVariants = selectedVariants

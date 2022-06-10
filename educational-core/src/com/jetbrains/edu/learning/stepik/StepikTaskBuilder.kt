@@ -43,7 +43,6 @@ import org.jetbrains.annotations.NonNls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
-import java.util.*
 import java.util.Collections.unmodifiableList
 
 open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
@@ -164,6 +163,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+    task.canCheckLocally = false
     task.descriptionText = clearCodeBlockFromTags(step)
     task.descriptionFormat = DescriptionFormat.HTML
 

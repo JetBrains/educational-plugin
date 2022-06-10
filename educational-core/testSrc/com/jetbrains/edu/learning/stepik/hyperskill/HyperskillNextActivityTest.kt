@@ -73,6 +73,7 @@ class HyperskillNextActivityTest : EduTestCase() {
     val task = findTask(0, 0, 1)
 
     val choiceTask = ChoiceTask()
+    choiceTask.canCheckLocally = false
     choiceTask.parent = task.parent
     
     mockConnector.configureResponses(
