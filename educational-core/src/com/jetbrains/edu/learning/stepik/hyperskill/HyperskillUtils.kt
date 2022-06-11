@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -37,9 +36,6 @@ import javax.swing.event.HyperlinkEvent
 
 private val LOG: Logger = Logger.getInstance("HyperskillUtils")
 
-val HYPERSKILL_SELECTED_STAGE: Key<Int> = Key.create("HYPERSKILL_SELECTED_STAGE")
-val HYPERSKILL_SELECTED_PROBLEM: Key<Int> = Key.create("HYPERSKILL_SELECTED_PROBLEM")
-
 val failedToPostToJBA: String
   get() = EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
 
@@ -62,20 +58,20 @@ fun openSelectedStage(course: Course, project: Project) {
 }
 
 private fun computeSelectedStage(course: HyperskillCourse): Int? {
-  val stageId = course.dataHolder.getUserData(HYPERSKILL_SELECTED_STAGE)
+  val stageId = course.selectedStage
   if (stageId != null) {
-    course.dataHolder.putUserData(HYPERSKILL_SELECTED_STAGE, null) // we may want to select something other in the same project
+    course.selectedStage = null  // we may want to select something other in the same project
     return stageId
   }
   // do not switch selected stage if a user opened only a single problem
-  val stepId = course.dataHolder.getUserData(HYPERSKILL_SELECTED_PROBLEM)
-  if (stepId != null) {
-    course.dataHolder.putUserData(HYPERSKILL_SELECTED_PROBLEM, null) // we may want to select something other in the same project
+  val problemId = course.selectedProblem
+  if (problemId != null) {
+    course.selectedProblem = null // we may want to select something other in the same project
     return null
   }
   val projectLesson = course.getProjectLesson() ?: return null
   val firstUnsolvedTask = projectLesson.taskList.indexOfFirst { task -> task.status != CheckStatus.Solved }
-  if (firstUnsolvedTask == -1 && projectLesson.taskList.size < 1) return null
+  if (firstUnsolvedTask == -1 && projectLesson.taskList.isEmpty()) return null
   return course.stages[if (firstUnsolvedTask != -1) firstUnsolvedTask else projectLesson.taskList.size - 1].id
 }
 

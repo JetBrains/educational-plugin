@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.annotation.JsonFormat

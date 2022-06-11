@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   protected abstract val widgetId: String
@@ -30,10 +31,10 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   abstract fun isWidgetAvailable(course: Course): Boolean
 
   private fun Course.isCoursePreview(project: Project): Boolean =
-    dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) ?: false ||
+    (this is EduCourse && isPreview) ||
     PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)
 
   private fun Course.isLocalCourse(project: Project): Boolean =
-    dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY) ?: false ||
+    (this is EduCourse && isLocalCourse)  ||
     PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE)
 }

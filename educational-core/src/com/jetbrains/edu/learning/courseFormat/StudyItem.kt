@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.util.UserDataHolder
-import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VfsUtilCore
 import java.util.*
 
@@ -36,9 +34,6 @@ abstract class StudyItem() {
       _parent = value
     }
 
-
-  @Transient
-  val dataHolder: UserDataHolder = UserDataHolderBase()
   var contentTags: List<String> = listOf()
 
   abstract val course: Course

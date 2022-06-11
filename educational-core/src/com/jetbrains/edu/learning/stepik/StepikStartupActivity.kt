@@ -7,14 +7,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.CustomStatusBarWidget
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -60,7 +58,6 @@ class StepikStartupActivity : StartupActivity {
     if (currentUser == null) {
       showBalloon(project)
     }
-    selectStep(project, course)
   }
 
   private fun showBalloon(project: Project) {
@@ -98,17 +95,7 @@ class StepikStartupActivity : StartupActivity {
     }
   }
 
-  private fun selectStep(project: Project, course: Course) {
-    val stepId = course.dataHolder.getUserData(STEP_ID)
-    if (stepId != null) {
-      EduUtils.navigateToStep(project, course, stepId)
-    }
-  }
-
   companion object {
     private val LOG: Logger = logger<StepikStartupActivity>()
-
-    @JvmStatic
-    val STEP_ID = Key.create<Int>("STEP_ID")
   }
 }
