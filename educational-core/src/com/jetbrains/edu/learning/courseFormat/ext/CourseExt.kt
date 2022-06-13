@@ -82,3 +82,6 @@ val Course.tags: List<Tag>
     }
     return tags
   }
+
+val Course.isPreview: Boolean
+  get() = this is EduCourse && isPreview

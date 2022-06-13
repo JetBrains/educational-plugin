@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.CommonBundle
 import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
@@ -10,7 +9,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages.showErrorDialog
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -19,8 +17,8 @@ import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
@@ -36,7 +34,7 @@ import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
   private val project: Project,
-  course: Course,
+  course: EduCourse,
   private val configurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
@@ -50,7 +48,7 @@ class CCCreateCoursePreviewDialog(
     panel.minimumSize = JBUI.size(WIDTH, HEIGHT)
     val courseCopy = course.copy().apply {
       // is set not to show "Edit" button for course preview
-      dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
+      isPreview = true
       // is set to show "Start" button for course preview
       courseMode = CourseMode.STUDENT
     }
@@ -103,33 +101,31 @@ class CCCreateCoursePreviewDialog(
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
-        val course = EduUtils.getLocalCourse(archivePath)
-        if (course != null) {
-          course.dataHolder.putUserData(IS_COURSE_PREVIEW_KEY, true)
-          val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
-          try {
-            val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
-            val settings = panel.projectSettings ?: error("Project settings shouldn't be null")
-            val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
-              ?.doCreateCourseProject(location.absolutePath, settings)
-            if (previewProject == null) {
-              LOG.info("Failed to create project for course preview")
-              showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.failed.message"),
-                              EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
-              return
-            }
-            PropertiesComponent.getInstance(previewProject).setValue(IS_COURSE_PREVIEW, true)
-            RecentProjectsManager.getInstance().removePath(location.absolutePath)
-            EduCounterUsageCollector.createCoursePreview()
-          }
-          catch (e: IOException) {
-            LOG.info(TMP_DIR_ERROR, e)
-            showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
+        val course = EduUtils.getLocalCourse(archivePath) as? EduCourse  ?: return
+        course.isPreview = true
+
+        val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
+        try {
+          val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
+          val settings = panel.projectSettings ?: error("Project settings shouldn't be null")
+          val previewProject = configurator.courseBuilder.getCourseProjectGenerator(course)
+            ?.doCreateCourseProject(location.absolutePath, settings)
+          if (previewProject == null) {
+            LOG.info("Failed to create project for course preview")
+            showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.failed.message"),
                             EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+            return
           }
-          finally {
-            RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
-          }
+          RecentProjectsManager.getInstance().removePath(location.absolutePath)
+          EduCounterUsageCollector.createCoursePreview()
+        }
+        catch (e: IOException) {
+          LOG.info(TMP_DIR_ERROR, e)
+          showErrorDialog(project, EduCoreBundle.message("course.creator.create.course.preview.tmpdir.message"),
+                          EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
+        }
+        finally {
+          RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
         }
       }
       else {
@@ -147,12 +143,6 @@ class CCCreateCoursePreviewDialog(
     private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview"
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
-    const val IS_COURSE_PREVIEW: String = "Edu.IsCoursePreview"
     const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
-
-    @JvmField
-    val IS_COURSE_PREVIEW_KEY = Key.create<Boolean>(IS_COURSE_PREVIEW)
-    @JvmField
-    val IS_LOCAL_COURSE_KEY = Key.create<Boolean>(IS_LOCAL_COURSE)
   }
 }

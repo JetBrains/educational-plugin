@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
@@ -15,6 +16,7 @@ class CCCreateCoursePreview : DumbAwareAction(EduCoreBundle.lazyMessage("action.
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
     val currentCourse = StudyTaskManager.getInstance(project).course ?: return
+    if (currentCourse !is EduCourse) return
     val configurator = currentCourse.configurator ?: return
 
     CCCreateCoursePreviewDialog(project, currentCourse, configurator).show()

@@ -8,7 +8,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 
 abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   protected abstract val widgetId: String
@@ -20,7 +20,7 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   override fun isAvailable(project: Project): Boolean {
     if (!EduUtils.isEduProject(project)) return false
     val course = StudyTaskManager.getInstance(project).course
-    return if (course != null && !course.isCoursePreview(project) && !course.isLocalCourse(project)) {
+    return if (course != null && !course.isPreview && !isLocalCourse(project)) {
       isWidgetAvailable(course)
     }
     else false
@@ -30,11 +30,6 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
 
   abstract fun isWidgetAvailable(course: Course): Boolean
 
-  private fun Course.isCoursePreview(project: Project): Boolean =
-    (this is EduCourse && isPreview) ||
-    PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW)
-
-  private fun Course.isLocalCourse(project: Project): Boolean =
-    (this is EduCourse && isLocalCourse)  ||
+  private fun isLocalCourse(project: Project): Boolean =
     PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE)
 }

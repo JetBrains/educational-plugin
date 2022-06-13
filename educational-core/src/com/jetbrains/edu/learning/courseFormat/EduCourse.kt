@@ -49,6 +49,5 @@ open class EduCourse : Course() {
   }
 
   var isPreview: Boolean = false
-  var isLocalCourse: Boolean = false
 
 }

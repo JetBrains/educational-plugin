@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
@@ -91,7 +90,7 @@ abstract class CourseProjectGenerator<S : Any>(
 
   // 'projectSettings' must have S type but due to some reasons:
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
-  //  * Kotlin and Java do type erasure a little bit differently
+  //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
   fun doCreateCourseProject(location: String, projectSettings: Any): Project? {
     if (!beforeProjectGenerated()) {
@@ -263,7 +262,7 @@ abstract class CourseProjectGenerator<S : Any>(
       if (isNewCourseCreatorCourse) return true
       if (course !is EduCourse) return true
       if (course.visibility is FeaturedVisibility) return true
-      return course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) == true
+      return course.isPreview
     }
   }
 }

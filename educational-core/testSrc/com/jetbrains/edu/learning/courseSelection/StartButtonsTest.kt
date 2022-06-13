@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProvider
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,7 @@ class StartButtonsTest : EduTestCase() {
   }
 
   fun `test course preview`() {
-    val course = course { }
+    val course = course {} as EduCourse
     course.init(course, false)
     val coursePanel = CCCreateCoursePreviewDialog(myFixture.project, course, PlainTextConfigurator()).panel
     val startButton = coursePanel.buttonsPanel.buttons.first()

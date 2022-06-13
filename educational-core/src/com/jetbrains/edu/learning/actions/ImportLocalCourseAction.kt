@@ -36,39 +36,37 @@ open class ImportLocalCourseAction(
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
-      var course = EduUtils.getLocalCourse(fileName)
+      val course = EduUtils.getLocalCourse(fileName)
       if (course == null) {
         showInvalidCourseDialog()
+        return@chooseFile
       }
-      else {
-        saveLastImportLocation(file)
-        course = initCourse(course)
+      saveLastImportLocation(file)
 
-        val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
-        if (courseMetaInfo != null) {
-          invokeLater {
-            val result = Messages.showDialog(null,
-                                             EduCoreBundle.message("action.import.local.course.dialog.text"),
-                                             EduCoreBundle.message("action.import.local.course.dialog"),
-                                             arrayOf(EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
-                                                     EduCoreBundle.message("action.import.local.course.dialog.ok.text")),
-                                             Messages.OK,
-                                             Messages.getErrorIcon())
-            if (result == Messages.NO) {
-              course.name = createUnusedName(course.name)
-              doImportNewCourse(course, component)
-            }
-            else if (result == Messages.OK) {
-              closeDialog(component)
-              val project = ProjectUtil.openProject(courseMetaInfo.location, null, true)
-              ProjectUtil.focusProjectWindow(project, true)
-            }
-
+      val courseMetaInfo = CoursesStorage.getInstance().getCourseMetaInfo(course)
+      if (courseMetaInfo != null) {
+        invokeLater {
+          val result = Messages.showDialog(null,
+                                           EduCoreBundle.message("action.import.local.course.dialog.text"),
+                                           EduCoreBundle.message("action.import.local.course.dialog"),
+                                           arrayOf(EduCoreBundle.message("action.import.local.course.dialog.cancel.text"),
+                                                   EduCoreBundle.message("action.import.local.course.dialog.ok.text")),
+                                           Messages.OK,
+                                           Messages.getErrorIcon())
+          if (result == Messages.NO) {
+            course.name = createUnusedName(course.name)
+            doImportNewCourse(course, component)
           }
-          return@chooseFile
+          else if (result == Messages.OK) {
+            closeDialog(component)
+            val project = ProjectUtil.openProject(courseMetaInfo.location, null, true)
+            ProjectUtil.focusProjectWindow(project, true)
+          }
+
         }
-        doImportNewCourse(course, component)
+        return@chooseFile
       }
+      doImportNewCourse(course, component)
     }
   }
 
@@ -86,7 +84,6 @@ open class ImportLocalCourseAction(
 
   private fun doImportNewCourse(course: Course, component: Component?) {
     EduCounterUsageCollector.importCourseArchive()
-    course.dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE_KEY, true)
     closeDialog(component)
     ImportCourseDialog(course).show()
   }
@@ -106,10 +103,6 @@ open class ImportLocalCourseAction(
   private fun closeDialog(component: Component?) {
     val dialog = UIUtil.getParentOfType(DialogWrapperDialog::class.java, component)
     dialog?.dialogWrapper?.close(DialogWrapper.OK_EXIT_CODE)
-  }
-
-  protected open fun initCourse(course: Course): Course {
-    return course
   }
 
   companion object {

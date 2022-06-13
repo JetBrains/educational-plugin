@@ -4,11 +4,11 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestVFiles
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -114,13 +114,13 @@ class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
   }
 
   fun testCoursePreviewNotAdded() {
-    val coursePreview = course {
+    val coursePreview = (course {
       lesson("lesson1") {
         eduTask("task1") {
         }
       }
-    }.apply {
-      dataHolder.putUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY, true)
+    } as EduCourse).apply {
+      isPreview = true
     }
 
     createCourseStructure(coursePreview)

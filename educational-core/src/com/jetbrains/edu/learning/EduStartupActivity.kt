@@ -18,9 +18,9 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_COURSE_PREVIEW_KEY
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -70,7 +70,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
       val location = project.basePath
-      if (!coursesStorage.hasCourse(course) && location != null && course.dataHolder.getUserData(IS_COURSE_PREVIEW_KEY) != true) {
+      if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
         coursesStorage.addCourse(course, location)
       }
       ApplicationManager.getApplication().invokeLater {
@@ -131,7 +131,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
     }
 
-    // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
+    // Android Studio creates `gradlew` not via VFS, so we have to refresh project dir
     VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
   }
 

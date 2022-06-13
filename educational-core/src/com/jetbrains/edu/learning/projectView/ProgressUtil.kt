@@ -8,12 +8,12 @@ import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -61,7 +61,6 @@ object ProgressUtil {
   fun createProgressBar() : JProgressBar {
     val progressBar = JProgressBar()
 
-    @Suppress("UsePropertyAccessSyntax") // for compatibility with JDK11
     progressBar.setUI(object : DarculaProgressBarUI() {
       override fun getRemainderColor(): Color {
         return JBColor(Gray._220, Color(76, 77, 79))
@@ -86,7 +85,7 @@ object ProgressUtil {
       pane.updateCourseProgress(tasksTotal, tasksSolved)
     }
     val location = project.basePath
-    if (location != null && course.dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true) {
+    if (location != null && !course.isPreview) {
       CoursesStorage.getInstance().updateCourseProgress(course, location, tasksSolved, tasksTotal)
     }
   }
