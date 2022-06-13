@@ -4,5 +4,5 @@ import com.jetbrains.edu.learning.courseFormat.Course
 
 data class CourseBindData(
   val course: Course,
-  val displaySettings: CourseDisplaySettings = CourseDisplaySettings(),
+  val displaySettings: CourseDisplaySettings = CourseDisplaySettings()
 )

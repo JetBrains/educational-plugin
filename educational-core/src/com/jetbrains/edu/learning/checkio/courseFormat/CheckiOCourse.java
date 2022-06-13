@@ -35,7 +35,7 @@ public class CheckiOCourse extends Course {
   }
 
   @Override
-  public String toString() {
+  public @NotNull String toString() {
     return "stations=[" + getStations().stream().map(CheckiOStation::toString).collect(Collectors.joining("\n")) + "]";
   }
 
@@ -45,8 +45,4 @@ public class CheckiOCourse extends Course {
     return CHECKIO_TYPE;
   }
 
-  @Override
-  public boolean isViewAsEducatorEnabled() {
-    return false;
-  }
 }

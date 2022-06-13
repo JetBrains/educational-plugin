@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.newproject
 
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
 
 /**
@@ -34,9 +34,6 @@ class JetBrainsAcademyCourse : Course() {
     get() = FEATURED_LANGUAGES.mapNotNull { languageId ->
       CourseCompatibilityProviderEP.find(languageId, DEFAULT_ENVIRONMENT)?.technologyName
     }
-
-  override val isViewAsEducatorEnabled: Boolean
-    get() = false
 
   companion object {
     private val FEATURED_LANGUAGES = listOf(

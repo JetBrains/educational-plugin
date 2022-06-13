@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.course
 
-import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
 
@@ -13,6 +12,4 @@ class StepikCourse : EduCourse() {
   var isAdaptive: Boolean = false
 
   override val itemType: String = StepikNames.STEPIK_TYPE
-  override val isViewAsEducatorEnabled: Boolean
-    get() = ApplicationManager.getApplication().isInternal
 }

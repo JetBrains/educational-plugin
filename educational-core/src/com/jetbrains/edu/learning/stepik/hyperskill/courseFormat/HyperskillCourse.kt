@@ -118,9 +118,6 @@ class HyperskillCourse : Course {
 
   override val itemType: String = HYPERSKILL
 
-  override val isViewAsEducatorEnabled: Boolean
-    get() = false
-
   // lexicographical order
   companion object {
     val SUPPORTED_STEP_TYPES: Set<String> = setOf(

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.lang.Language
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLanguage
@@ -145,9 +144,6 @@ abstract class Course : LessonContainer() {
 
   open val icon: Icon
     get() = EducationalCoreIcons.CourseTree
-
-  open val isViewAsEducatorEnabled: Boolean
-    get() = ApplicationManager.getApplication().isInternal
 
   open val isStepikRemote: Boolean
     get() = false

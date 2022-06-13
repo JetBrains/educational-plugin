@@ -77,9 +77,6 @@ open class CodeforcesCourse : Course {
   override val checkAction: CheckAction
     get() = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
 
-  override val isViewAsEducatorEnabled: Boolean
-    get() = false
-
   override val compatibility: CourseCompatibility
     get() = CourseCompatibility.Compatible
 

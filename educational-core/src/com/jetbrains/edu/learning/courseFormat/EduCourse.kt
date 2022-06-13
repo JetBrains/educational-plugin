@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import java.util.*
@@ -49,8 +48,7 @@ open class EduCourse : Course() {
     updateDate = Date(0)
   }
 
-  override val isViewAsEducatorEnabled: Boolean
-    get() = super.isViewAsEducatorEnabled &&
-            dataHolder.getUserData(CCCreateCoursePreviewDialog.IS_COURSE_PREVIEW_KEY) != true
+  var isPreview: Boolean = false
+  var isLocalCourse: Boolean = false
 
 }

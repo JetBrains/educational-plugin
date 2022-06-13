@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.CommonBundle
 import com.intellij.ide.plugins.newui.ColorButton
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -161,7 +163,7 @@ class EditCourseButton(errorHandler: (Course, CourseMode) -> Unit) : StartCourse
     setWidth72(this)
   }
 
-  override fun isVisible(course: Course) = course.isViewAsEducatorEnabled
+  override fun isVisible(course: Course) = course is EduCourse && ApplicationManager.getApplication().isInternal && !course.isPreview
 }
 
 /**
@@ -202,7 +204,7 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
     addListener(course)
   }
 
-  fun addListener(course: Course) {
+  private fun addListener(course: Course) {
     listener?.let { removeActionListener(listener) }
     isVisible = isVisible(course.course)
     if (isVisible) {

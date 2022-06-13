@@ -92,7 +92,6 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     layoutComponents()
-    @Suppress("LeakingThis")
     setButtonsEnabled(canStartCourse())
 
     ApplicationManager.getApplication()
@@ -234,12 +233,12 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     buttonsPanel.setButtonsEnabled(canStartCourse)
   }
 
-  fun canStartCourse(): Boolean = errorState.courseCanBeStarted
+  private fun canStartCourse(): Boolean = errorState.courseCanBeStarted
 
   private fun joinCourse(course: Course, courseMode: CourseMode) {
     val currentLocation = locationString
     val locationErrorState = when {
-      // if it's null it means there's no location field and it's ok
+      // if it's null it means there's no location field, and it's ok
       currentLocation == null -> ErrorState.None
       currentLocation.isEmpty() -> ErrorState.EmptyLocation
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(currentLocation))) -> ErrorState.InvalidLocation
