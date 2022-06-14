@@ -1,5 +1,3 @@
-import de.undercouch.gradle.tasks.download.DownloadAction
-import de.undercouch.gradle.tasks.download.DownloadSpec
 import groovy.util.Node
 import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
