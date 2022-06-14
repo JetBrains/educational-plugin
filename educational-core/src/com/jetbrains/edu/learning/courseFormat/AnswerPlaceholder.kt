@@ -1,9 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.ui.ColorUtil
-import com.intellij.ui.JBColor
-import java.awt.Color
-
 class AnswerPlaceholder {
   var offset: Int = -1
 
@@ -111,34 +107,5 @@ class AnswerPlaceholder {
 
     val sectionPrefix = if (section != null) "${section.name}#" else ""
     return "$sectionPrefix${lesson.name}#${task.name}#${taskFile.name}[$offset, $endOffset]"
-  }
-
-  fun getColor(): JBColor {
-    return when (status) {
-      CheckStatus.Solved -> {
-        val colorLight = createColor("26993D", 90, JBColor.LIGHT_GRAY)
-        val colorDark = createColor("47CC5E", 82, JBColor.LIGHT_GRAY)
-        JBColor(colorLight, colorDark)
-      }
-      CheckStatus.Failed -> {
-        val colorLight = createColor("CC0000", 64, JBColor.GRAY)
-        val colorDark = createColor("FF7373", 90, JBColor.GRAY)
-        JBColor(colorLight, colorDark)
-      }
-      else -> getDefaultPlaceholderColor()
-    }
-  }
-
-  private fun createColor(str: String, alpha: Int, defaultValue: Color): Color {
-    val color = ColorUtil.fromHex(str, defaultValue)
-    return ColorUtil.toAlpha(color, alpha)
-  }
-
-  private fun getDefaultPlaceholderColor(): JBColor {
-    var colorLight = ColorUtil.fromHex("284B73", JBColor.GRAY)
-    colorLight = ColorUtil.toAlpha(colorLight, 64)
-    var colorDark = ColorUtil.fromHex("A1C1E6", JBColor.GRAY)
-    colorDark = ColorUtil.toAlpha(colorDark, 72)
-    return JBColor(colorLight, colorDark)
   }
 }

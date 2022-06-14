@@ -10,16 +10,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.AbstractPainter
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.IdeGlassPaneUtil
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 import com.intellij.ui.scale.JBUIScale
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler
 import org.jetbrains.annotations.TestOnly
-import java.awt.BasicStroke
-import java.awt.Component
-import java.awt.Graphics2D
-import java.awt.Shape
+import java.awt.*
 
 object PlaceholderPainter {
 
@@ -94,6 +94,32 @@ object PlaceholderPainter {
       .filterIsInstance<TextEditor>()
       .filter { it.file == file }
       .map { it.editor }
+  }
+  private fun AnswerPlaceholder.getColor(): JBColor {
+    return when (status) {
+      CheckStatus.Solved -> {
+        val colorLight = createColor("26993D", 90, JBColor.LIGHT_GRAY)
+        val colorDark = createColor("47CC5E", 82, JBColor.LIGHT_GRAY)
+        JBColor(colorLight, colorDark)
+      }
+      CheckStatus.Failed -> {
+        val colorLight = createColor("CC0000", 64, JBColor.GRAY)
+        val colorDark = createColor("FF7373", 90, JBColor.GRAY)
+        JBColor(colorLight, colorDark)
+      }
+      else -> getDefaultPlaceholderColor()
+    }
+  }
+
+  private fun getDefaultPlaceholderColor(): JBColor {
+    val colorLight = createColor("284B73", 64, JBColor.GRAY)
+    val colorDark = createColor("A1C1E6", 72, JBColor.GRAY)
+    return JBColor(colorLight, colorDark)
+  }
+
+  private fun createColor(str: String, alpha: Int, defaultValue: Color): Color {
+    val color = ColorUtil.fromHex(str, defaultValue)
+    return ColorUtil.toAlpha(color, alpha)
   }
 
   private fun isVisible(shape: Shape, editor: Editor): Boolean {
