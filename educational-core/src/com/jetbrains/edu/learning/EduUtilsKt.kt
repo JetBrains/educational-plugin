@@ -10,7 +10,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
-import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import java.util.concurrent.Callable
@@ -36,7 +35,10 @@ object EduUtilsKt {
     // Markdown parser is supposed to work with normalized text from document
     val normalizedText = StringUtil.convertLineSeparators(markdownText)
 
-    val flavour = GFMFlavourDescriptor()
+    // org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor considers links starting
+    // with "^(vbscript|javascript|file|data):" unsafe and converts them into "#"
+    // if `useSafeLinks` is `true`
+    val flavour = getGFMFlavourDescriptor()
     val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdownText)
 
     return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()

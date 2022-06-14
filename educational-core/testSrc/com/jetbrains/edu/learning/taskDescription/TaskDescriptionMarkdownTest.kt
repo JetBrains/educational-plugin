@@ -40,6 +40,14 @@ class TaskDescriptionMarkdownTest : EduTestCase() {
     </body>
   """)
 
+  fun `test text with links`() = doTest("""
+    [file_link](file://lesson1/task1/Task.txt)
+    [course_file_link](course://lesson1/task1/Task.txt)
+  """, """
+    <body><p><a href="file://lesson1/task1/Task.txt">file_link</a>
+    <a href="course://lesson1/task1/Task.txt">course_file_link</a></p></body>
+  """)
+
   private fun doTest(@Language("Markdown") descriptionText: String, @Language("HTML") expectedText: String) {
     val first = taskWithFile(descriptionText.trimIndent())
     val actualText = EduUtils.getTaskTextFromTask(project, first)
