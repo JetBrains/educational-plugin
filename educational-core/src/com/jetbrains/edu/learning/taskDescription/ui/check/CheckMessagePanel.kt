@@ -14,6 +14,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.ui.EduColors
@@ -68,8 +69,8 @@ class CheckMessagePanel private constructor() : JPanel() {
   }
 
   private fun setDiff(diff: CheckResultDiff) {
-    val expected = createLabeledComponent(diff.expected, "Expected")
-    val actual = createLabeledComponent(diff.actual, "Actual")
+    val expected = createLabeledComponent(diff.expected, EduCoreBundle.message("compare.outputs.expected"))
+    val actual = createLabeledComponent(diff.actual, EduCoreBundle.message("compare.outputs.actual"))
     UIUtil.mergeComponentsWithAnchor(expected, actual)
 
     add(expected)

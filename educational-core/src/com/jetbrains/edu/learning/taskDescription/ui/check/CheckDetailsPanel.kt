@@ -81,7 +81,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     addActionLinks(course, linksPanel, 16, 0)
 
     if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
+      val showMoreInfo = LightColoredActionLink(EduCoreBundle.message("hyperskill.review.topics.action.link"), SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
@@ -118,7 +118,9 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     }
 
     if (checkResult.diff != null) {
-      val compareOutputs = LightColoredActionLink("Compare Outputs...", CompareOutputsAction(project, checkResult.diff))
+      //suppressing capitalization because LightColoredActionLink's base class requires Sentence capitalization for the parameter
+      @Suppress("DialogTitleCapitalization")
+      val compareOutputs = LightColoredActionLink(EduCoreBundle.message("label.compare.outputs"), CompareOutputsAction(project, checkResult.diff))
       answerHintsPanel.value.add(compareOutputs)
       if (task is CodeforcesTask) {
         answerHintsPanel.value.add(createCodeforcesMarkAsCompletedLink())
@@ -147,6 +149,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null as String?) {
     private var outputShown = false
+    //suppressing capitalization because LightColoredActionLink's base class requires Sentence capitalization for the parameter
+    @Suppress("DialogTitleCapitalization")
     val actionLink: ActionLink = LightColoredActionLink(EduCoreBundle.message("label.full.output.show"), this)
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -186,8 +190,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     override fun actionPerformed(e: AnActionEvent) {
       val expected = DiffContentFactory.getInstance().create(diff.expected)
       val actual = DiffContentFactory.getInstance().create(diff.actual)
-      val request = SimpleDiffRequest(diff.title, expected, actual, EduCoreBundle.message("action.compare.outputs.expected"),
-                                      EduCoreBundle.message("action.compare.outputs.actual"))
+      val request = SimpleDiffRequest(diff.title, expected, actual, EduCoreBundle.message("compare.outputs.expected"),
+                                      EduCoreBundle.message("compare.outputs.actual"))
       DiffManager.getInstance().showDiff(project, request, DiffDialogHints.FRAME)
     }
   }

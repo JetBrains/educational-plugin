@@ -2,12 +2,13 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class TopPanel(linkText: String, action: DumbAwareAction) : JPanel(BorderLayout()) {
+class TopPanel(@Suppress("UnstableApiUsage") @NlsContexts.LinkLabel linkText: String, action: DumbAwareAction) : JPanel(BorderLayout()) {
 
   val actionLink = LightColoredActionLink(linkText, action, AllIcons.Actions.Back)
 

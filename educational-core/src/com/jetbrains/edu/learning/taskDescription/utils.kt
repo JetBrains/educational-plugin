@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.ui.components.labels.ActionLink
@@ -102,7 +103,6 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
     lastIndex += shortcutText.length
   }
 }
-
 
 fun processYoutubeLink(text: String, taskId: Int): String {
   val document = Jsoup.parse(text)
@@ -237,7 +237,11 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   }
 }
 
-fun createActionLink(actionText: String, actionId: String, top: Int = 9, left: Int = 10): ActionLink {
+fun createActionLink(@Suppress("UnstableApiUsage") @LinkLabel actionText: String,
+                     actionId: String,
+                     top: Int = 9,
+                     left: Int = 10
+): ActionLink {
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
   link.border = JBUI.Borders.empty(top, left, 0, 0)
   return link
