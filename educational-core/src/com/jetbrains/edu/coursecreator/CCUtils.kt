@@ -30,7 +30,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -38,7 +37,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
-
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.*
@@ -137,7 +135,7 @@ object CCUtils {
   }
 
   /**
-   * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [course].
+   * Replaces placeholder texts with [AnswerPlaceholder.possibleAnswer]` for each task file in [course].
    * Note, it doesn't affect files in file system
    */
   @JvmStatic
@@ -165,7 +163,7 @@ object CCUtils {
   }
 
   /**
-   * Replaces placeholder texts with [AnswerPlaceholder.getPossibleAnswer]` for each task file in [task].
+   * Replaces placeholder texts with [AnswerPlaceholder.possibleAnswer]` for each task file in [task].
    * Note, it doesn't affect files in file system
    */
   fun initializeTaskPlaceholders(task: Task, project: Project) {
@@ -310,27 +308,6 @@ object CCUtils {
       }
     }
   }
-
-  @JvmStatic
-  fun pushAvailable(parent: ItemContainer, itemToPush: StudyItem, project: Project): Boolean {
-    for (item in parent.items) {
-      if (item === itemToPush) {
-        continue
-      }
-      if (item.id == 0 && item.index < itemToPush.index) {
-        showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.upload"),
-                              EduCoreBundle.message("course.creator.stepik.previous.siblings.are.not.published"))
-        return false
-      }
-      if (item.id != 0 && item.index > itemToPush.index) {
-        showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.upload"),
-                              EduCoreBundle.message("course.creator.stepik.next.siblings.are.affected"))
-        return false
-      }
-    }
-    return true
-  }
-
 
   @JvmStatic
   fun showLoginNeededNotification(project: Project, failedActionTitle: String, authAction: () -> Unit) {
