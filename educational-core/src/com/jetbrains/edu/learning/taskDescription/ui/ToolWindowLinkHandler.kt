@@ -31,7 +31,7 @@ open class ToolWindowLinkHandler(val project: Project) {
   protected open fun processExternalLink(url: String) = EduBrowser.getInstance().browse(url)
 
   /**
-   * @return false if need to continue (for example open external link at task description), otherwise true
+   * @return false to continue (for example open external link at task description), otherwise true
    */
   open fun process(url: String, referUrl: String? = null): Boolean {
     when {
@@ -45,11 +45,6 @@ open class ToolWindowLinkHandler(val project: Project) {
 
   companion object {
     private val LOG = Logger.getInstance(ToolWindowLinkHandler::class.java)
-
-    @JvmStatic
-    fun isRelativeLink(href: String): Boolean {
-      return !href.startsWith("http")
-    }
 
     @JvmStatic
     fun processPsiElementLink(project: Project, url: String) {
