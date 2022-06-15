@@ -85,7 +85,7 @@ class Step {
                 defaultImpl = PyCharmStepOptions::class)
   @JsonSubTypes(JsonSubTypes.Type(PyCharmStepOptions::class, name = PYCHARM),
                 JsonSubTypes.Type(ChoiceStepOptions::class, name = CHOICE))
-  // this property is named differently in get and post queries so we need to define different
+  // this property is named differently in get and post queries, so we need to define different
   // names for getter (POST queries as data is serialized for query payload)
   // and setter (GET queries as data is deserialized from response)
   @get:JsonProperty(SOURCE, access = JsonProperty.Access.READ_ONLY)
@@ -97,7 +97,7 @@ class Step {
   constructor(project: Project, task: Task) {
     CourseArchiveCreator.addDescriptions(project, task)
     text = if (task.descriptionFormat == DescriptionFormat.MD && task.course !is HyperskillCourse) {
-      // convert to html because Stepik web site can't display markdown
+      // convert to html because Stepik website can't display markdown
       EduUtilsKt.convertToHtml(task.descriptionText)
     }
     else task.descriptionText
@@ -186,7 +186,7 @@ open class PyCharmStepOptions : StepOptions {
     files = collectTaskFiles(project, task)
     taskType = task.itemType
     lessonType = if (task.lesson is FrameworkLesson) FRAMEWORK else null
-    @Suppress("deprecation")
+    @Suppress("DEPRECATION")
     customPresentableName = task.customPresentableName
     solutionHidden = task.solutionHidden
   }

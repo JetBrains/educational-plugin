@@ -52,7 +52,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
             HyperskillConnector.getInstance().loadStages(hyperskillCourse)
           }
           hyperskillCourse.init(false)
-          val projectLesson = hyperskillCourse.getProjectLesson()!!
+          val projectLesson = hyperskillCourse.getProjectLesson() ?: return false
           val courseDir = hyperskillCourse.getDir(project.courseDir) ?: return false
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
           GeneratorUtils.createAdditionalFiles(project, course, courseDir)

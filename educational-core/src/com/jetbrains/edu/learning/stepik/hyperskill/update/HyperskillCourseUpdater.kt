@@ -240,7 +240,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
     else {
       // With current logic of next/prev action for hyperskill tasks
-      // update of non test files makes sense only for first task
+      // update of non-test files makes sense only for first task
       if (task.index == 1 && !task.hasChangedFiles(project)) {
         updateTaskFiles(task, remoteTask.taskFiles, true)
       }

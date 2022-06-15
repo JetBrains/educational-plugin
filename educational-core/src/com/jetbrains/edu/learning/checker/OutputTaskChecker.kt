@@ -64,9 +64,7 @@ open class OutputTaskChecker(
   }
 
   private fun getOutputFile(): VirtualFile? {
-    val outputFile = task.findTestDirs(project)
-      .mapNotNull { it.findChild(OUTPUT_PATTERN_NAME) }
-      .firstOrNull()
+    val outputFile = task.findTestDirs(project).firstNotNullOfOrNull { it.findChild(OUTPUT_PATTERN_NAME) }
     return outputFile ?: task.getDir(project.courseDir)?.findChild(OUTPUT_PATTERN_NAME)
   }
 

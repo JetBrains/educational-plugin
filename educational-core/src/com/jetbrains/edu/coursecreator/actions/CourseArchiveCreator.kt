@@ -81,7 +81,7 @@ class CourseArchiveCreator(
       if (!isUnitTestMode) {
         LOG.error("Failed to create course archive: ${e.message}")
       }
-      val yamlFile = e.placeholder.taskFile?.task?.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return e.message
+      val yamlFile = e.placeholder.taskFile.task?.getDir(project.courseDir)?.findChild(TASK_CONFIG) ?: return e.message
       FileEditorManager.getInstance(project).openFile(yamlFile, true)
       return "${e.message}\n\n${e.placeholderInfo}"
     }
@@ -134,7 +134,7 @@ class CourseArchiveCreator(
   }
 
   /**
-   * @return null if course archive was created successfully, non-empty error message otherwise
+   * @return null when course archive was created successfully, non-empty error message otherwise
    */
   fun createArchive(): String? {
     FileDocumentManager.getInstance().saveAllDocuments()

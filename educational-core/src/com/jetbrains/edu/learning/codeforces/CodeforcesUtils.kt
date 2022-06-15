@@ -17,7 +17,7 @@ object CodeforcesUtils {
     return findChild(task.inputFileName) != null && findChild(task.outputFileName) != null
   }
 
-  fun VirtualFile.isTestDataFolder(project: Project, task: CodeforcesTask): Boolean {
+  private fun VirtualFile.isTestDataFolder(project: Project, task: CodeforcesTask): Boolean {
     val taskDir = task.getDir(project.courseDir) ?: return false
     return name == CodeforcesNames.TEST_DATA_FOLDER && parent == taskDir
   }
