@@ -102,12 +102,12 @@
     {
       "languageIdWithVersion": "Kotlin 1.5",
       "programTypeId": "72",
-      "version": "1.5.10"
+      "version": "1.5"
     },
     {
       "languageIdWithVersion": "Kotlin 1.4",
       "programTypeId": "48",
-      "version": "1.4.10"
+      "version": "1.4"
     }
   ],
   "Scala":
