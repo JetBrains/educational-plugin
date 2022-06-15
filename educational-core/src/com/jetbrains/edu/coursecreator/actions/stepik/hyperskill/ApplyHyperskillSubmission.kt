@@ -33,7 +33,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
       private var errorText: String? = null
 
       override fun checkInput(inputString: String?): Boolean {
-        errorText = if (!StringUtil.isNotNegativeNumber(inputString))
+        errorText = if (inputString?.toIntOrNull() == null || !StringUtil.isNotNegativeNumber(inputString))
           EduCoreBundle.message("error.submission.invalid.id")
         else null
 
@@ -58,11 +58,19 @@ class ApplyHyperskillSubmission : DumbAwareAction(
     computeUnderProgress(project, EduCoreBundle.message("submission.applying"), false) {
       val submission = HyperskillConnector.getInstance().getSubmission(id).onError {
         runInEdt {
-          Messages.showErrorDialog(EduCoreBundle.message("error.submission.failed.to.retrieve", id),
+          Messages.showErrorDialog(EduCoreBundle.message("error.submission.failed.to.retrieve", idText),
                                    EduCoreBundle.message("error.submission.not.applied"))
         }
         return@computeUnderProgress
       }
+      if (submission.taskId != task.id) {
+        runInEdt {
+          Messages.showErrorDialog(EduCoreBundle.message("error.submission.not.suitable", submission.taskId.toString(), task.id.toString()),
+                                   EduCoreBundle.message("error.submission.not.applied"))
+        }
+        return@computeUnderProgress
+      }
+
       HyperskillSolutionLoader.getInstance(project).updateTask(project, task, listOf(submission), true)
     }
   }
