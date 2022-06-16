@@ -1,12 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.findDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
@@ -184,11 +182,6 @@ abstract class Task : StudyItem {
       return EducationalCoreIcons.TaskSolved
     }
     return if (checkStatus === CheckStatus.Solved) EducationalCoreIcons.TaskSolved else EducationalCoreIcons.TaskFailed
-  }
-
-  override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    val lessonDir = lesson.getDir(baseDir)
-    return findDir(lessonDir)
   }
 
   companion object {

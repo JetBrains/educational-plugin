@@ -10,7 +10,6 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -28,7 +27,7 @@ open class CCCreateAnswerPlaceholderDialog(
   private val placeholder: AnswerPlaceholder
 ) : DialogWrapper(project, true) {
 
-  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText ?: DEFAULT_PLACEHOLDER_TEXT)
+  private val panel: CCAddAnswerPlaceholderPanel = CCAddAnswerPlaceholderPanel(placeholder.placeholderText)
   private val dependencyPathField: JBTextField = JBTextField(0)
   private val visibilityCheckBox: JBCheckBox = JBCheckBox(
     EduCoreBundle.message("label.visible"),

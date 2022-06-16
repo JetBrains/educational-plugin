@@ -112,10 +112,6 @@ abstract class Course : LessonContainer() {
     return sections.firstOrNull { predicate(it) }
   }
 
-  override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    return baseDir
-  }
-
   override val course: Course
     get() = this
 

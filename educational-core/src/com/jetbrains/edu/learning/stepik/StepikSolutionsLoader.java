@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -597,7 +598,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionsMap) {
-    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
+    VirtualFile taskDir = StudyItemExtKt.getDir(task, OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) {
       return;
     }

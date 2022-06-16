@@ -3,6 +3,7 @@ package com.jetbrains.edu.yaml.completion
 import com.intellij.openapi.application.runWriteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class YamlPathCompletionTest : YamlCompletionTestBase() {

@@ -5,6 +5,7 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.taskDescription.IMG_TAG
 import com.jetbrains.edu.learning.taskDescription.SCRIPT_TAG
 import com.jetbrains.edu.learning.taskDescription.SRC_ATTRIBUTE

@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredExcepti
 import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle

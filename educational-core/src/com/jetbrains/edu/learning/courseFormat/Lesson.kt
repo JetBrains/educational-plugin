@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -52,16 +51,6 @@ open class Lesson : ItemContainer() {
 
   val container: LessonContainer
     get() = section ?: course
-
-  override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    return if (parent is Section) {
-      val sectionDir = baseDir.findChild(parent.name) ?: error("Section dir for lesson not found")
-      sectionDir.findChild(name)
-    }
-    else {
-      baseDir.findChild(name)
-    }
-  }
 
   fun visitTasks(visit: (Task) -> Unit) {
     taskList.forEach(visit)

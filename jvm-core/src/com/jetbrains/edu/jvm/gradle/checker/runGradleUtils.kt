@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.Companion.STUDY_PREFIX
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
@@ -42,8 +43,6 @@ const val EDUCATIONAL_RUN_PROPERTY = "-PeducationalRun=true"
 const val CHECKER_VERSION = "#educational_plugin_checker_version "
 
 const val TEST_TASK_NAME = "test"
-
-const val TESTS_ARG = "--tests"
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)

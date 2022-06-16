@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -61,7 +62,7 @@ object YamlDeepLoader {
       }
     }
 
-    // we init course before setting description and remote info, as we have to set parent item
+    // we initialize course before setting description and remote info, as we have to set parent item
     // to obtain description/remote config file to set info from
     deserializedCourse.init(true)
     deserializedCourse.loadRemoteInfoRecursively(project)

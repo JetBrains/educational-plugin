@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import java.util.*
 
 /**
@@ -57,8 +56,6 @@ abstract class StudyItem() {
   }
 
   abstract fun init(parentItem: ItemContainer, isRestarted: Boolean)
-
-  abstract fun getDir(baseDir: VirtualFile): VirtualFile?
 
   fun generateId() {
     if (id == 0) {

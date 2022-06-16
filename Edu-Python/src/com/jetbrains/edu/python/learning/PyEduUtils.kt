@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.python.packaging.PyPackageManagerUI
@@ -49,7 +50,7 @@ fun excludeFromArchive(file: VirtualFile): Boolean {
 fun installRequiredPackages(project: Project, sdk: Sdk) {
   for (module in ModuleManager.getInstance(project).modules) {
     val requirements = runReadAction { PyPackageUtil.getRequirementsFromTxt(module) }
-    if (requirements == null || requirements.isEmpty()) {
+    if (requirements.isNullOrEmpty()) {
       continue
     }
     PyPackageManagerUI(project, sdk, object : PyPackageManagerUI.Listener {

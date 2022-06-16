@@ -8,6 +8,7 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,8 @@ public class GoCodeforcesRunConfiguration extends GoApplicationConfiguration imp
 
     TaskFile taskFile = checkRequired(getTaskFile(file, project), "Unable to find taskFile for virtual file " + file.getPath());
     Task task = taskFile.getTask();
-    VirtualFile taskDir = checkRequired(task.getDir(getCourseDir(project)), "Unable to find taskDir for task " + task.getName());
+    VirtualFile taskDir = checkRequired(StudyItemExtKt.getDir(task, getCourseDir(project)),
+                                        "Unable to find taskDir for task " + task.getName());
     setWorkingDirectory(taskDir.getPath());
   }
 

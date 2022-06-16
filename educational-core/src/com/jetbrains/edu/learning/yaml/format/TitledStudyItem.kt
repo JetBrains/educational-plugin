@@ -14,10 +14,6 @@ class TitledStudyItem(title: String) : StudyItem(title) {
     throw NotImplementedError()
   }
 
-  override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    throw NotImplementedError()
-  }
-
   override val course: Course
     get() = throw NotImplementedError()
   override val itemType: String

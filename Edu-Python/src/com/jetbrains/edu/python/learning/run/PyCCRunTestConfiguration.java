@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.VirtualFileExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
 import com.jetbrains.python.run.PythonRunConfiguration;
@@ -73,7 +74,7 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
     if (task == null) {
       throw new RuntimeConfigurationException(EduPythonBundle.message("error.invalid.path.to.file"));
     }
-    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(myProject));
+    VirtualFile taskDir = StudyItemExtKt.getDir(task, OpenApiExtKt.getCourseDir(myProject));
     if (taskDir == null) {
       throw new RuntimeConfigurationException(EduPythonBundle.message("error.invalid.path.to.file"));
     }

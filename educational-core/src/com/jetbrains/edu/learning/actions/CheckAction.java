@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
@@ -224,7 +225,7 @@ public class CheckAction extends ActionWithProgressIcon implements DumbAware {
     @NotNull
     private CheckResult localCheck(@NotNull ProgressIndicator indicator) {
       if (myChecker == null) return CheckResult.NO_LOCAL_CHECK;
-      VirtualFile taskDir = myTask.getDir(OpenApiExtKt.getCourseDir(myProject));
+      VirtualFile taskDir = StudyItemExtKt.getDir(myTask, OpenApiExtKt.getCourseDir(myProject));
       if (taskDir == null) return CheckResult.NO_LOCAL_CHECK;
       List<TaskFile> testFiles = getInvisibleTestFiles();
       if (myTask.getCourse().isStudy()) {

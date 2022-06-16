@@ -12,13 +12,14 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration
 
 class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    // In general, python plugin can create run configuration for a directory
+    // In general, python plugin can create run configuration for a directory,
     // but it can skip some test files if they haven't proper names
     return createTestConfigurationsForTestFiles()
   }

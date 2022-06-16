@@ -14,9 +14,6 @@ class RemoteStudyItem : StudyItem() {
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
     throw NotImplementedError()
   }
-  override fun getDir(baseDir: VirtualFile): VirtualFile? {
-    throw NotImplementedError()
-  }
 
   override val course: Course
     get() = throw NotImplementedError()

@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ItemContainer;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
@@ -189,7 +190,7 @@ public class CCStepikConnector {
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
     if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
-    VirtualFile taskDir = task.getDir(OpenApiExtKt.getCourseDir(project));
+    VirtualFile taskDir = StudyItemExtKt.getDir(task, OpenApiExtKt.getCourseDir(project));
     if (taskDir == null) return false;
 
     final int responseCode = StepikConnector.getInstance().updateTask(project, task);

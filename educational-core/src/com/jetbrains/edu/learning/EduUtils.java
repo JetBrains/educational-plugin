@@ -39,6 +39,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -133,12 +134,12 @@ public class EduUtils {
       return null;
     }
     Lesson lesson = task.getLesson();
-    VirtualFile lessonDir = lesson.getDir(OpenApiExtKt.getCourseDir(project));
+    VirtualFile lessonDir = StudyItemExtKt.getDir(lesson, OpenApiExtKt.getCourseDir(project));
     if (lessonDir == null) {
       return null;
     }
     VirtualFile taskDirectory = lesson instanceof FrameworkLesson ? lessonDir.findChild(task.getName())
-                                                                  : task.getDir(OpenApiExtKt.getCourseDir(project));
+                                                                  : StudyItemExtKt.getDir(task, OpenApiExtKt.getCourseDir(project));
     String text = getTaskTextByTaskName(task, taskDirectory);
     if (text == null) {
       LOG.warn("Cannot find task description file for a task: " + task.getName());

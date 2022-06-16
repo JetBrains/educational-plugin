@@ -3,6 +3,7 @@ package com.jetbrains.edu.yaml.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.yaml.configFileName
 import com.jetbrains.edu.yaml.YamlCodeInsightTest
 import kotlin.reflect.KClass

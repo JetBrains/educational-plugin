@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeContent
@@ -50,7 +51,7 @@ object YamlLoader {
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
-      // tis code is called if item wasn't loaded because of broken config
+      // this code is called if item wasn't loaded because of broken config
       // and now if config fixed, we'll add item to a parent
       if (deserializedItem is Course) {
         StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)
