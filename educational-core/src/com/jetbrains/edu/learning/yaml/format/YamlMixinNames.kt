@@ -129,6 +129,8 @@ object YamlMixinNames {
   const val SELECTED_OPTIONS = "selected_options"
   const val QUIZ_HEADER = "quiz_header"
 
+  const val LOCAL_CHECK = "local_check"
+
   // video task
   @NlsSafe
   const val THUMBNAIL = "thumbnail"

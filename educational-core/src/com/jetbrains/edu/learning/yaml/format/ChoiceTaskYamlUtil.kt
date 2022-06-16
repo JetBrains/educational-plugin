@@ -19,12 +19,13 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_MULTIPLE_CHOICE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LOCAL_CHECK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, QUIZ_HEADER, FILES, FEEDBACK_LINK, TAGS)
 abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
@@ -45,6 +46,9 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
   @JsonProperty(QUIZ_HEADER)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = QuizHeaderFilter::class)
   private var quizHeader: String = ""
+
+  @JsonProperty(LOCAL_CHECK)
+  var canCheckLocally: Boolean = true
 }
 
 /**
