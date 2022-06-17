@@ -258,8 +258,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     @VisibleForTesting
     val buttons: List<CourseButtonBase> = mutableListOf(
       StartCourseButton(joinCourse = { course, courseMode -> joinCourse(course, courseMode) }),
-      OpenCourseButton(),
-      EditCourseButton { course, courseMode -> joinCourse(course, courseMode) }
+      OpenCourseButton()
     )
 
     init {

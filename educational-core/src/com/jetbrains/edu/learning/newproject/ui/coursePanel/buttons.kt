@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 
-import com.intellij.CommonBundle
 import com.intellij.ide.plugins.newui.ColorButton
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
@@ -17,7 +15,6 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -124,8 +121,17 @@ class OpenCourseButton : CourseButtonBase() {
   override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().hasCourse(course)
 }
 
-class StartCourseButton(joinCourse: (Course, CourseMode) -> Unit, fill: Boolean = true) : StartCourseButtonBase(joinCourse, fill) {
-  override val courseMode = CourseMode.STUDENT
+/**
+ * inspired by [com.intellij.ide.plugins.newui.InstallButton]
+ */
+class StartCourseButton(
+  private val joinCourse: (Course, CourseMode) -> Unit,
+  fill: Boolean = false
+) : CourseButtonBase(fill) {
+
+  override fun actionListener(course: Course) = ActionListener {
+    joinCourse(course, CourseMode.STUDENT)
+  }
 
   override fun isVisible(course: Course): Boolean {
     if (CoursesStorage.getInstance().hasCourse(course)) {
@@ -133,8 +139,8 @@ class StartCourseButton(joinCourse: (Course, CourseMode) -> Unit, fill: Boolean 
     }
 
     if (course is CodeforcesCourse) {
-      val isRegistrationPossible = course.isRegistrationOpen 
-                                   && course.isUpcomingContest 
+      val isRegistrationPossible = course.isRegistrationOpen
+                                   && course.isUpcomingContest
                                    && !CodeforcesConnector.getInstance().isUserRegisteredForContest(course.id)
       return isRegistrationPossible || course.isOngoing || course.isPastContest
     }
@@ -152,33 +158,6 @@ class StartCourseButton(joinCourse: (Course, CourseMode) -> Unit, fill: Boolean 
     val languageSettings = courseInfo.languageSettings()
     return languageSettings?.validate(courseInfo.course, courseInfo.location())
   }
-
-}
-
-class EditCourseButton(errorHandler: (Course, CourseMode) -> Unit) : StartCourseButtonBase(errorHandler) {
-  override val courseMode = CourseMode.EDUCATOR
-
-  init {
-    text = CommonBundle.message("button.edit")
-    setWidth72(this)
-  }
-
-  override fun isVisible(course: Course) = course is EduCourse && ApplicationManager.getApplication().isInternal && !course.isPreview
-}
-
-/**
- * inspired by [com.intellij.ide.plugins.newui.InstallButton]
- */
-abstract class StartCourseButtonBase(
-  private val joinCourse: (Course, CourseMode) -> Unit,
-  fill: Boolean = false
-) : CourseButtonBase(fill) {
-  abstract val courseMode: CourseMode
-
-  override fun actionListener(course: Course) = ActionListener {
-    joinCourse(course, courseMode)
-  }
-
 }
 
 abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
