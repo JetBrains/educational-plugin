@@ -54,6 +54,7 @@ open class ImportLocalCourseAction(
                                            Messages.OK,
                                            Messages.getErrorIcon())
           if (result == Messages.NO) {
+            CoursesStorage.getInstance().removeCourseByLocation(courseMetaInfo.location)
             course.name = createUnusedName(course.name)
             doImportNewCourse(course, component)
           }
