@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -55,7 +56,7 @@ object EduConfiguratorManager {
       return allExtensions().filter { it.courseType == EduNames.PYCHARM }.map { it.language }
     }
 
-  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE, StepikNames.STEPIK_TYPE)
+  private val compatibleCourseTypes: List<String> = listOf(CourseraNames.COURSE_TYPE, StepikNames.STEPIK_TYPE, EduFormatNames.MARKETPLACE)
 
   private fun compatibleCourseType(extension: EducationalExtensionPoint<EduConfigurator<*>>, courseType: String): Boolean {
     return extension.courseType == EduNames.PYCHARM && courseType in compatibleCourseTypes
