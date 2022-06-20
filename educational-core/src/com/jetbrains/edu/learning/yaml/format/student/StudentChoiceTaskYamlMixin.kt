@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SELECTED_OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STATUS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, QUIZ_HEADER, FILES,
                    FEEDBACK_LINK, OPTIONS, STATUS, FEEDBACK, RECORD, SELECTED_OPTIONS, TAGS)
 abstract class StudentChoiceTaskYamlMixin : ChoiceTaskYamlMixin() {

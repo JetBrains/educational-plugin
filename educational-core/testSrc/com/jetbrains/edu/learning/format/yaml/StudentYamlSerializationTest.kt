@@ -171,6 +171,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |record: 1
     |selected_options:
     |- 1
+    |local_check: true
     |""".trimMargin())
   }
 
@@ -190,7 +191,7 @@ class StudentYamlSerializationTest : EduTestCase() {
       }
     }.findTask("lesson1", "task1") as ChoiceTask
     task.record = 1
-
+    task.canCheckLocally = false
     doTest(task, """
     |type: choice
     |is_multiple_choice: true
@@ -206,6 +207,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |record: 1
     |selected_options:
     |- 1
+    |local_check: false
     |""".trimMargin())
   }
 

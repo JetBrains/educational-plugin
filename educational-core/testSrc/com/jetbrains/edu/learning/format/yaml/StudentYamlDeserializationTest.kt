@@ -238,6 +238,32 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
   }
 
+  fun `test can check locally`() {
+    val yamlContent = """
+    |type: choice
+    |is_multiple_choice: false
+    |options:
+    |- text: 1
+    |  is_correct: true
+    |- text: 2
+    |  is_correct: false
+    |status: Solved
+    |record: 1
+    |selected_options:
+    |- 1
+    |local_check: false
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is ChoiceTask)
+    assertEquals(CheckStatus.Solved, task.status)
+    assertEquals(1, task.record)
+    assertEquals(false, (task as ChoiceTask).canCheckLocally)
+    assertEquals(mutableListOf(1), task.selectedVariants)
+    assertEquals(EduCoreBundle.message("check.correct.solution"), task.messageCorrect)
+    assertEquals(EduCoreBundle.message("check.incorrect.solution"), task.messageIncorrect)
+    assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+  }
+
   fun `test deserialize choice task with custom messages variants`() {
     val yamlContent = """
     |type: choice

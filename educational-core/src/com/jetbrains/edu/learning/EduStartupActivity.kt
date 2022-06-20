@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
@@ -20,13 +21,18 @@ import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog.Companion.IS_COURSE_PREVIEW_KEY
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.course.StepikCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class EduStartupActivity : StartupActivity.DumbAware {
+
+  private val YAML_MIGRATED = "Edu.Yaml.Migrate"
 
   override fun runActivity(project: Project) {
     if (!EduUtils.isEduProject(project)) return
@@ -59,6 +65,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
       }
+      migrateYaml(project, course)
 
       setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
@@ -68,6 +75,19 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
       ApplicationManager.getApplication().invokeLater {
         runWriteAction { EduCounterUsageCollector.eduProjectOpened(course) }
+      }
+    }
+  }
+
+  private fun migrateYaml(project: Project, course: Course) {
+    val propertyComponent = PropertiesComponent.getInstance(project)
+    if (propertyComponent.getBoolean(YAML_MIGRATED)) return
+    propertyComponent.setValue(YAML_MIGRATED, true)
+    if (course !is HyperskillCourse && course !is StepikCourse) return
+
+    course.visitTasks {
+      if (it is ChoiceTask) {
+        it.canCheckLocally = false
       }
     }
   }

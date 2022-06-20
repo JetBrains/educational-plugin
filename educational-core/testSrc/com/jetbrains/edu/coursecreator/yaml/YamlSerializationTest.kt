@@ -335,6 +335,7 @@ class YamlSerializationTest : YamlTestCase() {
       |files:
       |- name: Test.java
       |  visible: true
+      |local_check: true
       |""".trimMargin())
   }
 
@@ -355,6 +356,7 @@ class YamlSerializationTest : YamlTestCase() {
       |files:
       |- name: Test.java
       |  visible: true
+      |local_check: true
       |""".trimMargin())
   }
 
@@ -909,8 +911,8 @@ class YamlSerializationTest : YamlTestCase() {
       |files:
       |- name: task.txt
       |  visible: true
-      |
-    """.trimMargin())
+      |local_check: true
+      |""".trimMargin())
   }
 
   private fun doTest(item: StudyItem, expected: String) {
