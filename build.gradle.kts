@@ -79,6 +79,7 @@ val sqlPlugin = "com.intellij.database"
 val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
+val intelliLangPlugin = "org.intellij.intelliLang"
 
 val jvmPlugins = listOf(
   "java",
@@ -769,7 +770,7 @@ project(":Edu-Go") {
   intellij {
     localPath.set(null as String?)
     version.set(ideaVersion)
-    plugins.set(listOf(goPlugin))
+    plugins.set(listOf(goPlugin, intelliLangPlugin))
   }
 
   dependencies {
