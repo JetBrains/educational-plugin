@@ -189,7 +189,6 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                 compile "org.jetbrains.kotlin:kotlin-test-junit"
                 compile "junit:junit:4.12"
             }
-            compileKotlin.destinationDir = compileJava.destinationDir
             compileKotlin {
                 kotlinOptions.jvmTarget = "1.8"
             }
