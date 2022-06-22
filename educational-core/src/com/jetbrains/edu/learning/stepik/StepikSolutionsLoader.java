@@ -563,7 +563,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     Course course = task.getLesson().getCourse();
-    Language language = course.getLanguageById();
+    Language language = CourseExt.getLanguageById(course);
     if (language == null) return null;
     String version = course.getLanguageVersion();
     return findStepikSolutionForLanguage(submissions, language, version);

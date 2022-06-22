@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -653,7 +654,6 @@ class YamlDeserializationTest : YamlTestCase() {
     |""".trimMargin()
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
-    @Suppress("DEPRECATION")
     assertEquals(contentTags, task.contentTags)
   }
 

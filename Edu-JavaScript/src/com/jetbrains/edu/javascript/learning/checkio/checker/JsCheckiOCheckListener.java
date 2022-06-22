@@ -7,6 +7,7 @@ import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthCo
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.checker.CheckiOCheckListener;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
 
 public class JsCheckiOCheckListener extends CheckiOCheckListener {
@@ -22,6 +23,6 @@ public class JsCheckiOCheckListener extends CheckiOCheckListener {
 
   @Override
   protected boolean isEnabledForCourse(@NotNull CheckiOCourse course) {
-    return course.getLanguageById() == JavascriptLanguage.INSTANCE;
+    return CourseExt.getLanguageById(course) == JavascriptLanguage.INSTANCE;
   }
 }

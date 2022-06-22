@@ -65,7 +65,7 @@ import java.util.*
  * Mixin class is used to deserialize [Course] item.
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
-@Suppress("unused", "UNUSED_PARAMETER") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS)
 @JsonDeserialize(builder = CourseBuilder::class)
@@ -123,7 +123,7 @@ abstract class CourseYamlMixin {
   protected open lateinit var contentTags: List<String>
 }
 
-@Suppress("unused", "UNUSED_PARAMETER", "LateinitVarOverridesLateinitVar") // used for yaml serialization
+@Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonProperty(SUBMIT_MANUALLY)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -157,7 +157,7 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
 /**
  * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
  */
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@Suppress("unused") // used for json serialization
 @JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
@@ -174,7 +174,7 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 /**
  * Mixin class is used to deserialize remote information of [CodeforcesCourse] item.
  */
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@Suppress("unused") // used for json serialization
 @JsonPropertyOrder(TYPE, ID, UPDATE_DATE)
 abstract class CodeforcesCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 

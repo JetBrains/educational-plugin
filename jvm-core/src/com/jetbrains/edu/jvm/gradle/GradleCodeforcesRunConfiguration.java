@@ -16,6 +16,7 @@ import com.jetbrains.edu.jvm.MainFileProvider;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfigurationType.CONFIGURATION_ID;
@@ -34,7 +35,7 @@ public class GradleCodeforcesRunConfiguration extends ApplicationConfiguration i
       LOG.error("Unable to find course");
       return;
     }
-    Language language = course.getLanguageById();
+    Language language = CourseExt.getLanguageById(course);
     if (language == null) {
       LOG.error("Unable to get language for course " + course.getPresentableName());
       return;

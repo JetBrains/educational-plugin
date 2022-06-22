@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.lang.Language
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLanguage
 import com.jetbrains.edu.learning.EduLanguage.Companion.get
@@ -67,9 +65,6 @@ abstract class Course : LessonContainer() {
     require(parentItem is Course)
     super.init(parentItem, isRestarted)
   }
-
-  val languageById: Language?
-    get() = getEduLanguage().language
 
   val languageID: String
     get() = getEduLanguage().id
