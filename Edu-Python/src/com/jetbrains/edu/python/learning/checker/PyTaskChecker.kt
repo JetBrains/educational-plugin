@@ -12,8 +12,10 @@ import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.nullize
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
@@ -23,11 +25,13 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
+import java.io.IOException
 
 /**
  * Checker for legacy python courses
@@ -52,6 +56,21 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
       return CheckResult(CheckStatus.Unchecked, EduPythonBundle.message("error.solution.not.loaded"))
     }
     return super.check(indicator)
+  }
+
+  private fun Task.isValid(project: Project): Boolean {
+    val taskDir = getDir(project.courseDir) ?: return false
+    for (taskFile in taskFiles.values) {
+      val file = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+      try {
+        val text = VfsUtilCore.loadText(file)
+        if (!taskFile.isValid(text)) return false
+      }
+      catch (e: IOException) {
+        return false
+      }
+    }
+    return true
   }
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
@@ -113,7 +132,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
      * We need this hack because:
      * 1. First error is hardcoded in test_helper
      * 2. Second error could appear if educator uses third-party testing frameworks (e.g. unittest in Coursera Algorithmic Toolbox)
-     * @see com.jetbrains.edu.python.checker.PyCheckErrorsTest (SyntaxErrorFromUnittest)
+     * @see com.jetbrains.edu.python.slow.checker.PyCheckErrorsTest (SyntaxErrorFromUnittest)
      */
     private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduCoreBundle.message("check.no.tests"))
   }

@@ -1,19 +1,15 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
-import java.io.IOException
 import java.util.*
 import javax.swing.Icon
 
@@ -177,21 +173,6 @@ abstract class Task : StudyItem {
     result = 31 * result + descriptionText.hashCode()
     result = 31 * result + descriptionFormat.hashCode()
     return result
-  }
-
-  fun isValid(project: Project): Boolean {
-    val taskDir = getDir(project.courseDir) ?: return false
-    for (taskFile in _taskFiles.values) {
-      val file = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-      try {
-        val text = VfsUtilCore.loadText(file)
-        if (!taskFile.isValid(text)) return false
-      }
-      catch (e: IOException) {
-        return false
-      }
-    }
-    return true
   }
 
   open fun getIcon(): Icon {
