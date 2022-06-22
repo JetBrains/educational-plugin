@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 
 
 class ChoiceTaskCheckerTest : EduTestCase() {
@@ -111,6 +112,7 @@ class ChoiceTaskCheckerTest : EduTestCase() {
 
 
   private fun launchAction() {
-    testAction(CheckAction.ACTION_ID)
+    val task = findTask(0, 0)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 }

@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 
 abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest() {
   fun `test number task correct`() {
@@ -22,7 +23,7 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
     val task = myCourse.allTasks[2] as NumberTask
     NavigationUtils.navigateToTask(project, task)
-    testAction(CheckAction.ACTION_ID)
+    testAction(CheckAction(task.getUICheckLabel()))
     assertEquals("12", task.getInputAnswer(project))
   }
 
@@ -31,8 +32,9 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[2])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[2]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test number task validation on number`() {
@@ -49,15 +51,17 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.number.task.not.number") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[0]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test number task input is empty`() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.string.task.empty.text") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[1]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test creating placeholder`() {

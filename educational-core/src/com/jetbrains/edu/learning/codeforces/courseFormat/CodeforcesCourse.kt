@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
@@ -9,7 +8,6 @@ import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Document
 import java.time.Duration
@@ -74,8 +72,6 @@ open class CodeforcesCourse : Course {
     get() = EducationalCoreIcons.CODEFORCES_SMALL
 
   override val itemType: String = CODEFORCES_COURSE_TYPE
-  override val checkAction: CheckAction
-    get() = CheckAction(EduCoreBundle.lazyMessage("action.codeforces.run.local.tests.text"))
 
   override val compatibility: CourseCompatibility
     get() = CourseCompatibility.Compatible

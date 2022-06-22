@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE_WITH_FILE_IO
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CodeforcesTaskWithFileIO : CodeforcesTask {
   override lateinit var inputFileName: String
@@ -17,7 +15,4 @@ class CodeforcesTaskWithFileIO : CodeforcesTask {
   }
 
   override val itemType = CODEFORCES_TASK_TYPE_WITH_FILE_IO
-
-  override val checkAction: CheckAction
-    get() = CheckAction(EduCoreBundle.lazyMessage("codeforces.copy.and.submit"))
 }

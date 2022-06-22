@@ -12,8 +12,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
-import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.presentableName
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
@@ -25,7 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isTestsFile
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.selectedTaskFile
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -217,11 +214,4 @@ fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
   val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, TASK))
   val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
   return file ?: error("No task description file for $name")
-}
-
-fun Task.getUIName(): String = if (course is HyperskillCourse) {
-  if (this is CodeTask) EduCoreBundle.message("item.task.challenge") else EduCoreBundle.message("item.task.stage")
-}
-else {
-  StudyItemType.TASK_TYPE.presentableName
 }

@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.EduLanguage
 import com.jetbrains.edu.learning.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
@@ -115,9 +114,6 @@ abstract class Course : LessonContainer() {
     get() = this
 
   override val itemType: String = EduNames.PYCHARM //"PyCharm" is used here for historical reasons
-
-  open val checkAction: CheckAction
-    get() = CheckAction()
 
   val isStudy: Boolean
     get() = CourseMode.STUDENT == courseMode

@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.intellij.lang.annotations.Language
 import java.util.*
 
@@ -74,8 +75,9 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
     }
     CheckActionListener.reset()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[0]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
 
@@ -93,15 +95,17 @@ class HyperskillCheckChoiceTaskTest : CheckersTestBase<Unit>() {
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[0]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test choice task nothing selected `() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("choice.task.empty.variant") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[1]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   @Language("JSON")

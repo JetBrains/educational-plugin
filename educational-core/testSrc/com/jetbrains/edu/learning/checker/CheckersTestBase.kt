@@ -16,6 +16,7 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.codeforces.AnsiAwareCapturingProcessAdapter
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
@@ -26,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -108,7 +110,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
             }
 
             val virtualFile = task.openFirstTaskFileInEditor()
-            launchAction(virtualFile, task.checkAction)
+            launchAction(virtualFile, CheckAction(task.getUICheckLabel()))
             UIUtil.dispatchAllInvocationEvents()
         } catch (e: AssertionError) {
             exceptions.add(e)

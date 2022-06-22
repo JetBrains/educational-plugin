@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.retry.RetryHyperlinkComponent
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -115,7 +116,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
   private fun restoreSavedResult(task: Task): CheckResult? {
     /**
      * We are not showing old result for CheckiO because we store last successful attempt
-     * @see com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.setStatus
+     * @see com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.status
      */
     if (task is CheckiOMission) return null
     val feedback = task.feedback
@@ -151,7 +152,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
       is DataTask -> updateCheckButtonWrapper(task)
       else -> {
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
-        val checkComponent = CheckPanelButtonComponent(task.checkAction, isDefault = isDefault, isEnabled = isDefault)
+        val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isDefault)
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
@@ -164,7 +165,8 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
         ActionManager.getInstance().getAction(it) ?: error("Action $it is not found")
       }
     }
-    val checkComponent = CheckPanelButtonComponent(project, task.checkAction, isDefault = false, optionalActions = optionalActions)
+    val checkComponent = CheckPanelButtonComponent(project, CheckAction(task.getUICheckLabel()),
+                                                   isDefault = false, optionalActions = optionalActions)
     checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
   }
 
@@ -181,7 +183,7 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
         }
         checkButtonWrapper.add(component, BorderLayout.WEST)
 
-        val checkComponent = CheckPanelButtonComponent(task.checkAction, isEnabled = isRunning, isDefault = isRunning)
+        val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
       CheckStatus.Failed -> {

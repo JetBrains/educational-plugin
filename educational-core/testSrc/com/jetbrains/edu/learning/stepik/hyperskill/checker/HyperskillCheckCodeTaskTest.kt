@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
@@ -114,7 +115,9 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
     })
 
     CheckActionListener.shouldSkip()
-    testAction(CheckAction.ACTION_ID)
+    doTest()
+//    val task = findTask(0, 0)
+//    testAction(CheckAction(task))
   }
 
   private fun configureResponses() {
@@ -133,7 +136,8 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   private fun doTest() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Failed" }
-    testAction(CheckAction.ACTION_ID)
+    val task = findTask(0, 0)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   @Language("JSON")

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 
 abstract class StepikBasedCheckStringTaskTest : StepikBasedCheckAnswerTaskTest() {
   fun `test string task correct`() {
@@ -20,7 +21,7 @@ abstract class StepikBasedCheckStringTaskTest : StepikBasedCheckAnswerTaskTest()
     CheckActionListener.expectedMessage { "<html>Succeed solution</html>" }
     val task = myCourse.allTasks[0] as StringTask
     NavigationUtils.navigateToTask(project, task)
-    testAction(CheckAction.ACTION_ID)
+    testAction(CheckAction(task.getUICheckLabel()))
     assertEquals("answer", task.getInputAnswer(project))
   }
 
@@ -29,15 +30,17 @@ abstract class StepikBasedCheckStringTaskTest : StepikBasedCheckAnswerTaskTest()
 
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { "Wrong solution" }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[0])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[0]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test string task input is empty`() {
     CheckActionListener.shouldFail()
     CheckActionListener.expectedMessage { EduCoreBundle.message("hyperskill.string.task.empty.text") }
-    NavigationUtils.navigateToTask(project, myCourse.allTasks[1])
-    testAction(CheckAction.ACTION_ID)
+    val task = myCourse.allTasks[1]
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
   }
 
   fun `test creating placeholder`() {

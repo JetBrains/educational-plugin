@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.twitter.TwitterSettings
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.withMockTwitterDialogUI
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 
 class HyperskillTwittingTest : EduActionTestCase() {
 
@@ -142,7 +143,7 @@ class HyperskillTwittingTest : EduActionTestCase() {
       val virtualFile = taskFile.getVirtualFile(project)
                         ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name}` task")
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
-      testAction(CheckAction.ACTION_ID, dataContext(virtualFile))
+      testAction(CheckAction(task.getUICheckLabel()), dataContext(virtualFile))
     }
     return isDialogShown
   }

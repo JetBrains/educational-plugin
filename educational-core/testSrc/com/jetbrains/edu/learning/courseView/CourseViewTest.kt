@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
 
@@ -42,7 +43,8 @@ class CourseViewTest : CourseViewTestBase() {
 
     val fileName = "lesson1/task1/taskFile1.txt"
     val taskFile = myFixture.findFileInTempDir(fileName)
-    testAction(CheckAction.ACTION_ID, dataContext(taskFile))
+    val task = findTask(0, 1)
+    testAction(CheckAction(task.getUICheckLabel()), dataContext(taskFile))
 
     val structure = "-Project\n" +
                     " -CourseNode Edu test course  1/4\n" +

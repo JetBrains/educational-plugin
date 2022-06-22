@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 
 abstract class SubmissionsTestBase : EduTestCase() {
 
@@ -43,8 +43,9 @@ abstract class SubmissionsTestBase : EduTestCase() {
     assertNull("SubmissionsManager should not contain submissions before task check",
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
 
-    NavigationUtils.navigateToTask(project, findTask(0, 0))
-    testAction(CheckAction.ACTION_ID)
+    val task = findTask(0, 0)
+    NavigationUtils.navigateToTask(project, task)
+    testAction(CheckAction(task.getUICheckLabel()))
 
     checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus)
   }

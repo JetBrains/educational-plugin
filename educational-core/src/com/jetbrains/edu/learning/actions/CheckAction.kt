@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.shouldGenerateTestsOnTheFly
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -48,18 +49,16 @@ import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
+import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Supplier
 
-class CheckAction @JvmOverloads constructor(dynamicText: Supplier<String> = lazyMessage("action.check.text"),
-                                            dynamicDescription: Supplier<String> = lazyMessage(
-                                              "action.check.description")) : ActionWithProgressIcon(dynamicText,
-                                                                                                    dynamicDescription), DumbAware {
+class CheckAction(checkLabel: String) : ActionWithProgressIcon(lazyMessage("action.check.text"), lazyMessage("action.check.description")), DumbAware {
   init {
     setUpSpinnerPanel(PROCESS_MESSAGE)
+    templatePresentation.text = checkLabel
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -103,9 +102,7 @@ class CheckAction @JvmOverloads constructor(dynamicText: Supplier<String> = lazy
     val project = e.project ?: return
     val taskFile = project.selectedTaskFile
     if (taskFile != null) {
-      val checkActionPresentation = taskFile.task.checkAction.templatePresentation
-      e.presentation.text = checkActionPresentation.text
-      e.presentation.description = checkActionPresentation.description
+      templatePresentation.text = taskFile.task.getUICheckLabel()
     }
     if (e.presentation.isEnabled) {
       e.presentation.isEnabled = !CheckActionState.getInstance(project).isLocked
@@ -124,8 +121,7 @@ class CheckAction @JvmOverloads constructor(dynamicText: Supplier<String> = lazy
   }
 
   private inner class StudyCheckTask(project: Project, private val task: Task)
-    : com.intellij.openapi.progress.Task.Backgroundable(project, message(
-    "progress.title.checking.solution"), true) {
+    : com.intellij.openapi.progress.Task.Backgroundable(project, message("progress.title.checking.solution"), true) {
     private var result: CheckResult? = null
     private val checker: TaskChecker<*>?
 
@@ -281,8 +277,7 @@ class CheckAction @JvmOverloads constructor(dynamicText: Supplier<String> = lazy
   }
 
   companion object {
-    const val ACTION_ID: @NonNls String = "Educational.Check"
-    private const val PROCESS_MESSAGE: @NonNls String = "Check in progress"
+    private const val PROCESS_MESSAGE = "Check in progress"
     private val LOG = Logger.getInstance(CheckAction::class.java)
   }
 }

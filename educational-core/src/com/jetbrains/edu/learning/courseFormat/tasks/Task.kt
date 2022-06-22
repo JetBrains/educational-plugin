@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat.tasks
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
@@ -68,8 +67,6 @@ abstract class Task : StudyItem {
   val lesson: Lesson
     get() = parent as? Lesson ?: error("Lesson is null for task $name")
 
-  open val checkAction: CheckAction
-    get() = course.checkAction
   open val isPluginTaskType: Boolean
     get() = true
   open val supportSubmissions: Boolean
