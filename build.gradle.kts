@@ -72,11 +72,11 @@ val pythonPlugin = when {
 }
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
-// Since 2022.1 TOML plugin is bundled into IDEA and CLion
-val tomlPlugin = if (isAtLeast221 && (isIdeaIDE || isClionIDE)) "org.toml.lang" else "org.toml.lang:${prop("tomlPluginVersion")}"
+// Since 2022.1 TOML plugin is bundled into all supported IDEs
+val tomlPlugin = if (isAtLeast221 || !isIdeaIDE && !isClionIDE) "org.toml.lang" else "org.toml.lang:${prop("tomlPluginVersion")}"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val sqlPlugin = "com.intellij.database"
-val markdownPlugin = if (isStudioIDE) "org.intellij.plugins.markdown:${prop("markdownPluginVersion")}" else "org.intellij.plugins.markdown"
+val markdownPlugin = "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
 val intelliLangPlugin = "org.intellij.intelliLang"
