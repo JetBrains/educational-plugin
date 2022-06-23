@@ -20,6 +20,11 @@ import java.io.IOException
 class EduDocumentListenerTest : EduTestCase() {
 
   fun `test type in placeholder`() {
+//    val r = object : Runnable {
+//      override fun run() {
+//        TODO("Not yet implemented")
+//      }
+//    }
     val lessonIndex = 1
     val taskIndex = 1
     val taskFileName = "taskFile1.txt"
