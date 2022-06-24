@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
@@ -73,7 +72,6 @@ class HyperskillAccount : OAuthAccount<HyperskillUserInfo> {
 
   constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
 
-  @NlsSafe
   override val servicePrefix: String = EduNames.JBA
 
   override fun getUserName(): String {
