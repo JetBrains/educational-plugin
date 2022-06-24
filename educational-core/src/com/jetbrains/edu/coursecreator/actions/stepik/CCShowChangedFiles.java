@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangesInfo;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -141,7 +142,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull @DialogTitle String status) {
     stringBuilder
-      .append(item.getPathInCourse())
+      .append(StudyItemExtKt.getPathInCourse(item))
       .append(" ")
       .append(status)
       .append("\n");

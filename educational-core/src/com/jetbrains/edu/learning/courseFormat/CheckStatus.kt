@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.UNCHECKED
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.WRONG
 
-
 enum class CheckStatus(val rawStatus: String) {
   Unchecked(UNCHECKED),
   Solved(CORRECT),

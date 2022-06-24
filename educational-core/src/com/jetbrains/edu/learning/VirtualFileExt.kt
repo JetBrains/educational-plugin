@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -128,7 +129,7 @@ fun VirtualFile.getStudyItem(project: Project): StudyItem? {
 }
 
 /**
- * @return true, if file doesn't belong to task (in term of course structure)
+ * @return true, if file doesn't belong to task (in terms of course structure)
  * but can be added to it as task, test or additional file.
  * Otherwise, returns false
  */

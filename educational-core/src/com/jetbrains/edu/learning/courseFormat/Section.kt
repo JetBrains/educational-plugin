@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
-
 
 open class Section : LessonContainer() {
 
