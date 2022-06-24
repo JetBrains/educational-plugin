@@ -11,9 +11,11 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -111,7 +113,7 @@ object CourseViewUtils {
       is Lesson -> {
         if (item.isSolved) EducationalCoreIcons.LessonSolved else EducationalCoreIcons.Lesson
       }
-      is Task -> item.getIcon()
+      is Task -> item.icon
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
   }
@@ -130,4 +132,25 @@ object CourseViewUtils {
     val project = it.project ?: return false
     it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
   }
+
+  val Course.icon: Icon
+    get() {
+      return if (this is CodeforcesCourse) EducationalCoreIcons.CODEFORCES_SMALL
+      else EducationalCoreIcons.CourseTree
+    }
+
+  val Task.icon: Icon
+    get() {
+      return when (status) {
+        CheckStatus.Unchecked -> if (this is IdeTask) EducationalCoreIcons.IdeTask else EducationalCoreIcons.Task
+        CheckStatus.Solved -> if (this is IdeTask) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.TaskSolved
+        else -> {
+          val project = course.project
+          if (project != null && SubmissionsManager.getInstance(project).containsCorrectSubmission(id)) {
+            return EducationalCoreIcons.TaskSolved
+          }
+          EducationalCoreIcons.TaskFailed
+        }
+      }
+    }
 }

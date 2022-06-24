@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.codeforces.courseFormat
 
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestURLFromID
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
@@ -13,7 +12,6 @@ import org.jsoup.nodes.Document
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
-import javax.swing.Icon
 
 open class CodeforcesCourse : Course {
   var endDateTime: ZonedDateTime? = null
@@ -67,9 +65,6 @@ open class CodeforcesCourse : Course {
     remainingTime = contestParameters.remainingTime
     authors = contestParameters.authors
   }
-
-  override val icon: Icon
-    get() = EducationalCoreIcons.CODEFORCES_SMALL
 
   override val itemType: String = CODEFORCES_COURSE_TYPE
 

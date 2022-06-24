@@ -1,14 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.submissions.SubmissionsManager.Companion.getInstance
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.util.*
-import javax.swing.Icon
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
@@ -168,17 +164,6 @@ abstract class Task : StudyItem {
     result = 31 * result + descriptionText.hashCode()
     result = 31 * result + descriptionFormat.hashCode()
     return result
-  }
-
-  open fun getIcon(): Icon {
-    if (checkStatus === CheckStatus.Unchecked) {
-      return EducationalCoreIcons.Task
-    }
-    val project = course.project
-    if (project != null && getInstance(project).containsCorrectSubmission(id)) {
-      return EducationalCoreIcons.TaskSolved
-    }
-    return if (checkStatus === CheckStatus.Solved) EducationalCoreIcons.TaskSolved else EducationalCoreIcons.TaskFailed
   }
 
   companion object {

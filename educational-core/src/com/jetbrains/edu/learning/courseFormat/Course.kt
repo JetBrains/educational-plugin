@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduLanguage
 import com.jetbrains.edu.learning.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.EduNames
@@ -10,7 +9,6 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.fo
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
-import javax.swing.Icon
 
 /**
  * To introduce new course it's required to:
@@ -132,9 +130,6 @@ abstract class Course : LessonContainer() {
 
   open val compatibility: CourseCompatibility
     get() = forCourse(this)
-
-  open val icon: Icon
-    get() = EducationalCoreIcons.CourseTree
 
   open val isStepikRemote: Boolean
     get() = false
