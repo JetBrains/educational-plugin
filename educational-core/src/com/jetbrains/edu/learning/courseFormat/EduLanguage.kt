@@ -1,6 +1,5 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.lang.Language
 import org.jetbrains.annotations.NonNls
 
 data class EduLanguage(
@@ -8,12 +7,8 @@ data class EduLanguage(
   val version: String = DEFAULT_VERSION
 ) {
 
-  val language: Language?
-    get() = Language.findLanguageByID(id)
-
   override fun toString(): String {
-    val languageName = language?.displayName ?: id
-    return "$languageName $version".trimEnd()
+    return "$id $version".trimEnd()
   }
 
   companion object {

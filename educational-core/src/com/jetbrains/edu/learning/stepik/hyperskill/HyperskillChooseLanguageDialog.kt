@@ -4,7 +4,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent

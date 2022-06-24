@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.EduLanguage
+import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 

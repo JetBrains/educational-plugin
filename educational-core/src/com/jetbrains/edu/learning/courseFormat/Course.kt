@@ -1,12 +1,11 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduLanguage
-import com.jetbrains.edu.learning.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
 

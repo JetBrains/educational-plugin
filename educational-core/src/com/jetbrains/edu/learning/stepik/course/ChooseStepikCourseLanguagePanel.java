@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.course;
 
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.EduLanguage;
+import com.jetbrains.edu.learning.courseFormat.EduLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduLanguage
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikLanguage
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType

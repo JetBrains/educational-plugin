@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_DEFAULT_URL
@@ -25,15 +26,15 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
     }
 
     if (course is StepikCourse) {
-      val language = getLanguageForStepikCourse(course)
-      language?.let {
-        course.programmingLanguage = "${language.id} ${language.version}".trim()
+      val eduLanguage = getLanguageForStepikCourse(course)
+      eduLanguage?.let {
+        course.programmingLanguage = "${eduLanguage.id} ${eduLanguage.version}".trim()
       }
       course.validateLanguage().onError {
         Messages.showErrorDialog(it, message("error.failed.to.import.course"))
         return null
       }
-      if (language?.language == null || language.language?.id !in EduConfiguratorManager.supportedEduLanguages) return null
+      if (eduLanguage == null || eduLanguage.id !in EduConfiguratorManager.supportedEduLanguages) return null
       return course
     }
     else if (isCompatibleEduCourse(course)) {
@@ -77,7 +78,7 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
       languages[0]
     }
     else {
-      val supportedLanguages = languages.filter { it.language?.id in EduConfiguratorManager.supportedEduLanguages }
+      val supportedLanguages = languages.filter { it.id in EduConfiguratorManager.supportedEduLanguages }
       val chooseLanguageDialog = ChooseStepikCourseLanguageDialog(supportedLanguages, course.name)
       if (chooseLanguageDialog.showAndGet()) {
         chooseLanguageDialog.selectedLanguage()

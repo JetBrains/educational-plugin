@@ -5,7 +5,6 @@ package com.jetbrains.edu.learning.courseFormat.ext
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
-import com.jetbrains.edu.learning.EduLanguage
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
@@ -86,7 +85,7 @@ val Course.tags: List<Tag>
   }
 
 val Course.languageById: Language?
-  get() = EduLanguage.get(programmingLanguage).language
+  get() = Language.findLanguageByID(EduLanguage.get(programmingLanguage).id)
 
 
 val Course.isPreview: Boolean
