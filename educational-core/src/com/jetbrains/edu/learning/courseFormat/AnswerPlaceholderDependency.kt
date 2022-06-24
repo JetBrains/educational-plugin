@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import java.util.regex.Pattern
@@ -37,10 +35,7 @@ class AnswerPlaceholderDependency() {
     val lesson = course.getLesson(sectionName, lessonName) ?: return null
     val task = lesson.getTask(taskName) ?: return null
     val taskFile = task.getTaskFile(fileName) ?: return null
-    return if (!EduUtils.indexIsValid(placeholderIndex, taskFile.answerPlaceholders)) {
-      null
-    }
-    else taskFile.answerPlaceholders[placeholderIndex]
+    return taskFile.answerPlaceholders.getOrNull(placeholderIndex)
   }
 
   override fun toString(): String {
@@ -72,49 +67,52 @@ class AnswerPlaceholderDependency() {
         return null
       }
       val task = answerPlaceholder.taskFile.task
-      val course = task.course
       val matcher = DEPENDENCY_PATTERN.matcher(text)
       if (!matcher.matches()) {
         throw InvalidDependencyException(text)
       }
-      return try {
-        val sectionName = matcher.group(2)
-        val lessonName = matcher.group(3)
-        val taskName = matcher.group(4)
-        val file = FileUtil.toSystemIndependentName(matcher.group(5))
-        val placeholderIndex = matcher.group(6).toInt() - 1
-        val dependency = AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, file, placeholderIndex,
-                                                     isVisible)
-        val targetPlaceholder = dependency.resolve(course)
-                                ?: throw InvalidDependencyException(text, message("exception.placeholder.non.existing"))
-        if (targetPlaceholder.taskFile.task === task) {
-          throw InvalidDependencyException(text, message("exception.placeholder.wrong.reference.to.source"))
-        }
-        if (refersToNextTask(task, targetPlaceholder.taskFile.task)) {
-          throw InvalidDependencyException(text, message("exception.placeholder.wrong.reference.to.next"))
-        }
-        dependency
+
+      val sectionName = matcher.group(2)
+      val lessonName = matcher.group(3)
+      val taskName = matcher.group(4)
+      val filePath = toSystemIndependent(matcher.group(5))
+
+      val placeholderIndex = try {
+        matcher.group(6).toInt() - 1
       }
       catch (e: NumberFormatException) {
         throw InvalidDependencyException(text)
       }
+
+      val dependency = AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, filePath, placeholderIndex,
+                                                   isVisible)
+      val targetPlaceholder = dependency.resolve(task.course)
+                              ?: throw InvalidDependencyException(text, message("exception.placeholder.non.existing"))
+      if (targetPlaceholder.taskFile.task == task) {
+        throw InvalidDependencyException(text, message("exception.placeholder.wrong.reference.to.source"))
+      }
+      if (refersToNextTask(task, targetPlaceholder.taskFile.task)) {
+        throw InvalidDependencyException(text, message("exception.placeholder.wrong.reference.to.next"))
+      }
+      return dependency
     }
+
+    private fun toSystemIndependent(path: String) = path.replace('\\', '/')
 
     private fun refersToNextTask(sourceTask: Task, targetTask: Task): Boolean {
       val sourceLesson = sourceTask.lesson
       val targetLesson = targetTask.lesson
-      if (sourceLesson === targetLesson) {
+      if (sourceLesson == targetLesson) {
         return targetTask.index > sourceTask.index
       }
-      return if (sourceLesson.section === targetLesson.section) {
+      return if (sourceLesson.section == targetLesson.section) {
         targetLesson.index > sourceLesson.index
       }
       else getIndexInCourse(targetLesson) > getIndexInCourse(sourceLesson)
     }
 
     private fun getIndexInCourse(lesson: Lesson): Int {
-      val section = lesson.section
-      return section?.index ?: lesson.index
+      return lesson.section?.index ?: lesson.index
     }
   }
 }
