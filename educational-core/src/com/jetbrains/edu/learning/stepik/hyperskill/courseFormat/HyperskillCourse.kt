@@ -120,7 +120,7 @@ class HyperskillCourse : Course {
 
   // lexicographical order
   companion object {
-    val SUPPORTED_STEP_TYPES: Set<String> = setOf(
+    private val SUPPORTED_STEP_TYPES: Set<String> = setOf(
       StepikTaskType.CHOICE.type,
       StepikTaskType.CODE.type,
       StepikTaskType.DATASET.type,
@@ -129,5 +129,7 @@ class HyperskillCourse : Course {
       StepikTaskType.STRING.type,
       StepikTaskType.TEXT.type
     )
+
+    fun isStepSupported(type: String?): Boolean = type in SUPPORTED_STEP_TYPES
   }
 }

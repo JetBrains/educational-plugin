@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.Companion.SUPPORTED_STEP_TYPES
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpenRequest>() {
@@ -243,7 +242,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
     val existingTasksIds = items.map { it.id }
-    val stepsSourceForAdding = stepSources.filter { it.block?.name in SUPPORTED_STEP_TYPES && it.id !in existingTasksIds }
+    val stepsSourceForAdding = stepSources.filter { HyperskillCourse.isStepSupported(it.block?.name) && it.id !in existingTasksIds }
 
     val tasks = HyperskillConnector.getTasks(course, this, stepsSourceForAdding)
     tasks.forEach(this::addTask)
@@ -411,7 +410,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     val task = course.getProblem(stepId) ?: return
     if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
-      val tasks = task.lesson.taskList.filter { it.itemType in SUPPORTED_STEP_TYPES }
+      val tasks = task.lesson.taskList.filter { HyperskillCourse.isStepSupported(it.itemType) }
       HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
     }
     else {
