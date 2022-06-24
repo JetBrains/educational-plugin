@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -28,10 +27,23 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test activity not available`() {
-    createHyperskillProblemsProject()
+    val task = initProject()
+    configureResponsesForCurrentTask(task)
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
-      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(step2.id)), content)
+      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(codeStepFromInitialProject.id)),
+                   content)
+    }) {
+      openNextActivity(project, findTask(0, 0, 1))
+    }
+  }
+
+  fun `test no topic for a task`() {
+    initProject()
+    withNotificationCheck(project, testRootDisposable, { shown, content ->
+      assertEquals(true, shown)
+      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(codeStepFromInitialProject.id)),
+                   content)
     }) {
       openNextActivity(project, findTask(0, 0, 1))
     }
@@ -40,6 +52,7 @@ class HyperskillNextActivityTest : EduTestCase() {
   fun `test activity not available without login`() {
     logOutFakeHyperskillUser()
     createHyperskillProblemsProject()
+
     withNotificationCheck(project, testRootDisposable, { shown, content ->
       assertEquals(true, shown)
       assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"), content)
@@ -49,100 +62,119 @@ class HyperskillNextActivityTest : EduTestCase() {
   }
 
   fun `test topic is completed`() {
-    createHyperskillProblemsProject()
-    val task = findTask(0, 0, 1)
+    val task = initProject()
 
-    val theoryTask = TheoryTask()
-    theoryTask.parent = task.lesson
-    mockConnector.configureResponses(
-      StepMockResponse(step2.path, task) { topic = topic1.id },
-      StepMockResponse(topic1.path, theoryTask) {
-        topic = topic1.id
-        isCompleted = true
-        id = step5.id
-        block!!.name = TheoryTask.THEORY_TASK_TYPE
-      }
-    )
+    configureResponsesForCurrentTask(task)
+    configureResponseForTopicSteps()
 
     openNextActivity(project, task)
-    assertEquals(topicCompletedLink(topic1.id), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
+    assertEquals(topicCompletedLink(DEFAULT_TOPIC_ID), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
   }
 
   fun `test next activity unsupported in IDE`() {
-    createHyperskillProblemsProject()
-    val task = findTask(0, 0, 1)
+    val task = initProject()
 
     val choiceTask = ChoiceTask()
     choiceTask.canCheckLocally = false
     choiceTask.parent = task.parent
-    
-    mockConnector.configureResponses(
-      StepMockResponse(step2.path, task) { topic = topic1.id },
-      StepMockResponse(topic1.path, choiceTask) {
-        topic = topic1.id
-        id = step5.id
-        block!!.name = StepikTaskBuilder.StepikTaskType.TABLE.type
-      }
-    )
+
+    configureResponsesForCurrentTask(task)
+    configureResponseForTopicSteps()
 
     openNextActivity(project, task)
-    assertEquals(stepLink(5), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
+    assertEquals(stepLink(3), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
   }
 
   fun `test open next step in IDE`() {
-    createHyperskillProblemsProject()
-    val task = findTask(0, 0, 1)
-    val nextStepId = step5.id
+    val task = initProject()
 
-    mockConnector.configureResponses(
-      StepMockResponse(step2.path, task) {
-        topic = topic1.id
-        id = step2.id
-        topicTheory = step11.id
-        title = step2.title
-      },
-      StepMockResponse(step5.path, task) {
-        block!!.name = CodeTask.CODE_TASK_TYPE
-        topic = topic1.id
-        id = nextStepId
-        topicTheory = step11.id
-        title = step5.title
-        isRecommended = true
-      },
-      StepMockResponse(step11.path, TheoryTask()) {
-        block!!.name = TheoryTask.THEORY_TASK_TYPE
-        topic = topic1.id
-        id = step11.id
-        topicTheory = step11.id
-        title = step11.title
-        isRecommended = true
-      }
-    )
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(topic1.path)) {
-        mockResponse(topic1.file)
-      }
-      else null
+    // mock responses setup
+    val nextStepId = 5
+    val nextStep = StepInfo(nextStepId, "Test Code Task 2")
+
+    fun configureResponseForNextStep(task: Task, nextStep: StepInfo) {
+      mockConnector.configureResponses(
+        StepMockResponse(nextStep.path, task) {
+          block!!.name = CodeTask.CODE_TASK_TYPE
+          topic = DEFAULT_TOPIC_ID
+          id = nextStep.id
+          topicTheory = theoryStepFromInitialProject.id
+          title = nextStep.title
+          isRecommended = true
+        }
+      )
     }
 
+    configureResponsesForCurrentTask(task)
+    configureResponseForNextStep(task, nextStep)
+    configureResponseForTopicSteps()
+
+    // test itself
     (ProjectOpener.getInstance() as MockProjectOpener).project = project
     openNextActivity(project, task)
-    assertEquals(nextStepId, findTask(0, 0, 2).id)
+    assertEquals(nextStepId, findTask(0, 0, 3).id)
+  }
+
+  fun `test next step is the same as current`() {
+    val task = initProject()
+
+    configureResponsesForCurrentTask(task)
+    configureResponseForTopicSteps()
+
+    withNotificationCheck(project, testRootDisposable, { shown, content ->
+      assertEquals(true, shown)
+      assertEquals(EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(codeStepFromInitialProject.id)),
+                   content)
+    }) {
+      openNextActivity(project, findTask(0, 0, 1))
+    }
+  }
+
+  private fun initProject(): Task {
+    createHyperskillProblemsProject()
+    val task = findTask(0, 0, 1)
+    return task
   }
 
   private fun createHyperskillProblemsProject() {
     hyperskillCourseWithFiles {
       section(HYPERSKILL_TOPICS) {
-        lesson(step11.title) {
-          theoryTask("Theory", stepId = step11.id) {
+        lesson(theoryStepFromInitialProject.title) {
+          theoryTask("Theory", stepId = theoryStepFromInitialProject.id) {
             taskFile("Task.txt")
           }
-          codeTask(step2.title, stepId = step2.id) {
+          codeTask(codeStepFromInitialProject.title, stepId = codeStepFromInitialProject.id) {
             taskFile("Task.txt")
           }
         }
       }
     }
+  }
+
+  private fun configureResponseForTopicSteps() {
+    val topicInfo = TopicInfo(DEFAULT_TOPIC_ID, topicResponseFileName)
+    mockConnector.withResponseHandler(testRootDisposable) { request ->
+      if (request.path.endsWith(topicInfo.path)) {
+        mockResponse(topicInfo.file)
+      }
+      else {
+        null
+      }
+    }
+  }
+
+  private fun configureResponsesForCurrentTask(task: Task) {
+    mockConnector.configureResponses(
+      StepMockResponse(theoryStepFromInitialProject.path, TheoryTask()) {
+        block!!.name = TheoryTask.THEORY_TASK_TYPE
+        topic = DEFAULT_TOPIC_ID
+        id = theoryStepFromInitialProject.id
+        topicTheory = theoryStepFromInitialProject.id
+        title = theoryStepFromInitialProject.title
+        isRecommended = true
+      },
+      StepMockResponse(codeStepFromInitialProject.path, task) { topic = DEFAULT_TOPIC_ID }
+    )
   }
 
   private data class StepMockResponse(val path: String, val task: Task, val initStepSource: HyperskillStepSource.() -> Unit)
@@ -155,12 +187,15 @@ class HyperskillNextActivityTest : EduTestCase() {
     }
   }
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/nextActivity/"
+
+  private val topicResponseFileName: String
+    get() = "${getTestName(true).trim().replace(" ", "_")}.json"
 
   companion object {
-    private val step2 = StepInfo(2, "Test Code Task")
-    private val step5 = StepInfo(5, "Test Code Task 2")
-    private val step11 = StepInfo(11, "Test Topic Name")
-    private val topic1 = TopicInfo(1)
+    private const val DEFAULT_TOPIC_ID = 1
+
+    private val theoryStepFromInitialProject = StepInfo(1, "Test topic name")
+    private val codeStepFromInitialProject = StepInfo(2, "Test Code Task")
   }
 }

@@ -1,0 +1,296 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "<p>In this topic, you will learn how to develop your first Python programs. Despite the fact that these programs are quite simple, they are still syntactically correct and show that programming in Python is a treat.</p>\n\n<h5 style=\"text-align: center;\" id=\"the-hello-world-program\">The Hello World program</h5>\n\n<p>Our first example will be <strong>Hello, World!</strong> It is traditionally used to introduce beginners to a new programming language.</p>\n\n<pre><code class=\"language-python\">print(\"Hello, World!\")</code></pre>\n\n<p>As you can see, it consists of a single line and just prints a string passed in the parentheses, but without quotes. You may run this code <a target=\"_blank\" target=\"_blank\" href=\"https://repl.it/languages/python3\" rel=\"nofollow noopener noreferrer\">online</a> (just copy it and click on the triangle) or follow these <a target=\"_blank\" target=\"_blank\" href=\"https://www.python.org/about/gettingstarted/#installing\" rel=\"noopener noreferrer nofollow\">installation tips</a>. You should get this result:</p>\n\n<pre><code class=\"language-no-highlight\">Hello, World!</code></pre>\n\n<p>Although this code is very simple, we will go through it in some more detail.</p>\n\n<h5 style=\"text-align: center;\" id=\"short-explanation\">Short explanation</h5>\n\n<p>Here,<strong> print</strong> is the name of a function. A <strong>function</strong> is a block of code that does some useful work for you, e.g. prints a text. In some sense, a function is a subprogram that can be reused within your programs. When the name of a function is followed by parentheses, it means that it was <strong>called</strong> to get the result.</p>\n\n<p>Let's go further: <strong>\"Hello, World!\"</strong> is a Python string. All strings are surrounded by either <em>single</em> or <em>double</em> quotes, so <strong>'Hello, World!'</strong> is also a valid string. You may replace this string with another one, and the program will print the new string. For example:</p>\n\n<pre><code class=\"language-python\">print('Python 3.x')</code></pre>\n\n<p>As you might guess, this program will print:</p>\n\n<pre><code class=\"language-no-highlight\">Python 3.x</code></pre>\n\n<h5 style=\"text-align: center;\" id=\"printing-quotes\">Printing quotes</h5>\n\n<p>Now imagine that the string you want to print already contains some type of quotation mark. If you would like to include quotes into a string, then enclose this string in quotes of <strong>another</strong> type, e.g.:</p>\n\n<pre><code class=\"language-python\">print(\"Yes, I'm ready to learn Python.\")</code></pre>\n\n<p>Part of the string with <code class=\"language-python\">I'm</code> is printed <strong>correctly</strong>, because you used double quotes <code class=\"language-python\">\"...\"</code> to enclose the whole string:</p>\n\n<pre><code class=\"language-no-highlight\">Yes, I'm ready to learn Python.</code></pre>\n\n<p>If you write it in the following <strong>wrong</strong> way:</p>\n\n<pre><code class=\"language-python\">print('Yes, I'm ready to learn Python.')</code></pre>\n\n<p>your program won't know where the string starts and ends.</p>\n\n<p>You can try to run all the examples using the <a target=\"_blank\" target=\"_blank\" href=\"https://repl.it/languages/python3\" rel=\"nofollow noopener noreferrer\" title=\"Link: https://trinket.io/python/77624890a0\">link</a> provided earlier. This will help you familiarize yourself with Python.</p>\n\n<h5 style=\"text-align: center;\" id=\"possible-errors\">Possible errors</h5>\n\n<p>Even this simple line of code may contain errors, most common of them are:</p>\n\n<ul>\n\t<li><strong>putting extra indentation</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">   print(\"Hello, World!\")</code></pre>\n\n<p>This does not work because of extra spaces before <strong>print</strong>.</p>\n\n<ul>\n\t<li><strong>calling the function by the wrong name</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">pint(\"Hello, World!\")</code></pre>\n\n<p>This line contains <strong>pint</strong> instead of <strong>print.</strong> Make sure to refer to every function by its proper name.</p>\n\n<ul>\n\t<li><strong>writing names in the wrong case</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">PRINT(\"All caps\")</code></pre>\n\n<p>Again, <strong>Print</strong>, <strong>print</strong> and <strong>PRINT</strong> are not the same. Names are case-sensitive in Python.</p>\n\n<ul>\n\t<li><strong>missing one or both quotes for a string</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">print(\"Python)</code></pre>\n\n<p>This does not work because of missing closing quotes.</p>\n\n<ul>\n\t<li><strong>missing one or more parentheses</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">print(\"I have no end\"</code></pre>\n\n<p>Be careful with parentheses, especially when calling a function.</p>\n\n<p>Now you shouldn't have any serious trouble with such programs.</p>\n\n<h5 id=\"summary\">Summary</h5>\n\n<p>In this topic, we've written our first program in Python, broke it down, printed some strings, and looked at the most common errors you may encounter at the very start.</p>",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        },
+        "source" : { },
+        "raw_text" : "<p>In this topic, you will learn how to develop your first Python programs. Despite the fact that these programs are quite simple, they are still syntactically correct and show that programming in Python is a treat.</p>\n\n<h5 style=\"text-align: center;\">The Hello World program</h5>\n\n<p>Our first example will be <strong>Hello, World!</strong> It is traditionally used to introduce beginners to a new programming language.</p>\n\n<pre><code class=\"language-python\">print(\"Hello, World!\")</code></pre>\n\n<p>As you can see, it consists of a single line and just prints a string passed in the parentheses, but without quotes. You may run this code <a target=\"_blank\" href=\"https://repl.it/languages/python3\" rel=\"nofollow noopener noreferrer\">online</a> (just copy it and click on the triangle) or follow these <a target=\"_blank\" href=\"https://www.python.org/about/gettingstarted/#installing\" rel=\"noopener noreferrer nofollow\">installation tips</a>. You should get this result:</p>\n\n<pre><code class=\"language-no-highlight\">Hello, World!</code></pre>\n\n<p>Although this code is very simple, we will go through it in some more detail.</p>\n\n<h5 style=\"text-align: center;\">Short explanation</h5>\n\n<p>Here,<strong> print</strong> is the name of a function. A <strong>function</strong> is a block of code that does some useful work for you, e.g. prints a text. In some sense, a function is a subprogram that can be reused within your programs. When the name of a function is followed by parentheses, it means that it was <strong>called</strong> to get the result.</p>\n\n<p>Let's go further: <strong>\"Hello, World!\"</strong> is a Python string. All strings are surrounded by either <em>single</em> or <em>double</em> quotes, so <strong>'Hello, World!'</strong> is also a valid string. You may replace this string with another one, and the program will print the new string. For example:</p>\n\n<pre><code class=\"language-python\">print('Python 3.x')</code></pre>\n\n<p>As you might guess, this program will print:</p>\n\n<pre><code class=\"language-no-highlight\">Python 3.x</code></pre>\n\n<h5 style=\"text-align: center;\">Printing quotes</h5>\n\n<p>Now imagine that the string you want to print already contains some type of quotation mark. If you would like to include quotes into a string, then enclose this string in quotes of <strong>another</strong> type, e.g.:</p>\n\n<pre><code class=\"language-python\">print(\"Yes, I'm ready to learn Python.\")</code></pre>\n\n<p>Part of the string with <code class=\"language-python\">I'm</code> is printed <strong>correctly</strong>, because you used double quotes <code class=\"language-python\">\"...\"</code> to enclose the whole string:</p>\n\n<pre><code class=\"language-no-highlight\">Yes, I'm ready to learn Python.</code></pre>\n\n<p>If you write it in the following <strong>wrong</strong> way:</p>\n\n<pre><code class=\"language-python\">print('Yes, I'm ready to learn Python.')</code></pre>\n\n<p>your program won't know where the string starts and ends.</p>\n\n<p>You can try to run all the examples using the <a target=\"_blank\" href=\"https://repl.it/languages/python3\" rel=\"nofollow noopener noreferrer\" title=\"Link: https://trinket.io/python/77624890a0\">link</a> provided earlier. This will help you familiarize yourself with Python.</p>\n\n<h5 style=\"text-align: center;\">Possible errors</h5>\n\n<p>Even this simple line of code may contain errors, most common of them are:</p>\n\n<ul>\n\t<li><strong>putting extra indentation</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">   print(\"Hello, World!\")</code></pre>\n\n<p>This does not work because of extra spaces before <strong>print</strong>.</p>\n\n<ul>\n\t<li><strong>calling the function by the wrong name</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">pint(\"Hello, World!\")</code></pre>\n\n<p>This line contains <strong>pint</strong> instead of <strong>print.</strong> Make sure to refer to every function by its proper name.</p>\n\n<ul>\n\t<li><strong>writing names in the wrong case</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">PRINT(\"All caps\")</code></pre>\n\n<p>Again, <strong>Print</strong>, <strong>print</strong> and <strong>PRINT</strong> are not the same. Names are case-sensitive in Python.</p>\n\n<ul>\n\t<li><strong>missing one or both quotes for a string</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">print(\"Python)</code></pre>\n\n<p>This does not work because of missing closing quotes.</p>\n\n<ul>\n\t<li><strong>missing one or more parentheses</strong></li>\n</ul>\n\n<pre><code class=\"language-python\">print(\"I have no end\"</code></pre>\n\n<p>Be careful with parentheses, especially when calling a function.</p>\n\n<p>Now you shouldn't have any serious trouble with such programs.</p>\n\n<h5>Summary</h5>\n\n<p>In this topic, we've written our first program in Python, broke it down, printed some strings, and looked at the most common errors you may encounter at the very start.</p>",
+        "table_of_contents" : [
+          {
+            "id" : "the-hello-world-program",
+            "title" : "The Hello World program"
+          },
+          {
+            "id" : "short-explanation",
+            "title" : "Short explanation"
+          },
+          {
+            "id" : "printing-quotes",
+            "title" : "Printing quotes"
+          },
+          {
+            "id" : "possible-errors",
+            "title" : "Possible errors"
+          },
+          {
+            "id" : "summary",
+            "title" : "Summary"
+          }
+        ]
+      },
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 19
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 2
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 3
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2019-01-18T07:44:19Z",
+      "id" : 1,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2022-05-11T07:51:56.526527Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 1765
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 265
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 52
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 53
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 6559
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : -1,
+          "total_count" : 195
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : 1,
+          "total_count" : 184
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : 0,
+          "total_count" : 88
+        }
+      ],
+      "lesson_stepik_id" : 202049,
+      "position" : 1,
+      "seconds_to_complete" : 168.7097700000046,
+      "solved_by" : 94111,
+      "stage" : null,
+      "stepik_id" : 590421,
+      "success_rate" : 0.0,
+      "title" : "Test topic name",
+      "topic" : 1,
+      "topic_theory" : 5208,
+      "type" : "theory",
+      "updated_at" : "2021-12-30T02:07:36.828778Z",
+      "content_updated_at" : "2021-06-22T10:31:29Z",
+      "progress_updated_at" : "2022-04-28T11:28:56.694981Z",
+      "popular_ide" : "Python",
+      "project" : null,
+      "is_beta" : false,
+      "is_deprecated" : false,
+      "is_ide_compatible" : true,
+      "is_remote_tested" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 2,
+      "error_issues" : [ ],
+      "warning_issues" : [
+        "Link (href) with the length less than 10: 642",
+        "Link (href) with the length less than 10: 3014"
+      ],
+      "can_see_admin_toolbar" : true
+    },
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "<p>Write a program that prints out a string <code class=\"java\">We love Python!</code></p>\n\n<p>Note that this task is case-sensitive.</p>",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "python3" : {
+              "time" : 15,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "python3" : ""
+          },
+          "code_templates_header_lines_count" : {
+            "python3" : 0
+          },
+          "code_templates_footer_lines_count" : {
+            "python3" : 0
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true
+        },
+        "source" : {
+          "code" : "# This is a sample Code Challenge\n# Learn more: https://stepik.org/lesson/9173\n# Ask your questions via support@stepik.org\n\ndef generate():\n    return []\n\ndef check(reply, clue):\n    return reply.strip() == clue.strip()\n\n# def solve(dataset):\n#     a, b = dataset.split()\n#     return str(int(a) + int(b))",
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "samples_count" : 0,
+          "templates_data" : "::python3\n\n\n\n\n",
+          "is_time_limit_scaled" : true,
+          "is_memory_limit_scaled" : true,
+          "is_run_user_code_allowed" : true,
+          "manual_time_limits" : [ ],
+          "manual_memory_limits" : [ ],
+          "test_archive" : [ ],
+          "test_cases" : [
+            [
+              "",
+              "We love Python!"
+            ]
+          ],
+          "are_all_tests_scored" : false
+        },
+        "raw_text" : "<p>[TITLE]Plain message # Application[/TITLE]</p>\n\n<p>Write a program that prints out a string <code>We love Python!</code></p>\n\n<p>Note that this task is case-sensitive.</p>",
+        "table_of_contents" : [ ]
+      },
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 29
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 6
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 0
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 304
+        }
+      ],
+      "content_created_at" : "2019-12-05T19:21:09Z",
+      "id" : 2,
+      "is_abandoned" : false,
+      "is_completed" : false,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : true,
+      "is_skipped" : false,
+      "last_completed_at" : "2022-05-11T06:40:11.156314Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 3703
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 140
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 123
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 759
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 63
+        },
+        {
+          "subject" : "skip",
+          "value" : 0,
+          "total_count" : 18
+        },
+        {
+          "subject" : "skip",
+          "value" : 101,
+          "total_count" : 87
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 42
+        },
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 70
+        }
+      ],
+      "lesson_stepik_id" : 286528,
+      "position" : 1,
+      "seconds_to_complete" : 55.171,
+      "solved_by" : 54826,
+      "stage" : null,
+      "stepik_id" : 976796,
+      "success_rate" : 0.575,
+      "title" : "Plain message",
+      "topic" : 1,
+      "topic_theory" : 5208,
+      "type" : "practice",
+      "updated_at" : "2022-01-02T15:57:57.547843Z",
+      "content_updated_at" : "2020-09-13T18:06:48Z",
+      "progress_updated_at" : "2022-04-28T14:17:25.175761Z",
+      "popular_ide" : "PyCharmEdu",
+      "project" : null,
+      "is_beta" : false,
+      "is_deprecated" : false,
+      "is_ide_compatible" : true,
+      "is_remote_tested" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : true
+    }
+  ]
+}

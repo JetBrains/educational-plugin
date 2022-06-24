@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
@@ -209,39 +210,86 @@ fun openNextActivity(project: Project, task: Task) {
     notifyJBAUnauthorized(project, EduCoreBundle.message("notification.hyperskill.no.next.activity.title"))
     return
   }
-  val course = task.course
-  val language = HyperskillLanguages.getRequestLanguage(course.programmingLanguage) ?: return
 
-  val nextStep = computeUnderProgress(project, EduCoreBundle.message("hyperskill.next.activity"), true) {
-    val stepSource = HyperskillConnector.getInstance().getStepSource(task.id)
-      .onError { return@computeUnderProgress null }
-    val topic = stepSource.topic ?: return@computeUnderProgress null
-    val steps = HyperskillConnector.getInstance().getStepsForTopic(topic).onError { return@computeUnderProgress null }
-    return@computeUnderProgress steps.lastOrNull()
+  val nextActivityInfo = computeUnderProgress(project, EduCoreBundle.message("hyperskill.next.activity"), true) {
+    getNextStep(task.id)
   }
 
-  if (nextStep == null) {
-    LOG.warn("Next step is null: current task: ${task.id}")
-    Notification(
-      "EduTools",
-      EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
-      EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)),
-      NotificationType.ERROR
-    )
-      .setListener(NotificationListener.URL_OPENING_LISTENER)
-      .notify(project)
-    return
+  when (nextActivityInfo) {
+    is NextActivityInfo.TopicCompleted -> EduBrowser.getInstance().browse(topicCompletedLink(nextActivityInfo.topicId))
+    NextActivityInfo.NoTopic, NextActivityInfo.NoActivity -> showNoNextActivityNotification(task, project)
+    is NextActivityInfo.NotCalculated -> {
+      showNoNextActivityNotification(task, project)
+      LOG.warn("Next step for taskId=${task.id}, topicId=${nextActivityInfo.topicId} isn't calculated yet: current step with not " +
+               "completed state is returned")
+    }
+    is NextActivityInfo.Next -> {
+      val nextStep = nextActivityInfo.stepSource
+      val topicId = nextActivityInfo.topicId
+      if (!HyperskillCourse.isStepSupported(nextStep.block?.name)) {
+        EduBrowser.getInstance().browse(stepLink(nextStep.id))
+        LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task.id} topic: ${topicId} ")
+        return
+      }
+
+      val course = task.course
+      val language = HyperskillLanguages.getRequestLanguage(course.programmingLanguage) ?: return
+      ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(course.id, nextStep.id, language))
+    }
+  }
+}
+
+private fun getTopic(taskId: Int): Int? {
+  val stepSource = HyperskillConnector.getInstance().getStepSource(taskId).onError {
+    LOG.warn(it)
+    null
   }
 
-  if (nextStep.block!!.name in HyperskillCourse.SUPPORTED_STEP_TYPES && nextStep.id != task.id) {
-    ProjectOpener.getInstance().open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(course.id, nextStep.id, language))
+  return stepSource?.topic
+}
+
+private fun getNextStep(taskId: Int): NextActivityInfo {
+  val topicId = getTopic(taskId)
+  if (topicId == null) {
+    LOG.warn("Topic id is null for a step ${taskId}")
+    return NextActivityInfo.NoTopic
+  }
+
+  val steps = HyperskillConnector.getInstance().getStepsForTopic(topicId).onError { error ->
+    LOG.warn(error)
+    null
+  }
+
+  if (steps.isNullOrEmpty()) {
+    return NextActivityInfo.NoActivity
+  }
+
+  // it can happen as next task is calculated asynchronously,
+  // But as it never happens during testing I'll log it to see if we need to process this case
+  val currentStep = steps.find { it.id == taskId }
+  if (currentStep?.isCompleted == false) {
+    return NextActivityInfo.NotCalculated(topicId)
+  }
+
+  val nextStep = steps.find { it.isNext }
+
+  return if (nextStep == null) {
+    NextActivityInfo.TopicCompleted(topicId)
   }
   else {
-    val topic = nextStep.topic
-    val link = if (nextStep.isCompleted && topic != null) topicCompletedLink(topic) else stepLink(nextStep.id)
-    LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task.id} topic: ${topic} ")
-    EduBrowser.getInstance().browse(link)
+    NextActivityInfo.Next(nextStep, topicId)
   }
+}
+
+private fun showNoNextActivityNotification(task: Task, project: Project) {
+  Notification(
+    "EduTools",
+    EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
+    EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)),
+    NotificationType.ERROR
+  )
+    .setListener(NotificationListener.URL_OPENING_LISTENER)
+    .notify(project)
 }
 
 fun wrapWithUtm(link: String, content: String): String {
@@ -254,4 +302,16 @@ fun wrapWithUtm(link: String, content: String): String {
   else {
     "$link?$utmParams"
   }
+}
+
+private sealed class NextActivityInfo {
+  class TopicCompleted(val topicId: Int) : NextActivityInfo()
+
+  object NoActivity : NextActivityInfo()
+
+  object NoTopic : NextActivityInfo()
+
+  class Next(val stepSource: HyperskillStepSource, val topicId: Int) : NextActivityInfo()
+
+  class NotCalculated(val topicId: Int) : NextActivityInfo()
 }
