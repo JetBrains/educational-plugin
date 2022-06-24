@@ -91,7 +91,10 @@ fun markStageAsCompleted(task: Task) {
   YamlFormatSynchronizer.saveRemoteInfo(course)
 }
 
-private class NavigateToProjectAction(private val project: Project, private val course: HyperskillCourse) : DumbAwareAction(null as String?) {
+private class NavigateToProjectAction(
+  private val project: Project,
+  private val course: HyperskillCourse
+) : DumbAwareAction(null as String?) {
   override fun actionPerformed(e: AnActionEvent) {
     val lesson = course.getProjectLesson() ?: return
     val currentTask = lesson.currentTask() ?: return
