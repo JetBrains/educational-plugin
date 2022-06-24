@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Mixin class is used to deserialize remote information of [com.jetbrains.edu.learning.courseFormat.StudyItem] item stored on Stepik.
  */
-@Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
+@Suppress("unused") // used for json serialization
 @JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteStudyItemYamlMixin {
   @JsonProperty(ID)

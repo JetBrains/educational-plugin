@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(SECTION, LESSON, TASK, FILE, PLACEHOLDER, IS_VISIBLE)
 abstract class AnswerPlaceholderDependencyYamlMixin {
   @JsonProperty(SECTION)

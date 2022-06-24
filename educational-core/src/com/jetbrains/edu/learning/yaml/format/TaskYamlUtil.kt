@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NonNls
  * Mixin class is used to deserialize [Task] item.
  * Update [TaskChangeApplier] if new fields added to mixin
  */
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)
 abstract class TaskYamlMixin {
   val itemType: String

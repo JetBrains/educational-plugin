@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
  * Mixin class is used to deserialize [Section] item.
  * Update [ItemContainerChangeApplier] if new fields added to mixin
  */
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(CUSTOM_NAME, CONTENT, TAGS)
 @JsonDeserialize(builder = SectionBuilder::class)
 abstract class SectionYamlMixin {

@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
  * Mixin class is used to deserialize [TaskFile] item.
  * Update [TaskChangeApplier.applyTaskFileChanges] if new fields added to mixin
  */
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE)
 @JsonDeserialize(builder = TaskFileBuilder::class)
 abstract class TaskFileYamlMixin {

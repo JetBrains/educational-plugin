@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@file:Suppress("unused") // used for yaml serialization
 package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonFormat
