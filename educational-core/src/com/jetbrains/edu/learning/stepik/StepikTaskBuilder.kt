@@ -41,9 +41,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.C
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
 import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.NonNls
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.safety.Whitelist
 import java.util.Collections.unmodifiableList
 
 open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
@@ -124,7 +121,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
     descriptionFormat = DescriptionFormat.HTML
     descriptionText = buildString {
-      append(clearCodeBlockFromTags(step))
+      append(step.text)
 
       if (samples != null) {
         append("<br>")
@@ -165,7 +162,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
     task.canCheckLocally = false
-    task.descriptionText = clearCodeBlockFromTags(step)
+    task.descriptionText = step.text
     task.descriptionFormat = DescriptionFormat.HTML
 
     if (course is EduCourse && courseMode == CourseMode.EDUCATOR && stepId > 0) {
@@ -213,7 +210,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   }
 
   private fun AnswerTask.init(description: String) {
-    descriptionText = clearCodeBlockFromTags(description)
+    descriptionText = description
     descriptionFormat = DescriptionFormat.HTML
 
     val text = EduCoreBundle.message("string.task.comment.file")
@@ -225,7 +222,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   private fun theoryTask(name: String): TheoryTask {
     val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = clearCodeBlockFromTags(step)
+    task.descriptionText = step.text
     task.descriptionFormat = DescriptionFormat.HTML
 
     initTaskFiles(task)
@@ -393,21 +390,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
       task.isMultipleChoice = dataset.isMultipleChoice
       return true
-    }
-
-    private fun clearCodeBlockFromTags(text: String): String {
-      val parsedText = Jsoup.parse(text)
-      for (element in parsedText.select("code")) {
-        val settings = Document.OutputSettings().prettyPrint(false)
-        var codeBlockWithoutTags = Jsoup.clean(element.html(), "", Whitelist().addTags("br"), settings)
-        codeBlockWithoutTags = codeBlockWithoutTags.replace("<br>", "\n")
-        element.html(codeBlockWithoutTags)
-      }
-      return parsedText.toString()
-    }
-
-    private fun clearCodeBlockFromTags(step: Step): String {
-      return clearCodeBlockFromTags(step.text)
     }
 
     @VisibleForTesting
