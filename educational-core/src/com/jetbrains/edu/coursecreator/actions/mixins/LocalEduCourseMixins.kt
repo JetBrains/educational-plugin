@@ -377,6 +377,8 @@ class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDe
         CourseraNames.COURSE_TYPE -> codec.treeToValue(jsonObject, CourseraCourse::class.java)
         else -> {
           val course = codec.treeToValue(jsonObject, EduCourse::class.java)
+          course.programmingLanguage = course.programmingLanguage
+
           if (courseType == MARKETPLACE) {
             course.isMarketplace = true
           }
