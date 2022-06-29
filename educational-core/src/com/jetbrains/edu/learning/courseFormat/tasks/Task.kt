@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.logger
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.util.*
 
@@ -167,6 +167,6 @@ abstract class Task : StudyItem {
 
   companion object {
     @JvmStatic
-    protected val LOG = Logger.getInstance(Task::class.java)
+    protected val LOG = logger<Task>()
   }
 }

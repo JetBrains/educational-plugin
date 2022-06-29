@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.logger
 import java.util.*
 
 data class CheckFeedback(
@@ -23,6 +23,6 @@ data class CheckFeedback(
   }
 
   companion object {
-    private val LOG = Logger.getInstance(CheckFeedback::class.java)
+    private val LOG = logger<CheckFeedback>()
   }
 }

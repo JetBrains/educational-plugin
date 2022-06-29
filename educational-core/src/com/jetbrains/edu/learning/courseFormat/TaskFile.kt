@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.logger
 
 /**
  * Implementation of task file which contains task answer placeholders for student to type in and
