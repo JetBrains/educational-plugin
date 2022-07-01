@@ -7,6 +7,7 @@ import com.jetbrains.cidr.cpp.cmake.projectWizard.CLionProjectWizardUtils
 import com.jetbrains.cidr.cpp.toolchains.CMakeExecutableTool
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
 import com.jetbrains.edu.cpp.messages.EduCppBundle
+import com.jetbrains.edu.learning.isUnitTestMode
 
 const val GTEST_VERSION_KEY: String = "GTEST_VERSION"
 const val GTEST_VERSION_VALUE: String = "release-1.8.1"
@@ -27,6 +28,11 @@ const val TEST_FRAMEWORKS_BASE_DIR_VALUE: String = "test-framework"
 const val CMAKE_MINIMUM_REQUIRED_LINE_KEY: String = "CMAKE_MINIMUM_REQUIRED_LINE"
 val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
   val cMakeVersionExtractor = {
+    if (isUnitTestMode) {
+      // Manually provide `cmake` executable permissions to avoid https://youtrack.jetbrains.com/issue/CPP-28466
+      // and make tests work
+      makeCmakeExecutable()
+    }
     CLionProjectWizardUtils.getCMakeMinimumRequiredLine(CMakeExecutableTool.readCMakeVersion(CPPToolchains.getInstance().defaultToolchain))
   }
 
@@ -38,6 +44,13 @@ val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
     progressManager.run(object : Task.WithResult<String, Nothing>(null, EduCppBundle.message("progress.getting.c.make.version"), false) {
       override fun compute(indicator: ProgressIndicator) = cMakeVersionExtractor()
     })
+  }
+}
+
+private fun makeCmakeExecutable() {
+  val cmakeFile = CMakeExecutableTool.getBundledCMakeToolBinary(false, CMakeExecutableTool.ToolKind.CMAKE)
+  if (cmakeFile.exists() && !cmakeFile.canExecute()) {
+    cmakeFile.setExecutable(true)
   }
 }
 
