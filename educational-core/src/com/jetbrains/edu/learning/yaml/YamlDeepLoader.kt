@@ -76,7 +76,7 @@ object YamlDeepLoader {
   private fun addNonEditableFilesToCourse(taskContainer: Lesson, course: Course, project: Project) {
     val nonEditableFile = taskContainer.taskList.flatMap { task ->
       task.taskFiles.values.mapNotNull { taskFile ->
-        if (!taskFile.isEditable) return@mapNotNull null
+        if (taskFile.isEditable) return@mapNotNull null
         project.courseDir
           .findChild(taskContainer.name)
           ?.findChild(task.name)
