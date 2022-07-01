@@ -66,6 +66,10 @@ fun toEncodeFileContent(path: String): Boolean {
     return fileType.isBinary
   }
   val contentType = mimeFileType(path) ?: return isGitObject(name)
+  return isBinary(contentType)
+}
+
+fun isBinary(contentType: String): Boolean {
   return contentType.startsWith("image") ||
          contentType.startsWith("audio") ||
          contentType.startsWith("video") ||

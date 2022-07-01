@@ -1,12 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.toEncodeFileContent
+import com.jetbrains.edu.learning.isBinary
+import com.jetbrains.edu.learning.mimeFileType
 
 /**
  * Implementation of task file which contains task answer placeholders for student to type in and
@@ -73,18 +71,13 @@ class TaskFile {
 
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
-    if (task.lesson is FrameworkLesson && toEncodeFileContent(name)) {
-      if (EduUtils.exceedsBase64ContentLimit(text)) {
-        LOG.warn("Base64 encoding of `$name` file exceeds limit (${StringUtil.formatFileSize(EduUtils.getBinaryFileLimit().toLong())}), " +
-                 "its content isn't serialized")
-        return null
-      }
-      return text
+    if (EduUtils.exceedsBase64ContentLimit(text)) {
+      LOG.warn("Base64 encoding of `$name` file exceeds limit (${EduUtils.getBinaryFileLimit().toLong()}), " +
+               "its content isn't serialized")
+      return null
     }
-    val extension = FileUtilRt.getExtension(name)
-    val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
-
-    return if (fileType.isBinary) null else text
+    val contentType = mimeFileType(name) ?: return text
+    return if (isBinary(contentType)) null else text
   }
 
   fun sortAnswerPlaceholders() {
