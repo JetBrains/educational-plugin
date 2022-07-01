@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader
+import com.jetbrains.rd.util.first
 
 class LearnerYamlLoadingTest : EduTestCase() {
 
@@ -71,6 +74,44 @@ class LearnerYamlLoadingTest : EduTestCase() {
 
     loadFromYaml()
     assertEquals(1, findTask(0, 0).taskFiles.size)
+  }
+
+  fun `test editable file`() {
+    courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("file1.txt")
+        }
+      }
+    }
+    createConfigFiles(project)
+
+    loadFromYaml()
+    val task = findTask(0, 0)
+    UIUtil.dispatchAllInvocationEvents()
+    val taskFileVF = task.taskFiles.first().value.getVirtualFile(project)!!
+    val course = StudyTaskManager.getInstance(project).course!!
+    assertTrue(course.isEditableFile(taskFileVF.path))
+  }
+
+  fun `test non editable file`() {
+    val nonEditableFileName = "non-editable-file.txt"
+    courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("file1.txt")
+          taskFile(nonEditableFileName, editable = false)
+        }
+      }
+    }
+    createConfigFiles(project)
+
+    loadFromYaml()
+    val task = findTask(0, 0)
+    UIUtil.dispatchAllInvocationEvents()
+    val taskFileVF = task.taskFiles[nonEditableFileName]!!.getVirtualFile(project)!!
+    val course = StudyTaskManager.getInstance(project).course!!
+    assertFalse(course.isEditableFile(taskFileVF.path))
   }
 
   private fun loadFromYaml() {
