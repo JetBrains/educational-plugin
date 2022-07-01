@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkEvent
 
-fun showNotification(student : Boolean, course: Course, project: Project) {
+fun showPostFeedbackNotification(student : Boolean, course: Course, project: Project) {
   val feedbackUrl = feedbackUrlTemplate
       .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
                                              PlatformUtils.getPlatformPrefix())
@@ -29,13 +29,26 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
   content = content.replace("\$PRODUCT", product)
                    .replace("\$URL", feedbackUrl)
                    .replace("\$LANGUAGE", language.lowercase().capitalize())
-  val notification = MyNotification(content, feedbackUrl)
+  val notification = MyNotification(EduCoreBundle.message("check.correct.solution.no.exclamation"), content, feedbackUrl)
   PropertiesComponent.getInstance().setValue(feedbackAsked, true)
   notification.notify(project)
 }
 
-class MyNotification(content: String, feedbackUrl: String) :
-  Notification("EduTools", EduCoreBundle.message("check.correct.solution.no.exclamation"), content, NotificationType.INFORMATION),
+fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
+  val questionnaireUrl = questionnaireUrlTemplate
+    .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()]
+                                                                       ?: PlatformUtils.getPlatformPrefix())
+    .replace("\$COURSE_ID", course.id.toString())
+
+  val notification = MyNotification(EduCoreBundle.message("check.correct.solution.no.exclamation"),
+                                    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl),
+                                    questionnaireUrl)
+  PropertiesComponent.getInstance().setValue(questionnaireAdvertisingNotificationShown, true)
+  notification.notify(project)
+}
+
+class MyNotification(title: String, content: String, feedbackUrl: String) :
+  Notification("EduTools",title, content, NotificationType.INFORMATION),
   NotificationFullContent {
   init {
     setListener(object : NotificationListener.Adapter() {
@@ -48,18 +61,24 @@ class MyNotification(content: String, feedbackUrl: String) :
 
 fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(feedbackAsked)
 
-const val feedbackAsked = "askFeedbackNotification"
+fun isQuestionnaireAdvertisingNotificationShown() : Boolean = PropertiesComponent.getInstance().getBoolean(questionnaireAdvertisingNotificationShown)
 
-const val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
+private const val feedbackAsked = "askFeedbackNotification"
+
+private const val questionnaireAdvertisingNotificationShown = "questionnaireAdvertisingNotification"
+
+private const val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
                                 "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
 
-const val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
+private const val questionnaireUrlTemplate = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
+
+private const val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
                             "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make teaching \$LANGUAGE better.</html>"
 
-const val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
+private const val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
                             "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
 
-val productMap = hashMapOf(
+private val productMap = hashMapOf(
     Pair(PlatformUtils.PYCHARM_CE_PREFIX, "PCC"),
     Pair(PlatformUtils.PYCHARM_PREFIX, "PCP"),
     Pair(PlatformUtils.PYCHARM_EDU_PREFIX, "PCE"),
