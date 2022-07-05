@@ -5,6 +5,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.cmake.CMakeLanguage
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard
 import com.jetbrains.cmake.psi.CMakeCommand
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -51,3 +52,5 @@ fun PsiFile.findCMakeCommand(commandName: String): CMakeCommand? {
   return PsiTreeUtil.findChildrenOfType(this, CMakeCommand::class.java)
     .firstOrNull { it.name.equals(commandName, true) }
 }
+
+fun getLanguageVersions(): List<String> = CMakeRecognizedCPPLanguageStandard.values().map { it.standard }

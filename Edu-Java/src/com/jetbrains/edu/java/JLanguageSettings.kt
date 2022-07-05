@@ -36,8 +36,6 @@ class JLanguageSettings : JdkLanguageSettings() {
     return if (SystemInfo.isMac) File(location, "Contents/Home") else location
   }
 
-  override fun getLanguageVersions() = JavaSdkVersion.values().filter { it.isAtLeast(DEFAULT_JAVA) }.map { it.description }
-
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     return if (course != null) {
       val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
@@ -66,7 +64,7 @@ class JLanguageSettings : JdkLanguageSettings() {
   }
 
   companion object {
-    private val DEFAULT_JAVA = JavaSdkVersion.JDK_1_8
+    val DEFAULT_JAVA = JavaSdkVersion.JDK_1_8
 
     @JvmStatic
     fun findSuitableJdk(course: Course, sdkModel: ProjectSdksModel): Sdk? {

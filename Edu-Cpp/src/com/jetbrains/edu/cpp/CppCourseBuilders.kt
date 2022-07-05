@@ -52,6 +52,8 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
+  override fun getSupportedLanguageVersions(): List<String> = getLanguageVersions()
+
   override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     super.initNewTask(project, course, task, info, withSources)
     if (withSources) {

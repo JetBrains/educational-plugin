@@ -17,6 +17,9 @@ open class PyCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override val testTemplateName: String? = PyConfigurator.TESTS_PY
 
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
+
+  override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
     PyCourseProjectGenerator(this, course)
 

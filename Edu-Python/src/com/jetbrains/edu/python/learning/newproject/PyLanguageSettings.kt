@@ -39,12 +39,6 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun getSettings(): PyNewProjectSettings = mySettings
 
-  override fun getLanguageVersions(): List<String> {
-    val pythonVersions = mutableListOf(ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
-    pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
-    return pythonVersions
-  }
-
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
     val sdk = mySettings.sdk ?: return ValidationMessage(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON))
@@ -130,6 +124,6 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
       return ProjectJdkImpl(name, PyFakeSdkType, "", pythonVersion)
     }
 
-    private const val ALL_VERSIONS = "All versions"
+    const val ALL_VERSIONS = "All versions"
   }
 }
