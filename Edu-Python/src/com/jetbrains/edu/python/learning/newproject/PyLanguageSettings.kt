@@ -5,6 +5,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.UserDataHolderBase
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
@@ -19,6 +20,8 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
+import com.jetbrains.python.sdk.add.addBaseInterpretersAsync
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -33,12 +36,22 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     disposable: Disposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    // by default, we create new virtual env in project, we need to add this non-existing sdk to sdk list
-    val fakeSdk = createFakeSdk(course, context)
 
-    val combo = getInterpreterComboBox(fakeSdk)
+    val sdkField = PySdkPathChoosingComboBox()
+
+    addBaseInterpretersAsync(sdkField, emptyList(), null, context ?: UserDataHolderBase()) {
+      val fakeSdk = createFakeSdk(course, context)
+      if (fakeSdk != null) {
+        sdkField.addSdkItemOnTop(fakeSdk)
+        sdkField.selectedSdk = fakeSdk
+      }
+      mySettings.sdk = sdkField.selectedSdk
+      notifyListeners()
+    }
+
     return listOf<LabeledComponent<JComponent>>(
-      LabeledComponent.create(combo, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))
+      LabeledComponent.create(sdkField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST)
+    )
   }
 
   override fun getSettings(): PyNewProjectSettings = mySettings
@@ -69,14 +82,6 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         PythonSdkType.getLanguageLevelForSdk(this)
       }
     }
-
-  private fun getInterpreterComboBox(fakeSdk: Sdk?): JComponent {
-    val helper = PySdkSettingsHelper.firstAvailable()
-    return helper.getInterpreterComboBox(fakeSdk) { sdk ->
-      mySettings.sdk = sdk
-      notifyListeners()
-    }
-  }
 
   companion object {
 
@@ -120,7 +125,8 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
                                                                                                   requiredVersion)) : Err<String>(
       errorMessage)
 
-    private fun createFakeSdk(course: Course, context: UserDataHolder?): ProjectJdkImpl? {
+
+    private fun createFakeSdk(course: Course, context: UserDataHolder? = null): Sdk? {
       val baseSdk = getBaseSdk(course, context) ?: return null
       val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
       val prefix = flavor.name + " "
