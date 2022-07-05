@@ -112,8 +112,8 @@ class HyperskillCourse : Course {
   fun isTaskInTopicsSection(task: Task): Boolean = getTopicsSection()?.lessons?.contains(task.lesson) == true
 
   private fun descriptionNote(projectId: Int): String {
-    val link = "https://hyperskill.org/projects/$projectId"
-    return """<br/><br/>Learn more at <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
+    val link = "$HYPERSKILL_PROJECTS_URL/$projectId"
+    return """<br/><br/>${EduCoreBundle.message("learn.more.at")} <a href="${wrapWithUtm(link, "project-card")}">$link</a>"""
   }
 
   override val itemType: String = HYPERSKILL

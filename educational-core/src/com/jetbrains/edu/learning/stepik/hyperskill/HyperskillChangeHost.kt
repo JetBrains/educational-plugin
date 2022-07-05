@@ -9,10 +9,8 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-private const val ACTION_TEXT = "Change Hyperskill url"
-
 @Suppress("ComponentNotRegistered")
-class HyperskillChangeHost : DumbAwareAction(ACTION_TEXT), RightAlignedToolbarAction {
+class HyperskillChangeHost : DumbAwareAction(EduCoreBundle.message("hyperskill.change.host.action.name")), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val initialValue = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)
     val result = Messages.showInputDialog(EduCoreBundle.message("hyperskill.enter.url.description"),

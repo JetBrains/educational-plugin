@@ -96,7 +96,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
                       ?: return Err(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage))
 
     if (!hyperskillProject.useIde) {
-      return Err(HYPERSKILL_PROJECT_NOT_SUPPORTED)
+      return Err(EduCoreBundle.message("hyperskill.project.not.supported", HYPERSKILL_PROJECTS_URL))
     }
 
     val eduEnvironment = hyperskillProject.eduEnvironment

@@ -123,7 +123,7 @@ fun topicCompletedLink(topicId: Int) = "${HYPERSKILL_URL}learn/topic/${topicId}"
 fun isHyperskillSupportAvailable(): Boolean = EduConfiguratorManager.allExtensions().any { it.courseType == HYPERSKILL_TYPE }
 
 fun getSelectedProjectIdUnderProgress(): Int? {
-  return computeUnderProgress(null, SYNCHRONIZE_JBA_ACCOUNT, false) {
+  return computeUnderProgress(null, EduCoreBundle.message("hyperskill.synchronizing.account"), false) {
     val currentUser = HyperskillConnector.getInstance().getCurrentUserInfo() ?: return@computeUnderProgress null
     currentUser.hyperskillProjectId
   }
