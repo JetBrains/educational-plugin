@@ -24,6 +24,8 @@ class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
 
+  override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
+
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
     return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
       override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {}

@@ -51,11 +51,6 @@ abstract class LanguageSettings<Settings : Any> {
    */
   abstract fun getSettings(): Settings
 
-  /**
-   * Returns string representations of all possible language versions to be shown to a user
-   */
-  open fun getLanguageVersions(): List<String> = emptyList()
-
   protected fun notifyListeners() {
     for (listener in listeners) {
       listener.settingsChanged()

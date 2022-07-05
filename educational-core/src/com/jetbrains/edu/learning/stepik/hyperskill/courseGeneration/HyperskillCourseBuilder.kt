@@ -29,6 +29,8 @@ open class HyperskillCourseBuilder<T : Any>(private val baseCourseBuilder: EduCo
    */
   override fun getLanguageSettings(): LanguageSettings<T> = baseCourseBuilder.getLanguageSettings()
 
+  override fun getSupportedLanguageVersions(): List<String> = baseCourseBuilder.getSupportedLanguageVersions()
+
   override fun showNewStudyItemUi(
     project: Project,
     course: Course,

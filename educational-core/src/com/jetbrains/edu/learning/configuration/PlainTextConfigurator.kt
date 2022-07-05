@@ -124,8 +124,9 @@ class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
 
   override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
     override fun getSettings() {}
-    override fun getLanguageVersions() = mutableListOf("1.42")
   }
+
+  override fun getSupportedLanguageVersions(): List<String> = listOf("1.42")
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
 }

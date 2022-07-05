@@ -199,6 +199,8 @@ interface EduCourseBuilder<Settings : Any> {
    */
   fun getLanguageSettings(): LanguageSettings<Settings>
 
+  fun getSupportedLanguageVersions(): List<String> = emptyList()
+
   fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Settings>? = null
 
   /**

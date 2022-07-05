@@ -9,8 +9,6 @@ import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 
 class KtLanguageSettings : JdkLanguageSettings() {
-  override fun getLanguageVersions() = listOf("1.2", "1.3", "1.4", "1.5", "1.6")
-
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     if (course != null) {
       val courseKotlinVersion = course.kotlinVersion
