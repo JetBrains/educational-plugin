@@ -261,9 +261,8 @@ private class CourseBuilder(
 
       programmingLanguage = languages.first().id
 
-      val supportedLanguageVersions = configurator?.courseBuilder?.getSupportedLanguageVersions()
-                                      ?: formatError(
-                                        EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
+      val supportedLanguageVersions = configurator?.courseBuilder?.getSupportedLanguageVersions() ?: formatError(
+        EduCoreBundle.message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))
       if (programmingLanguageVersion != null) {
         if (!supportedLanguageVersions.contains(programmingLanguageVersion)) {
           formatError(EduCoreBundle.message("yaml.editor.invalid.unsupported.language.with.version", displayProgrammingLanguageName,
