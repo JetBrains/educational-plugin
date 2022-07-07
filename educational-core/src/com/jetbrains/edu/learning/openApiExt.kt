@@ -41,8 +41,6 @@ private val LOG = Logger.getInstance("openApiExt")
 
 val isUnitTestMode: Boolean get() = ApplicationManager.getApplication().isUnitTestMode
 
-val isReadAccessAllowed: Boolean get() = ApplicationManager.getApplication().isReadAccessAllowed
-
 fun checkIsBackgroundThread() {
   check(!ApplicationManager.getApplication().isDispatchThread) {
     "Long running operation invoked on UI thread"
@@ -123,10 +121,6 @@ val String.xmlUnescaped: String get() = StringUtil.unescapeXmlEntities(this)
 
 inline fun <T> runReadActionInSmartMode(project: Project, crossinline runnable: () -> T): T {
   return DumbService.getInstance(project).runReadActionInSmartMode(Computable { runnable() })
-}
-
-fun String.toTitleCase(): String {
-  return StringUtil.toTitleCase(this)
 }
 
 fun Document.toPsiFile(project: Project): PsiFile? {
