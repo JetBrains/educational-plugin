@@ -26,7 +26,7 @@ sealed class AnswerTask : Task {
       return ""
     }
 
-    val answerPlaceholder = answerTaskFile.answerPlaceholders?.first()
+    val answerPlaceholder = answerTaskFile.answerPlaceholders.firstOrNull()
     if (answerPlaceholder == null) {
       LOG.warn("Answer placeholder in file: ${itemType} for task is null or empty")
       return ""

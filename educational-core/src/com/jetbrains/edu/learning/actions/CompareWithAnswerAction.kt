@@ -78,7 +78,7 @@ open class CompareWithAnswerAction : DumbAwareAction() {
   private fun getSolution(taskFile: TaskFile): String {
     val fullAnswer = StringBuilder(taskFile.text)
 
-    taskFile.answerPlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
+    taskFile.answerPlaceholders.sortedBy { it.offset }.reversed().forEach { placeholder ->
       placeholder.possibleAnswer.let { answer ->
         fullAnswer.replace(placeholder.initialState.offset,
                            placeholder.initialState.offset + placeholder.initialState.length, answer)
