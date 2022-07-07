@@ -255,7 +255,7 @@ private fun Task.containsLocalImages(project: Project, fileName: String): Boolea
 }
 
 fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
-  appendLine("<h1 style=\"margin-top: 15px\">${getUIName().capitalize()} $index/$tasksNumber: $name</h1>")
+  appendLine("<h1 style=\"margin-top: 15px\">${getUIName().capitalize()} $index/$tasksNumber: $presentableName</h1>")
   appendLine(text)
 }
 
