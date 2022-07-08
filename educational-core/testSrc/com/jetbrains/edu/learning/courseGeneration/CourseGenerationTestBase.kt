@@ -3,10 +3,12 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
@@ -25,6 +27,7 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
                     ?: error("given builder returns null as course project generator")
     val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
 
+    TaskDescriptionView.getInstance(project).currentTask = EduUtils.getCurrentTask(project)
     runInEdtAndWait {
       myProject = project
     }

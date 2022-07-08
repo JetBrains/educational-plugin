@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 
 abstract class TaskNavigationAction : DumbAwareAction() {
@@ -21,14 +21,14 @@ abstract class TaskNavigationAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = false
     val project = e.project ?: return
-    val currentTask = EduUtils.getCurrentTask(project) ?: return
+    val currentTask = TaskDescriptionView.getInstance(project).currentTask ?: return
     if (getTargetTask(currentTask) != null || getCustomAction(currentTask) != null) {
       e.presentation.isEnabled = true
     }
   }
 
   private fun navigateTask(project: Project, place: String) {
-    val currentTask = EduUtils.getCurrentTask(project) ?: return
+    val currentTask = TaskDescriptionView.getInstance(project).currentTask ?: return
     val customAction = getCustomAction(currentTask)
     if (customAction != null) {
       customAction(project, currentTask)

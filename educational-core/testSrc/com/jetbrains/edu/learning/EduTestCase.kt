@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
@@ -168,6 +169,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
+    TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
   }
 
   override fun getTestDataPath(): String {
@@ -234,6 +236,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     val taskFile = getTaskFile(taskFilePath) ?: error("Can't find task file `$taskFilePath` in `$name`")
     val file = taskFile.getVirtualFile(project) ?: error("Can't find virtual file for `${taskFile.name}` task")
     myFixture.openFileInEditor(file)
+    TaskDescriptionView.getInstance(myFixture.project).currentTask = this
     if (placeholderIndex != null) {
       val placeholder = taskFile.answerPlaceholders[placeholderIndex]
       myFixture.editor.selectionModel.setSelection(placeholder.offset, placeholder.endOffset)

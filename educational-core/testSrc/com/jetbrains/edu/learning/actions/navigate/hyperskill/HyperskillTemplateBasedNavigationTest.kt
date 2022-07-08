@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.testAction
 
 class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
@@ -155,6 +156,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("NewFile.kt")
       myFixture.type("fun qwe() {}\n")
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = task1
       testAction(NextTaskAction.ACTION_ID)
     }
 
@@ -193,6 +195,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
       val task1 = course.findTask("lesson1", "task1")
       task1.createTaskFileAndOpenInEditor("src/NewFile.kt")
       myFixture.type("fun qwe() {}")
+      TaskDescriptionView.getInstance(myFixture.project).currentTask = task1
       testAction(NextTaskAction.ACTION_ID)
 
       val task2 = course.findTask("lesson1", "task2")
@@ -324,6 +327,7 @@ class HyperskillTemplateBasedNavigationTest : NavigationTestBase() {
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject().apply { isTemplateBased = true }
     course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true))
+//    TaskDescriptionView.getInstance(myFixture.project).currentTask = EduUtils.getCurrentTask(myFixture.project)
     return course
   }
 }

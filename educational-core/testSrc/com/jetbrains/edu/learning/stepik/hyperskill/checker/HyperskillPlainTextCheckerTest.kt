@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -11,6 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
 class HyperskillPlainTextCheckerTest : CheckersTestBase<Unit>() {
 
@@ -40,6 +42,7 @@ class HyperskillPlainTextCheckerTest : CheckersTestBase<Unit>() {
         else -> null
       }
     }
+    TaskDescriptionView.getInstance(project).currentTask = EduUtils.getCurrentTask(project)
     doTest()
   }
 
