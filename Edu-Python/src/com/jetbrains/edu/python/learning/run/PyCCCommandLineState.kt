@@ -8,6 +8,9 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.target.TargetEnvironment
+import com.intellij.execution.target.TargetEnvironmentRequest
+import com.intellij.execution.target.value.constant
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -26,6 +29,10 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.python.learning.getCurrentTaskFilePath
 import com.jetbrains.python.run.CommandLinePatcher
 import com.jetbrains.python.run.PythonCommandLineState
+import com.jetbrains.python.run.PythonExecution
+import com.jetbrains.python.run.PythonScriptExecution
+import com.jetbrains.python.run.target.HelpersAwareTargetEnvironmentRequest
+import java.util.function.Function
 
 class PyCCCommandLineState private constructor(
   private val runConfiguration: PyCCRunTestConfiguration,
@@ -68,6 +75,23 @@ class PyCCCommandLineState private constructor(
       }
     }
     return super.execute(executor, processStarter, *patchers)
+  }
+
+  override fun buildPythonExecution(helpersAwareRequest: HelpersAwareTargetEnvironmentRequest): PythonExecution {
+    val pythonScriptExecution = PythonScriptExecution()
+    pythonScriptExecution.pythonScriptPath = constant(runConfiguration.pathToTest)
+    val project = runConfiguration.project
+    val path = task.getCurrentTaskFilePath(project)
+    if (path == null) {
+      LOG.warn("Path to task file is null for a task ${task.name}")
+      return pythonScriptExecution
+    }
+    pythonScriptExecution.addParameter(path)
+    return pythonScriptExecution
+  }
+
+  override fun getPythonExecutionWorkingDir(targetEnvironmentRequest: TargetEnvironmentRequest): Function<TargetEnvironment, String>? {
+    return constant(taskDir.path)
   }
 
   @Throws(ExecutionException::class)
