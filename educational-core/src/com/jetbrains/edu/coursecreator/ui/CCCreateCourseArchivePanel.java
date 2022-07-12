@@ -5,6 +5,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.NlsContexts.Label;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
@@ -46,8 +47,9 @@ public class CCCreateCourseArchivePanel extends JPanel {
     return myLocationField;
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   @NotNull
-  private static String getAuthorInitialValue(@NotNull Project project) {
+  private static @Label String getAuthorInitialValue(@NotNull Project project) {
     Course course =  OpenApiExtKt.getCourse(project);
     if (course != null) {
       if (course.getVendor() == null) {
@@ -67,7 +69,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
     if (userName != null) {
       return StringUtil.capitalize(userName);
     }
-    return "User";
+    return EduCoreBundle.message("action.create.course.archive.author.field.initial.value");
   }
 
   public String getLocationPath() {

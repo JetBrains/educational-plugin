@@ -6,6 +6,7 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.capitalize
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.event.HyperlinkEvent
 
+@Suppress("UnstableApiUsage")
 fun showPostFeedbackNotification(student : Boolean, course: Course, project: Project) {
   val feedbackUrl = feedbackUrlTemplate
       .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
@@ -22,33 +24,30 @@ fun showPostFeedbackNotification(student : Boolean, course: Course, project: Pro
       .replace("\$MODE", if (course.courseMode == CourseMode.STUDENT) "Learner" else "Educator")
 
   val product = if (PlatformUtils.isPyCharmEducational()) "PyCharm Edu" else "EduTools"
-  val language = course.languageID
+  val language = course.languageID.lowercase().capitalize()
 
-  var content = if (student) studentTemplate else creatorTemplate
+  val content = if (student) EduCoreBundle.message("feedback.template.student", product, feedbackUrl, language)
+  else EduCoreBundle.message("feedback.template.creator", product, feedbackUrl, language)
 
-  content = content.replace("\$PRODUCT", product)
-                   .replace("\$URL", feedbackUrl)
-                   .replace("\$LANGUAGE", language.lowercase().capitalize())
-  val notification = MyNotification(EduCoreBundle.message("check.correct.solution.no.exclamation"), content, feedbackUrl)
+  val notification = MyNotification(content, feedbackUrl)
   PropertiesComponent.getInstance().setValue(feedbackAsked, true)
   notification.notify(project)
 }
 
 fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
+  @Suppress("UnstableApiUsage")
   val questionnaireUrl = questionnaireUrlTemplate
-    .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()]
-                                                                       ?: PlatformUtils.getPlatformPrefix())
+    .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix())
     .replace("\$COURSE_ID", course.id.toString())
 
   val notification = MyNotification(EduCoreBundle.message("check.correct.solution.no.exclamation"),
-                                    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl),
-                                    questionnaireUrl)
+                                    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl))
   PropertiesComponent.getInstance().setValue(questionnaireAdvertisingNotificationShown, true)
   notification.notify(project)
 }
 
-class MyNotification(title: String, content: String, feedbackUrl: String) :
-  Notification("EduTools",title, content, NotificationType.INFORMATION),
+class MyNotification(@Suppress("UnstableApiUsage") @NotificationContent content: String, feedbackUrl: String) :
+  Notification("EduTools", EduCoreBundle.message("check.correct.solution.no.exclamation"), content, NotificationType.INFORMATION),
   NotificationFullContent {
   init {
     setListener(object : NotificationListener.Adapter() {
@@ -72,12 +71,7 @@ private const val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feed
 
 private const val questionnaireUrlTemplate = "https://surveys.jetbrains.com/s3/marketplace-courses-survey?ide=\$PRODUCT&courseId=\$COURSE_ID"
 
-private const val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
-                            "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make teaching \$LANGUAGE better.</html>"
-
-private const val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
-                            "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
-
+@Suppress("UnstableApiUsage")
 private val productMap = hashMapOf(
     Pair(PlatformUtils.PYCHARM_CE_PREFIX, "PCC"),
     Pair(PlatformUtils.PYCHARM_PREFIX, "PCP"),
