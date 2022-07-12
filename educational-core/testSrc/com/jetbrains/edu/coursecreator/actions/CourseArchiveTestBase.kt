@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import java.io.File
 
@@ -17,7 +18,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     val fileName = "task.${EduUtils.EDU_TEST_BIN}"
     var placeholder = "placeholder"
 
-    while (placeholder.toByteArray(Charsets.UTF_8).size <= EduUtils.getBinaryFileLimit()) {
+    while (placeholder.toByteArray(Charsets.UTF_8).size <= getBinaryFileLimit()) {
       placeholder += placeholder
     }
 

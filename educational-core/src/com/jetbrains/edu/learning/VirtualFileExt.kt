@@ -221,8 +221,8 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
     if (isToEncodeContent) {
-      if (task.lesson is FrameworkLesson && length >= EduUtils.getBinaryFileLimit()) {
-        throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, EduUtils.getBinaryFileLimit().toLong(), true)
+      if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
+        throw HugeBinaryFileException("${task.getPathInCourse()}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
       taskFile.text = loadEncodedContent(isToEncodeContent = true)
       return taskFile

@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.intellij.openapi.diagnostic.logger
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isBinary
-import com.jetbrains.edu.learning.mimeFileType
 
 /**
  * Implementation of task file which contains task answer placeholders for student to type in and
@@ -71,8 +68,8 @@ class TaskFile {
 
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
-    if (EduUtils.exceedsBase64ContentLimit(text)) {
-      LOG.warn("Base64 encoding of `$name` file exceeds limit (${EduUtils.getBinaryFileLimit().toLong()}), " +
+    if (exceedsBase64ContentLimit(text)) {
+      LOG.warn("Base64 encoding of `$name` file exceeds limit (${getBinaryFileLimit().toLong()}), " +
                "its content isn't serialized")
       return null
     }

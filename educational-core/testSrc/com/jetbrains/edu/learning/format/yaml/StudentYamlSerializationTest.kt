@@ -3,7 +3,6 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResultDiff
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
@@ -559,7 +558,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     var base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
 
     //create huge fileText
-    while (!EduUtils.exceedsBase64ContentLimit(base64Text)) {
+    while (!exceedsBase64ContentLimit(base64Text)) {
       base64Text += base64Text
     }
 
