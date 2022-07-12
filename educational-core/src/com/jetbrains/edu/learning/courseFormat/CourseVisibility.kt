@@ -1,23 +1,12 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.ui.SimpleTextAttributes
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-
 sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibility> {
 
-  open val tooltipText : String? = null
-  open val textAttributes: SimpleTextAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES
-
-  object PrivateVisibility : CourseVisibility(0) {
-    override val tooltipText = EduCoreBundle.message("course.visibility.private")
-  }
+  object PrivateVisibility : CourseVisibility(0)
 
   object LocalVisibility : CourseVisibility(3)
 
-  object PublicVisibility : CourseVisibility(4) {
-    override val tooltipText = EduCoreBundle.message("course.visibility.public.not.approved")
-    override val textAttributes: SimpleTextAttributes = SimpleTextAttributes.GRAYED_ATTRIBUTES
-  }
+  object PublicVisibility : CourseVisibility(4)
 
   class FeaturedVisibility(internal val inGroup: Int) : CourseVisibility(1)
 
