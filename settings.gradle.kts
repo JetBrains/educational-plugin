@@ -3,15 +3,6 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.util.*
 
-// Custom plugin repo is needed here to use snapshot version of gradle-intelij-plugin
-// and avoid https://youtrack.jetbrains.com/issue/EDU-5104
-pluginManagement {
-  repositories {
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    gradlePluginPortal()
-  }
-}
-
 rootProject.name = "educational-plugin"
 include(
   "educational-core",

@@ -94,8 +94,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 plugins {
   idea
   kotlin("jvm") version "1.6.10"
-  // Snapshot version is used to avoid https://youtrack.jetbrains.com/issue/EDU-5104
-  id("org.jetbrains.intellij") version "1.7.0-SNAPSHOT"
+  id("org.jetbrains.intellij") version "1.7.0"
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
