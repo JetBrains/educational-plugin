@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import java.util.*
@@ -30,7 +29,7 @@ abstract class Task : StudyItem {
 
   var feedback: CheckFeedback? = null
   var descriptionText: String = ""
-  var descriptionFormat: DescriptionFormat = EduUtils.getDefaultTaskDescriptionFormat()
+  var descriptionFormat: DescriptionFormat = DescriptionFormat.MD
   var feedbackLink: String? = null
 
   /**
