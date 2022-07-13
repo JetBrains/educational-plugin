@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.checkio.checker
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
-import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator
 import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector

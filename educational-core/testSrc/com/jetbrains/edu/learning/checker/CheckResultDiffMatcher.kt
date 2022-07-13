@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher

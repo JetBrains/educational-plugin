@@ -21,16 +21,15 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.addProxy
-import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import okhttp3.*
 import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
@@ -45,8 +44,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val course = task.course as CourseraCourse
     if (course.submitManually) {
-      return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.local.tests.passed", getLinkToSubmission(task)),
-                         hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
+      return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.local.tests.passed", getLinkToSubmission(task)))
     }
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
@@ -81,8 +79,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
   private fun createCheckResult(statusCode: Int, task: Task): CheckResult {
     return when (statusCode) {
       HttpStatus.SC_CREATED -> CheckResult(CheckStatus.Unchecked,
-                                           EduCoreBundle.message("coursera.successful.submission", getLinkToSubmission(task)),
-                                           hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
+                                           EduCoreBundle.message("coursera.successful.submission", getLinkToSubmission(task)))
       HttpStatus.SC_UNAUTHORIZED -> CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.error.invalid.credentials"))
       HttpStatus.SC_BAD_REQUEST -> CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.error.invalid.token"))
       else -> CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("coursera.error.failed.creating.submission", statusCode))

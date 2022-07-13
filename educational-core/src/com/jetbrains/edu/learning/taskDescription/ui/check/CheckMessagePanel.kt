@@ -6,13 +6,14 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.HtmlBuilder
 import com.intellij.openapi.util.text.HtmlChunk
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckResultDiff
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
@@ -22,6 +23,7 @@ import org.jsoup.Jsoup
 import java.awt.BorderLayout
 import java.awt.Font
 import javax.swing.*
+import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -124,13 +126,25 @@ class CheckMessagePanel private constructor() : JPanel() {
     fun create(checkResult: CheckResult): CheckMessagePanel {
       val messagePanel = CheckMessagePanel()
       messagePanel.setMessage(checkResult.message)
-      messagePanel.setHyperlinkListener(checkResult.hyperlinkListener ?: EduBrowserHyperlinkListener.INSTANCE)
+      messagePanel.setHyperlinkListener(checkResult.hyperlinkListener)
       messagePanel.adjustView(checkResult)
       if (checkResult.diff != null) {
         messagePanel.setDiff(checkResult.diff)
       }
       return messagePanel
     }
+
+    private val CheckResult.hyperlinkListener: HyperlinkListener
+      get() {
+        if (hyperlinkAction == null) {
+          return EduBrowserHyperlinkListener.INSTANCE
+        }
+        return object : HyperlinkAdapter() {
+          override fun hyperlinkActivated(e: HyperlinkEvent) {
+            hyperlinkAction.invoke()
+          }
+        }
+      }
 
     @VisibleForTesting
     fun prepareHtmlText(text: String): String {

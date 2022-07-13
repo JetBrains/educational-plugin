@@ -42,12 +42,11 @@ object CheckUtils {
   val CONGRATULATIONS = EduCoreBundle.message("check.correct.solution")
   val COMPILATION_FAILED_MESSAGE = EduCoreBundle.message("check.error.compilation.failed")
   val NOT_RUNNABLE_MESSAGE = EduCoreBundle.message("check.error.solution.not.runnable")
-  val LOGIN_NEEDED_MESSAGE = EduCoreBundle.message("check.error.login.needed")
   val SYNTAX_ERROR_MESSAGE = EduCoreBundle.message("check.error.syntax.error")
   val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduCoreBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE)
 
   private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
-    return taskFile.answerPlaceholders.size > 0 && taskFile.hasFailedPlaceholders()
+    return taskFile.answerPlaceholders.isNotEmpty() && taskFile.hasFailedPlaceholders()
   }
 
   fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {

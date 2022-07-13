@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checker
+package com.jetbrains.edu.learning.courseFormat
 
 enum class CheckResultSeverity {
   Info, Warning, Error;

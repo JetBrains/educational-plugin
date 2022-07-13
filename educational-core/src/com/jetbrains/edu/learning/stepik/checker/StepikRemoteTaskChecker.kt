@@ -5,9 +5,9 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSAGE
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -33,7 +33,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   }
 
   override fun retry(task: Task): Result<Boolean, String> {
-    EduSettings.getInstance().user ?: return Err(CheckUtils.LOGIN_NEEDED_MESSAGE)
+    EduSettings.getInstance().user ?: return Err(LOGIN_NEEDED_MESSAGE)
     return when (task) {
       is ChoiceTask -> StepikCheckConnector.retryChoiceTask(task)
       else -> error("Can't retry ${task.itemType} on ${StepikNames.STEPIK}")

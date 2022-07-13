@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning
 
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TROUBLESHOOTING_GUIDE_URL
+
 object EduNames {
   const val PLUGIN_ID = "com.jetbrains.edu"
   const val JBA = "JetBrains Academy"
@@ -49,12 +51,8 @@ object EduNames {
   const val PYTHON_3_VERSION = "3.x"
 
   // Troubleshooting guide links
-
-  private const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/troubleshooting-guide.html"
-  const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
   const val NO_COURSES_URL = "$TROUBLESHOOTING_GUIDE_URL#no_courses_found"
   const val FAILED_TO_POST_TO_JBA_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_submission_jba"
-  const val FAILED_TO_CHECK_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_to_launch_checking"
   const val OUTSIDE_OF_KNOWN_PORT_RANGE_URL = "$TROUBLESHOOTING_GUIDE_URL#outside_of_known_port_range"
 
   const val ENVIRONMENT_CONFIGURATION_LINK_JAVA = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_java"

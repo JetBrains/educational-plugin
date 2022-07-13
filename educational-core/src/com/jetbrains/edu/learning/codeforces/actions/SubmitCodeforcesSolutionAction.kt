@@ -1,20 +1,20 @@
 package com.jetbrains.edu.learning.codeforces.actions
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.ui.BrowserHyperlinkListener
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckResult.Companion.failedToCheck
-import com.jetbrains.edu.learning.checker.CheckResultSeverity
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_CONTEST_SUBMISSIONS_URL
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck
+import com.jetbrains.edu.learning.courseFormat.CheckResultSeverity
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
@@ -24,8 +24,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.awt.datatransfer.StringSelection
-import javax.swing.event.HyperlinkEvent
-import javax.swing.event.HyperlinkListener
 
 class SubmitCodeforcesSolutionAction : CodeforcesAction() {
 
@@ -45,20 +43,19 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
                                           CODEFORCES_CONTEST_SUBMISSIONS_URL.format(task.course.id))
       var severity = CheckResultSeverity.Info
       var checkResult = CheckResult(checkStatus, message, severity = severity)
-      var hyperlinkListener: HyperlinkListener? = null
+      var hyperlinkAction: (() -> Unit)? = null
       try {
         CodeforcesSettings.getInstance().account?.let {
           val responseMessage = CodeforcesConnector.getInstance().submitSolution(task, solution, it, project)
             .onError { errorMessage ->
               checkStatus = CheckStatus.Failed
               severity = CheckResultSeverity.Error
-              hyperlinkListener = object : BrowserHyperlinkListener() {
-                override fun hyperlinkActivated(e: HyperlinkEvent) {
-                  CopyPasteManager.getInstance().setContents(StringSelection(solution))
-                  super.hyperlinkActivated(e)
-                }
+              val codeforcesSubmitLink = CodeforcesTask.codeforcesSubmitLink(task)
+              hyperlinkAction = {
+                CopyPasteManager.getInstance().setContents(StringSelection(solution))
+                BrowserUtil.browse(codeforcesSubmitLink)
               }
-              errorMessage + "&emsp;<a href=${CodeforcesTask.codeforcesSubmitLink(task)}>${
+              errorMessage + "&emsp;<a href=$codeforcesSubmitLink>${
                 EduCoreBundle.message("codeforces.copy.solution.and.submit")
               }</a>"
             }
@@ -66,7 +63,7 @@ class SubmitCodeforcesSolutionAction : CodeforcesAction() {
             message = responseMessage
             if (severity == CheckResultSeverity.Info) severity = CheckResultSeverity.Warning
           }
-          checkResult = CheckResult(checkStatus, message, severity = severity, hyperlinkListener = hyperlinkListener)
+          checkResult = CheckResult(checkStatus, message, severity = severity, hyperlinkAction = hyperlinkAction)
         }
       }
       catch (e: Exception) {

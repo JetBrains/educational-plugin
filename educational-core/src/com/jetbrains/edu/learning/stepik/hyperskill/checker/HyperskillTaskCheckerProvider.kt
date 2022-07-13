@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.checker
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -10,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 
 class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvider) : TaskCheckerProvider {
   override val codeExecutor: CodeExecutor
@@ -34,8 +34,7 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
             val otherUnsolvedTasks = projectLesson.taskList.filter { it != task && it.status != CheckStatus.Solved }
             if (otherUnsolvedTasks.isEmpty()) {
               return CheckResult(resultingStatus,
-                                 EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL),
-                                 hyperlinkListener = EduBrowserHyperlinkListener.INSTANCE)
+                                 EduCoreBundle.message("hyperskill.next.project", HYPERSKILL_PROJECTS_URL))
             }
           }
 

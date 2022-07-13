@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -152,7 +152,7 @@ abstract class StepikBasedCheckConnector {
       return if (this == EduCoreBundle.message("error.access.denied")) {
         CheckResult(CheckStatus.Unchecked,
                     EduCoreBundle.message("error.access.denied.with.link"),
-                    hyperlinkListener = HyperskillLoginListener
+                    hyperlinkAction = { HyperskillLoginListener.doLogin() }
         )
       }
       else CheckResult(CheckStatus.Unchecked, this)

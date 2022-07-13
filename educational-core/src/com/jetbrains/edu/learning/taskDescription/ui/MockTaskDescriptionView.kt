@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.awt.RelativePoint
-import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType
 import java.awt.Point

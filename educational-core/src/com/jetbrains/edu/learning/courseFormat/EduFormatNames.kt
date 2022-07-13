@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+
 object EduFormatNames {
   const val MARKETPLACE = "Marketplace"
 
@@ -31,4 +33,12 @@ object EduFormatNames {
 
   // Used as course type only
   const val PYCHARM = "PyCharm"
+
+  // Troubleshooting guide links
+  const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/troubleshooting-guide.html"
+  const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
+  const val FAILED_TO_CHECK_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_to_launch_checking"
+
+  @JvmField
+  val LOGIN_NEEDED_MESSAGE = EduCoreBundle.message("check.error.login.needed")
 }

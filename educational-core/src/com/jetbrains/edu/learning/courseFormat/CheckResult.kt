@@ -1,11 +1,10 @@
-package com.jetbrains.edu.learning.checker
+package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduNames.FAILED_TO_CHECK_URL
-import com.jetbrains.edu.learning.EduNames.NO_TESTS_URL
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_CHECK_URL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSAGE
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NO_TESTS_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.Nls
-import javax.swing.event.HyperlinkListener
 
 data class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
@@ -13,7 +12,7 @@ data class CheckResult @JvmOverloads constructor(
   val details: String? = null,
   val diff: CheckResultDiff? = null,
   val severity: CheckResultSeverity = CheckResultSeverity.Info,
-  val hyperlinkListener: HyperlinkListener? = null
+  val hyperlinkAction: (() -> Unit)? = null
 ) {
 
   val fullMessage: String get() = if (details == null) message else "$message\n\n$details"
@@ -24,7 +23,7 @@ data class CheckResult @JvmOverloads constructor(
     @JvmField
     val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.local.check.unavailable"))
     @JvmField
-    val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
+    val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, LOGIN_NEEDED_MESSAGE)
     @JvmField
     val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.connection.failed"))
     @JvmField

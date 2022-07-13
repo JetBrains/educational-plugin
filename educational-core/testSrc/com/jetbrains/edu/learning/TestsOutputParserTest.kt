@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning
 
-import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.Companion.CONGRATS_MESSAGE
