@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 class MarketplaceWidgetFactory : LoginWidgetFactory() {
   override val widgetId: String = "widget.marketplace"
 
-  override fun isWidgetAvailable(course: Course) = course is EduCourse && course.isMarketplace && course.isStudy
+  override fun isWidgetAvailable(course: Course) = course is EduCourse && course.isMarketplace
 
   override fun getDisplayName(): String = EduCoreBundle.message("marketplace.widget.title")
 
