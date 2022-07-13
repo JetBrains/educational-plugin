@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
-import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.Account
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TITLE
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import org.jetbrains.annotations.TestOnly
 import java.time.Instant
 import java.time.temporal.ChronoUnit

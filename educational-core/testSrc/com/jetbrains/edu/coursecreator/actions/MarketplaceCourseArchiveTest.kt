@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
+import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 

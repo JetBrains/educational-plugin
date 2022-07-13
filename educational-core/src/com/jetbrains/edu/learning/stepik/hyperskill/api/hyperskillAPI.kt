@@ -9,9 +9,9 @@ import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions

@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
 import com.jetbrains.edu.learning.marketplace.REVIEWS
-import com.jetbrains.edu.learning.setMarketplaceAuthorsAsString
 import java.util.*
 
 @JsonDeserialize(builder = MarketplaceCourseBuilder::class)
@@ -56,4 +55,8 @@ private class MarketplaceCourseBuilder(
 
     return course
   }
+}
+
+fun Course.setMarketplaceAuthorsAsString(authors: List<Author>) {
+  this.authors = authors.map { MarketplaceUserInfo(it.name) }
 }

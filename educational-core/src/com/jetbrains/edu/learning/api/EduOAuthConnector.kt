@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import okhttp3.ConnectionPool

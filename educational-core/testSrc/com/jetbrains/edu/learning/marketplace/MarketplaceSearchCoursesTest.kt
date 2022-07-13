@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import okhttp3.mockwebserver.RecordedRequest

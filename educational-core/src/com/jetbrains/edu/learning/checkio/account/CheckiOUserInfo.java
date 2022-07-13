@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checkio.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jetbrains.edu.learning.UserInfo;
+import com.jetbrains.edu.learning.courseFormat.UserInfo;
 import org.jetbrains.annotations.NotNull;
 
 

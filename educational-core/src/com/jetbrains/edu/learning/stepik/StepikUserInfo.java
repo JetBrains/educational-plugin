@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.UserInfo;
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
+import com.jetbrains.edu.learning.courseFormat.UserInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
