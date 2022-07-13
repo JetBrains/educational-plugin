@@ -15,7 +15,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
-import com.jetbrains.edu.learning.EduNames.PYCHARM
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO_TYPE
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator

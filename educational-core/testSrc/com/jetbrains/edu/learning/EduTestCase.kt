@@ -315,7 +315,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     disposable: Disposable,
     configuratorClass: Class<*>,
     language: Language,
-    courseType: String = EduNames.PYCHARM,
+    courseType: String = EduFormatNames.PYCHARM,
     environment: String = DEFAULT_ENVIRONMENT
   ) {
     val extension = EducationalExtensionPoint<EduConfigurator<*>>()

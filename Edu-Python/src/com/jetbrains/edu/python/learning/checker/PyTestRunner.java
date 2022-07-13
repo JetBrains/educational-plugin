@@ -8,10 +8,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.sdk.PythonSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ class PyTestRunner {
 
   Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
     final Sdk sdk = PythonSdkUtil.findPythonSdk(ModuleManager.getInstance(project).getModules()[0]);
-    EduConfigurator<?> configurator = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, DEFAULT_ENVIRONMENT,
+    EduConfigurator<?> configurator = EduConfiguratorManager.findConfigurator(EduFormatNames.PYCHARM, DEFAULT_ENVIRONMENT,
                                                                               PythonLanguage.getInstance());
     if (configurator == null) {
       LOG.warn("Plugin configurator for Python is null");

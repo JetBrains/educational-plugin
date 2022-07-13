@@ -1,10 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.courseFormat.EduLanguage.Companion.get
 import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
@@ -13,7 +13,7 @@ import java.util.*
  * To introduce new course it's required to:
  * - Extend Course class
  * - Update CourseBuilder#build() in [com.jetbrains.edu.learning.yaml.format.CourseYamlUtil] to handle course loading from YAML
- * - Override [Course.getItemType], that's how we find appropriate [com.jetbrains.edu.learning.configuration.EduConfigurator]
+ * - Override [Course.itemType], that's how we find appropriate [com.jetbrains.edu.learning.configuration.EduConfigurator]
  */
 abstract class Course : LessonContainer() {
   var description: String = ""
@@ -105,7 +105,7 @@ abstract class Course : LessonContainer() {
   override val course: Course
     get() = this
 
-  override val itemType: String = EduNames.PYCHARM //"PyCharm" is used here for historical reasons
+  override val itemType: String = PYCHARM //"PyCharm" is used here for historical reasons
 
   val isStudy: Boolean
     get() = CourseMode.STUDENT == courseMode

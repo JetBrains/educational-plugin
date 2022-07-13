@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
@@ -289,7 +290,7 @@ class CCNewCoursePanel(
     val courseType = extension.courseType
     val displayName = extension.displayName ?: run {
       when (courseType) {
-        EduNames.PYCHARM -> if (environment == DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
+        EduFormatNames.PYCHARM -> if (environment == DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
         else -> "$courseType ${language.displayName}"
       }
     }

@@ -19,8 +19,6 @@ object EduNames {
   const val PROJECT_NAME = "PROJECT_NAME"
   const val RUN_CONFIGURATION_DIR = "runConfigurations"
 
-  // Used as course type only
-  const val PYCHARM = "PyCharm"
   const val EDU = "Edu"
   const val ANDROID = "Android"
   const val UNITTEST = "unittest"

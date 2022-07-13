@@ -4,7 +4,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.RequiredElement;
 import com.intellij.serviceContainer.BaseKeyedLazyInstance;
 import com.intellij.util.xmlb.annotations.Attribute;
-import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
 import org.jetbrains.annotations.Nullable;
 
 public class EducationalExtensionPoint<T> extends BaseKeyedLazyInstance<T> {
@@ -20,7 +20,7 @@ public class EducationalExtensionPoint<T> extends BaseKeyedLazyInstance<T> {
   public String language = "";
 
   @Attribute("courseType")
-  public String courseType = EduNames.PYCHARM;
+  public String courseType = EduFormatNames.PYCHARM;
 
   @Attribute("environment")
   public String environment = "";

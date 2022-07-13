@@ -11,6 +11,7 @@ import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -47,7 +48,7 @@ class EduYamlCompletionContributor : CompletionContributor() {
   private fun extendCompletionForProgrammingLanguageVersion() {
     extendCompletionForKey(PROGRAMMING_LANGUAGE_VERSION) { yamlFile ->
       val language = yamlFile.programmingLanguage ?: return@extendCompletionForKey emptyList()
-      val supportedLanguageVersions = EduConfiguratorManager.findConfigurator(EduNames.PYCHARM, DEFAULT_ENVIRONMENT,
+      val supportedLanguageVersions = EduConfiguratorManager.findConfigurator(EduFormatNames.PYCHARM, DEFAULT_ENVIRONMENT,
                                                                               language)?.courseBuilder?.getSupportedLanguageVersions()
       return@extendCompletionForKey supportedLanguageVersions.orEmpty()
     }
