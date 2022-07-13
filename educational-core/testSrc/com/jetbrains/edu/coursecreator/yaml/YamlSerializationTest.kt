@@ -502,6 +502,22 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
   }
 
+  fun `test framework lesson with custom name`() {
+    val course = course(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson("lesson")
+    }
+
+    val lesson = course.getItem("lesson")!!.apply {
+      customPresentableName = "my new lesson"
+    }
+
+    doTest(lesson, """
+      |type: framework
+      |custom_name: my new lesson
+      |
+    """.trimMargin())
+  }
+
   fun `test section`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
       section {

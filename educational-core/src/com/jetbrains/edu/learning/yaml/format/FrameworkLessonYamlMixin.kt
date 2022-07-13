@@ -31,8 +31,9 @@ abstract class FrameworkLessonYamlMixin : LessonYamlMixin() {
 open class FrameworkLessonBuilder(
   @JsonProperty(IS_TEMPLATE_BASED) val isTemplateBased: Boolean = true,
   @JsonProperty(CONTENT) content: List<String?> = emptyList(),
-  @JsonProperty(TAGS) contentTags: List<String> = emptyList()
-) : LessonBuilder(content, contentTags = contentTags) {
+  @JsonProperty(TAGS) contentTags: List<String> = emptyList(),
+  @JsonProperty(CUSTOM_NAME) customName: String? = null
+) : LessonBuilder(content, customName, contentTags) {
   override fun createLesson(): FrameworkLesson = FrameworkLesson().also {
     it.isTemplateBased = isTemplateBased
   }
