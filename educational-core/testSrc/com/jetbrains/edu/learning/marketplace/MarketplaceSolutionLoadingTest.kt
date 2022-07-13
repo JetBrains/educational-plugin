@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.MarketplaceSubmissionsTest.Companion.configureSubmissionsResponses
 import org.intellij.lang.annotations.Language

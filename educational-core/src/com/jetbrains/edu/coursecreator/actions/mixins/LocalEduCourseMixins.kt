@@ -71,7 +71,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
 import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption

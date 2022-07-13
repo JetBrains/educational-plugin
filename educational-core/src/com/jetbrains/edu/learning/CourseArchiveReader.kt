@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException
-import java.util.*
 
 private val LOG = Logger.getInstance(EduUtils::class.java.name)
 

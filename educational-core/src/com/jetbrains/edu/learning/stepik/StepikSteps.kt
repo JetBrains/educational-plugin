@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TIME
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

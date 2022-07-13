@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE

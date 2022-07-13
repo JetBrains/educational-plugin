@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.UserInfo
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo

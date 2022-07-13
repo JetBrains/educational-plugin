@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus

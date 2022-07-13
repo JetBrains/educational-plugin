@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import java.util.*
 
