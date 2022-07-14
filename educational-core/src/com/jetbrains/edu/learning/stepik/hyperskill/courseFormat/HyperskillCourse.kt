@@ -126,7 +126,7 @@ class HyperskillCourse : Course {
       StepikTaskType.DATASET.type,
       StepikTaskType.NUMBER.type,
       StepikTaskType.PYCHARM.type,
-      StepikTaskType.STRING.type,
+//      StepikTaskType.STRING.type,
       StepikTaskType.TEXT.type
     )
 
