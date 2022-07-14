@@ -23,6 +23,7 @@ class TestsOutputParser {
         is TestMessage.Failed -> {
           lastFailedMessage = message
         }
+        else -> Unit
       }
     }
 

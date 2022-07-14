@@ -93,7 +93,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 plugins {
   idea
-  kotlin("jvm") version "1.6.10"
+  kotlin("jvm") version "1.7.10"
   id("org.jetbrains.intellij") version "1.7.0"
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"

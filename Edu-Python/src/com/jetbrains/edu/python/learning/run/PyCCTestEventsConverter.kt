@@ -47,6 +47,7 @@ class PyCCTestEventsConverter(
           messages += createTestFailedMessage(nodeId, message)
           messages += createTestFinishedMessage(nodeId, message.testName)
         }
+        else -> Unit
       }
     }
 
