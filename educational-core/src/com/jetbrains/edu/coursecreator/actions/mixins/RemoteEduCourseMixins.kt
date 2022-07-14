@@ -94,14 +94,14 @@ abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   private lateinit var feedbackLink: String
 }
 
-@JsonPropertyOrder(TITLE, TAGS, TASK_LIST, IS_TEMPLATE_BASED, TYPE)
+@JsonPropertyOrder(TITLE, CUSTOM_NAME, TAGS, TASK_LIST, IS_TEMPLATE_BASED, TYPE)
 abstract class RemoteFrameworkLessonMixin : RemoteLessonMixin() {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_TEMPLATE_BASED)
   private var isTemplateBased: Boolean = true
 }
 
-@JsonPropertyOrder(ID)
+@JsonPropertyOrder(ID, TITLE, CUSTOM_NAME, TAGS, TASK_LIST, TYPE)
 abstract class RemoteLessonMixin : LocalLessonMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -115,7 +115,7 @@ abstract class RemoteTaskMixin : LocalTaskMixin() {
   private var id: Int = 0
 }
 
-@JsonPropertyOrder(ID, TITLE, TAGS, ITEMS, TYPE)
+@JsonPropertyOrder(ID, TITLE, CUSTOM_NAME, TAGS, ITEMS, TYPE)
 abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonProperty(ID)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)

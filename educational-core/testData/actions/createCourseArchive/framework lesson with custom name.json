@@ -1,0 +1,39 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "my lesson",
+      "custom_name" : "custom name",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : {
+            "Task.kt" : {
+              "name" : "Task.kt",
+              "placeholders" : [
+                {
+                  "offset" : 20,
+                  "length" : 6,
+                  "possible_answer" : "YHy7k6TLDgQ5klWwH+OQRA==",
+                  "placeholder_text" : "TODO()"
+                }
+              ],
+              "is_visible" : true,
+              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
+            }
+          },
+          "description_text" : "solve task",
+          "description_format" : "MD",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "framework"
+    }
+  ],
+  "version" : 13,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}

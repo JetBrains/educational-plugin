@@ -180,10 +180,14 @@ abstract class PluginInfoMixin : PluginInfo() {
   override var maxVersion: String? = null
 }
 
-@JsonPropertyOrder(TITLE, TAGS, ITEMS, TYPE)
+@JsonPropertyOrder(TITLE, CUSTOM_NAME, TAGS, ITEMS, TYPE)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
+
+  @JsonProperty(CUSTOM_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var customPresentableName: String? = null
 
   @JsonProperty(ITEMS)
   private lateinit var _items: List<StudyItem>
@@ -197,9 +201,14 @@ abstract class LocalSectionMixin {
   private lateinit var contentTags: List<String>
 }
 
+@JsonPropertyOrder(TITLE, CUSTOM_NAME, TAGS, TASK_LIST, TYPE)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
+
+  @JsonProperty(CUSTOM_NAME)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var customPresentableName: String? = null
 
   @JsonProperty(TASK_LIST)
   private lateinit var _items: List<StudyItem>

@@ -143,6 +143,34 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test framework lesson with custom name`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      frameworkLesson("my lesson") {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    course.lessons[0].customPresentableName = "custom name"
+    doTest()
+  }
+
+  fun `test lesson with custom name`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    course.description = "my summary"
+    course.lessons[0].customPresentableName = "custom name"
+    doTest()
+  }
+
   fun `test sections`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section {
@@ -170,6 +198,22 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     course.description = "my summary"
     val section = course.sections[0]
     section.contentTags = listOf("kotlin", "cycles")
+    doTest()
+  }
+
+  fun `test section with custom name`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("taskFile1.txt")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    val section = course.sections[0]
+    section.customPresentableName = "custom name"
     doTest()
   }
 
