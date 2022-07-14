@@ -1,6 +1,4 @@
-package com.jetbrains.edu.learning.plugins
-
-import com.intellij.openapi.extensions.PluginId
+package com.jetbrains.edu.learning.courseFormat
 
 open class PluginInfo {
   open var stringId: String = ""
@@ -17,8 +15,6 @@ open class PluginInfo {
     this.minVersion = minVersion
     this.maxVersion = maxVersion
   }
-
-  val id: PluginId get() = PluginId.getId(stringId)
 
   companion object {
     val JAVA: PluginInfo = PluginInfo("com.intellij.java", "Java")

@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
+import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import kotlin.reflect.KClass
@@ -32,7 +33,7 @@ abstract class CourseCompatibilityProviderTestBase(private val clazz: KClass<out
         check(configurators.isNotEmpty()) { "Cannot find configurator for ${clazz.qualifiedName}" }
 
         for (info in requiredPlugins) {
-          check(PluginManagerCore.getPlugin(info.id) != null) { "Cannot find plugin with `${info.stringId}` id" }
+          check(PluginManagerCore.getPlugin(PluginId.getId(info.stringId)) != null) { "Cannot find plugin with `${info.stringId}` id" }
         }
       }
       else {

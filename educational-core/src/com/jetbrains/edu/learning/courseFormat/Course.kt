@@ -1,11 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.forCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.courseFormat.EduLanguage.Companion.get
-import com.jetbrains.edu.learning.plugins.PluginInfo
 import java.util.*
 
 /**
@@ -125,9 +122,6 @@ abstract class Course : LessonContainer() {
 
   open val humanLanguage: String
     get() = Locale(languageCode).displayName
-
-  open val compatibility: CourseCompatibility
-    get() = forCourse(this)
 
   open val isStepikRemote: Boolean
     get() = false

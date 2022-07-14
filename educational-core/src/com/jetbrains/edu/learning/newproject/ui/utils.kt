@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.css.*

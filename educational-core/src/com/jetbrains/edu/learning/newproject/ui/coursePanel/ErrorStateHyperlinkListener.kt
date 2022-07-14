@@ -74,7 +74,7 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
         Disposer.register(parentDisposable, Disposable {
           PluginStateManager.removeStateListener(listener)
         })
-        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { it.id }
+        val pluginStringIds = state.pluginIds.mapTo(HashSet()) { PluginId.getId(it.stringId) }
         PluginStateManager.addStateListener(listener)
         installAndEnablePlugin(pluginStringIds) {}
       }

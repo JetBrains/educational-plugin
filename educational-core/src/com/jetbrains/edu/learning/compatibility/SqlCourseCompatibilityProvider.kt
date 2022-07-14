@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.compatibility
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 
 class SqlCourseCompatibilityProvider : CourseCompatibilityProvider {
   override fun requiredPlugins(): List<PluginInfo>? {

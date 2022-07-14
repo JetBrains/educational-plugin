@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
@@ -17,7 +18,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse

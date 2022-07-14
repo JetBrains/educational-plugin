@@ -28,6 +28,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -41,7 +42,6 @@ import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.plugins.PluginInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
@@ -236,7 +236,7 @@ class CourseArchiveCreator(
     }
 
     private fun collectCourseDependencies(project: Project, course: Course): List<PluginInfo> {
-      val requiredPluginIds = course.compatibilityProvider?.requiredPlugins().orEmpty().mapTo(HashSet()) { it.id.idString }
+      val requiredPluginIds = course.compatibilityProvider?.requiredPlugins().orEmpty().mapTo(HashSet()) { it.stringId }
       return ExternalDependenciesManager.getInstance(project).getDependencies(DependencyOnPlugin::class.java)
         // Compatibility provider may produce different required plugins in different IDEs,
         // for example, `PythonCore` in IDEA Community and `Pythonid` in PyCharm Pro.

@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getConte
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_COURSE_TYPE
 import com.jetbrains.edu.learning.codeforces.ContestParameters
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import org.jetbrains.annotations.NonNls
@@ -67,9 +66,6 @@ open class CodeforcesCourse : Course {
   }
 
   override val itemType: String = CODEFORCES_COURSE_TYPE
-
-  override val compatibility: CourseCompatibility
-    get() = CourseCompatibility.Compatible
 
   fun getContestUrl(): String = getContestURLFromID(id)
 

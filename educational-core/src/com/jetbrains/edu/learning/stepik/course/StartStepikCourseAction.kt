@@ -3,12 +3,13 @@ package com.jetbrains.edu.learning.stepik.course
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Companion.validateLanguage
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.Compatible
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility.IncompatibleVersion
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduLanguage
+import com.jetbrains.edu.learning.courseFormat.ext.compatibility
+import com.jetbrains.edu.learning.courseFormat.ext.validateLanguage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.JBA_DEFAULT_URL

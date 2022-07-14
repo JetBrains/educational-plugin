@@ -79,7 +79,7 @@ import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.encrypt.Encrypt
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE

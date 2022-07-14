@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.encrypt.EncryptionBundle
 import com.jetbrains.edu.learning.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.converter.json.local.*
 import java.io.IOException

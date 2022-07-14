@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.compatibility
 
 import com.intellij.util.ui.EmptyIcon
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
-import com.jetbrains.edu.learning.plugins.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import javax.swing.Icon
 
 /**
