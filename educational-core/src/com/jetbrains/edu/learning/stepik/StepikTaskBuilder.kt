@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_T
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -74,7 +75,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         StepikTaskType.NUMBER -> this::numberTask
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
         StepikTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
-//        StepikTaskType.STRING -> this::stringTask
+        StepikTaskType.STRING -> this::stringTask
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
         else -> this::unsupportedTask
@@ -95,7 +96,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
     REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
     SORTING("sorting", "Sorting"),
-//    STRING(STRING_TASK_TYPE, "Text"),
+    STRING(STRING_TASK_TYPE, "Text"),
     TABLE("table", "Table"),
     TEXT("text", "Theory"),
     VIDEO(VIDEO_TASK_TYPE, "Video")

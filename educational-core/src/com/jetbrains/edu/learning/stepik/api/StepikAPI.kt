@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
@@ -333,6 +332,9 @@ class Reply {
 
   @JsonProperty(FILE)
   var file: String? = null
+
+  @JsonProperty(FILES)
+  var files: List<String> = emptyList()
 
   @JsonProperty(TEXT)
   var text: String? = null
