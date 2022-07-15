@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
@@ -233,9 +233,9 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
-    assertEquals(EduCoreBundle.message("check.correct.solution"), task.messageCorrect)
-    assertEquals(EduCoreBundle.message("check.incorrect.solution"), task.messageIncorrect)
-    assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+    assertEquals(EduFormatBundle.message("check.correct.solution"), task.messageCorrect)
+    assertEquals(EduFormatBundle.message("check.incorrect.solution"), task.messageIncorrect)
+    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
   }
 
   fun `test can check locally`() {
@@ -259,9 +259,9 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(1, task.record)
     assertEquals(false, (task as ChoiceTask).canCheckLocally)
     assertEquals(mutableListOf(1), task.selectedVariants)
-    assertEquals(EduCoreBundle.message("check.correct.solution"), task.messageCorrect)
-    assertEquals(EduCoreBundle.message("check.incorrect.solution"), task.messageIncorrect)
-    assertEquals(EduCoreBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+    assertEquals(EduFormatBundle.message("check.correct.solution"), task.messageCorrect)
+    assertEquals(EduFormatBundle.message("check.incorrect.solution"), task.messageIncorrect)
+    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
   }
 
   fun `test deserialize choice task with custom messages variants`() {

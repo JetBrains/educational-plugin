@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.choice
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.message
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.*
 
 class ChoiceTask : Task {
@@ -10,11 +10,11 @@ class ChoiceTask : Task {
   var choiceOptions: List<ChoiceOption> = listOf()
   var isMultipleChoice: Boolean = false
   var selectedVariants: MutableList<Int> = mutableListOf()
-  var messageCorrect: String = EduCoreBundle.message("check.correct.solution")
-  var messageIncorrect: String = EduCoreBundle.message("check.incorrect.solution")
+  var messageCorrect: String = message("check.correct.solution")
+  var messageIncorrect: String = message("check.incorrect.solution")
   var quizHeader: String =
-    if (isMultipleChoice) EduCoreBundle.message("course.creator.create.choice.task.multiple.label")
-    else EduCoreBundle.message("course.creator.create.choice.task.single.label")
+    if (isMultipleChoice) message("course.creator.create.choice.task.multiple.label")
+    else message("course.creator.create.choice.task.single.label")
 
   var canCheckLocally: Boolean = true
 

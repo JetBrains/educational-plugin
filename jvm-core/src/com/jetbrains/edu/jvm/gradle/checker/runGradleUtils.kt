@@ -15,13 +15,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.checker.TestsOutputParser.Companion.STUDY_PREFIX
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.settings.TestRunner
 
@@ -85,7 +85,7 @@ class GradleCommandLine private constructor(
 
     if (!output.stdout.contains(taskName)) {
       LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-      return GradleOutput(false, listOf(EduCoreBundle.message("error.failed.to.launch.checking"), stderr, output.stdout))
+      return GradleOutput(false, listOf(EduFormatBundle.message("error.failed.to.launch.checking"), stderr, output.stdout))
     }
 
     return GradleOutput(true, collectMessages(output))

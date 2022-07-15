@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_INCORRECT
@@ -57,7 +58,7 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 @Suppress("EqualsOrHashCode")
 class FeedbackCorrectFilter {
   override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduCoreBundle.message("check.correct.solution")))
+                                               (other == EduFormatBundle.message("check.correct.solution")))
 
 }
 
@@ -67,7 +68,7 @@ class FeedbackCorrectFilter {
 @Suppress("EqualsOrHashCode")
 class FeedbackIncorrectFilter {
   override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduCoreBundle.message("check.incorrect.solution")))
+                                               (other == EduFormatBundle.message("check.incorrect.solution")))
 }
 
 /**
@@ -76,8 +77,8 @@ class FeedbackIncorrectFilter {
 @Suppress("EqualsOrHashCode")
 class QuizHeaderFilter {
   override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduCoreBundle.message("course.creator.create.choice.task.multiple.label") ||
-                                                other == EduCoreBundle.message("course.creator.create.choice.task.single.label")))
+                                               (other == EduFormatBundle.message("course.creator.create.choice.task.multiple.label") ||
+                                                other == EduFormatBundle.message("course.creator.create.choice.task.single.label")))
 }
 
 abstract class ChoiceOptionYamlMixin {

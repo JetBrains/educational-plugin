@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_CHECK_URL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSAGE
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NO_TESTS_URL
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.Nls
 
 data class CheckResult @JvmOverloads constructor(
@@ -21,31 +20,34 @@ data class CheckResult @JvmOverloads constructor(
 
   companion object {
     @JvmField
-    val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.local.check.unavailable"))
+    val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, message("check.result.local.check.unavailable"))
+
     @JvmField
     val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, LOGIN_NEEDED_MESSAGE)
+
     @JvmField
-    val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.connection.failed"))
+    val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, message("check.result.connection.failed"))
+
     @JvmField
     val SOLVED = CheckResult(CheckStatus.Solved)
+
     @JvmField
-    val CANCELED = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("check.result.canceled"))
+    val CANCELED = CheckResult(CheckStatus.Unchecked, message("check.result.canceled"))
+
     @JvmField
     val UNCHECKED = CheckResult(CheckStatus.Unchecked)
 
     val noTestsRun: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        EduCoreBundle.message("gluing.dot", EduCoreBundle.message("check.no.tests"),
-                              EduCoreBundle.message("help.use.guide", NO_TESTS_URL))
+        message("gluing.dot", message("check.no.tests"), message("help.use.guide", NO_TESTS_URL))
       )
 
     @JvmStatic
     val failedToCheck: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        EduCoreBundle.message("gluing.dot", EduCoreBundle.message("error.failed.to.launch.checking"),
-                              EduCoreBundle.message("help.use.guide", FAILED_TO_CHECK_URL))
+        message("gluing.dot", message("error.failed.to.launch.checking"), message("help.use.guide", FAILED_TO_CHECK_URL))
       )
   }
 }

@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 
 open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
@@ -44,7 +44,7 @@ open class JsTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     }
     catch (e: RuntimeConfigurationError) {
       val packageJson = project.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON) ?: return null
-      val message = """${EduCoreBundle.message("check.no.tests")}. ${EduJavaScriptBundle.message("install.dependencies")}."""
+      val message = """${EduFormatBundle.message("check.no.tests")}. ${EduJavaScriptBundle.message("install.dependencies")}."""
       CheckResult(CheckStatus.Unchecked, message, hyperlinkAction = { installNodeDependencies(project, packageJson) })
     }
   }

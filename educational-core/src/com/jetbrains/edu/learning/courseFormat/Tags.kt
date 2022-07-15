@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
@@ -26,4 +25,4 @@ class ProgrammingLanguageTag(language: String) : Tag(language, PROGRAMMING_LANGU
 
 class HumanLanguageTag(languageName: String) : Tag(languageName, LANGUAGE_TAG_SEARCH_OPTION)
 
-class FeaturedTag : Tag(EduCoreBundle.message("course.dialog.tags.featured"))
+class FeaturedTag : Tag(message("course.dialog.tags.featured"))

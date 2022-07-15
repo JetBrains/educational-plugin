@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.edu.learning.xmlEscaped
 import org.hamcrest.CoreMatchers.containsString
@@ -182,7 +183,7 @@ class JCheckErrorsTest : JdkCheckerTestBase() {
 
     CheckActionListener.shouldSkip()
     CheckActionListener.setCheckResultVerifier { _, checkResult ->
-      assertThat(checkResult.message, containsString(EduCoreBundle.message("error.failed.to.launch.checking")))
+      assertThat(checkResult.message, containsString(EduFormatBundle.message("error.failed.to.launch.checking")))
     }
 
     try {

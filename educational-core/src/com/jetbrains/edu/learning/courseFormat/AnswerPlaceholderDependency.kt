@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import java.util.regex.Pattern
 
 class AnswerPlaceholderDependency() {
@@ -46,12 +45,14 @@ class AnswerPlaceholderDependency() {
   class InvalidDependencyException : IllegalStateException {
     val customMessage: String
 
-    constructor(dependencyText: String) : super(message("exception.placeholder.invalid.dependency.detailed", dependencyText)) {
+    constructor(dependencyText: String) : super("'$dependencyText' is not a valid placeholder dependency") {
       customMessage = message("exception.placeholder.invalid.dependency")
     }
 
-    constructor(dependencyText: String, customMessage: String) : super(
-      message("exception.placeholder.invalid.dependency.detailed.with.custom.message", dependencyText, customMessage)) {
+    constructor(
+      dependencyText: String,
+      customMessage: String
+    ) : super("'$dependencyText' is not a valid placeholder dependency\n$customMessage") {
       this.customMessage = customMessage
     }
   }

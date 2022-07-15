@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
@@ -148,7 +149,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
         "EduTestsFailed" ->
           Result(CheckStatus.Failed, equalTo("4 != 3 : error"),
                  diff(CheckResultDiff(expected = "4", actual = "3", title = "Comparison Failure (test_add)")), nullValue())
-        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(EduCoreBundle.message("check.no.tests")), nullValue(), nullValue())
+        "EduNoTestsRun" -> Result(CheckStatus.Unchecked, containsString(EduFormatBundle.message("check.no.tests")), nullValue(), nullValue())
         "SyntaxError" -> Result(CheckStatus.Failed, containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "AssertionError" -> Result(CheckStatus.Failed, equalTo("False is not true : My own message"), nullValue(), nullValue())

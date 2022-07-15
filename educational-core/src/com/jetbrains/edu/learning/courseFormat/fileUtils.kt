@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.logger
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -22,7 +22,7 @@ fun mimeFileType(path: String): String? {
     Files.probeContentType(Paths.get(path))
   }
   catch (e: IOException) {
-    LOG.error(e)
+    LOG.error("Failed to determine file mimetype", e)
     null
   }
 }
@@ -40,4 +40,4 @@ fun getExtension(fileName: String): String {
   return if (index < 0) "" else fileName.substring(index + 1)
 }
 
-private val LOG = Logger.getInstance("fileUtils")
+private val LOG = logger<StudyItem>()

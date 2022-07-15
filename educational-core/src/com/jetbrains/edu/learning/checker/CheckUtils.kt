@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -39,11 +40,11 @@ import java.util.concurrent.TimeUnit
 object CheckUtils {
   private val COMPILATION_ERRORS = listOf("Compilation failed", "Compilation error")
 
-  val CONGRATULATIONS = EduCoreBundle.message("check.correct.solution")
+  val CONGRATULATIONS = EduFormatBundle.message("check.correct.solution")
   val COMPILATION_FAILED_MESSAGE = EduCoreBundle.message("check.error.compilation.failed")
   val NOT_RUNNABLE_MESSAGE = EduCoreBundle.message("check.error.solution.not.runnable")
   val SYNTAX_ERROR_MESSAGE = EduCoreBundle.message("check.error.syntax.error")
-  val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduCoreBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE)
+  val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduFormatBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE)
 
   private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
     return taskFile.answerPlaceholders.isNotEmpty() && taskFile.hasFailedPlaceholders()

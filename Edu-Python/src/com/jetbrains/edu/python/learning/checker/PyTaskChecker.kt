@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduState
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
@@ -135,6 +135,6 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
      * 2. Second error could appear if educator uses third-party testing frameworks (e.g. unittest in Coursera Algorithmic Toolbox)
      * @see com.jetbrains.edu.python.slow.checker.PyCheckErrorsTest (SyntaxErrorFromUnittest)
      */
-    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduCoreBundle.message("check.no.tests"))
+    private val SYNTAX_ERRORS = listOf("The file contains syntax errors", EduFormatBundle.message("check.no.tests"))
   }
 }

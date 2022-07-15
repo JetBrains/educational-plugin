@@ -3,12 +3,13 @@ package com.jetbrains.edu.python.slow.checker
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.setDirectoryProjectSdk
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
 import com.jetbrains.python.PythonLanguage
 import org.hamcrest.CoreMatchers.containsString
@@ -89,7 +90,7 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       assertEquals("Status for ${task.name} doesn't match", CheckStatus.Failed, checkResult.status)
       val matcher: Triple<Matcher<String>, Matcher<CheckResultDiff?>, Matcher<String?>> = when (task.name) {
         "EduTestsFailed" -> Triple(equalTo("error happened"), nullValue(), nullValue())
-        "EduNoTestsRun" -> Triple(containsString(EduCoreBundle.message("check.no.tests")), nullValue(), nullValue())
+        "EduNoTestsRun" -> Triple(containsString(EduFormatBundle.message("check.no.tests")), nullValue(), nullValue())
         "SyntaxError" -> Triple(containsString("Syntax Error"), nullValue(),
                                 containsString("SyntaxError: invalid syntax"))
         "SyntaxErrorFromUnittest" -> Triple(containsString("Syntax Error"), nullValue(),
