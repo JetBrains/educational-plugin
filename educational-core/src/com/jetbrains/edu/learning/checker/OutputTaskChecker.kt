@@ -46,7 +46,7 @@ open class OutputTaskChecker(
         return failedToCheck
       }
       val expectedOutput = runReadAction { FileDocumentManager.getInstance().getDocument(outputPatternFile)?.text.orEmpty() }
-      return checkOutput(outputString, expectedOutput)
+      return checkOutput(outputString.trimEnd('\n'), expectedOutput.trimEnd('\n'))
     }
     catch (e: Exception) {
       LOG.error(e)
