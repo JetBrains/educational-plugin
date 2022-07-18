@@ -21,19 +21,16 @@ abstract class StudyItem() {
   var name: String = ""
   var updateDate: Date = Date(0)
   var id: Int = 0 // id on remote resource (Stepik, CheckIO, Codeforces)
+  var contentTags: List<String> = listOf()
 
   @Transient
   private var _parent: ItemContainer? = null
 
-  var parent: ItemContainer
-    @com.intellij.util.xmlb.annotations.Transient
+  open var parent: ItemContainer
     get() = _parent ?: error("Parent is null for StudyItem $name")
-    @com.intellij.util.xmlb.annotations.Transient
     set(value) {
       _parent = value
     }
-
-  var contentTags: List<String> = listOf()
 
   abstract val course: Course
   abstract val itemType: String     // used in json/yaml serialization/deserialization

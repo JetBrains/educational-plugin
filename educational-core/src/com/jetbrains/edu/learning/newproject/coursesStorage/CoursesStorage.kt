@@ -12,6 +12,7 @@ import com.intellij.util.xmlb.annotations.Transient
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import org.apache.commons.lang.LocaleUtils
@@ -92,6 +93,11 @@ class CourseMetaInfo() : Course() {
 
   // to be compatible with previous version
   var programmingLanguageVersion: String? = null
+  override var parent: ItemContainer
+    @Transient
+    get() = super.parent
+    @Transient
+    set(_) {}
 
   constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
     this.type = course.itemType
