@@ -9,6 +9,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.JdkBundle
 import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import java.io.File
@@ -40,13 +41,17 @@ class JLanguageSettings : JdkLanguageSettings() {
     return if (course != null) {
       val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
       val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
-                              ?: return ValidationMessage(EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription))
+                              ?: return ValidationMessage(
+                                EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription),
+                                ENVIRONMENT_CONFIGURATION_LINK_JAVA)
 
       val jdkItem = myJdkSettings.jdkItem
-      val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"))
+      val providedJavaVersion = jdkItem?.jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"),
+                                                                                        ENVIRONMENT_CONFIGURATION_LINK_JAVA)
 
       val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                           ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"))
+                           ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"),
+                                                       ENVIRONMENT_CONFIGURATION_LINK_JAVA)
       if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
         return null
       }

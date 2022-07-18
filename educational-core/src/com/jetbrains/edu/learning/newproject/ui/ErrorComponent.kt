@@ -26,7 +26,7 @@ class ErrorComponent(
   private val doValidation: (Course?) -> Unit
 ) : NonOpaquePanel(), CourseSelectionListener {
   private val errorPanel = ErrorPanel(icon, hyperlinkListener, errorPanelTopBottomMargin, errorPanelLeftMargin)
-
+  var validationMessageLink: String? = null
   init {
     isVisible = false
     add(errorPanel)
@@ -75,6 +75,7 @@ class ErrorComponent(
       messageType = validationMessage.type
       errorTextPane.text = wrappedMessage
       errorTextPane.background = getComponentColor()
+      validationMessageLink = validationMessage.hyperlinkAddress
     }
 
     private fun getComponentColor(): Color {

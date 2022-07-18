@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.TextComponentAccessor
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.ui.DocumentAdapter
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -55,9 +56,9 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     val toolchain = rustToolchain
-    return when {
-      toolchain == null -> ValidationMessage(EduRustBundle.message("error.no.toolchain.location"))
-      !toolchain.looksLikeValidToolchain() -> ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"))
+   return when {
+      toolchain == null -> ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+      !toolchain.looksLikeValidToolchain() -> ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"), ENVIRONMENT_CONFIGURATION_LINK_RUST)
       else -> null
     }
   }

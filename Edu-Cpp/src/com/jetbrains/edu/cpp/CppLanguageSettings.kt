@@ -18,7 +18,6 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
-
   private var languageStandard: String = CPP14.standard
 
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
@@ -47,7 +46,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
     courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
-      ValidationMessage(EduCppBundle.message("error.non.ascii"), type = WARNING)
+      ValidationMessage(EduCppBundle.message("error.non.ascii"), null, WARNING)
     else -> null
   }
 

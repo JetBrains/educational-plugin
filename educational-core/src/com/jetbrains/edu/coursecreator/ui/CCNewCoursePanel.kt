@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.ui
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
@@ -175,7 +176,8 @@ class CCNewCoursePanel(
 
   private fun getHyperlinkListener(): HyperlinkListener = HyperlinkListener { e ->
     if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-      enablePlugins(requiredAndDisabledPlugins)
+      if (requiredAndDisabledPlugins.isNotEmpty()) enablePlugins(requiredAndDisabledPlugins)
+      else errorComponent.validationMessageLink?.let { BrowserUtil.browse(it) }
     }
   }
 

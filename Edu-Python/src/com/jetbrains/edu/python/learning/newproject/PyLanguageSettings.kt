@@ -5,9 +5,13 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
 import com.jetbrains.edu.learning.EduNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.EduNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -41,8 +45,13 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     course ?: return null
-    val sdk = mySettings.sdk ?: return ValidationMessage(EduCoreBundle.message("error.no.interpreter", EduNames.PYTHON))
-    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let { ValidationMessage(it) }
+    val sdk = mySettings.sdk ?: return ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ""),
+                                                         ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+
+    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let {
+      val message = "$it ${EduPythonBundle.message("configure.python.environment.help")}"
+      ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+    }
   }
 
   private val Sdk.languageLevel: LanguageLevel

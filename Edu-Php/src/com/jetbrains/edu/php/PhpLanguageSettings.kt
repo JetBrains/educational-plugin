@@ -7,11 +7,12 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PHP
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.php.messages.EduPhpBundle
 import com.jetbrains.php.composer.execution.phar.ComposerPhpInterpretersCombo
 import com.jetbrains.php.config.PhpProjectWorkspaceConfiguration
 import com.jetbrains.php.config.interpreters.PhpInterpreter
@@ -99,7 +100,7 @@ class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
     val phpInterpreter = phpProjectSettings.phpInterpreter
 
     if (phpInterpreter == null) {
-      return ValidationMessage(EduCoreBundle.message("error.no.interpreter", EduNames.PHP))
+      return ValidationMessage(EduPhpBundle.message("error.no.php.interpreter", ""), ENVIRONMENT_CONFIGURATION_LINK_PHP)
     }
     return null
   }

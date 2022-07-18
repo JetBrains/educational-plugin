@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil.isAncestor
 import com.jetbrains.edu.go.messages.EduGoBundle
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GO
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -36,10 +37,10 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     val sdk = selectedSdk ?: return null
-    if (sdk == GoSdk.NULL) return ValidationMessage(EduGoBundle.message("error.no.sdk", SDK_TYPE_ID))
-    if (!sdk.isValid) return ValidationMessage(EduGoBundle.message("error.invalid.sdk", SDK_TYPE_ID))
+    if (sdk == GoSdk.NULL) return ValidationMessage(EduGoBundle.message("error.no.sdk", ""), ENVIRONMENT_CONFIGURATION_LINK_GO)
+    if (!sdk.isValid) return ValidationMessage(EduGoBundle.message("error.invalid.sdk"), ENVIRONMENT_CONFIGURATION_LINK_GO)
     if (courseLocation != null && isAncestor(courseLocation, sdk.homePath, false))
-      return ValidationMessage(EduGoBundle.message("error.invalid.sdk.location", SDK_TYPE_ID))
+      return ValidationMessage(EduGoBundle.message("error.invalid.sdk.location"), ENVIRONMENT_CONFIGURATION_LINK_GO)
     return null
   }
 }

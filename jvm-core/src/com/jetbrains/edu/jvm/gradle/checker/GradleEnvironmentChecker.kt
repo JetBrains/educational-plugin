@@ -8,6 +8,8 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.jetbrains.edu.jvm.gradle.GradleCourseRefresher
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GRADLE
 import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -21,7 +23,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import javax.swing.event.HyperlinkEvent
 
 class GradleEnvironmentChecker : EnvironmentChecker() {
-  override fun checkEnvironment(project: Project, task: Task): CheckResult? {
+  override fun getEnvironmentError(project: Project, task: Task): CheckResult? {
     ProjectRootManager.getInstance(project).projectSdk ?: return noSdkConfiguredResult
     val taskDir = task.getDir(project.courseDir) ?: return getFailedToLaunchCheckingResult(project)
     val module = invokeAndWaitIfNeeded {  ModuleUtil.findModuleForFile(taskDir, project) } ?: return getFailedToLaunchCheckingResult(project)
@@ -47,20 +49,20 @@ class GradleEnvironmentChecker : EnvironmentChecker() {
 
   companion object {
     private const val RELOAD_GRADLE_LINK: String = "reload_gradle"
-    private val reloadGradleMessage: String
-      get() = """<a href="${RELOAD_GRADLE_LINK}">${EduCoreBundle.message("reload.gradle.project")}</a>"""
 
     private val noSdkConfiguredResult: CheckResult
-      get() = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.no.sdk"))
+      get() = CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("error.no.sdk.gradle", ENVIRONMENT_CONFIGURATION_LINK_GRADLE))
 
     fun getFailedToLaunchCheckingResult(project: Project): CheckResult {
-      val message = EduCoreBundle.message("gluing.dot", EduCoreBundle.message("error.failed.to.launch.checking"), reloadGradleMessage)
-      return CheckResult(CheckStatus.Unchecked, message, hyperlinkListener = ReloadGradleHyperlinkListener(project))
+      return CheckResult(CheckStatus.Unchecked,
+                         EduCoreBundle.message("error.failed.to.launch.checking.with.message", RELOAD_GRADLE_LINK, EduNames.NO_TESTS_URL),
+                         hyperlinkListener = ReloadGradleHyperlinkListener(project))
     }
 
     private fun getGradleNotImportedResult(project: Project): CheckResult {
-      val message = EduCoreBundle.message("gluing.dot", EduJVMBundle.message("error.gradle.not.imported"), reloadGradleMessage)
-      return CheckResult(CheckStatus.Unchecked, message, hyperlinkListener = ReloadGradleHyperlinkListener(project))
+      return CheckResult(CheckStatus.Unchecked,
+                         EduJVMBundle.message("error.gradle.not.imported", RELOAD_GRADLE_LINK, EduNames.NO_TESTS_URL),
+                         hyperlinkListener = ReloadGradleHyperlinkListener(project))
     }
   }
 }

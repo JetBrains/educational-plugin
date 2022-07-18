@@ -20,6 +20,7 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_ANDROID
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import org.jetbrains.annotations.Nls
@@ -48,7 +49,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("error.no.sdk")) else null
+    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("error.no.sdk"), ENVIRONMENT_CONFIGURATION_LINK_ANDROID) else null
   }
 
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]

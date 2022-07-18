@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
+import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
@@ -54,7 +55,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
     if (myJdkSettings.jdkItem == null) {
-      return ValidationMessage(EduJVMBundle.message("error.no.jdk"))
+      return ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA)
     }
     return super.validate(course, courseLocation)
   }

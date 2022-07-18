@@ -49,12 +49,25 @@ object EduNames {
   const val PYTHON_3_VERSION = "3.x"
 
   // Troubleshooting guide links
+
   private const val TROUBLESHOOTING_GUIDE_URL = "https://plugins.jetbrains.com/plugin/10081-edutools/docs/troubleshooting-guide.html"
   const val NO_TESTS_URL = "$TROUBLESHOOTING_GUIDE_URL#no_tests_have_run"
   const val NO_COURSES_URL = "$TROUBLESHOOTING_GUIDE_URL#no_courses_found"
   const val FAILED_TO_POST_TO_JBA_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_submission_jba"
   const val FAILED_TO_CHECK_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_to_launch_checking"
   const val OUTSIDE_OF_KNOWN_PORT_RANGE_URL = "$TROUBLESHOOTING_GUIDE_URL#outside_of_known_port_range"
+
+  const val ENVIRONMENT_CONFIGURATION_LINK_JAVA = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_java"
+  const val ENVIRONMENT_CONFIGURATION_LINK_KOTLIN = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_kotlin"
+  const val ENVIRONMENT_CONFIGURATION_LINK_PYTHON = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_python"
+  const val ENVIRONMENT_CONFIGURATION_LINK_SCALA = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_scala"
+  const val ENVIRONMENT_CONFIGURATION_LINK_JS = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_js"
+  const val ENVIRONMENT_CONFIGURATION_LINK_RUST = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_rust"
+  const val ENVIRONMENT_CONFIGURATION_LINK_CPP = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_cpp"
+  const val ENVIRONMENT_CONFIGURATION_LINK_GO = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_go"
+  const val ENVIRONMENT_CONFIGURATION_LINK_PHP = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_php"
+  const val ENVIRONMENT_CONFIGURATION_LINK_ANDROID = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_android"
+  const val ENVIRONMENT_CONFIGURATION_LINK_GRADLE = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_gradle"
 
   // Help links
   const val HELP_URL = "https://www.jetbrains.com/help"
