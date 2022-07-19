@@ -21,6 +21,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
@@ -57,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), lazyMessage("action.check.description")), DumbAware {
 
-  constructor(checkLabel: String) : this() {
+  constructor(@NlsActions.ActionText checkLabel: String) : this() {
     templatePresentation.text = checkLabel
   }
 
