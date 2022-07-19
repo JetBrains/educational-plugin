@@ -51,13 +51,10 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
-import org.junit.internal.runners.JUnit38ClassRunner
-import org.junit.runner.RunWith
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 
-@RunWith(JUnit38ClassRunner::class) // TODO: drop the annotation when issue with Gradle test scanning go away
 abstract class EduTestCase : BasePlatformTestCase() {
 
   protected lateinit var testPluginDescriptor: IdeaPluginDescriptor

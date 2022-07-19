@@ -9,10 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import org.junit.internal.runners.JUnit38ClassRunner
-import org.junit.runner.RunWith
 
-@RunWith(JUnit38ClassRunner::class) // TODO: drop the annotation when issue with Gradle test scanning go away
 abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
 
   abstract val defaultSettings: Settings

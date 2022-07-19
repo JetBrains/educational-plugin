@@ -29,10 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
-import org.junit.internal.runners.JUnit38ClassRunner
-import org.junit.runner.RunWith
 
-@RunWith(JUnit38ClassRunner::class) // TODO: drop the annotation when issue with Gradle test scanning go away
 abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
     protected lateinit var myCourse: Course
 
