@@ -36,7 +36,7 @@ class CheckiOPlatformProvider : CoursesPlatformProvider() {
     else {
       val courses = listOf(
         CheckiOCourse(CheckiONames.PY_CHECKIO, "${EduNames.PYTHON} ${EduNames.PYTHON_3_VERSION}"),
-        CheckiOCourse(CheckiONames.JS_CHECKIO, EduNames.JAVASCRIPT)
+//        CheckiOCourse(CheckiONames.JS_CHECKIO, EduNames.JAVASCRIPT)
       )
 
       CoursesGroup(courses).asList()
