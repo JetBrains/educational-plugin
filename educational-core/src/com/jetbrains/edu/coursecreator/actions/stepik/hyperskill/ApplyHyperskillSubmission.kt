@@ -63,12 +63,10 @@ class ApplyHyperskillSubmission : DumbAwareAction(
         }
         return@computeUnderProgress
       }
+      // submission.taskId can differ from task.id because submissions were stored on stepik and got stepik step ID instead
+      // of  hyperskill task ID, see EDU-5186
       if (submission.taskId != task.id) {
-        runInEdt {
-          Messages.showErrorDialog(EduCoreBundle.message("error.submission.not.suitable", submission.taskId.toString(), task.id.toString()),
-                                   EduCoreBundle.message("error.submission.not.applied"))
-        }
-        return@computeUnderProgress
+        LOG.info("Applying submission with taskId = ${submission.taskId} to task with id = ${task.id}")
       }
 
       HyperskillSolutionLoader.getInstance(project).updateTask(project, task, listOf(submission), true)
@@ -100,5 +98,7 @@ class ApplyHyperskillSubmission : DumbAwareAction(
   companion object {
     @NonNls
     const val ACTION_ID = "Educational.Educator.ApplyHyperskillSubmission"
+
+    val LOG = logger<ApplyHyperskillSubmission>()
   }
 }
