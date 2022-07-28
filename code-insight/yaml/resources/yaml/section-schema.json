@@ -9,6 +9,10 @@
       "type": "array",
       "uniqueItems": true
     },
+    "custom_name": {
+      "description": "Custom name for the task if it differs from its folder name",
+      "type": "string"
+    },
     "tags": {
       "description": "Tags for content",
       "type": "array",
