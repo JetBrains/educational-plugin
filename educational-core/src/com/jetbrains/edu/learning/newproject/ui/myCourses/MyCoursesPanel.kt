@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui.myCourses
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.ui.SimpleTextAttributes
-import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import kotlinx.coroutines.CoroutineScope
-import javax.swing.JPanel
 
 private const val ACTION_PLACE = "MyCoursesPanel"
 
@@ -30,15 +28,14 @@ class MyCoursesPanel(
     return ToolbarActionWrapper(EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.lowercase"), importCourseAction)
   }
 
-  override fun createNoCoursesPanel(): JPanel {
-    return JBPanelWithEmptyText().apply {
-      emptyText.text = EduCoreBundle.message("course.dialog.my.courses.no.courses.started")
-      emptyText.appendSecondaryText(
-        EduCoreBundle.message("course.dialog.open.course.from.disk"),
-        SimpleTextAttributes.LINK_ATTRIBUTES,
-        ActionUtil.createActionListener(ImportLocalCourseAction.ACTION_ID, this, ACTION_PLACE)
-      )
-    }
+  override fun setNoCoursesPanelText() {
+    val emptyText = noCoursesPanel.emptyText
+    emptyText.text = EduCoreBundle.message("course.dialog.my.courses.no.courses.started")
+    emptyText.appendSecondaryText(
+      EduCoreBundle.message("course.dialog.open.course.from.disk"),
+      SimpleTextAttributes.LINK_ATTRIBUTES,
+      ActionUtil.createActionListener(ImportLocalCourseAction.ACTION_ID, this, ACTION_PLACE)
+    )
   }
 
   override fun updateFilters(coursesGroups: List<CoursesGroup>) {

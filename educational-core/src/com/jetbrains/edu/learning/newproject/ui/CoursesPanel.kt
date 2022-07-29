@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.exceptions.EduException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -56,6 +57,7 @@ abstract class CoursesPanel(
 
   private val cardLayout = JBCardLayout()
   protected val coursesGroups = mutableListOf<CoursesGroup>()
+  protected val noCoursesPanel: JBPanelWithEmptyText = JBPanelWithEmptyText()
 
   @Volatile
   private var loadingFinished = false
@@ -73,10 +75,11 @@ abstract class CoursesPanel(
     layout = cardLayout
     background = MAIN_BG_COLOR
     coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
+    this.setNoCoursesPanelText()
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
-    this.add(this.createNoCoursesPanel(), NO_COURSES)
+    this.add(noCoursesPanel, NO_COURSES)
     showProgressState()
   }
 
@@ -111,9 +114,14 @@ abstract class CoursesPanel(
   }
 
   suspend fun loadCourses() {
-    coursesGroups.addAll(withContext(Dispatchers.IO) {
-      coursesProvider.loadCourses()
-    })
+    try {
+      coursesGroups.addAll(withContext(Dispatchers.IO) {
+        coursesProvider.loadCourses()
+      })
+    }
+    catch (e: EduException) {
+      noCoursesPanel.emptyText.appendLine(e.uiMessage, SimpleTextAttributes.ERROR_ATTRIBUTES, null)
+    }
 
     loadingFinished = true
     if (isShowing) {
@@ -155,16 +163,14 @@ abstract class CoursesPanel(
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
-  protected open fun createNoCoursesPanel(): JPanel {
-    val panel = JBPanelWithEmptyText()
-    val text = panel.emptyText
+  protected open fun setNoCoursesPanelText() {
+    val text = noCoursesPanel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide2"),
                              SimpleTextAttributes.LINK_ATTRIBUTES,
                              ActionListener { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) })
-    return panel
   }
 
   private fun showProgressState() = cardLayout.show(this, LOADING_CARD_NAME)
