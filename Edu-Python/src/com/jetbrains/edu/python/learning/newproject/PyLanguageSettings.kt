@@ -33,7 +33,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     disposable: Disposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
+    // by default, we create new virtual env in project, we need to add this non-existing sdk to sdk list
     val fakeSdk = createFakeSdk(course, context)
 
     val combo = getInterpreterComboBox(fakeSdk)

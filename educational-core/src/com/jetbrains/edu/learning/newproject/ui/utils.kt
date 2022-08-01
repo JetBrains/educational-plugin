@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyMan
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.css.*
 import kotlinx.css.properties.lh
+import org.jetbrains.annotations.Nls
 import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
@@ -65,18 +66,21 @@ fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
   return IconUtil.toSize(scaledIcon, JBUI.scale(logoSize), JBUI.scale(logoSize))
 }
 
-val Course.unsupportedCourseMessage: String get() {
-  val type = when (val environment = course.environment) {
-    EduNames.ANDROID -> environment
-    DEFAULT_ENVIRONMENT -> course.languageDisplayName
-    else -> null
+val Course.unsupportedCourseMessage: String
+  @Nls(capitalization = Nls.Capitalization.Sentence)
+  get() {
+    val type = when (val environment = course.environment) {
+      EduNames.ANDROID -> environment
+      DEFAULT_ENVIRONMENT -> course.languageDisplayName
+      else -> null
+    }
+    return if (type != null) {
+      EduCoreBundle.message("courses.not.supported", type)
+    }
+    else {
+      EduCoreBundle.message("selected.course.not.supported", course.name)
+    }
   }
-  return if (type != null) {
-    "$type courses are not supported"
-  } else {
-    """Selected "${course.name}" course is unsupported"""
-  }
-}
 
 fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessage?): ErrorState {
   var languageError: ErrorState = ErrorState.NothingSelected

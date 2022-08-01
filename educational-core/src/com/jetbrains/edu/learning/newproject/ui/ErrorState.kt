@@ -89,7 +89,9 @@ sealed class ErrorState(
                                     errorTextForeground,
                                     false)
 
-  class UnsupportedCourse(message: String) : ErrorState(UNSUPPORTED_COURSE, ValidationMessage(message), errorTextForeground, false)
+  class UnsupportedCourse(@Nls(capitalization = Nls.Capitalization.Sentence) message: String) : ErrorState(UNSUPPORTED_COURSE,
+                                                                                                           ValidationMessage(message),
+                                                                                                           errorTextForeground, false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 
