@@ -24,6 +24,11 @@ class CCCreateCoursePreview : DumbAwareAction(EduCoreBundle.lazyMessage("action.
 
   override fun update(e: AnActionEvent) {
     val project = e.project
-    e.presentation.isEnabledAndVisible = project != null && CCUtils.isCourseCreator(project)
+    if (project == null) {
+      e.presentation.isEnabledAndVisible = false
+      return
+    }
+    val course = StudyTaskManager.getInstance(project).course
+    e.presentation.isEnabledAndVisible = course is EduCourse && CCUtils.isCourseCreator(project)
   }
 }
