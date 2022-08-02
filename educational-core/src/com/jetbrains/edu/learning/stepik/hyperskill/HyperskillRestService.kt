@@ -25,15 +25,21 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
     val uri = request.uri()
-    val codeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
+    val oAuthCodeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
+    val oAuthErrorMatcher = OAUTH_ERROR_CODE_PATTERN.matcher(uri)
     val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
     val openStepMatcher = OPEN_STEP_PATTERN.matcher(uri)
     val pluginInfo = PLUGIN_INFO.matcher(uri)
-    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches() || openStepMatcher.matches() ||
-                                                       pluginInfo.matches())) {
+    return if (request.method() === HttpMethod.GET && (oAuthCodeMatcher.matches()
+                                                       || oAuthErrorMatcher.matches()
+                                                       || openCourseMatcher.matches()
+                                                       || openStepMatcher.matches()
+                                                       || pluginInfo.matches())) {
       true
     }
-    else super.isHostTrusted(request, urlDecoder)
+    else {
+      super.isHostTrusted(request, urlDecoder)
+    }
   }
 
   @Throws(IOException::class)
@@ -44,6 +50,10 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     if (PLUGIN_INFO.matcher(uri).matches()) {
       sendPluginInfoResponse(request, context)
       return null
+    }
+
+    if (OAUTH_ERROR_CODE_PATTERN.matcher(uri).matches()) {
+      return sendErrorResponse(request, context, "Failed to login")
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
@@ -238,6 +248,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private const val USER_ID: String = "user_id"
 
     private val OAUTH_CODE_PATTERN = HyperskillConnector.getInstance().getOAuthPattern()
+    private val OAUTH_ERROR_CODE_PATTERN = HyperskillConnector.getInstance().getOAuthPattern("\\?error=(\\w+)")
     private val OPEN_COURSE_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STAGE_ID=.+&$PROJECT_ID=.+""")
     private val OPEN_STEP_PATTERN = HyperskillConnector.getInstance().getServicePattern("""\?$STEP_ID=.+""")
     private val PLUGIN_INFO = HyperskillConnector.getInstance().getServicePattern("/info")
