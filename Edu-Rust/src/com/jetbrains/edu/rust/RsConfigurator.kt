@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
@@ -36,8 +37,20 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     get() = RsIcons.RUST
 
   override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    // Cargo config file should be included into course even it's located in "hidden" `.cargo` directory
+    if (file.isCargoConfigDirOrFile(project)) return false
     return super.excludeFromArchive(project, file) || file.name == CargoConstants.LOCK_FILE ||
            generateSequence(file, VirtualFile::getParent).any { it.name == CargoConstants.ProjectLayout.target }
+  }
+
+  private fun VirtualFile.isCargoConfigDirOrFile(project: Project): Boolean {
+    val courseDir = project.courseDir
+    val cargoDir = courseDir.findChild(".cargo") ?: return false
+    if (cargoDir == this) return true
+    // BACKCOMPAT: 2021.3. Replace string constants with `CargoConstants.CONFIG_TOML_FILE` and `CargoConstants.CONFIG_FILE`
+    //  and bump minimal Rust plugin version to 174
+    // Cargo config file should be included into course even it's located in "hidden" directory
+    return cargoDir.findChild("config.toml") == this || cargoDir.findChild("config") == this
   }
 
   override val isEnabled: Boolean
