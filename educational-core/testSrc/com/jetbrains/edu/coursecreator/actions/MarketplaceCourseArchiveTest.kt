@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.jetbrains.edu.coursecreator.CCUtils.GENERATED_FILES_FOLDER
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -158,8 +157,4 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/marketplaceCourseArchive"
   }
-
-  override fun getArchiveCreator() =
-    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/$GENERATED_FILES_FOLDER/course.zip")
-
 }

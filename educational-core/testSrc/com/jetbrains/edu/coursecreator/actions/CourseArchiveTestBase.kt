@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -55,7 +56,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
     return StringUtilRt.convertLineSeparators(json).replace("\\n\\n".toRegex(), "\n")
   }
 
-  abstract fun getArchiveCreator() : CourseArchiveCreator
+  protected open fun getArchiveCreator(): CourseArchiveCreator =
+    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip")
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"
