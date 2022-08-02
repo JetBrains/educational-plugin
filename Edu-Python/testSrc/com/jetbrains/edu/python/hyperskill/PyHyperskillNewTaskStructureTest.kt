@@ -47,12 +47,14 @@ class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("main.py")
       dir("hstest") {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir("hstest") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

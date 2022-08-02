@@ -53,12 +53,14 @@ class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.html")
       dir(TEST) {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir(TEST) {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

@@ -10,13 +10,14 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
-import com.jetbrains.edu.learning.checker.OutputTaskChecker.Companion.OUTPUT_PATTERN_NAME
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase.Companion.INPUT_PATTERN_NAME
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase.Companion.OUTPUT_PATTERN_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -149,7 +150,12 @@ interface EduCourseBuilder<Settings : Any> {
           joinPaths(course.testDirs.firstOrNull(), OUTPUT_PATTERN_NAME),
           false
         )
-        getExecutableTaskTemplates(course, info, withSources) + outputTemplate
+        val inputTemplate = TemplateFileInfo(
+          INPUT_PATTERN_NAME,
+          joinPaths(course.testDirs.firstOrNull(), INPUT_PATTERN_NAME),
+          false
+        )
+        getExecutableTaskTemplates(course, info, withSources) + outputTemplate + inputTemplate
       }
       is ChoiceTask -> getExecutableTaskTemplates(course, info, withSources)
       is TheoryTask -> getExecutableTaskTemplates(course, info, withSources)

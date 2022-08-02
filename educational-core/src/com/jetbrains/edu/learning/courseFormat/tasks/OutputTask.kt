@@ -9,8 +9,7 @@ import java.util.*
  * Correct output is specified in output.txt file which is invisible for student.
  * @see OutputTaskChecker
  */
-class OutputTask : Task {
-
+class OutputTask : OutputTaskBase {
   constructor() : super()
 
   constructor(name: String) : super(name)
@@ -21,9 +20,6 @@ class OutputTask : Task {
 
   override val isToSubmitToRemote: Boolean
     get() = checkStatus != CheckStatus.Unchecked
-
-  override val supportSubmissions: Boolean
-    get() = true
 
   companion object {
     const val OUTPUT_TASK_TYPE: String = "output"

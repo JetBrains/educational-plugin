@@ -143,6 +143,23 @@ class ScalaGradleCheckerTest : JdkCheckerTestBase() {
             withText("OK\n")
           }
         }
+
+        outputTask("OutputTask with input.txt") {
+          scalaTaskFile("src/Main.scala", """
+            object Main {
+                def main(args: Array[String]): Unit = {
+                    val text = scala.io.StdIn.readLine()
+                    println(text + ", World!")
+                }
+            }
+          """)
+          taskFile("test/output.txt") {
+            withText("Hello, World!")
+          }
+          taskFile("test/input.txt") {
+            withText("Hello")
+          }
+        }
       }
       frameworkLesson {
         eduTask("EduTask in framework lesson") {

@@ -26,10 +26,12 @@ class PyNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.md")
       file("main.py")
       file("output.txt")
+      file("input.txt")
     },
     taskStructureWithoutSources = {
       file("task.md")
       file("output.txt")
+      file("input.txt")
     }
   )
 

@@ -41,12 +41,14 @@ class JsHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.js")
       dir("hstest") {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir("hstest") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

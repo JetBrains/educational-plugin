@@ -44,12 +44,14 @@ class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
         file("Main.java")
       }
       dir("test") {
+        file("input.txt")
         file("output.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir("test") {
+        file("input.txt")
         file("output.txt")
       }
     }

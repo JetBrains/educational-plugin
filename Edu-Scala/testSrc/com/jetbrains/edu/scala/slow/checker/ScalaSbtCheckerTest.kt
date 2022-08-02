@@ -56,6 +56,7 @@ class ScalaSbtCheckerTest : JdkCheckerTestBase() {
           taskFile("build.sbt", taskSbtText)
         }
       }
+
       frameworkLesson {
         eduTask("EduTask in framework lesson") {
           scalaTaskFile("src/Task.scala", """

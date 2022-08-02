@@ -25,14 +25,12 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
-open class CodeforcesTask : Task() {
-  open val inputFileName: String = "input.txt"
-  open val outputFileName: String = "output.txt"
-  open val latestOutputFileName: String = "latest_output.txt"
+open class CodeforcesTask : OutputTaskBase() {
 
   override val itemType: String = CODEFORCES_TASK_TYPE
 
@@ -46,7 +44,7 @@ open class CodeforcesTask : Task() {
       val testFolderName = (index + 1).toString()
       addTestTaskFile(inputElement, testFolderName, inputFileName)
 
-      val outputElement = inputElement.nextElementSibling()
+      val outputElement = inputElement.nextElementSibling() ?: error("HTML element is null")
       addTestTaskFile(outputElement, testFolderName, outputFileName)
     }
   }
@@ -56,7 +54,8 @@ open class CodeforcesTask : Task() {
     if (innerElement.isEmpty()) {
       error("Can't find HTML element with test data in ${htmlElement.text()}")
     }
-    val text = innerElement.first().childNodes().joinToString("") { node ->
+    val firstInnerElement = innerElement.first() ?:  error("Can't find HTML element with test data")
+    val text = firstInnerElement.childNodes().joinToString("") { node ->
       when {
         node is TextNode -> node.wholeText
         node is Element && node.tagName() == "br" -> "\n"
@@ -71,9 +70,6 @@ open class CodeforcesTask : Task() {
     addTaskFile(TaskFile(path, text))
   }
 
-  override val supportSubmissions: Boolean
-    get() = true
-
   companion object {
     private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)
 
@@ -84,8 +80,8 @@ open class CodeforcesTask : Task() {
         CodeforcesTask()
       }
       else {
-        val inputFileName = htmlElement.selectFirst("div.input-file").ownText()
-        val outputFileName = htmlElement.selectFirst("div.output-file").ownText()
+        val inputFileName = htmlElement.selectFirst("div.input-file")?.ownText() ?: error("No input file found")
+        val outputFileName = htmlElement.selectFirst("div.output-file")?.ownText() ?: error("No output file found")
         CodeforcesTaskWithFileIO(inputFileName, outputFileName)
       }
       task.parent = lesson
@@ -117,7 +113,6 @@ open class CodeforcesTask : Task() {
       }
 
       val sampleTests = htmlElement.selectFirst("div.sample-test")
-      @Suppress("SENSELESS_COMPARISON")
       if (sampleTests != null) {
         task.addSampleTests(sampleTests)
       }

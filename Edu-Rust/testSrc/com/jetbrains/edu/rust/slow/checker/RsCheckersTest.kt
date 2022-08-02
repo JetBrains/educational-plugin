@@ -107,7 +107,26 @@ class RsCheckersTest : RsCheckersTestBase() {
             withText("Hello, World!\n")
           }
         }
-
+        outputTask("OutputWithInput") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/main.rs", """
+              fn main() {
+                  let text = std::io::stdin().lines().next().unwrap();
+                  println!("{}", text.unwrap() + ", World!");
+              }
+          """)
+          taskFile("tests/output.txt") {
+            withText("Hello, World!\n")
+          }
+          taskFile("tests/input.txt") {
+            withText("Hello")
+          }
+        }
       }
     }
   }

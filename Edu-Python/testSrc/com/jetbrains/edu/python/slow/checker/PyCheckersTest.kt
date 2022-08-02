@@ -24,6 +24,18 @@ class PyCheckersTest : PyCheckersTestBase() {
             withText("Hello, World!\n")
           }
         }
+        outputTask("Output with input.txt") {
+          pythonTaskFile("hello_world.py", """
+            a = input()
+            print(a + " World!")
+          """)
+          taskFile("output.txt") {
+            withText("Hello, World!")
+          }
+          taskFile("input.txt") {
+            withText("Hello,")
+          }
+        }
         eduTask("NonZeroExitCodeInTests") {
           pythonTaskFile("hello_world.py", """print("Hello, world!")""")
           pythonTaskFile("tests.py", """

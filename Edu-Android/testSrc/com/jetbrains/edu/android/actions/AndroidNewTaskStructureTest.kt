@@ -83,6 +83,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
         }
         dir("test") {
           file("output.txt")
+          file("input.txt")
         }
       }
     },
@@ -90,6 +91,7 @@ class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.md")
       dir("src/test") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

@@ -31,12 +31,14 @@ class JsNewTaskStructureTest : CCNewTaskStructureTestBase() {
       file("task.js")
       dir("test") {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.md")
       dir("test") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

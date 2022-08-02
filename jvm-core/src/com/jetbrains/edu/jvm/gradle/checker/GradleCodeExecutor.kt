@@ -8,16 +8,14 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
-import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 
 open class GradleCodeExecutor : CodeExecutor {
   override fun execute(project: Project, task: Task, indicator: ProgressIndicator, input: String?): Result<String, CheckResult> =
-    when (task) {
+    when {
       // TODO https://youtrack.jetbrains.com/issue/EDU-3272
-      is CodeforcesTask, is DataTask -> DefaultCodeExecutor().execute(project, task, indicator, input)
+      input != null -> DefaultCodeExecutor().execute(project, task, indicator, input)
       else -> runGradleRunTask(project, task, indicator)
     }
 

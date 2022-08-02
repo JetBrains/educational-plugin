@@ -39,12 +39,14 @@ class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
       dir("tests") {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.md")
       dir("tests") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )

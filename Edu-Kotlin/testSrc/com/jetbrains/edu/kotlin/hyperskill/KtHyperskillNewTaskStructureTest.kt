@@ -45,12 +45,14 @@ class KtHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
       }
       dir("test") {
         file("output.txt")
+        file("input.txt")
       }
     },
     taskStructureWithoutSources = {
       file("task.html")
       dir("test") {
         file("output.txt")
+        file("input.txt")
       }
     }
   )
