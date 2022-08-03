@@ -31,9 +31,11 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
       eduLanguage?.let {
         course.programmingLanguage = "${eduLanguage.id} ${eduLanguage.version}".trim()
       }
-      course.validateLanguage().onError {
-        Messages.showErrorDialog(it, message("error.failed.to.import.course"))
-        return null
+      if (course.programmingLanguage.isNotEmpty()) {
+        course.validateLanguage().onError {
+          Messages.showErrorDialog(it, message("error.failed.to.import.course"))
+          return null
+        }
       }
       if (eduLanguage == null || eduLanguage.id !in EduConfiguratorManager.supportedEduLanguages) return null
       return course

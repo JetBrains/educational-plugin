@@ -44,7 +44,7 @@ abstract class StartCourseAction(
     return inputDialog.courseLink()
   }
 
-  protected fun showFailedToAddCourseNotification(courseLink: String) {
+  private fun showFailedToAddCourseNotification(courseLink: String) {
     Messages.showErrorDialog(message("error.failed.to.find.course.by.link", platformName, courseLink),
                              message("error.failed.to.find.course.title", platformName))
   }
