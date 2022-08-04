@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -15,12 +16,14 @@ abstract class TaskNavigationAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+    if (!EduUtils.isEduProject(project)) return
     navigateTask(project, e.place)
   }
 
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = false
     val project = e.project ?: return
+    if (!EduUtils.isEduProject(project)) return
     val currentTask = TaskDescriptionView.getInstance(project).currentTask ?: return
     if (getTargetTask(currentTask) != null || getCustomAction(currentTask) != null) {
       e.presentation.isEnabled = true
