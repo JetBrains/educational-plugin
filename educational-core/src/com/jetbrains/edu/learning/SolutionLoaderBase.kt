@@ -290,7 +290,6 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     private fun applySolutionToNonCurrentTask(project: Project, task: Task, taskSolutions: TaskSolutions) {
       val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
 
-
       frameworkLessonManager.saveExternalChanges(task, taskSolutions.solutions.mapValues { it.value.text })
       for (taskFile in task.taskFiles.values) {
         val solution = taskSolutions.solutions[taskFile.name] ?: continue

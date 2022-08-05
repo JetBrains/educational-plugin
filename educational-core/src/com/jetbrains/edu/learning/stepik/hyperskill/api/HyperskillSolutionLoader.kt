@@ -25,7 +25,9 @@ import com.jetbrains.edu.learning.submissions.Submission
 class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
-    val lastSubmission: Submission = submissions.firstOrNull { it.taskId == task.id } ?: return TaskSolutions.EMPTY
+    // submission.taskId can differ from task.id because some hyperskill submissions were stored on stepik and got stepik step ID instead
+    // of  hyperskill task ID, see EDU-5186
+    val lastSubmission: Submission = submissions.firstOrNull { if (!task.course.isStudy) true else it.taskId == task.id } ?: return TaskSolutions.EMPTY
     if (lastSubmission !is StepikBasedSubmission)
       error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of ${StepikBasedSubmission::class.simpleName} class")
 
