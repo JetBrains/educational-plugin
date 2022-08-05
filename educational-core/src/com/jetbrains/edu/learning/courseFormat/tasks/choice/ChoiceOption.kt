@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks.choice
 
+import org.jetbrains.annotations.Nls
+
 class ChoiceOption {
   var text: String = ""
   var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
@@ -7,11 +9,11 @@ class ChoiceOption {
   @Suppress("unused") //used for deserialization
   private constructor()
 
-  constructor(text: String) {
+  constructor(@Nls(capitalization = Nls.Capitalization.Sentence) text: String) {
     this.text = text
   }
 
-  constructor(text: String, status: ChoiceOptionStatus) {
+  constructor(@Nls(capitalization = Nls.Capitalization.Sentence) text: String, status: ChoiceOptionStatus) {
     this.text = text
     this.status = status
   }
