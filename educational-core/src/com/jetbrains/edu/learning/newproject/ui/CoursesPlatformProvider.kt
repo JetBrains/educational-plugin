@@ -43,7 +43,7 @@ abstract class CoursesPlatformProvider {
     return courseGroups.mapNotNull { courseGroup ->
       val filteredCourses = courseGroup.courses.filter {
         val compatibility = it.compatibility
-        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired
+        compatibility == CourseCompatibility.Compatible || compatibility is CourseCompatibility.PluginsRequired || compatibility is CourseCompatibility.IncompatibleVersion
       }
 
       if (filteredCourses.isEmpty()) return@mapNotNull null

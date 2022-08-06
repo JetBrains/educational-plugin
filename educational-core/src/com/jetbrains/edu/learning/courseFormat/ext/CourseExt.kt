@@ -115,11 +115,17 @@ val Course.compatibility: CourseCompatibility
   }
 
 private fun Course.versionCompatibility(): CourseCompatibility? {
-  if (this !is EduCourse) return null
-  if (programmingLanguage.isEmpty())
-    return CourseCompatibility.Unsupported
+  if (this !is EduCourse) {
+    return null
+  }
 
-  if (formatVersion > JSON_FORMAT_VERSION) CourseCompatibility.IncompatibleVersion
+  if (programmingLanguage.isEmpty()) {
+    return CourseCompatibility.Unsupported
+  }
+
+  if (formatVersion > JSON_FORMAT_VERSION) {
+    return CourseCompatibility.IncompatibleVersion
+  }
 
   return null
 }
