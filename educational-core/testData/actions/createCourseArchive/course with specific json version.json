@@ -3,7 +3,7 @@
   "title" : "Test Course",
   "programming_language" : "TEXT",
   "language" : "en",
-  "course_type" : "Coursera",
+  "course_type" : "PyCharm",
   "items" : [
     {
       "title" : "lesson1",
@@ -11,17 +11,11 @@
         {
           "name" : "task1",
           "files" : {
-            "Task.kt" : {
-              "name" : "Task.kt",
-              "placeholders" : [
-                {
-                  "offset" : 20,
-                  "length" : 6,
-                  "placeholder_text" : "TODO()"
-                }
-              ],
+            "taskFile1.txt" : {
+              "name" : "taskFile1.txt",
+              "placeholders" : [ ],
               "is_visible" : true,
-              "text" : "pXi8uFG5Sc6Y0oMCwTrI4js+awtjCwgP1pHDEycaVsk="
+              "text" : "6zkm3NpDQQaIQ+CAebF//w=="
             }
           },
           "description_text" : "solve task",
@@ -32,5 +26,6 @@
       "type" : "lesson"
     }
   ],
-  "submit_manually" : true
+  "version" : 10,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }

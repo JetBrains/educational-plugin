@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
@@ -97,6 +98,20 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     course.description = "my summary"
     course.authors = listOf(StepikUserInfo("EduTools Dev"), StepikUserInfo("EduTools QA"),
                             StepikUserInfo("EduTools"))
+    doTest()
+  }
+
+  fun `test course with specific json version`() {
+    val jsonVersion = 10
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+    } as EduCourse
+    course.description = "my summary"
+    course.formatVersion = jsonVersion
     doTest()
   }
 

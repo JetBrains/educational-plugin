@@ -62,11 +62,10 @@ import java.util.*
  */
 
 @JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
+@JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
                    PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ID, UPDATE_DATE,
-                   ADDITIONAL_FILES)
-@JsonAppend(props = [JsonAppend.Prop(VersionPropertyWriter::class, name = VERSION, type = Int::class),
-  JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
+                   ADDITIONAL_FILES, PLUGIN_VERSION, VERSION)
+@JsonAppend(props = [JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(VENDOR)
