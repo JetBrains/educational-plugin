@@ -26,9 +26,9 @@ object MarketplaceListedCoursesIdsLoader {
     catch (e: IOException) {
       val message = "Failed to retrieve content of '$MARKETPLACE_LISTED_COURSES_LINK'"
       LOG.warn(message, e)
-      error(message)
+      null
     }
-    coursesIds = listedCoursesText.lines().filter { it.isNotEmpty() }.map {
+    coursesIds = listedCoursesText?.lines()?.filter { it.isNotEmpty() }?.map {
       val parts = it.split("#")
       val marketplaceId = parts[0].trim().toInt()
 
@@ -41,7 +41,7 @@ object MarketplaceListedCoursesIdsLoader {
       }
 
       CourseIds(marketplaceId, stepikId)
-    }
+    } ?: emptyList()
   }
 
   fun getMarketplaceIdByStepikId(stepikCourseId: Int): Int? = coursesIds.find { it.stepikId == stepikCourseId }?.marketplaceId

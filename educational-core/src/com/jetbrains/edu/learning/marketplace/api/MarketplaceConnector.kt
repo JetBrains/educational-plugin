@@ -134,6 +134,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   override fun refreshTokens() {
     super.refreshTokens()
 
+    if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
     val currentAccount = account ?: error("No logged in user")
     val jBAccountToken = retrieveJBAccountToken(currentAccount.getHubIdToken()) ?: error(
       "Failed to obtain JB account token via extension grants at token refresh")
