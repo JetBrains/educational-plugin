@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
@@ -54,7 +55,11 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
         descriptionText.addEmptySubmissionsMessage()
       }
       else {
-        descriptionText.addSubmissions(submissionsList)
+        // we need to show submissions ids for `ApplyHyperskillSubmission` action testing
+        val course = task.course
+        val isToShowSubmissionsIds = course is HyperskillCourse && !course.isStudy
+
+        descriptionText.addSubmissions(submissionsList, isToShowSubmissionsIds)
         customLinkHandler = SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
     }
@@ -115,10 +120,10 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       append("<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}")
     }
 
-    private fun StringBuilder.addSubmissions(submissionsNext: List<Submission>) {
+    private fun StringBuilder.addSubmissions(submissionsNext: List<Submission>, isToShowSubmissionsIds: Boolean) {
       append("<ul style=list-style-type:none;margin:0;padding:0;>")
       submissionsNext.forEach { submission ->
-        append(submissionLink(submission))
+        append(submissionLink(submission, isToShowSubmissionsIds))
       }
       append("</ul>")
     }
@@ -155,10 +160,17 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
     }
 
-    private fun submissionLink(submission: Submission): String? {
+    private fun submissionLink(submission: Submission, isToShowSubmissionsIds: Boolean): String? {
       val time = submission.time ?: return null
       val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
-      val text = formatDate(time)
+      val date = formatDate(time)
+      val text = if (isToShowSubmissionsIds) {
+        "$date submission.id = ${submission.id}"
+      }
+      else {
+        date
+      }
+
       return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
              "<a $textStyleHeader;color:${getLinkColor(submission)} href=$SUBMISSION_DIFF_URL${submission.id}> ${text}</a></li>"
     }
