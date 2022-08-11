@@ -420,6 +420,10 @@ project(":") {
     }
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
+      // Force `mergePluginJarTask` be executed before `buildSearchableOptions`
+      // Otherwise, `buildSearchableOptions` task can't load EduTools plugin and searchable options are not built.
+      // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
+      mustRunAfter(mergePluginJarTask)
     }
   }
 
