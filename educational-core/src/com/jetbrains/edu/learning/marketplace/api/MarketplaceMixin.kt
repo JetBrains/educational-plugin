@@ -10,6 +10,18 @@ import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
 import com.jetbrains.edu.learning.marketplace.REVIEWS
 import java.util.*
 
+private const val AUTHORS = "authors"
+private const val CREATE_DATE = "cdate"
+private const val DESCRIPTION = "description"
+private const val DOWNLOADS = "downloads"
+private const val FIELDS = "fields"
+private const val LAST_UPDATE_DATE = "lastUpdateDate"
+private const val LICENSE = "license"
+private const val LINK = "link"
+const val MARKETPLACE_COURSE_VERSION = "course_version"
+private const val ORGANIZATION = "organization"
+private const val RATING = "rating"
+
 @JsonDeserialize(builder = MarketplaceCourseBuilder::class)
 abstract class MarketplaceEduCourseMixin
 

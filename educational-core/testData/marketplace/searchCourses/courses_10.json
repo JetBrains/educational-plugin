@@ -4,6 +4,7 @@
       "total" : 12,
       "plugins" : [
         {
+          "id" : "1",
           "name" : "Introduction to Python 1",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -22,6 +23,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "2",
           "name" : "Introduction to Python 2",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -40,6 +42,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "3",
           "name" : "Introduction to Python 3",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -58,6 +61,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 4",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -76,6 +80,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 5",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -94,6 +99,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 6",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -112,6 +118,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 7",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -130,6 +137,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 8",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -148,6 +156,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 9",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,
@@ -166,6 +175,7 @@
           "license" : "https://licenses/"
         },
         {
+          "id" : "1",
           "name" : "Introduction to Python 10",
           "lastUpdateDate": 1619697473000,
           "cdate": 1623321716000,

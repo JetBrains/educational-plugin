@@ -27,10 +27,10 @@ object GraphqlQuery {
     }
 
   /**
-   * this query returns the List<UpdateBean>, which should contain a single value - latest update id bean, because in
-   * marketplace.qraphql.courseUpdateId.txt.ft  parameter max is set to 1
+   * this query returns the List<UpdateBean>, which should contain one value for each courseId in courseIds - the latest update id bean,
+   * because in marketplace.qraphql.courseUpdatesById.txt.ft `collapseField: PLUGIN_ID` parameter is passed
    */
-  fun lastUpdateId(courseId: Int) = GeneratorUtils.getInternalTemplateText("marketplace.qraphql.courseUpdateId.txt",
-                                                                           mapOf("courseId" to courseId))
+  fun lastUpdatesList(courseIds: List<Int>) = GeneratorUtils.getInternalTemplateText("marketplace.qraphql.courseUpdatesById.txt",
+                                                                                     mapOf("courseIds" to courseIds))
 
 }

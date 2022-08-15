@@ -20,7 +20,9 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
     val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(1)
     checkNotNull(updateInfo)
     assertEquals(102996, updateInfo.updateId)
+    assertEquals(1, updateInfo.pluginId)
     assertEquals(3, updateInfo.version)
+    assertEquals(13, updateInfo.compatibility.gte)
   }
 
   // course version from updateInfo.json should be incremented by 1

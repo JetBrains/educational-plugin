@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
-import okhttp3.mockwebserver.RecordedRequest
 import java.util.*
 
 class MarketplaceSearchCoursesTest : EduTestCase() {
@@ -16,7 +15,12 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   private fun configureCoursesResponse() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      mockResponse("courses.json")
+      val requestBody = request.body.readUtf8()
+      when  {
+        requestBody.isPluginsRequest() -> mockResponse("courses.json")
+        requestBody.isUpdatesRequest() -> mockResponse("updates.json")
+        else -> null
+      }
     }
   }
 
@@ -35,6 +39,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals("JetBrains s.r.o.", pythonCourse.organization)
     checkAuthorFullNames(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
     checkAuthors(listOf("FirstName LastName"), pythonCourse.authors)
+    assertEquals(13, pythonCourse.formatVersion)
   }
 
   fun `test java ru course created`() {
@@ -48,6 +53,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val expectedAuthors = listOf("user1 LastName1", "user2 LastName2")
     checkAuthorFullNames(expectedAuthors, javaCourse.authorFullNames)
     checkAuthors(expectedAuthors, javaCourse.authors)
+    assertEquals(14, javaCourse.formatVersion)
   }
 
   fun `test scala course with environment created`() {
@@ -61,14 +67,18 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val expectedAuthors = listOf("FirstName LastName")
     checkAuthorFullNames(expectedAuthors, scalaCourse.authorFullNames)
     checkAuthors(expectedAuthors, scalaCourse.authors)
+    assertEquals(13, scalaCourse.formatVersion)
   }
 
   fun `test all courses loaded`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      when (request.getOffset()) {
-        0 -> mockResponse("courses_10.json")
-        else -> mockResponse("courses.json")
+      val requestBody = request.body.readUtf8()
+      when {
+        requestBody.isPluginsRequest() && (requestBody.getOffset() == 0) -> mockResponse("courses_10.json")
+        requestBody.isPluginsRequest() && (requestBody.getOffset() == 10) -> mockResponse("courses.json")
+        requestBody.isUpdatesRequest() ->  mockResponse("updates_10.json")
+        else -> null
       }
     }
 
@@ -78,7 +88,12 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   fun `test course found by id`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      mockResponse("course_by_id.json")
+      val requestBody = request.body.readUtf8()
+      when  {
+        requestBody.isPluginsRequest() -> mockResponse("course_by_id.json")
+        requestBody.isUpdatesRequest() -> mockResponse("updates.json")
+        else -> null
+      }
     }
     val courseId = 1
     val course = MarketplaceConnector.getInstance().searchCourse(courseId)
@@ -90,7 +105,12 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   fun `test private course found`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
-      mockResponse("private_course.json")
+      val requestBody = request.body.readUtf8()
+      when  {
+        requestBody.isPluginsRequest() -> mockResponse("private_course.json")
+        requestBody.isUpdatesRequest() -> mockResponse("updates.json")
+        else -> null
+      }
     }
     val courseId = 1
     val course = MarketplaceConnector.getInstance().searchCourse(courseId)
@@ -146,8 +166,16 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     }
   }
 
-  private fun RecordedRequest.getOffset(): Int {
-    return body.readUtf8().substringAfter("offset: ").substringBefore("\\n").toInt()
+  private fun String.getOffset(): Int {
+    return substringAfter("offset: ", "10").substringBefore("\\n").toInt()
+  }
+
+  private fun String.isPluginsRequest(): Boolean {
+    return contains("plugins")
+  }
+
+  private fun String.isUpdatesRequest(): Boolean {
+    return contains("updates")
   }
 
   private fun doTestCoursesLoaded(coursesNumber: Int = 3): List<EduCourse> {

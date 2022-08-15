@@ -5,7 +5,11 @@
       "updates" : [
         {
           "id" : "102996",
-          "version" : "3"
+          "pluginId" : "1",
+          "version" : "3",
+          "compatibility": {
+            "gte": 13
+          }
         }
       ]
     }

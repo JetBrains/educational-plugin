@@ -21,7 +21,7 @@ import org.jdom.Element
 import java.nio.file.Paths
 import java.util.*
 
-class CoursesStorageTest : EduTestCase() {
+class CoursesInfosStorageTest : EduTestCase() {
 
   fun `test correct configurator found for courses in storage`() {
     val coursesStorage = CoursesStorage.getInstance()

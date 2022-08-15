@@ -21,38 +21,30 @@ import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 
-const val AUTHORS = "authors"
-const val CONTENT = "content"
-const val CREATE_DATE = "cdate"
-const val COURSE_VERSION = "course_version"
-const val DATA = "data"
-const val DESCRIPTION = "description"
-const val DESCRIPTORS = "descriptors"
-const val DOWNLOADS = "downloads"
-const val ENVIRONMENT = "environment"
-const val FIELDS = "fields"
-const val GUEST = "guest"
 const val ID = "id"
-const val IS_PRIVATE = "isPrivate"
-const val LANGUAGE = "language"
-const val LAST_UPDATE_DATE = "lastUpdateDate"
-const val LICENSE = "license"
-const val LINK = "link"
-const val MARKETPLACE_COURSE_VERSION = "course_version"
 const val NAME = "name"
-const val ORGANIZATION = "organization"
-const val PATH = "path"
-const val PLUGINS = "plugins"
-const val PROGRAMMING_LANGUAGE = "programmingLanguage"
-const val QUERY = "query"
-const val RATING = "rating"
-const val TASK_ID = "task_id"
-const val TOTAL = "total"
-const val TIMESTAMP = "timestamp"
-const val TYPE = "type"
-const val UPDATES = "updates"
-const val VERSION = "version"
-const val VERSIONS = "versions"
+private const val CONTENT = "content"
+private const val COMPATIBILITY = "compatibility"
+private const val COURSE_VERSION = "course_version"
+private const val DATA = "data"
+private const val DESCRIPTORS = "descriptors"
+private const val ENVIRONMENT = "environment"
+private const val GTE = "gte"
+private const val GUEST = "guest"
+private const val IS_PRIVATE = "isPrivate"
+private const val LANGUAGE = "language"
+private const val PATH = "path"
+private const val PLUGIN_ID = "pluginId"
+private const val PLUGINS = "plugins"
+private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
+private const val QUERY = "query"
+private const val TASK_ID = "task_id"
+private const val TOTAL = "total"
+private const val TIMESTAMP = "timestamp"
+private const val TYPE = "type"
+private const val UPDATES = "updates"
+private const val VERSION = "version"
+private const val VERSIONS = "versions"
 
 class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
   @TestOnly
@@ -134,8 +126,10 @@ class QueryData(graphqlQuery: String) {
   var query: String = graphqlQuery
 }
 
+// downloaded CoursesInfos are not full-fledged EduCourses, they miss information, specific for the update,
+// contained in the UpdateInfo (e.g. Course.formatVersion, stored in Compatibility.gte)
 @JsonIgnoreProperties(ignoreUnknown = true)
-class CoursesList {
+class CoursesInfoList {
   @JsonProperty(TOTAL)
   var total: Int = -1
 
@@ -146,13 +140,13 @@ class CoursesList {
 @JsonIgnoreProperties(ignoreUnknown = true)
 class CoursesData {
   @JsonProperty(DATA)
-  lateinit var data: Courses
+  lateinit var data: CoursesInfos
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Courses {
+class CoursesInfos {
   @JsonProperty(PLUGINS)
-  lateinit var coursesList: CoursesList
+  lateinit var myCoursesInfoList: CoursesInfoList
 }
 
 class Author {
@@ -210,8 +204,20 @@ class UpdateInfo {
   @JsonProperty(ID)
   var updateId: Int = -1
 
+  @JsonProperty(PLUGIN_ID)
+  var pluginId: Int = -1
+
   @JsonProperty(VERSION)
   var version: Int = -1
+
+  @JsonProperty(COMPATIBILITY)
+  var compatibility: Compatibility = Compatibility()
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Compatibility {
+  @JsonProperty(GTE)
+  var gte: Int = -1
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

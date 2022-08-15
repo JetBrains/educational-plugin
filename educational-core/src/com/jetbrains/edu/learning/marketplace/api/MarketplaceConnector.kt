@@ -175,45 +175,66 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return allCourses
   }
 
-  fun searchCourses(searchPrivate: Boolean): List<EduCourse> {
+  private fun searchCourses(searchPrivate: Boolean): List<EduCourse> {
     var offset = 0
     val courses = mutableListOf<EduCourse>()
 
     do {
-      val coursesList = getCourses(offset, searchPrivate) ?: return courses
-      val loadedCourses = coursesList.courses
-      if (loadedCourses.isEmpty()) return courses
+      val coursesInfoList = getCoursesInfoList(offset, searchPrivate) ?: return courses
+      val loadedCourses = updateFormatVersions(coursesInfoList)
+      if (loadedCourses.isNullOrEmpty()) return courses
       courses.addAll(loadedCourses)
       offset += LOADING_STEP
     }
-    while (courses.size < coursesList.total)
+    while (courses.size < coursesInfoList.total)
 
     return courses
   }
 
-  private fun getCourses(offset: Int, searchPrivate: Boolean): CoursesList? {
+  private fun updateFormatVersions(coursesInfoList: CoursesInfoList): List<EduCourse>? {
+    val courses = coursesInfoList.courses.toMutableList()
+    val updates = getUpdateInfoList(courses.map { it.id }) ?: return null
+    val courseIdJsonVersionMap: Map<Int, Int> = updates.associateBy(UpdateInfo::pluginId) { it.compatibility.gte }
+    for (course in courses) {
+      val courseFormatVersion = courseIdJsonVersionMap[course.id]
+      if (courseFormatVersion == null) {
+        courses.remove(course)
+        LOG.error("No UpdateInfo found for course ${course.name}")
+        continue
+      }
+      course.formatVersion = courseFormatVersion
+    }
+    return courses
+  }
+
+  private fun getCoursesInfoList(offset: Int, searchPrivate: Boolean): CoursesInfoList? {
     val query = QueryData(GraphqlQuery.search(offset, searchPrivate))
     val response = repositoryEndpoints.search(query).executeHandlingExceptions()
-    return response?.body()?.data?.coursesList
+    return response?.body()?.data?.myCoursesInfoList
   }
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
     val query = QueryData(GraphqlQuery.searchById(courseId, searchPrivate))
     val response = repositoryEndpoints.search(query).executeHandlingExceptions()
-    val course = response?.body()?.data?.coursesList?.courses?.firstOrNull()
+    val coursesInfoList = response?.body()?.data?.myCoursesInfoList ?: return null
+    val course = updateFormatVersions(coursesInfoList)?.firstOrNull()
     course?.id = courseId
     return course
   }
 
   fun getLatestCourseUpdateInfo(courseId: Int): UpdateInfo? {
-    val response = repositoryEndpoints.getUpdateId(QueryData(GraphqlQuery.lastUpdateId(courseId))).executeHandlingExceptions()
-    val updateInfoList = response?.body()?.data?.updates?.updateInfoList
+    val updateInfoList = getUpdateInfoList(listOf(courseId))
     if (updateInfoList == null) {
       error("Update info list for course $courseId is null")
     }
     else {
       return updateInfoList.firstOrNull()
     }
+  }
+
+  private fun getUpdateInfoList(courseIds: List<Int>): List<UpdateInfo>? {
+    val response = repositoryEndpoints.getUpdateId(QueryData(GraphqlQuery.lastUpdatesList(courseIds))).executeHandlingExceptions()
+    return response?.body()?.data?.updates?.updateInfoList
   }
 
   @Suppress("UnstableApiUsage")
@@ -290,7 +311,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     LOG.info("$message with id ${courseBean.id}")
   }
 
-  fun <T> Call<T>.executeUploadParsingErrors(project: Project,
+  private fun <T> Call<T>.executeUploadParsingErrors(project: Project,
                                              failedActionMessage: String,
                                              onErrorAction: AnAction,
                                              showOnForbiddenCodeNotification: () -> Unit,
@@ -466,7 +487,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
 
   @Suppress("DialogTitleCapitalization")
-  fun createAndShowCourseVersionDialog(project: Project, course: EduCourse, failedActionTitle: String): Int? {
+  private fun createAndShowCourseVersionDialog(project: Project, course: EduCourse, failedActionTitle: String): Int? {
     val currentCourseVersion = course.marketplaceCourseVersion
     val suggestedCourseVersion = currentCourseVersion + 1
 

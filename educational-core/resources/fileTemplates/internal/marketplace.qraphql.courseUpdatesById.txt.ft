@@ -1,0 +1,17 @@
+query {
+  updates(
+    search: {
+      filters: [{ field: "pluginId", value: ${courseIds} }]
+      max: 20
+      collapseField: PLUGIN_ID
+    }
+  ) {
+    total
+    updates {
+      id
+      pluginId
+      version
+      compatibility { gte }
+    }
+  }
+}
