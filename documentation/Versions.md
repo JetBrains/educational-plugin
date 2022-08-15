@@ -842,3 +842,50 @@
       }
     }
     ```
+    
+14. Output Tasks reworked, now input.txt file is being created at Output Task creation
+    Before:
+    ```json
+    {
+      // Output Task
+      "files" : {
+            "src/Main.kt" : {
+              "name" : "src/Main.kt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "NDA7NYDJ4pT3F7ChgC7OnY7PiQg0Z9w3V0uXkpoQ4U1bA82PIPbBUwzzqamNfgOY"
+            },
+            "test/output.txt" : {
+              "name" : "test/output.txt",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "BPrPxsoPO0ddRfXxWyDgbA=="
+            }
+    }
+    ```
+
+    After:
+    ```json
+    {
+      // Output Task
+      "files" : {
+            "src/Main.kt" : {
+              "name" : "src/Main.kt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "NDA7NYDJ4pT3F7ChgC7OnY7PiQg0Z9w3V0uXkpoQ4U1bA82PIPbBUwzzqamNfgOY"
+            },
+            "test/output.txt" : {
+              "name" : "test/output.txt",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "BPrPxsoPO0ddRfXxWyDgbA=="
+            },
+            "test/input.txt" : {
+              "name" : "test/input.txt",
+              "placeholders" : [ ],
+              "is_visible" : false,
+              "text" : "BPrPxsoPO0ddRfXxWyDgbA=="
+            }
+    }
+    ```
