@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.newproject;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -20,6 +21,7 @@ import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
+import com.jetbrains.python.sdk.PySdkToInstall;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +52,15 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     super.afterProjectGenerated(project, settings);
     Sdk sdk = settings.getSdk();
 
+    if (sdk instanceof PySdkToInstall) {
+      Sdk selectedSdk = sdk;
+      ApplicationManager.getApplication().invokeAndWait(() -> {
+        PyLanguageSettings.installSdk((PySdkToInstall)selectedSdk);
+      });
+      createAndAddVirtualEnv(project, settings);
+      sdk = settings.getSdk();
+    }
+
     if (sdk != null && sdk.getSdkType() == PyFakeSdkType.INSTANCE) {
       createAndAddVirtualEnv(project, settings);
       sdk = settings.getSdk();
@@ -68,6 +79,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
     if (course == null) {
       return;
     }
+
     final String baseSdkPath = getBaseSdkPath(settings, course);
     if (baseSdkPath != null) {
       final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);

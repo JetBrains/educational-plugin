@@ -19,9 +19,11 @@ import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
+import com.jetbrains.python.sdk.PySdkToInstall
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addBaseInterpretersAsync
+import com.jetbrains.python.sdk.detectSystemWideSdks
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -140,5 +142,8 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     }
 
     const val ALL_VERSIONS = "All versions"
+
+    @JvmStatic
+    fun installSdk(sdkToInstall: PySdkToInstall) = sdkToInstall.install(null) { detectSystemWideSdks(null, emptyList()) }
   }
 }
