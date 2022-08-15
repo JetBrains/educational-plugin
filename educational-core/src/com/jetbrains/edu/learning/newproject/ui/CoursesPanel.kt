@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.exceptions.EduException
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
@@ -75,7 +75,7 @@ abstract class CoursesPanel(
     layout = cardLayout
     background = MAIN_BG_COLOR
     coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
-    this.setNoCoursesPanelText()
+    this.setNoCoursesPanelDefaultText()
 
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
@@ -119,7 +119,7 @@ abstract class CoursesPanel(
         coursesProvider.loadCourses()
       })
     }
-    catch (e: EduException) {
+    catch (e: CoursesDownloadingException) {
       noCoursesPanel.emptyText.appendLine(e.uiMessage, SimpleTextAttributes.ERROR_ATTRIBUTES, null)
     }
 
@@ -163,7 +163,7 @@ abstract class CoursesPanel(
     add(CenteredIcon(), BorderLayout.CENTER)
   }
 
-  protected open fun setNoCoursesPanelText() {
+  protected open fun setNoCoursesPanelDefaultText() {
     val text = noCoursesPanel.emptyText
     text.text = EduCoreBundle.message("course.dialog.no.courses", ApplicationNamesInfo.getInstance().fullProductName)
     text.appendSecondaryText(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
