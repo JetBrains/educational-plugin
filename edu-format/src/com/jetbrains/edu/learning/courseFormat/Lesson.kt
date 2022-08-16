@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 
 /**
  * To introduce new lesson type it's required to:

@@ -118,7 +118,6 @@ idea {
 
 allprojects {
   apply {
-    plugin("org.jetbrains.intellij")
     plugin("java")
     plugin("kotlin")
     plugin("net.saliman.properties")
@@ -168,14 +167,6 @@ allprojects {
     all {
       // Allows using project dependencies instead of IDE dependencies during compilation and test running
       resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
-    }
-  }
-
-  intellij {
-    if (isStudioIDE) {
-      localPath.set(studioPath)
-    } else {
-      version.set(baseVersion)
     }
   }
 
@@ -232,7 +223,24 @@ allprojects {
       dependsOn(verifyClasses)
     }
   }
+}
 
+fun Iterable<Project>.pluginModules(): List<Project> {
+  return filter { it.name != "edu-format" }
+}
+
+configure(allprojects.pluginModules()) {
+  apply {
+    plugin("org.jetbrains.intellij")
+  }
+  intellij {
+    if (isStudioIDE) {
+      localPath.set(studioPath)
+    }
+    else {
+      version.set(baseVersion)
+    }
+  }
   dependencies {
     implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
     implementation("org.jsoup:jsoup:1.12.1")
@@ -269,7 +277,7 @@ allprojects {
   }
 }
 
-subprojects {
+configure(subprojects.pluginModules()) {
   tasks {
     runIde { enabled = false }
     prepareSandbox { enabled = false }
@@ -280,6 +288,8 @@ subprojects {
 
   dependencies {
     testOutput(sourceSets.test.get().output.classesDirs)
+
+    testImplementation(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
   }
 }
 
@@ -529,11 +539,27 @@ project(":") {
   }
 }
 
-project(":educational-core")
+project(":edu-format") {
+  dependencies {
+    compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
+    compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
+    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.10.0") {
+      excludeKotlinDeps()
+    }
+    implementation(group = "org.slf4j", name = "slf4j-api", version = "1.7.29")
+  }
+}
+
+project(":educational-core") {
+  dependencies {
+    api(project(":edu-format"))
+  }
+}
 
 project(":code-insight") {
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -600,6 +626,7 @@ project(":jvm-core") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -614,6 +641,7 @@ project(":Edu-Java") {
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
@@ -631,6 +659,7 @@ project(":Edu-Kotlin") {
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
@@ -647,6 +676,7 @@ project(":Edu-Scala") {
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
@@ -663,6 +693,7 @@ project(":Edu-Android") {
   dependencies {
     implementation(project(":educational-core"))
     implementation(project(":jvm-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
@@ -686,6 +717,7 @@ project(":Edu-Python") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":Edu-Python:Idea"))
     testImplementation(project(":Edu-Python:PyCharm"))
@@ -738,6 +770,7 @@ project(":Edu-JavaScript") {
   }
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -757,6 +790,7 @@ project(":Edu-Rust") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -770,6 +804,7 @@ project(":Edu-Cpp") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -783,6 +818,7 @@ project(":Edu-Go") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -796,6 +832,7 @@ project(":Edu-Php") {
 
   dependencies {
     implementation(project(":educational-core"))
+
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -1000,7 +1037,7 @@ fun findModulePackage(project: Project): String {
   // because we use `include` for them inside manifests, i.e. they just a part of another module.
   // That's why we delegate manifest search to other projects in some cases
   val moduleManifest = when (project.path) {
-    ":", ":educational-core", ":code-insight" -> manifestFile(rootProject, "META-INF/plugin.xml")
+    ":", ":educational-core", ":edu-format", ":code-insight" -> manifestFile(rootProject, "META-INF/plugin.xml")
     ":Edu-Python:Idea", ":Edu-Python:PyCharm" -> manifestFile(project.parent!!)
     else -> manifestFile(project)
   }

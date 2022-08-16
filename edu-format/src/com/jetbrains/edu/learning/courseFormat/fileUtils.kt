@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.logger
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files

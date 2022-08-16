@@ -6,6 +6,7 @@ import java.util.*
 rootProject.name = "educational-plugin"
 include(
   "educational-core",
+  "edu-format",
   "code-insight",
   "code-insight:html",
   "code-insight:markdown",

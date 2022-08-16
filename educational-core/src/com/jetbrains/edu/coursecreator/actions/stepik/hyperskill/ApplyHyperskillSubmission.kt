@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
@@ -19,7 +20,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
 class ApplyHyperskillSubmission : DumbAwareAction(
   EduCoreBundle.lazyMessage("action.apply.submission.text", HYPERSKILL),
   EduCoreBundle.lazyMessage("action.apply.submission.description", HYPERSKILL),

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.logger
-
 open class EduFile {
   var name: String = ""
   var text: String = ""

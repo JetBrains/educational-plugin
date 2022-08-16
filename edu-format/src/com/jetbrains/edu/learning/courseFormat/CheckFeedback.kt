@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.logger
 import java.util.*
 
 data class CheckFeedback(

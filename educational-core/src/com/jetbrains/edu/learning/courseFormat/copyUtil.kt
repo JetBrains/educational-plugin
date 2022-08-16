@@ -9,9 +9,9 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.coursecreator.actions.mixins.StudyItemDeserializer
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.logger
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 
 private val LOG = logger<StudyItem>()

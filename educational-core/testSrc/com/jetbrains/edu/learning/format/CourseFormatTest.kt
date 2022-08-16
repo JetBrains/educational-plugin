@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.format
 
-import com.intellij.openapi.util.Pair
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -11,15 +9,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 
 class CourseFormatTest : EduTestCase() {
   fun testAdditionalMaterialsLesson() {
-    val course = courseFromJson
-    assertNotNull(course.additionalFiles)
-    assertFalse(course.additionalFiles.isEmpty())
-    assertEquals("test_helper.py", course.additionalFiles[0].name)
+    assertNotNull(courseFromJson.additionalFiles)
+    assertFalse(courseFromJson.additionalFiles.isEmpty())
+    assertEquals("test_helper.py", courseFromJson.additionalFiles[0].name)
   }
 
   fun testCourseWithSection() {
-    val course = courseFromJson
-    val items = course.items
+    val items = courseFromJson.items
     assertEquals(2, items.size)
     assertTrue(items[0] is Section)
     assertTrue(items[1] is Lesson)
@@ -27,24 +23,21 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testFrameworkLesson() {
-    val course = courseFromJson
-    assertEquals(1, course.items.size)
-    val lesson = course.items[0]
+    assertEquals(1, courseFromJson.items.size)
+    val lesson = courseFromJson.items[0]
     check(lesson is FrameworkLesson)
     assertTrue(lesson.isTemplateBased)
   }
 
   fun testNonTemplateBasedFrameworkLesson() {
-    val course = courseFromJson
-    assertEquals(1, course.items.size)
-    val lesson = course.items[0]
+    assertEquals(1, courseFromJson.items.size)
+    val lesson = courseFromJson.items[0]
     check(lesson is FrameworkLesson)
     assertFalse(lesson.isTemplateBased)
   }
 
   fun testPycharmToEduTask() {
-    val course = courseFromJson
-    val lessons = course.lessons
+    val lessons = courseFromJson.lessons
     assertFalse("No lessons found", lessons.isEmpty())
     val lesson = lessons[0]
     val taskList = lesson.taskList
@@ -53,18 +46,15 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testDescription() {
-    val eduTask = firstEduTask
-    assertEquals("First task description", EduUtils.getTaskTextFromTask(project, eduTask))
+    assertEquals("First task description", EduUtils.getTaskTextFromTask(project, firstEduTask))
   }
 
   fun testFeedbackLinks() {
-    val eduTask = firstEduTask
-    assertEquals("https://www.jetbrains.com/", eduTask.feedbackLink)
+    assertEquals("https://www.jetbrains.com/", firstEduTask.feedbackLink)
   }
 
   fun testPlaceholderText() {
-    val eduTask = firstEduTask
-    val taskFile = eduTask.getTaskFile("task.py")
+    val taskFile = firstEduTask.getTaskFile("task.py")
     check(taskFile != null)
     val answerPlaceholders = taskFile.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
@@ -72,8 +62,7 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testPossibleAnswer() {
-    val eduTask = firstEduTask
-    val taskFile = eduTask.getTaskFile("task.py")
+    val taskFile = firstEduTask.getTaskFile("task.py")
     check(taskFile != null)
     val answerPlaceholders = taskFile.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
@@ -81,28 +70,23 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testCourseName() {
-    val course = courseFromJson
-    assertEquals("My Python Course", course.name)
+    assertEquals("My Python Course", courseFromJson.name)
   }
 
   fun testCourseProgrammingLanguage() {
-    val course = courseFromJson
-    assertEquals(EduNames.PYTHON, course.languageID)
+    assertEquals(EduNames.PYTHON, courseFromJson.languageID)
   }
 
   fun testCourseLanguage() {
-    val course = courseFromJson
-    assertEquals("Russian", course.humanLanguage)
+    assertEquals("Russian", courseFromJson.humanLanguage)
   }
 
   fun testCourseDescription() {
-    val course = courseFromJson
-    assertEquals("Best course ever", course.description)
+    assertEquals("Best course ever", courseFromJson.description)
   }
 
   fun testStudentTaskText() {
-    val course = courseFromJson
-    val lessons = course.lessons
+    val lessons = courseFromJson.lessons
     assertFalse("No lessons found", lessons.isEmpty())
     val lesson = lessons[0]
     val taskList = lesson.taskList
@@ -114,38 +98,31 @@ class CourseFormatTest : EduTestCase() {
   }
 
   fun testChoiceTasks() {
-    val course = courseFromJson
-    val task = course.lessons[0].taskList[0]
+    val task = courseFromJson.lessons[0].taskList[0]
     check(task is ChoiceTask)
     assertTrue(task.isMultipleChoice)
     val choiceOptions = task.choiceOptions
-    val actualChoiceOptions = ContainerUtil.newHashMap(ContainerUtil.map(choiceOptions) { it.text },
-                                                       ContainerUtil.map(choiceOptions) { it.status })
-    assertEquals(ContainerUtil.newHashMap(Pair.create("1", ChoiceOptionStatus.CORRECT),
-                                          Pair.create("2", ChoiceOptionStatus.INCORRECT)),
-                 actualChoiceOptions)
+
+    val actualChoiceOptions = choiceOptions.associateBy({ it.text }, { it.status })
+    assertEquals(mapOf(Pair("1", ChoiceOptionStatus.CORRECT), Pair("2", ChoiceOptionStatus.INCORRECT)), actualChoiceOptions)
   }
 
   fun testCourseWithAuthors() {
-    val course = courseFromJson
-    assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
-                 ContainerUtil.map(course.authors) { info -> info.getFullName() })
+    assertEquals(listOf("EduTools Dev", "EduTools QA", "EduTools"),
+                 courseFromJson.authors.map { info -> info.getFullName() })
   }
 
   fun testSolutionsHiddenInCourse() {
-    val course = courseFromJson
-    assertTrue(course.solutionsHidden)
+    assertTrue(courseFromJson.solutionsHidden)
   }
 
   fun testSolutionHiddenInTask() {
-    val course = courseFromJson
-    val task = course.lessons[0].taskList[0]
+    val task = courseFromJson.lessons[0].taskList[0]
     assertTrue(task.solutionHidden!!)
   }
 
   fun testLocalCourseWithPlugins() {
-    val course = courseFromJson
-    val pluginDependencies = course.pluginDependencies
+    val pluginDependencies = courseFromJson.pluginDependencies
     assertSize(1, pluginDependencies)
 
     with(pluginDependencies.first()) {

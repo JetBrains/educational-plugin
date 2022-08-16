@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.logger
 import org.jetbrains.annotations.PropertyKey
 import java.lang.reflect.Method
 import java.text.MessageFormat

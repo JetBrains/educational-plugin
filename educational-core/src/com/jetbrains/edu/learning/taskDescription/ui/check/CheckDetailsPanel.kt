@@ -117,10 +117,11 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
       answerHintsPanel.value.add(peekSolution)
     }
 
-    if (checkResult.diff != null) {
+    val diff = checkResult.diff
+    if (diff != null) {
       //suppressing capitalization because LightColoredActionLink's base class requires Sentence capitalization for the parameter
       @Suppress("DialogTitleCapitalization")
-      val compareOutputs = LightColoredActionLink(EduCoreBundle.message("label.compare.outputs"), CompareOutputsAction(project, checkResult.diff))
+      val compareOutputs = LightColoredActionLink(EduCoreBundle.message("label.compare.outputs"), CompareOutputsAction(project, diff))
       answerHintsPanel.value.add(compareOutputs)
       if (task is CodeforcesTask) {
         answerHintsPanel.value.add(createCodeforcesMarkAsCompletedLink())

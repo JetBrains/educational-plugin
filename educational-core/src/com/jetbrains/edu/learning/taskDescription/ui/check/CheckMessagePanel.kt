@@ -128,8 +128,9 @@ class CheckMessagePanel private constructor() : JPanel() {
       messagePanel.setMessage(checkResult.message)
       messagePanel.setHyperlinkListener(checkResult.hyperlinkListener)
       messagePanel.adjustView(checkResult)
-      if (checkResult.diff != null) {
-        messagePanel.setDiff(checkResult.diff)
+      val diff = checkResult.diff
+      if (diff != null) {
+        messagePanel.setDiff(diff)
       }
       return messagePanel
     }
@@ -141,7 +142,7 @@ class CheckMessagePanel private constructor() : JPanel() {
         }
         return object : HyperlinkAdapter() {
           override fun hyperlinkActivated(e: HyperlinkEvent) {
-            hyperlinkAction.invoke()
+            hyperlinkAction?.invoke()
           }
         }
       }

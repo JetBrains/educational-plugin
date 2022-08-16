@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.jetbrains.edu.learning.checker.OutputTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import java.util.*
 
