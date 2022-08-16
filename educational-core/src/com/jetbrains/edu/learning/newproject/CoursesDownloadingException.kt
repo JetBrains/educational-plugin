@@ -1,3 +1,5 @@
 package com.jetbrains.edu.learning.newproject
 
-class CoursesDownloadingException(message: String? = null, val uiMessage: String) : Exception(message)
+import java.io.IOException
+
+class CoursesDownloadingException(message: String? = null, val uiMessage: String) : IOException(message)
