@@ -70,6 +70,7 @@ val pythonPlugin = when {
   isStudioIDE -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
+val kotlinPlugin = "org.jetbrains.kotlin"
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
 // Since 2022.1 TOML plugin is bundled into all supported IDEs
@@ -86,6 +87,8 @@ val jvmPlugins = listOf(
   "junit",
   "gradle-java"
 )
+
+val kotlinPlugins = jvmPlugins + kotlinPlugin
 
 val changesFile = "changes.html"
 
@@ -347,6 +350,7 @@ project(":") {
     implementation(project(":Edu-Php"))
     implementation(project(":sql"))
     implementation(project(":sql:sql-jvm"))
+    implementation(project(":sql:Edu-Sql-Kotlin"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -620,8 +624,7 @@ project(":Edu-Kotlin") {
       localPath.set(null as String?)
       version.set(ideaVersion)
     }
-    val pluginList = jvmPlugins + "Kotlin"
-    plugins.set(pluginList)
+    plugins.set(kotlinPlugins)
   }
 
   dependencies {
@@ -823,6 +826,23 @@ project("sql:sql-jvm") {
     api(project(":jvm-core"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
+  }
+}
+
+project("sql:Edu-Sql-Kotlin") {
+  intellij {
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(sqlPlugin) + kotlinPlugins)
+  }
+
+  dependencies {
+    implementation(project(":sql:sql-jvm"))
+    implementation(project(":Edu-Kotlin"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":sql", "testOutput"))
+    testImplementation(project(":sql:sql-jvm", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.kotlin
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.kotlinVersion
@@ -21,9 +20,8 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
   override fun getLanguageSettings() = KtLanguageSettings()
 
   companion object {
-    private const val KOTLIN_BUILD_GRADLE_TEMPLATE_NAME = "kotlin-build.gradle"
+    const val KOTLIN_BUILD_GRADLE_TEMPLATE_NAME = "kotlin-build.gradle"
 
-    @VisibleForTesting
     fun getKotlinTemplateVariables(): Map<String, Any> {
       val kotlinVersion = kotlinVersion()
       return mapOf(
