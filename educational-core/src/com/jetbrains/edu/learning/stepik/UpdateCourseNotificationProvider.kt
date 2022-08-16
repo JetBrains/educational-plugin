@@ -14,8 +14,9 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.marketplace.isRemoteUpdateFormatVersionCompatible
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
-import com.jetbrains.edu.learning.marketplace.update.getUpdateVersion
+import com.jetbrains.edu.learning.marketplace.update.getUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -53,8 +54,9 @@ class UpdateCourseNotificationProvider : EditorNotifications.Provider<EditorNoti
   private fun updateCourse(project: Project, course: EduCourse) {
     when (course.isMarketplace) {
       true -> {
-        val remoteCourseVersion = course.getUpdateVersion() ?: return
-        MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourse()
+        val updateInfo = course.getUpdateInfo() ?: return
+        if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return
+        MarketplaceCourseUpdater(project, course, updateInfo.version).updateCourse()
       }
       false -> updateCourseOnStepik(project, course)
     }

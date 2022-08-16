@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
+import com.jetbrains.edu.learning.marketplace.isRemoteUpdateFormatVersionCompatible
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.runInBackground
@@ -21,8 +22,10 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
   override fun synchronizeCourse(project: Project) {
     val course = project.course as EduCourse
     runInBackground(title = message("progress.loading.course")) {
-      val remoteCourseVersion = course.getUpdateVersion()
-      if (remoteCourseVersion != null) {
+      val updateInfo = course.getUpdateInfo() ?: return@runInBackground
+      val remoteCourseVersion = updateInfo.version
+      if (remoteCourseVersion > course.marketplaceCourseVersion) {
+        if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return@runInBackground
         MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourse()
       }
       else {
