@@ -34,5 +34,6 @@
     <module name="Edu-Go"/>
     <module name="Edu-Php"/>
     <module name="sql-core"/>
+    <module name="sql-jvm"/>
   </content>
 </idea-plugin>

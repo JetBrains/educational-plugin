@@ -1,0 +1,9 @@
+<idea-plugin package="com.jetbrains.edu.sql.jvm">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <module name="sql-core"/>
+    <module name="jvm-core"/>
+
+    <plugin id="com.intellij.database"/>
+  </dependencies>
+</idea-plugin>

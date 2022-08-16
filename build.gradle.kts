@@ -346,6 +346,7 @@ project(":") {
     implementation(project(":Edu-Go"))
     implementation(project(":Edu-Php"))
     implementation(project(":sql"))
+    implementation(project(":sql:sql-jvm"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -805,8 +806,24 @@ project(":sql") {
   }
 
   dependencies {
-    implementation(project(":educational-core"))
+    api(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project("sql:sql-jvm") {
+  intellij {
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(sqlPlugin) + jvmPlugins)
+  }
+
+  dependencies {
+    api(project(":sql"))
+    api(project(":jvm-core"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":sql", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
   }
 }
 
