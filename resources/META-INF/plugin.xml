@@ -33,6 +33,6 @@
     <module name="Edu-Cpp"/>
     <module name="Edu-Go"/>
     <module name="Edu-Php"/>
-    <module name="Edu-Sql"/>
+    <module name="sql-core"/>
   </content>
 </idea-plugin>

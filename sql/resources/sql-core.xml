@@ -1,0 +1,6 @@
+<idea-plugin package="com.jetbrains.edu.sql.core">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.intellij.database"/>
+  </dependencies>
+</idea-plugin>

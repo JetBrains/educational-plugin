@@ -345,7 +345,7 @@ project(":") {
     implementation(project(":Edu-Cpp"))
     implementation(project(":Edu-Go"))
     implementation(project(":Edu-Php"))
-    implementation(project(":Edu-Sql"))
+    implementation(project(":sql"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -795,7 +795,7 @@ project(":Edu-Php") {
   }
 }
 
-project(":Edu-Sql") {
+project(":sql") {
   intellij {
     if (isStudioIDE || isPycharmIDE) {
       localPath.set(null as String?)

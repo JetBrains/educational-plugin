@@ -23,7 +23,7 @@ include(
   "Edu-Cpp",
   "Edu-Go",
   "Edu-Php",
-  "Edu-Sql"
+  "sql"
 )
 
 apply(from = "common.gradle.kts")
