@@ -386,7 +386,11 @@
     <compatibilityProvider language="PHP"
                            implementationClass="com.jetbrains.edu.learning.compatibility.PhpCourseCompatibilityProvider"/>
     <compatibilityProvider language="SQL"
-                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlCourseCompatibilityProvider"/>
+                           environment="Java"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlJCourseCompatibilityProvider"/>
+    <compatibilityProvider language="SQL"
+                           environment="Kotlin"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.SqlKtCourseCompatibilityProvider"/>
 
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
