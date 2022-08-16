@@ -150,7 +150,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         // the capital letters used in the notification title
         @Suppress("DialogTitleCapitalization")
         UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
-                           EduCoreBundle.message("notification.update.plugin.content")).notify(project)
+                           EduCoreBundle.message("notification.update.plugin.apply.solutions.content")).notify(project)
       }
       EduUtils.synchronize()
       ProjectView.getInstance(project).refresh()

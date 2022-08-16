@@ -202,7 +202,7 @@ public class StepikSolutionsLoader implements Disposable {
           // the capital letters used in the notification title
           //noinspection DialogTitleCapitalization
           new UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
-                                 EduCoreBundle.message("notification.update.plugin.content")).notify(myProject);
+                                 EduCoreBundle.message("notification.update.plugin.apply.solutions.content")).notify(myProject);
         }
         EduUtils.synchronize();
         if (mySelectedTask != null) {
