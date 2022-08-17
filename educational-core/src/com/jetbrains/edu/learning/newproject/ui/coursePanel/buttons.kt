@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -118,7 +119,7 @@ class OpenCourseButton : CourseButtonBase() {
     dialog.dialogWrapper?.close(DialogWrapper.CANCEL_EXIT_CODE)
   }
 
-  override fun isVisible(course: Course): Boolean = CoursesStorage.getInstance().hasCourse(course)
+  override fun isVisible(course: Course): Boolean = !course.isPreview && CoursesStorage.getInstance().hasCourse(course)
 }
 
 /**
@@ -134,7 +135,7 @@ class StartCourseButton(
   }
 
   override fun isVisible(course: Course): Boolean {
-    if (CoursesStorage.getInstance().hasCourse(course)) {
+    if (!course.isPreview && CoursesStorage.getInstance().hasCourse(course)) {
       return false
     }
 
