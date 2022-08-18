@@ -35,6 +35,7 @@
     <module name="Edu-Php"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
+    <module name="Edu-Sql-Java"/>
     <module name="Edu-Sql-Kotlin"/>
   </content>
 </idea-plugin>

@@ -350,6 +350,7 @@ project(":") {
     implementation(project(":Edu-Php"))
     implementation(project(":sql"))
     implementation(project(":sql:sql-jvm"))
+    implementation(project(":sql:Edu-Sql-Java"))
     implementation(project(":sql:Edu-Sql-Kotlin"))
   }
 
@@ -826,6 +827,23 @@ project("sql:sql-jvm") {
     api(project(":jvm-core"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
+    testImplementation(project(":jvm-core", "testOutput"))
+  }
+}
+
+project("sql:Edu-Sql-Java") {
+  intellij {
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(sqlPlugin) + jvmPlugins)
+  }
+
+  dependencies {
+    implementation(project(":sql:sql-jvm"))
+    implementation(project(":Edu-Java"))
+    testImplementation(project(":educational-core", "testOutput"))
+    testImplementation(project(":sql", "testOutput"))
+    testImplementation(project(":sql:sql-jvm", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
   }
 }

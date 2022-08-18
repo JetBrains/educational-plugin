@@ -18,6 +18,6 @@ open class JCourseBuilder : GradleCourseBuilderBase() {
   override fun getLanguageSettings() = JLanguageSettings()
 
   companion object {
-    private const val JAVA_BUILD_GRADLE_TEMPLATE_NAME = "java-build.gradle"
+    const val JAVA_BUILD_GRADLE_TEMPLATE_NAME = "java-build.gradle"
   }
 }

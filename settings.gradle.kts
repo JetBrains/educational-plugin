@@ -25,6 +25,7 @@ include(
   "Edu-Php",
   "sql",
   "sql:sql-jvm",
+  "sql:Edu-Sql-Java",
   "sql:Edu-Sql-Kotlin"
 )
 
