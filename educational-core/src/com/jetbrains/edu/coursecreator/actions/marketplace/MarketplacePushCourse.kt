@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
+import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
@@ -17,7 +18,6 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -29,7 +29,7 @@ import java.io.File
 class MarketplacePushCourse(
   private val updateTitle: @NlsActions.ActionText String = message("item.update.on.0.course.title", MARKETPLACE),
   private val uploadTitle: @NlsActions.ActionText String = message("item.upload.to.0.course.title", MARKETPLACE)
-) : DumbAwareAction(EduCoreBundle.lazyMessage("gluing.slash", updateTitle, uploadTitle)) {
+) : DumbAwareAction(addGluingSlash(updateTitle, uploadTitle)) {
 
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation

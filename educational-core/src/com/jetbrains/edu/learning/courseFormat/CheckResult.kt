@@ -40,14 +40,14 @@ data class CheckResult @JvmOverloads constructor(
     val noTestsRun: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        message("gluing.dot", message("check.no.tests"), message("help.use.guide", NO_TESTS_URL))
+        message("check.no.tests.with.help.guide", NO_TESTS_URL)
       )
 
     @JvmStatic
     val failedToCheck: CheckResult
       get() = CheckResult(
         CheckStatus.Unchecked,
-        message("gluing.dot", message("error.failed.to.launch.checking"), message("help.use.guide", FAILED_TO_CHECK_URL))
+        message("error.failed.to.launch.checking.with.help.guide", FAILED_TO_CHECK_URL)
       )
   }
 }

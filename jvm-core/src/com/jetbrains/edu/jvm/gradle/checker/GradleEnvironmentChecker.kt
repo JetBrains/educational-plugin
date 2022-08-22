@@ -46,7 +46,7 @@ class GradleEnvironmentChecker : EnvironmentChecker() {
 
     fun getFailedToLaunchCheckingResult(project: Project): CheckResult {
       return CheckResult(CheckStatus.Unchecked,
-                         EduCoreBundle.message("error.failed.to.launch.checking.with.message", RELOAD_GRADLE_LINK,
+                         EduCoreBundle.message("error.failed.to.launch.checking.with.reload.gradle.message", RELOAD_GRADLE_LINK,
                                                EduFormatNames.NO_TESTS_URL), hyperlinkAction = { reloadGradle(project) })
     }
 

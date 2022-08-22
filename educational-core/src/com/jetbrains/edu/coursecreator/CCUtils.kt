@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsContexts.Button
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -342,5 +343,15 @@ object CCUtils {
     return checkIfAuthorized(project, failedActionTitle, EduSettings.isLoggedIn()) {
       StepikConnector.getInstance().doAuthorize()
     }
+  }
+
+  /**
+   * Use for actions with double naming only (e.g. [com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse],
+   * [com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson])
+   * Concatenates upload and update action texts for action search in find actions
+   */
+  @JvmStatic
+  fun addGluingSlash(updateText: @NlsActions.ActionText String, uploadText: @NlsActions.ActionText String): String {
+    return "${updateText}/${uploadText}"
   }
 }

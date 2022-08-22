@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
+import static com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash;
 import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
@@ -56,8 +57,8 @@ public class PushHyperskillLesson extends DumbAwareAction {
   }
 
   public PushHyperskillLesson() {
-    super(EduCoreBundle.lazyMessage("gluing.slash", getUploadTitleText(), getUpdateTitleText()),
-          EduCoreBundle.lazyMessage("gluing.slash", getUploadText(), getUpdateText()),
+    super(addGluingSlash(getUpdateTitleText(), getUploadTitleText()),
+          addGluingSlash(getUpdateText(), getUploadText()),
           null);
   }
 
