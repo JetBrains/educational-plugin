@@ -59,6 +59,7 @@ open class CodeforcesTask : OutputTaskBase() {
       when {
         node is TextNode -> node.wholeText
         node is Element && node.tagName() == "br" -> "\n"
+        node is Element && node.tagName() == "div" -> "${node.wholeText()}\n"
         else -> {
           LOG.info("Unexpected element: $node")
           ""
