@@ -64,7 +64,7 @@ public class CCStepikConnector {
     }
     ItemContainer parent = lesson.getParent();
     parent.removeItem(lesson);
-    parent.addItem(lesson.getIndex(), postedLesson);
+    parent.addItem(lesson.getIndex() - 1, postedLesson);
 
     return success;
   }
