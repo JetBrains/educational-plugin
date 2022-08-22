@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 
 import static com.jetbrains.edu.learning.marketplace.MarketplaceUtils.addVendor;
@@ -28,19 +27,15 @@ public class CCCreateCourseArchivePanel extends JPanel {
   private JTextField myAuthorField;
   private JLabel myAuthorLabel;
 
-  public CCCreateCourseArchivePanel(@NotNull final Project project, String name, boolean showAuthorField) {
+  public CCCreateCourseArchivePanel(@NotNull final Project project, String name) {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
     myAuthorField.setText(getAuthorInitialValue(project));
     myLocationField.setText(getArchiveLocation(project, name));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     myLocationField.addBrowseFolderListener(EduCoreBundle.message("course.creator.create.archive.dialog.title"), null, project, descriptor);
-    myAuthorLabel.setVisible(showAuthorField);
-    myAuthorField.setVisible(showAuthorField);
-  }
-
-  public void addLocationListener(DocumentListener listener) {
-    myLocationField.getTextField().getDocument().addDocumentListener(listener);
+    myAuthorLabel.setVisible(true);
+    myAuthorField.setVisible(true);
   }
 
   public TextFieldWithBrowseButton getLocationField() {

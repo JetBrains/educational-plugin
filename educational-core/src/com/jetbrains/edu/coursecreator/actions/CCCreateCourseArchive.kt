@@ -43,18 +43,16 @@ class CCCreateCourseArchive : DumbAwareAction(EduCoreBundle.lazyMessage("action.
       }
     }
 
-    val dlg = CCCreateCourseArchiveDialog(project, course.name, showAuthorField())
+    val dlg = CCCreateCourseArchiveDialog(project, course.name)
     if (!dlg.showAndGet()) {
       return
     }
 
     val locationPath = dlg.locationPath
 
-    if (showAuthorField()) {
-      val authorName = dlg.authorName
-      course.vendor = Vendor(authorName)
-      PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
-    }
+    val authorName = dlg.authorName
+    course.vendor = Vendor(authorName)
+    PropertiesComponent.getInstance(project).setValue(AUTHOR_NAME, authorName)
 
     val errorMessage = createCourseArchive(project, locationPath)
     if (errorMessage == null) {
@@ -68,16 +66,12 @@ class CCCreateCourseArchive : DumbAwareAction(EduCoreBundle.lazyMessage("action.
   }
 
   /**
-   * @return null if course archive was created successfully, non-empty error message otherwise
+   * @return null when course archive was created successfully, non-empty error message otherwise
    */
-  fun createCourseArchive(project: Project, location: String): String? {
+  private fun createCourseArchive(project: Project, location: String): String? {
     FileDocumentManager.getInstance().saveAllDocuments()
-    return ApplicationManager.getApplication().runWriteAction<String>(getArchiveCreator(project, location))
+    return ApplicationManager.getApplication().runWriteAction<String>(CourseArchiveCreator(project, location))
   }
-
-  fun showAuthorField(): Boolean = true
-
-  fun getArchiveCreator(project: Project, location: String): CourseArchiveCreator = CourseArchiveCreator(project, location)
 
   companion object {
     @NonNls
@@ -87,7 +81,6 @@ class CCCreateCourseArchive : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     const val AUTHOR_NAME = "Edu.Author.Name"
   }
 
-  @Suppress("ComponentNotRegistered")
   class ShowFileAction(val path: String) : AnAction(
     EduCoreBundle.message("action.create.course.archive.open.file", RevealFileAction.getFileManagerName())) {
     override fun actionPerformed(e: AnActionEvent) {

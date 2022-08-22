@@ -8,12 +8,12 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.io.File
 import javax.swing.JComponent
 
-class CCCreateCourseArchiveDialog(project: Project, courseName: String, showAuthorField: Boolean) : DialogWrapper(project) {
+class CCCreateCourseArchiveDialog(project: Project, courseName: String) : DialogWrapper(project) {
   private val myPanel: CCCreateCourseArchivePanel
 
   init {
     title = EduCoreBundle.message("action.create.course.archive.text")
-    myPanel = CCCreateCourseArchivePanel(project, courseName, showAuthorField)
+    myPanel = CCCreateCourseArchivePanel(project, courseName)
     myPreferredFocusedComponent = myPanel.locationField
     init()
   }
