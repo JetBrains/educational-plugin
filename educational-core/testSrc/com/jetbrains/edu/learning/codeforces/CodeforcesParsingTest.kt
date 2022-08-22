@@ -85,6 +85,43 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink)
   }
 
+
+  fun testOldInputSampleFormat() {
+    val course = CodeforcesCourse().apply {
+      id = 1211
+      languageCode = "en"
+    }
+    val lesson = Lesson().apply { parent = course }
+    course.addLesson(lesson)
+
+    val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement")[0]
+    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+
+    assertEquals("6\n" +
+                 "3 1 4 1 5 9", task.taskFiles["testData/1/input.txt"]?.text)
+  }
+
+  fun testNewInputSampleFormat() {
+    val course = CodeforcesCourse().apply {
+      id = 1715
+      languageCode = "en"
+    }
+    val lesson = Lesson().apply { parent = course }
+    course.addLesson(lesson)
+
+    val htmlElement = Jsoup.parse(loadText(contest1715)).select(".problem-statement")[0]
+    val task = CodeforcesTask.create(htmlElement, lesson, 1)
+
+    assertEquals("7\n" +
+                 "7 5\n" +
+                 "5 7\n" +
+                 "1 1\n" +
+                 "100000 100000\n" +
+                 "57 228\n" +
+                 "1 5\n" +
+                 "5 1", task.taskFiles["testData/1/input.txt"]?.text)
+  }
+
   fun testUpcomingContests() {
     val htmlText = getHtmlText()
     val document = Jsoup.parse(htmlText)

@@ -14,6 +14,7 @@ abstract class CodeforcesTestCase : EduTestCase() {
 
   companion object {
     const val contest1211 = "Contest 1211.html"
+    const val contest1715 = "Contest 1715.html"
 
     val expectedTaskDescriptionFiles = mapOf(
       1170 to mapOf(
