@@ -1,6 +1,7 @@
 package com.jetbrains.edu.jvm
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import java.awt.BorderLayout
+import java.io.File
 import javax.swing.JComponent
 
 open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
@@ -61,4 +63,18 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
+
+  companion object {
+    fun findBundledJdk(model: ProjectSdksModel): BundledJdkInfo? {
+      val bundledJdkPath = PathManager.getBundledRuntimePath()
+      // It's possible IDE doesn't have bundled jdk.
+      // For example, IDE loaded by gradle-intellij-plugin doesn't have bundled jdk
+      if (!File(bundledJdkPath).exists()) return null
+      // Try to find existing bundled jdk added by the plugin on previous course creation or by user
+      val sdk = model.projectSdks.values.find { it.homePath == bundledJdkPath }
+      return BundledJdkInfo(bundledJdkPath, sdk)
+    }
+  }
+
+  data class BundledJdkInfo(val path: String, val existingSdk: Sdk?)
 }

@@ -5,36 +5,19 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.util.JdkBundle
 import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import java.io.File
 
 class JLanguageSettings : JdkLanguageSettings() {
 
-  // BACKCOMPAT: 2020.3
-  @Suppress("UnstableApiUsage", "DEPRECATION")
   override fun setupProjectSdksModel(model: ProjectSdksModel) {
-    val jdkBundle = JdkBundle.createBundled()
-    if (jdkBundle != null && jdkBundle.isJdk) {
-      val bundledJdkPath = jdkBundle.homeLocation.absolutePath
-      if (model.sdks.none { it.homePath == bundledJdkPath }) {
-        model.addSdk(JavaSdk.getInstance(), bundledJdkPath, null)
-      }
+    val (jdkPath, sdk) = findBundledJdk(model) ?: return
+    if (sdk == null) {
+      model.addSdk(JavaSdk.getInstance(), jdkPath, null)
     }
-  }
-
-  // BACKCOMPAT: 2020.3
-  @Suppress("UnstableApiUsage", "DEPRECATION")
-  private val JdkBundle.homeLocation get(): File {
-    // `JdkBundle#getLocation` returns only location of bundled jdk/jre root folder
-    // but we need to get directory where `javac` is located, and for macOS these folders are not the same
-    // See implementation of `com.intellij.util.JdkBundle#createBundle`
-    return if (SystemInfo.isMac) File(location, "Contents/Home") else location
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
