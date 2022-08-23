@@ -4,7 +4,6 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -24,10 +23,7 @@ class JdkCheckerFixture : EduCheckerFixture<JdkProjectSettings>() {
     val sdksModel = ProjectSdksModel()
     sdksModel.addSdk(jdk)
 
-    return JdkProjectSettings(sdksModel, object : JdkComboBox.JdkComboBoxItem() {
-      override fun getJdk() = jdk
-      override fun getSdkName() = jdk.name
-    })
+    return JdkProjectSettings(sdksModel, jdk)
   }
 
   override fun getSkipTestReason(): String? {

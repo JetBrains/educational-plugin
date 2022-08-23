@@ -9,15 +9,14 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 
-open class JdkProjectSettings(val model: ProjectSdksModel, val jdkItem: JdkComboBox.JdkComboBoxItem?) {
+class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) {
 
   fun setUpProjectJdk(
     project: Project,
-    getJdk: JdkProjectSettings.() -> Sdk? = { jdkItem?.jdk }
+    getJdk: JdkProjectSettings.() -> Sdk? = { jdk }
   ): Sdk? {
     val jdk = getJdk()
 

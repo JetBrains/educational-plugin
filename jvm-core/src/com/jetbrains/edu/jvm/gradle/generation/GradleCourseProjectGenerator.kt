@@ -44,7 +44,7 @@ open class GradleCourseProjectGenerator(
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
-    return settings.jdkItem?.jdk
+    return settings.jdk
   }
 
   companion object {

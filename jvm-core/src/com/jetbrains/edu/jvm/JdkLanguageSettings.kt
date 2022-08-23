@@ -40,9 +40,9 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(null, myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
     preselectJdk(course, jdkComboBox, myModel)
-    myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
+    myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem?.jdk)
     jdkComboBox.addItemListener {
-      myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
+      myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem?.jdk)
       notifyListeners()
     }
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
@@ -54,7 +54,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (myJdkSettings.jdkItem == null) {
+    if (myJdkSettings.jdk == null) {
       return ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA)
     }
     return super.validate(course, courseLocation)
