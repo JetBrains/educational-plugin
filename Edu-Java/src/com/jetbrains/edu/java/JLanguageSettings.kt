@@ -45,9 +45,8 @@ class JLanguageSettings : JdkLanguageSettings() {
                                 EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription),
                                 ENVIRONMENT_CONFIGURATION_LINK_JAVA)
 
-      val jdk = myJdkSettings.jdk
       val providedJavaVersion = jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"),
-                                                                                        ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+                                                                                    ENVIRONMENT_CONFIGURATION_LINK_JAVA)
 
       val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
                            ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"),

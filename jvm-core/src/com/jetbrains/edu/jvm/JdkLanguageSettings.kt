@@ -22,8 +22,8 @@ import javax.swing.JComponent
 
 open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
-  private val myModel: ProjectSdksModel = createSdkModel()
-  protected var myJdkSettings: JdkProjectSettings = JdkProjectSettings(myModel, null)
+  protected var jdk: Sdk? = null
+  private val sdkModel: ProjectSdksModel = createSdkModel()
 
   private fun createSdkModel(): ProjectSdksModel {
     val project = ProjectManager.getInstance().defaultProject
@@ -38,11 +38,11 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
-    val jdkComboBox = JdkComboBox(null, myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
-    preselectJdk(course, jdkComboBox, myModel)
-    myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem?.jdk)
+    val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
+    preselectJdk(course, jdkComboBox, sdkModel)
+    jdk = jdkComboBox.selectedItem?.jdk
     jdkComboBox.addItemListener {
-      myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem?.jdk)
+      jdk = jdkComboBox.selectedItem?.jdk
       notifyListeners()
     }
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
@@ -54,11 +54,11 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    if (myJdkSettings.jdk == null) {
+    if (jdk == null) {
       return ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA)
     }
     return super.validate(course, courseLocation)
   }
 
-  override fun getSettings(): JdkProjectSettings = myJdkSettings
+  override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 }
