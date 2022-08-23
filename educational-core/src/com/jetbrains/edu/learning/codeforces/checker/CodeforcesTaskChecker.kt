@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.checker.OutputTaskCheckerBase
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
@@ -34,5 +35,9 @@ class CodeforcesTaskChecker(
 
   override fun compareOutputs(expected: String, actual: String): Boolean {
     return expected.trimEnd('\n') != actual.trimEnd('\n')
+  }
+
+  override fun createLatestOutputFile(testFolder: VirtualFile, actualOutput: String) {
+    GeneratorUtils.createChildFile(project, testFolder, task.latestOutputFileName, actualOutput)
   }
 }

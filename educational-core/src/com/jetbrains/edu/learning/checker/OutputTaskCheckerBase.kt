@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.withRegistryKeyOff
 
@@ -23,13 +22,15 @@ abstract class OutputTaskCheckerBase<T: OutputTaskBase>(
   private val codeExecutor: CodeExecutor
 ) : TaskChecker<T>(task, project) {
 
-  abstract fun getIncorrectMessage(testFolderName: String): String
+  protected abstract fun getIncorrectMessage(testFolderName: String): String
 
-  abstract fun getTestFolders(project: Project, task: T): Array<out VirtualFile>
+  protected abstract fun getTestFolders(project: Project, task: T): Array<out VirtualFile>
 
-  abstract fun processCorrectCheckResult(): CheckResult
+  protected abstract fun processCorrectCheckResult(): CheckResult
 
-  abstract fun compareOutputs(expected: String, actual: String): Boolean
+  protected abstract fun compareOutputs(expected: String, actual: String): Boolean
+
+  protected open fun createLatestOutputFile(testFolder: VirtualFile, actualOutput: String) {}
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     indicator.text = EduCoreBundle.message("progress.text.output.checker.executing.tests")
@@ -67,7 +68,7 @@ abstract class OutputTaskCheckerBase<T: OutputTaskBase>(
         is Ok -> CheckUtils.postProcessOutput(result.value)
         is Err -> return result.error
       }
-      GeneratorUtils.createChildFile(project, testFolder, task.latestOutputFileName, actualOutput)
+      createLatestOutputFile(testFolder, actualOutput)
 
       val expectedOutput = runReadAction { outputDocument.text }
       if (compareOutputs(expectedOutput, actualOutput)) {

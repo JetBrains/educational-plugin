@@ -6,7 +6,7 @@ import java.util.*
 abstract class OutputTaskBase: Task {
   open val inputFileName: String = INPUT_PATTERN_NAME
   open val outputFileName: String = OUTPUT_PATTERN_NAME
-  val latestOutputFileName: String = "latest_output.txt"
+  val latestOutputFileName: String = LATEST_OUTPUT_PATTERN_NAME
 
   constructor() : super()
 
@@ -20,5 +20,6 @@ abstract class OutputTaskBase: Task {
   companion object {
     const val OUTPUT_PATTERN_NAME = "output.txt"
     const val INPUT_PATTERN_NAME = "input.txt"
+    const val LATEST_OUTPUT_PATTERN_NAME = "latest_output.txt"
   }
 }
