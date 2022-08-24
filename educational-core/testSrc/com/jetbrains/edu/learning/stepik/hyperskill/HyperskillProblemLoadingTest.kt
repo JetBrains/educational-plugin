@@ -67,10 +67,10 @@ class HyperskillProblemLoadingTest : EduTestCase() {
 
   private fun configureResponse(responseFileName: String) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(step4894.path)) {
+      if (request.getPathWithoutPrams().endsWith(step4894.path) && request.requestUrl.hasParams(step4894.param)) {
         mockResponse(responseFileName)
       }
-      else if (request.path.endsWith(topic84.path)) {
+      else if (request.getPathWithoutPrams().endsWith(topic84.path) && request.requestUrl.hasParams(topic84.param)) {
         mockResponse(responseFileName)
       }
       else null

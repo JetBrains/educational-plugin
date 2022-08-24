@@ -44,15 +44,19 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
     abstract class ItemInfo(val id: Int) {
       abstract val file: String
 
-      abstract val path: String
+      val path: String = "/api/steps"
+
+      abstract val param: Pair<String, String>
+
+      val urlWithPrams: String = "${path}?${param.first}=${param.second}"
     }
 
     open class StepInfo(id: Int, private val stepTitle: String? = null) : ItemInfo(id) {
       override val file: String
         get() = "step_${id}_response.json"
 
-      override val path: String
-        get() = "/api/steps?ids=$id"
+      override val param: Pair<String, String>
+        get() = "ids" to id.toString()
 
       open val title: String
         get() = stepTitle ?: error("Title must be specified for step")
@@ -61,7 +65,8 @@ abstract class HyperskillProjectOpenerTestBase : EduTestCase() {
     open class TopicInfo(id: Int, fileName: String = "steps_${id}_topic_response.json") : ItemInfo(id) {
       override val file: String = fileName
 
-      override val path: String = "/api/steps?topic=$id"
+      override val param: Pair<String, String>
+        get() = "topic" to id.toString()
     }
   }
 }

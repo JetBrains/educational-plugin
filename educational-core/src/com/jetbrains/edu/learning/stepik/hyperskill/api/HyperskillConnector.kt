@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.TOPICS_TAB
 import okhttp3.*
 import org.apache.http.client.utils.URIBuilder
+import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Call
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -63,6 +64,13 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     StepikConnector.createObjectMapper(module)
+  }
+
+  override val requestInterceptor: Interceptor = Interceptor { chain ->
+    val request = chain.request()
+    val newUrl = request.url().newBuilder().addQueryParameter("ide_rpc_port", BuiltInServerManager.getInstance().port.toString()).build()
+    val newRequest = request.newBuilder().url(newUrl).build()
+    chain.proceed(newRequest)
   }
 
   private val hyperskillEndpoints: HyperskillEndpoints

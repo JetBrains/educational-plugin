@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.testAction
+import org.jetbrains.ide.BuiltInServerManager
 import java.util.*
 
 class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
@@ -142,19 +143,23 @@ class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
   }
 
   private fun configureResponses() {
+    val port = BuiltInServerManager.getInstance().port.toString()
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      MockResponseFactory.fromString(
-        when (request.path) {
-          "/api/attempts" -> newAttemptForTask1
-          "/api/attempts?step=1&user=1" -> noAttempts
-          "/api/attempts?step=2&user=1" -> existingAttemptForTask2
-          "/api/attempts?step=3&user=1" -> existingAttemptForTask3
-          "/api/attempts/101/dataset" -> TASK_1_DATASET_TEXT
-          "/api/attempts/102/dataset" -> TASK_2_NEW_DATASET_TEXT
-          "/api/attempts/103/dataset" -> TASK_3_NEW_DATASET_TEXT
+      val requestUrl = request.requestUrl
+      val data = when (request.getPathWithoutPrams()) {
+        "/api/attempts" -> when {
+          requestUrl.hasParams("step" to "1", "user" to "1", "ide_rpc_port" to port) -> noAttempts
+          requestUrl.hasParams("step" to "2", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask2
+          requestUrl.hasParams("step" to "3", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask3
+          requestUrl.hasParams("ide_rpc_port" to port) -> newAttemptForTask1
           else -> error("Wrong path: ${request.path}")
         }
-      )
+        "/api/attempts/101/dataset" -> TASK_1_DATASET_TEXT
+        "/api/attempts/102/dataset" -> TASK_2_NEW_DATASET_TEXT
+        "/api/attempts/103/dataset" -> TASK_3_NEW_DATASET_TEXT
+        else -> error("Wrong path: ${request.path}")
+      }
+      MockResponseFactory.fromString(data)
     }
   }
 

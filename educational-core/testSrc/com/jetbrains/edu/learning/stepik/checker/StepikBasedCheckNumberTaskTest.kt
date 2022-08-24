@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 
@@ -40,7 +41,7 @@ abstract class StepikBasedCheckNumberTaskTest : StepikBasedCheckAnswerTaskTest()
   fun `test number task validation on number`() {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (val path = request.getPathWithoutPrams()) {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           "/api/submissions/11" -> submissionWithFailedStatus

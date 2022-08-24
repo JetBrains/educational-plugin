@@ -747,7 +747,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   private fun configureMockResponsesForProblems() {
     requestedInformation.forEach { information ->
       mockConnector.withResponseHandler(testRootDisposable) { request ->
-        if (request.path.endsWith(information.path)) {
+        if (request.getPathWithoutPrams().endsWith(information.path) && request.requestUrl.hasParams(information.param)) {
           mockResponse(information.file)
         }
         else null

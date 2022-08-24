@@ -126,11 +126,11 @@ class CourseFormatTest : EduTestCase() {
                  actualChoiceOptions)
   }
 
-  fun testCourseWithAuthors() {
-    val course = courseFromJson
-    assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
-                 ContainerUtil.map(course.authors) { info: UserInfo -> info.getFullName() })
-  }
+//  fun testCourseWithAuthors() {
+//    val course = courseFromJson
+//    assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
+//                 ContainerUtil.map(course.authors) { info: UserInfo -> info.getFullName() })
+//  }
 
   fun testSolutionsHiddenInCourse() {
     val course = courseFromJson

@@ -94,7 +94,7 @@ class HyperskillNextActivityTest : EduTestCase() {
 
     fun configureResponseForNextStep(task: Task, nextStep: StepInfo) {
       mockConnector.configureResponses(
-        StepMockResponse(nextStep.path, task) {
+        StepMockResponse(nextStep.urlWithPrams, task) {
           block!!.name = CodeTask.CODE_TASK_TYPE
           topic = DEFAULT_TOPIC_ID
           id = nextStep.id
@@ -154,7 +154,7 @@ class HyperskillNextActivityTest : EduTestCase() {
   private fun configureResponseForTopicSteps() {
     val topicInfo = TopicInfo(DEFAULT_TOPIC_ID, topicResponseFileName)
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith(topicInfo.path)) {
+      if (request.getPathWithoutPrams().endsWith(topicInfo.path)) {
         mockResponse(topicInfo.file)
       }
       else {
@@ -165,7 +165,7 @@ class HyperskillNextActivityTest : EduTestCase() {
 
   private fun configureResponsesForCurrentTask(task: Task) {
     mockConnector.configureResponses(
-      StepMockResponse(theoryStepFromInitialProject.path, TheoryTask()) {
+      StepMockResponse(theoryStepFromInitialProject.urlWithPrams, TheoryTask()) {
         block!!.name = TheoryTask.THEORY_TASK_TYPE
         topic = DEFAULT_TOPIC_ID
         id = theoryStepFromInitialProject.id
@@ -173,7 +173,7 @@ class HyperskillNextActivityTest : EduTestCase() {
         title = theoryStepFromInitialProject.title
         isRecommended = true
       },
-      StepMockResponse(codeStepFromInitialProject.path, task) { topic = DEFAULT_TOPIC_ID }
+      StepMockResponse(codeStepFromInitialProject.urlWithPrams, task) { topic = DEFAULT_TOPIC_ID }
     )
   }
 
@@ -181,7 +181,7 @@ class HyperskillNextActivityTest : EduTestCase() {
 
   private fun MockHyperskillConnector.configureResponses(vararg responses: StepMockResponse) {
     withResponseHandler(testRootDisposable) { request ->
-      responses.find { request.path == it.path }?.let {
+      responses.find { request.getPathWithoutPrams() == it.path }?.let {
         mockResponseFromTask(it.task, it.initStepSource)
       }
     }

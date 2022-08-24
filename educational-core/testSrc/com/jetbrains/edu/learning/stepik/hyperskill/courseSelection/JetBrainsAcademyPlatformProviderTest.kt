@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.defaultHyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProvider
@@ -40,7 +41,7 @@ class JetBrainsAcademyPlatformProviderTest : EduTestCase() {
     mockConnector.apply {
       withResponseHandler(testRootDisposable) { request ->
         MockResponseFactory.fromString(
-          when (request.path) {
+          when (request.getPathWithoutPrams()) {
             "/api/profiles/current" -> objectMapper.writeValueAsString(ProfilesList().apply { profiles = listOf(profile) })
             "/api/projects/1" -> objectMapper.writeValueAsString(ProjectsList().also {
               it.projects = listOf(hyperskillCourse.hyperskillProject!!)

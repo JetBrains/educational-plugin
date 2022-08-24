@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
 import org.intellij.lang.annotations.Language
 import java.util.*
 
@@ -25,7 +26,7 @@ abstract class StepikBasedCheckAnswerTaskTest : CheckersTestBase<Unit>() {
   protected fun configureResponses(succeed: Boolean) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (val path = request.getPathWithoutPrams()) {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           "/api/submissions/11" -> if (succeed) {

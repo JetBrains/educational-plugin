@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
@@ -19,6 +18,8 @@ import com.jetbrains.edu.learning.stepik.Step
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.OPTIONS
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.stepik.hyperskill.hasParams
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -66,11 +67,14 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
     val hyperskillProject = course.hyperskillProject!!
     val projectId = hyperskillProject.id
     withResponseHandler(disposable) { request ->
+      val requestUrl = request.requestUrl
+      val path = request.getPathWithoutPrams()
+
       MockResponseFactory.fromString(
-        when (request.path) {
-          "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
-          "/api/stages?project=$projectId" -> objectMapper.writeValueAsString(StagesList().also { it.stages = course.stages })
-          "/api/steps?ids=${course.stages.map { it.stepId }.joinToString(separator = ",")}" -> stepSources(course.allTasks)
+        when {
+          path == "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
+          path == "/api/stages" && requestUrl.hasParams("project" to projectId.toString()) -> objectMapper.writeValueAsString(StagesList().also { it.stages = course.stages })
+          path ==  "/api/steps" && requestUrl.hasParams("ids" to course.stages.map { it.stepId }.joinToString(separator = ","))-> stepSources(course.allTasks)
           else -> return@withResponseHandler null
         }
       )
@@ -79,7 +83,7 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
 
   private fun configureProblemsResponses(disposable: Disposable, tasks: List<Task>) {
     withResponseHandler(disposable) { request ->
-      val result = """/api/steps\?ids=(\d+)""".toRegex().matchEntire(request.path) ?: return@withResponseHandler null
+      val result = """/api/steps\?ids=(\d+)&ide_rpc_port=(\d+)""".toRegex().matchEntire(request.path) ?: return@withResponseHandler null
       val stepId = result.groupValues[1].toInt()
       val task = tasks.find { it.id == stepId } ?: return@withResponseHandler null
       MockResponseFactory.fromString(stepSources(listOf(task)))

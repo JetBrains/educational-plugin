@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
 import java.awt.Rectangle
@@ -128,7 +129,7 @@ class HyperskillMetricsTest : EduTestCase() {
 
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (request.path) {
+        when (request.getPathWithoutPrams()) {
           "/api/frontend-events" -> """{"${FRONTEND_EVENTS}":[]}"""
           else -> return@withResponseHandler null
         }
@@ -149,7 +150,7 @@ class HyperskillMetricsTest : EduTestCase() {
 
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (request.path) {
+        when (request.getPathWithoutPrams()) {
           "/api/time-spent-events" -> """{"${TIME_SPENT_EVENTS}":[]}"""
           else -> return@withResponseHandler null
         }
@@ -196,7 +197,7 @@ class HyperskillMetricsTest : EduTestCase() {
 
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (request.path) {
+        when (request.getPathWithoutPrams()) {
           "/api/frontend-events" -> {
             chunksCount++
             """{"${FRONTEND_EVENTS}":[]}"""

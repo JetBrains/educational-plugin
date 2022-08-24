@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
 import org.intellij.lang.annotations.Language
 
 class ApplyHyperskillSubmissionTest: EduActionTestCase() {
@@ -57,7 +58,7 @@ class ApplyHyperskillSubmissionTest: EduActionTestCase() {
   private fun doTest(submissionsJson: String, mode: CourseMode = CourseMode.STUDENT, expectedFileTree: FileTree = learnerExpectedFileTree) {
     mockConnector.withResponseHandler(testRootDisposable) { request ->
       MockResponseFactory.fromString(
-        when (request.path) {
+        when (request.getPathWithoutPrams()) {
           "/api/submissions/1" -> submissionsJson
           else -> "{}"
         }

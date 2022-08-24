@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import okhttp3.ConnectionPool
+import okhttp3.Interceptor
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.ide.RestService
@@ -64,6 +65,8 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
    * Must be changed only with synchronization
    */
   private var submissionTabListener: EduLogInListener? = null
+
+  protected open val requestInterceptor: Interceptor? = null
 
   open val serviceName: String by lazy {
     "${EduNames.EDU_PREFIX}/${platformName.lowercase()}"
@@ -141,7 +144,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
       refreshTokens()
     }
 
-    return createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool, accessToken)
+    return createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool, accessToken, customInterceptor = requestInterceptor)
       .addConverterFactory(converterFactory)
       .build()
       .create(Endpoints::class.java)

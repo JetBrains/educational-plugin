@@ -18,7 +18,7 @@ class HyperskillCompleteTheoryTaskTest : EduTestCase() {
     val stepId = 666
     var requestSent = false
     mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.path.endsWith("/api/steps/$stepId/complete")) {
+      if (request.getPathWithoutPrams().endsWith("/api/steps/$stepId/complete")) {
         requestSent = true
         MockResponse().setResponseCode(200)
       }
