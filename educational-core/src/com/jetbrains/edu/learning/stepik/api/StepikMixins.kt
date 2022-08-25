@@ -157,13 +157,10 @@ class StepikLessonMixin : StepikItemMixin() {
 
 }
 
-@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
-class StepikTaskFileMixin {
+@JsonPropertyOrder(NAME, IS_VISIBLE, TEXT)
+open class StepikEduFileMixin {
   @JsonProperty(NAME)
   lateinit var name: String
-
-  @JsonProperty(PLACEHOLDERS)
-  lateinit var _answerPlaceholders: MutableList<AnswerPlaceholder>
 
   @JsonProperty(IS_VISIBLE)
   var isVisible = true
@@ -171,6 +168,12 @@ class StepikTaskFileMixin {
   @JsonProperty(TEXT)
   @JsonDeserialize(using = TaskFileTextDeserializer::class)
   lateinit var text: String
+}
+
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
+class StepikTaskFileMixin : StepikEduFileMixin() {
+  @JsonProperty(PLACEHOLDERS)
+  lateinit var _answerPlaceholders: MutableList<AnswerPlaceholder>
 }
 
 class StepikAnswerPlaceholderMixin {
