@@ -162,6 +162,7 @@ class CourseArchiveCreator(
         mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
       }
       mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
+      mapper.addMixIn(EduFile::class.java, EduFileMixin::class.java)
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)

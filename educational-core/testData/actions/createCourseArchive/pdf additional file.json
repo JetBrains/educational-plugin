@@ -22,19 +22,16 @@
   "additional_files" : [
     {
       "name" : "test.pdf",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "build.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "settings.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     }

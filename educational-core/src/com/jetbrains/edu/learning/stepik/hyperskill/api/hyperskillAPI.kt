@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.pluginVersion
@@ -179,7 +179,7 @@ class HyperskillStepOptions : PyCharmStepOptions {
 
 class HyperskillAdditionalInfo {
   @JsonProperty(FILES)
-  var files: List<TaskFile>? = null
+  var files: List<EduFile>? = null
 }
 
 class HyperskillStepSource : StepSource() {

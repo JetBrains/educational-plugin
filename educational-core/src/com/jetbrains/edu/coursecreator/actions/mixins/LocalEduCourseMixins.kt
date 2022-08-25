@@ -115,7 +115,7 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
-  private lateinit var additionalFiles: List<TaskFile>
+  private lateinit var additionalFiles: List<EduFile>
 
   @JsonProperty(PLUGINS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -279,13 +279,10 @@ abstract class ChoiceOptionLocalMixin {
   private var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 }
 
-@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
-abstract class TaskFileMixin {
+@JsonPropertyOrder(NAME, IS_VISIBLE, TEXT, IS_EDITABLE)
+abstract class EduFileMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
-
-  @JsonProperty(PLACEHOLDERS)
-  private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 
   @JsonProperty(IS_VISIBLE)
   var isVisible: Boolean = true
@@ -297,6 +294,12 @@ abstract class TaskFileMixin {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_EDITABLE)
   var isEditable: Boolean = true
+}
+
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
+abstract class TaskFileMixin : EduFileMixin() {
+  @JsonProperty(PLACEHOLDERS)
+  private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 }
 
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, PLACEHOLDER_TEXT)

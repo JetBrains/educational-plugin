@@ -11,7 +11,7 @@ import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.TaskFile.Companion.LOG
+import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 

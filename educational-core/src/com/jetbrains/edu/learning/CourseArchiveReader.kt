@@ -95,6 +95,7 @@ fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
   configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
   addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
+  addMixIn(EduFile::class.java, EduFileMixin::class.java)
   addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
   addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
   disable(MapperFeature.AUTO_DETECT_FIELDS)

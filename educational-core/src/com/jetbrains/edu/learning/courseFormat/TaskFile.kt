@@ -1,23 +1,25 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.logger
 
 /**
  * Implementation of task file which contains task answer placeholders for student to type in and
  * which is visible to student in project view
  */
-class TaskFile {
-  var name: String = ""
-  var text: String = ""
+class TaskFile : EduFile {
+  constructor()
+  constructor(name: String, text: String) {
+    this.name = name
+    this.text = text
+  }
 
-  var isTrackChanges: Boolean = true
-  var isHighlightErrors: Boolean = false
-  var isVisible: Boolean = true
-  var isEditable: Boolean = true
+  constructor(name: String, text: String, isVisible: Boolean) : this(name, text) {
+    this.isVisible = isVisible
+  }
 
-  // Should be used only in student mode
-  var isLearnerCreated: Boolean = false
+  constructor(name: String, text: String, isVisible: Boolean, isLearnerCreated: Boolean) : this(name, text, isVisible) {
+    this.isLearnerCreated = isLearnerCreated
+  }
 
   var answerPlaceholders: List<AnswerPlaceholder>
     get() = _answerPlaceholders
@@ -34,20 +36,6 @@ class TaskFile {
     set(value) {
       _task = value
     }
-
-  constructor()
-  constructor(name: String, text: String) {
-    this.name = name
-    this.text = text
-  }
-
-  constructor(name: String, text: String, isVisible: Boolean) : this(name, text) {
-    this.isVisible = isVisible
-  }
-
-  constructor(name: String, text: String, isVisible: Boolean, isLearnerCreated: Boolean) : this(name, text, isVisible) {
-    this.isLearnerCreated = isLearnerCreated
-  }
 
   fun initTaskFile(task: Task, isRestarted: Boolean) {
     this.task = task
@@ -66,17 +54,6 @@ class TaskFile {
     return _answerPlaceholders.firstOrNull { offset in it.offset..it.endOffset }
   }
 
-  @Suppress("unused") // used for serialization
-  fun getTextToSerialize(): String? {
-    if (exceedsBase64ContentLimit(text)) {
-      LOG.warn("Base64 encoding of `$name` file exceeds limit (${getBinaryFileLimit().toLong()}), " +
-               "its content isn't serialized")
-      return null
-    }
-    val contentType = mimeFileType(name) ?: return text
-    return if (isBinary(contentType)) null else text
-  }
-
   fun sortAnswerPlaceholders() {
     _answerPlaceholders.sortWith(AnswerPlaceholderComparator)
     for (i in _answerPlaceholders.indices) {
@@ -90,9 +67,5 @@ class TaskFile {
 
   fun isValid(text: String): Boolean {
     return _answerPlaceholders.all { it.isValid(text.length) }
-  }
-
-  companion object {
-    val LOG = logger<TaskFile>()
   }
 }

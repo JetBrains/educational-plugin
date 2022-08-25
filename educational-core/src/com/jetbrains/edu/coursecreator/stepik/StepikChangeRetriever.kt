@@ -252,6 +252,13 @@ class StepikChangeRetriever(private val project: Project, private val course: Ed
            answerPlaceholdersEqual
   }
 
+  private fun EduFile.isEqualTo(otherTaskFile: EduFile): Boolean {
+    if (this === otherTaskFile) return true
+    return name == otherTaskFile.name &&
+           text == otherTaskFile.text &&
+           isVisible == otherTaskFile.isVisible
+  }
+
   private fun AnswerPlaceholder.isEqualTo(otherPlaceholder: AnswerPlaceholder): Boolean {
     if (this === otherPlaceholder) return true
 

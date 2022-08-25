@@ -35,13 +35,11 @@
   "additional_files" : [
     {
       "name" : ".cargo/config",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "MdhWKtfC5KSFZK0stFdsQz4DL6GGtcBQpE667hrlvZpodfX4+B/MV66qPBkWEz/2OtVAYcj5TIAN12StTkb+lEs+cWXorFaGr2Ef6EubuYPbl1mnR0wlKYWfIqxxKnbw"
     },
     {
       "name" : "Cargo.toml",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "C6+mlEohbB8Ms8hXmzsP9Ru1DZ7nufbHiB4ublpouV68hXeGrjS5EUGW23iWeLgJxN5cd696/079qzw8mgtB5A=="
     }

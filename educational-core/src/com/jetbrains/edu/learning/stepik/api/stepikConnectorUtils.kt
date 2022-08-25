@@ -81,7 +81,7 @@ private fun markStepAsSolved(lessonId: Int, task: Task) {
   }
   val unit = StepikConnector.getInstance().getLessonUnit(lessonId)
   val assignmentsIds = unit?.assignments
-  if (assignmentsIds == null || assignmentsIds.isEmpty()) {
+  if (assignmentsIds.isNullOrEmpty()) {
     LOG.warn("No assignment ids in unit ${unit?.id}")
     return
   }

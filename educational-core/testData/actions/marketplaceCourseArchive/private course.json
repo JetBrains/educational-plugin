@@ -23,19 +23,16 @@
   "additional_files" : [
     {
       "name" : "test.txt",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "j70iMjTU6gykgaATeLPLvA=="
     },
     {
       "name" : "build.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "settings.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     }

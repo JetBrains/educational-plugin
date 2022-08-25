@@ -29,13 +29,11 @@
   "additional_files" : [
     {
       "name" : "build.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     },
     {
       "name" : "settings.gradle",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "6zkm3NpDQQaIQ+CAebF//w=="
     }

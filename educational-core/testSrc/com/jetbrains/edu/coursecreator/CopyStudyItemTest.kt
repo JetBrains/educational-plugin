@@ -189,6 +189,14 @@ class CopyStudyItemTest : EduTestCase() {
            answerPlaceholdersEqual
   }
 
+  private fun EduFile.sameTo(otherTaskFile: EduFile): Boolean {
+    if (this === otherTaskFile) return true
+
+    return name == otherTaskFile.name &&
+           text == otherTaskFile.text &&
+           isVisible == otherTaskFile.isVisible
+  }
+
   private fun AnswerPlaceholder.sameTo(otherPlaceholder: AnswerPlaceholder): Boolean {
     if (this === otherPlaceholder) return true
 

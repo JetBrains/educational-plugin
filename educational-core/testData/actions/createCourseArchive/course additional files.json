@@ -42,7 +42,6 @@
   "additional_files" : [
     {
       "name" : "additional.txt",
-      "placeholders" : [ ],
       "is_visible" : true,
       "text" : "0vSewMnXdop+aaoDCcNsxA=="
     }

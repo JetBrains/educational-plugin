@@ -6,10 +6,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
@@ -268,7 +265,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       }
     }
 
-    private fun needUpdateCourseAdditionalFiles(project: Project, remoteFiles: List<TaskFile>): Boolean {
+    private fun needUpdateCourseAdditionalFiles(project: Project, remoteFiles: List<EduFile>): Boolean {
       val courseDir = project.courseDir
       for (remoteFile in remoteFiles) {
         val needToUpdate = invokeAndWaitIfNeeded {

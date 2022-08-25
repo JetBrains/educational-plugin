@@ -21,7 +21,7 @@ abstract class Course : LessonContainer() {
   var visibility: CourseVisibility = CourseVisibility.LocalVisibility
 
   @Transient
-  var additionalFiles: List<TaskFile> = emptyList()
+  var additionalFiles: List<EduFile> = emptyList()
 
   @Transient
   var pluginDependencies: List<PluginInfo> = emptyList()

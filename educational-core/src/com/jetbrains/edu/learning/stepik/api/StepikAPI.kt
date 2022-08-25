@@ -377,7 +377,7 @@ open class AdditionalInfo
 
 class CourseAdditionalInfo : AdditionalInfo {
   @JsonProperty(ADDITIONAL_FILES)
-  lateinit var additionalFiles: List<TaskFile>
+  lateinit var additionalFiles: List<EduFile>
 
   @JsonProperty(SOLUTIONS_HIDDEN)
   var solutionsHidden: Boolean = false
@@ -385,7 +385,7 @@ class CourseAdditionalInfo : AdditionalInfo {
   constructor()
 
   @JvmOverloads
-  constructor(additionalFiles: List<TaskFile>, solutionsHidden: Boolean = false) {
+  constructor(additionalFiles: List<EduFile>, solutionsHidden: Boolean = false) {
     this.additionalFiles = additionalFiles
     this.solutionsHidden = solutionsHidden
   }
@@ -394,7 +394,7 @@ class CourseAdditionalInfo : AdditionalInfo {
 class LessonAdditionalInfo : AdditionalInfo {
   // needed for com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
   @JsonProperty(ADDITIONAL_FILES)
-  var additionalFiles: List<TaskFile> = listOf()
+  var additionalFiles: List<EduFile> = listOf()
 
   @JsonProperty(CUSTOM_NAME)
   var customName: String? = null
@@ -410,7 +410,7 @@ class LessonAdditionalInfo : AdditionalInfo {
 
   constructor()
 
-  constructor(customName: String?, tasksInfo: Map<Int, TaskAdditionalInfo>, additionalFiles: List<TaskFile>) {
+  constructor(customName: String?, tasksInfo: Map<Int, TaskAdditionalInfo>, additionalFiles: List<EduFile>) {
     this.customName = customName
     this.tasksInfo = tasksInfo
     this.additionalFiles = additionalFiles

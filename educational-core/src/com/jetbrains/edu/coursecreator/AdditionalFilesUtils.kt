@@ -14,8 +14,8 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
@@ -59,15 +59,15 @@ object AdditionalFilesUtils {
    * Method has a lot of checks on belonging.
    */
   @JvmStatic
-  fun collectAdditionalFiles(course: Course, project: Project): List<TaskFile> {
+  fun collectAdditionalFiles(course: Course, project: Project): List<EduFile> {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
     val archiveName = createArchiveName(course.name)
-    val additionalTaskFiles = mutableListOf<TaskFile>()
-    val fileVisitor = virtualFileVisitor(archiveName, project, course, additionalTaskFiles)
+    val additionalFiles = mutableListOf<EduFile>()
+    val fileVisitor = virtualFileVisitor(archiveName, project, course, additionalFiles)
 
     val baseDir = project.courseDir
     VfsUtilCore.visitChildrenRecursively(baseDir, fileVisitor)
-    return additionalTaskFiles
+    return additionalFiles
   }
 
   private fun createArchiveName(courseName: String): String {
@@ -79,7 +79,7 @@ object AdditionalFilesUtils {
   private fun virtualFileVisitor(archiveName: String,
                                  project: Project,
                                  course: Course,
-                                 additionalTaskFiles: MutableList<TaskFile>) =
+                                 additionalFiles: MutableList<EduFile>) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       private val excludedFiles = loadExcludedFilePaths(project)
 
@@ -95,7 +95,7 @@ object AdditionalFilesUtils {
           return file.getTask(project) == null
         }
 
-        addToAdditionalFiles(file, project, additionalTaskFiles)
+        addToAdditionalFiles(file, project, additionalFiles)
         return false
       }
     }
@@ -129,9 +129,9 @@ object AdditionalFilesUtils {
   private fun addToAdditionalFiles(
     file: VirtualFile,
     project: Project,
-    additionalTaskFiles: MutableList<TaskFile>) {
+    additionalFiles: MutableList<EduFile>) {
     try {
-      createAdditionalTaskFile(file, project)?.also { taskFile -> additionalTaskFiles.add(taskFile) }
+      createAdditionalFile(file, project)?.also { taskFile -> additionalFiles.add(taskFile) }
     }
     catch (e: FileTooBigException) {
       throw HugeBinaryFileException(file.path, file.length, FileUtilRt.LARGE_FOR_CONTENT_LOADING.toLong(), false)
@@ -141,16 +141,16 @@ object AdditionalFilesUtils {
     }
   }
 
-  private fun createAdditionalTaskFile(
+  private fun createAdditionalFile(
     file: VirtualFile,
     project: Project
-  ): TaskFile? {
+  ): EduFile? {
     val taskFile = file.getTaskFile(project)
     if (taskFile != null) return null
 
     val baseDir = project.courseDir
     val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return null
-    return TaskFile(path, file.loadEncodedContent())
+    return EduFile(path, file.loadEncodedContent())
   }
 
   /**
@@ -169,7 +169,7 @@ object AdditionalFilesUtils {
     val taskInfo = nonPluginTasks.associateBy(Task::id) {
       TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
     }
-    val courseFiles: List<TaskFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
+    val courseFiles: List<EduFile> = if (lesson.course is HyperskillCourse) collectAdditionalFiles(lesson.course, project) else listOf()
     return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
   }
 }
