@@ -112,8 +112,15 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
     var languageError: ErrorState = ErrorState.NothingSelected
     val course = coursePanel.course
     if (course != null) {
-      val languageSettingsMessage = coursePanel.validateSettings(course)
-      languageError = languageSettingsMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
+      val settingsValidationResult = coursePanel.validateSettings(course)
+
+      languageError = when (settingsValidationResult) {
+        is SettingsValidationResult.Pending -> ErrorState.Pending
+        is SettingsValidationResult.Ready -> {
+          val validationMessage = settingsValidationResult.validationMessage
+          validationMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
+        }
+      }
     }
     val errorState = ErrorState.forCourse(course).merge(languageError)
     coursePanel.setError(errorState)

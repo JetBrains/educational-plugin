@@ -12,6 +12,7 @@ import com.jetbrains.edu.go.messages.EduGoBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GO
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -35,12 +36,17 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
     return listOf(LabeledComponent.create(sdkChooser as JComponent, SDK_TYPE_ID, BorderLayout.WEST))
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    val sdk = selectedSdk ?: return null
-    if (sdk == GoSdk.NULL) return ValidationMessage(EduGoBundle.message("error.no.sdk", ""), ENVIRONMENT_CONFIGURATION_LINK_GO)
-    if (!sdk.isValid) return ValidationMessage(EduGoBundle.message("error.invalid.sdk"), ENVIRONMENT_CONFIGURATION_LINK_GO)
-    if (courseLocation != null && isAncestor(courseLocation, sdk.homePath, false))
-      return ValidationMessage(EduGoBundle.message("error.invalid.sdk.location"), ENVIRONMENT_CONFIGURATION_LINK_GO)
-    return null
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    val sdk = selectedSdk ?: return SettingsValidationResult.Pending
+
+    val message =  when {
+      sdk == GoSdk.NULL -> ValidationMessage(EduGoBundle.message("error.no.sdk", ""), ENVIRONMENT_CONFIGURATION_LINK_GO)
+      !sdk.isValid -> ValidationMessage(EduGoBundle.message("error.invalid.sdk"), ENVIRONMENT_CONFIGURATION_LINK_GO)
+      courseLocation != null && isAncestor(courseLocation, sdk.homePath, false) ->
+        ValidationMessage(EduGoBundle.message("error.invalid.sdk.location"), ENVIRONMENT_CONFIGURATION_LINK_GO)
+      else -> null
+    }
+
+    return SettingsValidationResult.Ready(message)
   }
 }

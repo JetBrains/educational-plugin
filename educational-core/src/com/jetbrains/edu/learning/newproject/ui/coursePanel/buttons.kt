@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.getErrorState
 import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import com.jetbrains.edu.learning.onError
@@ -155,9 +155,9 @@ class StartCourseButton(
     validateSettings(courseInfo)
   }.courseCanBeStarted
 
-  private fun validateSettings(courseInfo: CourseInfo): ValidationMessage? {
+  private fun validateSettings(courseInfo: CourseInfo): SettingsValidationResult {
     val languageSettings = courseInfo.languageSettings()
-    return languageSettings?.validate(courseInfo.course, courseInfo.location())
+    return languageSettings?.validate(courseInfo.course, courseInfo.location()) ?: SettingsValidationResult.OK
   }
 }
 

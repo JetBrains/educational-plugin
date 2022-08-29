@@ -7,9 +7,11 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.UserDataHolder;
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult;
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
-
-import static com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JS;
 
 public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
   private final JsNewProjectSettings mySettings = new JsNewProjectSettings();
@@ -59,11 +59,14 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
 
   @Nullable
   @Override
-  public ValidationMessage validate(@Nullable Course course, @Nullable String courseLocation) {
+  public SettingsValidationResult validate(@Nullable Course course, @Nullable String courseLocation) {
     NodeJsInterpreter interpreter = myInterpreterField.getInterpreter();
     String message = NodeInterpreterUtil.validateAndGetErrorMessage(interpreter);
     if (message == null) return null;
-    return new ValidationMessage(EduJavaScriptBundle.message("configure.js.environment.help", message, ENVIRONMENT_CONFIGURATION_LINK_JS),
-                                 ENVIRONMENT_CONFIGURATION_LINK_JS);
+    ValidationMessage validationMessage = new ValidationMessage(
+      EduJavaScriptBundle.message("configure.js.environment.help", message, EduNames.ENVIRONMENT_CONFIGURATION_LINK_JS),
+      EduNames.ENVIRONMENT_CONFIGURATION_LINK_JS
+    );
+    return new SettingsValidationResult.Ready(validationMessage);
   }
 }

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PHP
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.php.messages.EduPhpBundle
 import com.jetbrains.php.composer.execution.phar.ComposerPhpInterpretersCombo
@@ -96,13 +97,15 @@ class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
     LabeledComponent.create(composerPhpInterpretersCombo, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))
 
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     val phpInterpreter = phpProjectSettings.phpInterpreter
 
     if (phpInterpreter == null) {
-      return ValidationMessage(EduPhpBundle.message("error.no.php.interpreter", ""), ENVIRONMENT_CONFIGURATION_LINK_PHP)
+      return SettingsValidationResult.Ready(
+        ValidationMessage(EduPhpBundle.message("error.no.php.interpreter", ""), ENVIRONMENT_CONFIGURATION_LINK_PHP)
+      )
     }
-    return null
+    return SettingsValidationResult.OK
   }
 
   override fun getSettings(): PhpProjectSettings = phpProjectSettings

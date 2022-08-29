@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import java.awt.event.ItemEvent
 import javax.swing.JCheckBox
 import javax.swing.JComponent
@@ -47,11 +48,13 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
       return ValidationInfo(message, courseSettingsPanel.locationField)
     }
 
-    val validationMessage = courseSettingsPanel.languageSettings?.validate(codeforcesCourse, courseSettingsPanel.locationString)
-    if (validationMessage != null) {
-      val message = validationMessage.message
-      setErrorText(message)
-      return ValidationInfo(message, courseSettingsPanel.settingsPanel)
+    val settingsValidationResult = courseSettingsPanel.languageSettings?.validate(codeforcesCourse, courseSettingsPanel.locationString)
+    if (settingsValidationResult !is SettingsValidationResult.Ready) {
+      val message = (settingsValidationResult as SettingsValidationResult.Ready).validationMessage?.message
+      if (message != null) {
+        setErrorText(message)
+        return ValidationInfo(message, courseSettingsPanel.settingsPanel)
+      }
     }
 
     return super.doValidate()

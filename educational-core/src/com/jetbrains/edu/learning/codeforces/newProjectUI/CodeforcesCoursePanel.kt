@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType
 import com.jetbrains.edu.learning.newproject.ui.humanReadableDuration
@@ -68,7 +69,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
   override val openButtonText: String
     get() = EduCoreBundle.message("course.dialog.start.button.codeforces.open.contest")
 
-  override fun validateSettings(it: Course): ValidationMessage? = null
+  override fun validateSettings(it: Course): SettingsValidationResult = SettingsValidationResult.OK
 
   override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
@@ -138,7 +139,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
 
     if (termsAccepted) {
 
-      val registrationCompleted = execCancelable(EduCoreBundle.message("course.dialog.tags.in.progress"))
+      val registrationCompleted = execCancelable(EduCoreBundle.message("course.dialog.in.progress"))
       { connector.registerToContest(id, registration.token) }
 
       if (registrationCompleted) {

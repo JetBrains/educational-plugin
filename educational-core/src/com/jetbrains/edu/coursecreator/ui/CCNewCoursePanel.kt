@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -187,36 +188,47 @@ class CCNewCoursePanel(
         EduCoreBundle.message("error.wrong.location"))
       else -> null
     }
-    processError(validationMessage)
+    processError(SettingsValidationResult.Ready(validationMessage))
   }
 
   private fun doValidation() {
     val excessTitleLength = titleField.text.length - MAX_COURSE_TITLE_LENGTH
-    val validationMessage = when {
-      titleField.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title"))
-      excessTitleLength > 0 -> ValidationMessage(
-        EduCoreBundle.message("cc.new.course.error.exceeds.max.title.length", excessTitleLength, MAX_COURSE_TITLE_LENGTH))
-      descriptionTextArea.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description"))
-      requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins)
-      else -> {
-        val validationMessage = languageSettings.validate(null, locationString)
-        if (validationMessage != null) settings.setOn(true)
-        validationMessage
-      }
+    val settingsValidationResult = when {
+      titleField.text.isNullOrBlank() -> SettingsValidationResult.Ready(
+        ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title")))
+
+      excessTitleLength > 0 -> SettingsValidationResult.Ready(ValidationMessage(
+        EduCoreBundle.message("cc.new.course.error.exceeds.max.title.length", excessTitleLength, MAX_COURSE_TITLE_LENGTH)))
+
+      descriptionTextArea.text.isNullOrBlank() -> SettingsValidationResult.Ready(
+        ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description")))
+
+      requiredAndDisabledPlugins.isNotEmpty() -> SettingsValidationResult.Ready(ErrorState.errorMessage(requiredAndDisabledPlugins))
+      else -> languageSettings.validate(null, locationString)
     }
-    processError(validationMessage)
+    processError(settingsValidationResult)
   }
 
-  private fun processError(validationMessage: ValidationMessage?) {
-    if (validationMessage != null) {
-      errorComponent.setErrorMessage(validationMessage)
-      errorComponent.isVisible = true
-      revalidate()
+  private fun processError(settingsValidationResult: SettingsValidationResult) {
+    when (settingsValidationResult) {
+      is SettingsValidationResult.Pending -> {
+        validationListener?.onInputDataValidated(false)
+      }
+
+      is SettingsValidationResult.Ready -> {
+        val validationMessage = settingsValidationResult.validationMessage
+        if (validationMessage != null) {
+          errorComponent.setErrorMessage(validationMessage)
+          errorComponent.isVisible = true
+          settings.setOn(true)
+          revalidate()
+        }
+        else {
+          errorComponent.isVisible = false
+        }
+        validationListener?.onInputDataValidated(validationMessage == null)
+      }
     }
-    else {
-      errorComponent.isVisible = false
-    }
-    validationListener?.onInputDataValidated(validationMessage == null)
   }
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {

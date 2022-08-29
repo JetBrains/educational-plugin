@@ -1,16 +1,26 @@
 package com.jetbrains.edu.learning.newproject.ui.errors
 
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.EduNames
 
-fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessage?): ErrorState {
+fun getErrorState(course: Course?, validateSettings: (Course) -> SettingsValidationResult): ErrorState {
   var languageError: ErrorState = ErrorState.NothingSelected
   if (course != null) {
-    val languageSettingsMessage = validateSettings(course)
-    languageError = languageSettingsMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
+    val languageSettingsValidationResult = validateSettings(course)
+    if (languageSettingsValidationResult is SettingsValidationResult.Pending) {
+      return ErrorState.Pending
+    }
+
+    languageError = when (languageSettingsValidationResult) {
+      is SettingsValidationResult.Pending -> ErrorState.Pending
+      is SettingsValidationResult.Ready -> {
+        val validationMessage = languageSettingsValidationResult.validationMessage
+        validationMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
+      }
+    }
   }
   return ErrorState.forCourse(course).merge(languageError)
 }
