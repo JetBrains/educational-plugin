@@ -20,9 +20,13 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.*
+import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
+import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType
+import com.jetbrains.edu.learning.newproject.ui.humanReadableDuration
 import java.awt.BorderLayout
 import java.awt.Font
 import java.net.URL

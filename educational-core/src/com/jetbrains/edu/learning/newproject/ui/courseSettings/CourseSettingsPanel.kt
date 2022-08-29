@@ -24,11 +24,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat

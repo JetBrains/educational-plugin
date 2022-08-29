@@ -6,8 +6,8 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import java.awt.BorderLayout

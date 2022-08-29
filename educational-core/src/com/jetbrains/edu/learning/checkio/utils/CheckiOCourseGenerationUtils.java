@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.newproject.ui.ErrorState;
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

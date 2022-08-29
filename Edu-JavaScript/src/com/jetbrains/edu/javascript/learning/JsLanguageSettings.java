@@ -10,7 +10,7 @@ import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage;
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

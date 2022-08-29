@@ -10,7 +10,7 @@ import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.toolchain.RsToolchain
 import java.awt.BorderLayout

@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls

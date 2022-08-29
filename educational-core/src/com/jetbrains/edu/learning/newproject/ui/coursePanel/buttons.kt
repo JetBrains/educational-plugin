@@ -23,9 +23,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CourseMetaInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.getErrorState
 import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
-import com.jetbrains.edu.learning.newproject.ui.getErrorState
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler

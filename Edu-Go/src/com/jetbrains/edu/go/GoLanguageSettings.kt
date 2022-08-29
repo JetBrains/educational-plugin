@@ -12,7 +12,7 @@ import com.jetbrains.edu.go.messages.EduGoBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GO
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import java.awt.BorderLayout
 import javax.swing.JComponent
 

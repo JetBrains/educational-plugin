@@ -9,7 +9,7 @@ import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 
 class JLanguageSettings : JdkLanguageSettings() {
 

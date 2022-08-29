@@ -22,7 +22,7 @@ import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_ANDROID
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent

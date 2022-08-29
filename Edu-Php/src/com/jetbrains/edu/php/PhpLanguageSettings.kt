@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PHP
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.php.messages.EduPhpBundle
 import com.jetbrains.php.composer.execution.phar.ComposerPhpInterpretersCombo
 import com.jetbrains.php.config.PhpProjectWorkspaceConfiguration
