@@ -8,7 +8,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.VirtualFileExt;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.projectView.CourseViewUtils;
 import org.jetbrains.annotations.Nls;
@@ -34,8 +36,10 @@ public class CCStudentInvisibleFileNode extends PsiFileNode {
                                     String name) {
     super(project, value, viewSettings);
     VirtualFile file = value.getVirtualFile();
-    boolean isExcluded = file != null &&
-                         (VirtualFileExt.canBeAddedToTask(file, project) || AdditionalFilesUtils.isExcluded(file, null, null, project));
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    boolean isExcluded = file != null && course != null &&
+                         (VirtualFileExt.canBeAddedToTask(file, project) ||
+                          AdditionalFilesUtils.isExcluded(file, null, course, project));
     myName = isExcluded ? excludedName(name) : name;
   }
 
