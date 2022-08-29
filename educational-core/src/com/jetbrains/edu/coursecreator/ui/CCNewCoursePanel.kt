@@ -20,7 +20,6 @@ import com.intellij.ui.layout.*
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -36,9 +35,9 @@ import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component

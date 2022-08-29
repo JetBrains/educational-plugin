@@ -20,10 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
-import com.jetbrains.edu.learning.newproject.ui.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
-import com.jetbrains.edu.learning.newproject.ui.getErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorStateHyperlinkListener
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.getErrorState
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.CardLayout
 import java.awt.Component

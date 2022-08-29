@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.errors
 
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
@@ -10,15 +10,17 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.ErrorSeverity.*
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.ERROR
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessageType.WARNING
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -112,7 +114,24 @@ sealed class ErrorState(
           is CourseCompatibility.PluginsRequired -> {
             if (compatibility.toInstallOrEnable.isEmpty()) RestartNeeded else RequirePlugins(compatibility.toInstallOrEnable)
           }
+
           else -> None
+        }
+      }
+
+    private val Course.unsupportedCourseMessage: String
+      @Nls(capitalization = Nls.Capitalization.Sentence)
+      get() {
+        val type = when (val environment = course.environment) {
+          EduNames.ANDROID -> environment
+          DEFAULT_ENVIRONMENT -> course.languageDisplayName
+          else -> null
+        }
+        return if (type != null) {
+          EduCoreBundle.message("courses.not.supported", type)
+        }
+        else {
+          EduCoreBundle.message("selected.course.not.supported", course.name)
         }
       }
 
@@ -130,6 +149,7 @@ sealed class ErrorState(
               None
             }
           }
+
           else -> None
         }
       }
@@ -195,14 +215,3 @@ private enum class ErrorSeverity {
   UNSUPPORTED_COURSE
 }
 
-data class ValidationMessage @JvmOverloads constructor(
-  @Nls val message: String,
-  val hyperlinkAddress: String? = null,
-  val type: ValidationMessageType = ERROR
-)
-
-enum class ValidationMessageType {
-  WARNING,
-  ERROR,
-  INFO
-}

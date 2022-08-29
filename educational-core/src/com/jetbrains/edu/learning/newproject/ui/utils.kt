@@ -5,7 +5,6 @@ import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.JBColor
@@ -14,20 +13,19 @@ import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.courseFormat.PluginInfo
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.css.*
 import kotlinx.css.properties.lh
-import org.jetbrains.annotations.Nls
 import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
@@ -36,11 +34,10 @@ import java.time.Duration
 import javax.swing.Icon
 import javax.swing.JPanel
 import javax.swing.UIManager
+import com.jetbrains.edu.learning.EduNames
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
 
-@NlsSafe
-private const val HELP_LINK = "https://www.jetbrains.com/help/idea/managing-plugins.html"
 
 const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
 val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
@@ -66,22 +63,6 @@ fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
   return IconUtil.toSize(scaledIcon, JBUI.scale(logoSize), JBUI.scale(logoSize))
 }
 
-val Course.unsupportedCourseMessage: String
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  get() {
-    val type = when (val environment = course.environment) {
-      EduNames.ANDROID -> environment
-      DEFAULT_ENVIRONMENT -> course.languageDisplayName
-      else -> null
-    }
-    return if (type != null) {
-      EduCoreBundle.message("courses.not.supported", type)
-    }
-    else {
-      EduCoreBundle.message("selected.course.not.supported", course.name)
-    }
-  }
-
 fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessage?): ErrorState {
   var languageError: ErrorState = ErrorState.NothingSelected
   if (course != null) {
@@ -96,15 +77,14 @@ fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>): String {
     return ""
   }
 
-
   val names = plugins.map { it.displayName ?: it.stringId }
   return when (names.size) {
-    1 -> EduCoreBundle.message("validation.plugins.required.plugins.one", names[0], HELP_LINK)
-    2 -> EduCoreBundle.message("validation.plugins.required.plugins.two", names[0], names[1], HELP_LINK)
-    3 -> EduCoreBundle.message("validation.plugins.required.plugins.three", names[0], names[1], names[2], HELP_LINK)
+    1 -> EduCoreBundle.message("validation.plugins.required.plugins.one", names[0], EduNames.PLUGINS_HELP_LINK)
+    2 -> EduCoreBundle.message("validation.plugins.required.plugins.two", names[0], names[1], EduNames.PLUGINS_HELP_LINK)
+    3 -> EduCoreBundle.message("validation.plugins.required.plugins.three", names[0], names[1], names[2], EduNames.PLUGINS_HELP_LINK)
     else -> {
       val restPluginsNumber = plugins.size - 2
-      EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber, HELP_LINK)
+      EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber, EduNames.PLUGINS_HELP_LINK)
     }
   }
 }

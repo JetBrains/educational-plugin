@@ -70,5 +70,7 @@ object EduNames {
 
   // Help links
   const val HELP_URL = "https://www.jetbrains.com/help"
+  const val PLUGINS_HELP_LINK = "$HELP_URL/idea/managing-plugins.html"
+
   const val LEARNER_START_GUIDE = "$HELP_URL/education/learner-start-guide.html"
 }

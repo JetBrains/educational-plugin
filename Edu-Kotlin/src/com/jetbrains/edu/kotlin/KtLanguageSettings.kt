@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_KOTLIN
 import com.jetbrains.edu.learning.KotlinVersion
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.kotlinVersion
-import com.jetbrains.edu.learning.newproject.ui.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 
 class KtLanguageSettings : JdkLanguageSettings() {
 
