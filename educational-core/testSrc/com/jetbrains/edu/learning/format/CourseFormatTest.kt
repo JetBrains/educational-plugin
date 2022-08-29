@@ -129,7 +129,7 @@ class CourseFormatTest : EduTestCase() {
   fun testCourseWithAuthors() {
     val course = courseFromJson
     assertEquals(ContainerUtil.newArrayList("EduTools Dev", "EduTools QA", "EduTools"),
-                 ContainerUtil.map(course.authors) { info: UserInfo -> info.getFullName() })
+                 ContainerUtil.map(course.authors) { info -> info.getFullName() })
   }
 
   fun testSolutionsHiddenInCourse() {

@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseView.CourseViewTestBase
 
 class CCCourseViewTest : CourseViewTestBase() {
 
-  @Suppress("DEPRECATION")
   fun `test lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -21,7 +20,6 @@ class CCCourseViewTest : CourseViewTestBase() {
                    "  CCLessonNode custom name (lesson1)\n")
   }
 
-  @Suppress("DEPRECATION")
   fun `test section with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       section()
@@ -34,7 +32,6 @@ class CCCourseViewTest : CourseViewTestBase() {
                     "  CCSectionNode custom name (section1)\n")
   }
 
-  @Suppress("DEPRECATION")
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
@@ -51,9 +48,9 @@ class CCCourseViewTest : CourseViewTestBase() {
        -CCCourseNode Test Course (Course Creation)
         -CCLessonNode lesson1
          -CCTaskNode custom name (task1)
-          CCStudentInvisibleFileNode task.md (excluded)
+          CCStudentInvisibleFileNode task.md
          -CCTaskNode task2
-          CCStudentInvisibleFileNode task.md (excluded)
+          CCStudentInvisibleFileNode task.md
     """.trimIndent())
   }
 
