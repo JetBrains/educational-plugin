@@ -62,14 +62,17 @@ object AdditionalFilesUtils {
     return fileVisitor.additionalTaskFiles
   }
 
+  fun inCourseIgnore(file: VirtualFile, project: Project): Boolean {
+    return inCourseIgnore(file, project, null)
+  }
+
   private fun inCourseIgnore(file: VirtualFile, project: Project, excludedFiles: List<String>? = null): Boolean {
     val excludedPaths = excludedFiles ?: loadExcludedFilePaths(project)
     val courseRelativePath = VfsUtil.getRelativePath(file, project.courseDir)
     return courseRelativePath in excludedPaths
   }
 
-  @JvmStatic
-  fun isExcluded(file: VirtualFile, excludedFiles: List<String>?, course: Course, project: Project): Boolean =
+  private fun isExcluded(file: VirtualFile, excludedFiles: List<String>?, course: Course, project: Project): Boolean =
     inCourseIgnore(file, project, excludedFiles) || excludedByConfigurator(file, course, project)
 
   private fun excludedByConfigurator(file: VirtualFile, course: Course, project: Project): Boolean =
