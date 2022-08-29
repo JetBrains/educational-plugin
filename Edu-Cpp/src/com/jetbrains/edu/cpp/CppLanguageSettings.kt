@@ -11,6 +11,7 @@ import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
@@ -44,10 +45,13 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, CPP_STANDARD_PREFIX, BorderLayout.WEST))
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? = when {
-    courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation) ->
-      ValidationMessage(EduCppBundle.message("error.non.ascii"), null, WARNING)
-    else -> null
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    return if (courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation)) {
+      SettingsValidationResult.Ready(ValidationMessage(EduCppBundle.message("error.non.ascii"), null, WARNING))
+    }
+    else {
+      SettingsValidationResult.OK
+    }
   }
 
   companion object {

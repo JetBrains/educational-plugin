@@ -7,17 +7,19 @@ import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_KOTLIN
 import com.jetbrains.edu.learning.KotlinVersion
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.kotlinVersion
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 
 class KtLanguageSettings : JdkLanguageSettings() {
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     if (course != null) {
       val courseKotlinVersion = course.kotlinVersion
       val kotlinVersion = kotlinVersion()
       if (kotlinVersion < courseKotlinVersion) {
-        return ValidationMessage(EduKotlinBundle.message("update.kotlin.plugin", courseKotlinVersion.version),
-                                 ENVIRONMENT_CONFIGURATION_LINK_KOTLIN)
+        val validationMessage = ValidationMessage(EduKotlinBundle.message("update.kotlin.plugin", courseKotlinVersion.version),
+                                                  ENVIRONMENT_CONFIGURATION_LINK_KOTLIN)
+        return SettingsValidationResult.Ready(validationMessage)
       }
     }
     return super.validate(course, courseLocation)

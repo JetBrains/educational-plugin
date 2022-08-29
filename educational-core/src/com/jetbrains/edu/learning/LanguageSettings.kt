@@ -4,7 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import javax.swing.JComponent
 
 /**
@@ -39,8 +39,8 @@ abstract class LanguageSettings<Settings : Any> {
     listeners.add(listener)
   }
 
-  open fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    return null
+  open fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    return SettingsValidationResult.OK
   }
 
   /**

@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
@@ -63,15 +64,23 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun getSettings(): PyNewProjectSettings = mySettings
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    course ?: return null
-    val sdk = mySettings.sdk ?: return ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ""),
-                                                         ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
-
-    return (isSdkApplicable(course, sdk.languageLevel) as? Err)?.error?.let {
-      val message = "$it ${EduPythonBundle.message("configure.python.environment.help")}"
-      ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    course ?: return SettingsValidationResult.OK
+    val sdk = mySettings.sdk
+    if (sdk == null) {
+      val validationMessage = ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ""),
+                                                ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+      return SettingsValidationResult.Ready(validationMessage)
     }
+
+    val sdkApplicable = isSdkApplicable(course, sdk.languageLevel)
+    if (sdkApplicable is Err) {
+      val message = "${sdkApplicable.error} ${EduPythonBundle.message("configure.python.environment.help")}"
+      val validationMessage = ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+      return SettingsValidationResult.Ready(validationMessage)
+    }
+
+    return SettingsValidationResult.OK
   }
 
   private val Sdk.languageLevel: LanguageLevel

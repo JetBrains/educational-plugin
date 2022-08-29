@@ -11,16 +11,16 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
-import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -39,6 +39,7 @@ sealed class ErrorState(
 
   object NothingSelected : ErrorState(OK, null, Color.BLACK, false)
   object None : ErrorState(OK, null, Color.BLACK, true)
+  object Pending : ErrorState(OK, null, Color.BLACK, false)
 
   object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED,
                                   ValidationMessage(EduCoreBundle.message("validation.stepik.log.in.needed"), type = WARNING),

@@ -9,6 +9,7 @@ import com.jetbrains.edu.java.messages.EduJavaBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 
 class JLanguageSettings : JdkLanguageSettings() {
@@ -20,27 +21,39 @@ class JLanguageSettings : JdkLanguageSettings() {
     }
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     return if (course != null) {
       val courseJavaVersionDescription = course.languageVersion ?: DEFAULT_JAVA.description
       val courseJavaVersion = courseJavaVersionDescription.toJavaSdkVersion()
-                              ?: return ValidationMessage(
-                                EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription),
-                                ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+      if (courseJavaVersion == null) {
+        val validationMessage = ValidationMessage(EduJavaBundle.message("error.unsupported.java.version", courseJavaVersionDescription),
+                                                  ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+        return SettingsValidationResult.Ready(validationMessage)
+      }
 
-      val providedJavaVersion = jdk?.versionString ?: return ValidationMessage(EduJavaBundle.message("error.no.jdk"),
-                                                                                    ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+
+
+      val providedJavaVersion = jdk?.versionString
+      if (providedJavaVersion == null) {
+        val validationMessage = ValidationMessage(EduJavaBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+        return SettingsValidationResult.Ready(validationMessage)
+      }
 
       val javaSdkVersion = JavaSdkVersion.fromVersionString(providedJavaVersion)
-                           ?: return ValidationMessage(EduJavaBundle.message("failed.determine.java.version"),
-                                                       ENVIRONMENT_CONFIGURATION_LINK_JAVA)
-      if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
-        return null
+      if (javaSdkVersion == null) {
+        val validationMessage = ValidationMessage(EduJavaBundle.message("failed.determine.java.version"),
+                                                  ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+        return SettingsValidationResult.Ready(validationMessage)
       }
-      return ValidationMessage(
-        EduJavaBundle.message("error.old.java", courseJavaVersionDescription),
-        "https://www.oracle.com/technetwork/java/javase/downloads/index.html"
-      )
+
+      if (javaSdkVersion.isAtLeast(courseJavaVersion)) {
+        return SettingsValidationResult.OK
+      }
+      else {
+        val validationMessage = ValidationMessage(EduJavaBundle.message("error.old.java", courseJavaVersionDescription),
+                                                  "https://www.oracle.com/technetwork/java/javase/downloads/index.html")
+        return SettingsValidationResult.Ready(validationMessage)
+      }
     }
     else super.validate(null, courseLocation)
   }

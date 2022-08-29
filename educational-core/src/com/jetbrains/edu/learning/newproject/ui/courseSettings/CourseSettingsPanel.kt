@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETTINGS_TOP_OFFSET
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import java.awt.BorderLayout
 import java.io.File
 import java.text.DateFormat
@@ -131,11 +131,13 @@ class CourseSettingsPanel(
 
   fun getProjectSettings(): Any? = languageSettings?.getSettings()
 
-  fun validateSettings(course: Course?): ValidationMessage? {
-    val validationMessage = languageSettings?.validate(course, locationString) ?: return null
+  fun validateSettings(course: Course?): SettingsValidationResult {
+    val settingsValidationResult = languageSettings?.validate(course, locationString) ?: SettingsValidationResult.OK
+    if (settingsValidationResult is SettingsValidationResult.Ready && settingsValidationResult.validationMessage != null) {
+      setOn(true)
+    }
 
-    setOn(true)
-    return validationMessage
+    return settingsValidationResult
   }
 
   companion object {

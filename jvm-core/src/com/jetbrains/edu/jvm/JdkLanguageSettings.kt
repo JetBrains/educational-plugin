@@ -17,6 +17,7 @@ import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import java.awt.BorderLayout
 import java.io.File
@@ -55,9 +56,9 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     jdkComboBox.selectedJdk = sdksModel.sdks.firstOrNull { it.sdkType == JavaSdk.getInstance() }
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     if (jdk == null) {
-      return ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA)
+      return SettingsValidationResult.Ready(ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA))
     }
     return super.validate(course, courseLocation)
   }

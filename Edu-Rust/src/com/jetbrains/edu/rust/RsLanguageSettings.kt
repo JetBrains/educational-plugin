@@ -10,6 +10,7 @@ import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.toolchain.RsToolchain
@@ -54,12 +55,19 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     val toolchain = rustToolchain
-   return when {
-      toolchain == null -> ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
-      !toolchain.looksLikeValidToolchain() -> ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+    val validationMessage = when {
+      toolchain == null -> {
+        ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+      }
+
+      !toolchain.looksLikeValidToolchain() -> {
+        ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+      }
+
       else -> null
     }
+    return SettingsValidationResult.Ready(validationMessage)
   }
 }

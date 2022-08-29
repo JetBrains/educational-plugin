@@ -22,6 +22,7 @@ import com.jetbrains.edu.android.messages.EduAndroidBundle
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_ANDROID
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -48,15 +49,23 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     return super.getLanguageSettingsComponents(course, disposable, context) + androidSdkLocation
   }
 
-  override fun validate(course: Course?, courseLocation: String?): ValidationMessage? {
-    return if (locationField.text.isEmpty()) ValidationMessage(EduAndroidBundle.message("error.no.sdk"), ENVIRONMENT_CONFIGURATION_LINK_ANDROID) else null
+  override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    val validationMessage = if (locationField.text.isEmpty()) {
+      ValidationMessage(EduAndroidBundle.message("error.no.sdk"), ENVIRONMENT_CONFIGURATION_LINK_ANDROID)
+    }
+    else {
+      null
+    }
+
+    return SettingsValidationResult.Ready(validationMessage)
   }
 
   // Inspired by [com.android.tools.idea.updater.configure.SdkUpdaterConfigPanel#setUpSingleSdkChooser]
   override fun actionPerformed(e: ActionEvent) {
     val host = DialogWrapperHost(null)
 
-val wizard = EduAndroidWizard(EduAndroidBundle.message("setup.sdk"), host)
+
+    val wizard = EduAndroidWizard(EduAndroidBundle.message("setup.sdk"), host)
     wizard.init()
     wizard.show()
   }
