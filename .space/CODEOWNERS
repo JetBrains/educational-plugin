@@ -1,1 +1,1 @@
-*.properties "Copy Editor"
+**/resources/messages/*.properties "Copy Editor"
