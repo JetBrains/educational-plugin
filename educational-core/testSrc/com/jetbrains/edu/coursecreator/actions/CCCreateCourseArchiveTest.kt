@@ -403,7 +403,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
         }
       }
       additionalFiles {
-        taskFile("additional.txt", "file text")
+        eduFile("additional.txt", "file text")
       }
     }
     course.description = "my summary"

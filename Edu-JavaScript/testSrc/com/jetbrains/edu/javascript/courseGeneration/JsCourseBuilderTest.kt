@@ -45,7 +45,7 @@ class JsCourseBuilderTest : CourseGenerationTestBase<JsNewProjectSettings>() {
         }
       }
       additionalFiles {
-        taskFile("package.json", "tmp")
+        eduFile("package.json", "tmp")
       }
     }
     createCourseStructure(course)

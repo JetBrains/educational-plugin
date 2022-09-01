@@ -53,11 +53,11 @@ class PhpCourseBuilderTest : CourseGenerationTestBase<PhpProjectSettings>() {
         }
       }
       additionalFiles {
-        taskFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, "{" +
-                                "  \"require\": {" +
-                                "    \"phpunit/phpunit\": \"^9\"" +
-                                "  }" +
-                                "}")
+        eduFile(ComposerUtils.CONFIG_DEFAULT_FILENAME, "{" +
+                                                       "  \"require\": {" +
+                                                       "    \"phpunit/phpunit\": \"^9\"" +
+                                                       "  }" +
+                                                       "}")
       }
     }
     createCourseStructure(course)

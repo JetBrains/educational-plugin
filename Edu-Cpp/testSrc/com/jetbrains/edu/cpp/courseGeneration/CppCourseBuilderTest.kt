@@ -82,8 +82,8 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         }
       }
       additionalFiles {
-        taskFile("CMakeLists.txt.in")
-        taskFile("CMakeLists.txt")
+        eduFile("CMakeLists.txt.in")
+        eduFile("CMakeLists.txt")
       }
     }
     createCourseStructure(course)
@@ -117,8 +117,8 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         }
       }
       additionalFiles {
-        taskFile("CMakeLists.txt.in")
-        taskFile("CMakeLists.txt")
+        eduFile("CMakeLists.txt.in")
+        eduFile("CMakeLists.txt")
       }
     }
     createCourseStructure(course)
@@ -159,8 +159,8 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
         }
       }
       additionalFiles {
-        taskFile("CMakeLists.txt.in")
-        taskFile("CMakeLists.txt")
+        eduFile("CMakeLists.txt.in")
+        eduFile("CMakeLists.txt")
       }
     }
     createCourseStructure(course)
@@ -212,8 +212,8 @@ class CppCourseBuilderTest : CourseGenerationTestBase<CppProjectSettings>() {
       }
 
       additionalFiles {
-        taskFile("CMakeLists.txt.in")
-        taskFile("CMakeLists.txt")
+        eduFile("CMakeLists.txt.in")
+        eduFile("CMakeLists.txt")
       }
     }
     createCourseStructure(course)

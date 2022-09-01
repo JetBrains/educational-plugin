@@ -105,9 +105,9 @@ abstract class LessonOwnerBuilder(val course: Course) {
     lessonBuilder.buildLesson()
   }
 
-  fun additionalFiles(buildTaskFiles: AdditionalFilesBuilder.() -> Unit) {
+  fun additionalFiles(buildEduFiles: AdditionalFilesBuilder.() -> Unit) {
     val builder = AdditionalFilesBuilder(course)
-    builder.buildTaskFiles()
+    builder.buildEduFiles()
   }
 }
 
@@ -137,13 +137,13 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     sectionBuilder.buildSection()
   }
 
-  fun additionalFile(name: String, text: String = "", buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
-    val builder = TaskFileBuilder()
+  fun additionalFile(name: String, text: String = "", buildTaskFile: EduFileBuilder.() -> Unit = {}) {
+    val builder = EduFileBuilder()
     builder.withName(name)
     builder.withText(text)
     builder.buildTaskFile()
 
-    course.additionalFiles = course.additionalFiles + builder.taskFile
+    course.additionalFiles = course.additionalFiles + builder.eduFile
   }
 }
 
@@ -533,16 +533,16 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
 class AdditionalFilesBuilder(val course: Course) {
 
-  fun taskFile(
+  fun eduFile(
     name: String, text: String = "",
-    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+    buildEduFile: EduFileBuilder.() -> Unit = {}
   ) {
-    val taskFileBuilder = TaskFileBuilder()
-    taskFileBuilder.withName(name)
+    val eduFileBuilder = EduFileBuilder()
+    eduFileBuilder.withName(name)
     val textBuilder = StringBuilder(text.trimIndent())
-    taskFileBuilder.withText(textBuilder.toString())
-    taskFileBuilder.buildTaskFile()
-    val taskFile = taskFileBuilder.taskFile
+    eduFileBuilder.withText(textBuilder.toString())
+    eduFileBuilder.buildEduFile()
+    val taskFile = eduFileBuilder.eduFile
     course.additionalFiles = course.additionalFiles + taskFile
   }
 
@@ -585,5 +585,17 @@ class TaskFileBuilder(val task: Task? = null) {
     if (createdDependency != null) {
       answerPlaceholder.placeholderDependency = createdDependency
     }
+  }
+}
+
+class EduFileBuilder {
+  val eduFile = EduFile()
+
+  fun withName(name: String) {
+    eduFile.name = name
+  }
+
+  fun withText(text: String) {
+    eduFile.text = text
   }
 }

@@ -98,7 +98,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
       }
 
       additionalFiles {
-        taskFile("CMakeLists.txt")
+        eduFile("CMakeLists.txt")
       }
     }
   }
