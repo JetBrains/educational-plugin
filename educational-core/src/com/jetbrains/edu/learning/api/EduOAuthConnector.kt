@@ -27,6 +27,8 @@ import java.util.regex.Pattern
 abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
   open var account: Account? = null
 
+  protected open val redirectHost = "localhost"
+
   protected abstract val authorizationUrl: String
 
   protected abstract val baseUrl: String
@@ -175,7 +177,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     else {
       // port is already checked to be valid
       val currentPort = BuiltInServerManager.getInstance().port
-      Urls.newHttpUrl("localhost:${currentPort}", oAuthServicePath).toString()
+      Urls.newHttpUrl("$redirectHost:${currentPort}", oAuthServicePath).toString()
     }
 
   @JvmOverloads

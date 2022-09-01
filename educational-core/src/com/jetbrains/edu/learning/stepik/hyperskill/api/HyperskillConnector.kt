@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
   override val platformName: String = HYPERSKILL
 
+  override val redirectHost: String = "127.0.0.1"
+
   override var account: HyperskillAccount?
     get() = HyperskillSettings.INSTANCE.account
     set(account) {
