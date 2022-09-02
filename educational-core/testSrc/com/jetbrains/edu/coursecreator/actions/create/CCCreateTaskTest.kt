@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.yaml.YamlDeepLoader
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.hasItem
 import org.junit.Assert.assertThat
@@ -26,7 +27,7 @@ import org.junit.Assert.assertThat
 class CCCreateTaskTest : EduActionTestCase() {
 
   fun `test create task in lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs=true) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -39,6 +40,10 @@ class CCCreateTaskTest : EduActionTestCase() {
       testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
     }
     assertEquals(2, course.lessons[0].taskList.size)
+
+    val loadedCourseFromYaml = YamlDeepLoader.loadCourse(project)
+    assertNotNull(loadedCourseFromYaml)
+    assertEquals(course.lessons[0].taskList.size, loadedCourseFromYaml!!.lessons[0].taskList.size)
 
     val task = course.lessons[0].taskList[1]
     checkOpenedFiles(task)

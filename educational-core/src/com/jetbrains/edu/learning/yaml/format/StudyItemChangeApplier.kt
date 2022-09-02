@@ -77,7 +77,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
         // it is called from `YamlLoader.loadItem`
         val configFile = existingItem.getConfigFileForChild(project, titledItem.name) ?: continue
 
-        val deserializedChild = YamlDeserializer.deserializeItem(configFile, project, existingItem.course.mapper) ?: continue
+        val deserializedChild = YamlDeserializer.deserializeItem(configFile, project, mapper=existingItem.course.mapper) ?: continue
         deserializedChild.name = titledItem.name
         deserializedChild.index = titledItem.index
         deserializedChild.parent = existingItem.parent

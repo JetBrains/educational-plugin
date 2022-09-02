@@ -24,14 +24,18 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   }
 
   override fun after(events: List<VFileEvent>) {
-    for (event in events) {
+    val configEvents = events.filter { it.file != null && YamlFormatSynchronizer.isLocalConfigFile(it.file!!) }
+    for (event in events - configEvents.toSet()) {
       when (event) {
         is VFileCreateEvent -> fileCreated(event)
         is VFileMoveEvent -> fileMoved(event)
         is VFileDeleteEvent -> fileDeleted(event)
       }
     }
+    configUpdated(configEvents)
   }
+
+  protected open fun configUpdated(configEvents: List<VFileEvent>) {}
 
   private fun fileCreated(event: VFileCreateEvent) {
     val file = event.file ?: return
@@ -150,6 +154,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   }
 
   private fun fileDeleted(event: VFileDeleteEvent) {
+    if (event.requestor == null) return
     val fileInfo = event.file.fileInfo(project) ?: return
     fileDeleted(fileInfo, event.file)
   }
@@ -170,4 +175,5 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
   companion object {
     private val LOG: Logger = Logger.getInstance(EduVirtualFileListener::class.java)
   }
+
 }

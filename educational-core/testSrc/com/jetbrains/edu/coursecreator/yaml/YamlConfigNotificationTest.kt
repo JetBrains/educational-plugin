@@ -36,12 +36,13 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     val task = course.findTask("lesson1", "task1")
     val taskDir = task.getDir(project.courseDir)
     createConfigFiles(project)
-    val configFile = taskDir!!.findChild(YamlFormatSettings.TASK_CONFIG)
-    runWriteAction { configFile!!.document.setText("random text") }
+    val configFile = taskDir!!.findChild(YamlFormatSettings.TASK_CONFIG)!!
+    myFixture.openFileInEditor(configFile)
+    runWriteAction { configFile.document.setText("random text") }
     withOriginalException {
-      YamlLoader.loadItem(project, configFile!!)
+      YamlLoader.loadItem(project, configFile, false)
     }
-    checkEditorNotification<YamlConfigNotificationProvider>(configFile!!,
+    checkEditorNotification<YamlConfigNotificationProvider>(configFile,
                             "Failed to apply configuration: task type is not specified")
   }
 

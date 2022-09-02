@@ -113,7 +113,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
       testAction(CCRemoveSection.ACTION_ID, dataContext(arrayOf(section2)))
       TestCase.fail("Expected failed to move lesson out message")
     }
-    catch (e: Throwable) {}
+    catch (_: Throwable) {}
 
     TestCase.assertEquals(3, course.items.size)
     val section = course.getSection("section2")

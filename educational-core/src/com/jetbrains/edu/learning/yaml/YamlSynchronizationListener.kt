@@ -19,7 +19,7 @@ class YamlSynchronizationListener(project: Project) : EduDocumentListenerBase(pr
     val loadFromConfig = configFile.getUserData(YamlFormatSynchronizer.LOAD_FROM_CONFIG) ?: true
     if (loadFromConfig) {
       runInEdt {
-        YamlLoader.loadItem(project, configFile)
+        YamlLoader.loadItem(project, configFile, false)
         ProjectView.getInstance(project).refresh()
       }
     }

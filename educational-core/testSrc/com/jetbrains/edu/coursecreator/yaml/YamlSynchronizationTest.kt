@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -31,8 +32,7 @@ class YamlSynchronizationTest : YamlTestCase() {
     val lesson = section.lessons.first()
     val task = lesson.taskList.first()
     val taskConfig = task.getDir(project.courseDir)?.findChild(YamlFormatSettings.TASK_CONFIG)!!
-    val document = FileDocumentManager.getInstance().getDocument(taskConfig)!!
-    runWriteAction { document.setText("invalid text") }
+    runWriteAction { VfsUtil.saveText(taskConfig, "invalid text") }
     StudyTaskManager.getInstance(project).course = null
 
     // check loaded task is null

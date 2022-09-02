@@ -236,7 +236,7 @@ object CCUtils {
 
     val delta = -lessonsToWrap.size + 1
 
-    updateHigherElements(project.courseDir.children, Function { file -> course.getItem(file.name) }, maxIndex, delta)
+    updateHigherElements(project.courseDir.children, { file -> course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section.index - 1, section)
     synchronizeChanges(project, course, section)
     return section

@@ -10,12 +10,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -24,6 +22,7 @@ import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
@@ -217,7 +216,7 @@ object YamlFormatSynchronizer {
     if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
       return
     }
-    item.saveConfigDocument(project, configName, mapper)
+    item.saveConfig(project, configName, mapper)
   }
 
   @JvmStatic
@@ -267,7 +266,7 @@ object YamlFormatSynchronizer {
           }
 
           // load item to show editor notification if config file is invalid
-          YamlLoader.loadItem(project, file)
+          YamlLoader.loadItem(project, file, false)
         }
       }
     })
@@ -284,10 +283,10 @@ object YamlFormatSynchronizer {
     editor.headerComponent = panel
   }
 
-  private fun StudyItem.saveConfigDocument(project: Project, configName: String, mapper: ObjectMapper) {
+  private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
 
-    ApplicationManager.getApplication().invokeLater {
+    invokeAndWaitIfNeeded {
       runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
@@ -298,7 +297,7 @@ object YamlFormatSynchronizer {
             FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE,
                                                              file.extension ?: error(errorMessageToLog))
           }
-          file.document?.setText(mapper.writeValueAsString(this))
+          VfsUtil.saveText(file, mapper.writeValueAsString(this))
         }
         finally {
           file.putUserData(LOAD_FROM_CONFIG, true)
@@ -306,9 +305,6 @@ object YamlFormatSynchronizer {
       }
     }
   }
-
-  private val VirtualFile.document: Document?
-    get() = FileDocumentManager.getInstance().getDocument(this)
 
   @JvmStatic
   fun isConfigFile(file: VirtualFile): Boolean {

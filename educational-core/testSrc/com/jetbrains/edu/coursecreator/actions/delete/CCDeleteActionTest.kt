@@ -1,13 +1,22 @@
 package com.jetbrains.edu.coursecreator.actions.delete
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
+import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCDeleteActionTest : EduActionTestCase() {
+  override fun setUp() {
+    super.setUp()
+    ApplicationManager.getApplication().messageBus
+      .connect(testRootDisposable)
+      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project))
+  }
 
   fun `test delete task`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -81,7 +90,7 @@ class CCDeleteActionTest : EduActionTestCase() {
   }
 
   fun `test delete lesson`() {
-    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
         eduTask("task1")
       }
@@ -102,6 +111,10 @@ class CCDeleteActionTest : EduActionTestCase() {
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
+
+    assertEquals(1, course.items.size)
+    assertNull(course.getLesson("lesson1"))
+    assertEquals(1, course.getLesson("lesson2")!!.index)
   }
 
   fun `test lesson deletion with dependent tasks`() {
@@ -185,6 +198,71 @@ class CCDeleteActionTest : EduActionTestCase() {
         }
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
+  }
+  
+  fun `test delete middle section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson()
+      section()
+      lesson()
+    }
+    val sectionFile = findFile("section2")
+    val testDialog = TestDeleteDialog()
+    withEduTestDialog(testDialog) {
+      testAction(IdeActions.ACTION_DELETE, dataContext(sectionFile))
+    }.checkWasShown()
+
+    assertEquals(2, course.items.size)
+    assertNull(course.getSection("section2"))
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson2")!!.index)
+  }
+
+  fun `test delete lesson from section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson()
+      section {
+        lesson()
+        lesson()
+      }
+      lesson()
+    }
+    val lesson1 = findFile("section2/lesson1")
+    val testDialog = TestDeleteDialog()
+    withEduTestDialog(testDialog) {
+      testAction(IdeActions.ACTION_DELETE, dataContext(lesson1))
+    }.checkWasShown()
+
+    val section = course.getSection("section2")!!
+    assertEquals(3, course.items.size)
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, section.index)
+    assertEquals(3, course.getLesson("lesson2")!!.index)
+
+    assertNull(section.getLesson("lesson1"))
+    assertEquals(1, section.items.size)
+    assertEquals(1, section.getLesson("lesson2")!!.index)
+  }
+
+  fun `test delete not empty section`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson()
+      section {
+        lesson()
+      }
+      lesson()
+    }
+    
+    val sectionFile = findFile("section2")
+    val testDialog = TestDeleteDialog()
+    withEduTestDialog(testDialog) {
+      testAction(IdeActions.ACTION_DELETE, dataContext(sectionFile))
+    }.checkWasShown()
+
+    assertEquals(2, course.items.size)
+    assertNull(course.getSection("section2"))
+    assertEquals(1, course.getLesson("lesson1")!!.index)
+    assertEquals(2, course.getLesson("lesson2")!!.index)
   }
 
   fun `test section deletion with dependent tasks`() {

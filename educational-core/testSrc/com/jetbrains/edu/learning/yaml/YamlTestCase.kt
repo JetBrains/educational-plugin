@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -36,13 +37,12 @@ abstract class YamlTestCase : EduTestCase() {
   protected fun loadItemFromConfig(item: StudyItem, newConfigText: String) {
     createConfigFiles(project)
     val configFile = item.getDir(project.courseDir)!!.findChild(item.configFileName)!!
-    val document = FileDocumentManager.getInstance().getDocument(configFile)!!
     runWriteAction {
-      document.setText(newConfigText)
+      VfsUtil.saveText(configFile, newConfigText)
     }
 
     UIUtil.dispatchAllInvocationEvents()
-    YamlLoader.loadItem(project, configFile)
+    YamlLoader.loadItem(project, configFile, true)
   }
 }
 

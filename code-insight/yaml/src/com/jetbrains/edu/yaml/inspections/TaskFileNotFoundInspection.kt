@@ -81,7 +81,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
     }
 
     private fun updateEditorNotifications(project: Project, file: VirtualFile) {
-      YamlLoader.loadItem(project, file)
+      YamlLoader.loadItem(project, file, false)
     }
 
     companion object {

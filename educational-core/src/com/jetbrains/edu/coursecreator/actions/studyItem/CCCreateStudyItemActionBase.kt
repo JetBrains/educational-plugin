@@ -114,7 +114,11 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
       }
 
       YamlFormatSynchronizer.saveItem(item)
-      YamlFormatSynchronizer.saveItem(item.parent)
+
+      val updateParentConfig = UPDATE_PARENT_CONFIG.getData(dataContext) ?: true
+      if (updateParentConfig) {
+        YamlFormatSynchronizer.saveItem(item.parent)
+      }
       EduCounterUsageCollector.studyItemCreated(item)
 
       if (itemDir != null) {
@@ -209,6 +213,9 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
 
     @JvmStatic
     val ITEM_INDEX: DataKey<Int> = DataKey.create("ITEM_INDEX")
+
+    @JvmStatic
+    val UPDATE_PARENT_CONFIG: DataKey<Boolean> = DataKey.create("UPDATE_PARENT_CONFIG")
 
     private fun askFeedback(course: Course, project: Project) {
       if (isFeedbackAsked()) {

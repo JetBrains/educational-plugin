@@ -13,9 +13,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider
 import com.intellij.openapi.ui.Messages.*
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDependentTasks
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -73,6 +75,10 @@ class CCStudyItemDeleteProvider : DeleteProvider {
       modifiableModel.commit()
       CommandProcessor.getInstance().executeCommand(project, {
         virtualFile.delete(CCStudyItemDeleteProvider::class.java)
+
+        val parent = studyItem.parent
+        val parentDir = parent.getDir(project.courseDir) ?: return@executeCommand
+        CCUtils.updateHigherElements(parentDir.children, { parent.getItem(it.name) }, studyItem.index, -1)
       }, "", Object())
     }
   }

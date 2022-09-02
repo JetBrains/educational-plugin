@@ -12,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
 import com.intellij.util.messages.Topic
@@ -77,9 +78,9 @@ object YamlDeserializer {
   private const val TOPIC = "Loaded YAML"
   val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
 
-  fun deserializeItem(configFile: VirtualFile, project: Project?, mapper: ObjectMapper = MAPPER): StudyItem? {
+  fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
+    val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
     val configName = configFile.name
-    val configFileText = configFile.document.text
     val remoteConfigFile = configFile.parent?.findChild(localConfigNameToRemote(configName))
     return try {
       when (configName) {
@@ -106,7 +107,7 @@ object YamlDeserializer {
     val content = mutableListOf<T>()
     for (titledItem in contentList) {
       val configFile: VirtualFile = getConfigFileForChild(project, titledItem.name) ?: continue
-      val deserializeItem = deserializeItem(configFile, project, mapper) as? T ?: continue
+      val deserializeItem = deserializeItem(configFile, project, mapper=mapper) as? T ?: continue
       deserializeItem.name = titledItem.name
       deserializeItem.index = titledItem.index
       content.add(deserializeItem)
@@ -153,7 +154,7 @@ object YamlDeserializer {
       null, Lesson().itemType -> {
         // migration: previously we stored remote info for lessons from Stepik in `Lesson` items
         if (remoteConfigFile != null) {
-          val remoteTreeNode = REMOTE_MAPPER.readTree(remoteConfigFile.document.text)
+          val remoteTreeNode = REMOTE_MAPPER.readTree(VfsUtil.loadText(remoteConfigFile))
           val unit = remoteTreeNode.get(YamlMixinNames.UNIT)
           if (unitIsEmpty(unit)) Lesson::class.java else StepikLesson::class.java
         }
@@ -194,7 +195,7 @@ object YamlDeserializer {
 
   fun deserializeRemoteItem(configFile: VirtualFile): StudyItem {
     val configName = configFile.name
-    val configFileText = configFile.document.text
+    val configFileText = VfsUtil.loadText(configFile)
     return when (configName) {
       REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
       REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)

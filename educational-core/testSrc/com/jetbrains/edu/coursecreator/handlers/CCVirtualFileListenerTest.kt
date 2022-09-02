@@ -2,98 +2,18 @@ package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
+import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.notIn
-import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
   override val courseMode: CourseMode = CourseMode.EDUCATOR
 
   override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project)
-
-  fun `test delete section`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson()
-      section()
-      lesson()
-    }
-    val sectionVFile = findFile("section2")
-    runWriteAction {
-      sectionVFile.delete(this)
-    }
-
-    TestCase.assertEquals(2, course.items.size)
-    TestCase.assertNull(course.getSection("section2"))
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-  }
-
-  fun `test delete not empty section`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson()
-      section {
-        lesson()
-      }
-      lesson()
-    }
-    val sectionVFile = findFile("section2")
-    runWriteAction {
-      sectionVFile.delete(this)
-    }
-
-    TestCase.assertEquals(2, course.items.size)
-    TestCase.assertNull(course.getSection("section2"))
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-  }
-
-  fun `test delete lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson()
-      section()
-      lesson()
-    }
-    val lesson1 = findFile("lesson1")
-    runWriteAction {
-      lesson1.delete(this)
-    }
-
-    TestCase.assertEquals(2, course.items.size)
-    TestCase.assertNull(course.getLesson("lesson1"))
-    TestCase.assertEquals(1, course.getSection("section2")!!.index)
-    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
-  }
-
-
-  fun `test delete lesson from section`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson()
-      section {
-        lesson()
-        lesson()
-      }
-      lesson()
-    }
-    val lesson1 = findFile("section2/lesson1")
-    runWriteAction {
-      lesson1.delete(this)
-    }
-
-    val section = course.getSection("section2")!!
-    TestCase.assertEquals(3, course.items.size)
-    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
-    TestCase.assertEquals(2, section.index)
-    TestCase.assertEquals(3, course.getLesson("lesson2")!!.index)
-
-    TestCase.assertNull(section.getLesson("lesson1"))
-    TestCase.assertEquals(1, section.items.size)
-    TestCase.assertEquals(1, section.getLesson("lesson2")!!.index)
-  }
 
   fun `test delete task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -109,7 +29,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
 
     val lesson = course.getLesson("lesson1")
-    TestCase.assertNull(lesson!!.getTask("task1"))
+    assertNull(lesson!!.getTask("task1"))
   }
 
   fun `test add task file`() {

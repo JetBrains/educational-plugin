@@ -174,12 +174,12 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   private fun loadAndDispatchEvents(lastChildConfig: VirtualFile) {
-    YamlLoader.loadItem(project, lastChildConfig)
+    YamlLoader.loadItem(project, lastChildConfig, true)
     UIUtil.dispatchAllInvocationEvents()
   }
 
-  private fun saveItemAndDispatchEvents(task: StudyItem) {
-    YamlFormatSynchronizer.saveItem(task)
+  private fun saveItemAndDispatchEvents(studyItem: StudyItem) {
+    YamlFormatSynchronizer.saveItem(studyItem)
     UIUtil.dispatchAllInvocationEvents()
   }
 }

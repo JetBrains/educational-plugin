@@ -28,10 +28,10 @@ import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
  */
 object YamlLoader {
 
-  fun loadItem(project: Project, configFile: VirtualFile) {
+  fun loadItem(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     ApplicationManager.getApplication().messageBus.syncPublisher(YamlDeserializer.YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
     try {
-      doLoad(project, configFile)
+      doLoad(project, configFile, loadFromVFile)
     }
     catch (e: Exception) {
       when (e) {
@@ -42,12 +42,12 @@ object YamlLoader {
   }
 
   @VisibleForTesting
-  fun doLoad(project: Project, configFile: VirtualFile) {
+  fun doLoad(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
     // for null course we load course again so no need to pass mode specific mapper here
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: MAPPER
 
     val existingItem = getStudyItemForConfig(project, configFile)
-    val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, mapper) ?: return
+    val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, loadFromVFile, mapper) ?: return
     deserializedItem.ensureChildrenExist(configFile.parent)
 
     if (existingItem == null) {
@@ -62,7 +62,7 @@ object YamlLoader {
       deserializedItem.name = itemDir.name
       val parentItem = deserializedItem.getParentItem(project, itemDir.parent)
       val parentConfig = parentItem.getDir(project.courseDir)?.findChild(parentItem.configFileName) ?: return
-      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig, project, mapper) as? ItemContainer ?: return
+      val deserializedParent = YamlDeserializer.deserializeItem(parentConfig, project, mapper=mapper) as? ItemContainer ?: return
       if (deserializedParent.items.map { it.name }.contains(itemDir.name)) {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)

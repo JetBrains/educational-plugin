@@ -90,11 +90,12 @@ class StudyItemNotFoundInspection : UnresolvedFileReferenceInspection() {
           CommonDataKeys.VIRTUAL_FILE_ARRAY.`is`(dataId) -> arrayOf(configFile.parent)
           CCCreateStudyItemActionBase.ITEM_INDEX.`is`(dataId) -> index
           CCCreateStudyItemActionBase.SUGGESTED_NAME.`is`(dataId) -> name
+          CCCreateStudyItemActionBase.UPDATE_PARENT_CONFIG.`is`(dataId) -> false
           else -> null
         }
       }
       ActionUtil.invokeAction(action, context, ActionPlaces.UNKNOWN, null, Runnable {
-        YamlLoader.loadItem(project, configFile)
+        YamlLoader.loadItem(project, configFile, false)
       })
     }
   }
