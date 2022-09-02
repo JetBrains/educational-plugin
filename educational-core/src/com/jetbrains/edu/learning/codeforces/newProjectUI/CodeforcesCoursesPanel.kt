@@ -2,14 +2,18 @@ package com.jetbrains.edu.learning.codeforces.newProjectUI
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.StartCodeforcesContestAction
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -79,6 +83,18 @@ class CodeforcesCoursesPanel(
   }
 
   override fun isLoginNeeded(): Boolean = !CodeforcesSettings.getInstance().isLoggedIn()
+
+  override fun showErrorMessage(e: CoursesDownloadingException) {
+    val text = noCoursesPanel.emptyText
+    text.text = EduCoreBundle.message("codeforces.anti.crawler.start")
+    text.appendSecondaryText(EduCoreBundle.message("codeforces.anti.crawler.end2") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+    text.appendSecondaryText(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
+                             SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(CodeforcesNames.CODEFORCES_URL) }
+    text.appendLine(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+    @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
+    text.appendText(EduCoreBundle.message("help.use.guide2"),
+                    SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) }
+  }
 
   private inner class CodeforcesCoursesListPanel : CoursesListWithResetFilters() {
     override fun createCourseCard(course: Course): CourseCardComponent {

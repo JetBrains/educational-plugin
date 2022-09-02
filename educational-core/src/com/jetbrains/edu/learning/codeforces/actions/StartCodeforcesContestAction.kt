@@ -52,7 +52,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
         EduCoreBundle.message(
           "codeforces.error.failed.to.get.contest.information",
           CodeforcesNames.CODEFORCES_TITLE,
-          error.lowercase(),
+          error,
           contestUrl
         ),
         EduCoreBundle.message("codeforces.error.failed.to.load.contest.title", CodeforcesNames.CODEFORCES_TITLE)

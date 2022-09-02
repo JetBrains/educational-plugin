@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.api.Reply
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -60,10 +61,27 @@ abstract class CodeforcesConnector {
   private val service: CodeforcesService by lazy { service() }
 
   private fun service(): CodeforcesService =
-    createRetrofitBuilder(baseUrl, connectionPool)
+    createRetrofitBuilder(baseUrl, connectionPool, customInterceptor = AntiCrawlerInterceptor)
       .addConverterFactory(converterFactory)
       .build()
       .create(CodeforcesService::class.java)
+
+  private object AntiCrawlerInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+      val response = chain.proceed(chain.request())
+      if (response.isSuccessful) {
+        // original redirect page length is about 900 characters, so 1024 is enough to get it
+        // and cut real contest data when anti-cowling disabled
+        val text = response.peekBody(1024).string()
+        if (text.contains("Redirecting... Please, wait.")) {
+          response.close()
+          throw CoursesDownloadingException("${EduCoreBundle.message("codeforces.anti.crawler.start")} ${EduCoreBundle.message("codeforces.anti.crawler.end1")}")
+        }
+      }
+      return response
+    }
+  }
+
 
   fun getContests(withTrainings: Boolean = false, locale: String = "en"): ContestsResponse? =
     service.contests(withTrainings, locale)
@@ -72,28 +90,31 @@ abstract class CodeforcesConnector {
       ?.body()
 
   fun getContest(contestParameters: ContestParameters): Result<CodeforcesCourse, String> =
-    service.problems(contestParameters.id, contestParameters.locale).executeParsingErrors().flatMap {
-      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
-      val doc = Jsoup.parse(responseBody.string())
-      Ok(CodeforcesCourse(contestParameters, doc))
+    handlingDownloadException {
+      service.problems(contestParameters.id, contestParameters.locale).executeParsingErrors().flatMap {
+        val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
+        val doc = Jsoup.parse(responseBody.string())
+        Ok(CodeforcesCourse(contestParameters, doc))
+      }
     }
 
-  fun getContestInformation(contestId: Int): Result<CodeforcesCourse, String> {
-    val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contests.list"))
-    val contestInfo = contestsList.result.find { it.id == contestId }
-                      ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
+  fun getContestInformation(contestId: Int): Result<CodeforcesCourse, String> =
+    handlingDownloadException {
+      val contestsList = getContests() ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contests.list"))
+      val contestInfo = contestsList.result.find { it.id == contestId } ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.find.contest.in.contests.list"))
 
-    val responseBody = service.status(contestId).executeParsingErrors()
-                         .onError { return Err(it) }
+      val responseBody = service.status(contestId).executeParsingErrors()
+                           .onError { return Err(it) }
+                           .body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
+      val doc = Jsoup.parse(responseBody.string())
+      val contestLanguages = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contest.language"))
 
-                         .body() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
-    val doc = Jsoup.parse(responseBody.string())
-    val contestLanguages = getLanguages(doc) ?: return Err(EduCoreBundle.message("codeforces.error.failed.to.get.contest.language"))
-
-    val contestParameters = ContestParameters(contestId, name = contestInfo.name, endDateTime = contestInfo.endTime,
-                                              availableLanguages = contestLanguages)
-    return Ok(CodeforcesCourse(contestParameters))
-  }
+      val contestParameters = ContestParameters(
+        contestId, name = contestInfo.name, endDateTime = contestInfo.endTime,
+        availableLanguages = contestLanguages
+      )
+      return Ok(CodeforcesCourse(contestParameters))
+    }
 
   fun getContestsPage(): Result<Document, String> {
     return service.contestsPage().executeParsingErrors().flatMap {
@@ -103,8 +124,7 @@ abstract class CodeforcesConnector {
     }
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun login(userName: String, password: String): Result<CodeforcesAccount, String> {
+  fun login(userName: String, password: String): Result<CodeforcesAccount, String> = handlingDownloadException {
     if (userName.isEmpty() || password.isEmpty()) {
       return Err(EduCoreBundle.message("error.empty.handle.or.password"))
     }
@@ -140,8 +160,7 @@ abstract class CodeforcesConnector {
     return Err(EduCoreBundle.message("error.unknown.error"))
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> {
+  fun getCSRFTokenWithJSessionID(): Result<Pair<String, String>, String> = handlingDownloadException {
     val loginPage = service.getLoginPage().executeParsingErrors().onError { return Err(it) }
     val loginPageBody = loginPage.body()?.string() ?: return Err(EduCoreBundle.message("error.failed.to.parse.response"))
 
@@ -156,15 +175,22 @@ abstract class CodeforcesConnector {
   }
 
 
-  fun postLoginForm(handle: String, password: String, jSessionID: String, csrfToken: String): Result<Response<ResponseBody>, String> {
-    return service.postLoginPage(csrfToken = csrfToken,
-                                 handle = handle,
-                                 password = password,
-                                 cookie = "JSESSIONID=$jSessionID").executeParsingErrors()
+  private fun postLoginForm(handle: String,
+                            password: String,
+                            jSessionID: String,
+                            csrfToken: String): Result<Response<ResponseBody>, String> = handlingDownloadException {
+    return service.postLoginPage(
+      csrfToken = csrfToken,
+      handle = handle,
+      password = password,
+      cookie = "JSESSIONID=$jSessionID"
+    ).executeParsingErrors()
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun submitSolution(task: CodeforcesTask, solution: String, account: CodeforcesAccount, project: Project): Result<String, String> {
+  fun submitSolution(task: CodeforcesTask,
+                     solution: String,
+                     account: CodeforcesAccount,
+                     project: Project): Result<String, String> = handlingDownloadException {
     if ((!account.isUpToDate() || !isLoggedIn()) && !getInstance().updateJSessionID(account)) {
       return Err(EduCoreBundle.message("error.access.denied"))
     }
@@ -183,13 +209,15 @@ abstract class CodeforcesConnector {
     val body = Jsoup.parse(htmlPage)
     val csrfToken = body.getElementsByClass("csrf-token").attr("data-csrf")
 
-    val response = service.postSolution(csrfToken = csrfToken,
-                                        submittedProblemIndex = submittedProblemIndex,
-                                        source = solution,
-                                        contestId = contestId,
-                                        programTypeId = programTypeId,
-                                        csrf_token = csrfToken,
-                                        cookie = "JSESSIONID=$jSessionID").executeParsingErrors().onError {
+    val response = service.postSolution(
+      csrfToken = csrfToken,
+      submittedProblemIndex = submittedProblemIndex,
+      source = solution,
+      contestId = contestId,
+      programTypeId = programTypeId,
+      csrf_token = csrfToken,
+      cookie = "JSESSIONID=$jSessionID"
+    ).executeParsingErrors().onError {
       return Err(it)
     }
 
@@ -206,11 +234,13 @@ abstract class CodeforcesConnector {
     val timeStamp = System.currentTimeMillis()
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      connectToWebSocketWithTimeout("wss://pubsub.codeforces.com/ws/s_$pc/s_$cc?_=$timeStamp&tag=&time=&eventid=",
-                                    "s_$cc",
-                                    csrfToken,
-                                    jSessionID,
-                                    project)
+      connectToWebSocketWithTimeout(
+        "wss://pubsub.codeforces.com/ws/s_$pc/s_$cc?_=$timeStamp&tag=&time=&eventid=",
+        "s_$cc",
+        csrfToken,
+        jSessionID,
+        project
+      )
     }
 
     return Ok("")
@@ -262,7 +292,6 @@ abstract class CodeforcesConnector {
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
   fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, List<StepikBasedSubmission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
@@ -296,8 +325,7 @@ abstract class CodeforcesConnector {
     return emptyMap()
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun getSubmissionSource(submissionId: Int, token: String, jSessionId: String): String =
+  private fun getSubmissionSource(submissionId: Int, token: String, jSessionId: String): String =
     service.getSubmissionSource(token, submissionId, "JSESSIONID=$jSessionId")
       .executeParsingErrors()
       .onError { return "" }
@@ -308,8 +336,7 @@ abstract class CodeforcesConnector {
     return true
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {
+  private fun updateJSessionID(codeforcesAccount: CodeforcesAccount): Boolean {
     val (csrfToken, jSessionId) = getInstance().getCSRFTokenWithJSessionID().onError { return false }
     val password = codeforcesAccount.getPassword() ?: return false
     val loginResponse = getInstance().postLoginForm(codeforcesAccount.userInfo.handle, password, jSessionId, csrfToken)
@@ -323,8 +350,7 @@ abstract class CodeforcesConnector {
     return false
   }
 
-  @Suppress("UNNECESSARY_SAFE_CALL")
-  fun getProfile(jSessionID: String): String? {
+  private fun getProfile(jSessionID: String): String? {
     val response = service.profile("JSESSIONID=$jSessionID").executeParsingErrors().onError { return null }
     return response.raw().priorResponse()
       ?.headers("location")
@@ -345,8 +371,8 @@ abstract class CodeforcesConnector {
     val jSessionID = account.getSessionId() ?: return null
 
     val registrationPage = service.getRegistrationPage(contestId, "JSESSIONID=$jSessionID")
-                             .executeParsingErrors()
-                             .onError { return null }.body() ?: return null
+      .executeParsingErrors()
+      .onError { return null }.body() ?: return null
 
     val doc = Jsoup.parse(registrationPage.string())
     val csrfToken = doc.getElementsByClass("csrf-token").attr("data-csrf")
@@ -371,8 +397,8 @@ abstract class CodeforcesConnector {
   fun isUserRegisteredForContest(contestId: Int): Boolean {
     val jSessionId = CodeforcesSettings.getInstance().account?.getSessionId() ?: return false
     val registrationData = service.getContestRegistrationData(contestId, "JSESSIONID=$jSessionId")
-                             .executeParsingErrors()
-                             .onError { return false }.body() ?: return false
+      .executeParsingErrors()
+      .onError { return false }.body() ?: return false
 
     val doc = Jsoup.parse(registrationData.string())
     return doc.getElementsByClass("welldone").isNotEmpty()
@@ -388,3 +414,12 @@ abstract class CodeforcesConnector {
 }
 
 data class ContestRegistrationData(val token: String, val termsOfAgreement: String, val isTeamRegistrationAvailable: Boolean)
+
+private inline fun <T> handlingDownloadException(fn: () -> Result<T, String>): Result<T, String> {
+  return try {
+    fn()
+  }
+  catch (e: CoursesDownloadingException) {
+    Err(e.uiMessage)
+  }
+}

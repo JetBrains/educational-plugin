@@ -97,6 +97,8 @@ abstract class CoursesPanel(
     loginPanel?.isVisible = true
   }
 
+  open fun showErrorMessage(e: CoursesDownloadingException) {}
+
   private fun createContentPanel(): JPanel {
     val searchAndLoginPanel = NonOpaquePanel()
     searchAndLoginPanel.add(coursesSearchComponent, BorderLayout.NORTH)
@@ -120,8 +122,7 @@ abstract class CoursesPanel(
       })
     }
     catch (e: CoursesDownloadingException) {
-      setNoCoursesPanelDefaultText()
-      noCoursesPanel.emptyText.appendLine(e.uiMessage, SimpleTextAttributes.ERROR_ATTRIBUTES, null)
+      showErrorMessage(e)
     }
 
     loadingFinished = true

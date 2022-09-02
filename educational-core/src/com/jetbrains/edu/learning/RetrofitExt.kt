@@ -15,6 +15,7 @@ import com.intellij.util.PlatformUtils
 import com.intellij.util.net.HttpConfigurable
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.failedToPostToJBA
 import okhttp3.*
@@ -151,6 +152,10 @@ fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, St
   catch (e: InterruptedIOException) {
     log("Connection to server was interrupted", e.message, omitErrors)
     Err("${EduCoreBundle.message("error.connection.interrupted")}\n\n${e.message}")
+  }
+  catch (e: CoursesDownloadingException) {
+    log("Failed to connect to server", e.message, true)
+    throw e
   }
   catch (e: IOException) {
     log("Failed to connect to server", e.message, omitErrors)
