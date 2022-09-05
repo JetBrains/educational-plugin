@@ -95,13 +95,6 @@ class GetHyperskillLesson : DumbAwareAction(
       }
 
       val languageAndEnvironment = getLanguageAndEnvironment(lesson)
-      if (languageAndEnvironment == null) {
-        showError(
-          EduCoreBundle.message("error.failed.to.create.lesson.undefined.language"),
-          EduCoreBundle.message("error.failed.to.create.lesson")
-        )
-        return null
-      }
 
       @NonNls val hyperskillLessonName = "Hyperskill lesson $lessonId"
       course.apply {
@@ -140,7 +133,7 @@ class GetHyperskillLesson : DumbAwareAction(
       }
     }
 
-    private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String>? {
+    private fun getLanguageAndEnvironment(lesson: Lesson): Pair<String, String> {
       for (task in lesson.taskList) {
         val taskFiles = task.taskFiles.values
         if (taskFiles.any { it.name.contains("androidTest") || it.name.contains("AndroidManifest.xml") }) {
@@ -155,7 +148,7 @@ class GetHyperskillLesson : DumbAwareAction(
           }
           val languageAndEnvironment = when (FileUtilRt.getExtension(taskFile.name)) {
             "java" -> EduNames.JAVA to DEFAULT_ENVIRONMENT
-            "py" -> EduNames.PYTHON to EduNames.UNITTEST //legacy environment was handled earlier
+            "py" -> EduNames.PYTHON to EduNames.UNITTEST
             "kt" -> EduNames.KOTLIN to DEFAULT_ENVIRONMENT
             "js", "html" -> EduNames.JAVASCRIPT to DEFAULT_ENVIRONMENT
             "scala" -> EduNames.SCALA to DEFAULT_ENVIRONMENT
@@ -167,7 +160,7 @@ class GetHyperskillLesson : DumbAwareAction(
           }
         }
       }
-      return null
+      return EduNames.JAVA to DEFAULT_ENVIRONMENT
     }
   }
 }
