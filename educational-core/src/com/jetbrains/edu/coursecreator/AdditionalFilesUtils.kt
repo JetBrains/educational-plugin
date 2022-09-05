@@ -98,6 +98,10 @@ object AdditionalFilesUtils {
     return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
   }
 
+  fun getChangeNotesVirtualFile(project: Project): VirtualFile? {
+    return project.courseDir.findChild(EduNames.CHANGE_NOTES)
+  }
+
   private fun additionalFilesVisitor(project: Project, course: Course) =
     object : VirtualFileVisitor<Any>(NO_FOLLOW_SYMLINKS) {
       private val excludedFiles = loadExcludedFilePaths(project)

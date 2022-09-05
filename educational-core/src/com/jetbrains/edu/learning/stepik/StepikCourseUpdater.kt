@@ -1,12 +1,14 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.EduCourseUpdater
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
 
@@ -15,6 +17,7 @@ class StepikCourseUpdater(project: Project, course: EduCourse) : EduCourseUpdate
   override fun setUpdated(courseFromServer: EduCourse) {
     super.setUpdated(courseFromServer)
     course.setUpdated(courseFromServer)
+    CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), null)
   }
 
   override fun updateSections(courseFromServer: EduCourse) {

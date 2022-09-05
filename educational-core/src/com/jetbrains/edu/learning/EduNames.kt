@@ -31,6 +31,7 @@ object EduNames {
   const val STUDY_PROJECT_XML_PATH = "/.idea/study_project.xml"
   const val STEPIK_IDS_JSON = "stepik_ids.json"
   const val COURSE_IGNORE = ".courseignore"
+  const val CHANGE_NOTES = "change-notes.txt"
 
   // IDs of supported languages. They are the same that `Language#getID` returns
   // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method

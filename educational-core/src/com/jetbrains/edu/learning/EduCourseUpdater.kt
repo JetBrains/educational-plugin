@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -11,7 +10,6 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.*
@@ -21,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
@@ -59,13 +56,11 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       course.isUpToDate = true
       EduUtils.synchronize()
       ProjectView.getInstance(project).refresh()
-      CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), null)
       course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
       YamlFormatSynchronizer.saveAll(project)
     }
   }
 
-  @VisibleForTesting
   open fun doUpdate(courseFromServer: EduCourse) {
     courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
 

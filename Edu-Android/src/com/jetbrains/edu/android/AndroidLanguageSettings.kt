@@ -56,7 +56,6 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
   override fun actionPerformed(e: ActionEvent) {
     val host = DialogWrapperHost(null)
 
-    @Suppress("DEPRECATION")
 val wizard = EduAndroidWizard(EduAndroidBundle.message("setup.sdk"), host)
     wizard.init()
     wizard.show()

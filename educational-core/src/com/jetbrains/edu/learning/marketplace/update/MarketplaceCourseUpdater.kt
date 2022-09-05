@@ -1,7 +1,13 @@
 package com.jetbrains.edu.learning.marketplace.update
 
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.getChangeNotesVirtualFile
+import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.EduCourseUpdater
 import com.jetbrains.edu.learning.EduUtils.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -11,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
@@ -20,6 +27,23 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCo
 
     super.doUpdate(courseFromServer)
     saveLearningProgress(courseFromServer)
+    showUpdateNotification()
+  }
+
+  private fun showUpdateNotification() {
+    val changeNotesVirtualFile = getChangeNotesVirtualFile(project)
+    val openChangeNotesAction = if (changeNotesVirtualFile == null || changeNotesVirtualFile.length <= 0) {
+      null
+    }
+    else {
+      object : AnAction(EduCoreBundle.message("marketplace.see.whats.new")) {
+        override fun actionPerformed(e: AnActionEvent) {
+          runInEdt { FileEditorManager.getInstance(project).openFile(changeNotesVirtualFile, true) }
+        }
+      }
+    }
+
+    CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), openChangeNotesAction)
   }
 
   override fun setUpdated(courseFromServer: EduCourse) {
