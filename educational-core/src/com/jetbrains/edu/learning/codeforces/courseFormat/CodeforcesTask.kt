@@ -103,6 +103,7 @@ open class CodeforcesTask : OutputTaskBase() {
       }
 
       task.descriptionFormat = DescriptionFormat.HTML
+      htmlElement.getElementsByClass("test-example-line").append("\n").unwrap()
       task.descriptionText = htmlElement.outerHtml()
         // This replacement is needed for proper MathJax visualization
         .replace("$$$", "$")
