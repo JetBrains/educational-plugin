@@ -120,7 +120,7 @@
     </group>
 
     <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
-    <action id="Educational.Educator.CheckAllTasks" class="com.jetbrains.edu.coursecreator.actions.CheckAllTasks"/>
+    <action id="Educational.Educator.CheckAllTasks" class="com.jetbrains.edu.coursecreator.actions.CCCheckAllTasksAction"/>
 
     <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
 

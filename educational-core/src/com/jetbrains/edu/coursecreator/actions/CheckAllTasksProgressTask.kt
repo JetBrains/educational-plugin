@@ -8,71 +8,75 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import org.jetbrains.annotations.NonNls
 import javax.swing.event.HyperlinkEvent
 
-class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks.text")) {
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
-    val course = StudyTaskManager.getInstance(project).course ?: return
+class CheckAllTasksProgressTask(
+  project: Project,
+  private val course: Course,
+): com.intellij.openapi.progress.Task.Backgroundable(
+  project,
+  EduCoreBundle.message("progress.title.checking.all.tasks"),
+  true
+) {
+  var isFinished = false
+  var isCancelled = false
+  var errorMessage: String? = null
 
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
-      project,
-      EduCoreBundle.message("progress.title.checking.all.tasks"),
-      true
-    ) {
-      override fun run(indicator: ProgressIndicator) {
-        val failedTasks = mutableListOf<Task>()
-        var curTask = 0
-        var tasksNum = 0
-        course.visitTasks { tasksNum++ }
-        course.visitTasks {
-          if (indicator.isCanceled) {
-            return@visitTasks
-          }
-          curTask++
-          indicator.fraction = curTask * 1.0 / tasksNum
-          val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
-          if (checker is EduTaskCheckerBase) {
-            checker.activateRunToolWindow = false
-          }
-          indicator.text = EduCoreBundle.message("progress.text.checking.task", curTask, tasksNum)
-          val checkResult = checker.check(indicator)
-          if (checkResult.status != CheckStatus.Solved) {
-            failedTasks.add(it)
-            LOG.warn("Task ${it.name} ${checkResult.status}: ${checkResult.message}")
-          }
-          checker.clearState()
-        }
-        if (indicator.isCanceled) {
-          return
-        }
-        val notification = if (failedTasks.isEmpty()) {
-          Notification(
-            "EduTools",
-            EduCoreBundle.message("notification.title.check.finished"),
-            EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
-            NotificationType.INFORMATION
-          )
-        }
-        else {
-          createFailedTasksNotification(failedTasks, tasksNum, project)
-        }
-        Notifications.Bus.notify(notification, project)
+  override fun run(indicator: ProgressIndicator) {
+    val failedTasks = mutableListOf<Task>()
+    var curTask = 0
+    var tasksNum = 0
+    course.visitTasks { tasksNum++ }
+    course.visitTasks {
+      if (indicator.isCanceled) {
+        return@visitTasks
       }
-    })
+      curTask++
+      indicator.fraction = curTask * 1.0 / tasksNum
+      val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(it, project)!!
+      if (checker is EduTaskCheckerBase) {
+        checker.activateRunToolWindow = false
+      }
+      indicator.text = EduCoreBundle.message("progress.text.checking.task", curTask, tasksNum)
+      val checkResult = checker.check(indicator)
+      if (checkResult.status != CheckStatus.Solved) {
+        failedTasks.add(it)
+        LOG.warn("Task ${it.name} ${checkResult.status}: ${checkResult.message}")
+      }
+      checker.clearState()
+    }
+    if (indicator.isCanceled) {
+      isCancelled = true
+      return
+    }
+    val notification = if (failedTasks.isEmpty()) {
+      Notification(
+        "EduTools",
+        EduCoreBundle.message("notification.title.check.finished"),
+        EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
+        NotificationType.INFORMATION
+      )
+    }
+    else {
+      createFailedTasksNotification(failedTasks, tasksNum, project)
+    }
+    Notifications.Bus.notify(notification, project)
+
+    errorMessage = if (failedTasks.isNotEmpty())
+      EduCoreBundle.message("notification.subtitle.some.tasks.failed", failedTasks.size, tasksNum)
+    else
+      null
+    isFinished = true
   }
 
   private fun createFailedTasksNotification(failedTasks: MutableList<Task>, tasksNum: Int, project: Project): Notification {
@@ -113,15 +117,7 @@ class CheckAllTasks : AnAction(EduCoreBundle.lazyMessage("action.check.all.tasks
   private val Task.fullName: String
     get() = listOfNotNull(lesson.section, lesson, this).joinToString("/") { it.presentableName }
 
-  override fun update(e: AnActionEvent) {
-    val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(project)
-  }
-
   companion object {
-    private val LOG = Logger.getInstance(CheckAllTasks::class.java)
-
-    @NonNls
-    const val ACTION_ID = "Educational.Educator.CheckAllTasks"
+    private val LOG = Logger.getInstance(CheckAllTasksProgressTask::class.java)
   }
 }

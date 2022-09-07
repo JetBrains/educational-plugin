@@ -78,7 +78,7 @@ class CheckAllTest : EduActionTestCase() {
         }
       }
     }
-    testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()), shouldBeEnabled = false)
+    testAction(CCCheckAllTasksAction.ACTION_ID, dataContext(emptyArray()), shouldBeEnabled = false)
   }
 
   private fun doTestWithNotification(checkNotification: (Notification) -> Unit) {
@@ -90,7 +90,7 @@ class CheckAllTest : EduActionTestCase() {
       }
     })
 
-    testAction(CheckAllTasks.ACTION_ID, dataContext(emptyArray()))
+    testAction(CCCheckAllTasksAction.ACTION_ID, dataContext(emptyArray()))
     assertTrue("Notification wasn't shown", notificationShown)
   }
 }
