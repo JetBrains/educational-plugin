@@ -46,7 +46,7 @@ val studioPath: String
     return androidStudioPath ?: downloadStudioIfNeededAndGetPath()
   }
 
-val jacksonVersion = "2.10.0"
+val jacksonVersion = "2.13.4"
 val okhttpVersion = "3.14.0"
 
 val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
@@ -245,17 +245,8 @@ configure(allprojects.pluginModules()) {
   dependencies {
     implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
     implementation("org.jsoup:jsoup:1.12.1")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion) {
-      exclude(module = "snakeyaml")
-    }
+    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
-
-    //transitive dependency is specified explicitly to avoid conflict with lib bundled since idea 181
-    implementation(group = "com.fasterxml.jackson.core", name = "jackson-core", version = jacksonVersion)
-
-    //transitive dependency is specified explicitly because of the issue https://github.com/FasterXML/jackson-dataformats-text/issues/81
-    //intellij platform uses affected snakeyaml version inside
-    implementation(group = "org.yaml", name = "snakeyaml", version = "1.21")
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
       excludeKotlinDeps()
     }
@@ -542,7 +533,7 @@ project(":edu-format") {
   dependencies {
     compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
-    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.10.0") {
+    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
       excludeKotlinDeps()
     }
   }

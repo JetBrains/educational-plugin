@@ -74,7 +74,11 @@ class StepikCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
       |      is_visible: true
       |    - name: src/Test.kt
       |      is_visible: false
-      |    edu_task: '{"task":{"name":"Edu problem","stepic_id":1,"status":"Unchecked","files":{"src/Task.kt":{"name":"src/Task.kt","placeholders":[],"is_visible":true,"text":""},"src/Test.kt":{"name":"src/Test.kt","placeholders":[],"is_visible":false,"text":""}},"task_type":"edu"}}'
+      |    edu_task: "{\"task\":{\"name\":\"Edu problem\",\"stepic_id\":1,\"status\":\"Unchecked\"\
+      |      ,\"files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"placeholders\":[],\"\
+      |      is_visible\":true,\"text\":\"\"},\"src/Test.kt\":{\"name\":\"src/Test.kt\",\"\
+      |      placeholders\":[],\"is_visible\":false,\"text\":\"\"}},\"task_type\":\"edu\"\
+      |      }}"
       |    version: $JSON_FORMAT_VERSION
       |
     """.trimMargin())

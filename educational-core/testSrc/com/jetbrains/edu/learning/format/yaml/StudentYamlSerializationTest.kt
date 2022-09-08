@@ -245,7 +245,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |status: Failed
     |feedback:
     |  message: $message
-    |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |  time: "Thu, 01 Jan 1970 00:00:00 UTC"
     |  expected: $expected
     |  actual: $actual
     |record: 1
@@ -267,7 +267,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     |type: edu
     |status: Failed
     |feedback:
-    |  time: Thu, 01 Jan 1970 00:00:00 UTC
+    |  time: "Thu, 01 Jan 1970 00:00:00 UTC"
     |record: 1
     |""".trimMargin())
   }

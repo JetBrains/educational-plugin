@@ -27,7 +27,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(course, """
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |default_section: 1
     |""".trimMargin())
   }
@@ -57,7 +57,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       |  ide_files: ${hyperskillProject.ideFiles}
       |  is_template_based: ${hyperskillProject.isTemplateBased}
       |  use_ide: true
-      |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+      |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
       |stages:
       |- id: 1
       |  step: 11
@@ -84,7 +84,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(course, """
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |""".trimMargin())
   }
 
@@ -97,7 +97,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     section.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(section, """
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |""".trimMargin())
   }
 
@@ -138,7 +138,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     task.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(task, """
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |""".trimMargin())
   }
 
@@ -152,7 +152,7 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: dataset
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |""".trimMargin())
   }
 
@@ -170,10 +170,10 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     doTest(task, """
     |type: dataset
     |id: 1
-    |update_date: Fri, 01 Jan 2010 00:00:00 UTC
+    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
     |attempt:
     |  id: 2
-    |  end_date_time: Thu, 01 Jan 1970 00:05:00 UTC
+    |  end_date_time: "Thu, 01 Jan 1970 00:05:00 UTC"
     |""".trimMargin())
   }
 

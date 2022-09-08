@@ -184,6 +184,19 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(attempt, task.attempt)
   }
 
+  fun `test quited date`() {
+    val id = 1
+    val yamlText = """
+    |id: $id
+    |update_date: "Thu, 01 Jan 1970 00:00:01 UTC"
+    |""".trimMargin()
+
+    val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
+    val course = YamlDeserializer.deserializeRemoteItem(configFile) as EduCourse
+    assertEquals(1, course.id)
+    assertEquals(Date(1000), course.updateDate)
+  }
+
   private fun createConfigFile(yamlText: String, configName: String): LightVirtualFile {
     val configFile = LightVirtualFile(configName)
     runWriteAction { VfsUtil.saveText(configFile, yamlText) }
