@@ -46,8 +46,11 @@ val studioPath: String
     return androidStudioPath ?: downloadStudioIfNeededAndGetPath()
   }
 
+// Probably, these versions should be extracted to version catalog
+// See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
 val jacksonVersion = "2.13.4"
 val okhttpVersion = "3.14.0"
+val retrofitVersion = "2.9.0"
 
 val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"
 val pycharmSandbox = "${project.buildDir.absolutePath}/pycharm-sandbox"
@@ -251,8 +254,8 @@ configure(allprojects.pluginModules()) {
       excludeKotlinDeps()
     }
 
-    implementation("com.squareup.retrofit2:retrofit:2.4.0")
-    implementation("com.squareup.retrofit2:converter-jackson:2.3.0")
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
       excludeKotlinDeps()
