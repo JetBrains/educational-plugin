@@ -23,28 +23,28 @@ class SyncStepikCourseTest : EduTestCase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("remote_course.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      SECTIONS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      SECTIONS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("sections.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      UNITS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      UNITS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("units.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      LESSONS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      LESSONS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("lessons.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      STEPS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      STEPS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("steps.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      SUBMISSIONS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      SUBMISSIONS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("submissions.json")
     }
   }

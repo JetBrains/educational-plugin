@@ -30,8 +30,8 @@ class HyperskillLessonTest : EduTestCase() {
     val lessonId = 278738129
     val mockConnector = StepikConnector.getInstance() as MockStepikConnector
 
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val responseFileName = when (request.path) {
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      val responseFileName = when (path) {
         "/api/lessons?ids%5B%5D=$lessonId" -> "lessons_response_$lessonId.json"
         "/api/steps?ids%5B%5D=111" -> "steps_response_111.json"
         else -> "response_empty.json"

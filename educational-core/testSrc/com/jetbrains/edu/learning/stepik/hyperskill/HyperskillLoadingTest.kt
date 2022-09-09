@@ -19,7 +19,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   private fun configureResponse(responseFileName: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { mockResponse(responseFileName) }
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ -> mockResponse(responseFileName) }
   }
 
   fun `test solution loading second stage failed`() {
@@ -413,8 +413,8 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
   fun `test all topics loaded`() {
     val items = mapOf(1 to "topics_response_1.json", 2 to "topics_response_2.json")
 
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val result = TOPICS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      val result = TOPICS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val stepId = result.groupValues[1].toInt()
       items[stepId]?.let { mockResponse(it) } ?: mockResponse("response_empty.json")
     }

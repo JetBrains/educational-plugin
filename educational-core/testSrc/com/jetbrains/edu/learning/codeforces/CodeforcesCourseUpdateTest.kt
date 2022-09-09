@@ -23,7 +23,7 @@ class CodeforcesCourseUpdateTest : CodeforcesTestCase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) {
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ ->
       MockResponseFactory.fromFile(File(testDataPath, contest1211).path)
     }
   }

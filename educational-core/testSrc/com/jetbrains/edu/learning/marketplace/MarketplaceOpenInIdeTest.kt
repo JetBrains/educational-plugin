@@ -33,8 +33,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
   }
 
   private fun configureCoursesResponse(fileName: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val path = request.path
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       when {
         COURSES_REQUEST_RE.matches(path) -> if (graphqlRequestsCounter.get() == 0) {
           graphqlRequestsCounter.incrementAndGet()

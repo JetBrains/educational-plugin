@@ -24,16 +24,16 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   private fun configureResponse(stagesResponse: String, courseResponse: String = "course_response.json") {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse(courseResponse)
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      STAGES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      STAGES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse(stagesResponse)
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      STEPS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      STEPS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("steps_response_111.json")
     }
   }

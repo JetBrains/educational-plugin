@@ -13,8 +13,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   private val mockConnector: MockMarketplaceConnector get() = MarketplaceConnector.getInstance() as MockMarketplaceConnector
 
   private fun configureCoursesResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { request, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val requestBody = request.body.readUtf8()
       when  {
         requestBody.isPluginsRequest() -> mockResponse("courses.json")
@@ -71,8 +71,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   fun `test all courses loaded`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { request, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val requestBody = request.body.readUtf8()
       when {
         requestBody.isPluginsRequest() && (requestBody.getOffset() == 0) -> mockResponse("courses_10.json")
@@ -86,8 +86,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   fun `test course found by id`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { request, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val requestBody = request.body.readUtf8()
       when  {
         requestBody.isPluginsRequest() -> mockResponse("course_by_id.json")
@@ -103,8 +103,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   fun `test private course found`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { request, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val requestBody = request.body.readUtf8()
       when  {
         requestBody.isPluginsRequest() -> mockResponse("private_course.json")

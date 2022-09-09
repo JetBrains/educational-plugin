@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import org.intellij.lang.annotations.Language
@@ -70,9 +70,9 @@ class HyperskillCheckEduTaskMessageTest : CheckersTestBase<Unit>() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           else -> error("Wrong path: ${path}")

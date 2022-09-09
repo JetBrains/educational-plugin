@@ -18,8 +18,8 @@ class StepikUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      COURSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("remote_course.json")
     }
   }

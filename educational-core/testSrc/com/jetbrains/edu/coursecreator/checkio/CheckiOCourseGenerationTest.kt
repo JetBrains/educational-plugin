@@ -21,7 +21,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) {
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ ->
       MockResponseFactory.fromFile(getTestFile("missions.json"))
     }
   }

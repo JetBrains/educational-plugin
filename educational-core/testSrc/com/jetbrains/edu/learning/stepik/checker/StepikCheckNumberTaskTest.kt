@@ -19,9 +19,9 @@ class StepikCheckNumberTaskTest : StepikBasedCheckNumberTaskTest() {
 
   override fun setUp() {
     super.setUp()
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       // Can be called from `StepikStartupActivity` after login
-      if (request.path.startsWith("/api/submissions?")) MockResponseFactory.fromString(EMPTY_SUBMISSIONS) else null
+      if (path.startsWith("/api/submissions?")) MockResponseFactory.fromString(EMPTY_SUBMISSIONS) else null
     }
     loginFakeStepikUser()
   }

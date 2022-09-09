@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckActionListener
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -14,7 +15,6 @@ import com.jetbrains.edu.learning.ui.getUICheckLabel
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.intellij.lang.annotations.Language
-import org.jetbrains.ide.BuiltInServerManager
 
 class HyperskillCheckCodeTaskTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -98,9 +98,9 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   }
 
   fun `test failed to get submission status via API`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/ws" -> webSocketConfiguration
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
@@ -122,9 +122,9 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   }
 
   private fun configureResponses() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/ws" -> webSocketConfiguration
           "/api/attempts" -> attempt
           "/api/submissions" -> submission

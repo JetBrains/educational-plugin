@@ -287,7 +287,7 @@ abstract class CodeforcesConnector {
 
     latch.await(TIMEOUT_IN_SEC, TimeUnit.SECONDS)
     socket.close(1000, "")
-    client.dispatcher().executorService().shutdown()
+    client.dispatcher.executorService.shutdown()
     val submissions = getUserSubmissions(task.course.id, listOf(task), csrfToken, jSessionID)[task.id] ?: return
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
@@ -352,7 +352,7 @@ abstract class CodeforcesConnector {
 
   private fun getProfile(jSessionID: String): String? {
     val response = service.profile("JSESSIONID=$jSessionID").executeParsingErrors().onError { return null }
-    return response.raw().priorResponse()
+    return response.raw().priorResponse
       ?.headers("location")
       ?.find { it.startsWith("https://codeforces.com/profile/") }
       ?.split("/")

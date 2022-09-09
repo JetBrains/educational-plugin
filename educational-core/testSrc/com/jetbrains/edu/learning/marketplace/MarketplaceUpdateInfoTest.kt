@@ -9,8 +9,8 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
   private val mockConnector: MockMarketplaceConnector get() = MarketplaceConnector.getInstance() as MockMarketplaceConnector
 
   private fun configureResponse(fileName: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      UPDATE_INFO_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      UPDATE_INFO_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse(fileName)
     }
   }

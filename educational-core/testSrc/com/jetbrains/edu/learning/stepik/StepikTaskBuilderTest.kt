@@ -33,9 +33,9 @@ class StepikTaskBuilderTest : EduTestCase() {
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
   fun `test unsupported task`() = doTest<TheoryTask>(FakeGradleBasedLanguage, false)
   fun `test choice task`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (path) {
           "/api/attempts?step=-1&user=-1" -> attemptsGet
           else -> error("Wrong path: ${path}")
         }

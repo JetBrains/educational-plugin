@@ -66,7 +66,7 @@ class HyperskillLegacyProblemsLoadingTest : EduTestCase() {
   }
 
   private fun configureResponse(responseFileName: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { mockResponse(responseFileName) }
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ -> mockResponse(responseFileName) }
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"

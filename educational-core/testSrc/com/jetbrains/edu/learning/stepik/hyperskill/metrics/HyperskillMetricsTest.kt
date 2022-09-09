@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROBLEMS
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
 import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService.Companion.getRoute
 import java.awt.Rectangle
@@ -127,9 +127,9 @@ class HyperskillMetricsTest : EduTestCase() {
 
     addViewEvents(listOf(findTask(0, 0), findTask(1, 0)))
 
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (request.getPathWithoutPrams()) {
+        when (request.pathWithoutPrams) {
           "/api/frontend-events" -> """{"${FRONTEND_EVENTS}":[]}"""
           else -> return@withResponseHandler null
         }
@@ -148,9 +148,9 @@ class HyperskillMetricsTest : EduTestCase() {
     metricsService.taskStarted(1)
     metricsService.taskStopped()
 
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (request.getPathWithoutPrams()) {
+        when (request.pathWithoutPrams) {
           "/api/time-spent-events" -> """{"${TIME_SPENT_EVENTS}":[]}"""
           else -> return@withResponseHandler null
         }
@@ -195,9 +195,9 @@ class HyperskillMetricsTest : EduTestCase() {
     var chunksCount = 0
     addViewEvents(List(eventsCount) { findTask(0, 0) })
 
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (request.getPathWithoutPrams()) {
+        when (request.pathWithoutPrams) {
           "/api/frontend-events" -> {
             chunksCount++
             """{"${FRONTEND_EVENTS}":[]}"""

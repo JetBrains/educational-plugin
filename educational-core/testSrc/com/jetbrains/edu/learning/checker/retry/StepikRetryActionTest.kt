@@ -54,9 +54,9 @@ class StepikRetryActionTest : SubmissionsTestBase() {
   }
 
   fun `test choice task correct`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (path) {
           "/api/attempts" -> attemptList
           else -> error("Wrong path: ${path}")
         },
@@ -81,9 +81,9 @@ class StepikRetryActionTest : SubmissionsTestBase() {
   }
 
   fun `test empty dataset`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (path) {
           "/api/attempts" -> emptyStep5454
           else -> error("Wrong path: ${path}")
         }

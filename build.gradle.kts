@@ -49,7 +49,7 @@ val studioPath: String
 // Probably, these versions should be extracted to version catalog
 // See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
 val jacksonVersion = "2.13.4"
-val okhttpVersion = "3.14.0"
+val okhttpVersion = "4.10.0"
 val retrofitVersion = "2.9.0"
 
 val ideaSandbox = "${project.buildDir.absolutePath}/idea-sandbox"

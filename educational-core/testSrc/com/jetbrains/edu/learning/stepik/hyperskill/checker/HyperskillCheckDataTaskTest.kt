@@ -16,10 +16,9 @@ import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckDataTaskTest
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
-import org.jetbrains.ide.BuiltInServerManager
 import java.util.*
 
 class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
@@ -68,9 +67,9 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
   }
 
   fun `test solved data task`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithSucceedStatus
           else -> error("Wrong path: ${path}")
@@ -83,9 +82,9 @@ class HyperskillCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
   }
 
   fun `test failed data task`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithFailedStatus
           else -> error("Wrong path: ${path}")

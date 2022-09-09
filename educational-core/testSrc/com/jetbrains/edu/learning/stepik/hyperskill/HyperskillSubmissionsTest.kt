@@ -28,8 +28,7 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
   }
 
   private fun configureResponses() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val path = request.path
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
         when {
           "/api/ws.*".toRegex().matches(path) -> webSocketConfiguration

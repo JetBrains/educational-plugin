@@ -19,12 +19,12 @@ class StepikSolutionLoadingTest : SolutionLoadingTestBase() {
   private val mockConnector: MockStepikConnector get() = StepikConnector.getInstance() as MockStepikConnector
 
   private fun configureSubmissionsResponse(items: Map<Int, String>) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      PROGRESSES_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      PROGRESSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("progresses.json")
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val result = SUBMISSIONS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      val result = SUBMISSIONS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val stepId = result.groupValues[1].toInt()
       items[stepId]?.let { mockResponse(it) } ?: mockResponse("submissions_response_empty.json")
     }

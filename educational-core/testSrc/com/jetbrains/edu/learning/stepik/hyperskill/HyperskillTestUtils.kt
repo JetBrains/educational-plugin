@@ -13,9 +13,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillUserInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.mockwebserver.RecordedRequest
 
 const val TEST_HYPERSKILL_PROJECT_NAME = "Test Hyperskill Project"
 
@@ -78,10 +75,6 @@ fun EduTestCase.defaultHyperskillCourse(): HyperskillCourse {
     }
   }
 }
-
-fun RecordedRequest.getPathWithoutPrams(): String = this.requestUrl.url().path
-
-fun HttpUrl.hasParams(vararg params: Pair<String, String>): Boolean = params.all { param -> this.queryParameter(param.first) == param.second }
 
 private fun HyperskillCourse.init(projectId: Int?, completeStages: Boolean) {
   if (projectId == null) {

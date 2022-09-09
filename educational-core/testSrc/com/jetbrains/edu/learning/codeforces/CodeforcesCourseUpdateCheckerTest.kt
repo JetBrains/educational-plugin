@@ -42,7 +42,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) {
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ ->
       MockResponseFactory.fromFile(getTestFile(contest1211))
     }
   }

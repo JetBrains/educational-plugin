@@ -153,8 +153,8 @@ class HyperskillNextActivityTest : EduTestCase() {
 
   private fun configureResponseForTopicSteps() {
     val topicInfo = TopicInfo(DEFAULT_TOPIC_ID, topicResponseFileName)
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.getPathWithoutPrams().endsWith(topicInfo.path)) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      if (request.pathWithoutPrams.endsWith(topicInfo.path)) {
         mockResponse(topicInfo.file)
       }
       else {
@@ -180,8 +180,8 @@ class HyperskillNextActivityTest : EduTestCase() {
   private data class StepMockResponse(val path: String, val task: Task, val initStepSource: HyperskillStepSource.() -> Unit)
 
   private fun MockHyperskillConnector.configureResponses(vararg responses: StepMockResponse) {
-    withResponseHandler(testRootDisposable) { request ->
-      responses.find { request.getPathWithoutPrams() == it.path }?.let {
+    withResponseHandler(testRootDisposable) { request, _ ->
+      responses.find { request.pathWithoutPrams == it.path }?.let {
         mockResponseFromTask(it.task, it.initStepSource)
       }
     }

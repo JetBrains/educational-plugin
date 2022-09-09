@@ -9,7 +9,7 @@ import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.junit.Assert.assertEquals
 
-typealias ResponseHandler = (RecordedRequest) -> MockResponse?
+typealias ResponseHandler = (RecordedRequest, String) -> MockResponse?
 
 class MockWebServerHelper(parentDisposable: Disposable) {
 
@@ -22,8 +22,9 @@ class MockWebServerHelper(parentDisposable: Disposable) {
         if (expectEduToolsUserAgent(request)) {
           assertEquals(eduToolsUserAgent, request.getHeader(USER_AGENT))
         }
+        val path = request.path ?: error("Request path should not be null. Probably, `requestLine` is empty")
         for (handler in handlers) {
-          val response = handler(request)
+          val response = handler(request, path)
           if (response != null) return response
         }
         return MockResponseFactory.notFound()
@@ -34,7 +35,7 @@ class MockWebServerHelper(parentDisposable: Disposable) {
   init {
     Disposer.register(parentDisposable, Disposable { mockWebServer.shutdown() })
     Disposer.register(parentDisposable, Disposable { webSocketMockSever.shutdown() })
-    ThreadTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp ConnectionPool", "Okio Watchdog")
+    ThreadTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp TaskRunner", "Okio Watchdog")
   }
 
   val baseUrl: String get() = mockWebServer.url("/").toString()
@@ -46,5 +47,16 @@ class MockWebServerHelper(parentDisposable: Disposable) {
 
   // DownloadUtil.downloadAtomically(), used in com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector.loadCourseStructure(),
   // sets product name as user agent, so such requests are not expected to contain eduToolsUserAgent
-  private fun expectEduToolsUserAgent(request: RecordedRequest): Boolean = !request.requestUrl.url().path.contains("plugin")
+  private fun expectEduToolsUserAgent(request: RecordedRequest): Boolean = !request.pathWithoutPrams.contains("plugin")
 }
+
+fun RecordedRequest.hasParams(vararg params: Pair<String, String>): Boolean {
+  val url = requestUrl ?: return false
+  return params.all { param -> url.queryParameter(param.first) == param.second }
+}
+
+val RecordedRequest.pathWithoutPrams: String
+  get() {
+    val requestUrl = requestUrl ?: error("Request url should not be null. Probably, `requestLine` is empty")
+    return requestUrl.toUrl().path
+  }

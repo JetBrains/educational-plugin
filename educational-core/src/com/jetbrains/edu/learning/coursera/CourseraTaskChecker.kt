@@ -31,6 +31,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.loadEncodedContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.HttpStatus
 import org.apache.http.entity.ContentType
 import java.time.Duration
@@ -60,12 +62,12 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     return try {
       val response = postSubmission(createSubmissionJson(project, task, courseraSettings, token))
-      var responseCode = response.code()
+      var responseCode = response.code
       if (responseCode != HttpStatus.SC_CREATED && !askedForCredentials) {
         askToEnterCredentials(task, createCheckResult(responseCode, task).message)
         token = getToken()
         if (token != null) {
-          responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings, token)).code()
+          responseCode = postSubmission(createSubmissionJson(project, task, courseraSettings, token)).code
         }
       }
       createCheckResult(responseCode, task)
@@ -118,7 +120,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     val request = Request.Builder()
       .url(ON_DEMAND_SUBMIT)
-      .method("POST", RequestBody.create(MediaType.get(ContentType.APPLICATION_JSON.mimeType), json)).build()
+      .method("POST", json.toRequestBody(ContentType.APPLICATION_JSON.mimeType.toMediaType())).build()
 
     return builder.build().newCall(request).execute()
   }

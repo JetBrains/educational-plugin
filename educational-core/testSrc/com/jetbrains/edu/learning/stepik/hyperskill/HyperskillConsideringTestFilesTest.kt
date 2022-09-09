@@ -122,7 +122,7 @@ class HyperskillConsideringTestFilesTest : NavigationTestBase() {
 
   fun `test solution loading for non-current task with non-visible files`() {
     logInFakeHyperskillUser()
-    mockConnector.withResponseHandler(testRootDisposable) { MockResponseFactory.fromString(submissions) }
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ -> MockResponseFactory.fromString(submissions) }
 
     val course = createHyperskillCourse()
     val task1 = course.findTask("lesson1", "task1")

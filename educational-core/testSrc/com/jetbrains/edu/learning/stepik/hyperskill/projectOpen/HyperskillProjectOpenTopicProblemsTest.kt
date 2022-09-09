@@ -4,19 +4,17 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
-import com.jetbrains.edu.learning.withFeature
 
 
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
@@ -743,8 +741,8 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
 
   private fun configureMockResponsesForProblems() {
     requestedInformation.forEach { information ->
-      mockConnector.withResponseHandler(testRootDisposable) { request ->
-        if (request.getPathWithoutPrams().endsWith(information.path) && request.requestUrl.hasParams(information.param)) {
+      mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+        if (request.pathWithoutPrams.endsWith(information.path) && request.hasParams(information.param)) {
           mockResponse(information.file)
         }
         else null

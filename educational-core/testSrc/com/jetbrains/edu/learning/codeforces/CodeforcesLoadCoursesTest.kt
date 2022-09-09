@@ -17,7 +17,7 @@ class CodeforcesLoadCoursesTest : CodeforcesTestCase() {
   }
 
   private fun configureResponse() {
-    mockConnector.withResponseHandler(testRootDisposable) {
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ ->
       MockResponseFactory.fromFile(File(testDataPath, "${getTestName(true).trim()}.html").path)
     }
   }

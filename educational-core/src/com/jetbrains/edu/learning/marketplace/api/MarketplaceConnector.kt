@@ -282,7 +282,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     if (!isUserAuthorized()) return
     LOG.info("Uploading new course from ${file.absolutePath}")
 
-    val response = repositoryEndpoints.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toRequestBody())
+    val response = repositoryEndpoints.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.upload.course.title"),
                                   showLogAction,

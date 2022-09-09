@@ -4,15 +4,13 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
-import com.jetbrains.edu.learning.withFeature
 
 
 class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerTestBase() {
@@ -232,15 +230,15 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
   }
 
   private fun configureMockResponsesForNotRecommendedProblem() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.getPathWithoutPrams().endsWith(step8143.path) && request.requestUrl.hasParams(step8143.param)) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      if (request.pathWithoutPrams.endsWith(step8143.path) && request.hasParams(step8143.param)) {
         error("8143 step shouldn't be requested")
       }
       else null
     }
     requestedInformation.forEach { information ->
-      mockConnector.withResponseHandler(testRootDisposable) { request ->
-        if (request.getPathWithoutPrams().endsWith(information.path) && request.requestUrl.hasParams(information.param)) {
+      mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+        if (request.pathWithoutPrams.endsWith(information.path) && request.hasParams(information.param)) {
           mockResponse(information.file)
         }
         else null

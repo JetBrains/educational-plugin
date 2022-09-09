@@ -21,9 +21,9 @@ import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.HttpStatus
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.annotations.NonNls
@@ -291,9 +291,9 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) : Int {
-    val fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), objectMapper.writeValueAsString(info))
+    val fileBody = objectMapper.writeValueAsString(info).toRequestBody("multipart/form-data".toMediaTypeOrNull())
     val fileData = MultipartBody.Part.createFormData("file", StepikNames.ADDITIONAL_INFO, fileBody)
-    val lessonBody = RequestBody.create(MediaType.parse("text/plain"), lessonId.toString())
+    val lessonBody = lessonId.toString().toPlainTextRequestBody()
 
     val response = stepikEndpoints.attachment(fileData, lessonBody).executeHandlingExceptions()
     return response?.code() ?: -1

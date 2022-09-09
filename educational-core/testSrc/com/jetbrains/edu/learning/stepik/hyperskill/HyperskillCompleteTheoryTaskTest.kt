@@ -4,6 +4,7 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -17,8 +18,8 @@ class HyperskillCompleteTheoryTaskTest : EduTestCase() {
 
     val stepId = 666
     var requestSent = false
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.getPathWithoutPrams().endsWith("/api/steps/$stepId/complete")) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      if (request.pathWithoutPrams.endsWith("/api/steps/$stepId/complete")) {
         requestSent = true
         MockResponse().setResponseCode(200)
       }

@@ -144,9 +144,9 @@ class StepikDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
   }
 
   private fun configureResponses() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (request.path) {
+        when (path) {
           "/api/attempts" -> {
             return@withResponseHandler MockResponseFactory.fromString(newAttemptForTask1, HttpStatus.SC_CREATED)
           }
@@ -156,7 +156,7 @@ class StepikDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
           "/api/attempts/101/file" -> TASK_1_DATASET_TEXT
           "/api/attempts/102/file" -> TASK_2_NEW_DATASET_TEXT
           "/api/attempts/103/file" -> TASK_3_NEW_DATASET_TEXT
-          else -> error("Wrong path: ${request.path}")
+          else -> error("Wrong path: ${path}")
         }
       )
     }

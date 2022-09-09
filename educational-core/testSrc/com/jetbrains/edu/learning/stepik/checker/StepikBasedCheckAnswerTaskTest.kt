@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
 import java.util.*
 
@@ -24,9 +24,9 @@ abstract class StepikBasedCheckAnswerTaskTest : CheckersTestBase<Unit>() {
   override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
 
   protected fun configureResponses(succeed: Boolean) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           "/api/submissions/11" -> if (succeed) {

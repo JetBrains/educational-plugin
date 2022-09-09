@@ -39,8 +39,8 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
   }
 
   private fun configureResponse(items: Map<Int, String>) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val result = SUBMISSIONS_GET_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      val result = SUBMISSIONS_GET_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val stepId = result.groupValues[1].toInt()
       items[stepId]?.let { mockResponse(it) } ?: mockResponse("submissions_response_empty.json")
     }
@@ -62,12 +62,12 @@ class StepikSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test submission added after edu task check`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      ATTEMPTS_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      ATTEMPTS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("attempts.json", HttpStatus.SC_CREATED)
     }
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      SUBMISSIONS_POST_REQUEST_RE.matchEntire(request.path) ?: return@withResponseHandler null
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      SUBMISSIONS_POST_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("submissions_response_2.json", HttpStatus.SC_CREATED)
     }
 

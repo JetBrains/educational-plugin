@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.getPathWithoutPrams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import com.jetbrains.edu.learning.testAction
@@ -59,9 +59,9 @@ class HyperskillRetryActionTest : CheckersTestBase<Unit>() {
   }
 
   fun `test choice task correct`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> attempt
           else -> error("Wrong path: ${path}")
         }
@@ -86,9 +86,9 @@ class HyperskillRetryActionTest : CheckersTestBase<Unit>() {
   }
 
   fun `test empty dataset`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
-        when (val path = request.getPathWithoutPrams()) {
+        when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> emptyDatasetAttempt
           else -> error("Wrong path: ${path}")
         }

@@ -65,9 +65,9 @@ class StepikCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
   }
 
   fun `test solved data task`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (path) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithSucceedStatus
           else -> error("Wrong path: ${path}")
@@ -81,9 +81,9 @@ class StepikCheckDataTaskTest : StepikBasedCheckDataTaskTest() {
   }
 
   fun `test failed data task`() {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(
-        when (val path = request.path) {
+        when (path) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithFailedStatus
           else -> error("Wrong path: ${path}")

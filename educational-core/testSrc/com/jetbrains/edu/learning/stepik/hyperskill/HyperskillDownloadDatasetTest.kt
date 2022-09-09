@@ -2,13 +2,12 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATASET_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.StepikBasedDownloadDatasetTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
@@ -16,7 +15,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetActio
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.testAction
 import org.jetbrains.ide.BuiltInServerManager
 import java.util.*
 
@@ -144,20 +142,19 @@ class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
 
   private fun configureResponses() {
     val port = BuiltInServerManager.getInstance().port.toString()
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      val requestUrl = request.requestUrl
-      val data = when (request.getPathWithoutPrams()) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      val data = when (val path = request.pathWithoutPrams) {
         "/api/attempts" -> when {
-          requestUrl.hasParams("step" to "1", "user" to "1", "ide_rpc_port" to port) -> noAttempts
-          requestUrl.hasParams("step" to "2", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask2
-          requestUrl.hasParams("step" to "3", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask3
-          requestUrl.hasParams("ide_rpc_port" to port) -> newAttemptForTask1
-          else -> error("Wrong path: ${request.path}")
+          request.hasParams("step" to "1", "user" to "1", "ide_rpc_port" to port) -> noAttempts
+          request.hasParams("step" to "2", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask2
+          request.hasParams("step" to "3", "user" to "1", "ide_rpc_port" to port) -> existingAttemptForTask3
+          request.hasParams("ide_rpc_port" to port) -> newAttemptForTask1
+          else -> error("Wrong path: $path")
         }
         "/api/attempts/101/dataset" -> TASK_1_DATASET_TEXT
         "/api/attempts/102/dataset" -> TASK_2_NEW_DATASET_TEXT
         "/api/attempts/103/dataset" -> TASK_3_NEW_DATASET_TEXT
-        else -> error("Wrong path: ${request.path}")
+        else -> error("Wrong path: $path")
       }
       MockResponseFactory.fromString(data)
     }

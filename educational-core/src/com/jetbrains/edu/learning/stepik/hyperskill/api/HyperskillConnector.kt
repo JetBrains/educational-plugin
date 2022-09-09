@@ -70,7 +70,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   override val requestInterceptor: Interceptor = Interceptor { chain ->
     val request = chain.request()
-    val newUrl = request.url().newBuilder().addQueryParameter("ide_rpc_port", BuiltInServerManager.getInstance().port.toString()).build()
+    val newUrl = request.url.newBuilder().addQueryParameter("ide_rpc_port", BuiltInServerManager.getInstance().port.toString()).build()
     val newRequest = request.newBuilder().url(newUrl).build()
     chain.proceed(newRequest)
   }
@@ -321,11 +321,11 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
       }
 
       override fun onOpen(webSocket: WebSocket, response: Response) {
-        handleEvent("open", webSocket, response.message())
+        handleEvent("open", webSocket, response.message)
       }
 
       override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        logEvent("failure", state, response?.message() ?: "no message")
+        logEvent("failure", state, response?.message ?: "no message")
         latch.countDown()
       }
 
@@ -341,7 +341,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
     latch.await(timeOutSec, TimeUnit.SECONDS)
     socket.close(1000, null)
-    client.dispatcher().executorService().shutdown()
+    client.dispatcher.executorService.shutdown()
     return state
   }
 

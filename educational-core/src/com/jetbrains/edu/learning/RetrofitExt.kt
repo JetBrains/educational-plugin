@@ -18,6 +18,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
@@ -104,7 +107,7 @@ val proxyAuthenticator: Authenticator
       val password = proxyConfigurable.plainProxyPassword ?: return@Authenticator null
 
       val credentials = Credentials.basic(login, password)
-      return@Authenticator response.request().newBuilder()
+      return@Authenticator response.request.newBuilder()
         .header("Proxy-Authorization", credentials)
         .build()
     }
@@ -200,11 +203,11 @@ fun <T> Response<T>.checkStatusCode(): Response<T>? {
 }
 
 fun File.toMultipartBody(): MultipartBody.Part {
-  val body = RequestBody.create(MediaType.parse("application/octet-stream"), this)
+  val body = asRequestBody("application/octet-stream".toMediaTypeOrNull())
   return MultipartBody.Part.createFormData("file", this.name, body)
 }
 
-fun String.toRequestBody(): RequestBody = RequestBody.create(MediaType.parse("text/plain"), this)
+fun String.toPlainTextRequestBody(): RequestBody = toRequestBody("text/plain".toMediaTypeOrNull())
 
 private fun processForbiddenErrorMessage(jsonText: String): String? {
   return try {

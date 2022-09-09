@@ -18,7 +18,7 @@ class HyperskillHttpErrorsTest : EduTestCase() {
   fun `test forbidden`() = doTest(HTTP_FORBIDDEN, EduCoreBundle.message("error.access.denied"))
 
   private fun doTest(code: Int, expectedError: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { MockResponse().setResponseCode(code) }
+    mockConnector.withResponseHandler(testRootDisposable) { _, _ -> MockResponse().setResponseCode(code) }
     val response = mockConnector.postSubmission(StepikBasedSubmission())
     val actualError = (response as Err).error
     assertTrue("Unexpected error message: `$actualError`", actualError.startsWith(expectedError))

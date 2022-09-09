@@ -2,8 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -14,7 +13,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillO
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
-import com.jetbrains.edu.learning.withFeature
 
 class HyperskillProblemLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
@@ -66,11 +64,11 @@ class HyperskillProblemLoadingTest : EduTestCase() {
   }
 
   private fun configureResponse(responseFileName: String) {
-    mockConnector.withResponseHandler(testRootDisposable) { request ->
-      if (request.getPathWithoutPrams().endsWith(step4894.path) && request.requestUrl.hasParams(step4894.param)) {
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      if (request.pathWithoutPrams.endsWith(step4894.path) && request.hasParams(step4894.param)) {
         mockResponse(responseFileName)
       }
-      else if (request.getPathWithoutPrams().endsWith(topic84.path) && request.requestUrl.hasParams(topic84.param)) {
+      else if (request.pathWithoutPrams.endsWith(topic84.path) && request.hasParams(topic84.param)) {
         mockResponse(responseFileName)
       }
       else null
