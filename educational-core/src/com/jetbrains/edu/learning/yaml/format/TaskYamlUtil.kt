@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTION_HIDDEN
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMISSION_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import org.jetbrains.annotations.NonNls
 
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NonNls
  * Update [TaskChangeApplier] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS)
+@JsonPropertyOrder(TYPE, CUSTOM_NAME, FILES, FEEDBACK_LINK, SOLUTION_HIDDEN, TAGS, SUBMISSION_LANGUAGE)
 abstract class TaskYamlMixin {
   val itemType: String
     @JsonProperty(TYPE)
@@ -54,6 +55,10 @@ abstract class TaskYamlMixin {
   @JsonProperty(CUSTOM_NAME)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private var customPresentableName: String? = null
+
+  @JsonProperty(SUBMISSION_LANGUAGE)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var submissionLanguage: String? = null
 
   @JsonProperty(SOLUTION_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_NULL)

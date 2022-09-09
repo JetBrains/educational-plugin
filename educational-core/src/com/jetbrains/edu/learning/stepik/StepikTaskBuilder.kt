@@ -6,6 +6,7 @@ import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil.join
 import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
+import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -151,13 +152,29 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   }
 
   private fun codeTask(name: String): CodeTask {
-    val task = CodeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    val options = step.pycharmOptions()
+    val codeTemplates = step.pycharmOptions().codeTemplates
+    val (submissionLanguage, codeTemplate) = getCodeTemplateAndLang(codeTemplates)
+    val task = CodeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked, submissionLanguage)
 
     task.fillDescription()
-    initTaskFiles(task, "write your answer here \n", getCodeTemplateForTask(options.codeTemplates))
+    initTaskFiles(task, "write your answer here \n", codeTemplate)
     return task
   }
+
+  private fun getCodeTemplateAndLang(codeTemplates: Map<String, String>?): Pair<String?, String?> =
+    when (codeTemplates?.size) {
+      0 -> null to null
+      1 -> codeTemplates.entries.first().toPair()
+      else -> {
+        val langWithMaxVersion= codeTemplates?.keys?.mapNotNull {
+          val groups = Regex("^(\\D+)\\s?([.|0-9]+)?$").matchEntire(it)?.groupValues
+          if (groups?.size != 3) null
+          else groups
+        }?.reduce { max, curr -> if (VersionComparatorUtil.compare(max[2], curr[2]) > 0) max else curr }?.first()
+
+        langWithMaxVersion to codeTemplates?.get(langWithMaxVersion)
+      }
+    }
 
   private fun choiceTask(name: String): ChoiceTask {
     val task = ChoiceTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)

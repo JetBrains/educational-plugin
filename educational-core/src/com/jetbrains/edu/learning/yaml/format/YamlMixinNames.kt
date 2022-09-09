@@ -105,6 +105,9 @@ object YamlMixinNames {
   @NlsSafe
   const val SOLUTION_HIDDEN = "solution_hidden"
 
+  @NlsSafe
+  const val SUBMISSION_LANGUAGE = "submission_language"
+
   // theory task
   @NlsSafe
   const val POST_SUBMISSION_ON_OPEN = "post_submission_on_open"

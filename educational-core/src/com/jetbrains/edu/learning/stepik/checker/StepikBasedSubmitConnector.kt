@@ -35,9 +35,7 @@ object StepikBasedSubmitConnector {
       return Err(it)
     }
 
-    val defaultLanguage = getLanguage(task).onError {
-      return Err(it)
-    }
+    val defaultLanguage = task.submissionLanguage ?: getLanguage(task).onError { return Err(it) }
 
     val configurator = task.course.configurator
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)

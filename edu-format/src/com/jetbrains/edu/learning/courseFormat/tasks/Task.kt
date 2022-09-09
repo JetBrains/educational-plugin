@@ -43,6 +43,7 @@ abstract class Task : StudyItem {
   var submissionsId: String? = null
 
   protected var checkStatus: CheckStatus = CheckStatus.Unchecked
+  var submissionLanguage: String? = null
 
   open var status: CheckStatus
     get() = checkStatus
@@ -75,11 +76,12 @@ abstract class Task : StudyItem {
 
   constructor() // used for deserialization
   constructor(name: String) : super(name)
-  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus) : super(name) {
+  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus, submissionLanguage: String? = null) : super(name) {
     this.id = id
     this.index = position
     this.updateDate = updateDate
     checkStatus = status
+    this.submissionLanguage = submissionLanguage
   }
 
   override fun init(parentItem: ItemContainer, isRestarted: Boolean) {
