@@ -28,9 +28,9 @@
     <experimentalFeature id="edu.course.hyperskill.problems.by.topic" percentOfUsers="100">
       <description>Enables grouping JetBrains Academy code challenges by topic</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.hyperskill.choice.task.support" percentOfUsers="100">
-      <description>Enables choice tasks support for JetBrains Academy</description>
-    </experimentalFeature>
+<!--    <experimentalFeature id="edu.course.hyperskill.choice.task.support" percentOfUsers="100">-->
+<!--      <description>Enables choice tasks support for JetBrains Academy</description>-->
+<!--    </experimentalFeature>-->
 
     <registryKey defaultValue="10" description="Hyperskill metrics sending interval in minutes" key="edu.hyperskill.metrics"
                  restartRequired="true"/>

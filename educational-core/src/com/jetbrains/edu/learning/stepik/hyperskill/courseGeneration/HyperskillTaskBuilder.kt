@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_CHOICE_TASK_SUPPORT
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -9,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -44,9 +42,6 @@ class HyperskillTaskBuilder(
 
   fun build(): Task? {
     val blockName = stepSource.block?.name ?: return null
-    if (blockName == ChoiceTask.CHOICE_TASK_TYPE && !isFeatureEnabled(HYPERSKILL_CHOICE_TASK_SUPPORT)) {
-      return null
-    }
 
     val type = if (blockName == PYCHARM_TASK_TYPE && stepSource.isRemoteTested) {
       REMOTE_EDU_TASK_TYPE
