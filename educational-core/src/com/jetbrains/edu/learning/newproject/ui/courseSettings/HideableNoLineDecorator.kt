@@ -10,15 +10,10 @@ import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Cursor
 import java.awt.Dimension
-import java.awt.event.ActionEvent
-import java.awt.event.InputEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.util.*
-import javax.swing.AbstractAction
 import javax.swing.JComponent
 import javax.swing.JPanel
-import javax.swing.KeyStroke
 
 /**
  * Inspired by [com.intellij.ui.HideableDecorator]
@@ -85,23 +80,6 @@ class HideableNoLineDecorator(private val myPanel: JPanel, @Nls(capitalization =
     myTitledSeparator.label.disabledIcon = IconLoader.getTransparentIcon(icon, 0.5f)
   }
 
-  private fun registerMnemonic() {
-    val mnemonicIndex = UIUtil.getDisplayMnemonicIndex(title)
-    if (mnemonicIndex == -1) {
-      return
-    }
-
-    myPanel.actionMap.put(ACTION_KEY, ExpandAction())
-    val mnemonic = UIUtil.removeMnemonic(title).uppercase(Locale.getDefault())[mnemonicIndex]
-    val inputMap = myPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-    val keyStroke = KeyStroke.getKeyStroke(mnemonic.code, InputEvent.ALT_DOWN_MASK, false)
-    inputMap.put(keyStroke, ACTION_KEY)
-  }
-
-  private inner class ExpandAction : AbstractAction() {
-    override fun actionPerformed(e: ActionEvent) = setOn(!isExpanded)
-  }
-
   private inner class ExpandMouseAdapter : MouseAdapter() {
     override fun mouseReleased(e: MouseEvent) = setOn(!isExpanded)
   }
@@ -131,15 +109,9 @@ class HideableNoLineDecorator(private val myPanel: JPanel, @Nls(capitalization =
       super.setEnabled(enabled)
       label.isEnabled = enabled
     }
-
-    override fun addNotify() {
-      super.addNotify()
-      registerMnemonic()
-    }
   }
 
   companion object {
-    private const val ACTION_KEY = "Collapse/Expand on mnemonic"
     private const val TOP_INSET = 7
     private const val BOTTOM_INSET = 5
   }
