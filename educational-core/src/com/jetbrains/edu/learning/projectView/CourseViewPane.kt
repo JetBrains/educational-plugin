@@ -167,7 +167,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   @Suppress("UnstableApiUsage")
   override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = error("This tree is async now")
 
-  override fun getTitle(): String = ID
+  override fun getTitle(): String = EduCoreBundle.message("project.view.course.pane.title")
+
   override fun getIcon(): Icon = EducationalCoreIcons.CourseTree
   override fun getId(): String = ID
   override fun getWeight(): Int = 10

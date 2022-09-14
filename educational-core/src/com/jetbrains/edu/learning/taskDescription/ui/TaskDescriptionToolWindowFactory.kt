@@ -112,7 +112,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   companion object {
-    const val STUDY_TOOL_WINDOW = "Task"
-
+    @JvmField
+    val STUDY_TOOL_WINDOW = EduCoreBundle.message("task.description.tool.window")
   }
 }
