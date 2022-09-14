@@ -30,13 +30,11 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
@@ -65,13 +63,11 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>

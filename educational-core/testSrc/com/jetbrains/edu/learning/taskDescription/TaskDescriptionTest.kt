@@ -308,10 +308,10 @@ class TaskDescriptionTest : EduTestCase() {
     }
     val expectedText = """
       <html>
-       <head></head> 
-       <body> 
-        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p> 
-        <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>  
+       <head></head>
+       <body>
+        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
     """.trimIndent()

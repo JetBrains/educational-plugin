@@ -247,7 +247,7 @@ configure(allprojects.pluginModules()) {
   }
   dependencies {
     implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
-    implementation("org.jsoup:jsoup:1.12.1")
+    implementation("org.jsoup:jsoup:1.15.3")
     implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {

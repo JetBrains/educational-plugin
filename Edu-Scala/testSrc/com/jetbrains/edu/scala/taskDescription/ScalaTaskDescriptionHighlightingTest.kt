@@ -31,13 +31,11 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
@@ -66,13 +64,11 @@ class ScalaTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">def </span><span style="...">main(args: Array[String]): Unit = {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
     </pre> </span>

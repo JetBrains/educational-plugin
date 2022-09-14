@@ -188,7 +188,7 @@ fun replaceImagesForTheme(project: Project, task: Task, taskText: String): Docum
 
 fun addExternalLinkIcons(document: Document): String {
   val links = document.getElementsByTag(A_TAG)
-  val externalLinks = links.filter { it.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
+  val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
   val arrowIcon = if (UIUtil.isUnderDarcula()) {
     EXTERNAL_LINK_ARROW_DARK_PNG
   }

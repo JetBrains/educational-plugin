@@ -45,7 +45,6 @@ object CodeforcesContestConnector {
 
   fun getLanguages(contest: Document): List<String>? {
     val supportedLanguages = CodeforcesLanguageProvider.getSupportedLanguages()
-    @Suppress("UNNECESSARY_SAFE_CALL")
     return contest.selectFirst("#programTypeForInvoker")
       ?.select("option")
       ?.map { it.text() }
@@ -61,11 +60,7 @@ object CodeforcesContestConnector {
       return emptyList()
     }
 
-    val contestElements = getContestsElements(upcomingContests)
-
-    return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
-      parseContestInformation(it, FORMAT_TIME_CLASS)
-    }
+    return extractContestInfo(upcomingContests, FORMAT_TIME_CLASS)
   }
 
   /**
@@ -76,11 +71,7 @@ object CodeforcesContestConnector {
     val recentContestsParent = document.body().getElementsByClass(CONTEST_TABLE_CLASS).firstOrNull() ?: return emptyList()
     val recentContests = recentContestsParent.getElementsByClass(DATATABLE_CLASS).firstOrNull() ?: return emptyList()
 
-    val contestElements = getContestsElements(recentContests)
-
-    return contestElements.filter { it.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }.mapNotNull {
-      parseContestInformation(it, FORMAT_DATE_CLASS)
-    }
+    return extractContestInfo(recentContests, FORMAT_DATE_CLASS)
   }
 
   private fun parseContestInformation(element: Element, dateClass: String): CodeforcesCourse? {
@@ -186,5 +177,11 @@ object CodeforcesContestConnector {
     return ZonedDateTime.of(startDateLocal, ZoneId.of("GMT+3")).withZoneSameInstant(ZoneId.systemDefault())
   }
 
-  private fun getContestsElements(recentContests: Element) = recentContests.getElementsByTag(TR_TAG)
+  private fun extractContestInfo(contests: Element, dateClass: String): List<CodeforcesCourse> {
+    val contestElements = contests.getElementsByTag(TR_TAG)
+
+    return contestElements
+      .filter { element -> element.attr(DATA_CONTEST_ID_ATTR).isNotEmpty() }
+      .mapNotNull { parseContestInformation(it, dateClass) }
+  }
 }

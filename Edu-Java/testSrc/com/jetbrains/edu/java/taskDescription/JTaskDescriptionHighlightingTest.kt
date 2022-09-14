@@ -34,15 +34,13 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
@@ -77,15 +75,13 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     <html>
      <head></head>
      <body>
-      <p>Code block with default language:</p>
-      <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <p>Code block with default language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
     </pre> </span>
-      <p>Code block with specific language:</p>
-      <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
+      <p>Code block with specific language:</p> <span class="code-block"><pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
@@ -109,8 +105,7 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   """, """
     <html>
      <head></head>
-     <body>
-      <span class="code-block"><pre>  <span style="...">class Main {</span>
+     <body><span class="code-block"><pre>  <span style="...">class Main {</span>
           <span style="...">public static void main(String[] args) {</span>
             <span style="...">System.out.println("Hello!");</span>
           <span style="...">}</span>

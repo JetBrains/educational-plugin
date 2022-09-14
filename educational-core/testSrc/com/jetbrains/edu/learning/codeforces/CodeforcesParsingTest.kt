@@ -27,7 +27,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val lesson = Lesson().apply { parent = course }
     course.addLesson(lesson)
 
-    val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()
+    val htmlElement = Jsoup.parse(loadText(contest1211)).select(".problem-statement").first()!!
     val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("A. Three Problems", task.name)

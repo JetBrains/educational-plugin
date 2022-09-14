@@ -32,8 +32,7 @@ class EduCodeHighlighter {
         // We have to check `parent.parent()` for null
         // because in case of incomplete code `parent.parent()` can be null
         // and in this case `parent.after(codeText)` throws `IllegalArgumentException`
-        @Suppress("SENSELESS_COMPARISON")
-        if (parent.tagName() == "pre" && parent.parent() != null) {
+        if (parent?.tagName() == "pre" && parent.parent() != null) {
           parent.after("<span class='code-block'>$codeText</span>")
           parent.remove()
         } else {
