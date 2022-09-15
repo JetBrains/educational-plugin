@@ -74,6 +74,7 @@ class HyperskillTaskBuilder(
             task.checkProfile = stepSource.checkProfile
           }
           name = stepSource.title
+          customPresentableName = null
         }
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title)
