@@ -137,17 +137,22 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   /**
    * No need to pass any arguments by default, but you need to pass
    * account and accessToken for [com.jetbrains.edu.learning.api.EduOAuthConnector.getUserInfo]
+   * because access token is not saved at the moment we want to get userInfo and check if current user isGuest
    */
   protected inline fun <reified Endpoints> getEndpoints(
     account: Account? = this.account,
     accessToken: String? = account?.getAccessToken(),
     baseUrl: String = this.baseUrl
   ): Endpoints {
-    if (!isUnitTestMode && account != null && !account.isUpToDate()) {
+    val freshAccessToken = if (!isUnitTestMode && account != null && !account.isUpToDate()) {
       refreshTokens()
+      account.getAccessToken()
+    }
+    else {
+      accessToken
     }
 
-    return createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool, accessToken, customInterceptor = requestInterceptor)
+    return createRetrofitBuilder(baseUrl.withTrailingSlash(), connectionPool, freshAccessToken, customInterceptor = requestInterceptor)
       .addConverterFactory(converterFactory)
       .build()
       .create(Endpoints::class.java)
