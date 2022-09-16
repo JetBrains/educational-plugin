@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -18,6 +19,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -221,8 +223,10 @@ object NavigationUtils {
     // We should save student answers and apply diffs only in student mode
     if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
       fromTask.saveStudentAnswersIfNeeded(project)
+      setFlagToEditableFiles(project, fromTask, false)
       prepareFilesForTargetTask(project, lesson, fromTask, task, showDialogIfConflict)
       project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+      setFlagToEditableFiles(project, task, true)
     }
 
     val taskDir = task.getDir(project.courseDir) ?: return
@@ -346,6 +350,19 @@ object NavigationUtils {
       for (path in toCollapse) {
         tree.collapsePath(path)
         tree.fireTreeCollapsed(path)
+      }
+    }
+  }
+
+  private fun setFlagToEditableFiles(project: Project, task: Task, flag: Boolean) {
+    runWriteAction {
+      for (taskFile in task.taskFiles.values.filter { !it.isEditable }) {
+        val virtualTaskFile = taskFile.getVirtualFile(project) ?: error("Cannot get a virtual file")
+        if (flag) {
+          GeneratorUtils.addNonEditableFileToCourse(task.course, virtualTaskFile)
+        } else {
+          GeneratorUtils.removeNonEditableFileFromCourse(task.course, virtualTaskFile)
+        }
       }
     }
   }

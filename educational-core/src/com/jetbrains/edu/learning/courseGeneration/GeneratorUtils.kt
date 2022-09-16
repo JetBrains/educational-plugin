@@ -209,6 +209,15 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
+  fun removeNonEditableFileFromCourse(course: Course, virtualTaskFile: VirtualFile) {
+    ApplicationManager.getApplication().assertWriteAccessAllowed()
+    if (course.isStudy) {
+      course.removeNonEditableFile(virtualTaskFile.path)
+      ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, false)
+    }
+  }
+
+  @Throws(IOException::class)
   @JvmStatic
   fun <T> runInWriteActionAndWait(action: ThrowableComputable<T, IOException>): T {
     val application = ApplicationManager.getApplication()

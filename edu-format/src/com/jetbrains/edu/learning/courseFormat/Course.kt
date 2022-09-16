@@ -139,4 +139,10 @@ abstract class Course : LessonContainer() {
       nonEditableFiles.add(path)
     }
   }
+
+  fun removeNonEditableFile(path: String?) {
+    if (path != null && isStudy) {
+      nonEditableFiles.remove(path)
+    }
+  }
 }

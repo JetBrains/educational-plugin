@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import junit.framework.TestCase
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
 class FrameworkLessonNavigationTest : NavigationTestBase() {
@@ -581,6 +582,54 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test editable flag for files remain unchanged when navigating the course`() {
+    val course = createCourseWithNonEditableFiles(CourseMode.STUDENT)
+    val task1 = course.findTask("lesson", "task1")
+    val task2 = course.findTask("lesson", "task2")
+    val initialEditableFlags = course.lessons.first().taskList.associate { task ->
+      task.name to task.taskFiles.entries.associate { it.key to it.value.isEditable }
+    }
+
+    fun checkTask(task: Task) {
+      for ((name, file) in task.taskFiles) {
+        task.openTaskFileInEditor(name)
+        assertTrue(file.isEditable == initialEditableFlags[task.name]?.get(name))
+      }
+    }
+
+    withVirtualFileListener(course) {
+      checkTask(task1)
+      testAction(NextTaskAction.ACTION_ID)
+      checkTask(task2)
+      testAction(PreviousTaskAction.ACTION_ID)
+      checkTask(task1)
+    }
+  }
+
+  fun `test non-editable flags when navigate tasks`() {
+    val course = createCourseWithNonEditableFiles(CourseMode.STUDENT)
+
+    val task1 = course.findTask("lesson", "task1")
+    val task2 = course.findTask("lesson", "task2")
+
+    fun checkTask(task: Task) {
+      for ((name, file) in task.taskFiles) {
+        task.openTaskFileInEditor(name)
+        val virtualFile = file.getVirtualFile(project)
+        assertNotNull(virtualFile)
+        assertTrue(file.isEditable == virtualFile!!.isWritable)
+      }
+    }
+
+    withVirtualFileListener(course) {
+      checkTask(task1)
+      testAction(NextTaskAction.ACTION_ID)
+      checkTask(task2)
+      testAction(PreviousTaskAction.ACTION_ID)
+      checkTask(task1)
+    }
+  }
+
   private inline fun doTest(actionId: String, expectedTask: Task, init: () -> Unit) {
     init()
     testAction(actionId)
@@ -615,6 +664,55 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
           placeholder(0, dependency = "lesson1#task2#fizz.kt#1")
           placeholder(1, dependency = "lesson1#task2#buzz.kt#1")
         }
+      }
+    }
+  }
+
+  private fun createCourseWithNonEditableFiles(courseMode: CourseMode) = courseWithFiles(courseMode = courseMode) {
+    frameworkLesson("lesson") {
+      eduTask("task1") {
+        taskFile(
+          name = "mem.kt",
+          text = "class Mem {}",
+          editable = false,
+        )
+        taskFile(
+          name = "Main.kt",
+          text = "fun main() = println(\"Hello world!\")",
+          editable = true,
+        )
+        taskFile(
+          name = "file1.kt",
+          text = "123",
+          editable = true,
+        )
+        taskFile(
+          name = "file2.kt",
+          text = "321",
+          editable = false,
+        )
+      }
+      eduTask("task2") {
+        taskFile(
+          name = "mem.kt",
+          text = "class Mem { TODO() }",
+          editable = true,
+        )
+        taskFile(
+          name = "Main.kt",
+          text = "fun main() = println(\"Wow this file had changed\")",
+          editable = false,
+        )
+        taskFile(
+          name = "file1.kt",
+          text = "321",
+          editable = true,
+        )
+        taskFile(
+          name = "file2.kt",
+          text = "123",
+          editable = false,
+        )
       }
     }
   }
