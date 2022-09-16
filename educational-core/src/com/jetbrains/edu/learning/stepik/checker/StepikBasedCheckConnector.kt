@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning.stepik.checker
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.DefaultCodeExecutor
@@ -15,18 +19,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
+import com.jetbrains.edu.learning.stepik.checker.StepikCheckConnector.showErrorDetails
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.TimeUnit
 
 abstract class StepikBasedCheckConnector {
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
+
+  protected abstract val loginListener: StepikBasedLoginListener
+  protected abstract val linkToHelp: String
 
   protected open val remotelyCheckedTasks: Set<Class<out Task>> = setOf(
     ChoiceTask::class.java,
@@ -53,7 +59,7 @@ abstract class StepikBasedCheckConnector {
     while (delay < timeout && lastSubmission.status == EVALUATION_STATUS) {
       TimeUnit.SECONDS.sleep(delay)
       delay *= 2
-      lastSubmission = connector.getSubmission(submissionId).onError { return it.toCheckResult() }
+      lastSubmission = connector.getSubmission(submissionId).onError { return it.toCheckResult(loginListener) }
     }
 
     if (lastSubmission.status != EVALUATION_STATUS) {
@@ -123,7 +129,7 @@ abstract class StepikBasedCheckConnector {
     if (codeExecutor == null) {
       LOG.error("Unable to get code executor for the `${task.name}` task")
       val connector = task.getStepikBasedConnector()
-      return EduCoreBundle.message("error.failed.to.post.solution", connector.platformName).toCheckResult()
+      return EduCoreBundle.message("error.failed.to.post.solution.to", connector.platformName).toCheckResult(loginListener)
     }
     val answer = codeExecutor.execute(project, task, indicator).onError {
       return it
@@ -131,7 +137,7 @@ abstract class StepikBasedCheckConnector {
 
     if (answer == DefaultCodeExecutor.NO_OUTPUT) {
       LOG.warn("No output after execution of the `${task.name}` task")
-      return EduCoreBundle.message("error.no.output").toCheckResult()
+      return EduCoreBundle.message("error.no.output").toCheckResult(loginListener)
     }
 
     val submission = StepikBasedSubmitConnector.submitDataTask(task, answer).onError { error ->
@@ -139,6 +145,31 @@ abstract class StepikBasedCheckConnector {
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
   }
+
+  protected fun showErrorDetails(project: Project, error: String) {
+    if (error == EduCoreBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
+      Notification(
+        "EduTools",
+        EduCoreBundle.message("error.failed.to.post.solution"),
+        EduCoreBundle.message("error.access.denied.with.link"),
+        NotificationType.ERROR
+      ).setListener { notification, _ ->
+        notification.expire()
+        loginListener
+      }.notify(project)
+      return
+    }
+
+    LOG.warn(error)
+    Notification(
+      "EduTools",
+      EduCoreBundle.message("error.failed.to.post.solution"),
+      EduFormatBundle.message("help.use.guide", linkToHelp),
+      NotificationType.ERROR
+    )
+      .setListener(NotificationListener.URL_OPENING_LISTENER)
+      .notify(project)
+}
 
   companion object {
     @NonNls
@@ -148,11 +179,11 @@ abstract class StepikBasedCheckConnector {
     protected val LOG: Logger = logger<StepikBasedCheckConnector>()
 
     @JvmStatic
-    protected fun String.toCheckResult(): CheckResult {
+    protected fun String.toCheckResult(loginListener: StepikBasedLoginListener): CheckResult {
       return if (this == EduCoreBundle.message("error.access.denied")) {
         CheckResult(CheckStatus.Unchecked,
                     EduCoreBundle.message("error.access.denied.with.link"),
-                    hyperlinkAction = { HyperskillLoginListener.doLogin() }
+                    hyperlinkAction = { loginListener.doLogin() }
         )
       }
       else CheckResult(CheckStatus.Unchecked, this)
@@ -178,17 +209,19 @@ abstract class StepikBasedCheckConnector {
     }
 
     @JvmStatic
-    protected fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {
+    fun failedToSubmit(project: Project, task: Task, error: String): CheckResult {
       LOG.error(error)
 
       val platformName = task.getStepikBasedConnector().platformName
       val message = EduCoreBundle.message("stepik.base.failed.to.submit.task", task.itemType, platformName)
 
-      if (task.course is HyperskillCourse) {
-        showErrorDetails(project, error)
-      }
+      showErrorDetails(project, error)
 
       return CheckResult(CheckStatus.Unchecked, message)
     }
   }
+}
+
+abstract class StepikBasedLoginListener: HyperlinkAdapter() {
+  abstract fun doLogin()
 }

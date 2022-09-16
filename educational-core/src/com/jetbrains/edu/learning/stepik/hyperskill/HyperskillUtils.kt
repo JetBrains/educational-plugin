@@ -8,10 +8,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -21,8 +21,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -37,9 +39,6 @@ import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
 private val LOG: Logger = Logger.getInstance("HyperskillUtils")
-
-val failedToPostToJBA: String
-  get() = EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)
 
 fun openSelectedStage(course: Course, project: Project) {
   if (course !is HyperskillCourse) {
@@ -134,37 +133,12 @@ fun getSelectedProjectIdUnderProgress(): Int? {
   }
 }
 
-fun showErrorDetails(project: Project, error: String) {
-  if (error == EduCoreBundle.message("error.access.denied")) {
-    Notification(
-      "EduTools",
-      EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
-      EduCoreBundle.message("error.access.denied.with.link"),
-      NotificationType.ERROR
-    ).setListener { notification, e ->
-      notification.expire()
-      HyperskillLoginListener.hyperlinkUpdate(e)
-    }.notify(project)
-    return
-  }
-
-  LOG.warn(error)
-  Notification(
-    "EduTools",
-    EduCoreBundle.message("error.failed.to.post.solution", EduNames.JBA),
-    EduFormatBundle.message("help.use.guide", EduNames.FAILED_TO_POST_TO_JBA_URL),
-    NotificationType.ERROR
-  )
-    .setListener(NotificationListener.URL_OPENING_LISTENER)
-    .notify(project)
-}
-
-object HyperskillLoginListener : HyperlinkAdapter() {
+object HyperskillLoginListener : StepikBasedLoginListener() {
   override fun hyperlinkActivated(e: HyperlinkEvent) {
     doLogin()
   }
 
-  fun doLogin() {
+  override fun doLogin() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.getFullName() ?: return@Runnable
       showLoginSuccessfulNotification(fullName)

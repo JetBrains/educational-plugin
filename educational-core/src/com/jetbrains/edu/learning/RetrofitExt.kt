@@ -17,7 +17,6 @@ import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.failedToPostToJBA
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
@@ -28,7 +27,7 @@ import retrofit2.Retrofit
 import java.io.File
 import java.io.IOException
 import java.io.InterruptedIOException
-import java.net.HttpURLConnection
+import java.net.HttpURLConnection.*
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -128,13 +127,6 @@ fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response
   }
 }
 
-fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
-  return executeParsingErrors(true).flatMap {
-    val result = it.body()?.extractResult()?.firstOrNull()
-    if (result == null) Err(failedToPostToJBA) else Ok(result)
-  }
-}
-
 fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, String> {
   return try {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
@@ -183,16 +175,16 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   log(error, "Code ${response.code()}", omitErrors)
 
   return when (response.code()) {
-    HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_CREATED -> Ok(response) // 200, 201
-    HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY ->
+    HTTP_OK, HTTP_CREATED -> Ok(response) // 200, 201
+    HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
       Err("${EduCoreBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
-    in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION ->
+    in HTTP_INTERNAL_ERROR..HTTP_VERSION ->
       Err("${EduCoreBundle.message("error.service.down")}\n\n$error") // 500x
-    HttpURLConnection.HTTP_FORBIDDEN -> {
+    HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> {
       val errorMessage = processForbiddenErrorMessage(error) ?: EduCoreBundle.message("error.access.denied")
       Err(errorMessage)
     }
-    in HttpURLConnection.HTTP_BAD_REQUEST..HttpURLConnection.HTTP_UNSUPPORTED_TYPE ->
+    in HTTP_BAD_REQUEST..HTTP_UNSUPPORTED_TYPE ->
       Err(EduCoreBundle.message("error.unexpected.error", error)) // 400x
     else -> {
       LOG.warn("Code ${response.code()} is not handled")

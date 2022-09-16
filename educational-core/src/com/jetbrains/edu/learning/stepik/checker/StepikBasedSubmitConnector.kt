@@ -43,7 +43,7 @@ object StepikBasedSubmitConnector {
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
     if (codeTaskText == null) {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
-      return Err(EduCoreBundle.message("error.failed.to.post.solution", connector.platformName))
+      return Err(EduCoreBundle.message("error.failed.to.post.solution.to", connector.platformName))
     }
     val submission = StepikBasedSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, defaultLanguage)
     return connector.postSubmission(submission)

@@ -44,21 +44,9 @@ public class StepikUser extends OAuthAccount<StepikUserInfo> {
   }
 
   @Transient
-  public void setFirstName(final String firstName) {
-    StepikUserInfo info = getUserInfo();
-    info.setFirstName(firstName);
-  }
-
-  @Transient
   public String getLastName() {
     StepikUserInfo info = getUserInfo();
     return info.getLastName();
-  }
-
-  @Transient
-  public void setLastName(final String lastName) {
-    StepikUserInfo info = getUserInfo();
-    info.setLastName(lastName);
   }
 
   @Transient

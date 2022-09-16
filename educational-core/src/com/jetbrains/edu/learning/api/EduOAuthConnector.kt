@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_C
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import okhttp3.ConnectionPool
@@ -158,7 +159,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     val response = getEduOAuthEndpoints()
       .refreshTokens(baseOAuthTokenUrl, REFRESH_TOKEN, clientId, clientSecret, refreshToken)
       .executeHandlingExceptions()
-    return response?.body() ?: error("Failed to refresh tokens")
+    return response?.body() ?: error(EduCoreBundle.message("error.failed.to.refresh.tokens"))
   }
 
   @Throws(IOException::class)

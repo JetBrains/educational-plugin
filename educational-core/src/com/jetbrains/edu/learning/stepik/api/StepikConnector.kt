@@ -7,12 +7,11 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -62,11 +61,15 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(Reply::class.java, StepikReplyDeserializer())
-    createObjectMapper(module)
+    StepikBasedConnector.createObjectMapper(module)
   }
 
   private val stepikEndpoints: StepikEndpoints
     get() = getEndpoints()
+
+  override fun doRefreshTokens() {
+    refreshTokens()
+  }
 
   // Authorization requests:
 
@@ -175,20 +178,27 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
     return allSubmissions
   }
 
-  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> =
-    stepikEndpoints.submissionById(id).executeAndExtractFirst(SubmissionsList::submissions)
+  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> {
+    return withTokenRefreshIfFailed {
+      val submission = stepikEndpoints.submissionById(id).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
+                       ?: return@withTokenRefreshIfFailed Err("Failed to load submission with id = $id")
+      Ok(submission)
+    }
+  }
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
-    val userId = account?.id ?: return Err("Attempt to get list of attempts for unauthorized user")
-    val attempts = stepikEndpoints.attempts(task.id, userId)
-      .executeParsingErrors(true)
-      .flatMap {
-        val result = it.body()?.attempts
-        if (result == null) Err(it.message()) else Ok(result)
-      }
-      .onError { return Err(it) }
-    val activeAttempt = attempts.firstOrNull { it.isActive }
-    return Ok(activeAttempt)
+    return withTokenRefreshIfFailed {
+      val userId = account?.id ?: return@withTokenRefreshIfFailed Err("Attempt to get list of attempts for unauthorized user")
+      val attempts = stepikEndpoints.attempts(task.id, userId)
+        .executeParsingErrors(true)
+        .flatMap {
+          val result = it.body()?.attempts
+          if (result == null) Err(it.message()) else Ok(result)
+        }
+        .onError { return@withTokenRefreshIfFailed Err(it) }
+      val activeAttempt = attempts.firstOrNull { it.isActive }
+      Ok(activeAttempt)
+    }
   }
 
   override fun getDataset(attempt: Attempt): Result<String, String> {
@@ -241,31 +251,35 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
   override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> {
     val submissionData = SubmissionData(submission)
-    val response = stepikEndpoints.submission(submissionData).executeHandlingExceptions()
-    val submissions = response?.body()?.submissions
-    if (submissions.isNullOrEmpty() || response.code() != HttpStatus.SC_CREATED) {
-      return Err("Failed to make submission $submissions")
+    return withTokenRefreshIfFailed {
+      val response = stepikEndpoints.submission(submissionData).executeHandlingExceptions()
+      val submissions = response?.body()?.submissions
+      if (submissions.isNullOrEmpty() || response.code() != HttpStatus.SC_CREATED) {
+        return@withTokenRefreshIfFailed Err("Failed to make submission $submissions")
+      }
+      if (submissions.size > 1) {
+        LOG.warn("Got a submission wrapper with incorrect submissions number: ${submissions.size}")
+      }
+      Ok(submissions.first())
     }
-    if (submissions.size > 1) {
-      LOG.warn("Got a submission wrapper with incorrect submissions number: ${submissions.size}")
-    }
-    return Ok(submissions.first())
   }
 
   override fun postAttempt(task: Task): Result<Attempt, String> {
     val stepId = task.id
-    val response = stepikEndpoints.attempt(AttemptData(stepId)).executeHandlingExceptions(true)
-    val attempt = response?.body()?.attempts?.firstOrNull()
-    if (response?.code() != HttpStatus.SC_CREATED || attempt == null) {
-      return Err("Failed to make attempt $stepId")
+    return withTokenRefreshIfFailed {
+      val response = stepikEndpoints.attempt(AttemptData(stepId)).executeParsingErrors().onError { return@withTokenRefreshIfFailed Err(it) }
+      val attempt = response.body()?.attempts?.firstOrNull() ?:  return@withTokenRefreshIfFailed Err("Failed to make attempt $stepId")
+      Ok(attempt)
     }
-    return Ok(attempt)
   }
 
   fun postView(assignmentId: Int, stepId: Int) {
-    val response = stepikEndpoints.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
-    if (response?.code() != HttpStatus.SC_CREATED) {
-      LOG.warn("Error while Views post, code: " + response?.code())
+    withTokenRefreshIfFailed {
+      val response = stepikEndpoints.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
+      if (response?.code() != HttpStatus.SC_CREATED) {
+        return@withTokenRefreshIfFailed Err("Error while Views post, code: " + response?.code())
+      }
+      Ok(response)
     }
   }
 
@@ -452,19 +466,5 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
 
     @JvmStatic
     fun getInstance(): StepikConnector = service()
-
-    @JvmStatic
-    fun createObjectMapper(module: SimpleModule): ObjectMapper {
-      val objectMapper = ConnectorUtils.createMapper()
-      objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
-      objectMapper.addMixIn(StepikLesson::class.java, StepikLessonMixin::class.java)
-      objectMapper.addMixIn(EduFile::class.java, StepikEduFileMixin::class.java)
-      objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
-      objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
-      objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
-      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
-      objectMapper.registerModule(module)
-      return objectMapper
-    }
   }
 }

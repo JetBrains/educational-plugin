@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -19,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.createObjectMapper
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.WebSocketConnectionState
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
-  override val platformName: String = HYPERSKILL
+  override val platformName: String = EduNames.JBA
 
   override val redirectHost: String = "127.0.0.1"
 
@@ -65,7 +65,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   override val objectMapper: ObjectMapper by lazy {
     val module = SimpleModule()
     module.addDeserializer(PyCharmStepOptions::class.java, JacksonStepOptionsDeserializer())
-    StepikConnector.createObjectMapper(module)
+    createObjectMapper(module)
   }
 
   override val requestInterceptor: Interceptor = Interceptor { chain ->
@@ -77,6 +77,10 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
 
   private val hyperskillEndpoints: HyperskillEndpoints
     get() = getEndpoints()
+
+  override fun doRefreshTokens() {
+    refreshTokens()
+  }
 
   // Authorization requests:
 
@@ -233,7 +237,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   }
 
   override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(id).executeAndExtractFirst(SubmissionsList::submissions) }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.submission(id).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   fun getUser(userId: Int): Result<User, String> {
@@ -241,13 +245,13 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   }
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
-    return withTokenRefreshIfNeeded {
+    return withTokenRefreshIfFailed {
       val userId = account?.userInfo?.id
-                   ?: return@withTokenRefreshIfNeeded Err("Attempt to get list of attempts for unauthorized user")
+                   ?: return@withTokenRefreshIfFailed Err("Trying to get list of attempts for unauthorized user")
       val attempts = hyperskillEndpoints.attempts(task.id, userId).executeParsingErrors(true).flatMap {
         val result = it.body()?.attempts
         if (result == null) Err(it.message()) else Ok(result)
-      }.onError { return@withTokenRefreshIfNeeded Err(it) }
+      }.onError { return@withTokenRefreshIfFailed Err(it) }
 
       val activeAttempt = attempts.firstOrNull { it.isActive && it.isRunning }
       Ok(activeAttempt)
@@ -264,26 +268,26 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   // Post requests:
 
   override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.submission(submission).executeAndExtractFirst(SubmissionsList::submissions) }
   }
 
   override fun postAttempt(task: Task): Result<Attempt, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.attempt(Attempt(task.id)).executeAndExtractFirst(AttemptsList::attempts) }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.attempt(Attempt(task.id)).executeAndExtractFirst(AttemptsList::attempts) }
   }
 
   fun markTheoryCompleted(step: Int): Result<Any, String> =
-    withTokenRefreshIfNeeded { hyperskillEndpoints.completeStep(step).executeParsingErrors(true) }
+    withTokenRefreshIfFailed { hyperskillEndpoints.completeStep(step).executeParsingErrors(true) }
 
   fun getWebSocketConfiguration(): Result<WebSocketConfiguration, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.websocket().executeAndExtractFromBody() }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.websocket().executeAndExtractFromBody() }
   }
 
   fun sendFrontendEvents(events: List<HyperskillFrontendEvent>): Result<List<HyperskillFrontendEvent>, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.sendFrontendEvents(events).executeAndExtractFromBody() }.map { it.events }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.sendFrontendEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
   fun sendTimeSpentEvents(events: List<HyperskillTimeSpentEvent>): Result<List<HyperskillTimeSpentEvent>, String> {
-    return withTokenRefreshIfNeeded { hyperskillEndpoints.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
+    return withTokenRefreshIfFailed { hyperskillEndpoints.sendTimeSpentEvents(events).executeAndExtractFromBody() }.map { it.events }
   }
 
   private fun <T> Call<T>.executeAndExtractFromBody(): Result<T, String> {
@@ -291,16 +295,6 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
       val result = it.body()
       if (result == null) Err(it.message()) else Ok(result)
     }
-  }
-
-  private fun <T> withTokenRefreshIfNeeded(call: () -> Result<T, String>): Result<T, String> {
-    val result = call()
-    if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
-        && result is Err && result.error == EduCoreBundle.message("error.access.denied")) {
-      refreshTokens()
-      return call()
-    }
-    return result
   }
 
   fun connectToWebSocketWithTimeout(timeOutSec: Long, url: String, initialState: WebSocketConnectionState): WebSocketConnectionState {
@@ -354,6 +348,13 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
   protected open fun createWebSocket(client: OkHttpClient, url: String, listener: WebSocketListener): WebSocket =
     client.newWebSocket(Request.Builder().url(url).build(), listener)
 
+  private fun <T, R> Call<T>.executeAndExtractFirst(extractResult: T.() -> List<R>): Result<R, String> {
+    return executeParsingErrors(true).flatMap {
+      val result = it.body()?.extractResult()?.firstOrNull()
+      if (result == null) Err(EduCoreBundle.message("error.failed.to.post.solution.with.guide", EduNames.JBA, EduNames.FAILED_TO_POST_TO_JBA_URL)) else Ok(result)
+    }
+  }
+
   companion object {
     private val LOG: Logger = logger<HyperskillConnector>()
 
@@ -374,7 +375,7 @@ abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, Hypers
       }
     }
 
-    fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
+    private fun HyperskillCourse.updateAdditionalFiles(stepSource: HyperskillStepSource) {
       val files = (stepSource.block?.options as? PyCharmStepOptions)?.hyperskill?.files ?: return
       additionalFiles = files.filter { taskFile ->
         taskFile.name !in additionalFiles.map { it.name }

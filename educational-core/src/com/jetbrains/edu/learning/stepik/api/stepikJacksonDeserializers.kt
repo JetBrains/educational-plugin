@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
@@ -39,7 +39,7 @@ private val LOG = Logger.getInstance(EduUtils::class.java)
 class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<PyCharmStepOptions>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): PyCharmStepOptions {
-    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
+    val objectMapper = StepikBasedConnector.createObjectMapper(SimpleModule())
     val node: JsonNode = jp.codec.readTree(jp)
     val migratedNode = migrate(node as ObjectNode, JSON_FORMAT_VERSION)
     return objectMapper.treeToValue(migratedNode, PyCharmStepOptions::class.java)
@@ -84,7 +84,7 @@ class StepikReplyDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : 
     val jsonObject: ObjectNode = jp.codec.readTree(jp) as ObjectNode
     val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION)
 
-    val objectMapper = StepikConnector.createObjectMapper(SimpleModule())
+    val objectMapper = StepikBasedConnector.createObjectMapper(SimpleModule())
     val reply = objectMapper.treeToValue(jsonObject, Reply::class.java)
     // We need to save original version of reply object
     // to correct deserialize Reply#eduTask
@@ -173,7 +173,7 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
           val convertedTaskFiles = ObjectMapper().createObjectNode()
           for ((path, taskFile) in taskFiles.fields()) {
             val convertedPath = "${taskRoots.taskFilesRoot}/$path"
-            (taskFile as ObjectNode).put(SerializationUtils.Json.NAME, convertedPath)
+            (taskFile as ObjectNode).put(NAME, convertedPath)
             convertedTaskFiles.set<JsonNode?>(convertedPath, taskFile)
           }
           set<JsonNode?>(SerializationUtils.Json.TASK_FILES, convertedTaskFiles)

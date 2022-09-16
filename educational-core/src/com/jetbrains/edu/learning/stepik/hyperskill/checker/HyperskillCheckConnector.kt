@@ -10,14 +10,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedLoginListener
 import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_URL
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
-import com.jetbrains.edu.learning.stepik.hyperskill.showErrorDetails
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -30,6 +31,10 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
   private val LOG = Logger.getInstance(HyperskillCheckConnector::class.java)
   private val CODE_TASK_CHECK_TIMEOUT = TimeUnit.MINUTES.toSeconds(2)
   const val EVALUATION_STATUS = "evaluation"
+  override val loginListener: StepikBasedLoginListener
+    get() = HyperskillLoginListener
+  override val linkToHelp: String = EduNames.FAILED_TO_POST_TO_JBA_URL
+
 
   override val remotelyCheckedTasks: Set<Class<out Task>>
     get() = setOf(

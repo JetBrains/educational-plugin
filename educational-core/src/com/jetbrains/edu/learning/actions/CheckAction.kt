@@ -29,12 +29,12 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.EduActionUtils.showFakeProgress
 import com.jetbrains.edu.learning.checker.CheckListener
-import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager.remoteCheckerForTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.failedToCheck
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -48,6 +48,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
+import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector.Companion.failedToSubmit
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -247,7 +248,12 @@ class CheckAction() : ActionWithProgressIcon(lazyMessage("action.check.text"), l
 
     override fun onThrowable(error: Throwable) {
       super.onThrowable(error)
-      TaskDescriptionView.getInstance(project).checkFinished(task, failedToCheck)
+      if (error.message == message("error.failed.to.refresh.tokens")) {
+        TaskDescriptionView.getInstance(project).checkFinished(task, failedToSubmit(project, task, message("error.failed.to.refresh.tokens")))
+      }
+      else {
+        TaskDescriptionView.getInstance(project).checkFinished(task, failedToCheck)
+      }
     }
 
     private fun turnOffTestRunnerNotifications(): NotificationSettings {

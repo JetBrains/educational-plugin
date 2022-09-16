@@ -1,9 +1,18 @@
 package com.jetbrains.edu.learning.stepik.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.openapi.application.ApplicationManager
+import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.api.ConnectorUtils
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -28,6 +37,18 @@ interface StepikBasedConnector {
 
   fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String>
 
+  fun doRefreshTokens()
+
+  fun <T> withTokenRefreshIfFailed(call: () -> Result<T, String>): Result<T, String> {
+    val result = call()
+    if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
+        && result is Err && result.error == EduCoreBundle.message("error.access.denied")) {
+      doRefreshTokens()
+      return call()
+    }
+    return result
+  }
+
   companion object {
     fun Course.getStepikBasedConnector(): StepikBasedConnector {
       return when {
@@ -38,5 +59,19 @@ interface StepikBasedConnector {
     }
 
     fun Task.getStepikBasedConnector(): StepikBasedConnector = course.getStepikBasedConnector()
+
+    @JvmStatic
+    fun createObjectMapper(module: SimpleModule): ObjectMapper {
+      val objectMapper = ConnectorUtils.createMapper()
+      objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
+      objectMapper.addMixIn(StepikLesson::class.java, StepikLessonMixin::class.java)
+      objectMapper.addMixIn(EduFile::class.java, StepikEduFileMixin::class.java)
+      objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
+      objectMapper.addMixIn(Task::class.java, StepikTaskMixin::class.java)
+      objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
+      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+      objectMapper.registerModule(module)
+      return objectMapper
+    }
   }
 }
