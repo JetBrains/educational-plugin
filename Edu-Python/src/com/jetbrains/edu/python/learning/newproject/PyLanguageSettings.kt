@@ -27,6 +27,7 @@ import com.jetbrains.python.sdk.detectSystemWideSdks
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
+import java.awt.event.ItemEvent
 import javax.swing.JComponent
 
 open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
@@ -40,6 +41,12 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
   ): List<LabeledComponent<JComponent>> {
 
     val sdkField = PySdkPathChoosingComboBox()
+    sdkField.childComponent.addItemListener {
+      if (it.stateChange == ItemEvent.SELECTED) {
+        mySettings.sdk = sdkField.selectedSdk
+        notifyListeners()
+      }
+    }
 
     addBaseInterpretersAsync(sdkField, emptyList(), null, context ?: UserDataHolderBase()) {
       val fakeSdk = createFakeSdk(course, context)
@@ -47,8 +54,6 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         sdkField.addSdkItemOnTop(fakeSdk)
         sdkField.selectedSdk = fakeSdk
       }
-      mySettings.sdk = sdkField.selectedSdk
-      notifyListeners()
     }
 
     return listOf<LabeledComponent<JComponent>>(
