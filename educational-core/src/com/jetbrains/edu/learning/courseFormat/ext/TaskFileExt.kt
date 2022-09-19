@@ -10,8 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 
@@ -60,7 +60,7 @@ private fun TaskFile.resetDocument(project: Project): Boolean {
   val document = getDocument(project)
   // Note, nullable document is valid situation in case of binary files.
   if (document == null) {
-    LOG.warn("Failed to find document for task file $name")
+    LOG.warning("Failed to find document for task file $name")
     return false
   }
 

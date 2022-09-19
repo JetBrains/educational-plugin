@@ -22,13 +22,13 @@ sealed class AnswerTask : Task {
   fun getInputAnswer(project: Project): String {
     val answerTaskFile = getTaskFile(ANSWER_FILE_NAME)
     if (answerTaskFile == null) {
-      LOG.warn("Task with answer: ${itemType} for task is null")
+      LOG.warning("Task with answer: ${itemType} for task is null")
       return ""
     }
 
     val answerPlaceholder = answerTaskFile.answerPlaceholders.firstOrNull()
     if (answerPlaceholder == null) {
-      LOG.warn("Answer placeholder in file: ${itemType} for task is null or empty")
+      LOG.warning("Answer placeholder in file: ${itemType} for task is null or empty")
       return ""
     }
 

@@ -13,7 +13,7 @@ data class CheckFeedback(
 
   fun toCheckResult(status: CheckStatus): CheckResult {
     if ((expected == null && actual != null) || (expected != null && actual == null)) {
-      LOG.warn("Expected/Actual: one value is missing. Second value would be ignored")
+      LOG.warning("Expected/Actual: one value is missing. Second value would be ignored")
     }
     val diff = if (expected != null && actual != null) CheckResultDiff(expected, actual) else null
     return CheckResult(status, message, diff = diff)

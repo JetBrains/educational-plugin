@@ -4,6 +4,7 @@ import org.jetbrains.annotations.PropertyKey
 import java.lang.reflect.Method
 import java.text.MessageFormat
 import java.util.*
+import java.util.logging.Level
 
 const val FORMAT_BUNDLE = "messages.EduFormatBundle"
 private const val BUNDLE_CLASS = "com.jetbrains.edu.learning.messages.EduFormatBundle"
@@ -33,7 +34,7 @@ internal fun message(@PropertyKey(resourceBundle = FORMAT_BUNDLE) key: String, v
       messageMethod.invoke(bundleObject, key, params) as String
     }
     catch (e: Throwable) {
-      LOG.warn("Failed to invoke `$BUNDLE_CLASS.message()`", e)
+      LOG.log(Level.WARNING, "Failed to invoke `$BUNDLE_CLASS.message()`", e)
       bundledMessage(key, params)
     }
   }

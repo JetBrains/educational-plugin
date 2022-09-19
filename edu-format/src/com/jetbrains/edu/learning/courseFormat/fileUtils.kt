@@ -4,6 +4,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.logging.Level
 
 fun isBinary(contentType: String): Boolean {
   return contentType.startsWith("image") ||
@@ -21,7 +22,7 @@ fun mimeFileType(path: String): String? {
     Files.probeContentType(Paths.get(path))
   }
   catch (e: IOException) {
-    LOG.error("Failed to determine file mimetype", e)
+    LOG.log(Level.SEVERE, "Failed to determine file mimetype", e)
     null
   }
 }

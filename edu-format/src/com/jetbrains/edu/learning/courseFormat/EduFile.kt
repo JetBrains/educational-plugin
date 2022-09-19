@@ -29,7 +29,7 @@ open class EduFile {
   @Suppress("unused") // used for serialization
   fun getTextToSerialize(): String? {
     if (exceedsBase64ContentLimit(text)) {
-      LOG.warn("Base64 encoding of `$name` file exceeds limit (${getBinaryFileLimit().toLong()}), " +
+      LOG.warning("Base64 encoding of `$name` file exceeds limit (${getBinaryFileLimit().toLong()}), " +
                "its content isn't serialized")
       return null
     }

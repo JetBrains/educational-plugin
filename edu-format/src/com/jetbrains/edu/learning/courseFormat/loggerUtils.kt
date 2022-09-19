@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import java.util.logging.Logger
+
 
 internal inline fun <reified T : Any> logger(): Logger {
-  return LoggerFactory.getLogger("#" + T::class.java.name)
+  return Logger.getLogger("#" + T::class.java.name)
 }

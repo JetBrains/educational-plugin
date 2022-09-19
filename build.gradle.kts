@@ -544,7 +544,6 @@ project(":edu-format") {
     implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = "2.10.0") {
       excludeKotlinDeps()
     }
-    compileOnly(group = "org.slf4j", name = "slf4j-api", version = "1.7.29")
   }
 }
 
