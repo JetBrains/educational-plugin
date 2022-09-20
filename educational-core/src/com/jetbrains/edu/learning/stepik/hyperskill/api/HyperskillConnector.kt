@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 abstract class HyperskillConnector : EduOAuthConnector<HyperskillAccount, HyperskillUserInfo>(), StepikBasedConnector {
-  override val platformName: String = EduNames.JBA
+  override val platformName: String = HYPERSKILL
 
   override val redirectHost: String = "127.0.0.1"
 
