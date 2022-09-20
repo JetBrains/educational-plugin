@@ -184,7 +184,7 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     assertEquals(attempt, task.attempt)
   }
 
-  fun `test quited date`() {
+  fun `test quoted date`() {
     val id = 1
     val yamlText = """
     |id: $id
