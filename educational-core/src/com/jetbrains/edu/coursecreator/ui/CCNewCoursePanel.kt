@@ -34,12 +34,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.errors.ready
+import com.jetbrains.edu.learning.newproject.ui.errors.*
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component

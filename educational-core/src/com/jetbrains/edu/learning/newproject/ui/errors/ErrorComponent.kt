@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.newproject.ui.errors
 
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.JBColor
@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType
+import com.jetbrains.edu.learning.newproject.ui.createCourseDescriptionStylesheet
+import com.jetbrains.edu.learning.newproject.ui.createErrorStylesheet
 import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import java.awt.*
 import javax.swing.Icon

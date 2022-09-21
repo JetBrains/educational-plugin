@@ -5,7 +5,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.ErrorComponent
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorComponent
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
