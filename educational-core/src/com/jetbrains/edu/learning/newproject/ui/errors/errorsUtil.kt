@@ -9,15 +9,12 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 fun getErrorState(course: Course?, validateSettings: (Course) -> SettingsValidationResult): ErrorState {
   var languageError: ErrorState = ErrorState.NothingSelected
   if (course != null) {
-    val languageSettingsValidationResult = validateSettings(course)
-    if (languageSettingsValidationResult is SettingsValidationResult.Pending) {
-      return ErrorState.Pending
-    }
+    val validationResult = validateSettings(course)
 
-    languageError = when (languageSettingsValidationResult) {
+    languageError = when (validationResult) {
       is SettingsValidationResult.Pending -> ErrorState.Pending
       is SettingsValidationResult.Ready -> {
-        val validationMessage = languageSettingsValidationResult.validationMessage
+        val validationMessage = validationResult.validationMessage
         validationMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
       }
     }

@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
-import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.Executor.execCancelable
@@ -102,10 +101,10 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
       val codeforcesCourse = data.course as? CodeforcesCourse ?: return
       hyperlinkLabel.apply {
         isVisible = codeforcesCourse.isRegistrationOpen == true && codeforcesCourse.isOngoing
-        setListener(LinkListener { _, course ->
-          val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
-          register(codeforcesCourse.id, registrationLink, codeforcesCourse)
-        }, codeforcesCourse)
+        setListener({ _, course ->
+                      val registrationLink = CodeforcesNames.CODEFORCES_URL + course.registrationLink
+                      register(codeforcesCourse.id, registrationLink, codeforcesCourse)
+                    }, codeforcesCourse)
       }
 
       buttonsPanel.onCourseSelectionChanged(data)

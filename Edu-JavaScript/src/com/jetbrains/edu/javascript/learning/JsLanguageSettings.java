@@ -1,6 +1,9 @@
 package com.jetbrains.edu.javascript.learning;
 
-import com.intellij.javascript.nodejs.interpreter.*;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -33,12 +36,7 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
         return true;
       }
     };
-    myInterpreterField.addChangeListener(new NodeJsInterpreterChangeListener() {
-      @Override
-      public void interpreterChanged(@Nullable NodeJsInterpreter interpreter) {
-        mySettings.setSelectedInterpreter(interpreter);
-      }
-    });
+    myInterpreterField.addChangeListener(interpreter -> mySettings.setSelectedInterpreter(interpreter));
     myInterpreterField.setInterpreterRef(NodeJsInterpreterManager.getInstance(defaultProject).getInterpreterRef());
   }
 
@@ -57,12 +55,14 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
       LabeledComponent.create(myInterpreterField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST));
   }
 
-  @Nullable
+  @NotNull
   @Override
   public SettingsValidationResult validate(@Nullable Course course, @Nullable String courseLocation) {
     NodeJsInterpreter interpreter = myInterpreterField.getInterpreter();
     String message = NodeInterpreterUtil.validateAndGetErrorMessage(interpreter);
-    if (message == null) return null;
+    if (message == null) {
+      return SettingsValidationResult.OK;
+    }
     ValidationMessage validationMessage = new ValidationMessage(
       EduJavaScriptBundle.message("configure.js.environment.help", message, EduNames.ENVIRONMENT_CONFIGURATION_LINK_JS),
       EduNames.ENVIRONMENT_CONFIGURATION_LINK_JS

@@ -7,3 +7,5 @@ data class ValidationMessage @JvmOverloads constructor(
   val hyperlinkAddress: String? = null,
   val type: ValidationMessageType = ValidationMessageType.ERROR
 )
+
+fun ValidationMessage.ready(): SettingsValidationResult = SettingsValidationResult.Ready(this)

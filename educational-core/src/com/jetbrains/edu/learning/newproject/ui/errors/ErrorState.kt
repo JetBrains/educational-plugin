@@ -39,7 +39,7 @@ sealed class ErrorState(
 
   object NothingSelected : ErrorState(OK, null, Color.BLACK, false)
   object None : ErrorState(OK, null, Color.BLACK, true)
-  object Pending : ErrorState(OK, null, Color.BLACK, false)
+  object Pending : ErrorState(LANGUAGE_SETTINGS_PENDING, null, Color.BLACK, false)
 
   object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED,
                                   ValidationMessage(EduCoreBundle.message("validation.stepik.log.in.needed"), type = WARNING),
@@ -115,7 +115,6 @@ sealed class ErrorState(
           is CourseCompatibility.PluginsRequired -> {
             if (compatibility.toInstallOrEnable.isEmpty()) RestartNeeded else RequirePlugins(compatibility.toInstallOrEnable)
           }
-
           else -> None
         }
       }
@@ -202,6 +201,8 @@ sealed class ErrorState(
  */
 private enum class ErrorSeverity {
   OK,
+
+  LANGUAGE_SETTINGS_PENDING,
 
   LOGIN_RECOMMENDED,
   LOGIN_ERROR,

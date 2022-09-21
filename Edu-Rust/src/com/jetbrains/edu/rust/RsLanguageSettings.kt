@@ -61,11 +61,9 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
       toolchain == null -> {
         ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
       }
-
       !toolchain.looksLikeValidToolchain() -> {
         ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"), ENVIRONMENT_CONFIGURATION_LINK_RUST)
       }
-
       else -> null
     }
     return SettingsValidationResult.Ready(validationMessage)
