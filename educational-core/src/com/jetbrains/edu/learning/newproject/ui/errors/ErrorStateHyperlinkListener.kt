@@ -70,9 +70,9 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
           }
         }
 
-        Disposer.register(parentDisposable, Disposable {
+        Disposer.register(parentDisposable) {
           PluginStateManager.removeStateListener(listener)
-        })
+        }
         val pluginStringIds = state.pluginIds.mapTo(HashSet()) { PluginId.getId(it.stringId) }
         PluginStateManager.addStateListener(listener)
         installAndEnablePlugin(pluginStringIds) {}
@@ -109,20 +109,8 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
   }
 
   private fun doValidation(coursePanel: CoursePanel) {
-    var languageError: ErrorState = ErrorState.NothingSelected
-    val course = coursePanel.course
-    if (course != null) {
-      val settingsValidationResult = coursePanel.validateSettings(course)
-
-      languageError = when (settingsValidationResult) {
-        is SettingsValidationResult.Pending -> ErrorState.Pending
-        is SettingsValidationResult.Ready -> {
-          val validationMessage = settingsValidationResult.validationMessage
-          validationMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
-        }
-      }
-    }
-    val errorState = ErrorState.forCourse(course).merge(languageError)
+    val course = coursePanel.course ?: return
+    val errorState = getErrorState(course) { coursePanel.validateSettings(course) }
     coursePanel.setError(errorState)
     coursePanel.setButtonsEnabled(errorState.courseCanBeStarted)
   }

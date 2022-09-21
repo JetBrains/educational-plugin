@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
@@ -34,6 +35,7 @@ import javax.swing.JComponent
 open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   private val mySettings: PyNewProjectSettings = PyNewProjectSettings()
+  private var isSettingsInitialized = false
 
   override fun getLanguageSettingsComponents(
     course: Course,
@@ -55,6 +57,9 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         sdkField.addSdkItemOnTop(fakeSdk)
         sdkField.selectedSdk = fakeSdk
       }
+      mySettings.sdk = sdkField.selectedSdk
+      isSettingsInitialized = true
+      notifyListeners()
     }
 
     return listOf<LabeledComponent<JComponent>>(
@@ -66,11 +71,12 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     course ?: return SettingsValidationResult.OK
-    val sdk = mySettings.sdk
-    if (sdk == null) {
-      val validationMessage = ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ""),
-                                                ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
-      return SettingsValidationResult.Ready(validationMessage)
+    val sdk = mySettings.sdk ?: return if (isSettingsInitialized) {
+      ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ENVIRONMENT_CONFIGURATION_LINK_PYTHON),
+                        ENVIRONMENT_CONFIGURATION_LINK_PYTHON).ready()
+    }
+    else {
+      SettingsValidationResult.Pending
     }
 
     val sdkApplicable = isSdkApplicable(course, sdk.languageLevel)

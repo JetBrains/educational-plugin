@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPan
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component
@@ -188,33 +189,27 @@ class CCNewCoursePanel(
         EduCoreBundle.message("error.wrong.location"))
       else -> null
     }
-    processError(SettingsValidationResult.Ready(validationMessage))
+    processValidationResult(SettingsValidationResult.Ready(validationMessage))
   }
 
   private fun doValidation() {
     val excessTitleLength = titleField.text.length - MAX_COURSE_TITLE_LENGTH
     val settingsValidationResult = when {
-      titleField.text.isNullOrBlank() -> SettingsValidationResult.Ready(
-        ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title")))
-
-      excessTitleLength > 0 -> SettingsValidationResult.Ready(ValidationMessage(
-        EduCoreBundle.message("cc.new.course.error.exceeds.max.title.length", excessTitleLength, MAX_COURSE_TITLE_LENGTH)))
-
-      descriptionTextArea.text.isNullOrBlank() -> SettingsValidationResult.Ready(
-        ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description")))
-
-      requiredAndDisabledPlugins.isNotEmpty() -> SettingsValidationResult.Ready(ErrorState.errorMessage(requiredAndDisabledPlugins))
+      titleField.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.title")).ready()
+      excessTitleLength > 0 -> ValidationMessage(
+        EduCoreBundle.message("cc.new.course.error.exceeds.max.title.length", excessTitleLength, MAX_COURSE_TITLE_LENGTH)).ready()
+      descriptionTextArea.text.isNullOrBlank() -> ValidationMessage(EduCoreBundle.message("cc.new.course.error.enter.description")).ready()
+      requiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(requiredAndDisabledPlugins).ready()
       else -> languageSettings.validate(null, locationString)
     }
-    processError(settingsValidationResult)
+    processValidationResult(settingsValidationResult)
   }
 
-  private fun processError(settingsValidationResult: SettingsValidationResult) {
+  private fun processValidationResult(settingsValidationResult: SettingsValidationResult) {
     when (settingsValidationResult) {
       is SettingsValidationResult.Pending -> {
         validationListener?.onInputDataValidated(false)
       }
-
       is SettingsValidationResult.Ready -> {
         val validationMessage = settingsValidationResult.validationMessage
         if (validationMessage != null) {

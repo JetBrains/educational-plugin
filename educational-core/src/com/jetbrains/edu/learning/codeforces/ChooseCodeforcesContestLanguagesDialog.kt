@@ -49,8 +49,8 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
     }
 
     val settingsValidationResult = courseSettingsPanel.languageSettings?.validate(codeforcesCourse, courseSettingsPanel.locationString)
-    if (settingsValidationResult !is SettingsValidationResult.Ready) {
-      val message = (settingsValidationResult as SettingsValidationResult.Ready).validationMessage?.message
+    if (settingsValidationResult is SettingsValidationResult.Ready) {
+      val message = settingsValidationResult.validationMessage?.message
       if (message != null) {
         setErrorText(message)
         return ValidationInfo(message, courseSettingsPanel.settingsPanel)

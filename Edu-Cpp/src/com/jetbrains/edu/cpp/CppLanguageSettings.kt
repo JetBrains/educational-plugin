@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
+import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -47,7 +48,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     return if (courseLocation != null && SystemInfo.isWindows && !IOUtil.isAscii(courseLocation)) {
-      SettingsValidationResult.Ready(ValidationMessage(EduCppBundle.message("error.non.ascii"), null, WARNING))
+      ValidationMessage(EduCppBundle.message("error.non.ascii"), null, WARNING).ready()
     }
     else {
       SettingsValidationResult.OK

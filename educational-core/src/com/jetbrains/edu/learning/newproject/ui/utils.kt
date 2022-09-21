@@ -12,7 +12,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.IconUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
@@ -20,8 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
 import kotlinx.css.*
@@ -34,7 +32,6 @@ import java.time.Duration
 import javax.swing.Icon
 import javax.swing.JPanel
 import javax.swing.UIManager
-import com.jetbrains.edu.learning.EduNames
 
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproject.ui.utils")
 
@@ -63,15 +60,6 @@ fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
   return IconUtil.toSize(scaledIcon, JBUI.scale(logoSize), JBUI.scale(logoSize))
 }
 
-fun getErrorState(course: Course?, validateSettings: (Course) -> ValidationMessage?): ErrorState {
-  var languageError: ErrorState = ErrorState.NothingSelected
-  if (course != null) {
-    val languageSettingsMessage = validateSettings(course)
-    languageError = languageSettingsMessage?.let { ErrorState.LanguageSettingsError(it) } ?: ErrorState.None
-  }
-  return ErrorState.forCourse(course).merge(languageError)
-}
-
 fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>): String {
   if (plugins.isEmpty()) {
     return ""
@@ -86,16 +74,6 @@ fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>): String {
       val restPluginsNumber = plugins.size - 2
       EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber, EduNames.PLUGINS_HELP_LINK)
     }
-  }
-}
-
-fun browseHyperlink(message: ValidationMessage?) {
-  if (message == null) {
-    return
-  }
-  val hyperlink = message.hyperlinkAddress
-  if (hyperlink != null) {
-    EduBrowser.getInstance().browse(hyperlink)
   }
 }
 
