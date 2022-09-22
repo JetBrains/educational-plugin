@@ -1,8 +1,6 @@
 package com.jetbrains.edu.rust
 
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -47,31 +45,17 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     val courseDir = project.courseDir
     val cargoDir = courseDir.findChild(".cargo") ?: return false
     if (cargoDir == this) return true
-    // BACKCOMPAT: 2021.3. Replace string constants with `CargoConstants.CONFIG_TOML_FILE` and `CargoConstants.CONFIG_FILE`
-    //  and bump minimal Rust plugin version to 174
     // Cargo config file should be included into course even it's located in "hidden" directory
-    return cargoDir.findChild("config.toml") == this || cargoDir.findChild("config") == this
+    return cargoDir.findChild(CargoConstants.CONFIG_TOML_FILE) == this || cargoDir.findChild(CargoConstants.CONFIG_FILE) == this
   }
 
   override val isEnabled: Boolean
     get() {
       val rustPluginVersion = pluginVersion("org.rust.lang") ?: return false
-      val tomlPluginVersion = pluginVersion("org.toml.lang") ?: return false
-
-      // Rust plugin has incompatibility in API:
-      //   - before 2021.3 in 0.4.147
-      //   - starting 2021.3 there is another incompatibility in 0.4.165
-      val minimalSupportedRustPluginVersion = if (ApplicationInfo.getInstance().build >= BUILD_213) "0.4.165" else "0.4.147"
-
-      return VersionComparatorUtil.compare(rustPluginVersion, minimalSupportedRustPluginVersion) >= 0 &&
-             VersionComparatorUtil.compare(tomlPluginVersion, "0.2.147") >= 0
+      // CargoConstants.CONFIG_TOML_FILE and CargoConstants.CONFIG_FILE used above appeared only in 0.4.174
+      return VersionComparatorUtil.compare(rustPluginVersion, "0.4.174") >= 0
     }
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
-
-  companion object {
-    // BACKCOMPAT 2021.2
-    private val BUILD_213 = BuildNumber.fromString("213")!!
-  }
 }

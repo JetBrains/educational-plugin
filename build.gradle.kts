@@ -60,9 +60,6 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
-// BACKCOMPAT: 2021.3
-val isAtLeast221 = environmentName.toInt() >= 221
-
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
@@ -76,8 +73,7 @@ val pythonPlugin = when {
 val kotlinPlugin = "org.jetbrains.kotlin"
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
-// Since 2022.1 TOML plugin is bundled into all supported IDEs
-val tomlPlugin = if (isAtLeast221 || !isIdeaIDE && !isClionIDE) "org.toml.lang" else "org.toml.lang:${prop("tomlPluginVersion")}"
+val tomlPlugin = "org.toml.lang"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val sqlPlugin = "com.intellij.database"
 val markdownPlugin = "org.intellij.plugins.markdown"
@@ -441,10 +437,10 @@ project(":") {
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
-    // BACKCOMPAT: 2021.3. Update value to 221 and this comment
+    // BACKCOMPAT: 2022.1. Update value to 222 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
-    environment("IDEA_BUILD_NUMBER", "213")
+    environment("IDEA_BUILD_NUMBER", "221")
   }
 
   task("configureIdea") {

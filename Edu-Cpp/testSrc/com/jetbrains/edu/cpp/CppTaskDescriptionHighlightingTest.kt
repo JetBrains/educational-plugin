@@ -1,10 +1,6 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.lang.Language
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 
@@ -12,12 +8,6 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
   override val language: Language = OCLanguage.getInstance()
   override val settings = CppProjectSettings()
   override val environment = "GoogleTest"
-
-  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-    if (!SystemInfo.isWindows || ApplicationInfo.getInstance().build >= BUILD_221) {
-      super.runTestRunnable(testRunnable)
-    }
-  }
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:
@@ -100,9 +90,4 @@ class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase()
      </body>
     </html>
   """)
-
-  companion object {
-    // BACKCOMPAT: 2021.3
-    private val BUILD_221: BuildNumber = BuildNumber.fromString("221")!!
-  }
 }

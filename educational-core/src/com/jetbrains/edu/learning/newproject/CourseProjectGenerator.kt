@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.newproject
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.impl.setTrusted
+import com.intellij.ide.impl.TrustedPaths
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.WriteAction
@@ -130,8 +130,9 @@ abstract class CourseProjectGenerator<S : Any>(
     baseDir.putUserData(COURSE_MODE_TO_CREATE, course.courseMode)
     baseDir.putUserData(COURSE_LANGUAGE_ID_TO_CREATE, course.languageID)
 
-    if (isNewTrustedProjectApiAvailable && isCourseTrusted(course, isNewCourseCreatorCourse)) {
-      setProjectPathTrusted(location.toPath())
+    if (isCourseTrusted(course, isNewCourseCreatorCourse)) {
+      @Suppress("UnstableApiUsage")
+      TrustedPaths.getInstance().setProjectPathTrusted(location.toPath(), true)
     }
 
     return openNewProject(location.toPath()) { module ->
@@ -151,11 +152,6 @@ abstract class CourseProjectGenerator<S : Any>(
     GeneratorUtils.initializeCourse(project, course)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
-    // BACKCOMPAT: 2021.3. Drop it because project is marked as trusted in `createProject`
-    if (!isNewTrustedProjectApiAvailable && isCourseTrusted(course, isNewCourseCreatorCourse)) {
-      @Suppress("UnstableApiUsage")
-      project.setTrusted(true)
-    }
     if (isNewCourseCreatorCourse) {
       val lesson = courseBuilder.createInitialLesson(project, course)
       if (lesson != null) {
