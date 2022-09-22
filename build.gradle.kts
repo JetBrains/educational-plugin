@@ -101,6 +101,7 @@ plugins {
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
+  `maven-publish`
 }
 
 idea {
@@ -1063,5 +1064,25 @@ fun verifyClasses(project: Project) {
 
   if (hasErrors) {
     throw GradleException("Classes with wrong package were found. See https://docs.google.com/document/d/1pOy-qNlGOJe6wftHVYHkH8sZOoAfav1fdGDPJgkQWJo")
+  }
+}
+
+publishing {
+  publications {
+    create<MavenPublication>("edu-format") {
+      groupId = "com.jetbrains.edu"
+      artifactId = "edu-format"
+      version = "1.0-SNAPSHOT"
+      artifact("edu-format/build/libs/edu-format.jar")
+    }
+  }
+  repositories {
+    maven {
+      url = uri("https://packages.jetbrains.team/maven/p/edu/maven")
+      credentials {
+        username = prop("publishingUsername")
+        password = prop("publishingPassword")
+      }
+    }
   }
 }
