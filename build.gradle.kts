@@ -70,6 +70,7 @@ val pythonPlugin = when {
   isStudioIDE -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
+val javaPlugin = "com.intellij.java"
 val kotlinPlugin = "org.jetbrains.kotlin"
 val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
 val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
@@ -80,14 +81,36 @@ val markdownPlugin = "org.intellij.plugins.markdown"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
 val intelliLangPlugin = "org.intellij.intelliLang"
+val javaScriptPlugin = "JavaScript"
+val nodeJsPlugin = "NodeJS"
+val yamlPlugin = "org.jetbrains.plugins.yaml"
+val androidPlugin = "org.jetbrains.android"
+val platformImagesPlugin = "com.intellij.platform.images"
 
 val jvmPlugins = listOf(
-  "java",
-  "junit",
-  "gradle-java"
+  javaPlugin,
+  "JUnit",
+  "org.jetbrains.plugins.gradle"
 )
 
 val kotlinPlugins = jvmPlugins + kotlinPlugin
+
+val javaScriptPlugins = listOf(
+  javaScriptPlugin,
+  nodeJsPlugin
+)
+
+val rustPlugins = listOf(
+  rustPlugin,
+  tomlPlugin
+)
+
+val cppPlugins = listOf(
+  "com.intellij.cidr.lang",
+  "com.intellij.clion",
+  "org.jetbrains.plugins.clion.test.google",
+  "org.jetbrains.plugins.clion.test.catch"
+)
 
 val changesFile = "changes.html"
 
@@ -290,20 +313,21 @@ project(":") {
     }
 
     val pluginsList = mutableListOf(
-      rustPlugin,
-      tomlPlugin,
-      "yaml",
+      yamlPlugin,
       markdownPlugin,
       // PsiViewer plugin is not a runtime dependency
       // but it helps a lot while developing features related to PSI
       psiViewerPlugin
     )
+    pluginsList += rustPlugins
     pluginsList += listOfNotNull(pythonPlugin)
     if (isJvmCenteredIDE) {
-      pluginsList += listOf("java", "junit", "Kotlin", scalaPlugin)
+      pluginsList += jvmPlugins
+      pluginsList += listOf(kotlinPlugin, scalaPlugin)
     }
     if (isIdeaIDE) {
-      pluginsList += listOf("JavaScriptLanguage", "NodeJS", goPlugin, phpPlugin)
+      pluginsList += javaScriptPlugins
+      pluginsList += listOf(goPlugin, phpPlugin)
     }
     if (!(isStudioIDE || isPycharmIDE)) {
       pluginsList += sqlPlugin
@@ -581,7 +605,7 @@ project(":code-insight:markdown") {
 
 project(":code-insight:yaml") {
   intellij {
-    plugins.set(listOf("yaml"))
+    plugins.set(listOf(yamlPlugin))
   }
 
   dependencies {
@@ -664,7 +688,7 @@ project(":Edu-Android") {
   intellij {
     localPath.set(studioPath)
     version.set(null as String?)
-    val pluginsList = jvmPlugins + "android"
+    val pluginsList = jvmPlugins + androidPlugin
     plugins.set(pluginsList)
   }
 
@@ -686,9 +710,9 @@ project(":Edu-Python") {
   intellij {
     val pluginList = listOfNotNull(
       pythonPlugin,
-      if (isJvmCenteredIDE) "java" else null,
+      if (isJvmCenteredIDE) javaPlugin else null,
       // needed only for tests, actually
-      "platform-images"
+      platformImagesPlugin
     )
     plugins.set(pluginList)
   }
@@ -711,7 +735,7 @@ project(":Edu-Python:Idea") {
 
     val pluginList = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
-      "java"
+      javaPlugin
     )
     plugins.set(pluginList)
   }
@@ -743,8 +767,7 @@ project(":Edu-JavaScript") {
   intellij {
     localPath.set(null as String?)
     version.set(ideaVersion)
-    val pluginList = mutableListOf("NodeJS", "JavaScriptLanguage", "com.intellij.css")
-    plugins.set(pluginList)
+    plugins.set(javaScriptPlugins)
   }
   dependencies {
     implementation(project(":educational-core"))
@@ -755,7 +778,7 @@ project(":Edu-JavaScript") {
 
 project(":Edu-Rust") {
   intellij {
-    plugins.set(listOf(rustPlugin, tomlPlugin))
+    plugins.set(rustPlugins)
   }
 
   dependencies {
@@ -769,7 +792,7 @@ project(":Edu-Cpp") {
   intellij {
     localPath.set(null as String?)
     version.set(clionVersion)
-    plugins.set(listOf("clion-test-google", "clion-test-catch", "clion", "c-plugin"))
+    plugins.set(cppPlugins)
   }
 
   dependencies {
