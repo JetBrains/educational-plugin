@@ -9,7 +9,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.EditorNotificationsImpl
 
-abstract class NotificationsTestBase : PlatformNotificationsTestBase() {
+abstract class NotificationsTestBase : EduTestCase() {
 
   private fun completeEditorNotificationAsyncTasks() {
     EditorNotificationsImpl.completeAsyncTasks()
@@ -52,7 +52,7 @@ abstract class NotificationsTestBase : PlatformNotificationsTestBase() {
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)
                      ?: error("Can't find file editor for $virtualFile")
 
-    return getNotificationPanelForFileEditor(fileEditor, clazz)
+    return EditorNotificationsImpl.getNotificationPanels(fileEditor)[clazz] as? EditorNotificationPanel
   }
 
   protected fun withYamlFileTypeRegistered(action: () -> Unit) {

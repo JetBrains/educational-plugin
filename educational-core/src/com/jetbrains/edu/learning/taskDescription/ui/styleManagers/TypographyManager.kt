@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers
 
+import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
-import com.jetbrains.edu.learning.taskDescription.ui.getUISettings
 
 internal class TypographyManager {
   private val uiSettingsFontSize =
-    if (getUISettings().presentationMode) getUISettings().presentationModeFontSize else getUISettings().fontSize
+    if (UISettings.getInstance().presentationMode) UISettings.getInstance().presentationModeFontSize else UISettings.getInstance().fontSize
 
   val bodyFontSize = (uiSettingsFontSize * fontScaleFactor("body.font.size")).toInt()
   val codeFontSize = (uiSettingsFontSize * fontScaleFactor("code.font.size")).toInt()

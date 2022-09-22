@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.json.mixins.LocalEduCourseMixin
 import com.jetbrains.edu.learning.json.readCourseJson
 import com.jetbrains.edu.learning.taskDescription.ui.EduBrowserHyperlinkListener
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import java.io.IOException
@@ -53,7 +54,7 @@ object EduUtilsKt {
     // org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor considers links starting
     // with "^(vbscript|javascript|file|data):" unsafe and converts them into "#"
     // if `useSafeLinks` is `true`
-    val flavour = getGFMFlavourDescriptor()
+    val flavour = GFMFlavourDescriptor(useSafeLinks = false)
     val parsedTree = MarkdownParser(flavour).buildMarkdownTreeFromString(markdownText)
 
     return HtmlGenerator(normalizedText, parsedTree, flavour, false).generateHtml()

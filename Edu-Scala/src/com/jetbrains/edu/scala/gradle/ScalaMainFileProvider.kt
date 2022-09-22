@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.jvm.MainFileProvider
 import org.jetbrains.plugins.scala.lang.psi.api.ScalaFile
 import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef.ScObject
+import org.jetbrains.plugins.scala.util.ScalaMainMethodUtil
 
 class ScalaMainFileProvider : MainFileProvider {
   override fun findMainClassName(project: Project, file: VirtualFile): String? {
@@ -20,7 +21,10 @@ class ScalaMainFileProvider : MainFileProvider {
     if (psiFile !is ScalaFile) return null
 
     return PsiTreeUtil.findChildrenOfType(psiFile, ScObject::class.java)
-      .firstOrNull { it.findMainMethod().isDefined }
-      ?.fakeCompanionClassOrCompanionClass()
+      .firstOrNull {
+        // This code works only for Scala 2 code
+        // TODO: support Scala 3
+        ScalaMainMethodUtil.findScala2MainMethod(it).isDefined
+      }?.fakeCompanionClassOrCompanionClass()
   }
 }

@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.taskDescription.ui
 
+import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.project.Project
@@ -209,7 +210,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     }
 
     private fun getIconSize(): Int {
-      val currentFontSize = getUISettings().fontSize
+      val currentFontSize = UISettings.getInstance().fontSize
       val defaultFontSize = FontPreferences.DEFAULT_FONT_SIZE
       return (DEFAULT_ICON_SIZE * currentFontSize / defaultFontSize.toFloat()).roundToInt()
     }

@@ -13,7 +13,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.jetbrains.edu.jvm.ensureToolWindowInitialized
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
@@ -70,7 +69,6 @@ object EduGradleUtils {
     val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(gradleProjectSettings)
     systemSettings.linkedProjectsSettings = projects
-    ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
   }
 
   private fun setUpGradleJvm(projectSettings: GradleProjectSettings, sdk: Sdk?) {
