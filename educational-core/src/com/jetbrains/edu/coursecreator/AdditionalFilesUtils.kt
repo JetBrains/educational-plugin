@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
-import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
@@ -107,7 +107,7 @@ object AdditionalFilesUtils {
       private val excludedFiles = loadExcludedFilePaths(project)
 
       val additionalTaskFiles = mutableListOf<EduFile>()
-      var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchive.LAST_ARCHIVE_LOCATION)
+      var archiveLocation = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
 
       override fun visitFile(file: VirtualFile): Boolean {
         if (FileUtil.toSystemDependentName(file.path) == archiveLocation || isExcluded(file, excludedFiles, course, project)) {

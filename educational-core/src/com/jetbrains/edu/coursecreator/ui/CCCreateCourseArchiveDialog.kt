@@ -43,4 +43,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
 
   val authorName: String
     get() = myPanel.authorName
+
+  val checkTasksFlag: Boolean
+    get() = myPanel.checkAllTasksFlag
 }

@@ -139,7 +139,7 @@
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <reference id="Educational.Educator.CheckAllTasks"/>
-      <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
+      <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 

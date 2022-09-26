@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.NlsContexts.Label;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
+import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -26,16 +26,21 @@ public class CCCreateCourseArchivePanel extends JPanel {
   private TextFieldWithBrowseButton myLocationField;
   private JTextField myAuthorField;
   private JLabel myAuthorLabel;
+  private JCheckBox myCheckFlagCheckbox;
+  private JLabel myCheckFlagCheckboxLabel;
 
   public CCCreateCourseArchivePanel(@NotNull final Project project, String name) {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
     myAuthorField.setText(getAuthorInitialValue(project));
     myLocationField.setText(getArchiveLocation(project, name));
+    myCheckFlagCheckbox.setSelected(true);
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     myLocationField.addBrowseFolderListener(EduCoreBundle.message("course.creator.create.archive.dialog.title"), null, project, descriptor);
     myAuthorLabel.setVisible(true);
     myAuthorField.setVisible(true);
+    myCheckFlagCheckboxLabel.setVisible(true);
+    myCheckFlagCheckbox.setVisible(true);
   }
 
   public TextFieldWithBrowseButton getLocationField() {
@@ -55,7 +60,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
         return vendor.getName();
       }
     }
-    String savedAuthorName = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchive.AUTHOR_NAME);
+    String savedAuthorName = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.AUTHOR_NAME);
     if (savedAuthorName != null) {
       return savedAuthorName;
     }
@@ -75,8 +80,13 @@ public class CCCreateCourseArchivePanel extends JPanel {
     return myAuthorField.getText();
   }
 
+  public Boolean getCheckAllTasksFlag() {
+    return myCheckFlagCheckbox.isSelected();
+  }
+
+
   private static String getArchiveLocation(@NotNull Project project, String name) {
-    String location = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchive.LAST_ARCHIVE_LOCATION);
+    String location = PropertiesComponent.getInstance(project).getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION);
     if (location != null) return location;
 
     String sanitizedName = FileUtil.sanitizeFileName(name);
