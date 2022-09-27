@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.SystemInfo
@@ -20,37 +21,44 @@ class CreateNewYouTrackIssue : DumbAwareAction(
 ) {
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = false
-    val project = e.project ?: return
-    if (!EduUtils.isEduProject(project)) return
-    e.presentation.isEnabledAndVisible = true
+    val project = e.project
+    e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal || project != null && EduUtils.isEduProject(project)
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val course = e.project?.course ?: return
-    val pluginVersion = pluginVersion(EduNames.PLUGIN_ID)!!
-    val ideNameAndVersion = ideNameAndVersion
-    val os = SystemInfo.getOsNameAndVersion()
-    val description = ISSUE_TEMPLATE.format(pluginVersion, ideNameAndVersion, os, course.name, course.courseInfo, course.mode)
+    val course = e.project?.course
+    val description = createIssueDescription(course)
     val link = "https://youtrack.jetbrains.com/newIssue?project=EDU&description=${URLUtil.encodeURIComponent(description)}"
     EduBrowser.getInstance().browse(link)
   }
 
   companion object {
-    private val ISSUE_TEMPLATE = """
-      ## Environment
-
-      * **EduTools plugin version:** %s
-      * **IDE name and version:** %s
-      * **Operating system:** %s
-      * **Course name**: %s
-      * **Course info**: %s
-      * **Course mode**: %s
-
-      ## Problem description
-
-      ## Steps to reproduce
-    """.trimIndent()
+    
+    private fun createIssueDescription(course: Course?): String {
+      val pluginVersion = pluginVersion(EduNames.PLUGIN_ID)!!
+      return buildString {
+        appendLine("""
+          ## Environment
+          
+          * **EduTools plugin version:** $pluginVersion
+          * **IDE name and version:** $ideNameAndVersion
+          * **Operating system:** ${SystemInfo.getOsNameAndVersion()}
+        """.trimIndent())
+        if (course != null) {
+          appendLine("""
+            * **Course name**: ${course.name}
+            * **Course info**: ${course.courseInfo}
+            * **Course mode**: ${course.mode}
+            """.trimIndent())
+        }
+        appendLine("""
+          
+          ## Problem description
+          
+          ## Steps to reproduce
+        """.trimIndent())
+      }
+    }
 
     private val ideNameAndVersion: String
       get() {
