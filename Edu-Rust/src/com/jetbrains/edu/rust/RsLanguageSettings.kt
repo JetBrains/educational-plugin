@@ -1,49 +1,33 @@
 package com.jetbrains.edu.rust
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.TextComponentAccessor
-import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.rust.messages.EduRustBundle
-import org.rust.cargo.toolchain.RsToolchain
+import org.rust.cargo.project.RsToolchainPathChoosingComboBox
+import org.rust.cargo.toolchain.RsToolchainBase
+import org.rust.cargo.toolchain.RsToolchainProvider
+import org.rust.cargo.toolchain.flavors.RsToolchainFlavor
 import java.awt.BorderLayout
-import java.nio.file.Paths
+import java.nio.file.Path
 import javax.swing.JComponent
-import javax.swing.event.DocumentEvent
 
 class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
-  private val toolchainLocation = TextFieldWithBrowseButton()
-  private var rustToolchain: RsToolchain? = null
-
-  init {
-    val toolchain = RsToolchain.suggest()
-    if (toolchain != null) {
-      toolchainLocation.text = toolchain.location.toString()
-      rustToolchain = toolchain
-    }
-    toolchainLocation.addBrowseFolderListener(
-      EduRustBundle.message("select.rustup.binary"), null, null,
-      FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-      TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
-    )
-
-    toolchainLocation.childComponent.document.addDocumentListener(object : DocumentAdapter() {
-      override fun textChanged(e: DocumentEvent) {
-        val location = toolchainLocation.text
-        rustToolchain = if (location.isNotBlank()) RsToolchain(Paths.get(location)) else null
-        notifyListeners()
-      }
-    })
+  private val toolchainComboBox: RsToolchainPathChoosingComboBox by lazy {
+    RsToolchainPathChoosingComboBox { updateToolchain() }
   }
+
+  private var loadingFinished: Boolean = false
+
+  private var rustToolchain: RsToolchainBase? = null
 
   override fun getSettings(): RsProjectSettings = RsProjectSettings(rustToolchain)
 
@@ -52,10 +36,43 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     disposable: Disposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainLocation, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
+    Disposer.register(disposable, toolchainComboBox)
+    toolchainComboBox.addToolchainsAsync(::findAllToolchainsPath) {
+      loadingFinished = true
+      // `RsToolchainPathChoosingComboBox` sets initial empty text after addition of all items
+      // But we want to show text of selected item
+      val combobox = toolchainComboBox.childComponent
+      val selectedItem = combobox.selectedItem
+      if (selectedItem is Path) {
+        toolchainComboBox.selectedPath = selectedItem
+      }
+      updateToolchain()
+    }
+
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(toolchainComboBox, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
+  }
+
+  private fun findAllToolchainsPath(): List<Path> {
+    checkIsBackgroundThread()
+    return RsToolchainFlavor.getApplicableFlavors().flatMap { it.suggestHomePaths() }.distinct()
+  }
+
+  private fun updateToolchain() {
+    // Unfortunately, `RsToolchainPathChoosingComboBox` changes its text before final callback is called
+    // To avoid unexpected updates of toolchain, just skip all changes before call of final callback
+    if (!loadingFinished) return
+    val toolchainPath = toolchainComboBox.selectedPath
+    if (toolchainPath != null) {
+      // We already have toolchain for this path
+      if (rustToolchain?.location == toolchainPath) return
+
+      rustToolchain = RsToolchainProvider.getToolchain(toolchainPath)
+    }
+    notifyListeners()
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    if (!loadingFinished) return SettingsValidationResult.Pending
     val toolchain = rustToolchain
     val validationMessage = when {
       toolchain == null -> {
