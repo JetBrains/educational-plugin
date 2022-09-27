@@ -2,6 +2,7 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_11
+import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.intellij.tasks.PrepareSandboxTask
@@ -60,6 +61,9 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
+// BACKCOMPAT: 2022.2
+val isAtLeast223 = environmentName.toInt() >= 223
+
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
@@ -116,6 +120,8 @@ val changesFile = "changes.html"
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
+val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
+
 plugins {
   idea
   kotlin("jvm") version "1.7.10"
@@ -128,7 +134,7 @@ plugins {
 
 idea {
   project {
-    jdkName = "11"
+    jdkName = "17"
     languageLevel = IdeaLanguageLevel("11")
     vcs = "Git"
   }
@@ -154,8 +160,9 @@ allprojects {
   }
 
   configure<JavaPluginExtension> {
+    // BACKCOMPAT: 2022.2. Use VERSION_17
     sourceCompatibility = VERSION_11
-    targetCompatibility = VERSION_11
+    targetCompatibility = javaVersion
   }
   sourceSets {
     main {
@@ -215,7 +222,7 @@ allprojects {
     withType<JavaCompile> { options.encoding = "UTF-8" }
     withType<KotlinCompile> {
       kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = javaVersion.toString()
         languageVersion = "1.6"
         apiVersion = "1.5"
         freeCompilerArgs = listOf("-Xjvm-default=all")

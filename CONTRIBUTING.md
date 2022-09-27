@@ -9,8 +9,8 @@ cd educational-plugin
 
 ## Configuring development environment
 
-1. Java 11 is required for development.
-For example, you can install [openJDK](https://openjdk.java.net/install/) or [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html)
+1. Java 17 is required for development.
+For example, you can install [openJDK](https://openjdk.java.net/install/) or [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
 2. Open project directory in IntelliJ IDEA.
 You can get the latest IntelliJ IDEA Community Edition [here](https://www.jetbrains.com/idea/download/).
 3. Import Gradle project. If you are not familiar with IntelliJ IDEA Gradle integration, check out the [documentation](https://www.jetbrains.com/help/idea/gradle.html)
