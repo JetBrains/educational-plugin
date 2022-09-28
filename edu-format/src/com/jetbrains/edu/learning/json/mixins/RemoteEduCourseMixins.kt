@@ -51,7 +51,6 @@ import java.util.*
 @JsonPropertyOrder(MARKETPLACE_COURSE_VERSION, ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE,
                    PLUGIN_VERSION, VENDOR, FEEDBACK_LINK, IS_PRIVATE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ID, UPDATE_DATE,
                    ADDITIONAL_FILES, PLUGIN_VERSION, VERSION)
-//@JsonAppend(props = [JsonAppend.Prop(PluginVersionPropertyWriter::class, name = PLUGIN_VERSION, type = String::class)])
 abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
 
   @JsonProperty(VENDOR)
@@ -106,27 +105,3 @@ abstract class RemoteSectionMixin : LocalSectionMixin() {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
   private var id: Int = 0
 }
-
-//private class PluginVersionPropertyWriter : VirtualBeanPropertyWriter {
-//
-//  constructor()
-//
-//  constructor(propDef: BeanPropertyDefinition, contextAnnotations: Annotations, declaredType: JavaType) : super(propDef,
-//                                                                                                                contextAnnotations,
-//                                                                                                                declaredType)
-//
-//  override fun withConfig(config: MapperConfig<*>?,
-//                          declaringClass: AnnotatedClass,
-//                          propDef: BeanPropertyDefinition,
-//                          type: JavaType): VirtualBeanPropertyWriter {
-//    return PluginVersionPropertyWriter(propDef, declaringClass.annotations, type)
-//  }
-//
-//  override fun value(bean: Any, gen: JsonGenerator, prov: SerializerProvider): Any {
-//    return if (isUnitTestMode) TEST_PLUGIN_VERSION else pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
-//  }
-//
-//  companion object {
-//    private const val TEST_PLUGIN_VERSION = "yyyy.2-yyyy.1-TEST"
-//  }
-//}
