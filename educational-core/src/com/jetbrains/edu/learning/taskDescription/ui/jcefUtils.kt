@@ -4,15 +4,18 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.io.URLUtil
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
+import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.*
 import org.cef.network.CefRequest
+import org.jsoup.nodes.Element
 
 class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(project) {
 
@@ -104,5 +107,33 @@ class JCEFTaskInfoLifeSpanHandler(private val jcefLinkHandler: JCefToolWindowLin
   override fun onBeforePopup(browser: CefBrowser?, frame: CefFrame?, targetUrl: String?, targetFrameName: String?): Boolean {
     if (targetUrl == null) return true
     return jcefLinkHandler.process(targetUrl)
+  }
+}
+
+private const val HINT_HEADER: String = "hint_header"
+private const val HINT_HEADER_EXPANDED: String = "$HINT_HEADER checked"
+private const val HINT_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER + "'>%s %s</div>" +
+                                                "  <div class='hint_content'>" +
+                                                " %s" +
+                                                "  </div>"
+private const val HINT_EXPANDED_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER_EXPANDED + "'>%s %s</div>" +
+                                                         "  <div class='hint_content'>" +
+                                                         " %s" +
+                                                         "  </div>"
+
+fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+  val course = StudyTaskManager.getInstance(project).course
+  val hintText: String = hintElement.html()
+  val escapedHintTitle = StringEscapeUtils.escapeHtml(hintTitle)
+  if (course == null) {
+    return String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
+  }
+
+  val study = course.isStudy
+  return if (study) {
+    String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
+  }
+  else {
+    String.format(HINT_EXPANDED_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
   }
 }

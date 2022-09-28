@@ -15,9 +15,7 @@
  */
 package com.jetbrains.edu.learning.taskDescription.ui
 
-import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
@@ -39,7 +37,6 @@ import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.html.HTML
 import javax.swing.text.html.HTMLDocument
 import javax.swing.text.html.HTMLEditorKit
-import kotlin.math.roundToInt
 import javax.swing.text.Element as SwingTextElement
 
 class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
@@ -74,8 +71,8 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     taskInfoTextPane.text = htmlWithResources(project, wrapHints(text, task))
   }
 
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
-    return wrapHint(project, hintElement, displayedHintNumber)
+  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+    return wrapHintSwing(project, hintElement, displayedHintNumber, hintTitle)
   }
 
   private inner class HintElementLinkHandler : SwingToolWindowLinkHandler(project) {
@@ -168,64 +165,6 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
     // all a tagged elements should have different href otherwise they are all underlined on hover. That's why
     // we have to add hint number to href
-    private const val HINT_PROTOCOL = "hint://"
     private const val HINT_TEXT_PATTERN = "<div class='hint_text'>%s</div>"
-    private const val DEFAULT_ICON_SIZE = 16
-
-    fun wrapHint(project: Project, hintElement: Element, displayedHintNumber: String): String {
-      if (displayedHintNumber.isEmpty() || displayedHintNumber == "1") {
-        hintElement.wrap("<div class='top'></div>")
-      }
-      val course = StudyTaskManager.getInstance(project).course
-      return if (course != null && !course.isStudy) {
-        createExpandedHintBlockTemplate(hintElement, displayedHintNumber)
-      }
-      else {
-        createHintBlockTemplate(hintElement, displayedHintNumber)
-      }
-    }
-
-    // all tagged elements should have different href otherwise they are all underlined on hover. That's why
-    // we have to add hint number to href
-    private fun createHintBlockTemplate(hintElement: Element, displayedHintNumber: String): String {
-      val iconSize = getIconSize()
-      return """
-      <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-      <span><a href='hint://$displayedHintNumber', value='${hintElement.text()}'>Hint $displayedHintNumber</a>
-      <img src='${getLeftIcon()}' width='$iconSize' height='$iconSize' >
-    """.trimIndent()
-    }
-
-    // all tagged elements should have different href otherwise they are all underlined on hover. That's why
-    // we have to add hint number to href
-    private fun createExpandedHintBlockTemplate(hintElement: Element, displayedHintNumber: String): String {
-      val hintText = hintElement.text()
-      val iconSize = getIconSize()
-      return """ 
-        <img src='${getBulbIcon()}' width='$iconSize' height='$iconSize' >
-        <span><a href='hint://$displayedHintNumber', value='$hintText'>Hint $displayedHintNumber</a>
-        <img src='${getLeftIcon()}' width='$iconSize' height='$iconSize' >
-        <div class='hint_text'>$hintText</div>
-     """.trimIndent()
-    }
-
-    private fun getIconSize(): Int {
-      val currentFontSize = UISettings.getInstance().fontSize
-      val defaultFontSize = FontPreferences.DEFAULT_FONT_SIZE
-      return (DEFAULT_ICON_SIZE * currentFontSize / defaultFontSize.toFloat()).roundToInt()
-    }
-
-    private fun getBulbIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "style/hint/swing/swing_icons/bulb.png")
-
-    private fun getLeftIcon() = getIconFullPath("style/hint/swing/swing_icons/retina_right.png", "style/hint/swing/swing_icons/right.png")
-
-    private fun getIconFullPath(retinaPath: String, path: String): String {
-      val bulbPath = if (UIUtil.isRetina()) retinaPath else path
-      val bulbIconUrl = SwingToolWindow::class.java.classLoader.getResource(bulbPath)
-      if (bulbIconUrl == null) {
-        LOG.warn("Cannot find bulb icon")
-      }
-      return if (bulbIconUrl == null) "" else bulbIconUrl.toExternalForm()
-    }
   }
 }

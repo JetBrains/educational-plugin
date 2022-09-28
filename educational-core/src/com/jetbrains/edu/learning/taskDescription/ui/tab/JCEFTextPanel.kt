@@ -38,7 +38,7 @@ class JCEFTextPanel(project: Project, plainText: Boolean) : TabTextPanel(project
     jcefBrowser.loadHTML(text)
   }
 
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
-    return JCEFToolWindow.wrapHint(project, hintElement, displayedHintNumber)
+  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+    return wrapHintJCEF(project, hintElement, displayedHintNumber, hintTitle)
   }
 }

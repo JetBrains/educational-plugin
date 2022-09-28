@@ -5,10 +5,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindow
-import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
+import com.jetbrains.edu.learning.taskDescription.ui.*
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.jetbrains.annotations.NonNls
 import org.jsoup.nodes.Element
@@ -38,8 +35,8 @@ class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? 
     textPane.text = text
   }
 
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
-    return SwingToolWindow.wrapHint(project, hintElement, displayedHintNumber)
+  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+    return wrapHintSwing(project, hintElement, displayedHintNumber, hintTitle)
   }
 
   fun updateLinkHandler(newHyperlinkListener: SwingToolWindowLinkHandler?) {

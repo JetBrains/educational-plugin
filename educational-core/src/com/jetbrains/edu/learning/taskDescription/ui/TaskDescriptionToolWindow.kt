@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.processImagesAndLinks
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
@@ -49,29 +48,13 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  /**
-   * Copy-paste [com.jetbrains.edu.learning.taskDescription.ui.tab.TabTextPanel.wrapHints]
-   * To be removed a bit later
-   */
   protected fun wrapHints(text: String, task: Task?): String {
     if (task is VideoTask) return text
-    val document = Jsoup.parse(text)
-    val hints = document.getElementsByClass("hint")
-    if (hints.size == 1) {
-      val hint = hints[0]
-      val hintText = wrapHint(hint, "")
-      hint.html(hintText)
-      return document.html()
-    }
-    for (i in hints.indices) {
-      val hint = hints[i]
-      val hintText = wrapHint(hint, (i + 1).toString())
-      hint.html(hintText)
-    }
-    return document.html()
+
+    return wrapHintTagsInsideHTML(text, this::wrapHint)
   }
 
-  protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String): String
+  protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String
 
   fun setTaskText(project: Project, task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {

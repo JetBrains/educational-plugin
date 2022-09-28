@@ -9,7 +9,6 @@ import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
-@Suppress("UnstableApiUsage")
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val taskInfoJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
   private val taskSpecificJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
@@ -76,8 +74,8 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   override val taskSpecificPanel: JComponent
     get() = taskSpecificJBCefBrowser.component
 
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String): String {
-    return wrapHint(project, hintElement, displayedHintNumber)
+  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
+    return wrapHintJCEF(project, hintElement, displayedHintNumber, hintTitle)
   }
 
   override fun setText(text: String, task: Task?) {
@@ -128,33 +126,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   companion object {
-    private const val HINT_HEADER: String = "hint_header"
-    private const val HINT_HEADER_EXPANDED: String = "$HINT_HEADER checked"
-    private const val HINT_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER + "'>Hint %s</div>" +
-                                                    "  <div class='hint_content'>" +
-                                                    " %s" +
-                                                    "  </div>"
-    private const val HINT_EXPANDED_BLOCK_TEMPLATE: String = "<div class='" + HINT_HEADER_EXPANDED + "'>Hint %s</div>" +
-                                                             "  <div class='hint_content'>" +
-                                                             " %s" +
-                                                             "  </div>"
-
-    fun wrapHint(project: Project, hintElement: Element, displayedHintNumber: String): String {
-      val course = StudyTaskManager.getInstance(project).course
-      val hintText: String = hintElement.html()
-      if (course == null) {
-        return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-      }
-
-      val study = course.isStudy
-      return if (study) {
-        String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-      }
-      else {
-        String.format(HINT_EXPANDED_BLOCK_TEMPLATE, displayedHintNumber, hintText)
-      }
-    }
-
     @TestOnly
     fun processContent(content: String, project: Project): String {
       return htmlWithResources(project, content)
