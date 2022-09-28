@@ -136,6 +136,7 @@ class GradleCommandLine private constructor(
       val projectPath = FileUtil.toSystemDependentName(basePath)
       val cmd = GeneralCommandLine()
         .withEnvironment("JAVA_HOME", projectJdkPath)
+        .withEnvironment("JAVA_OPTS", "-Dfile.encoding=UTF-8")
         .withWorkDirectory(FileUtil.toSystemDependentName(basePath))
         .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, GRADLE_WRAPPER_WIN) else "./$GRADLE_WRAPPER_UNIX")
         .withParameters(command)
