@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.learning.encrypt.Encrypt
+import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENCRYPTED_TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LEARNER_CREATED

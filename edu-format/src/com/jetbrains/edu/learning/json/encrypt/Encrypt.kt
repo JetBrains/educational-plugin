@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.encrypt
+package com.jetbrains.edu.learning.json.encrypt
 
 import com.fasterxml.jackson.annotation.JacksonAnnotation
 

@@ -16,13 +16,13 @@ import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.submissions.IS_VISIBLE
 import com.jetbrains.edu.learning.submissions.PLACEHOLDERS
 import com.jetbrains.edu.learning.submissions.STATUS
 import com.jetbrains.edu.learning.submissions.TEXT
-import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import java.util.*
 
 const val IS_IDEA_COMPATIBLE = "is_idea_compatible"
@@ -55,8 +55,6 @@ const val LESSON = "lesson"
 const val TASK = "task"
 private const val FILE = "file"
 const val PLACEHOLDER = "placeholder"
-const val LINK_TYPE = "link_type"
-const val LINK = "link"
 const val STEPIK_ID = "stepic_id"
 const val FILES = "files"
 const val CHOICE_VARIANTS = "choice_variants"

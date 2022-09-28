@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -12,10 +11,11 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
-import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
 import com.jetbrains.edu.learning.yaml.format.TaskYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ACTUAL
@@ -48,7 +48,7 @@ abstract class StudentTaskYamlMixin : TaskYamlMixin() {
   protected open var record: Int = -1
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(MESSAGE, TIME, EXPECTED, ACTUAL)
 abstract class FeedbackYamlMixin {
   @JsonProperty(MESSAGE)

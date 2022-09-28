@@ -15,7 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -101,7 +101,7 @@ class CCCreateCoursePreviewDialog(
 
       if (errorMessage.isNullOrEmpty()) {
         val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
-        val course = EduUtils.getLocalCourse(archivePath) as? EduCourse  ?: return
+        val course = EduUtilsKt.getLocalCourse(archivePath) as? EduCourse  ?: return
         course.isPreview = true
 
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation

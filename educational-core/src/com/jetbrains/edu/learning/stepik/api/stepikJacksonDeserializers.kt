@@ -25,13 +25,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
+import com.jetbrains.edu.learning.json.migration.LANGUAGE_TASK_ROOTS
+import com.jetbrains.edu.learning.json.migration.TaskRoots
+import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
+import com.jetbrains.edu.learning.json.migration.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
-import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
-import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.*
-import com.jetbrains.edu.learning.serialization.converter.json.local.To10VersionLocalCourseConverter
-import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 
 private val LOG = Logger.getInstance(EduUtils::class.java)
@@ -201,7 +201,7 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
   }
 }
 
-fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
+private fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
   if (node.has(SerializationUtils.Json.TASK_TYPE)) {
     val taskType = node.get(SerializationUtils.Json.TASK_TYPE).asText()
     return when (taskType) {

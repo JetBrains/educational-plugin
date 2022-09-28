@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.encrypt.Encrypt
+import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
+@Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
 @JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE, TEXT, LEARNER_CREATED)
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {

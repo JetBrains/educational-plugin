@@ -61,7 +61,6 @@
   </extensionPoints>
 
   <actions>
-    <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>

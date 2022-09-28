@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
@@ -66,7 +66,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
   private fun loadBundledCourses(): List<Course> {
     val courses = mutableListOf<Course>()
     for (path in getBundledCoursesPaths()) {
-      val localCourse = EduUtils.getLocalCourse(path)
+      val localCourse = EduUtilsKt.getLocalCourse(path)
       if (localCourse == null) {
         LOG.error("Failed to import local course form $path")
         continue

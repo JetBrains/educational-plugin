@@ -57,7 +57,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
   }
 
   protected open fun getArchiveCreator(): CourseArchiveCreator =
-    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip")
+    CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip",
+                         "DFC929E375655998A34E56A21C98651C")
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"

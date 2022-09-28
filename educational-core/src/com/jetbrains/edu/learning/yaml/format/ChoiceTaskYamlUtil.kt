@@ -8,11 +8,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
+import com.jetbrains.edu.learning.json.mixins.FeedbackCorrectFilter
+import com.jetbrains.edu.learning.json.mixins.FeedbackIncorrectFilter
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.QuizHeaderFilter
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_CORRECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_INCORRECT
@@ -24,7 +26,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LOCAL_CHECK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.OPTIONS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.QUIZ_HEADER
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
-
 
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, IS_MULTIPLE_CHOICE, OPTIONS, FEEDBACK_CORRECT, FEEDBACK_INCORRECT, QUIZ_HEADER, FILES, FEEDBACK_LINK, TAGS)
@@ -50,35 +51,6 @@ abstract class ChoiceTaskYamlMixin : TaskYamlMixin() {
 
   @JsonProperty(LOCAL_CHECK)
   var canCheckLocally: Boolean = true
-}
-
-/**
- * Not to serialize default feedback_correct values
- */
-@Suppress("EqualsOrHashCode")
-class FeedbackCorrectFilter {
-  override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduFormatBundle.message("check.correct.solution")))
-
-}
-
-/**
- * Not to serialize default feedback_incorrect values
- */
-@Suppress("EqualsOrHashCode")
-class FeedbackIncorrectFilter {
-  override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduFormatBundle.message("check.incorrect.solution")))
-}
-
-/**
- * Not to serialize default quizHeader values
- */
-@Suppress("EqualsOrHashCode")
-class QuizHeaderFilter {
-  override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == EduFormatBundle.message("course.creator.create.choice.task.multiple.label") ||
-                                                other == EduFormatBundle.message("course.creator.create.choice.task.single.label")))
 }
 
 abstract class ChoiceOptionYamlMixin {

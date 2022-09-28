@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.jetbrains.edu.learning.json.migrate
 import java.io.File
 
 class LocalSourceMigrationTest : BasePlatformTestCase() {

@@ -1,11 +1,13 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
@@ -24,7 +26,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
-import com.jetbrains.edu.coursecreator.actions.mixins.*
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
@@ -33,13 +34,14 @@ import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.encrypt.getAesKey
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import com.jetbrains.edu.learning.json.addStudyItemMixins
+import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.json.encrypt.getAesKey
+import com.jetbrains.edu.learning.json.mixins.*
+import com.jetbrains.edu.learning.json.setDateFormat
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
@@ -47,8 +49,6 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CourseArchiveCreator(
   private val project: Project,
@@ -128,10 +128,34 @@ class CourseArchiveCreator(
   fun getMapper(course: Course): ObjectMapper {
     val factory = JsonFactory()
     val mapper = ObjectMapper(factory)
+    val module = SimpleModule()
+    module.addSerializer(EduCourse::class.java, EduCoursePluginVersionSerializer())
+    mapper.registerModule(module)
     mapper.addStudyItemMixins()
     mapper.registerModule(EncryptionModule(aesKey))
     commonMapperSetup(mapper, course)
+    setDateFormat(mapper)
     return mapper
+  }
+
+  class EduCoursePluginVersionSerializer : JsonSerializer<EduCourse>() {
+    override fun serialize(value: EduCourse, jgen: JsonGenerator, provider: SerializerProvider) {
+      jgen.writeStartObject()
+      val javaType = provider.constructType(value::class.java)
+      val beanDesc: BeanDescription = provider.config.introspect(javaType)
+      val serializer: JsonSerializer<Any> =
+        BeanSerializerFactory.instance.findBeanOrAddOnSerializer(provider, javaType, beanDesc,
+                                                                 provider.isEnabled(MapperFeature.USE_STATIC_TYPING))
+      serializer.unwrappingSerializer(null).serialize(value, jgen, provider)
+      jgen.addPluginVersion()
+      jgen.writeEndObject()
+    }
+
+    private fun JsonGenerator.addPluginVersion() {
+      val fieldName = JsonMixinNames.PLUGIN_VERSION
+      val pluginVersion = if (isUnitTestMode) TEST_PLUGIN_VERSION else pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
+      writeObjectField(fieldName, pluginVersion)
+    }
   }
 
   /**
@@ -144,6 +168,7 @@ class CourseArchiveCreator(
 
   companion object {
     private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
+    private const val TEST_PLUGIN_VERSION = "yyyy.2-yyyy.1-TEST"
 
     private val printer: PrettyPrinter
       get() {
@@ -168,20 +193,6 @@ class CourseArchiveCreator(
       mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
       mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
       mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-    }
-
-    fun ObjectMapper.addStudyItemMixins() {
-      addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
-      addMixIn(CourseraCourse::class.java, CourseraCourseMixin::class.java)
-      addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
-      addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
-      addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
-      addMixIn(Section::class.java, RemoteSectionMixin::class.java)
-      addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
-      addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-      val mapperDateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
-      mapperDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-      dateFormat = mapperDateFormat
     }
 
     @JvmStatic

@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -247,7 +248,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
-    val unpackedCourse = EduUtils.getLocalCourse(tempFile.path) as? EduCourse ?: error(
+    val unpackedCourse = EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse ?: error(
       message("dialog.title.failed.to.unpack.course"))
 
     course.items = unpackedCourse.items

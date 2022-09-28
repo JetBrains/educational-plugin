@@ -7,9 +7,9 @@ import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
+import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import org.jdom.Element
 
 private const val serviceName = "MarketplaceSettings"

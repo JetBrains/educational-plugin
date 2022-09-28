@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -29,9 +29,10 @@ import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.json.mixins.IntValueFilter
+import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.serialization.IntValueFilter
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_TYPE
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE

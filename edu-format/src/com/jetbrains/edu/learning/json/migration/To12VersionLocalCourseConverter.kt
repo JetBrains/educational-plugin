@@ -1,10 +1,10 @@
-package com.jetbrains.edu.learning.serialization.converter.json.local
+package com.jetbrains.edu.learning.json.migration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
-import com.jetbrains.edu.learning.stepik.api.LINK
-import com.jetbrains.edu.learning.stepik.api.LINK_TYPE
+import com.jetbrains.edu.learning.json.migration.MigrationNames.LINK
+import com.jetbrains.edu.learning.json.migration.MigrationNames.LINK_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 
 class To12VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 

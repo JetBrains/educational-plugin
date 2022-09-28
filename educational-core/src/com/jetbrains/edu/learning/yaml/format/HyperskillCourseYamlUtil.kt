@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.UPDATE_DATE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.stepik.hyperskill.api.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_PROJECT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STAGES

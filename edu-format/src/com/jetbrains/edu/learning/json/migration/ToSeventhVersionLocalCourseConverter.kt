@@ -1,18 +1,24 @@
-package com.jetbrains.edu.learning.serialization.converter.json.local
+package com.jetbrains.edu.learning.json.migration
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
-import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
+import com.jetbrains.edu.learning.json.migration.MigrationNames.ADDITIONAL_MATERIALS
+import com.jetbrains.edu.learning.json.migration.MigrationNames.DEPENDENCY_FILE
+import com.jetbrains.edu.learning.json.migration.MigrationNames.TASK_FILES
+import com.jetbrains.edu.learning.json.migration.MigrationNames.TEST_FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 
 class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
   override fun convertTaskObject(taskObject: ObjectNode, language: String) {
     val taskName = taskObject.get(NAME)?.asText() ?: return
     val taskRoots = LANGUAGE_TASK_ROOTS[language]
-    if (taskRoots != null && taskName != EduNames.ADDITIONAL_MATERIALS) {
+    if (taskRoots != null && taskName != ADDITIONAL_MATERIALS) {
       val (taskFilesRoot, testFilesRoot) = taskRoots
 
       val taskFiles = ObjectMapper().createObjectNode()

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.encrypt
+package com.jetbrains.edu.learning.json.encrypt
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -7,14 +7,14 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.introspect.Annotated
 import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector
 import com.fasterxml.jackson.databind.node.TextNode
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.courseFormat.logger
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-private val LOG = Logger.getInstance(EncryptionModule::class.java)
+private const val BUNDLE = "aes.aes"
+private val LOG = logger<EncryptionModule>()
 
 class EncryptionModule(private val aesKey: String?) : Module() {
   override fun getModuleName(): String {
@@ -54,7 +54,7 @@ private class EncryptedJsonSerializer(private val aesKey: String) : JsonSerializ
       jsonGenerator.writeString(AES256.encrypt(value, aesKey))
     }
     else {
-      LOG.warn("@Encrypt annotation should not be used for a non-string field")
+      LOG.warning("@Encrypt annotation should not be used for a non-string field")
       serializerProvider.defaultSerializeValue(value, jsonGenerator)
     }
   }
@@ -91,4 +91,12 @@ object AES256 {
   }
 }
 
-fun getAesKey() = if (!isUnitTestMode) EncryptionBundle.value("aesKey") else "DFC929E375655998A34E56A21C98651C"
+fun getAesKey(): String {
+  return try {
+    val resourceBundle = ResourceBundle.getBundle(BUNDLE)
+    resourceBundle.getString("aesKey")
+  }
+  catch (e: Exception) {
+    "DFC929E375655998A34E56A21C98651C"
+  }
+}

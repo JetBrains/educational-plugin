@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.api
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import retrofit2.Call
 import retrofit2.http.*
 

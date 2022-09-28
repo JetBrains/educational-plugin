@@ -10,8 +10,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
-import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
-import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderWithAnswerMixin
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder

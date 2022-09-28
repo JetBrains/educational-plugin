@@ -1,9 +1,8 @@
 @file:JvmName("LocalEduCourseMixins")
 @file:Suppress("unused")
 
-package com.jetbrains.edu.coursecreator.actions.mixins
+package com.jetbrains.edu.learning.json.mixins
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -15,71 +14,63 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.util.StdConverter
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ADDITIONAL_FILES
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.AUTHORS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CHOICE_OPTIONS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.CUSTOM_NAME
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DEPENDENCY
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_FORMAT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.DESCRIPTION_TEXT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ENVIRONMENT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FEEDBACK_LINK
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.FILES
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_EDITABLE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_MULTIPLE_CHOICE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.IS_VISIBLE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.ITEMS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LANGUAGE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LENGTH
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LESSON
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MAX_VERSION
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MESSAGE_CORRECT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MESSAGE_INCORRECT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.MIN_VERSION
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.NAME
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.OFFSET
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDERS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLACEHOLDER_TEXT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGINS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_ID
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PLUGIN_NAME
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.POSSIBLE_ANSWER
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.QUIZ_HEADER
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SECTION
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SOLUTION_HIDDEN
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUBMIT_MANUALLY
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SUMMARY
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_LIST
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TASK_TYPE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TEXT
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TITLE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TYPE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
-import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.encrypt.Encrypt
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.serialization.SerializationUtils
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FRAMEWORK_TYPE
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.ITEM_TYPE
-import com.jetbrains.edu.learning.serialization.TrueValueFilter
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.api.doDeserializeTask
-import com.jetbrains.edu.learning.yaml.format.FeedbackCorrectFilter
-import com.jetbrains.edu.learning.yaml.format.FeedbackIncorrectFilter
-import com.jetbrains.edu.learning.yaml.format.NotImplementedInMixin
-import com.jetbrains.edu.learning.yaml.format.QuizHeaderFilter
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.json.encrypt.Encrypt
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.AUTHORS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CHOICE_OPTIONS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_NAME
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DEPENDENCY
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FRAMEWORK_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_EDITABLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_MULTIPLE_CHOICE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ITEMS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ITEM_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.LANGUAGE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.LENGTH
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.LESSON
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MAX_VERSION
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MESSAGE_CORRECT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MESSAGE_INCORRECT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MIN_VERSION
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.OFFSET
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER_TEXT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGINS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGIN_ID
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLUGIN_NAME
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.POSSIBLE_ANSWER
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.QUIZ_HEADER
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SECTION
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTIONS_HIDDEN
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SOLUTION_HIDDEN
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SUMMARY
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK_LIST
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TITLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
 
+private val LOG = logger<LocalEduCourseMixin>()
 
 @JsonPropertyOrder(ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
                    ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION)
@@ -90,7 +81,7 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(AUTHORS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   @JsonSerialize(contentConverter = UserInfoToString::class)
-  @JsonDeserialize(contentConverter = StepikUserInfoFromString::class)
+  @JsonDeserialize(contentConverter = MarketplaceUserInfoFromString::class)
   private var authors: MutableList<UserInfo> = ArrayList()
 
   @JsonProperty(SUMMARY)
@@ -133,23 +124,16 @@ abstract class LocalEduCourseMixin {
   private var formatVersion = JSON_FORMAT_VERSION
 }
 
-@JsonAutoDetect(setterVisibility = JsonAutoDetect.Visibility.NONE)
-abstract class CourseraCourseMixin : LocalEduCourseMixin() {
-  @JsonProperty(SUBMIT_MANUALLY)
-  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-  var submitManually = false
-}
-
 private class UserInfoToString : StdConverter<UserInfo, String?>() {
   override fun convert(value: UserInfo?): String? = value?.getFullName()
 }
 
-private class StepikUserInfoFromString : StdConverter<String?, StepikUserInfo?>() {
-  override fun convert(value: String?): StepikUserInfo? {
+private class MarketplaceUserInfoFromString : StdConverter<String?, MarketplaceUserInfo?>() {
+  override fun convert(value: String?): MarketplaceUserInfo? {
     if (value == null) {
       return null
     }
-    return StepikUserInfo(value)
+    return MarketplaceUserInfo(value)
   }
 }
 
@@ -355,16 +339,11 @@ class CourseDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDe
   private fun deserializeCourse(jsonObject: ObjectNode, codec: ObjectCodec): Course? {
     if (jsonObject.has(COURSE_TYPE)) {
       val courseType = jsonObject.get(COURSE_TYPE).asText()
-      return when (courseType) {
-        CourseraNames.COURSE_TYPE -> codec.treeToValue(jsonObject, CourseraCourse::class.java)
-        else -> {
-          val course = codec.treeToValue(jsonObject, EduCourse::class.java)
-          if (courseType == MARKETPLACE) {
-            course.isMarketplace = true
-          }
-          course
-        }
+      val course = codec.treeToValue(jsonObject, EduCourse::class.java)
+      if (courseType == MARKETPLACE) {
+        course.isMarketplace = true
       }
+      return course
     }
     return codec.treeToValue(jsonObject, EduCourse::class.java)
   }
@@ -377,7 +356,7 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
   }
 
   private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem? {
-    if (jsonObject.has(SerializationUtils.Json.TASK_TYPE)) {
+    if (jsonObject.has(TASK_TYPE)) {
       return doDeserializeTask(jsonObject, codec)
     }
 
@@ -394,4 +373,28 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
       }
     }
   }
+}
+
+private fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
+  if (node.has(TASK_TYPE)) {
+    val taskType = node.get(TASK_TYPE).asText()
+    return when (taskType) {
+      IdeTask.IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
+      ChoiceTask.CHOICE_TASK_TYPE -> objectMapper.treeToValue(node, ChoiceTask::class.java)
+      TheoryTask.THEORY_TASK_TYPE -> objectMapper.treeToValue(node, TheoryTask::class.java)
+      VideoTask.VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
+      CodeTask.CODE_TASK_TYPE -> objectMapper.treeToValue(node, CodeTask::class.java)
+      // deprecated: old courses have pycharm tasks
+      EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {
+        objectMapper.treeToValue(node, EduTask::class.java)
+      }
+      OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
+      else -> {
+        LOG.warning("Unsupported task type $taskType")
+        null
+      }
+    }
+  }
+  LOG.warning("No task type found in json $node")
+  return null
 }

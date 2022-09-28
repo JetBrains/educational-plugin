@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.encrypt.Encrypt
+import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderBuilder
 import com.jetbrains.edu.learning.yaml.format.AnswerPlaceholderYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.DEPENDENCY

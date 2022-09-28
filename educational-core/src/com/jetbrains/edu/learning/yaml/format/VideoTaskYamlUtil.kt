@@ -4,7 +4,7 @@ package com.jetbrains.edu.learning.yaml.format
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CURRENT_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME

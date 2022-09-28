@@ -1,20 +1,24 @@
-package com.jetbrains.edu.learning.serialization.converter.json.local
+package com.jetbrains.edu.learning.json.migration
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.LESSON
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.SECTION
-import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FRAMEWORK_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ITEMS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ITEM_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.LESSON
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PROGRAMMING_LANGUAGE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.SECTION
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TASK_LIST
 
 abstract class JsonLocalCourseConverterBase : JsonLocalCourseConverter {
 
   override fun convert(localCourse: ObjectNode): ObjectNode {
-    val language = localCourse.get(SerializationUtils.Json.PROGRAMMING_LANGUAGE)?.asText() ?: ""
+    val language = localCourse.get(PROGRAMMING_LANGUAGE)?.asText() ?: ""
 
-    for (item in localCourse.getJsonObjectList(SerializationUtils.Json.ITEMS)) {
-      val type = item.get(SerializationUtils.Json.ITEM_TYPE)?.asText()
+    for (item in localCourse.getJsonObjectList(ITEMS)) {
+      val type = item.get(ITEM_TYPE)?.asText()
       when (type) {
-        null, LESSON, SerializationUtils.Json.FRAMEWORK_TYPE -> convertLesson(item, language)
+        null, LESSON, FRAMEWORK_TYPE -> convertLesson(item, language)
         SECTION -> convertSection(item, language)
       }
     }
@@ -24,14 +28,14 @@ abstract class JsonLocalCourseConverterBase : JsonLocalCourseConverter {
 
   protected fun convertSection(sectionObject: ObjectNode, language: String) {
     convertSectionObject(sectionObject, language)
-    for (lesson in sectionObject.getJsonObjectList(SerializationUtils.Json.ITEMS)) {
+    for (lesson in sectionObject.getJsonObjectList(ITEMS)) {
       convertLesson(lesson, language)
     }
   }
 
   protected fun convertLesson(lessonObject: ObjectNode, language: String) {
     convertLessonObject(lessonObject, language)
-    for (task in lessonObject.getJsonObjectList(SerializationUtils.Json.TASK_LIST)) {
+    for (task in lessonObject.getJsonObjectList(TASK_LIST)) {
       convertTaskObject(task, language)
     }
   }

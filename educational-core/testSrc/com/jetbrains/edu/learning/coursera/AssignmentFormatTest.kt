@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.coursera
 
 import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 
@@ -31,7 +31,7 @@ class AssignmentFormatTest : EduTestCase() {
 
   private fun getCourseraCourse(): CourseraCourse {
     val zipPath = "$testDataPath/${getTestName(true).trim()}.zip"
-    return EduUtils.getLocalCourse(zipPath) as? CourseraCourse ?: error("Failed to import Coursera course from $zipPath")
+    return EduUtilsKt.getCourseraCourse(zipPath) as? CourseraCourse ?: error("Failed to import Coursera course from $zipPath")
   }
 
   fun `test coursera course`() {

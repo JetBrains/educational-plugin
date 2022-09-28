@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.application.ApplicationManager
-import com.jetbrains.edu.coursecreator.actions.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result

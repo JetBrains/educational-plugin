@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.serialization.converter.json.local;
+package com.jetbrains.edu.learning.json.migration;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

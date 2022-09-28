@@ -7,7 +7,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")  // educational-core.xml
@@ -21,7 +21,7 @@ class CCUnpackCourseArchive : DumbAwareAction(
     val descriptor = FileChooserDescriptor(true, true, true, true,
                                            true, false)
     val virtualFile = FileChooser.chooseFile(descriptor, project, null) ?: return
-    val course = EduUtils.getLocalCourse(virtualFile.path)
+    val course = EduUtilsKt.getLocalCourse(virtualFile.path)
     if (course == null) {
       Messages.showErrorDialog(
         EduCoreBundle.message("dialog.message.course.incompatible"),

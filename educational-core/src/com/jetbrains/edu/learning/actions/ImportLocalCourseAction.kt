@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -36,7 +37,7 @@ open class ImportLocalCourseAction(
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
-      val course = EduUtils.getLocalCourse(fileName)
+      val course = EduUtilsKt.getLocalCourse(fileName)
       if (course == null) {
         showInvalidCourseDialog()
         return@chooseFile

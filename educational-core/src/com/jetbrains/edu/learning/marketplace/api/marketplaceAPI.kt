@@ -8,11 +8,8 @@ import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
@@ -94,30 +91,6 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
 
   fun isJwtTokenProvided(): Boolean {
     return !getJwtToken().isNullOrEmpty()
-  }
-}
-
-class MarketplaceUserInfo() : UserInfo {
-  @JsonProperty(ID)
-  var id: String = ""
-
-  @JsonProperty(NAME)
-  var name: String = ""
-
-  @JsonProperty(GUEST)
-  override var isGuest: Boolean = false
-
-  @JsonProperty(TYPE)
-  var type: String = ""
-
-  constructor(userName: String) : this() {
-    name = userName
-  }
-
-  override fun getFullName(): String = name
-
-  override fun toString(): String {
-    return name
   }
 }
 

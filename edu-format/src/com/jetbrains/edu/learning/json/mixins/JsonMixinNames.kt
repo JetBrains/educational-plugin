@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.mixins
+package com.jetbrains.edu.learning.json.mixins
 
 object JsonMixinNames {
   // common constants
@@ -7,6 +7,7 @@ object JsonMixinNames {
   const val TITLE = "title"
   const val ITEMS = "items"
   const val TAGS = "tags"
+  const val ITEM_TYPE = "type"
 
   // course
   const val AUTHORS = "authors"
@@ -21,6 +22,8 @@ object JsonMixinNames {
   const val SOLUTIONS_HIDDEN = "solutions_hidden"
   const val VERSION = "version"
   const val PLUGINS = "plugins"
+  const val GUEST = "guest"
+  const val MARKETPLACE_COURSE_VERSION = "course_version"
 
   //plugin dependency
   const val PLUGIN_NAME = "plugin_name"
@@ -28,11 +31,9 @@ object JsonMixinNames {
   const val MAX_VERSION = "max_version"
   const val MIN_VERSION = "min_version"
 
-  // coursera course
-  const val SUBMIT_MANUALLY = "submit_manually"
-
   // lesson
   const val TASK_LIST = "task_list"
+  const val FRAMEWORK_TYPE = "framework"
 
   // framework lesson
   const val IS_TEMPLATE_BASED = "is_template_based"

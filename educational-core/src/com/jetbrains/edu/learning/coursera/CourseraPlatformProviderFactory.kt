@@ -6,7 +6,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.coursera.newProjectUI.CourseraCoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
@@ -41,7 +41,7 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
       tasks.add(ApplicationManager.getApplication().executeOnPooledThread(Callable {
         val tempFile = FileUtil.createTempFile("coursera-zip", null)
         DownloadUtil.downloadAtomically(null, link, tempFile)
-        val courseraCourse: Course? = EduUtils.getLocalCourse(tempFile.absolutePath)
+        val courseraCourse = EduUtilsKt.getCourseraCourse(tempFile.absolutePath)
         if (courseraCourse == null) {
           LOG.error("Failed to get local course from $link")
           return@Callable null

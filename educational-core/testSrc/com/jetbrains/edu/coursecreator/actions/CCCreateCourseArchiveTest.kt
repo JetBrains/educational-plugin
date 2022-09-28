@@ -57,36 +57,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
-  fun `test coursera course archive`() {
-    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.EDUCATOR) {
-      lesson {
-        eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "\"Foo\"")
-          }
-        }
-      }
-    } as CourseraCourse
-    course.submitManually = false
-    course.description = "my summary"
-    doTest()
-  }
-
-  fun `test coursera course archive submit manually`() {
-    val course = courseWithFiles(courseProducer = ::CourseraCourse, courseMode = CourseMode.EDUCATOR) {
-      lesson {
-        eduTask("task1") {
-          taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
-            placeholder(0, "\"Foo\"")
-          }
-        }
-      }
-    } as CourseraCourse
-    course.submitManually = true
-    course.description = "my summary"
-    doTest()
-  }
-
   fun `test local course with author`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {

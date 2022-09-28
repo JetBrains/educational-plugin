@@ -1,29 +1,30 @@
 @file:JvmName("CourseArchiveReader")
-package com.jetbrains.edu.learning
 
-import com.fasterxml.jackson.core.JsonFactory
+package com.jetbrains.edu.learning.json
+
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator.Companion.addStudyItemMixins
-import com.jetbrains.edu.coursecreator.actions.mixins.*
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.COURSE_TYPE
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.VERSION
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.encrypt.EncryptionBundle
-import com.jetbrains.edu.learning.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.serialization.SerializationUtils
-import com.jetbrains.edu.learning.serialization.converter.json.local.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.json.encrypt.getAesKey
+import com.jetbrains.edu.learning.json.migration.*
+import com.jetbrains.edu.learning.json.mixins.*
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
-private val LOG = Logger.getInstance(EduUtils::class.java.name)
+private val LOG = logger<LocalEduCourseMixin>()
 
 fun readCourseJson(jsonText: String): Course? {
   return try {
@@ -35,7 +36,7 @@ fun readCourseJson(jsonText: String): Course? {
     courseMapper.treeToValue(courseNode)
   }
   catch (e: IOException) {
-    LOG.error("Failed to read course json \n" + e.message)
+    LOG.severe("Failed to read course json \n" + e.message)
     null
   }
 }
@@ -48,16 +49,15 @@ private fun isArchiveEncrypted(jsonText: String, courseMapper: ObjectMapper): Bo
   return courseType == MARKETPLACE
 }
 
-private fun migrate(jsonObject: ObjectNode): ObjectNode {
+fun migrate(jsonObject: ObjectNode): ObjectNode {
   return migrate(jsonObject, JSON_FORMAT_VERSION)
 }
 
 @VisibleForTesting
 fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
   var jsonObject = node
-  val jsonVersion = jsonObject.get(SerializationUtils.Json.VERSION)
-  var version: Int
-  version = jsonVersion?.asInt() ?: 1
+  val jsonVersion = jsonObject.get(VERSION)
+  var version = jsonVersion?.asInt() ?: 1
 
   while (version < maxVersion) {
     var converter: JsonLocalCourseConverter? = null
@@ -78,28 +78,45 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
 }
 
 fun getCourseMapper(): ObjectMapper {
-  val factory = JsonFactory()
-  val mapper = ObjectMapper(factory)
-  val module = SimpleModule()
-  module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())  // TODO: use JsonSubTypes
-  module.addDeserializer(Course::class.java, CourseDeserializer())
-  mapper.registerModule(module)
+  val mapper = ObjectMapper()
+  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
+  mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
+  mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+  mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
+  setDateFormat(mapper)
   return mapper
 }
 
 fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
   if (isEncrypted) {
-    registerModule(EncryptionModule(EncryptionBundle.value("aesKey")))
+    registerModule(EncryptionModule(getAesKey()))
   }
+  val module = SimpleModule()
+  module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())
+  module.addDeserializer(Course::class.java, CourseDeserializer())
+  registerModule(module)
+
   addStudyItemMixins()
-  configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+}
+
+fun ObjectMapper.addStudyItemMixins() {
+  addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
   addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
+  addMixIn(Section::class.java, RemoteSectionMixin::class.java)
+  addMixIn(FrameworkLesson::class.java, RemoteFrameworkLessonMixin::class.java)
+  addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
+  addMixIn(Task::class.java, RemoteTaskMixin::class.java)
+  addMixIn(ChoiceTask::class.java, ChoiceTaskLocalMixin::class.java)
+  addMixIn(ChoiceOption::class.java, ChoiceOptionLocalMixin::class.java)
   addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
   addMixIn(EduFile::class.java, EduFileMixin::class.java)
   addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
   addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
-  disable(MapperFeature.AUTO_DETECT_FIELDS)
-  disable(MapperFeature.AUTO_DETECT_GETTERS)
-  disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-  disable(MapperFeature.AUTO_DETECT_CREATORS)
+}
+
+fun setDateFormat(mapper: ObjectMapper) {
+  val mapperDateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
+  mapperDateFormat.timeZone = TimeZone.getTimeZone("UTC")
+  mapper.dateFormat = mapperDateFormat
 }

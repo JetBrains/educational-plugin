@@ -1,9 +1,15 @@
-package com.jetbrains.edu.learning.serialization.converter.json.local
+package com.jetbrains.edu.learning.json.migration
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.json.migration.MigrationNames.TASK_FILES
+import com.jetbrains.edu.learning.json.migration.MigrationNames.TEST_FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.IS_VISIBLE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 
 class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 

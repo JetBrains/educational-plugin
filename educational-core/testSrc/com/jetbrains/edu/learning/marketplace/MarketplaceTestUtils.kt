@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 
 fun loginFakeMarketplaceUser() {

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.jetbrains.edu.coursecreator.actions.mixins.JsonMixinNames.TAGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.yaml.format.FrameworkLessonBuilder
 import com.jetbrains.edu.learning.yaml.format.FrameworkLessonYamlMixin

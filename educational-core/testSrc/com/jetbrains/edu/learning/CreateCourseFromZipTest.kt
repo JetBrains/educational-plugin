@@ -35,7 +35,7 @@ class CreateCourseFromZipTest : EduTestCase() {
                                            courseName: String = "Introduction to Python",
                                            lessonsSize: Int = 10): Course {
     val zipPath = "$testDataPath/$fileName"
-    val course = EduUtils.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
+    val course = EduUtilsKt.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
 
     UsefulTestCase.assertInstanceOf(course, EduCourse::class.java)
     GeneratorUtils.initializeCourse(project, course)

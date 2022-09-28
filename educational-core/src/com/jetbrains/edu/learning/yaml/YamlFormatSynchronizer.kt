@@ -44,8 +44,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
 import com.jetbrains.edu.learning.coursera.CourseraCourse
-import com.jetbrains.edu.learning.encrypt.EncryptionModule
-import com.jetbrains.edu.learning.encrypt.getAesKey
+import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
+import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -105,7 +105,7 @@ object YamlFormatSynchronizer {
   val STUDENT_MAPPER_WITH_ENCRYPTION: ObjectMapper by lazy {
     val mapper = createMapper()
     addMixIns(mapper)
-    val aesKey = getAesKey()
+    val aesKey = if (!isUnitTestMode) getAesKey() else "DFC929E375655998A34E56A21C98651C"
     mapper.registerModule(EncryptionModule(aesKey))
     mapper.addMixIn(TaskFile::class.java, StudentEncryptedTaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, StudentEncryptedAnswerPlaceholderYamlMixin::class.java)
