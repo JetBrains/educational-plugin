@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.ObjectCodec
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -14,21 +13,13 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.json.migration.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.json.migration.TaskRoots
 import com.jetbrains.edu.learning.json.migration.To10VersionLocalCourseConverter
 import com.jetbrains.edu.learning.json.migration.To9VersionLocalCourseConverter
+import com.jetbrains.edu.learning.json.mixins.deserializeTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.NAME
 import com.jetbrains.edu.learning.serialization.converter.json.*
@@ -133,9 +124,19 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
                                                               vc: Class<*>? = null) : StdDeserializer<Task>(vc) {
 
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Task? {
-    val node: ObjectNode = jp.codec.readTree(jp) as ObjectNode
+    val objectMapper = jp.codec
+    val node: ObjectNode = objectMapper.readTree(jp) as ObjectNode
     node.migrate(replyVersion, JSON_FORMAT_VERSION, language)
-    return doDeserializeTask(node, jp.codec)
+    if (node.has(SerializationUtils.Json.TASK_TYPE)) {
+      val taskType = node.get(SerializationUtils.Json.TASK_TYPE).asText()
+      return when (taskType) {
+        STRING_TASK_TYPE -> objectMapper.treeToValue(node, StringTask::class.java)
+        NUMBER_TASK_TYPE -> objectMapper.treeToValue(node, NumberTask::class.java)
+        else -> deserializeTask(node, taskType, objectMapper)
+      }
+    }
+    LOG.warn("No task type found in json $node")
+    return null
   }
 
   companion object {
@@ -199,32 +200,6 @@ class JacksonSubmissionDeserializer @JvmOverloads constructor(private val replyV
       To10VersionLocalCourseConverter.convertTaskObject(this)
     }
   }
-}
-
-private fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
-  if (node.has(SerializationUtils.Json.TASK_TYPE)) {
-    val taskType = node.get(SerializationUtils.Json.TASK_TYPE).asText()
-    return when (taskType) {
-      IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
-      CHOICE_TASK_TYPE -> objectMapper.treeToValue(node, ChoiceTask::class.java)
-      THEORY_TASK_TYPE -> objectMapper.treeToValue(node, TheoryTask::class.java)
-      VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
-      CODE_TASK_TYPE -> objectMapper.treeToValue(node, CodeTask::class.java)
-      // deprecated: old courses have pycharm tasks
-      EDU_TASK_TYPE, PYCHARM_TASK_TYPE -> {
-        objectMapper.treeToValue(node, EduTask::class.java)
-      }
-      OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
-      STRING_TASK_TYPE -> objectMapper.treeToValue(node, StringTask::class.java)
-      NUMBER_TASK_TYPE -> objectMapper.treeToValue(node, NumberTask::class.java)
-      else -> {
-        LOG.warn("Unsupported task type $taskType")
-        null
-      }
-    }
-  }
-  LOG.warn("No task type found in json $node")
-  return null
 }
 
 private fun getTaskRoots(language: String?): TaskRoots? {

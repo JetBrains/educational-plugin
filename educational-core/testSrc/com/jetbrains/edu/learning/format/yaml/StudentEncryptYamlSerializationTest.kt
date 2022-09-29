@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.json.encrypt.AES256
+import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 class StudentEncryptYamlSerializationTest : EduTestCase() {
@@ -65,8 +66,8 @@ class StudentEncryptYamlSerializationTest : EduTestCase() {
   fun `test task with placeholders`() {
     val taskSolution = "42 is the answer"
     val possibleAnswer = "answer"
-    val encryptedPossibleAnswer = AES256.encrypt(possibleAnswer, "DFC929E375655998A34E56A21C98651C")
-    val taskSolutionEncrypted = AES256.encrypt(taskSolution, "DFC929E375655998A34E56A21C98651C")
+    val encryptedPossibleAnswer = AES256.encrypt(possibleAnswer, TEST_AES_KEY)
+    val taskSolutionEncrypted = AES256.encrypt(taskSolution, TEST_AES_KEY)
     val task = courseWithFiles {
       lesson {
         eduTask {

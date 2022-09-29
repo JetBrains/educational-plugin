@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec
 
 private const val BUNDLE = "aes.aes"
 private val LOG = logger<EncryptionModule>()
+const val TEST_AES_KEY = "DFC929E375655998A34E56A21C98651C"
 
 class EncryptionModule(private val aesKey: String?) : Module() {
   override fun getModuleName(): String {
@@ -91,12 +92,14 @@ object AES256 {
   }
 }
 
+
+
 fun getAesKey(): String {
   return try {
     val resourceBundle = ResourceBundle.getBundle(BUNDLE)
     resourceBundle.getString("aesKey")
   }
   catch (e: Exception) {
-    "DFC929E375655998A34E56A21C98651C"
+    TEST_AES_KEY
   }
 }

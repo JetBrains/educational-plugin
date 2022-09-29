@@ -357,7 +357,8 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
 
   private fun deserializeItem(jsonObject: ObjectNode, codec: ObjectCodec): StudyItem? {
     if (jsonObject.has(TASK_TYPE)) {
-      return doDeserializeTask(jsonObject, codec)
+      val taskType = jsonObject.get(TASK_TYPE).asText()
+      return deserializeTask(jsonObject, taskType, codec)
     }
 
     return if (!jsonObject.has(ITEM_TYPE)) {
@@ -375,26 +376,21 @@ class StudyItemDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : St
   }
 }
 
-private fun doDeserializeTask(node: ObjectNode, objectMapper: ObjectCodec): Task? {
-  if (node.has(TASK_TYPE)) {
-    val taskType = node.get(TASK_TYPE).asText()
-    return when (taskType) {
-      IdeTask.IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
-      ChoiceTask.CHOICE_TASK_TYPE -> objectMapper.treeToValue(node, ChoiceTask::class.java)
-      TheoryTask.THEORY_TASK_TYPE -> objectMapper.treeToValue(node, TheoryTask::class.java)
-      VideoTask.VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
-      CodeTask.CODE_TASK_TYPE -> objectMapper.treeToValue(node, CodeTask::class.java)
-      // deprecated: old courses have pycharm tasks
-      EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {
-        objectMapper.treeToValue(node, EduTask::class.java)
-      }
-      OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
-      else -> {
-        LOG.warning("Unsupported task type $taskType")
-        null
-      }
+fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCodec): Task? {
+  return when (taskType) {
+    IdeTask.IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
+    ChoiceTask.CHOICE_TASK_TYPE -> objectMapper.treeToValue(node, ChoiceTask::class.java)
+    TheoryTask.THEORY_TASK_TYPE -> objectMapper.treeToValue(node, TheoryTask::class.java)
+    VideoTask.VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
+    CodeTask.CODE_TASK_TYPE -> objectMapper.treeToValue(node, CodeTask::class.java)
+    // deprecated: old courses have pycharm tasks
+    EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {
+      objectMapper.treeToValue(node, EduTask::class.java)
+    }
+    OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
+    else -> {
+      LOG.warning("Unsupported task type $taskType")
+      null
     }
   }
-  LOG.warning("No task type found in json $node")
-  return null
 }

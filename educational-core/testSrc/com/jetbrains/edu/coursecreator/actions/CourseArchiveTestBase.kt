@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.getBinaryFileLimit
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import java.io.File
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
@@ -58,7 +59,7 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
 
   protected open fun getArchiveCreator(): CourseArchiveCreator =
     CourseArchiveCreator(myFixture.project, "${myFixture.project.basePath}/${CCUtils.GENERATED_FILES_FOLDER}/course.zip",
-                         "DFC929E375655998A34E56A21C98651C")
+                         TEST_AES_KEY)
 
   private fun getTestFile(): String {
     return getTestName(true).trim() + ".json"
