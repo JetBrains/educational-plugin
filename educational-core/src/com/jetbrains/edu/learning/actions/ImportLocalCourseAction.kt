@@ -16,20 +16,20 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 import java.awt.Component
 import java.util.function.Supplier
 
+@Suppress("ComponentNotRegistered") // educational-core.xml
 open class ImportLocalCourseAction(
   text: Supplier<@ActionText String> = EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.text")
 ) : DumbAwareAction(text, EduCoreBundle.lazyMessage("course.dialog.open.course.from.disk.description"), null) {
