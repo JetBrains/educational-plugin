@@ -399,6 +399,14 @@ project(":") {
         include("**/*.gif")
       }
       finalizedBy(removeIncompatiblePlugins)
+      doLast {
+        val kotlinJarRe = """kotlin-(stdlib|reflect|runtime).*\.jar""".toRegex()
+        val libraryDir = destinationDir.resolve("${pluginName.get()}/lib")
+        val kotlinStdlibJars = libraryDir.listFiles().orEmpty().filter { kotlinJarRe.matches(it.name) }
+        check(kotlinStdlibJars.isEmpty()) {
+          "Plugin shouldn't contain kotlin stdlib jars. Found:\n" + kotlinStdlibJars.joinToString(separator = ",\n") { it.absolutePath }
+        }
+      }
     }
     prepareSandbox {
       finalizedBy(mergePluginJarTask)
