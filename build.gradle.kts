@@ -246,29 +246,20 @@ configure(allprojects.pluginModules()) {
     }
   }
   dependencies {
-    implementation(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
-    implementation("org.jsoup:jsoup:1.15.3")
-    implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
-    implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
-    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
-      excludeKotlinDeps()
-    }
-
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementation("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0") {
-      excludeKotlinDeps()
-    }
+    implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
+    implementationWithoutKotlin("org.jsoup:jsoup:1.15.3")
+    implementationWithoutKotlin(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = jacksonVersion)
+    implementationWithoutKotlin(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = jacksonVersion)
+    implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
+    implementationWithoutKotlin("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementationWithoutKotlin("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
+    implementationWithoutKotlin("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
+    implementationWithoutKotlin("org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0")
 
     // The same as `testImplementation(kotlin("test"))` but with excluding kotlin stdlib dependencies
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${getKotlinPluginVersion()}") {
-      excludeKotlinDeps()
-    }
-    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testImplementation("io.mockk:mockk:1.12.0") {
-      excludeKotlinDeps()
-    }
+    testImplementationWithoutKotlin("org.jetbrains.kotlin:kotlin-test-junit:${getKotlinPluginVersion()}")
+    testImplementationWithoutKotlin("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    testImplementationWithoutKotlin("io.mockk:mockk:1.12.0")
   }
 }
 
@@ -536,9 +527,7 @@ project(":edu-format") {
   dependencies {
     compileOnly(group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8")
     compileOnly(group = "org.jetbrains", name = "annotations", version = "23.0.0")
-    implementation(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion) {
-      excludeKotlinDeps()
-    }
+    implementationWithoutKotlin(group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version = jacksonVersion)
   }
 }
 
@@ -1078,5 +1067,23 @@ publishing {
         password = prop("publishingPassword")
       }
     }
+  }
+}
+
+fun DependencyHandler.implementationWithoutKotlin(dependencyNotation: String): ExternalModuleDependency {
+  return implementation(dependencyNotation) {
+    excludeKotlinDeps()
+  }
+}
+
+fun DependencyHandler.implementationWithoutKotlin(group: String, name: String, version: String? = null): ExternalModuleDependency {
+  return implementation(group, name, version) {
+    excludeKotlinDeps()
+  }
+}
+
+fun DependencyHandler.testImplementationWithoutKotlin(dependencyNotation: String): ExternalModuleDependency {
+  return testImplementation(dependencyNotation) {
+    excludeKotlinDeps()
   }
 }
