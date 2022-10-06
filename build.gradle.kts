@@ -96,7 +96,7 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 plugins {
   idea
   kotlin("jvm") version "1.7.10"
-  id("org.jetbrains.intellij") version "1.7.0"
+  id("org.jetbrains.intellij") version "1.8.1"
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
@@ -160,13 +160,6 @@ allprojects {
           kotlin.srcDirs("testSrc", "branches/$environmentName/testSrc")
         }
       }
-    }
-  }
-
-  configurations {
-    all {
-      // Allows using project dependencies instead of IDE dependencies during compilation and test running
-      resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
     }
   }
 
@@ -763,14 +756,6 @@ project(":Edu-JavaScript") {
 project(":Edu-Rust") {
   intellij {
     plugins.set(listOf(rustPlugin, tomlPlugin))
-  }
-
-  configurations {
-    // Rust plugin contains own versions of some libs (for example, markdown) incompatible with libs from EduTools plugin
-    // Let's use Rust plugin libs in this module not to fail tests
-    all {
-      resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.CONSUMER_FIRST)
-    }
   }
 
   dependencies {
