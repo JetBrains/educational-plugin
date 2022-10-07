@@ -11,6 +11,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
@@ -46,7 +47,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
-    addGotItTooltip(project)
+    addGotItTooltip()
     taskDescriptionToolWindow.init(toolWindow)
     (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
@@ -59,9 +60,9 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     setTitleActions(actions)
   }
 
-  private fun addGotItTooltip(project: Project) {
+  private fun addGotItTooltip() {
     val action = EduActionUtils.getAction(CodeforcesShowLoginStatusAction.ACTION_ID)
-    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"), project)
+    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"), Disposer.newDisposable())
     gotItTooltip.assignTo(action.templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
     val jComponent = action.templatePresentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
     if (jComponent != null && gotItTooltip.canShow() && !CodeforcesSettings.getInstance().isLoggedIn()) {
