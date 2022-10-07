@@ -1,13 +1,11 @@
 package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.projectView.FrameworkLessonNode.Companion.createFrameworkLessonNode
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -26,6 +24,10 @@ open class CourseNode(
     }
     val lesson = item.getLesson(directory.name)
     if (lesson != null) {
+      val lessonSolved = lesson.taskList.all { it.status == CheckStatus.Solved }
+      if (lessonSolved && PropertiesComponent.getInstance().getBoolean(CourseViewPane.HIDE_SOLVED_LESSONS, false)) {
+        return null
+      }
       return createLessonNode(directory, lesson)
     }
     return null
