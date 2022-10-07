@@ -1,12 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
+import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.withEduTestDialog
@@ -61,6 +63,46 @@ class CourseViewTest : CourseViewTestBase() {
 
     withEduTestDialog(EduTestDialog(Messages.OK)) {
       testAction(RevertTaskAction.ACTION_ID, dataContext(taskFile))
+    }
+  }
+  fun `test hidden lesson`() {
+    PropertiesComponent.getInstance().setValue(CourseViewPane.HIDE_SOLVED_LESSONS, true)
+    try {
+      courseWithFiles("Edu test course") {
+        lesson {
+          eduTask {
+            taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+              placeholder(0, "2")
+            }
+          }
+        }
+        lesson {
+          eduTask {
+            taskFile("taskFile2.txt", "a = <p>TODO()</p>") {
+              placeholder(0, "2")
+            }
+          }
+        }
+      }
+      configureByTaskFile(1, 1, "taskFile1.txt")
+
+      val fileName = "lesson1/task1/taskFile1.txt"
+      val taskFile = myFixture.findFileInTempDir(fileName)
+      val task = findTask(0, 0)
+      testAction(CheckAction(task.getUICheckLabel()), dataContext(taskFile))
+
+      val structure = "-Project\n" +
+                      " -CourseNode Edu test course  1/2\n" +
+                      "  -LessonNode lesson2\n" +
+                      "   -TaskNode task1\n" +
+                      "    taskFile2.txt"
+      assertCourseView(structure)
+
+      withEduTestDialog(EduTestDialog(Messages.OK)) {
+        testAction(RevertTaskAction.ACTION_ID, dataContext(taskFile))
+      }
+    } finally {
+      PropertiesComponent.getInstance().setValue(CourseViewPane.HIDE_SOLVED_LESSONS, false)
     }
   }
 
