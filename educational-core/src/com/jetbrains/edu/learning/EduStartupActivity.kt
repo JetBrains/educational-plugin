@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.startup.StartupManager
@@ -48,11 +49,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(CourseIgnoreDocumentListener(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)
-      // In all IDEs except Android Studio, default project pane is selected via
-      // `com.intellij.ide.projectView.impl.AbstractProjectViewPane.isDefaultPane`.
-      if (EduUtils.isAndroidStudio()) {
-        selectProjectView(project, true)
-      }
     }
 
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
@@ -65,6 +61,13 @@ class EduStartupActivity : StartupActivity.DumbAware {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
       }
+
+      val fileEditorManager = FileEditorManager.getInstance(project)
+      if (!fileEditorManager.hasOpenFiles()) {
+        EduUtils.openFirstTask(course, project)
+      }
+      selectProjectView(project, true)
+
       migrateYaml(project, course)
 
       setupProject(project, course)
@@ -117,6 +120,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
       else {
         LOG.warn("Failed to select Project View")
       }
+      toolWindow.show()
     })
   }
 
