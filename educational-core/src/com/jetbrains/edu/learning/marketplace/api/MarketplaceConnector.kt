@@ -28,8 +28,7 @@ import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.api.EduOAuthConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.TOKEN_EXCHANGE
+import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -38,15 +37,16 @@ import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.apache.http.client.utils.URIBuilder
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 
 abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
   override var account: MarketplaceAccount?
@@ -55,16 +55,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
       MarketplaceSettings.INSTANCE.account = account
     }
 
-  override val authorizationUrl: String
-    get() = URIBuilder(HUB_AUTH_URL)
-      .setPath("$HUB_API_PATH/oauth2/auth")
-      .addParameter("access_type", "offline")
-      .addParameter("client_id", EDU_CLIENT_ID)
-      .addParameter("redirect_uri", getRedirectUri())
-      .addParameter("response_type", CODE_ARGUMENT)
-      .addParameter("scope", "openid $EDU_CLIENT_ID $MARKETPLACE_CLIENT_ID")
-      .build()
-      .toString()
+  override val authorizationUrl: String? = null
 
   override val clientId: String = EDU_CLIENT_ID
 
@@ -86,15 +77,46 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   private val repositoryEndpoints: MarketplaceRepositoryEndpoints
     get() = getEndpoints(baseUrl = repositoryUrl)
 
-  private val extensionGrantsEndpoint: MarketplaceExtensionGrantsEndpoints
-    get() = getEndpoints(baseUrl = JB_ACCOUNT_URL)
+  private val extensionGrantsEndpoint: HubExtensionGrantsEndpoints
+    get() = getHubExtensionGrantsEndpoints()
+
+  private fun getHubExtensionGrantsEndpoints(): HubExtensionGrantsEndpoints {
+    val retrofit = createRetrofitBuilder(HUB_AUTH_URL, connectionPool, accessToken = null, authHeaderValue = AUTH_TYPE_BASIC, customAuthHeader = getBasicAuthenticationHeader())
+      .addConverterFactory(converterFactory)
+      .build()
+
+    return retrofit.create(HubExtensionGrantsEndpoints::class.java)
+  }
+
+  private fun getBasicAuthenticationHeader(): String {
+    val valueToEncode = "$EDU_CLIENT_ID:$EDU_CLIENT_SECRET"
+    return "$AUTH_TYPE_BASIC " + Base64.getEncoder().encodeToString(valueToEncode.toByteArray())
+  }
 
 
   // Authorization requests:
 
+  override fun doAuthorize(vararg postLoginActions: Runnable, authorizationPlace: EduCounterUsageCollector.AuthorizationPlace) {
+    this.authorizationPlace = authorizationPlace
+    setPostLoginActions(postLoginActions.asList())
+    login(null)
+  }
+
   @Synchronized
-  override fun login(code: String): Boolean {
-    val hubTokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
+  override fun login(code: String?): Boolean {
+    val jbAuthService = JBAccountAuthService.getInstance()
+    if (!jbAuthService.isLoggedIn() && jbAuthService.isLoginAvailable()) {
+      jbAuthService.login()
+    }
+
+    val jbAccessToken: String = jbAuthService.getAccessToken() ?: return false
+
+    val hubTokenInfo = retrieveHubToken(jbAccessToken)
+    if (hubTokenInfo == null) {
+      LOG.error("Failed to obtain Hub token via extension grants")
+      return false
+    }
+
     val account = MarketplaceAccount(hubTokenInfo.expiresIn)
     val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return false
     if (currentUser.isGuest) {
@@ -105,41 +127,24 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     }
     account.userInfo = currentUser
 
-    // Hub token and JBA token both have expiresIn times, which are of the same duration.
-    // We keep the hub token expiresIn interval as the shortest one.
-    val jBAccountTokenInfo = if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) {
-      retrieveJBAccountToken(hubTokenInfo.idToken)
-    }
-    else TokenInfo()
-
-    if (jBAccountTokenInfo == null) {
-      LOG.error("Failed to obtain JBA token via extension grants")
-      return false
-    }
-
     this.account = account
     account.saveTokens(hubTokenInfo)
-    account.saveJBAccountToken(jBAccountTokenInfo.idToken)
+
+    //do we need to store jb account token if we do not manage its refresh
+    //account.saveJBAccountToken(jBAccountTokenInfo.idToken)
     return true
   }
 
-  private fun retrieveJBAccountToken(hubIdToken: String?): TokenInfo? {
-    if (hubIdToken.isNullOrEmpty()) {
-      LOG.error("Failed to obtain JB account token via extension grants. Hub id token is null")
+  private fun retrieveHubToken(jbaAccessToken: String): TokenInfo? {
+    val response = extensionGrantsEndpoint.exchangeTokens(JBA_TOKEN_EXCHANGE, jbaAccessToken, MARKETPLACE_CLIENT_ID).executeHandlingExceptions()
+    val tokenInfo = response?.body()
+
+    if (tokenInfo == null) {
+      LOG.error("Failed to obtain hub token via extension grants. JBAccount access token is null")
       return null
     }
-    val response = extensionGrantsEndpoint.exchangeTokens(TOKEN_EXCHANGE, hubIdToken).executeHandlingExceptions()
-    return response?.body()
-  }
 
-  override fun refreshTokens() {
-    super.refreshTokens()
-
-    if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
-    val currentAccount = account ?: error("No logged in user")
-    val jBAccountToken = retrieveJBAccountToken(currentAccount.getHubIdToken()) ?: error(
-      "Failed to obtain JB account token via extension grants at token refresh")
-    currentAccount.saveJBAccountToken(jBAccountToken.idToken)
+    return tokenInfo
   }
 
   override fun getNewTokens(): TokenInfo {
@@ -507,11 +512,12 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     private val LOG = logger<MarketplaceConnector>()
 
     private val MARKETPLACE_CLIENT_ID: String = MarketplaceOAuthBundle.value("marketplaceHubClientId")
-    private val EDU_CLIENT_ID: String = MarketplaceOAuthBundle.value("eduHubClientId")
-    private val EDU_CLIENT_SECRET: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
+    val EDU_CLIENT_ID: String = MarketplaceOAuthBundle.value("eduHubClientId")
+    val EDU_CLIENT_SECRET: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
 
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
+    private const val AUTH_TYPE_BASIC = "Basic"
 
     @JvmStatic
     fun getInstance(): MarketplaceConnector = service()

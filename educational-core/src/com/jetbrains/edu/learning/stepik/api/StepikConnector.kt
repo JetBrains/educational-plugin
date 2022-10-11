@@ -87,7 +87,8 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
   }
 
   @Synchronized
-  override fun login(code: String): Boolean {
+  override fun login(code: String?): Boolean {
+    if (code == null) return false
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
     val stepikUser = StepikUser(tokenInfo)
     val currentUser = getUserInfo(stepikUser, tokenInfo.accessToken) ?: return false

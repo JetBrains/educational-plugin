@@ -30,7 +30,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   protected open val redirectHost = "localhost"
 
-  protected abstract val authorizationUrl: String
+  protected abstract val authorizationUrl: String?
 
   protected abstract val baseUrl: String
 
@@ -90,13 +90,15 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
     this.authorizationPlace = authorizationPlace
     setPostLoginActions(postLoginActions.asList())
-    BrowserUtil.browse(authorizationUrl)
+    val authUrl = authorizationUrl
+    if (authUrl == null) return
+    BrowserUtil.browse(authUrl)
   }
 
   /**
    * Must be synchronized to avoid race condition
    */
-  abstract fun login(code: String): Boolean
+  abstract fun login(code: String?): Boolean
 
   @Synchronized
   fun doLogout(authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {

@@ -45,9 +45,10 @@ fun createRetrofitBuilder(baseUrl: String,
                           accessToken: String? = null,
                           authHeaderName: String = "Authorization",
                           authHeaderValue: String? = "Bearer",
+                          customAuthHeader: String? = null,
                           customInterceptor: Interceptor? = null): Retrofit.Builder {
   return Retrofit.Builder()
-    .client(createOkHttpClient(baseUrl, connectionPool, accessToken, authHeaderName, authHeaderValue, customInterceptor))
+    .client(createOkHttpClient(baseUrl, connectionPool, accessToken, authHeaderName, authHeaderValue, customAuthHeader, customInterceptor))
     .baseUrl(baseUrl)
 }
 
@@ -56,6 +57,7 @@ private fun createOkHttpClient(baseUrl: String,
                                accessToken: String?,
                                authHeaderName: String,
                                authHeaderValue: String?,
+                               customAuthHeader: String?,
                                customInterceptor: Interceptor?): OkHttpClient {
   val dispatcher = Dispatcher()
   dispatcher.maxRequests = 10
@@ -69,8 +71,12 @@ private fun createOkHttpClient(baseUrl: String,
     .connectTimeout(60, TimeUnit.SECONDS)
     .addInterceptor { chain ->
       val builder = chain.request().newBuilder().addHeader(USER_AGENT, eduToolsUserAgent)
-      if (accessToken != null) {
-        val authHeader = if (authHeaderValue != null) "$authHeaderValue $accessToken" else accessToken
+      val authHeader = customAuthHeader
+                       ?: if (accessToken != null) {
+                         if (authHeaderValue != null) "$authHeaderValue $accessToken" else accessToken
+                       }
+                       else null
+      if (authHeader != null) {
         builder.addHeader(authHeaderName, authHeader)
       }
       val newRequest = builder.build()
