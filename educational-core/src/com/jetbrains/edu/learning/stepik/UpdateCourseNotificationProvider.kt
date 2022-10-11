@@ -1,15 +1,14 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
-import com.intellij.ui.EditorNotifications
+import com.intellij.ui.EditorNotificationProvider
+import com.intellij.ui.EditorNotificationProvider.CONST_NULL
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -19,19 +18,21 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.marketplace.update.getUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Function
+import javax.swing.JComponent
 
-class UpdateCourseNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
+class UpdateCourseNotificationProvider : EditorNotificationProvider, DumbAware {
 
   private var isUpdateRunning: AtomicBoolean = AtomicBoolean(false)
 
-  override fun getKey() = KEY
-
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
+  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?> {
     if (!EduUtils.isStudentProject(project)) {
-      return null
+      return CONST_NULL
     }
-    val course = project.course as? EduCourse ?: return null
-    if ((course.isStepikRemote || course.isMarketplaceRemote) && !course.isUpToDate && file.getTaskFile(project) != null) {
+    val course = project.course as? EduCourse ?: return CONST_NULL
+    if (!course.isStepikRemote && !course.isMarketplaceRemote || course.isUpToDate || file.getTaskFile(project) == null) return CONST_NULL
+
+    return Function {
       val panel = EditorNotificationPanel()
       panel.text = EduCoreBundle.message("update.notification")
       panel.createActionLabel(EduCoreBundle.message("update.action")) {
@@ -45,10 +46,8 @@ class UpdateCourseNotificationProvider : EditorNotifications.Provider<EditorNoti
             }
           })
       }
-      return panel
+      panel
     }
-
-    return null
   }
 
   private fun updateCourse(project: Project, course: EduCourse) {
@@ -60,10 +59,5 @@ class UpdateCourseNotificationProvider : EditorNotifications.Provider<EditorNoti
       }
       false -> updateCourseOnStepik(project, course)
     }
-  }
-
-  companion object {
-    @VisibleForTesting
-    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.updateCourse")
   }
 }

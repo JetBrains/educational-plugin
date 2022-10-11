@@ -6,7 +6,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
-import com.intellij.ui.EditorNotifications
+import com.intellij.ui.EditorNotificationProvider
 import com.intellij.ui.EditorNotificationsImpl
 
 abstract class NotificationsTestBase : EduTestCase() {
@@ -15,18 +15,18 @@ abstract class NotificationsTestBase : EduTestCase() {
     EditorNotificationsImpl.completeAsyncTasks()
   }
 
-  protected inline fun <reified T : EditorNotifications.Provider<*>> checkEditorNotification(
+  protected inline fun <reified T : EditorNotificationProvider> checkEditorNotification(
     virtualFile: VirtualFile,
     expectedMessage: String? = null
   ) {
     checkEditorNotification(virtualFile, T::class.java, expectedMessage)
   }
 
-  protected inline fun <reified T : EditorNotifications.Provider<*>> checkNoEditorNotification(virtualFile: VirtualFile) {
+  protected inline fun <reified T : EditorNotificationProvider> checkNoEditorNotification(virtualFile: VirtualFile) {
     checkNoEditorNotification(virtualFile, T::class.java)
   }
 
-  protected fun <T : EditorNotifications.Provider<*>> checkEditorNotification(
+  protected fun <T : EditorNotificationProvider> checkEditorNotification(
     virtualFile: VirtualFile,
     clazz: Class<T>,
     expectedMessage: String? = null
@@ -38,12 +38,12 @@ abstract class NotificationsTestBase : EduTestCase() {
     }
   }
 
-  protected fun <T : EditorNotifications.Provider<*>> checkNoEditorNotification(virtualFile: VirtualFile, clazz: Class<T>) {
+  protected fun <T : EditorNotificationProvider> checkNoEditorNotification(virtualFile: VirtualFile, clazz: Class<T>) {
     val notificationPanel = getNotificationPanel(virtualFile, clazz)
     assertNull("Notification is shown", notificationPanel)
   }
 
-  private fun <T : EditorNotifications.Provider<*>> getNotificationPanel(
+  private fun <T : EditorNotificationProvider> getNotificationPanel(
     virtualFile: VirtualFile,
     clazz: Class<T>
   ): EditorNotificationPanel? {

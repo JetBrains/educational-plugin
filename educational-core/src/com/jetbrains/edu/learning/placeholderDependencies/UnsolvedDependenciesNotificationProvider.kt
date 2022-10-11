@@ -4,43 +4,44 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
-import com.intellij.ui.EditorNotifications
+import com.intellij.ui.EditorNotificationProvider
+import com.intellij.ui.EditorNotificationProvider.CONST_NULL
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import java.util.function.Function
+import javax.swing.JComponent
 
-class UnsolvedDependenciesNotificationProvider : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
+class UnsolvedDependenciesNotificationProvider : EditorNotificationProvider, DumbAware {
 
-  override fun getKey() = KEY
-
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor, project: Project): EditorNotificationPanel? {
+  override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?> {
     if (!EduUtils.isStudentProject(project)) {
-      return null
+      return CONST_NULL
     }
-    val task = file.getContainingTask(project) ?: return null
+    val task = file.getContainingTask(project) ?: return CONST_NULL
     val taskDependencies = task.getUnsolvedTaskDependencies().sortedBy { it.index }
     if (taskDependencies.isEmpty()) {
-      return null
+      return CONST_NULL
     }
-    val panel = EditorNotificationPanel()
-    panel.text = getText(taskDependencies.map { it.name })
-    panel.createActionLabel(EduCoreBundle.message("action.solve.task.text", taskDependencies[0].name)) {
-      NavigationUtils.navigateToTask(project, taskDependencies[0], task)
-      EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
+
+    return Function {
+      val panel = EditorNotificationPanel()
+      panel.text = getText(taskDependencies.map { it.name })
+      panel.createActionLabel(EduCoreBundle.message("action.solve.task.text", taskDependencies[0].name)) {
+        NavigationUtils.navigateToTask(project, taskDependencies[0], task)
+        EduCounterUsageCollector.taskNavigation(EduCounterUsageCollector.TaskNavigationPlace.UNRESOLVED_DEPENDENCY_NOTIFICATION)
+      }
+      panel
     }
-    return panel
   }
 
   companion object {
-    val KEY: Key<EditorNotificationPanel> = Key.create("Edu.unsolvedDependencies")
-
     @VisibleForTesting
     fun getText(taskNames: List<String>): String {
       val taskNamesString = taskNames.joinToString(separator = ", ") { "'$it'" }
