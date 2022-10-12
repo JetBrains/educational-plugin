@@ -7,6 +7,7 @@ import com.intellij.execution.application.ApplicationConfiguration.JavaApplicati
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.target.TargetEnvironmentRequest
 import com.intellij.execution.target.TargetedCommandLineBuilder
+import com.intellij.execution.target.value.TargetValue
 
 @Suppress("UnstableApiUsage")
 fun getJavaApplicationCommandLineState(
@@ -19,7 +20,7 @@ fun getJavaApplicationCommandLineState(
       val commandLine = super.createTargetedCommandLine(request)
       val inputFile = configuration.getRedirectInputFile()
       if (inputFile != null) {
-        commandLine.setInputFile(request.defaultVolume.createUpload(inputFile.path))
+        commandLine.setInputFile(TargetValue.fixed(inputFile.path))
       }
       return commandLine
     }
