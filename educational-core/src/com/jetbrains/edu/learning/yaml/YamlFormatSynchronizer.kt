@@ -34,10 +34,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -142,6 +139,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceTask::class.java, ChoiceTaskYamlMixin::class.java)
+    mapper.addMixIn(CodeTask::class.java, CodeTaskYamlMixin::class.java)
     mapper.addMixIn(ChoiceOption::class.java, ChoiceOptionYamlMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
     mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderYamlMixin::class.java)
