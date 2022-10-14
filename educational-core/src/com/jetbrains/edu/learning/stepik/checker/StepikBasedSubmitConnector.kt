@@ -35,6 +35,7 @@ object StepikBasedSubmitConnector {
       return Err(it)
     }
 
+    // getLanguage() needed for backwards compatibility
     val defaultLanguage = task.submissionLanguage ?: getLanguage(task).onError { return Err(it) }
 
     val configurator = task.course.configurator

@@ -54,6 +54,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private val stepId: Int = stepSource.id
   private val stepPosition: Int = stepSource.position
   private val updateDate = stepSource.updateDate
+  private val EXPECTED_PATTERN_GROUP_SIZE = 3
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
     // lexicographical order
@@ -166,9 +167,11 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       0 -> null to null
       1 -> codeTemplates.entries.first().toPair()
       else -> {
+        // Required to choose Java version.
+        // As Java has backwards compatibility it is more safe to use the latest version
         val langWithMaxVersion= codeTemplates?.keys?.mapNotNull {
           val groups = Regex("^(\\D+)\\s?([.|0-9]+)?$").matchEntire(it)?.groupValues
-          if (groups?.size != 3) null
+          if (groups?.size != EXPECTED_PATTERN_GROUP_SIZE) null
           else groups
         }?.reduce { max, curr -> if (VersionComparatorUtil.compare(max[2], curr[2]) > 0) max else curr }?.first()
 
