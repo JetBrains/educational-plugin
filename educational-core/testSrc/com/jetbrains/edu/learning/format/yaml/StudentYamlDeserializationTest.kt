@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoSource
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
@@ -548,6 +549,34 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("text", taskFile.text)
     assertTrue(taskFile.isLearnerCreated)
     TestCase.assertFalse(taskFile.isEditable)
+  }
+
+  fun `test code task`() {
+    val yamlContent = """
+    |type: code
+    |custom_name: Code task
+    |files:
+    |- name: src/Main.java
+    |  visible: true
+    |  text: |-
+    |    import java.util.Scanner;
+    |
+    |    public class Main {
+    |        public static void main(String[] args) {
+    |            Scanner scanner = new Scanner(System.in);
+    |            int number = scanner.nextInt();
+    |            System.out.println(number);
+    |        }
+    |    }
+    |  learner_created: false
+    |status: Failed
+    |submission_language: java17
+    |""".trimMargin()
+
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is CodeTask)
+    task as CodeTask
+    assertEquals("java17", task.submissionLanguage)
   }
 
   private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)

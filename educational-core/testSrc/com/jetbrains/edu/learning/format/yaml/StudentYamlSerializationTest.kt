@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFileIO
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -584,6 +585,30 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  learner_created: false
     |status: Unchecked
     |record: -1
+    |""".trimMargin())
+  }
+
+  fun `test code task`() {
+    val task: CodeTask = courseWithFiles {
+      lesson {
+        codeTask("task1") {
+          taskFile("Task.txt", "file text")
+        }
+      }
+    }.findTask("lesson1", "task1") as CodeTask
+    task.record = -1
+    task.submissionLanguage = "java256"
+
+    doTest(task, """
+    |type: code
+    |files:
+    |- name: Task.txt
+    |  visible: true
+    |  text: file text
+    |  learner_created: false
+    |status: Unchecked
+    |record: -1
+    |submission_language: java256
     |""".trimMargin())
   }
 
