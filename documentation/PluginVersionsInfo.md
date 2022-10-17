@@ -49,3 +49,4 @@
 | 2022.7   | PyCharm Edu 2022.1.3<br>IDEA Edu 2022.1.3                        | -   | 13   |
 | 2022.8   | PyCharm Edu 2022.2<br>IDEA Edu 2022.2                            | -   | 14   |
 | 2022.9   | PyCharm Edu 2022.2.1<br>IDEA Edu 2022.2.1                        | -   | 14   |
+| 2022.10  | PyCharm Edu 2022.2.3<br>IDEA Edu 2022.2.3                        | -   | 14   |
