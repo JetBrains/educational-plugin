@@ -5,37 +5,24 @@ package com.jetbrains.edu.learning.taskDescription
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
 import com.jetbrains.edu.learning.ui.getUIName
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -50,20 +37,11 @@ const val A_TAG = "a"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
-private const val SPAN_ATTRIBUTE = "span"
-private const val HEIGHT_ATTRIBUTE = "height"
 const val HREF_ATTRIBUTE = "href"
-private const val STYLE_ATTRIBUTE = "style"
-private const val SRCSET_ATTRIBUTE = "srcset"
-private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
-private const val WIDTH_ATTRIBUTE = "width"
-private const val BORDER_ATTRIBUTE = "border"
-private const val DARK_SUFFIX = "_dark"
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskDescription.utils")
 private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
                               tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
 private val YOUTUBE_LINKS_REGEX = "https?://(www\\.)?(youtu\\.be|youtube\\.com)/?(watch\\?v=|embed)?.*".toRegex()
-private val EXTERNAL_LINK_REGEX = "https?://.*".toRegex()
 
 private fun tagsToRegex(pattern: (String) -> String, vararg tags: String): List<Regex> = tags.map { pattern(it).toRegex() }
 
@@ -106,6 +84,9 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   }
 }
 
+/**
+ * TODO do we really need this method? It is used only in tests
+ */
 fun processYoutubeLink(text: String, taskId: Int): String {
   val document = Jsoup.parse(text)
   val videoElements = document.getElementsByTag(VIDEO_TAG)
@@ -158,129 +139,11 @@ fun String.getYoutubeVideoId(): String? {
   }
 }
 
-fun processImagesAndLinks(project: Project, task: Task, taskText: String): String {
-  val documentWithImagesByTheme = replaceMediaForTheme(project, task, taskText)
-  return addExternalLinkIcons(documentWithImagesByTheme)
-}
-
-/**
- * This method replaces the `src` attributes for `<img>` and for `<iframe>` elements.
- * It does it only if the dark theme is currently used.
- * The value to substitute for the original src value is searched in the following steps:
- * 1. If the custom attribute `darkSrc` is set (written as `data-dark-src` inside HTML),
- * then its value is used. No further steps are done.
- * 2. For image (`<img>`), if the `srcset` attribute is set, then its value is used, no further steps are done.
- * 3. For image (`<img>`), if the link directs to a local files, for example `image.png`, and the file `image_dark.png`
- * is also present, then the link is updated to direct to this file with a `_dark` postfix.
- *
- * Note, that the `srcset` attribute is always removed, independently of whether the dark theme is used or not.
- */
-fun replaceMediaForTheme(project: Project, task: Task, taskText: String): Document {
-  val document = Jsoup.parse(taskText)
-
-  val isDarkTheme = UIUtil.isUnderDarcula()
-
-  val imageElements = document.getElementsByTag(IMG_TAG)
-  for (element in imageElements) {
-    updateImageElementAccordingToUiTheme(element, isDarkTheme, task, project)
-  }
-
-  if (isDarkTheme) {
-    val iframeElements = document.getElementsByTag(IFRAME_TAG)
-    for (element in iframeElements) {
-      useDarkSrcCustomAttributeIfPresent(element)
-    }
-  }
-
-  return document
-}
-
-private fun updateImageElementAccordingToUiTheme(element: Element, isDarkTheme: Boolean, task: Task, project: Project) {
-  // remove srcset attribute independently of the theme. Store its value
-  val srcsetValue = if (element.hasAttr(SRCSET_ATTRIBUTE)) element.attr(SRCSET_ATTRIBUTE) else null
-  if (srcsetValue != null)
-    element.removeAttr(SRCSET_ATTRIBUTE)
-
-  if (!isDarkTheme)
-    return
-
-  //first, try to use data-dark-src attribute
-  if (useDarkSrcCustomAttributeIfPresent(element))
-    return
-
-  //second, try to use srcset attribute
-  if (srcsetValue != null) {
-    element.attr(SRC_ATTRIBUTE, srcsetValue)
-    return
-  }
-
-  //third, try to find a local image file with the _dark postfix
-  val srcAttr = element.attr(SRC_ATTRIBUTE)
-
-  val fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(srcAttr)
-  val fileExtension = FileUtilRt.getExtension(srcAttr)
-  val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
-  val taskDir = task.getDir(project.courseDir)?.path
-  if (task.taskFiles.containsKey(darkSrc) || (taskDir != null && FileUtil.exists("$taskDir${VfsUtil.VFS_SEPARATOR_CHAR}$darkSrc"))) {
-    element.attr(SRC_ATTRIBUTE, darkSrc)
-  }
-}
-
-/**
- * Take the value for the `src` attribute from the `dataSrc` attribute (written as `data-dark-src` in HTML),
- * if the latter is present.
- * @return whether the replacement was made
- */
-fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
-  val darkSrc = element.dataset()[DARK_SRC_CUSTOM_ATTRIBUTE]
-
-  return if (darkSrc != null) {
-    element.attr(SRC_ATTRIBUTE, darkSrc)
-    true
-  } else false
-}
-
-fun addExternalLinkIcons(document: Document): String {
-  val links = document.getElementsByTag(A_TAG)
-  val externalLinks = links.filter { element -> element.attr(HREF_ATTRIBUTE).matches(EXTERNAL_LINK_REGEX) }
-  val arrowIcon = if (UIUtil.isUnderDarcula()) {
-    EXTERNAL_LINK_ARROW_DARK_PNG
-  }
-  else {
-    EXTERNAL_LINK_ARROW_PNG
-  }
-  for (link in externalLinks) {
-    val span = document.createElement(SPAN_ATTRIBUTE)
-    link.replaceWith(span)
-    span.appendChild(link)
-    link.appendElement(IMG_TAG)
-    val img = link.getElementsByTag(IMG_TAG)
-    val fontSize = StyleManager().bodyFontSize
-    val pictureSize = getPictureSize(fontSize)
-
-    img.attr(SRC_ATTRIBUTE, StyleResourcesManager.resourceUrl(arrowIcon))
-    img.attr(STYLE_ATTRIBUTE, "display:inline; position:relative; top:${fontSize * 0.18}; left:-${fontSize * 0.1}")
-    img.attr(BORDER_ATTRIBUTE, "0")
-    img.attr(WIDTH_ATTRIBUTE, pictureSize)
-    img.attr(HEIGHT_ATTRIBUTE, pictureSize)
-  }
-  return document.toString()
-}
-
-fun getPictureSize(fontSize: Int): String {
-  return if (isSwing()) {
-    fontSize
-  }
-  else {
-    // rounding it to int is needed here, because if we are passing a float number, an arrow disappears in studio
-    (fontSize * 1.2).toInt()
-  }.toString()
-}
-
 fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
   when (course) {
     is HyperskillCourse -> linkPanel.add(
       createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin))
+
     is CodeforcesCourse -> {
       linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
                                      OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)

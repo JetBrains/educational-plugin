@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.HtmlTransformerContext
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.CodeHighlighter
 import org.intellij.lang.annotations.Language
 
 abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
@@ -30,7 +32,8 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
                      @Language("HTML") expectedText: String) {
     createCourseWithTestTask(taskDescription, format)
     val task = findTask(0, 0)
-    val actualText = TaskDescriptionToolWindow.getTaskDescriptionWithCodeHighlighting(project, task)
+    val html = EduUtils.getTaskTextFromTask(project, task) ?: ""
+    val actualText = CodeHighlighter.swingTransform(html, HtmlTransformerContext(project, task))
     assertEquals(expectedText.trimIndent(), actualText.dropSpecificValues())
   }
 

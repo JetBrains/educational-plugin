@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.ui.GotItTooltip
 import com.intellij.ui.components.JBOptionButton
 import com.intellij.util.containers.headTail
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.*
@@ -144,7 +145,7 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
       val buttonPanelGridBagConstraints = GridBagConstraints(0, 0, 1, 1, 1.0, 0.0,
                                                              GridBagConstraints.CENTER,
                                                              GridBagConstraints.NONE,
-                                                             Insets(8, 0, 0, 0), 0, 0)
+                                                             JBUI.insetsTop(8), 0, 0)
       gridBagPanel.add(buttonPanel, buttonPanelGridBagConstraints)
       return gridBagPanel
     }

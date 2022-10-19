@@ -15,12 +15,15 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.EduFileEditorManagerListener
-import com.jetbrains.edu.learning.taskDescription.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_DARK_PNG
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager.EXTERNAL_LINK_ARROW_PNG
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.addExternalLinkIcons
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.getPictureSize
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.htmlWithResources
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.replaceMediaForTheme
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -91,7 +94,7 @@ class TaskDescriptionTest : EduTestCase() {
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val initialDocument = Jsoup.parse(fileText)
 
-    val processedText = JCEFToolWindow.processContent(fileText, project)
+    val processedText = htmlWithResources(project, fileText)
     val processedDocument = Jsoup.parse(processedText)
 
     val initialImgElements = initialDocument.getElementsByTag(IMG_TAG)
@@ -105,7 +108,7 @@ class TaskDescriptionTest : EduTestCase() {
     myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
     val name = getTestName(true) + ".html"
     val fileText = FileUtil.loadFile(File(testDataPath, name))
-    val processedText = JCEFToolWindow.processContent(fileText, project)
+    val processedText = htmlWithResources(project, fileText)
     val document = Jsoup.parse(processedText)
     val imageElements = document.getElementsByTag(IMG_TAG)
     imageElements
@@ -124,7 +127,7 @@ class TaskDescriptionTest : EduTestCase() {
     createCourseWithDescription(description)
     myFixture.openFileInEditor(findFileInTask(0, 0, "taskFile1.txt"))
 
-    val processedText = JCEFToolWindow.processContent(description, project)
+    val processedText = htmlWithResources(project, description)
     val document = Jsoup.parse(processedText)
     for (script in document.getElementsByTag(SCRIPT_TAG)) {
       val url = script.attr(SRC_ATTRIBUTE)

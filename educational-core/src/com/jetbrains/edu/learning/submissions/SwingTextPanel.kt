@@ -1,42 +1,38 @@
-package com.jetbrains.edu.learning.taskDescription.ui.tab
+package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.*
+import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
+import com.jetbrains.edu.learning.taskDescription.ui.createTextPane
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import org.jetbrains.annotations.NonNls
-import org.jsoup.nodes.Element
 import java.awt.BorderLayout
 import java.awt.FlowLayout
-import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JTextPane
 
-
-class SwingTextPanel(project: Project, linkHandler: SwingToolWindowLinkHandler? = null) : TabTextPanel(project) {
+class SwingTextPanel(private val project: Project, linkHandler: SwingToolWindowLinkHandler? = null) : JPanel(BorderLayout()) {
   private var currentLinkHandler: SwingToolWindowLinkHandler? = null
 
   private val textPane: JTextPane = createTextPane()
   private val textPanel: JBScrollPane = JBScrollPane(textPane)
 
-  override val component: JComponent = textPane
-
   init {
+    background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    border = JBUI.Borders.empty(15, 15, 0, 0)
+
     textPanel.border = JBUI.Borders.empty()
     add(textPanel, BorderLayout.CENTER)
 
     updateLinkHandler(linkHandler)
   }
 
-  override fun setText(text: String) {
+  fun setText(text: String) {
     textPane.text = text
-  }
-
-  override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {
-    return wrapHintSwing(project, hintElement, displayedHintNumber, hintTitle)
   }
 
   fun updateLinkHandler(newHyperlinkListener: SwingToolWindowLinkHandler?) {

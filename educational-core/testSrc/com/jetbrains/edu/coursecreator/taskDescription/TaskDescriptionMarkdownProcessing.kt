@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.wrapHintTagsInsideHTML
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.wrapHintTagsInsideHTML
 import junit.framework.TestCase
 
 class TaskDescriptionMarkdownProcessing : EduTestCase() {

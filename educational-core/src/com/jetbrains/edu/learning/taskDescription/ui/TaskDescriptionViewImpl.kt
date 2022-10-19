@@ -189,7 +189,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
   }
 
   private fun setTaskText(task: Task?) {
-    uiContent?.taskTextTW?.setTaskText(project, task)
+    uiContent?.taskTextTW?.setTaskText(task)
   }
 
   override fun getData(dataId: String): Any? {

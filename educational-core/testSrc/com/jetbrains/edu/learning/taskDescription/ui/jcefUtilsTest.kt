@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.taskDescription.ui.uihtml.steps.handlers.JcefToolWindowLinkHandler
 import junit.framework.TestCase
 import org.junit.Test
 
@@ -10,20 +11,20 @@ class jcefUtilsTest : EduTestCase() {
 
   @Test
   fun `test about_blank`() {
-    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    val jCefToolWindowLinkHandler = JcefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("about:blank"))
   }
 
   @Test
   fun `test youtube link`() {
-    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    val jCefToolWindowLinkHandler = JcefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
   }
 
 
   @Test
   fun `test youtube link with ref`() {
-    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    val jCefToolWindowLinkHandler = JcefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro", "https://google.account"))
   }
 
@@ -54,7 +55,7 @@ class jcefUtilsTest : EduTestCase() {
 
   @Test
   fun `test psi Element`() {
-    val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
+    val jCefToolWindowLinkHandler = JcefToolWindowLinkHandler(project)
     assertTrue(jCefToolWindowLinkHandler.process("file:///jbcefbrowser/psi_element://java.lang.String#contains"))
     TestCase.assertNull(EduUtils.getCurrentTask(project))
   }
