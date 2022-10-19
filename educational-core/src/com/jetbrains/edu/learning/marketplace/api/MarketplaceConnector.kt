@@ -24,6 +24,7 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
@@ -289,7 +290,11 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
                                   showLogAction,
                                   {
                                     showAcceptDeveloperAgreementNotification(project) { openOnMarketplaceAction(MARKETPLACE_PROFILE_PATH) }
-                                  }, {})
+                                  },
+                                  {},
+                                  {
+                                    onAuthFailedActions(project, message("notification.course.creator.failed.to.upload.course.oauth.reason.title"))
+                                  })
       .onError {
         LOG.error("Failed to upload course ${course.name}: $it")
         return
@@ -312,12 +317,17 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     LOG.info("$message with id ${courseBean.id}")
   }
 
+  private fun onAuthFailedActions(project: Project, failedActionTitle: String) {
+    doLogout()
+    CCUtils.showLoginNeededNotification(project, message("item.upload.to.0.course.title", MARKETPLACE), failedActionTitle) { doAuthorize() }
+  }
+
   private fun <T> Call<T>.executeUploadParsingErrors(project: Project,
-                                             failedActionMessage: String,
-                                             onErrorAction: AnAction,
-                                             showOnForbiddenCodeNotification: () -> Unit,
-                                             showOnNotFoundCodeNotification: () -> Unit
-  ): Result<Response<T>, String> {
+                                                     failedActionMessage: String,
+                                                     onErrorAction: AnAction,
+                                                     showAgreementNotAcceptedNotification: () -> Unit,
+                                                     showOnNotFoundCodeNotification: () -> Unit,
+                                                     onAuthFailedActions: () -> Unit): Result<Response<T>, String> {
     val response = executeCall().onError { return Err(it) }
     val responseCode = response.code()
     val errorBody = response.errorBody()?.string() ?: return Ok(response)
@@ -328,7 +338,9 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
         Err(errorMessage) // 400
       }
       HttpURLConnection.HTTP_FORBIDDEN -> {
-        showOnForbiddenCodeNotification()
+        if (errorBody.contains(ERROR_AGREEMENT_NOT_ACCEPTED)) showAgreementNotAcceptedNotification()
+        else if (errorBody.contains(ERROR_AUTH_FAILED)) onAuthFailedActions()
+
         Err(errorMessage) // 403
       }
       HttpURLConnection.HTTP_NOT_FOUND -> {
@@ -400,6 +412,9 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
                                   },
                                   {
                                     showFailedToFindMarketplaceCourseOnRemoteNotification(project, uploadAsNewCourseAction)
+                                  },
+                                  {
+                                    onAuthFailedActions(project, message("notification.course.creator.failed.to.update.course.oauth.reason.title"))
                                   })
       .onError {
         val message = "Failed to upload course update for course ${course.id}: ${it}"
@@ -513,6 +528,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"
 
+    private const val ERROR_AGREEMENT_NOT_ACCEPTED = "You have not accepted the JetBrains Plugin Marketplace agreement"
+    private const val ERROR_AUTH_FAILED = "Authentication Failed"
     @JvmStatic
     fun getInstance(): MarketplaceConnector = service()
   }

@@ -312,8 +312,8 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun showLoginNeededNotification(project: Project, failedActionTitle: String, authAction: () -> Unit) {
-    val notification = Notification("EduTools", EduCoreBundle.message("notification.title.authorization.required"),
+  fun showLoginNeededNotification(project: Project, failedActionTitle: String, notificationTitle: String =  EduCoreBundle.message("notification.title.authorization.required"),authAction: () -> Unit) {
+    val notification = Notification("EduTools", notificationTitle,
                                     EduCoreBundle.message("notification.content.authorization", failedActionTitle), NotificationType.ERROR)
     notification.addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
       override fun actionPerformed(e: AnActionEvent) {
