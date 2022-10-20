@@ -7,7 +7,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -45,11 +45,11 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
   }
 
   @Throws(IOException::class)
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
-    var packageJsonFile = baseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
-    if (packageJsonFile == null && !course.isStudy) {
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    var packageJsonFile = holder.courseDir.findChild(NodeModuleNamesUtil.PACKAGE_JSON)
+    if (packageJsonFile == null && !holder.course.isStudy) {
       val templateText = getInternalTemplateText(NodeModuleNamesUtil.PACKAGE_JSON)
-      packageJsonFile = createChildFile(project, baseDir, NodeModuleNamesUtil.PACKAGE_JSON, templateText)
+      packageJsonFile = createChildFile(holder, holder.courseDir, NodeModuleNamesUtil.PACKAGE_JSON, templateText)
     }
     if (packageJsonFile != null && !isUnitTestMode) {
       installNodeDependencies(project, packageJsonFile)

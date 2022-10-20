@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
@@ -23,27 +24,27 @@ import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
-    super.createAdditionalFiles(project, baseDir, isNewCourse)
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    super.createAdditionalFiles(project, holder, isNewCourse)
 
     // fileSystem can be different here in tests.
     // But `GradleWrapper.create` works properly only for local file system
-    if (baseDir.fileSystem == LocalFileSystem.getInstance()) {
+    if (holder.courseDir.fileSystem == LocalFileSystem.getInstance()) {
       invokeAndWaitIfNeeded {
-        GradleWrapper.create(baseDir, project)
+        GradleWrapper.create(holder.courseDir, project)
       }
     }
     // We have to create property files manually
     // instead of `com.android.tools.idea.gradle.util.LocalProperties` and `com.android.tools.idea.gradle.util.LocalProperties`
     // because they work only with `java.io.File` but in tests we use in memory file system
     mapOf(SdkConstants.SDK_DIR_PROPERTY to (IdeSdks.getInstance().androidSdkPath?.path ?: ""))
-      .saveAsPropertyFile(baseDir, LOCAL_PROPERTIES)
+      .saveAsPropertyFile(holder.courseDir, LOCAL_PROPERTIES)
     mapOf(
       // https://developer.android.com/jetpack/androidx#using_androidx_libraries_in_your_project
       "android.useAndroidX" to "true",
       "android.enableJetifier" to "true",
       "org.gradle.jvmargs" to "-Xmx1536m"
-    ).saveAsPropertyFile(baseDir, GRADLE_PROPERTIES)
+    ).saveAsPropertyFile(holder.courseDir, GRADLE_PROPERTIES)
   }
 
   override fun setupGradleSettings(project: Project, sdk: Sdk?) {

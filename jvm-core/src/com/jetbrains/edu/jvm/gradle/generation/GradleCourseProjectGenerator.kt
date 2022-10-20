@@ -8,6 +8,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -36,9 +37,9 @@ open class GradleCourseProjectGenerator(
     EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
   }
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
-    EduGradleUtils.createProjectGradleFiles(project, baseDir,
+    EduGradleUtils.createProjectGradleFiles(holder,
                                             gradleCourseBuilder.templates,
                                             gradleCourseBuilder.templateVariables(project))
   }

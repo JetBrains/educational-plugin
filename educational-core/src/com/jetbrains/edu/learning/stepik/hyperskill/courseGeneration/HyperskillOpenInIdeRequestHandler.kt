@@ -53,9 +53,9 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
           }
           hyperskillCourse.init(false)
           val projectLesson = hyperskillCourse.getProjectLesson() ?: return false
-          val courseDir = hyperskillCourse.getDir(project.courseDir) ?: return false
+          val courseDir = project.courseDir
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
-          GeneratorUtils.createAdditionalFiles(project, course, courseDir)
+          GeneratorUtils.createAdditionalFiles(CourseInfoHolder.fromCourse(course, courseDir))
           YamlFormatSynchronizer.saveAll(project)
           course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
           synchronizeProjectOnStageOpening(project, hyperskillCourse, projectLesson.taskList)

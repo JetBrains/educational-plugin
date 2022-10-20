@@ -8,11 +8,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -39,12 +35,12 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
 
   @Override
   public void createAdditionalFiles(@NotNull Project project,
-                                    @NotNull VirtualFile baseDir,
+                                    @NotNull CourseInfoHolder<Course> holder,
                                     boolean isNewCourse) throws IOException {
     final String testHelper = EduNames.TEST_HELPER;
-    if (baseDir.findChild(testHelper) != null) return;
+    if (holder.getCourseDir().findChild(testHelper) != null) return;
     final String templateText = GeneratorUtils.getInternalTemplateText("test_helper");
-    GeneratorUtils.createChildFile(project, baseDir, testHelper, templateText);
+    GeneratorUtils.createChildFile(holder, holder.getCourseDir(), testHelper, templateText);
   }
 
   @Override

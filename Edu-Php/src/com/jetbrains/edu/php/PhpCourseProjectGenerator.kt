@@ -3,6 +3,7 @@ package com.jetbrains.edu.php
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
@@ -19,10 +20,10 @@ class PhpCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PhpProjectSettings>(builder, course) {
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
-    super.createAdditionalFiles(project, baseDir, isNewCourse)
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    super.createAdditionalFiles(project, holder, isNewCourse)
     downloadPhar(project)
-    createComposerFile(project, baseDir)
+    createComposerFile(project, holder.courseDir)
   }
 
   private fun createComposerFile(project: Project, baseDir: VirtualFile) {

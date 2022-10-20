@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.isToEncodeContent
+import com.jetbrains.edu.learning.toCourseInfoHolder
 import org.apache.commons.codec.binary.Base64
 import java.io.DataInput
 import java.io.DataOutput
@@ -191,7 +192,7 @@ sealed class Change {
         EduDocumentListener.modifyWithoutListener(task, path) {
           val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
           if (document != null) {
-            val expandedText = StringUtil.convertLineSeparators(EduMacroUtils.expandMacrosForFile(project, file, text))
+            val expandedText = StringUtil.convertLineSeparators(EduMacroUtils.expandMacrosForFile(project.toCourseInfoHolder(), file, text))
             runUndoTransparentWriteAction { document.setText(expandedText) }
           }
           else {

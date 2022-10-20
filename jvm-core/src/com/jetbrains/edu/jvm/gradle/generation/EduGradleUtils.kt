@@ -11,10 +11,11 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFileFromTemplate
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -32,13 +33,12 @@ object EduGradleUtils {
   @JvmStatic
   @Throws(IOException::class)
   fun createProjectGradleFiles(
-    project: Project,
-    projectDir: VirtualFile,
+    holder: CourseInfoHolder<Course>,
     templates: Map<String, String>,
     templateVariables: Map<String, Any>
   ) {
     for ((name, templateName) in templates) {
-      createFileFromTemplate(project, projectDir, name, templateName, templateVariables)
+      createFileFromTemplate(holder, holder.courseDir, name, templateName, templateVariables)
     }
   }
 

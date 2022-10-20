@@ -6,11 +6,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -83,9 +79,9 @@ class FakeGradleCourseProjectGenerator(
 ) : CourseProjectGenerator<Unit>(builder, course) {
   override fun afterProjectGenerated(project: Project, projectSettings: Unit) {}
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
-    super.createAdditionalFiles(project, baseDir, isNewCourse)
-    GeneratorUtils.createChildFile(project, baseDir, "build.gradle", "")
-    GeneratorUtils.createChildFile(project, baseDir, "settings.gradle", "")
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    super.createAdditionalFiles(project, holder, isNewCourse)
+    GeneratorUtils.createChildFile(holder, holder.courseDir, "build.gradle", "")
+    GeneratorUtils.createChildFile(holder, holder.courseDir, "settings.gradle", "")
   }
 }

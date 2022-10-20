@@ -70,9 +70,13 @@ private val FileEditor.loadingPanel: JBLoadingPanel?
   get() = UIUtil.findComponentOfType(component, JBLoadingPanel::class.java)
 
 fun VirtualFile.getSection(project: Project): Section? {
-  val course = project.course ?: return null
+  return getSection(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getSection(holder: CourseInfoHolder<out Course?>): Section? {
+  val course = holder.course ?: return null
   if (!isDirectory) return null
-  return if (project.courseDir == parent) course.getSection(name) else null
+  return if (holder.courseDir == parent) course.getSection(name) else null
 }
 
 fun VirtualFile.isSectionDirectory(project: Project): Boolean {
@@ -80,15 +84,19 @@ fun VirtualFile.isSectionDirectory(project: Project): Boolean {
 }
 
 fun VirtualFile.getLesson(project: Project): Lesson? {
-  val course = project.course ?: return null
+  return getLesson(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getLesson(holder: CourseInfoHolder<out Course?>): Lesson? {
+  val course = holder.course ?: return null
   if (!isDirectory) return null
   if (parent == null) return null
 
-  val section = parent.getSection(project)
+  val section = parent.getSection(holder)
   if (section != null) {
     return section.getLesson(name)
   }
-  return if (project.courseDir == parent) course.getLesson(name) else null
+  return if (holder.courseDir == parent) course.getLesson(name) else null
 }
 
 fun VirtualFile.isLessonDirectory(project: Project): Boolean {
@@ -96,10 +104,14 @@ fun VirtualFile.isLessonDirectory(project: Project): Boolean {
 }
 
 fun VirtualFile.getContainingTask(project: Project): Task? {
-  val course = project.course ?: return null
-  val taskDir = getTaskDir(project) ?: return null
+  return getContainingTask(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getContainingTask(holder: CourseInfoHolder<out Course?>): Task? {
+  val course = holder.course ?: return null
+  val taskDir = getTaskDir(holder) ?: return null
   val lessonDir = taskDir.parent ?: return null
-  val lesson = lessonDir.getLesson(project) ?: return null
+  val lesson = lessonDir.getLesson(holder) ?: return null
   return if (lesson is FrameworkLesson && course.isStudy) {
     lesson.currentTask()
   }
@@ -109,8 +121,12 @@ fun VirtualFile.getContainingTask(project: Project): Task? {
 }
 
 fun VirtualFile.getTask(project: Project): Task? {
+  return getTask(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getTask(holder: CourseInfoHolder<out Course?>): Task? {
   if (!isDirectory) return null
-  val lesson: Lesson = parent?.getLesson(project) ?: return null
+  val lesson: Lesson = parent?.getLesson(holder) ?: return null
   return lesson.getTask(name)
 }
 
@@ -165,10 +181,14 @@ fun VirtualFile.pathRelativeToTask(project: Project): String {
 }
 
 fun VirtualFile.getTaskDir(project: Project): VirtualFile? {
+  return getTaskDir(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getTaskDir(holder: CourseInfoHolder<out Course?>): VirtualFile? {
   var taskDir = this
   while (true) {
     val lessonDirCandidate = taskDir.parent ?: return null
-    val lesson = lessonDirCandidate.getLesson(project)
+    val lesson = lessonDirCandidate.getLesson(holder)
     if (lesson != null) {
       if (lesson is FrameworkLesson && TASK == taskDir.name || lesson.getTask(taskDir.name) != null) {
         return taskDir
@@ -188,11 +208,15 @@ fun VirtualFile.isTestsFile(project: Project): Boolean {
 }
 
 fun VirtualFile.isTaskRunConfigurationFile(project: Project): Boolean {
+  return isTaskRunConfigurationFile(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.isTaskRunConfigurationFile(holder: CourseInfoHolder<out Course?>): Boolean {
   if (isDirectory) return false
   val parent = parent ?: return false
   if (parent.name != EduNames.RUN_CONFIGURATION_DIR) return false
   val grandParent = parent.parent
-  return grandParent != null && grandParent.getTaskDir(project) == grandParent
+  return grandParent != null && grandParent.getTaskDir(holder) == grandParent
 }
 
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {
@@ -244,7 +268,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
         }
       }
       val text = studentDocument.immutableCharSequence.toString()
-      taskFile.text = EduMacroUtils.collapseMacrosForFile(project, this, text)
+      taskFile.text = EduMacroUtils.collapseMacrosForFile(project.toCourseInfoHolder(), this, text)
     }
     return taskFile
   }

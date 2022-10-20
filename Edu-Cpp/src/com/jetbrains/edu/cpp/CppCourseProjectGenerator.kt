@@ -3,8 +3,8 @@ package com.jetbrains.edu.cpp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.VcsConfiguration
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cmake.CMakeListsFileType
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
@@ -37,20 +37,20 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return true
   }
 
-  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {
-    if (baseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
+  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
     val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList
     GeneratorUtils.createChildFile(
-      project,
-      baseDir,
+      holder,
+      holder.courseDir,
       mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(baseDir.name), course.languageVersion ?: "")
+      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(holder.courseDir.name), course.languageVersion ?: "")
     )
 
     getCppTemplates(course).extraTopLevelFiles.forEach { templateInfo ->
-      GeneratorUtils.createChildFile(project, baseDir, templateInfo.generatedFileName,
-                                     templateInfo.getText(FileUtil.sanitizeFileName(baseDir.name)))
+      GeneratorUtils.createChildFile(holder, holder.courseDir, templateInfo.generatedFileName,
+                                     templateInfo.getText(FileUtil.sanitizeFileName(holder.courseDir.name)))
     }
   }
 

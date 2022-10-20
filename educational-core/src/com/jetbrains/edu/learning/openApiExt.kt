@@ -46,6 +46,12 @@ fun checkIsBackgroundThread() {
   }
 }
 
+fun checkIsWriteActionAllowed() {
+  check(ApplicationManager.getApplication().isWriteAccessAllowed) {
+    "Write action is required"
+  }
+}
+
 inline fun invokeLater(modalityState: ModalityState, condition: Condition<*>, crossinline runnable: () -> Unit) {
   ApplicationManager.getApplication().invokeLater({ runnable() }, modalityState, condition)
 }

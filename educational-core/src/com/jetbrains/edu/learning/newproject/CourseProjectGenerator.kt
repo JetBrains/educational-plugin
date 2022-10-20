@@ -22,9 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
@@ -33,7 +31,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.setUpPluginDependencies
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.synchronizeCourse
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -153,6 +150,7 @@ abstract class CourseProjectGenerator<S : Any>(
   open fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: S) {
     GeneratorUtils.initializeCourse(project, course)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
+    val holder = CourseInfoHolder.fromCourse(course, baseDir)
 
     if (isNewCourseCreatorCourse) {
       val lesson = courseBuilder.createInitialLesson(project, course)
@@ -165,11 +163,11 @@ abstract class CourseProjectGenerator<S : Any>(
     try {
       if (indicator == null) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
-          generateCourseContent(project, baseDir, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+          generateCourseContent(project, holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
         }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project)
       } else {
         indicator.text = EduCoreBundle.message("generate.project.generate.course.structure.progress.text")
-        generateCourseContent(project, baseDir, isNewCourseCreatorCourse, indicator)
+        generateCourseContent(project, holder, isNewCourseCreatorCourse, indicator)
       }
     }
     catch (e: IOException) {
@@ -180,7 +178,7 @@ abstract class CourseProjectGenerator<S : Any>(
   @Throws(IOException::class)
   private fun generateCourseContent(
     project: Project,
-    baseDir: VirtualFile,
+    holder: CourseInfoHolder<Course>,
     isNewCourseCreatorCourse: Boolean,
     indicator: ProgressIndicator
   ) {
@@ -188,13 +186,13 @@ abstract class CourseProjectGenerator<S : Any>(
       if (CCUtils.isCourseCreator(project)) {
         CCUtils.initializeCCPlaceholders(project, course)
       }
-      GeneratorUtils.createCourse(project, course, baseDir, indicator)
+      GeneratorUtils.createCourse(holder, indicator)
       if (course is EduCourse &&
           (course.isStepikRemote || (course as EduCourse).isMarketplaceRemote) &&
           CCUtils.isCourseCreator(project)) {
         checkIfAvailableOnRemote()
       }
-      createAdditionalFiles(project, baseDir, isNewCourseCreatorCourse)
+      createAdditionalFiles(project, holder, isNewCourseCreatorCourse)
       EduCounterUsageCollector.eduProjectCreated(course)
     }
     LOG.info("Course content generation: $duration ms")
@@ -233,13 +231,13 @@ abstract class CourseProjectGenerator<S : Any>(
    * Creates additional files that are not in course object
    *
    * @param project course project
-   * @param baseDir base directory of project
+   * @param holder base directory of project
    * @param isNewCourse `true` if course is new one, `false` otherwise
    *
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(project: Project, baseDir: VirtualFile, isNewCourse: Boolean) {}
+  open fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()

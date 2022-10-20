@@ -47,11 +47,10 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createCourse(
-    project: Project,
-    course: Course,
-    baseDir: VirtualFile,
+    holder: CourseInfoHolder<Course>,
     indicator: ProgressIndicator
   ) {
+    val course = holder.course
     indicator.isIndeterminate = false
     val initialFraction = indicator.fraction
     val remainingFraction = 1 - initialFraction
@@ -63,15 +62,15 @@ object GeneratorUtils {
 
         if (item is Lesson) {
           indicator.text2 = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
-          createLesson(project, item, baseDir)
+          createLesson(holder, item, holder.courseDir)
         }
         else if (item is Section) {
           indicator.text2 = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
-          createSection(project, item, baseDir)
+          createSection(holder, item, holder.courseDir)
         }
       }
       indicator.text2 = EduCoreBundle.message("generate.additional.files.progress.text")
-      createAdditionalFiles(project, course, baseDir)
+      createAdditionalFiles(holder)
     }
     finally {
       indicator.text2 = ""
@@ -79,11 +78,17 @@ object GeneratorUtils {
     EduCounterUsageCollector.studyItemCreated(course)
   }
 
+  @Throws(IOException::class)
   fun createSection(project: Project, item: Section, baseDir: VirtualFile): VirtualFile {
+    return createSection(project.toCourseInfoHolder(), item, baseDir)
+  }
+
+  @Throws(IOException::class)
+  private fun createSection(holder: CourseInfoHolder<out Course?>, item: Section, baseDir: VirtualFile): VirtualFile {
     val sectionDir = createUniqueDir(baseDir, item)
 
     for (lesson in item.lessons) {
-      createLesson(project, lesson, sectionDir)
+      createLesson(holder, lesson, sectionDir)
     }
     EduCounterUsageCollector.studyItemCreated(item)
     return sectionDir
@@ -92,10 +97,16 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createLesson(project: Project, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
+    return createLesson(project.toCourseInfoHolder(), lesson, parentDir)
+  }
+
+  @Throws(IOException::class)
+  @JvmStatic
+  private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
     val lessonDir = createUniqueDir(parentDir, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {
-      createTask(project, task, lessonDir)
+      createTask(holder, task, lessonDir)
     }
     EduCounterUsageCollector.studyItemCreated(lesson)
     return lessonDir
@@ -104,6 +115,12 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createTask(project: Project, task: Task, lessonDir: VirtualFile): VirtualFile {
+    return createTask(project.toCourseInfoHolder(), task, lessonDir)
+  }
+
+  @Throws(IOException::class)
+  @JvmStatic
+  private fun createTask(holder: CourseInfoHolder<out Course?>, task: Task, lessonDir: VirtualFile): VirtualFile {
     val isFirstInFrameworkLesson = task.parent is FrameworkLesson && task.index == 1
     val isStudyCourse = task.course.isStudy
     val (contentDir, configDir) = if (isStudyCourse && isFirstInFrameworkLesson) {
@@ -119,89 +136,117 @@ object GeneratorUtils {
     }
 
     if (!isStudyCourse || task.parent !is FrameworkLesson || isFirstInFrameworkLesson) {
-      createTaskContent(project, task, contentDir)
+      createTaskContent(holder, task, contentDir)
     }
 
-    createDescriptionFile(project, configDir, task)
+    createDescriptionFile(holder, configDir, task)
     EduCounterUsageCollector.studyItemCreated(task)
     return contentDir
   }
 
   @Throws(IOException::class)
   fun createTaskContent(project: Project, task: Task, taskDir: VirtualFile) {
+    createTaskContent(project.toCourseInfoHolder(), task, taskDir)
+  }
+
+  @Throws(IOException::class)
+  private fun createTaskContent(holder: CourseInfoHolder<out Course?>, task: Task, taskDir: VirtualFile) {
     val (testFiles, taskFiles) = task.taskFiles.values.partition { task.shouldBeEmpty(it.name) }
 
     for (file in taskFiles) {
-      createChildFile(project, taskDir, file.name, file.text, file.isEditable)
+      createChildFile(holder, taskDir, file.name, file.text, file.isEditable)
     }
 
     for (file in testFiles) {
-      createChildFile(project, taskDir, file.name, "", file.isEditable)
+      createChildFile(holder, taskDir, file.name, "", file.isEditable)
     }
   }
 
   @Throws(IOException::class)
   @JvmStatic
   fun createDescriptionFile(project: Project, taskDir: VirtualFile, task: Task): VirtualFile? {
+    return createDescriptionFile(project.toCourseInfoHolder(), taskDir, task)
+  }
+
+  @Throws(IOException::class)
+  @JvmStatic
+  private fun createDescriptionFile(holder: CourseInfoHolder<out Course?>, taskDir: VirtualFile, task: Task): VirtualFile? {
     val descriptionFileName = when (task.descriptionFormat) {
       HTML -> TASK_HTML
       MD -> TASK_MD
     }
 
-    return createChildFile(project, taskDir, descriptionFileName, task.descriptionText)
+    return createChildFile(holder, taskDir, descriptionFileName, task.descriptionText)
   }
 
   @Throws(IOException::class)
-  fun createAdditionalFiles(project: Project, course: Course, courseDir: VirtualFile) {
+  fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    val course = holder.course
     for (file in course.additionalFiles) {
-      createChildFile(project, courseDir, file.name, file.text, file.isEditable)
+      createChildFile(holder, holder.courseDir, file.name, file.text, file.isEditable)
     }
   }
 
   @Throws(IOException::class)
   @JvmStatic
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
-    return createChildFile(project, parentDir, path, text, true)
+    return createChildFile(project.toCourseInfoHolder(), parentDir, path, text)
   }
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
+  fun createChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
     return runInWriteActionAndWait(ThrowableComputable {
-      var newDirectories: String? = null
-      var fileName = path
-      var dir: VirtualFile? = parentDir
-      if (path.contains("/")) {
-        val pos = path.lastIndexOf("/")
-        fileName = path.substring(pos + 1)
-        newDirectories = path.substring(0, pos)
-      }
-      if (newDirectories != null) {
-        dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories)
-      }
-      if (dir != null) {
-        val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
-        if (virtualTaskFile.isToEncodeContent) {
-          virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
-        }
-        else {
-          VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandMacrosForFile(project, virtualTaskFile, text))
-        }
-        val course = project.course
-        if (!isEditable && course != null) {
-          addNonEditableFileToCourse(course, virtualTaskFile)
-        }
-        virtualTaskFile
-      }
-      else {
-        null
-      }
+      doCreateChildFile(holder, parentDir, path, text)
     })
   }
 
   @Throws(IOException::class)
+  @JvmStatic
+  fun createChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String, isEditable: Boolean = true): VirtualFile? {
+    return runInWriteActionAndWait(ThrowableComputable {
+      val file = doCreateChildFile(holder, parentDir, path, text)
+      val course = holder.course
+      if (course != null && file != null && !isEditable) {
+        addNonEditableFileToCourse(course, file)
+      }
+      file
+    })
+  }
+
+  @Throws(IOException::class)
+  private fun doCreateChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+    checkIsWriteActionAllowed()
+
+    var newDirectories: String? = null
+    var fileName = path
+    var dir: VirtualFile? = parentDir
+    if (path.contains("/")) {
+      val pos = path.lastIndexOf("/")
+      fileName = path.substring(pos + 1)
+      newDirectories = path.substring(0, pos)
+    }
+    if (newDirectories != null) {
+      dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories)
+    }
+    return if (dir != null) {
+      val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
+      if (virtualTaskFile.isToEncodeContent) {
+        virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
+      }
+      else {
+        VfsUtil.saveText(virtualTaskFile, EduMacroUtils.expandMacrosForFile(holder, virtualTaskFile, text))
+      }
+      virtualTaskFile
+    }
+    else {
+      null
+    }
+  }
+
+  @Throws(IOException::class)
   fun addNonEditableFileToCourse(course: Course, virtualTaskFile: VirtualFile) {
-    ApplicationManager.getApplication().assertWriteAccessAllowed()
+    checkIsWriteActionAllowed()
     if (course.isStudy) {
       course.addNonEditableFile(virtualTaskFile.path)
       ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualTaskFile, true)
@@ -314,7 +359,7 @@ object GeneratorUtils {
    * Otherwise, substitutes all template variables in file text
    */
   @Throws(IOException::class)
-  fun createFileFromTemplate(project: Project,
+  fun createFileFromTemplate(holder: CourseInfoHolder<out Course?>,
                              baseDir: VirtualFile,
                              path: String,
                              templateName: String,
@@ -322,7 +367,7 @@ object GeneratorUtils {
     val file = baseDir.findFileByRelativePath(path)
     if (file == null) {
       val configText = getInternalTemplateText(templateName, templateVariables)
-      createChildFile(project, baseDir, path, configText)
+      createChildFile(holder, baseDir, path, configText)
     }
     else {
       evaluateExistingTemplate(file, templateVariables)

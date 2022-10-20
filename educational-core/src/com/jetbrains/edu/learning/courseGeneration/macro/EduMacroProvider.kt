@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.courseGeneration.macro
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.CourseInfoHolder
+import com.jetbrains.edu.learning.courseFormat.Course
 
 /**
  * Provides a substitution rule wrapped into [EduMacro] for given file
@@ -11,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
  */
 interface EduMacroProvider {
 
-  fun provideMacro(project: Project, file: VirtualFile): EduMacro?
+  fun provideMacro(holder: CourseInfoHolder<out Course?>, file: VirtualFile): EduMacro?
 
   companion object {
     val EP_NAME: ExtensionPointName<EduMacroProvider> = ExtensionPointName.create("Educational.pathMacroProvider")
