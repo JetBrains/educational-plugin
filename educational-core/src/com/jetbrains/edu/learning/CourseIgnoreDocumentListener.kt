@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 
-class CourseIgnoreDocumentListener(project: Project) : EduDocumentListenerBase(project) {
+class CourseIgnoreDocumentListener(private val project: Project) : EduDocumentListenerBase(project) {
 
   override fun documentChanged(event: DocumentEvent) {
     if (!event.isInProjectContent()) return

@@ -184,7 +184,7 @@ abstract class CourseProjectGenerator<S : Any>(
   ) {
     val duration = measureTimeMillis {
       if (CCUtils.isCourseCreator(project)) {
-        CCUtils.initializeCCPlaceholders(project, course)
+        CCUtils.initializeCCPlaceholders(holder)
       }
       GeneratorUtils.createCourse(holder, indicator)
       if (course is EduCourse &&

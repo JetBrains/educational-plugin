@@ -8,7 +8,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.EduDocumentListenerBase
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isLocalConfigFile
 
-class YamlSynchronizationListener(project: Project) : EduDocumentListenerBase(project) {
+class YamlSynchronizationListener(private val project: Project) : EduDocumentListenerBase(project) {
   override fun documentChanged(event: DocumentEvent) {
     if (!event.isInProjectContent()) return
     val eventDocument = event.document

@@ -176,7 +176,11 @@ fun VirtualFile.canBelongToCourse(project: Project): Boolean {
 }
 
 fun VirtualFile.pathRelativeToTask(project: Project): String {
-  val taskDir = getTaskDir(project) ?: return name
+  return pathRelativeToTask(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.pathRelativeToTask(holder: CourseInfoHolder<out Course?>): String {
+  val taskDir = getTaskDir(holder) ?: return name
   return FileUtil.getRelativePath(taskDir.path, path, VfsUtilCore.VFS_SEPARATOR_CHAR) ?: return name
 }
 
@@ -220,8 +224,12 @@ fun VirtualFile.isTaskRunConfigurationFile(holder: CourseInfoHolder<out Course?>
 }
 
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {
-  val task = getContainingTask(project)
-  return task?.getTaskFile(pathRelativeToTask(project))
+  return getTaskFile(project.toCourseInfoHolder())
+}
+
+fun VirtualFile.getTaskFile(holder: CourseInfoHolder<out Course?>): TaskFile? {
+  val task = getContainingTask(holder)
+  return task?.getTaskFile(pathRelativeToTask(holder))
 }
 
 val VirtualFile.isToEncodeContent: Boolean

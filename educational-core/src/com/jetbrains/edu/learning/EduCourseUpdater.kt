@@ -270,7 +270,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   @Throws(IOException::class)
   private fun createTaskDirectories(project: Project, lessonDir: VirtualFile, task: Task) {
     if (!task.lesson.course.isStudy) {
-      CCUtils.initializeTaskPlaceholders(task, this.project)
+      CCUtils.initializeTaskPlaceholders(project.toCourseInfoHolder(), task)
     }
     GeneratorUtils.createTask(project, task, lessonDir)
   }

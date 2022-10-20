@@ -141,26 +141,26 @@ object CCUtils {
    * Note, it doesn't affect files in file system
    */
   @JvmStatic
-  fun initializeCCPlaceholders(project: Project, course: Course) {
-    for (item in course.items) {
+  fun initializeCCPlaceholders(holder: CourseInfoHolder<Course>) {
+    for (item in holder.course.items) {
       when (item) {
-        is Section -> initializeSectionPlaceholders(project, item)
-        is Lesson -> initializeLessonPlaceholders(project, item)
+        is Section -> initializeSectionPlaceholders(holder, item)
+        is Lesson -> initializeLessonPlaceholders(holder, item)
         else -> LOG.warn("Unknown study item type: `${item.javaClass.canonicalName}`")
       }
     }
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
   }
 
-  private fun initializeSectionPlaceholders(project: Project, section: Section) {
+  private fun initializeSectionPlaceholders(holder: CourseInfoHolder<out Course?>, section: Section) {
     for (item in section.lessons) {
-      initializeLessonPlaceholders(project, item)
+      initializeLessonPlaceholders(holder, item)
     }
   }
 
-  private fun initializeLessonPlaceholders(project: Project, lesson: Lesson) {
+  private fun initializeLessonPlaceholders(holder: CourseInfoHolder<out Course?>, lesson: Lesson) {
     for (task in lesson.taskList) {
-      initializeTaskPlaceholders(task, project)
+      initializeTaskPlaceholders(holder, task)
     }
   }
 
@@ -168,24 +168,24 @@ object CCUtils {
    * Replaces placeholder texts with [AnswerPlaceholder.possibleAnswer]` for each task file in [task].
    * Note, it doesn't affect files in file system
    */
-  fun initializeTaskPlaceholders(task: Task, project: Project) {
+  fun initializeTaskPlaceholders(holder: CourseInfoHolder<out Course?>, task: Task) {
     for ((path, taskFile) in task.taskFiles) {
       invokeAndWaitIfNeeded {
         val file = LightVirtualFile(PathUtil.getFileName(path), PlainTextFileType.INSTANCE, taskFile.text)
-        EduDocumentListener.runWithListener(project, taskFile, file) { document ->
-          initializeTaskFilePlaceholders(project, taskFile, document)
+        EduDocumentListener.runWithListener(holder, taskFile, file) { document ->
+          initializeTaskFilePlaceholders(taskFile, document)
         }
       }
     }
   }
 
-  private fun initializeTaskFilePlaceholders(project: Project, taskFile: TaskFile, document: Document) {
+  private fun initializeTaskFilePlaceholders(taskFile: TaskFile, document: Document) {
     taskFile.sortAnswerPlaceholders()
     for (placeholder in taskFile.answerPlaceholders) {
       replaceAnswerPlaceholder(document, placeholder)
     }
     CommandProcessor.getInstance().executeCommand(
-      project,
+      null,
       { runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) } },
       EduCoreBundle.message("action.create.answer.document"),
       "Edu Actions"

@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory.Companion.STUDY_TOOL_WINDOW
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class SynchronizeTaskDescription(project: Project) : EduDocumentListenerBase(project) {
+class SynchronizeTaskDescription(private val project: Project) : EduDocumentListenerBase(project) {
 
   override fun documentChanged(event: DocumentEvent) {
     if (!event.isInProjectContent()) return

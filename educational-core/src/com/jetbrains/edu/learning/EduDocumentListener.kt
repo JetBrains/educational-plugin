@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -19,13 +20,13 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
  * coordinates of all the placeholders in current task file
  */
 class EduDocumentListener private constructor(
-  project: Project,
+  holder: CourseInfoHolder<out Course?>,
   /**
    * If [taskFile] is `null` than listener should determine affected task file by [DocumentEvent],
    * otherwise, it should track changes only in single [Document] related to [taskFile]
    */
   private val taskFile: TaskFile?
-) : EduDocumentListenerBase(project) {
+) : EduDocumentListenerBase(holder) {
 
   private val updateYaml: Boolean = taskFile == null
 
@@ -116,13 +117,13 @@ class EduDocumentListener private constructor(
 
   private val DocumentEvent.taskFile: TaskFile? get() {
     val file = FileDocumentManager.getInstance().getFile(document) ?: return null
-    return file.getTaskFile(project)
+    return file.getTaskFile(holder)
   }
 
   companion object {
     @JvmStatic
     fun setGlobalListener(project: Project, disposable: Disposable) {
-      EditorFactory.getInstance().eventMulticaster.addDocumentListener(EduDocumentListener(project, null), disposable)
+      EditorFactory.getInstance().eventMulticaster.addDocumentListener(EduDocumentListener(project.toCourseInfoHolder(), null), disposable)
     }
 
     /**
@@ -131,12 +132,21 @@ class EduDocumentListener private constructor(
      */
     @JvmStatic
     fun runWithListener(project: Project, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
-      require(file.getTaskFile(project) == null) {
+      return runWithListener(project.toCourseInfoHolder(), taskFile, file, action)
+    }
+
+    /**
+     * Should be used only when current course doesn't contain task file related to given [file].
+     * For example, when changes are performed on non-physical file.
+     */
+    @JvmStatic
+    fun runWithListener(holder: CourseInfoHolder<out Course?>, taskFile: TaskFile, file: VirtualFile, action: (Document) -> Unit) {
+      require(file.getTaskFile(holder) == null) {
         "Changes in `${taskFile.name}` should be tracked by global listener"
       }
       val document = FileDocumentManager.getInstance().getDocument(file) ?: return
 
-      val listener = EduDocumentListener(project, taskFile)
+      val listener = EduDocumentListener(holder, taskFile)
       document.addDocumentListener(listener)
       try {
         action(document)
