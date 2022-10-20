@@ -32,7 +32,7 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
     return ScalaSbtCourseProjectGenerator(this, course)
   }
 
-  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> {
     return mapOf("TASK_NAME" to info.name.replace(" ", "-"))
   }
 

@@ -6,6 +6,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.presentableTitleName
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -44,8 +45,8 @@ class CCCreateSection : CCCreateStudyItemActionBase<Section>(StudyItemType.SECTI
     course.sortItems()
   }
 
-  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Section, info: NewStudyItemInfo) {
-    item.parent = course
+  override fun initItem(holder: CourseInfoHolder<Course>, parentItem: StudyItem?, item: Section, info: NewStudyItemInfo) {
+    item.parent = holder.course
   }
 
   override val studyItemVariants: List<StudyItemVariant>

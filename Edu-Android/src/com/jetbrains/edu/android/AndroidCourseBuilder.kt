@@ -18,6 +18,7 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
@@ -71,14 +72,14 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     }
   }
 
-  override fun createInitialLesson(project: Project, course: Course): Lesson {
+  override fun createInitialLesson(holder: CourseInfoHolder<Course>): Lesson {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::FrameworkLesson)
-    val lesson = CCCreateLesson().createAndInitItem(project, course, null, lessonInfo)
+    val lesson = CCCreateLesson().createAndInitItem(holder, null, lessonInfo)
 
     val taskInfo = NewStudyItemInfo(TASK + 1, 1, ::EduTask).apply {
       initAndroidProperties(SdkVersionInfo.HIGHEST_KNOWN_STABLE_API)
     }
-    val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)
+    val task = CCCreateTask().createAndInitItem(holder, lesson, taskInfo)
     lesson.addTask(task)
 
     return lesson
@@ -115,7 +116,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     return templates
   }
 
-  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> {
     val packageName = info.getUserData(PACKAGE_NAME) ?: return emptyMap()
     val minAndroidSdk = info.getUserData(MIN_ANDROID_SDK) ?: return emptyMap()
     val compileAndroidSdk = info.getUserData(COMPILE_ANDROID_SDK) ?: return emptyMap()
@@ -125,22 +126,22 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       "MIN_ANDROID_SDK" to minAndroidSdk.toString(),
       "COMPILE_ANDROID_SDK" to compileAndroidSdk.toString(),
       "TARGET_ANDROID_SDK" to compileAndroidSdk.toString(),
-      "ANDROIDX_CORE_VERSION" to getLibraryVersion(project, "androidx.core", "core-ktx", "1.0.2"),
-      "ANDROIDX_APP_COMPAT_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.0.2"),
-      "ANDROIDX_TEST_RUNNER_VERSION" to getLibraryVersion(project, "androidx.test.ext", "junit", "1.1.1"),
-      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0"),
-      "ANDROIDX_RULES_VERSION" to getLibraryVersion(project, GoogleMavenArtifactId.ANDROIDX_TEST_RULES, "1.1.0")
+      "ANDROIDX_CORE_VERSION" to getLibraryVersion("androidx.core", "core-ktx", "1.0.2"),
+      "ANDROIDX_APP_COMPAT_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.0.2"),
+      "ANDROIDX_TEST_RUNNER_VERSION" to getLibraryVersion("androidx.test.ext", "junit", "1.1.1"),
+      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0"),
+      "ANDROIDX_RULES_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_TEST_RULES, "1.1.0")
     )
   }
 
-  private fun getLibraryVersion(project: Project, mavenArtifactId: GoogleMavenArtifactId, defaultVersion: String): String {
-    return getLibraryVersion(project, mavenArtifactId.mavenGroupId, mavenArtifactId.mavenArtifactId, defaultVersion)
+  private fun getLibraryVersion(mavenArtifactId: GoogleMavenArtifactId, defaultVersion: String): String {
+    return getLibraryVersion(mavenArtifactId.mavenGroupId, mavenArtifactId.mavenArtifactId, defaultVersion)
   }
 
-  private fun getLibraryVersion(project: Project, groupId: String, artifactId: String, defaultVersion: String): String {
+  private fun getLibraryVersion(groupId: String, artifactId: String, defaultVersion: String): String {
     val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
     val sdkHandler = AndroidSdks.getInstance().tryToChooseSdkHandler()
-    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, project, sdkHandler) ?: defaultVersion
+    return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, null, sdkHandler) ?: defaultVersion
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()

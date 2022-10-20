@@ -58,11 +58,11 @@ interface EduCourseBuilder<Settings : Any> {
    */
   fun refreshProject(project: Project, cause: RefreshCause) { }
 
-  fun createInitialLesson(project: Project, course: Course): Lesson? {
+  fun createInitialLesson(holder: CourseInfoHolder<Course>): Lesson? {
     val lessonInfo = NewStudyItemInfo(LESSON + 1, 1, ::Lesson)
-    val lesson = CCCreateLesson().createAndInitItem(project, course, course, lessonInfo)
+    val lesson = CCCreateLesson().createAndInitItem(holder, holder.course, lessonInfo)
     val taskInfo = NewStudyItemInfo(TASK + 1, 1, ::EduTask)
-    val task = CCCreateTask().createAndInitItem(project, course, lesson, taskInfo)
+    val task = CCCreateTask().createAndInitItem(holder, lesson, taskInfo)
     lesson.addTask(task)
     return lesson
   }
@@ -133,7 +133,7 @@ interface EduCourseBuilder<Settings : Any> {
     return templates
   }
 
-  fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> = emptyMap()
+  fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> = emptyMap()
 
   /**
    * Add initial content for a new task: task and tests files if the corresponding files don't exist.
@@ -141,7 +141,7 @@ interface EduCourseBuilder<Settings : Any> {
    *
    * @param task initializing task
    */
-  fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
+  fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     val templates = when (task) {
       is EduTask -> getTestTaskTemplates(course, info, withSources)
       is OutputTask -> {
@@ -163,7 +163,7 @@ interface EduCourseBuilder<Settings : Any> {
       else -> return
     }
 
-    val params = extractInitializationParams(project, info)
+    val params = extractInitializationParams(info)
 
     for (template in templates) {
       val taskFile = template.toTaskFile(params)

@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.*
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -93,7 +94,8 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   ) {
     val parentItem = getParentItem(project, course, sourceDirectory)
     showCreationUI(project, course, sourceDirectory, parentItem, dataContext) { info ->
-      val item = createAndInitItem(project, course, parentItem, info)
+      val holder = CourseInfoHolder.fromCourse(course, project.courseDir)
+      val item = createAndInitItem(holder, parentItem, info)
       val parentDir = getParentDir(project, course, sourceDirectory)
       if (parentDir == null) {
         LOG.info("Failed to get parent directory")
@@ -194,16 +196,16 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
   protected abstract fun isAddedAsLast(project: Project, course: Course, sourceDirectory: VirtualFile): Boolean
   protected abstract fun sortSiblings(course: Course, parentItem: StudyItem?)
 
-  fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Item {
+  fun createAndInitItem(holder: CourseInfoHolder<Course>, parentItem: StudyItem?, info: NewStudyItemInfo): Item {
     @Suppress("UNCHECKED_CAST")
     val item = info.producer() as Item
     item.name = info.name
     item.index = info.index
-    initItem(project, course, parentItem, item, info)
+    initItem(holder, parentItem, item, info)
     return item
   }
 
-  protected open fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Item, info: NewStudyItemInfo) {}
+  protected open fun initItem(holder: CourseInfoHolder<Course>, parentItem: StudyItem?, item: Item, info: NewStudyItemInfo) {}
 
   companion object {
     protected val LOG: Logger = Logger.getInstance(CCCreateStudyItemActionBase::class.java)

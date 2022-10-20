@@ -54,8 +54,8 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun getSupportedLanguageVersions(): List<String> = getLanguageVersions()
 
-  override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
-    super.initNewTask(project, course, task, info, withSources)
+  override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
+    super.initNewTask(course, task, info, withSources)
     if (withSources) {
       val cMakeProjectName = getCMakeProjectName(task)
       task.addCMakeList(cMakeProjectName, getLanguageSettings().getSettings().languageStandard)

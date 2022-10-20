@@ -153,7 +153,7 @@ abstract class CourseProjectGenerator<S : Any>(
     val holder = CourseInfoHolder.fromCourse(course, baseDir)
 
     if (isNewCourseCreatorCourse) {
-      val lesson = courseBuilder.createInitialLesson(project, course)
+      val lesson = courseBuilder.createInitialLesson(holder)
       if (lesson != null) {
         course.addLesson(lesson)
       }

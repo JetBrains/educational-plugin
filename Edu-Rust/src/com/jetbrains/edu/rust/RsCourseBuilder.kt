@@ -127,7 +127,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     )
   }
 
-  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
+  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> {
     return mapOf("PACKAGE_NAME" to info.name.toPackageName())
   }
 

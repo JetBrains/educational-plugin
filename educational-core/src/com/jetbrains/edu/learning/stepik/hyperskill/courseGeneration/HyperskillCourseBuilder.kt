@@ -6,9 +6,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
-import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -44,7 +42,7 @@ open class HyperskillCourseBuilder<T : Any>(private val baseCourseBuilder: EduCo
 
   override fun refreshProject(project: Project, cause: RefreshCause) = baseCourseBuilder.refreshProject(project, cause)
 
-  override fun createInitialLesson(project: Project, course: Course): Lesson? = baseCourseBuilder.createInitialLesson(project, course)
+  override fun createInitialLesson(holder: CourseInfoHolder<Course>): Lesson? = baseCourseBuilder.createInitialLesson(holder)
 
   override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
     return baseCourseBuilder.getTestTaskTemplates(course, info, withSources)
@@ -63,12 +61,12 @@ open class HyperskillCourseBuilder<T : Any>(private val baseCourseBuilder: EduCo
     return baseCourseBuilder.getDefaultTaskTemplates(course, info, withSources, withTests)
   }
 
-  override fun extractInitializationParams(project: Project, info: NewStudyItemInfo): Map<String, String> {
-    return baseCourseBuilder.extractInitializationParams(project, info)
+  override fun extractInitializationParams(info: NewStudyItemInfo): Map<String, String> {
+    return baseCourseBuilder.extractInitializationParams(info)
   }
 
-  override fun initNewTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) =
-    baseCourseBuilder.initNewTask(project, course, task, info, withSources)
+  override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) =
+    baseCourseBuilder.initNewTask(course, task, info, withSources)
 
   override fun getTextForNewTask(taskFile: TaskFile, taskDir: VirtualFile, newTask: Task): String? =
     baseCourseBuilder.getTextForNewTask(taskFile, taskDir, newTask)

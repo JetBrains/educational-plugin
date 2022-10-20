@@ -67,18 +67,19 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
     }
   }
 
-  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Task, info: NewStudyItemInfo) {
+  override fun initItem(holder: CourseInfoHolder<Course>, parentItem: StudyItem?, item: Task, info: NewStudyItemInfo) {
     require(parentItem is Lesson) {
       "parentItem should be Lesson, found `$parentItem`"
     }
     item.parent = parentItem
     item.addDefaultTaskDescription()
 
+    val course = holder.course
     if (parentItem is FrameworkLesson) {
       val prevTask = parentItem.taskList.getOrNull(info.index - 2)
-      val prevTaskDir = prevTask?.getDir(project.courseDir)
+      val prevTaskDir = prevTask?.getDir(holder.courseDir)
       if (prevTask == null || prevTaskDir == null) {
-        initTask(project, course, item, info)
+        initTask(course, item, info)
         return
       }
       FileDocumentManager.getInstance().saveAllDocuments()
@@ -97,7 +98,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       item.taskFiles = newTaskFiles
 
       if (!needCopyTests) {
-        initTask(project, course, item, info, withSources = false)
+        initTask(course, item, info, withSources = false)
       }
 
       // If we insert new task between `task1` and `task2`
@@ -113,7 +114,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
         }
       item.init(parentItem, false)
     } else {
-      initTask(project, course, item, info)
+      initTask(course, item, info)
     }
   }
 
@@ -158,9 +159,9 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       )
     )
 
-  private fun initTask(project: Project, course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean = true) {
+  private fun initTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean = true) {
     if (!course.isStudy) {
-      course.configurator?.courseBuilder?.initNewTask(project, course, task, info, withSources)
+      course.configurator?.courseBuilder?.initNewTask(course, task, info, withSources)
     }
   }
 

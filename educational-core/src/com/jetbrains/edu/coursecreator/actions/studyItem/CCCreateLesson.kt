@@ -8,13 +8,10 @@ import com.intellij.util.Function
 import com.jetbrains.edu.EducationalCoreIcons.Lesson
 import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
 import com.jetbrains.edu.coursecreator.presentableTitleName
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.hasSections
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.getLesson
-import com.jetbrains.edu.learning.getSection
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
@@ -64,8 +61,8 @@ class CCCreateLesson : CCCreateStudyItemActionBase<Lesson>(LESSON_TYPE, Lesson) 
     }
   }
 
-  override fun initItem(project: Project, course: Course, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
-    item.parent = parentItem as? ItemContainer ?: course
+  override fun initItem(holder: CourseInfoHolder<Course>, parentItem: StudyItem?, item: Lesson, info: NewStudyItemInfo) {
+    item.parent = parentItem as? ItemContainer ?: holder.course
   }
 
   override fun update(event: AnActionEvent) {
