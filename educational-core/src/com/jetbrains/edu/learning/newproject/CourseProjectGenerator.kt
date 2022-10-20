@@ -163,11 +163,11 @@ abstract class CourseProjectGenerator<S : Any>(
     try {
       if (indicator == null) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
-          generateCourseContent(project, holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
+          generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
         }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project)
       } else {
         indicator.text = EduCoreBundle.message("generate.project.generate.course.structure.progress.text")
-        generateCourseContent(project, holder, isNewCourseCreatorCourse, indicator)
+        generateCourseContent(holder, isNewCourseCreatorCourse, indicator)
       }
     }
     catch (e: IOException) {
@@ -177,20 +177,18 @@ abstract class CourseProjectGenerator<S : Any>(
 
   @Throws(IOException::class)
   private fun generateCourseContent(
-    project: Project,
     holder: CourseInfoHolder<Course>,
     isNewCourseCreatorCourse: Boolean,
     indicator: ProgressIndicator
   ) {
     val duration = measureTimeMillis {
-      if (CCUtils.isCourseCreator(project)) {
+      val course = holder.course
+      if (!course.isStudy) {
         CCUtils.initializeCCPlaceholders(holder)
       }
       GeneratorUtils.createCourse(holder, indicator)
-      if (course is EduCourse &&
-          (course.isStepikRemote || (course as EduCourse).isMarketplaceRemote) &&
-          CCUtils.isCourseCreator(project)) {
-        checkIfAvailableOnRemote()
+      if (course is EduCourse && (course.isStepikRemote || course.isMarketplaceRemote) && !course.isStudy) {
+        checkIfAvailableOnRemote(course)
       }
       createAdditionalFiles(holder, isNewCourseCreatorCourse)
       EduCounterUsageCollector.eduProjectCreated(course)
@@ -198,7 +196,7 @@ abstract class CourseProjectGenerator<S : Any>(
     LOG.info("Course content generation: $duration ms")
   }
 
-  private fun checkIfAvailableOnRemote() {
+  private fun checkIfAvailableOnRemote(course: EduCourse) {
     val remoteCourse = if (course.isMarketplace) {
       MarketplaceConnector.getInstance().searchCourse(course.id, course.isMarketplacePrivate)
     }
@@ -209,7 +207,7 @@ abstract class CourseProjectGenerator<S : Any>(
       val platformName = if (course.isMarketplace) MARKETPLACE else StepikNames.STEPIK
       LOG.warn("Failed to get $platformName course for imported from zip course with id: ${course.id}")
       LOG.info("Converting course to local. Course id: ${course.id}")
-      (course as EduCourse).convertToLocal()
+      course.convertToLocal()
     }
   }
 
