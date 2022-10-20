@@ -32,7 +32,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     }
   }
 
-  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     if (!isNewCourse) return
 
     val members = mutableListOf<String>()

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning.stepik.hyperskill
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -27,7 +26,7 @@ class PyHyperskillBaseConfigurator : PyConfigurator() {
   }
 
   private class GeneratorWithoutAdditionalFiles(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
-    override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
       // do nothing
     }
   }

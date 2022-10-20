@@ -35,10 +35,10 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
-  override fun templateVariables(project: Project): Map<String, Any> {
+  override fun templateVariables(projectName: String): Map<String, Any> {
     val androidGradlePluginVersion = getLatestAndroidGradlePluginVersion()
     val kotlinVersion = kotlinVersion()
-    return super.templateVariables(project) + mapOf(
+    return super.templateVariables(projectName) + mapOf(
       "ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
       "KOTLIN_VERSION" to kotlinVersion.version,
     )

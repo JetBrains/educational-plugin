@@ -37,20 +37,21 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     return true
   }
 
-  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
     val mainCMakeTemplateInfo = getCppTemplates(course).mainCMakeList
+    val sanitizedProjectName = FileUtil.sanitizeFileName(holder.courseDir.name)
     GeneratorUtils.createChildFile(
       holder,
       holder.courseDir,
       mainCMakeTemplateInfo.generatedFileName,
-      mainCMakeTemplateInfo.getText(FileUtil.sanitizeFileName(holder.courseDir.name), course.languageVersion ?: "")
+      mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
     )
 
     getCppTemplates(course).extraTopLevelFiles.forEach { templateInfo ->
       GeneratorUtils.createChildFile(holder, holder.courseDir, templateInfo.generatedFileName,
-                                     templateInfo.getText(FileUtil.sanitizeFileName(holder.courseDir.name)))
+                                     templateInfo.getText(sanitizedProjectName))
     }
   }
 

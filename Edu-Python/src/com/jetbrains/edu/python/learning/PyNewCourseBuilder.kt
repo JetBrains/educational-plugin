@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.CourseInfoHolder
@@ -28,7 +27,7 @@ class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
     return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
-      override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
+      override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
     }
   }
 

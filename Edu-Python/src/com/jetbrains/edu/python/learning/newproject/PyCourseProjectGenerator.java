@@ -34,8 +34,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   }
 
   @Override
-  public void createAdditionalFiles(@NotNull Project project,
-                                    @NotNull CourseInfoHolder<Course> holder,
+  public void createAdditionalFiles(@NotNull CourseInfoHolder<Course> holder,
                                     boolean isNewCourse) throws IOException {
     final String testHelper = EduNames.TEST_HELPER;
     if (holder.getCourseDir().findChild(testHelper) != null) return;

@@ -24,14 +24,14 @@ import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
 
-  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    super.createAdditionalFiles(project, holder, isNewCourse)
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+    super.createAdditionalFiles(holder, isNewCourse)
 
     // fileSystem can be different here in tests.
     // But `GradleWrapper.create` works properly only for local file system
     if (holder.courseDir.fileSystem == LocalFileSystem.getInstance()) {
       invokeAndWaitIfNeeded {
-        GradleWrapper.create(holder.courseDir, project)
+        GradleWrapper.create(holder.courseDir, null)
       }
     }
     // We have to create property files manually

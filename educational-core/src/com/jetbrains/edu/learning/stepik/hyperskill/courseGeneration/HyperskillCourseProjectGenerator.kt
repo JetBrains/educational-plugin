@@ -19,8 +19,8 @@ open class HyperskillCourseProjectGenerator<T : Any>(
 
   override fun afterProjectGenerated(project: Project, projectSettings: T) = base.afterProjectGenerated(project, projectSettings)
 
-  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) =
-    base.createAdditionalFiles(project, holder, isNewCourse)
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) =
+    base.createAdditionalFiles(holder, isNewCourse)
 
   override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: T) =
     base.createCourseStructure(project, module, baseDir, settings)

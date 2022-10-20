@@ -37,11 +37,11 @@ open class GradleCourseProjectGenerator(
     EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
   }
 
-  override fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
     EduGradleUtils.createProjectGradleFiles(holder,
                                             gradleCourseBuilder.templates,
-                                            gradleCourseBuilder.templateVariables(project))
+                                            gradleCourseBuilder.templateVariables(holder.courseDir.name))
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {

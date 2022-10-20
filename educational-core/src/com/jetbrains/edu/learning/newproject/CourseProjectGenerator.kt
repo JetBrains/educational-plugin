@@ -192,7 +192,7 @@ abstract class CourseProjectGenerator<S : Any>(
           CCUtils.isCourseCreator(project)) {
         checkIfAvailableOnRemote()
       }
-      createAdditionalFiles(project, holder, isNewCourseCreatorCourse)
+      createAdditionalFiles(holder, isNewCourseCreatorCourse)
       EduCounterUsageCollector.eduProjectCreated(course)
     }
     LOG.info("Course content generation: $duration ms")
@@ -230,14 +230,13 @@ abstract class CourseProjectGenerator<S : Any>(
   /**
    * Creates additional files that are not in course object
    *
-   * @param project course project
-   * @param holder base directory of project
+   * @param holder contains info about course project like root directory
    * @param isNewCourse `true` if course is new one, `false` otherwise
    *
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(project: Project, holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
+  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
