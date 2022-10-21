@@ -11,7 +11,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
@@ -62,7 +61,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
 
   private fun addGotItTooltip() {
     val action = EduActionUtils.getAction(CodeforcesShowLoginStatusAction.ACTION_ID)
-    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"), Disposer.newDisposable())
+    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"))
     gotItTooltip.assignTo(action.templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
     val jComponent = action.templatePresentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
     if (jComponent != null && gotItTooltip.canShow() && !CodeforcesSettings.getInstance().isLoggedIn()) {
