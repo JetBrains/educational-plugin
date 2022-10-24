@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
 
@@ -125,6 +126,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
                           ?: error("Can't find virtual file for `${taskFile.name}` task file in `$name task`")
 
         FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
+        TaskDescriptionView.getInstance(project).currentTask = taskFile.task
         return virtualFile
     }
 
