@@ -1,1 +1,2 @@
 **/resources/messages/*.properties "Copy Editor"
+ **/edu-format/** "Format Library Watcher"
