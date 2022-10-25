@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.initializeCourse
+import com.jetbrains.edu.learning.initializeCourse
 import com.jetbrains.edu.learning.testAction
 import org.junit.Assert.assertNotEquals
 import java.io.IOException

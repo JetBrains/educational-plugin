@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -58,9 +57,7 @@ fun course(
 
 fun Course.createCourseFiles(
   project: Project,
-  module: Module,
-  baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot(),
-  settings: Any = Unit
+  baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot()
 ) {
   @Suppress("UNCHECKED_CAST")
   val configurator = configurator as? EduConfigurator<Any>
@@ -70,7 +67,7 @@ fun Course.createCourseFiles(
     configurator
       ?.courseBuilder
       ?.getCourseProjectGenerator(this)
-      ?.createCourseStructure(project, module, baseDir, settings)
+      ?.createCourseStructure(CourseInfoHolder.fromCourse(this, baseDir))
   }, "Course structure generation", false, project)
 }
 

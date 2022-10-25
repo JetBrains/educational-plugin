@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
+import com.intellij.projectImport.ProjectOpenedCallback
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -50,7 +51,7 @@ import kotlin.system.measureTimeMillis
 abstract class CourseProjectGenerator<S : Any>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected var course: Course
-) {
+) : ProjectOpenedCallback {
   private var alreadyEnrolled = false
 
   open fun beforeProjectGenerated(): Boolean {
@@ -72,6 +73,8 @@ abstract class CourseProjectGenerator<S : Any>(
         true
       }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null)
   }
+
+  override fun projectOpened(project: Project, module: Module) {}
 
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
@@ -95,9 +98,9 @@ abstract class CourseProjectGenerator<S : Any>(
     if (!beforeProjectGenerated()) {
       return null
     }
+    val createdProject = createProject(location) ?: return null
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
-    val createdProject = createProject(location, castedProjectSettings) ?: return null
     afterProjectGenerated(createdProject, castedProjectSettings)
     return createdProject
   }
@@ -107,10 +110,10 @@ abstract class CourseProjectGenerator<S : Any>(
    * To create course structure: modules, folders, files, etc. use [CourseProjectGenerator.createCourseStructure]
    *
    * @param locationString location of new project
-   * @param projectSettings new project settings
+   *
    * @return project of new course or null if new project can't be created
    */
-  private fun createProject(locationString: String, projectSettings: S): Project? {
+  private fun createProject(locationString: String): Project? {
     val location = File(FileUtil.toSystemDependentName(locationString))
     if (!location.exists() && !location.mkdirs()) {
       val message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.absolutePath)
@@ -134,23 +137,22 @@ abstract class CourseProjectGenerator<S : Any>(
       TrustedPaths.getInstance().setProjectPathTrusted(location.toPath(), true)
     }
 
-    return openNewProject(location.toPath()) { module ->
-      createCourseStructure(module.project, module, baseDir, projectSettings)
-    }
+    // @formatter:off
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
+       createCourseStructure(CourseInfoHolder.fromCourse(course, baseDir))
+    }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, null)
+    // @formatter:on
+
+    return openNewCourseProject(course, location.toPath(), this)
   }
 
   /**
-   * Create course structure for already created project.
-   * @param project course project
-   * @param module base project module
-   * @param baseDir base directory of project
-   * @param settings project settings
+   * Creates course structure in directory provided by [holder]
    */
   @VisibleForTesting
-  open fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: S) {
-    GeneratorUtils.initializeCourse(project, course)
+  open fun createCourseStructure(holder: CourseInfoHolder<Course>) {
+    holder.course.init(false)
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
-    val holder = CourseInfoHolder.fromCourse(course, baseDir)
 
     if (isNewCourseCreatorCourse) {
       val lesson = courseBuilder.createInitialLesson(holder)
@@ -159,16 +161,8 @@ abstract class CourseProjectGenerator<S : Any>(
       }
     }
 
-    val indicator = ProgressManager.getInstance().progressIndicator
     try {
-      if (indicator == null) {
-        ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
-          generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
-        }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, project)
-      } else {
-        indicator.text = EduCoreBundle.message("generate.project.generate.course.structure.progress.text")
-        generateCourseContent(holder, isNewCourseCreatorCourse, indicator)
-      }
+      generateCourseContent(holder, isNewCourseCreatorCourse, ProgressManager.getInstance().progressIndicator)
     }
     catch (e: IOException) {
       LOG.error("Failed to generate course", e)

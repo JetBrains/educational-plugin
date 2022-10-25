@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 
 class CreateCourseFromZipTest : EduTestCase() {
 
@@ -38,7 +37,7 @@ class CreateCourseFromZipTest : EduTestCase() {
     val course = EduUtilsKt.getLocalCourse(zipPath) ?: error("Failed to load course from $zipPath")
 
     UsefulTestCase.assertInstanceOf(course, EduCourse::class.java)
-    GeneratorUtils.initializeCourse(project, course)
+    initializeCourse(project, course)
 
     UsefulTestCase.assertInstanceOf(course, EduCourse::class.java)
     assertEquals(courseName, course.name)

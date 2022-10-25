@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -22,6 +20,6 @@ open class HyperskillCourseProjectGenerator<T : Any>(
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) =
     base.createAdditionalFiles(holder, isNewCourse)
 
-  override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: T) =
-    base.createCourseStructure(project, module, baseDir, settings)
+  override fun createCourseStructure(holder: CourseInfoHolder<Course>) =
+    base.createCourseStructure(holder)
 }

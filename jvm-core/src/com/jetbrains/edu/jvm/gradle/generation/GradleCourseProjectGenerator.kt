@@ -5,7 +5,6 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.CourseInfoHolder
@@ -18,13 +17,12 @@ open class GradleCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
-  override fun createCourseStructure(project: Project, module: Module, baseDir: VirtualFile, settings: JdkProjectSettings) {
+  override fun projectOpened(project: Project, module: Module) {
     invokeAndWaitIfNeeded {
       GeneratorUtils.removeModule(project, module)
     }
 
     PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
-    super.createCourseStructure(project, module, baseDir, settings)
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {

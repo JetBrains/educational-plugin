@@ -188,7 +188,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
   ): Course {
     val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
       vendor = courseVendor
-      createCourseFiles(project, module, settings = settings)
+
+      initializeCourse(project, course)
+      createCourseFiles(project)
       if (createYamlConfigs) {
         createConfigFiles(project)
       }
@@ -198,7 +200,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
 
     SubmissionsManager.getInstance(project).course = course
-    course.init(false)
     return course
   }
 

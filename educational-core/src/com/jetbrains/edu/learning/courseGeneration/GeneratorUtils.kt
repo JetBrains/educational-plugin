@@ -52,29 +52,23 @@ object GeneratorUtils {
   ) {
     val course = holder.course
     indicator.isIndeterminate = false
-    val initialFraction = indicator.fraction
-    val remainingFraction = 1 - initialFraction
 
-    try {
-      val items = course.items
-      for ((i, item) in items.withIndex()) {
-        indicator.fraction = initialFraction + ((i + 1).toDouble() / items.size) * remainingFraction
+    val items = course.items
+    for ((i, item) in items.withIndex()) {
+      indicator.fraction = (i + 1).toDouble() / items.size
 
-        if (item is Lesson) {
-          indicator.text2 = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
-          createLesson(holder, item, holder.courseDir)
-        }
-        else if (item is Section) {
-          indicator.text2 = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
-          createSection(holder, item, holder.courseDir)
-        }
+      if (item is Lesson) {
+        indicator.text = EduCoreBundle.message("generate.lesson.progress.text", i + 1, items.size)
+        createLesson(holder, item, holder.courseDir)
       }
-      indicator.text2 = EduCoreBundle.message("generate.additional.files.progress.text")
-      createAdditionalFiles(holder)
+      else if (item is Section) {
+        indicator.text = EduCoreBundle.message("generate.section.progress.text", i + 1, items.size)
+        createSection(holder, item, holder.courseDir)
+      }
     }
-    finally {
-      indicator.text2 = ""
-    }
+    indicator.text = EduCoreBundle.message("generate.additional.files.progress.text")
+    createAdditionalFiles(holder)
+
     EduCounterUsageCollector.studyItemCreated(course)
   }
 
@@ -284,12 +278,6 @@ object GeneratorUtils {
     else {
       resultRef.get()
     }
-  }
-
-  @JvmStatic
-  fun initializeCourse(project: Project, course: Course) {
-    course.init(false)
-    StudyTaskManager.getInstance(project).course = course
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -12,7 +11,7 @@ class MockProjectOpener: ProjectOpener() {
   override fun newProject(course: Course): Boolean {
     assertProject()
     course.configurator?.beforeCourseStarted(course)
-    course.createCourseFiles(project!!, ModuleManager.getInstance(project!!).modules[0])
+    course.createCourseFiles(project!!)
     return true
   }
 

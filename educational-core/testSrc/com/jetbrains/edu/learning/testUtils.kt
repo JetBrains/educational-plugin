@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
@@ -118,4 +119,9 @@ fun testAction(
 ): Presentation {
   val action = getActionById<AnAction>(actionId)
   return testAction(action, context, shouldBeEnabled, shouldBeVisible, runAction)
+}
+
+fun initializeCourse(project: Project, course: Course) {
+  course.init(false)
+  StudyTaskManager.getInstance(project).course = course
 }

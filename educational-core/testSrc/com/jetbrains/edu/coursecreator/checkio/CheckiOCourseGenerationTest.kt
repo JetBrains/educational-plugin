@@ -59,7 +59,7 @@ class CheckiOCourseGenerationTest : EduTestCase() {
     val checkiOCourse = course(courseProducer = ::CheckiOCourse) {} as CheckiOCourse
     val stations = contentGenerator.getStationsFromServer()
     stations.forEach { checkiOCourse.addStation(it) }
-    checkiOCourse.createCourseFiles(project, module)
+    checkiOCourse.createCourseFiles(project)
 
     fun FileTreeBuilder.dirWithDefaultFiles(dirName: String) {
       dir(dirName) {
