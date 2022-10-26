@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -20,11 +21,11 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesCopyAndSubmitAction
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.mimeType
 import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
@@ -56,7 +57,6 @@ private const val STYLE_ATTRIBUTE = "style"
 private const val SRCSET_ATTRIBUTE = "srcset"
 private const val WIDTH_ATTRIBUTE = "width"
 private const val BORDER_ATTRIBUTE = "border"
-private const val IMAGE_TYPE = "image"
 private const val DARK_SUFFIX = "_dark"
 private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskDescription.utils")
 private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
@@ -168,11 +168,12 @@ fun replaceImagesForTheme(project: Project, task: Task, taskText: String): Docum
   for (element in imageElements) {
     val srcAttr = element.attr(SRC_ATTRIBUTE)
     val isDarkTheme = UIUtil.isUnderDarcula()
-    if (isDarkTheme && task.containsLocalImages(project, srcAttr)) {
-      val fileNameWithoutExtension = FileUtil.getNameWithoutExtension(srcAttr)
+    if (isDarkTheme) {
+      val fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(srcAttr)
       val fileExtension = FileUtilRt.getExtension(srcAttr)
       val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
-      if (task.taskFiles.containsKey(darkSrc)) {
+      val taskDir = task.getDir(project.courseDir)?.path
+      if (task.taskFiles.containsKey(darkSrc) || (taskDir != null && FileUtil.exists("$taskDir${VfsUtil.VFS_SEPARATOR_CHAR}$darkSrc"))) {
         element.attr(SRC_ATTRIBUTE, darkSrc)
       }
     }
@@ -227,6 +228,7 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   when (course) {
     is HyperskillCourse -> linkPanel.add(
       createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin))
+
     is CodeforcesCourse -> {
       linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
                                      OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)
@@ -246,12 +248,6 @@ fun createActionLink(@Suppress("UnstableApiUsage") @LinkLabel actionText: String
   val link = LightColoredActionLink(actionText, ActionManager.getInstance().getAction(actionId), isExternal = true)
   link.border = JBUI.Borders.empty(top, left, 0, 0)
   return link
-}
-
-private fun Task.containsLocalImages(project: Project, fileName: String): Boolean {
-  val virtualFile = getTaskFile(fileName)?.getVirtualFile(project) ?: return false
-  val mimeType = virtualFile.mimeType()
-  return mimeType?.startsWith(IMAGE_TYPE) ?: false
 }
 
 fun Task.addHeader(tasksNumber: Int, text: String): String = buildString {
