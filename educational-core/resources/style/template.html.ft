@@ -39,6 +39,7 @@
   <link rel="stylesheet" type="text/css" href="${jetbrains_academy_style_base}"></link>
 
   <style>
+    ${tables_style}
     ${typography_color_style}
     ${video_style}
   </style>

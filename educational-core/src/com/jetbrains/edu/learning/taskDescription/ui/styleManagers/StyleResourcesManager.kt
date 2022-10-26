@@ -124,6 +124,7 @@ object StyleResourcesManager {
   fun getResources(content: String) = mapOf(
     resourcePair("base_css", BROWSER_CSS),
     "typography_color_style" to StyleManager().typographyAndColorStylesheet(),
+    "tables_style" to StyleManager().tablesStylesheet(),
     "content" to content,
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", STEPIK_LINK_CSS),
