@@ -4,6 +4,7 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.newproject.ui.asCssColor
 import kotlinx.css.*
@@ -103,6 +104,45 @@ class StyleManager {
         fontSize = bodyFontSize.em.times(1.3)
       }
     }
+
+  fun tablesStylesheet(): String {
+    val themeDependentBorderColor = if (UIUtil.isUnderDarcula()) {
+      if (StyleResourcesManager.isHighContrast())
+        Color(TaskDescriptionBundle.value("high.contrast.table.border.color"))
+      else
+        Color(TaskDescriptionBundle.value("dracula.table.border.color"))
+    } else
+      Color(TaskDescriptionBundle.value("light.table.border.color"))
+
+    val cellsPadding = TaskDescriptionBundle.value("table.cell.padding")
+
+    val tableCss =  if (JavaUILibrary.isJCEF())
+      CSSBuilder().apply {
+        "table" {
+          borderCollapse = BorderCollapse.collapse
+        }
+
+        "td, th" {
+          borderWidth = 1.px
+          borderStyle = BorderStyle.solid
+          borderColor = themeDependentBorderColor
+          padding = cellsPadding
+        }
+      }
+    else // Swing JTextPane does not support border-collapse, so we implement a workaround
+      CSSBuilder().apply {
+        "table" {
+          backgroundColor = themeDependentBorderColor
+        }
+
+        "td, th" {
+          backgroundColor = bodyBackground
+          padding = cellsPadding // in fact, padding it does not support also
+        }
+      }
+
+    return tableCss.toString()
+  }
 
   companion object {
     const val FONT_SIZE_PROPERTY: String = "edu.task.description.font.factor"
