@@ -27,8 +27,23 @@ import java.io.IOException
 object EduGradleUtils {
   @JvmStatic
   fun isConfiguredWithGradle(project: Project): Boolean {
+    return hasDefaultGradleScriptFile(project) || hasDefaultGradleKtsScriptFile(project)
+  }
+
+  @JvmStatic
+  fun hasDefaultGradleScriptFile(project: Project): Boolean {
     return File(project.basePath, GradleConstants.DEFAULT_SCRIPT_NAME).exists()
   }
+
+  @JvmStatic
+  fun hasDefaultGradleKtsScriptFile(project: Project): Boolean {
+    return File(project.basePath, GradleConstants.KOTLIN_DSL_SCRIPT_NAME).exists()
+  }
+
+  @JvmStatic
+  fun hasCourseHaveGradleKtsFiles(course: Course): Boolean =
+    course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME } != null &&
+      course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME } != null
 
   @JvmStatic
   @Throws(IOException::class)

@@ -37,6 +37,9 @@ open class GradleCourseProjectGenerator(
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
+    if (EduGradleUtils.hasCourseHaveGradleKtsFiles(course)) {
+      return
+    }
     EduGradleUtils.createProjectGradleFiles(holder,
                                             gradleCourseBuilder.templates,
                                             gradleCourseBuilder.templateVariables(holder.courseDir.name))
