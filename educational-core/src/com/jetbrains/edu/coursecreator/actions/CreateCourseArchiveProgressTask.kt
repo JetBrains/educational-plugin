@@ -17,6 +17,8 @@ import com.intellij.openapi.ui.Messages.showYesNoCancelDialog
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.AUTHOR_NAME
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.LAST_ARCHIVE_LOCATION
+import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkAllTasksInItemContainer
+import com.jetbrains.edu.coursecreator.actions.checkAllTasks.createFailedTasksNotification
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Vendor
@@ -52,7 +54,7 @@ class CreateCourseArchiveProgressTask(
   private fun checkAllTasksAndShowNotificationIfNeeded(indicator: ProgressIndicator): Boolean {
     val prevText = indicator.text
     indicator.text = EduCoreBundle.message("progress.title.checking.all.tasks")
-    val failedTasks = checkAllTasks(project, course, indicator)
+    val failedTasks = checkAllTasksInItemContainer(project, course, course, indicator)
     indicator.text = prevText
 
     if (failedTasks == null) {
