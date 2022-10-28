@@ -212,6 +212,16 @@ class TaskDescriptionTest : EduTestCase() {
     doTestImageReplacedFromSrcset("https://light.png")
   }
 
+  fun `test src attribute replaced from darkSrc in dark theme`() {
+    runWithDarkTheme {
+      doTestImageAndIFrameSrcReplacedFromDarkSrc("https://dark.png", "https://course.edu/dark.html")
+    }
+  }
+
+  fun `test src attribute not replaced from darkSrc in light theme`() {
+    doTestImageAndIFrameSrcReplacedFromDarkSrc("https://light.png", "https://course.edu/light.html")
+  }
+
   fun `test arrow icon added after external link in light theme`() {
     doTestArrowIconAdded(EXTERNAL_LINK_ARROW_PNG)
   }
@@ -278,9 +288,43 @@ class TaskDescriptionTest : EduTestCase() {
     """.trimIndent()
 
     val task = findTask(0, 0)
-    val actualText = replaceImagesForTheme(project, task, taskText).toString()
+    val actualText = replaceMediaForTheme(project, task, taskText).toString()
     assertEquals(expectedText, actualText)
   }
+
+  private fun doTestImageAndIFrameSrcReplacedFromDarkSrc(expectedImage: String, expectedURL: String) {
+    val taskText = """
+      <p><img class="image-fullsize" src="https://light.png" data-dark-src="https://dark.png" srcset="https://dark.png" width=400></p>
+      <iframe width="560" height="315"
+            src="https://course.edu/light.html"
+            title="YouTube video...autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            data-dark-src="https://course.edu/dark.html"
+      ></iframe>
+    """.trimIndent()
+    courseWithFiles {
+      lesson {
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+        }
+        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("screenshot2.png")
+        }
+      }
+    }
+    val expectedText = """
+      <html>
+       <head></head>
+       <body>
+        <p><img class="image-fullsize" src="$expectedImage" data-dark-src="https://dark.png" width="400"></p> <iframe width="560" height="315" src="$expectedURL" title="YouTube video...autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-dark-src="https://course.edu/dark.html"></iframe>
+       </body>
+      </html>
+    """.trimIndent()
+
+    val task = findTask(0, 0)
+    val actualText = replaceMediaForTheme(project, task, taskText).toString()
+    assertEquals(expectedText, actualText)
+  }
+
 
   private fun doTestLocalImageReplaced(isDarkTheme: Boolean, imageLight: String, imageDark: String) {
     val expectedImage = if (isDarkTheme) imageDark
@@ -316,7 +360,7 @@ class TaskDescriptionTest : EduTestCase() {
       </html>
     """.trimIndent()
     val task = findTask(0, 0)
-    val actualText = replaceImagesForTheme(project, task, taskText).toString().trimIndent()
+    val actualText = replaceMediaForTheme(project, task, taskText).toString().trimIndent()
     assertEquals(expectedText, actualText)
   }
 

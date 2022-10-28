@@ -55,6 +55,7 @@ private const val HEIGHT_ATTRIBUTE = "height"
 const val HREF_ATTRIBUTE = "href"
 private const val STYLE_ATTRIBUTE = "style"
 private const val SRCSET_ATTRIBUTE = "srcset"
+private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
 private const val WIDTH_ATTRIBUTE = "width"
 private const val BORDER_ATTRIBUTE = "border"
 private const val DARK_SUFFIX = "_dark"
@@ -158,33 +159,83 @@ fun String.getYoutubeVideoId(): String? {
 }
 
 fun processImagesAndLinks(project: Project, task: Task, taskText: String): String {
-  val documentWithImagesByTheme = replaceImagesForTheme(project, task, taskText)
+  val documentWithImagesByTheme = replaceMediaForTheme(project, task, taskText)
   return addExternalLinkIcons(documentWithImagesByTheme)
 }
 
-fun replaceImagesForTheme(project: Project, task: Task, taskText: String): Document {
+/**
+ * This method replaces the `src` attributes for `<img>` and for `<iframe>` elements.
+ * It does it only if the dark theme is currently used.
+ * The value to substitute for the original src value is searched in the following steps:
+ * 1. If the custom attribute `darkSrc` is set (written as `data-dark-src` inside HTML),
+ * then its value is used. No further steps are done.
+ * 2. For image (`<img>`), if the `srcset` attribute is set, then its value is used, no further steps are done.
+ * 3. For image (`<img>`), if the link directs to a local files, for example `image.png`, and the file `image_dark.png`
+ * is also present, then the link is updated to direct to this file with a `_dark` postfix.
+ *
+ * Note, that the `srcset` attribute is always removed, independently of whether the dark theme is used or not.
+ */
+fun replaceMediaForTheme(project: Project, task: Task, taskText: String): Document {
   val document = Jsoup.parse(taskText)
+
+  val isDarkTheme = UIUtil.isUnderDarcula()
+
   val imageElements = document.getElementsByTag(IMG_TAG)
-  for (element in imageElements) {
-    val srcAttr = element.attr(SRC_ATTRIBUTE)
-    val isDarkTheme = UIUtil.isUnderDarcula()
-    if (isDarkTheme) {
-      val fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(srcAttr)
-      val fileExtension = FileUtilRt.getExtension(srcAttr)
-      val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
-      val taskDir = task.getDir(project.courseDir)?.path
-      if (task.taskFiles.containsKey(darkSrc) || (taskDir != null && FileUtil.exists("$taskDir${VfsUtil.VFS_SEPARATOR_CHAR}$darkSrc"))) {
-        element.attr(SRC_ATTRIBUTE, darkSrc)
-      }
-    }
-    if (element.hasAttr(SRCSET_ATTRIBUTE)) {
-      if (isDarkTheme) {
-        element.attr(SRC_ATTRIBUTE, element.attr(SRCSET_ATTRIBUTE))
-      }
-      element.removeAttr(SRCSET_ATTRIBUTE)
-    }
+  for (element in imageElements)
+    updateImageElementAccordingToUiTheme(element, isDarkTheme, task, project)
+
+  if (isDarkTheme) {
+    val iframeElements = document.getElementsByTag(IFRAME_TAG)
+    for (element in iframeElements)
+      useDarkSrcCustomAttributeIfPresent(element)
   }
+
   return document
+}
+
+private fun updateImageElementAccordingToUiTheme(element: Element, isDarkTheme: Boolean, task: Task, project: Project) {
+  // remove srcset attribute independently of the theme. Store its value
+  val srcsetValue = if (element.hasAttr(SRCSET_ATTRIBUTE)) element.attr(SRCSET_ATTRIBUTE) else null
+  if (srcsetValue != null)
+    element.removeAttr(SRCSET_ATTRIBUTE)
+
+  if (!isDarkTheme)
+    return
+
+  //first, try to use data-dark-src attribute
+  if (useDarkSrcCustomAttributeIfPresent(element))
+    return
+
+  //second, try to use srcset attribute
+  if (srcsetValue != null) {
+    element.attr(SRC_ATTRIBUTE, srcsetValue)
+    return
+  }
+
+  //third, try to find a local image file with the _dark postfix
+  val srcAttr = element.attr(SRC_ATTRIBUTE)
+
+  val fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(srcAttr)
+  val fileExtension = FileUtilRt.getExtension(srcAttr)
+  val darkSrc = "$fileNameWithoutExtension$DARK_SUFFIX.$fileExtension"
+  val taskDir = task.getDir(project.courseDir)?.path
+  if (task.taskFiles.containsKey(darkSrc) || (taskDir != null && FileUtil.exists("$taskDir${VfsUtil.VFS_SEPARATOR_CHAR}$darkSrc"))) {
+    element.attr(SRC_ATTRIBUTE, darkSrc)
+  }
+}
+
+/**
+ * Take the value for the `src` attribute from the `dataSrc` attribute (written as `data-dark-src` in HTML),
+ * if the latter is present.
+ * @return whether the replacement was made
+ */
+fun useDarkSrcCustomAttributeIfPresent(element: Element): Boolean {
+  val darkSrc = element.dataset()[DARK_SRC_CUSTOM_ATTRIBUTE]
+
+  return if (darkSrc != null) {
+    element.attr(SRC_ATTRIBUTE, darkSrc)
+    true
+  } else false
 }
 
 fun addExternalLinkIcons(document: Document): String {
@@ -228,7 +279,6 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   when (course) {
     is HyperskillCourse -> linkPanel.add(
       createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin))
-
     is CodeforcesCourse -> {
       linkPanel.add(createActionLink(EduCoreBundle.message("action.open.on.text", CodeforcesNames.CODEFORCES_TITLE),
                                      OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin), BorderLayout.NORTH)
