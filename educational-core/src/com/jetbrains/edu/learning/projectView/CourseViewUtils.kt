@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
@@ -141,16 +142,17 @@ object CourseViewUtils {
 
   val Task.icon: Icon
     get() {
-      return when (status) {
-        CheckStatus.Unchecked -> if (this is IdeTask) EducationalCoreIcons.IdeTask else EducationalCoreIcons.Task
-        CheckStatus.Solved -> if (this is IdeTask) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.TaskSolved
-        else -> {
-          val project = course.project
-          if (project != null && SubmissionsManager.getInstance(project).containsCorrectSubmission(id)) {
-            return EducationalCoreIcons.TaskSolved
-          }
-          EducationalCoreIcons.TaskFailed
-        }
+      return when (this) {
+        is IdeTask -> if (isSolved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.IdeTask
+        is TheoryTask -> if (isSolved) EducationalCoreIcons.TheoryTaskSolved else EducationalCoreIcons.TheoryTask
+        else -> if (status == CheckStatus.Unchecked) EducationalCoreIcons.Task
+        else if  (isSolved || containsCorrectSubmissions()) EducationalCoreIcons.TaskSolved
+        else EducationalCoreIcons.TaskFailed
       }
     }
+
+  private fun Task.containsCorrectSubmissions(): Boolean {
+    val project = course.project ?: return false
+    return SubmissionsManager.getInstance(project).containsCorrectSubmission(id)
+  }
 }
