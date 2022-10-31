@@ -133,6 +133,18 @@ class JCheckersTest : JdkCheckerTestBase() {
           withText("OK\n")
         }
       }
+      outputTask("CheckEncoding") {
+        javaTaskFile("src/Task.java", """
+          public class Task {
+            public static void main(String[] args) {
+              System.out.print('\u25A1');
+            }
+          }
+        """)
+        taskFile("test/output.txt") {
+          withText("□")
+        }
+      }
     }
   }
 
