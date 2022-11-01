@@ -551,8 +551,28 @@ class StudentYamlDeserializationTest : EduTestCase() {
     TestCase.assertFalse(taskFile.isEditable)
   }
 
-  fun `test code task`() {
-    val yamlContent = """
+  fun `test code task with java17`() {
+    testCodeTaskWithProgrammingLanguage("java17")
+  }
+
+  fun `test code task with python3_10`() {
+    testCodeTaskWithProgrammingLanguage("python3.10")
+  }
+
+  fun `test code task with scala`() {
+    testCodeTaskWithProgrammingLanguage("scala")
+  }
+
+  private fun testCodeTaskWithProgrammingLanguage(programmingLanguage: String) {
+    val yamlContent = getYAMLWithProgrammingLanguage(programmingLanguage)
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is CodeTask)
+    task as CodeTask
+    assertEquals(programmingLanguage, task.submissionLanguage)
+  }
+
+  private fun getYAMLWithProgrammingLanguage(programmingLanguage: String): String {
+    return """
     |type: code
     |custom_name: Code task
     |files:
@@ -570,13 +590,8 @@ class StudentYamlDeserializationTest : EduTestCase() {
     |    }
     |  learner_created: false
     |status: Failed
-    |submission_language: java17
+    |submission_language: $programmingLanguage
     |""".trimMargin()
-
-    val task = deserializeTask(yamlContent)
-    assertTrue(task is CodeTask)
-    task as CodeTask
-    assertEquals("java17", task.submissionLanguage)
   }
 
   private fun deserializeTask(yamlContent: String) = STUDENT_MAPPER.deserializeTask(yamlContent)

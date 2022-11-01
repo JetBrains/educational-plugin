@@ -588,7 +588,19 @@ class StudentYamlSerializationTest : EduTestCase() {
     |""".trimMargin())
   }
 
-  fun `test code task`() {
+  fun `test code task with java256`() {
+    testCodeTaskProgrammingLanguage("java256")
+  }
+
+  fun `test code task with python3_10`() {
+    testCodeTaskProgrammingLanguage("python3.10")
+  }
+
+  fun `test code task with scala`() {
+    testCodeTaskProgrammingLanguage("scala")
+  }
+
+  private fun testCodeTaskProgrammingLanguage(programmingLanguage: String) {
     val task: CodeTask = courseWithFiles {
       lesson {
         codeTask("task1") {
@@ -597,9 +609,13 @@ class StudentYamlSerializationTest : EduTestCase() {
       }
     }.findTask("lesson1", "task1") as CodeTask
     task.record = -1
-    task.submissionLanguage = "java256"
+    task.submissionLanguage = programmingLanguage
 
-    doTest(task, """
+    doTest(task, getYAMLWithProgrammingLanguageWithVersion(programmingLanguage))
+  }
+
+  private fun getYAMLWithProgrammingLanguageWithVersion(languageIdWithVersion: String): String {
+    return """
     |type: code
     |files:
     |- name: Task.txt
@@ -608,8 +624,8 @@ class StudentYamlSerializationTest : EduTestCase() {
     |  learner_created: false
     |status: Unchecked
     |record: -1
-    |submission_language: java256
-    |""".trimMargin())
+    |submission_language: $languageIdWithVersion
+    |""".trimMargin()
   }
 
   private fun doTest(item: StudyItem, expected: String) {
