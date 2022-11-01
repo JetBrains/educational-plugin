@@ -157,8 +157,10 @@ fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, St
     Err("${EduCoreBundle.message("error.failed.to.connect")} \n\n${e.message}")
   }
   catch (e: ProcessCanceledException) {
+    // We don't have to log or throw ProcessCanceledException:
+    // 'Control-flow exceptions (like ProcessCanceledException) should never be logged: ignore for explicitly started processes or...'
     cancel()
-    throw e
+    Err("Process canceled by user")
   }
   catch (e: RuntimeException) {
     log("Failed to connect to server", e.message, omitErrors)
