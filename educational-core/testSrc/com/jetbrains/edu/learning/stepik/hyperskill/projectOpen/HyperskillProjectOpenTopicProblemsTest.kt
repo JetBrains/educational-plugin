@@ -3,9 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduExperimentalFeatures.PROBLEMS_BY_TOPIC
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -18,11 +16,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjec
 
 
 class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase() {
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(PROBLEMS_BY_TOPIC, true) {
-      super.runTestRunnable(context)
-    }
-  }
 
   override fun setUp() {
     super.setUp()

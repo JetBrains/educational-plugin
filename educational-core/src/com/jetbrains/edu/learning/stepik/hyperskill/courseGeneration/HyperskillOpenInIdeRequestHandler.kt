@@ -37,7 +37,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
       is HyperskillOpenStepRequest -> {
-        hyperskillCourse.addProblemWithFiles(project, request)
+        hyperskillCourse.addProblemsWithTopicWithFiles(project, getStepSource(request))
         val stepId = request.stepId
         hyperskillCourse.selectedProblem = stepId
         runInEdt {
@@ -46,6 +46,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
         }
         synchronizeProjectOnStepOpening(project, hyperskillCourse, stepId)
       }
+
       is HyperskillOpenStageRequest -> {
         if (hyperskillCourse.getProjectLesson() == null) {
           computeUnderProgress(project, EduCoreBundle.message("hyperskill.loading.stages")) {
@@ -139,9 +140,10 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     when (request) {
       is HyperskillOpenStepRequest -> {
-        hyperskillCourse.addProblem(request)
+        hyperskillCourse.addProblemsWithTopicWithFiles(null, getStepSource(request))
         hyperskillCourse.selectedProblem = request.stepId
       }
+
       is HyperskillOpenStageRequest -> {
         indicator.text2 = EduCoreBundle.message("hyperskill.loading.stages")
         HyperskillConnector.getInstance().loadStages(hyperskillCourse)
@@ -151,35 +153,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     return Ok(hyperskillCourse)
   }
 
-  /**
-   * TODO
-   * Replace with [addProblemsWithTopicWithFiles] after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature becomes enabled by default
-   * */
   @VisibleForTesting
-  fun HyperskillCourse.addProblem(request: HyperskillOpenStepRequest) {
-    val stepId = request.stepId
-    if (getProblem(stepId) != null) {
-      LOG.info("Task with $stepId already exists in the course")
-      return
-    }
-    val stepSource = getStepSource(request)
-
-    if (stepSource.canBeAddedWithTopic()) {
-      return addProblemsWithTopic(stepSource).onError { error(it) }
-    }
-
-    var lesson = getProblemsLesson()
-    if (lesson == null) {
-      lesson = createProblemsLesson()
-    }
-
-    val task = lesson.getTask(stepId)
-    if (task == null) {
-      lesson.addProblem(stepSource)
-    }
-  }
-
-  private fun getStepSource(request: HyperskillOpenStepRequest): HyperskillStepSource {
+  fun getStepSource(request: HyperskillOpenStepRequest): HyperskillStepSource {
     val connector = HyperskillConnector.getInstance()
     val stepSource = connector.getStepSource(request.stepId).onError { error(it) }
 
@@ -188,56 +163,6 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       error("Language has been selected by user not for data task, but it must be specified for other tasks in request")
     }
     return stepSource
-  }
-
-  private fun HyperskillStepSource.canBeAddedWithTopic(): Boolean {
-    return topic != null && isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)
-  }
-
-  private fun HyperskillCourse.createProblemsLesson(): Lesson {
-    val lesson = Lesson()
-    lesson.name = HYPERSKILL_PROBLEMS
-    lesson.index = this.items.size + 1
-    lesson.parent = this
-    addLesson(lesson)
-    return lesson
-  }
-
-  /**
-   * See [com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse.getTopicsSection]
-   */
-  @VisibleForTesting
-  fun HyperskillCourse.addProblemsWithTopic(stepSource: HyperskillStepSource): Result<Unit, String> {
-    return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
-      var topicsSection = getTopicsSection()
-      if (topicsSection == null) {
-        topicsSection = createTopicsSection()
-      }
-
-      val (topicName, stepSources) = stepSource.getTopicWithRecommendedSteps().onError {
-        return@computeUnderProgress Err(it)
-      }
-
-      var topicLesson = topicsSection.getLesson { it.presentableName == topicName }
-      if (topicLesson == null) {
-        topicLesson = topicsSection.createTopicLesson(topicName)
-      }
-
-      topicLesson.addProblems(stepSources).onError {
-        return@computeUnderProgress Err(it)
-      }
-      Ok(Unit)
-    }
-  }
-
-  private fun Lesson.addProblem(stepSource: HyperskillStepSource): Result<Task, String> {
-    val problems = addProblems(listOf(stepSource)).onError {
-      return Err(it)
-    }
-    if (problems.isEmpty()) {
-      return Err("Problem has not been added")
-    }
-    return Ok(problems.first())
   }
 
   private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
@@ -285,53 +210,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     return Ok(Pair(problemTitle, stepSources))
   }
 
-  /** Method creates legacy problem without their topic. TODO replace with [addProblemsWithTopicWithFiles]
-   * after [EduExperimentalFeatures.PROBLEMS_BY_TOPIC] feature is become enabled by default */
-  private fun HyperskillCourse.addProblemWithFiles(project: Project, request: HyperskillOpenStepRequest) {
-    val stepId = request.stepId
-    if (getProblem(stepId) != null) {
-      LOG.info("Task with $stepId already exists in the course")
-      return
-    }
-    val stepSource = getStepSource(request)
-
-    if (stepSource.canBeAddedWithTopic()) {
-      return addProblemsWithTopicWithFiles(project, stepSource).onError { error(it) }
-    }
-
-    var problemsLesson = getProblemsLesson()
-    var createLessonDir = false
-    if (problemsLesson == null) {
-      problemsLesson = createProblemsLesson()
-      createLessonDir = true
-    }
-
-    var task = problemsLesson.getTask(stepId)
-    var createTaskDir = false
-    if (task == null) {
-      task = problemsLesson.addProblem(stepSource).onError { error(it) }
-      createTaskDir = true
-    }
-
-    problemsLesson.init(this, false)
-
-    if (createLessonDir) {
-      GeneratorUtils.createLesson(project, problemsLesson, project.courseDir)
-      YamlFormatSynchronizer.saveAll(project)
-    }
-    else if (createTaskDir) {
-      GeneratorUtils.createTask(project, task, problemsLesson.getDir(project.courseDir)!!)
-      YamlFormatSynchronizer.saveItem(problemsLesson)
-      YamlFormatSynchronizer.saveItem(task)
-      YamlFormatSynchronizer.saveRemoteInfo(task)
-    }
-
-    if (createTaskDir) {
-      course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
-    }
-  }
-
-  private fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project, stepSource: HyperskillStepSource): Result<Unit, String> {
+  @VisibleForTesting
+  fun HyperskillCourse.addProblemsWithTopicWithFiles(project: Project?, stepSource: HyperskillStepSource): Result<Unit, String> {
     return computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.problems")) {
       var localTopicsSection = getTopicsSection()
       val createSectionDir = localTopicsSection == null
@@ -349,14 +229,16 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       val tasks = localTopicLesson.addProblems(stepSources).onError { return@computeUnderProgress Err(it) }
       localTopicsSection.init(this, false)
 
-      when {
-        createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
-        createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
-        else -> saveTasks(project, localTopicLesson, tasks)
-      }
+      if (project != null) {
+        when {
+          createSectionDir -> saveSectionDir(project, course, localTopicsSection, localTopicLesson, tasks)
+          createLessonDir -> saveLessonDir(project, localTopicsSection, localTopicLesson, tasks)
+          else -> saveTasks(project, localTopicLesson, tasks)
+        }
 
-      if (tasks.isNotEmpty()) {
-        course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+        if (tasks.isNotEmpty()) {
+          course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+        }
       }
       Ok(Unit)
     }
@@ -409,13 +291,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     }
 
     val task = course.getProblem(stepId) ?: return
-    if (isFeatureEnabled(EduExperimentalFeatures.PROBLEMS_BY_TOPIC)) {
-      val tasks = task.lesson.taskList.filter { HyperskillCourse.isStepSupported(it.itemType) }
-      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
-    }
-    else {
-      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, listOf(task), true)
-    }
+    val tasks = task.lesson.taskList.filter { HyperskillCourse.isStepSupported(it.itemType) }
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {

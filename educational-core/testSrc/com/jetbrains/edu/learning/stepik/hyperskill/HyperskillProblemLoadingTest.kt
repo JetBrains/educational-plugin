@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.util.ThrowableRunnable
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -9,19 +9,14 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblem
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.addProblemsWithTopicWithFiles
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler.getStepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.StepInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjectOpenerTestBase.Companion.TopicInfo
 
 class HyperskillProblemLoadingTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
-
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
-      super.runTestRunnable(context)
-    }
-  }
 
   override fun setUp() {
     super.setUp()
@@ -59,7 +54,7 @@ class HyperskillProblemLoadingTest : EduTestCase() {
     } as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
     course.stages = listOf(HyperskillStage(1, "", 1))
-    course.addProblem(HyperskillOpenStepRequest(1, 4894, "TEXT"))
+    course.addProblemsWithTopicWithFiles(null, getStepSource( HyperskillOpenStepRequest (1, 4894, "TEXT")))
     return course
   }
 

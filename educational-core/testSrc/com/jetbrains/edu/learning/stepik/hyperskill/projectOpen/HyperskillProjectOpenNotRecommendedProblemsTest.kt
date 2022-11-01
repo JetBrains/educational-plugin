@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -14,11 +13,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.projectOpen.HyperskillProjec
 
 
 class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerTestBase() {
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(EduExperimentalFeatures.PROBLEMS_BY_TOPIC, true) {
-      super.runTestRunnable(context)
-    }
-  }
 
   override fun setUp() {
     super.setUp()
