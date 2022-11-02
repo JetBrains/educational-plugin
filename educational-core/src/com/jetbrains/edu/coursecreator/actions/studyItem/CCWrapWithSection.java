@@ -12,12 +12,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.OpenApiExtKt;
+import com.jetbrains.edu.learning.RefreshCause;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import static com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getConfigurator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +57,12 @@ public class CCWrapWithSection extends DumbAwareAction {
     final ArrayList<Lesson> lessonsToWrap = getLessonsToWrap(virtualFiles, course);
 
     wrapLessonsIntoSection(project, course, lessonsToWrap);
+
+    EduConfigurator<?> configurator = getConfigurator(course);
+    if (configurator == null) {
+      return;
+    }
+    configurator.getCourseBuilder().refreshProject(project, RefreshCause.STRUCTURE_MODIFIED);
   }
 
   @NotNull
