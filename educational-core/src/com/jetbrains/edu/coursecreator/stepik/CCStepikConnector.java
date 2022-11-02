@@ -81,7 +81,8 @@ public class CCStepikConnector {
     if (sectionId != -1) {
       postedLesson.setUnitId(postUnit(postedLesson.getId(), position, sectionId, project));
     }
-
+    // required to POST additional files and form lesson creation notification link
+    lesson.setId(postedLesson.getId());
     return postedLesson;
   }
 
