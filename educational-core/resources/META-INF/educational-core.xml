@@ -95,6 +95,8 @@
     </action>
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
     </action>
+    <action id="Educational.PrintoutCourse" class="com.jetbrains.edu.learning.actions.PrintoutCourse">
+    </action>
 
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
