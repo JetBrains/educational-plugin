@@ -3,6 +3,8 @@
   <dependencies>
     <plugin id="com.intellij.clion"/>
     <plugin id="com.intellij.cidr.lang"/>
+    <plugin id="org.jetbrains.plugins.clion.test.catch"/>
+    <plugin id="org.jetbrains.plugins.clion.test.google"/>
   </dependencies>
 
   <extensions defaultExtensionNs="Educational">

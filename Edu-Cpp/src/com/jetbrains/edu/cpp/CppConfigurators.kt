@@ -3,6 +3,8 @@ package com.jetbrains.edu.cpp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.cpp.checker.CppCatchTaskCheckerProvider
+import com.jetbrains.edu.cpp.checker.CppGTaskCheckerProvider
 import com.jetbrains.edu.cpp.checker.CppTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -18,11 +20,17 @@ import javax.swing.Icon
 class CppGTestConfigurator : CppConfigurator() {
   override val courseBuilder: EduCourseBuilder<CppProjectSettings>
     get() = CppGTestCourseBuilder()
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = CppGTaskCheckerProvider()
 }
 
 class CppCatchConfigurator : CppConfigurator() {
   override val courseBuilder: EduCourseBuilder<CppProjectSettings>
     get() = CppCatchCourseBuilder()
+
+  override val taskCheckerProvider: TaskCheckerProvider
+    get() = CppCatchTaskCheckerProvider()
 }
 
 open class CppConfigurator : EduConfigurator<CppProjectSettings> {
