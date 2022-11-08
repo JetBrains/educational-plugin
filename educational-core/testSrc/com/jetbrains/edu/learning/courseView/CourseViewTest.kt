@@ -2,6 +2,7 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.tree.TreeUtil
@@ -9,10 +10,12 @@ import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.projectView.FrameworkLessonNode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.learning.withEduTestDialog
 import junit.framework.TestCase
+import javax.swing.tree.DefaultMutableTreeNode
 
 class CourseViewTest : CourseViewTestBase() {
 
@@ -30,6 +33,48 @@ class CourseViewTest : CourseViewTestBase() {
                     "   +TaskNode task3\n" +
                     "   +TaskNode task4\n"
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+  }
+
+  fun `test framework lesson navigate`() {
+    courseWithFiles("Edu test course") {
+      lesson {
+        eduTask {
+          taskFile("taskFile.txt")
+        }
+      }
+      frameworkLesson {
+        eduTask {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+            placeholder(0, "2")
+          }
+        }
+        eduTask {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+            placeholder(0, "2")
+          }
+          taskFile("taskFile2.txt")
+        }
+      }
+    }
+    val pane = createPane()
+    val model = pane.tree.model
+
+    val structure = "-Project\n" +
+                    " +CourseNode Edu test course  0/3"
+    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 3))
+    assertEmpty(FileEditorManager.getInstance (project).openFiles)
+
+    val root = model.root as DefaultMutableTreeNode
+    val courseNode = model.getChild(root, 0) as DefaultMutableTreeNode
+    val frameworkLessonNode = model.getChild(courseNode, 1) as DefaultMutableTreeNode
+    val frameworkLessonNodeObject = frameworkLessonNode.userObject as FrameworkLessonNode
+    assertFalse(frameworkLessonNodeObject.expandOnDoubleClick())
+    assertTrue(frameworkLessonNodeObject.canNavigate())
+    frameworkLessonNodeObject.navigate(true)
+    assertEquals(1, FileEditorManager.getInstance (project).openFiles.size)
+    assertEquals("taskFile1.txt", FileEditorManager.getInstance (project).openFiles[0].name)
   }
 
   fun testCourseProgress() {

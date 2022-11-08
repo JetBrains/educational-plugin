@@ -7,6 +7,7 @@ import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class FrameworkLessonNode private constructor(
@@ -22,6 +23,15 @@ class FrameworkLessonNode private constructor(
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
     val task = item.currentTask() ?: return null
     return CourseViewUtils.modifyTaskChildNode(myProject, childNode, task) { dir -> DirectoryNode(myProject, dir, settings, task) }
+  }
+
+  override fun canNavigate(): Boolean = item.taskList.isNotEmpty()
+
+  override fun expandOnDoubleClick(): Boolean = false
+
+  override fun navigate(requestFocus: Boolean) {
+    val firstTask = item.currentTask() ?: return
+    NavigationUtils.navigateToTask(myProject, firstTask)
   }
 
   override val additionalInfo: String?
