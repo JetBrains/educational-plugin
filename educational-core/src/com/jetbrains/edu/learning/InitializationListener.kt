@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.ide.AppLifecycleListener
-import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
@@ -88,7 +87,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun fillRecentCourses() {
-    val state = RecentProjectsManagerBase.instanceEx.state
+    val state = recentProjectManagerEx().state
     val recentPathsInfo = state.additionalInfo
     recentPathsInfo.forEach {
       val projectPath = it.key

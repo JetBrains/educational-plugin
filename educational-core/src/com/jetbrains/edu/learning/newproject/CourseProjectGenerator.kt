@@ -8,7 +8,6 @@ import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
@@ -20,7 +19,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
-import com.intellij.projectImport.ProjectOpenedCallback
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -51,7 +49,7 @@ import kotlin.system.measureTimeMillis
 abstract class CourseProjectGenerator<S : Any>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected var course: Course
-) : ProjectOpenedCallback {
+) : PlatformCourseProjectGenerator() {
   private var alreadyEnrolled = false
 
   open fun beforeProjectGenerated(): Boolean {
@@ -73,8 +71,6 @@ abstract class CourseProjectGenerator<S : Any>(
         true
       }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null)
   }
-
-  override fun projectOpened(project: Project, module: Module) {}
 
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
@@ -143,7 +139,7 @@ abstract class CourseProjectGenerator<S : Any>(
     }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, null)
     // @formatter:on
 
-    return openNewCourseProject(course, location.toPath(), this)
+    return openNewCourseProject(course, location.toPath(), this::prepareToOpen)
   }
 
   /**

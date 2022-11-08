@@ -10,8 +10,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
-import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
-import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -21,6 +19,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
+import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.marketplace.GRAZIE_STAGING_URL
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -28,8 +28,8 @@ import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.checkNotEmpty
 import com.jetbrains.edu.learning.submissions.findTaskFileInDirWithSizeCheck
 import okhttp3.ConnectionPool
-import org.apache.commons.httpclient.HttpStatus
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.net.HttpURLConnection
 import java.time.Instant
 import java.util.*
 
@@ -228,7 +228,7 @@ class MarketplaceSubmissionsConnector {
     val path = "/testPath"
     LOG.info("Validating inserted token: $token")
     val response = submissionServiceWithCheckedToken.getDescriptorsList(DocumentPath(path)).executeHandlingExceptions()
-    return if (response != null && response.code() != HttpStatus.SC_UNAUTHORIZED) {
+    return if (response != null && response.code() != HttpURLConnection.HTTP_UNAUTHORIZED) {
       LOG.info("Inserted token: $token is valid")
       true
     }

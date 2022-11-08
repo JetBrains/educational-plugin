@@ -66,8 +66,11 @@ class CodeforcesCreateTestAction : DumbAwareAction() {
     val fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project)
 
     if (fileEditorManagerEx.isInSplitter) {
-      fileEditorManagerEx.openFileWithProviders(outputFile, false, fileEditorManagerEx.splitters.windows[1])
-      fileEditorManagerEx.openFileWithProviders(inputFile, true, fileEditorManagerEx.splitters.windows[0])
+      // BACKCOMPAT: 2022.2. Remove `Suppress` annotation
+      @Suppress("UsePropertyAccessSyntax")
+      val windows = fileEditorManagerEx.splitters.getWindows()
+      fileEditorManagerEx.openFileWithProviders(outputFile, false, windows[1])
+      fileEditorManagerEx.openFileWithProviders(inputFile, true, windows[0])
     }
     else {
       fileEditorManagerEx.openFile(inputFile, true, false)

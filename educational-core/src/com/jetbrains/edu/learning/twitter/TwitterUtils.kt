@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.twitter.ui.TwitterDialogUI
 import com.jetbrains.edu.learning.twitter.ui.createTwitterDialogUI
-import org.apache.http.HttpStatus
 import twitter4j.StatusUpdate
 import twitter4j.Twitter
 import twitter4j.TwitterException
@@ -35,6 +34,7 @@ import twitter4j.auth.AccessToken
 import twitter4j.auth.RequestToken
 import twitter4j.conf.ConfigurationBuilder
 import java.io.IOException
+import java.net.HttpURLConnection
 import java.nio.file.Path
 
 object TwitterUtils {
@@ -158,7 +158,7 @@ object TwitterUtils {
 
     override fun onThrowable(error: Throwable) {
       LOG.warn(error)
-      val message = if (error is TwitterException && error.statusCode == HttpStatus.SC_UNAUTHORIZED) {
+      val message = if (error is TwitterException && error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
         EduCoreBundle.message("error.failed.to.authorize")
       } else {
         EduCoreBundle.message("error.failed.to.update.status")

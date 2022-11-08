@@ -36,7 +36,7 @@ fun hasOpenDialogs(platformName: String): Boolean = getInEdt(modalityState = Mod
 fun requestFocus() {
   val frame = WindowManager.getInstance().findVisibleFrame()
   if (frame is IdeFrame) {
-    AppIcon.getInstance().requestFocus(frame)
+    AppIcon.getInstance().requestFocus(frame as IdeFrame)
   }
   frame?.toFront()
 }

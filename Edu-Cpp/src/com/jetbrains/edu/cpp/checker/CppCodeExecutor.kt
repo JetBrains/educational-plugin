@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtilBase
-import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 import com.jetbrains.cidr.execution.OCTargetConfigurationHelper.isInEntryPointBody
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
 import com.jetbrains.edu.cpp.codeforces.CppCodeforcesRunConfiguration
@@ -35,7 +34,7 @@ class CppCodeExecutor : DefaultCodeExecutor() {
 
     val context = ConfigurationContext(mainFunction)
 
-    val configuration = CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
+    val configuration = findOrCreateConfigurationFromContext(project, context)
     if (configuration == null) {
       LOG.warn("Failed to create a configuration from main function in the file '${mainFunction.containingFile.name}'")
       return null

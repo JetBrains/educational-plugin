@@ -1,29 +1,16 @@
 package com.jetbrains.edu.jvm.gradle.generation
 
-import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 open class GradleCourseProjectGenerator(
   builder: GradleCourseBuilderBase,
   course: Course
-) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
-
-  override fun projectOpened(project: Project, module: Module) {
-    invokeAndWaitIfNeeded {
-      GeneratorUtils.removeModule(project, module)
-    }
-
-    PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
-  }
+) : GradleCourseProjectGeneratorBase(builder, course) {
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     val jdk = projectSettings.setUpProjectJdk(project, ::getJdk)
@@ -53,6 +40,7 @@ open class GradleCourseProjectGenerator(
 
     // Unfortunately, org.jetbrains.plugins.gradle.service.project.GradleStartupActivity#SHOW_UNLINKED_GRADLE_POPUP is private
     // so create own const
-    private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
+    // BACKCOMPAT: 2022.2. Make it private
+    const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
   }
 }

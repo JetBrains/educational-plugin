@@ -3,15 +3,25 @@
 package com.jetbrains.edu.learning.newproject
 
 import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.projectImport.ProjectOpenedCallback
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.nio.file.Path
 
-fun openNewCourseProject(course: Course, location: Path, callback: ProjectOpenedCallback): Project? {
-  val task = OpenProjectTask(
+fun openNewCourseProject(
+  course: Course,
+  location: Path,
+  prepareToOpenCallback: (Project, Module) -> Unit
+): Project? {
+  val task = OpenProjectTask(course, prepareToOpenCallback)
+
+  return ProjectManagerEx.getInstanceEx().openProject(location, task)
+}
+
+private fun OpenProjectTask(course: Course, prepareToOpenCallback: (Project, Module) -> Unit): OpenProjectTask {
+  return OpenProjectTask(
     forceOpenInNewFrame = true,
     projectToClose = null,
     isNewProject = true,
@@ -22,9 +32,7 @@ fun openNewCourseProject(course: Course, location: Path, callback: ProjectOpened
     },
     preparedToOpen = {
       StudyTaskManager.getInstance(it.project).course = course
-    },
-    callback = callback
+      prepareToOpenCallback(it.project, it)
+    }
   )
-
-  return ProjectManagerEx.getInstanceEx().openProject(location, task)
 }

@@ -1,9 +1,6 @@
 package com.jetbrains.edu.scala.sbt
 
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.CourseInfoHolder
@@ -11,20 +8,13 @@ import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.gradleSanitizeName
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import org.jetbrains.plugins.scala.project.Version
 import org.jetbrains.sbt.Sbt
 import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
-class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
-  override fun projectOpened(project: Project, module: Module) {
-    invokeAndWaitIfNeeded {
-      GeneratorUtils.removeModule(project, module)
-    }
-    project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
-  }
+class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Course) : ScalaSbtCourseProjectGeneratorBase(builder, course) {
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val sbtVersion = maxOf(Sbt.LatestVersion(), MIN_RECOMMENDED_SBT_VERSION)

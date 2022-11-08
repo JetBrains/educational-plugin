@@ -123,7 +123,7 @@ class MyCoursesWelcomeScreenPanel(disposable: Disposable) : JPanel(BorderLayout(
     val importCourseAction = EduActionUtils.getAction(ImportLocalCourseAction.ACTION_ID)
     moreActionGroup.addAll(CCNewCourseAction(EduCoreBundle.message("course.dialog.create.course.title")), importCourseAction)
 
-    val moreActionPresentation = moreActionGroup.templatePresentation
+    val moreActionPresentation = moreActionGroup.templatePresentation.clone()
     moreActionPresentation.icon = AllIcons.Actions.More
     moreActionPresentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
 

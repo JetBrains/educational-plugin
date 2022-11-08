@@ -7,13 +7,8 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
-import com.intellij.ui.EditorNotificationsImpl
 
-abstract class NotificationsTestBase : EduTestCase() {
-
-  private fun completeEditorNotificationAsyncTasks() {
-    EditorNotificationsImpl.completeAsyncTasks()
-  }
+abstract class NotificationsTestBase : PlatformNotificationsTestBase() {
 
   protected inline fun <reified T : EditorNotificationProvider> checkEditorNotification(
     virtualFile: VirtualFile,
@@ -52,7 +47,7 @@ abstract class NotificationsTestBase : EduTestCase() {
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)
                      ?: error("Can't find file editor for $virtualFile")
 
-    return EditorNotificationsImpl.getNotificationPanels(fileEditor)[clazz] as? EditorNotificationPanel
+    return getNotificationPanels(fileEditor, clazz)
   }
 
   protected fun withYamlFileTypeRegistered(action: () -> Unit) {

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.builtInServer
 
-import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
@@ -13,6 +12,7 @@ import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.recentProjectManagerEx
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
@@ -51,7 +51,7 @@ object EduBuiltInServerUtils {
 
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
-    val recentPaths = RecentProjectsManagerBase.instanceEx.getRecentPaths()
+    val recentPaths = recentProjectManagerEx().getRecentPaths()
     val parser = SAXBuilder()
 
     for (projectPath in recentPaths) {

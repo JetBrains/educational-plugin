@@ -66,7 +66,9 @@ class CCStudyItemDeleteProvider : DeleteProvider {
 
     removeDependentPlaceholders(project, dependentTasks, containingTasks)
 
-    val modifiableModel = ModuleManager.getInstance(project).modifiableModel
+    // BACKCOMPAT: 2022.2. Remove `Suppress` annotation
+    @Suppress("UsePropertyAccessSyntax")
+    val modifiableModel = ModuleManager.getInstance(project).getModifiableModel()
     if (module != null) {
       ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModel)
     }
