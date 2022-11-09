@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -119,6 +120,11 @@ fun checkTask(
   task: Task,
   indicator: ProgressIndicator
 ): Boolean {
+  // We decided to check the ChoiceTask when CC chose any answer. Otherwise, we don't check this task.
+  if (task is ChoiceTask && task.selectedVariants.isEmpty()) {
+    return true
+  }
+
   val checker = course.configurator?.taskCheckerProvider?.getTaskChecker(task, project)!!
   if (checker is EduTaskCheckerBase) {
     checker.activateRunToolWindow = false

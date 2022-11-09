@@ -7,11 +7,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.actions.checkAllTasks.CCCheckAllTasksAction
+import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkTask
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CheckAllTest : EduActionTestCase() {
@@ -154,6 +156,79 @@ class CheckAllTest : EduActionTestCase() {
         "<a href=\"4\">section2/lesson2/task1</a>",
         "<a href=\"5\">section2/lesson2/task2</a>",
         "<a href=\"6\">section1/lesson1/task1</a>",
+      ).joinToString("<br>")
+      assertEquals(expectedStr, it.content)
+    }
+  }
+
+  fun `test skipping blank choice tasks during checking all tasks`() {
+    val choiceOptions1 = mapOf("Correct" to ChoiceOptionStatus.CORRECT, "Incorrect" to ChoiceOptionStatus.INCORRECT)
+    val choiceOptions2 = mapOf("0" to ChoiceOptionStatus.CORRECT, "1" to ChoiceOptionStatus.INCORRECT, "2" to ChoiceOptionStatus.CORRECT)
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson") {
+        eduTask("eduTask1") {
+          checkResultFile(CheckStatus.Failed)
+        }
+        eduTask("eduTask2") {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask1",
+          choiceOptions = choiceOptions1,
+          isMultipleChoice = false,
+          selectedVariants = mutableListOf(1)
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask2",
+          choiceOptions = choiceOptions1,
+          isMultipleChoice = false,
+          selectedVariants = mutableListOf(0)
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask3",
+          choiceOptions = choiceOptions1,
+          isMultipleChoice = false,
+          selectedVariants = mutableListOf()
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask4",
+          choiceOptions = choiceOptions2,
+          isMultipleChoice = true,
+          selectedVariants = mutableListOf(0, 2)
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask5",
+          choiceOptions = choiceOptions2,
+          isMultipleChoice = true,
+          selectedVariants = mutableListOf(0, 1, 2)
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+        choiceTask(
+          name = "choiceTask6",
+          choiceOptions = choiceOptions2,
+          isMultipleChoice = true,
+          selectedVariants = mutableListOf()
+        ) {
+          checkResultFile(CheckStatus.Solved)
+        }
+      }
+    }
+    val dataContext = dataContext(arrayOf(getCourseDir()))
+    doTestWithNotification(dataContext) {
+      assertEquals("3 of 8 tasks failed", it.subtitle)
+      val expectedStr = listOf(
+        "<a href=\"0\">lesson/eduTask1</a>",
+        "<a href=\"1\">lesson/choiceTask1</a>",
+        "<a href=\"2\">lesson/choiceTask5</a>",
       ).joinToString("<br>")
       assertEquals(expectedStr, it.content)
     }
