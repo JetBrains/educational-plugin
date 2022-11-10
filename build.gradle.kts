@@ -90,6 +90,7 @@ val nodeJsPlugin = "NodeJS"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val platformImagesPlugin = "com.intellij.platform.images"
+val gridImplPlugin = if (isAtLeast223) "intellij.grid.impl" else null
 
 val jvmPlugins = listOf(
   javaPlugin,
@@ -115,6 +116,12 @@ val cppPlugins = listOf(
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
 )
+
+val pythonPlugins = listOfNotNull(
+  pythonPlugin,
+  gridImplPlugin
+)
+
 
 val changesFile = "changes.html"
 
@@ -327,7 +334,7 @@ project(":") {
       psiViewerPlugin
     )
     pluginsList += rustPlugins
-    pluginsList += listOfNotNull(pythonPlugin)
+    pluginsList += pythonPlugins
     if (isJvmCenteredIDE) {
       pluginsList += jvmPlugins
       pluginsList += listOf(kotlinPlugin, scalaPlugin)
@@ -715,8 +722,7 @@ project(":Edu-Android") {
 
 project(":Edu-Python") {
   intellij {
-    val pluginList = listOfNotNull(
-      pythonPlugin,
+    val pluginList = pythonPlugins + listOfNotNull(
       if (isJvmCenteredIDE) javaPlugin else null,
       // needed only for tests, actually
       platformImagesPlugin
@@ -742,6 +748,7 @@ project(":Edu-Python:Idea") {
 
     val pluginList = listOfNotNull(
       if (!isJvmCenteredIDE) pythonProPlugin else pythonPlugin,
+      gridImplPlugin,
       javaPlugin
     )
     plugins.set(pluginList)
@@ -760,7 +767,7 @@ project(":Edu-Python:PyCharm") {
       localPath.set(null as String?)
       version.set(ideaVersion)
     }
-    plugins.set(listOf(pythonPlugin))
+    plugins.set(pythonPlugins)
   }
 
   dependencies {
