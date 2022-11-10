@@ -49,9 +49,11 @@ abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>()
       .build()
       .toString()
 
-  override val clientId: String = getClientId()
+  override val clientId: String
+    get() = getClientId()
 
-  override val clientSecret: String = getClientSecret()
+  override val clientSecret: String
+    get() = getClientSecret()
 
   override val oAuthServicePath: String
     // In case of Stepik and Android Studio our redirect_uri is `http://localhost:port`
