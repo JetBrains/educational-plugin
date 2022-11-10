@@ -39,29 +39,29 @@ class PlainTextCheckerTest : CheckersTestBase<Unit>() {
           }
         }
         eduTask("EduTask") {
+          taskFile("task.txt") {
+            withText("task file")
+          }
+          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
+            withText("Solved Congratulations!")
+          }
           dir("tests") {
             taskFile("Tests.txt") {
               withText(EDU_TEST_FILE_TEXT)
             }
           }
+        }
+        eduTask("EduTaskWithVisibleTests") {
           taskFile("task.txt") {
             withText("task file")
           }
           taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
             withText("Solved Congratulations!")
           }
-        }
-        eduTask("EduTaskWithVisibleTests") {
           dir("tests") {
             taskFile("Tests.txt", visible = true) {
               withText(EDU_TEST_FILE_TEXT)
             }
-          }
-          taskFile("task.txt") {
-            withText("task file")
-          }
-          taskFile(PlainTextConfigurator.CHECK_RESULT_FILE) {
-            withText("Solved Congratulations!")
           }
         }
       }

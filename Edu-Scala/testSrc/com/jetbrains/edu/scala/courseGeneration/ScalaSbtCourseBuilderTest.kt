@@ -1,11 +1,21 @@
 package com.jetbrains.edu.scala.courseGeneration
 
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
+
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+    // https://youtrack.jetbrains.com/issue/SCL-20726
+    if (ApplicationInfo.getInstance().build < BUILD_223) {
+      super.runTestRunnable(testRunnable)
+    }
+  }
 
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/scala_course_sbt.json")
@@ -54,5 +64,9 @@ class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
     }
 
     expectedFileTree.assertEquals(rootDir)
+  }
+
+  companion object {
+    private val BUILD_223: BuildNumber = BuildNumber.fromString("223")!!
   }
 }

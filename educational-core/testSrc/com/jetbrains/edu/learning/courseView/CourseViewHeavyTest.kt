@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.getContainingTask
@@ -33,6 +35,11 @@ class CourseViewHeavyTest : CourseViewHeavyTestBase() {
   }
 
   fun testExpandAfterNavigation() {
+    // https://youtrack.jetbrains.com/issue/EDU-5367
+    if (ApplicationInfo.getInstance().build >= BUILD_223) {
+      return
+    }
+
     val projectView = createCourseAndChangeView()
 
     val tree = projectView.currentProjectViewPane.tree
@@ -85,4 +92,8 @@ class CourseViewHeavyTest : CourseViewHeavyTestBase() {
       }
     }
   })
+
+  companion object {
+    private val BUILD_223: BuildNumber = BuildNumber.fromString("223")!!
+  }
 }
