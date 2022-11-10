@@ -155,15 +155,16 @@ fun Task.canShowSolution(): Boolean {
 fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask
 
 fun Task.getCodeTaskFile(project: Project): TaskFile? {
+
+  fun String.getCodeTaskFile(): TaskFile? {
+    val name = GeneratorUtils.joinPaths(sourceDir, this)
+    return taskFiles[name]
+  }
+
   val files = taskFiles.values
   if (files.size == 1) return files.firstOrNull()
-  val mainFileName = course.configurator?.courseBuilder?.mainTemplateName
-  if (mainFileName != null) {
-    val name = GeneratorUtils.joinPaths(sourceDir, mainFileName)
-    if (name in taskFiles) {
-      return taskFiles[name]
-    }
-  }
+  course.configurator?.courseBuilder?.mainTemplateName?.getCodeTaskFile()?.let { return it }
+  course.configurator?.courseBuilder?.taskTemplateName?.getCodeTaskFile()?.let { return it }
   val editorTaskFile = project.selectedTaskFile
   return if (editorTaskFile?.task == this) {
     editorTaskFile
