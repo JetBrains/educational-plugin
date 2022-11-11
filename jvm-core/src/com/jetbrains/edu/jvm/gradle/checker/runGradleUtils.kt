@@ -41,6 +41,8 @@ const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 // Should be passed to gradle command to add `#educational_plugin` prefix for `run` task output
 const val EDUCATIONAL_RUN_PROPERTY = "-PeducationalRun=true"
 
+const val FORCE_USE_UTF_8_ENCODING="-Dorg.gradle.jvmargs=-Dfile.encoding=UTF-8"
+
 const val CHECKER_VERSION = "#educational_plugin_checker_version "
 
 const val TEST_TASK_NAME = "test"
@@ -136,7 +138,6 @@ class GradleCommandLine private constructor(
       val projectPath = FileUtil.toSystemDependentName(basePath)
       val cmd = GeneralCommandLine()
         .withEnvironment("JAVA_HOME", projectJdkPath)
-        .withEnvironment("JAVA_OPTS", "-Dfile.encoding=UTF-8")
         .withWorkDirectory(FileUtil.toSystemDependentName(basePath))
         .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, GRADLE_WRAPPER_WIN) else "./$GRADLE_WRAPPER_UNIX")
         .withParameters(command)
@@ -166,7 +167,9 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
     project,
     taskName,
     "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName",
-    EDUCATIONAL_RUN_PROPERTY
+    EDUCATIONAL_RUN_PROPERTY,
+    // if in future would require more 'soft' way, then pass encoding via `gradle.properties` using param `org.gradle.jvmargs=...`
+    FORCE_USE_UTF_8_ENCODING
   )
     ?.launch(indicator)
     ?: return Err(GradleEnvironmentChecker.getFailedToLaunchCheckingResult(project))
