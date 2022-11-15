@@ -34,6 +34,33 @@ class RsCheckersTest : RsCheckersTestBase() {
               }
           """)
         }
+        eduTask("EduWithIgnoredTest") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/lib.rs", """
+              pub fn foo() -> String {
+                  String::from("foo")
+              }
+          """)
+          rustTaskFile("tests/tests.rs", """
+              use task::foo;
+
+              #[test]
+              fn test() {
+                  assert_eq!(String::from("foo"), foo());
+              }
+              
+              #[test]
+              #[ignore]
+              fn ignored_test() {
+                  assert_eq!(1, 2);
+              }
+          """)
+        }
         outputTask("Output") {
           taskFile("Cargo.toml", """
             [package]

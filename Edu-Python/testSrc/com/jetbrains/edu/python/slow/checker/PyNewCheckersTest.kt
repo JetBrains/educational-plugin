@@ -30,6 +30,26 @@ class PyNewCheckersTest : PyCheckersTestBase() {
               """)
           }
         }
+        eduTask("EduWithIgnoredTest") {
+          pythonTaskFile("task.py", """
+            def sum(a, b):
+                return a + b
+            """)
+          dir("tests") {
+            taskFile("__init__.py")
+            taskFile("tests.py", """
+              import unittest
+              from task import sum
+              class TestCase(unittest.TestCase):
+                  def test_add(self):
+                      self.assertEqual(sum(1, 2), 3, msg="error")
+                     
+                  @unittest.skip   
+                  def test_ignored(self):
+                      self.assertEqual(sum(1, 2), 4, msg="error")    
+              """)
+          }
+        }
         eduTask("EduWithCustomRunConfiguration") {
           pythonTaskFile("task.py", """
             import os

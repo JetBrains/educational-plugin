@@ -24,12 +24,12 @@ class GoCheckerTest : GoCheckersTestBase() {
           """)
           goTaskFile("test/task_test.go", """
             package test
-            
+
             import (
             	task "task1"
             	"testing"
             )
-            
+
             //todo: replace this with an actual test
             func TestSum(t *testing.T) {
             	type args struct {
@@ -55,12 +55,60 @@ class GoCheckerTest : GoCheckersTestBase() {
 
           """)
         }
+        eduTask("EduWithIgnoredTest") {
+          goTaskFile("task.go", """
+            package task
+
+            // todo: replace this with an actual task
+            func Sum(a, b int) int {
+              return a + b
+            }
+          """)
+          taskFile("go.mod", """
+            module eduwithignoredtest
+          """)
+          goTaskFile("test/task_test.go", """
+            package test
+
+            import (
+              task "eduwithignoredtest"
+              "testing"
+            )
+
+            //todo: replace this with an actual test
+            func TestSum(t *testing.T) {
+              type args struct {
+                a int
+                b int
+              }
+              tests := []struct {
+                name string
+                args args
+                want int
+              }{
+                {"1", args{1, 1}, 2},
+                {"2", args{1, 2}, 3},
+                {"ignored", args{1, 2}, 4},
+              }
+              for _, tt := range tests {
+                t.Run(tt.name, func(t *testing.T) {
+                  if tt.name == "ignored" {
+                    t.Skip()
+                  }
+                  if got := task.Sum(tt.args.a, tt.args.b); got != tt.want {
+                    t.Errorf("Sum() = %v, want %v", got, tt.want)
+                  }
+                })
+              }
+            }
+          """)
+        }
         eduTask("EduWithCustomRunConfiguration") {
           goTaskFile("task.go", """
             package task
-            
+
             import "os"
-            
+
             func Hello() string {
               return os.Getenv("EXAMPLE_ENV")
             }
@@ -70,12 +118,12 @@ class GoCheckerTest : GoCheckersTestBase() {
           """)
           goTaskFile("test/task_test.go", """
             package test
-            
+
             import (
               task "eduwithcustomrunconfiguration"
               "testing"
             )
-            
+
             func TestSum(t *testing.T) {
               tests := []struct {
                 name string
@@ -113,7 +161,7 @@ class GoCheckerTest : GoCheckersTestBase() {
                 <pattern value="^\QTestSum\E${'$'}/^\Qhello\E${'$'}" />
                 <method v="2" />
               </configuration>
-            </component>        
+            </component>
           """)
         }
         outputTask("Output") {

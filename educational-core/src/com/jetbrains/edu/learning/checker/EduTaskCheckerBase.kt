@@ -112,16 +112,20 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   }
 
   protected fun SMTestProxy.SMRootTestProxy.toCheckResult(): CheckResult {
-    if (isPassed) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
+    if (finishedSuccessfully()) return CheckResult(CheckStatus.Solved, CheckUtils.CONGRATULATIONS)
 
     val failedChildren = collectChildren(object : Filter<SMTestProxy>() {
-      override fun shouldAccept(test: SMTestProxy): Boolean = test.isLeaf && !test.isPassed
+      override fun shouldAccept(test: SMTestProxy): Boolean = test.isLeaf && !test.finishedSuccessfully()
     })
 
     val firstFailedTest = failedChildren.firstOrNull() ?: error("Testing failed although no failed tests found")
     val diff = firstFailedTest.diffViewerProvider?.let { CheckResultDiff(it.left, it.right, it.diffTitle) }
     val message = if (diff != null) getComparisonErrorMessage(firstFailedTest) else getErrorMessage(firstFailedTest)
     return CheckResult(CheckStatus.Failed, removeAttributes(fillWithIncorrect(message)), diff = diff)
+  }
+
+  private fun SMTestProxy.finishedSuccessfully(): Boolean {
+    return !hasErrors() && (isPassed || isIgnored)
   }
 
   /**
