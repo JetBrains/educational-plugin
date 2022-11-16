@@ -40,8 +40,7 @@ fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
     .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?: PlatformUtils.getPlatformPrefix())
     .replace("\$COURSE_ID", course.id.toString())
 
-  val notification = MyNotification(EduCoreBundle.message("check.correct.solution.no.exclamation"),
-                                    EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl))
+  val notification = MyNotification(EduCoreBundle.message("notification.student.survey", course.name, questionnaireUrl), questionnaireUrl)
   PropertiesComponent.getInstance().setValue(questionnaireAdvertisingNotificationShown, true)
   notification.notify(project)
 }
