@@ -269,9 +269,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        EduUtils.execCancelable {
-          uploadAction()
-        }
+        uploadAction()
       }, message, true, null)
 
   fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File) {
