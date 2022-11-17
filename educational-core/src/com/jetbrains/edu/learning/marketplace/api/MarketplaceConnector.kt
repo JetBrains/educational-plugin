@@ -265,15 +265,15 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
     return updateInfo.updateId
   }
 
-  private fun uploadUnderProgress(message: String, uploadAction: () -> Unit) =
+  private fun uploadUnderProgress(project: Project, message: String, uploadAction: () -> Unit) =
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         uploadAction()
-      }, message, true, null)
+      }, message, true, project)
 
   fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File) {
-    uploadUnderProgress(message("action.push.course")) {
+    uploadUnderProgress(project, message("action.push.course")) {
       uploadNewCourse(project, course, file)
     }
   }
@@ -374,7 +374,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File) {
     var courseVersionMismatch = false
     invokeAndWaitIfNeeded {
-      uploadUnderProgress(message("push.course.updating.progress.title")) {
+      uploadUnderProgress(project, message("push.course.updating.progress.title")) {
         courseVersionMismatch = uploadCourseUpdate(project, course, file)
       }
     }
