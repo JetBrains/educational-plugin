@@ -32,7 +32,6 @@ import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
 import java.text.DateFormat
 import java.util.*
-import kotlin.math.roundToInt
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
   override val plainText: Boolean = true
@@ -164,7 +163,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
 
     private fun submissionLink(submission: Submission, isToShowSubmissionsIds: Boolean): String? {
       val time = submission.time ?: return null
-      val pictureSize = (StyleManager().bodyFontSize * 0.75).roundToInt()
+      val pictureSize = StyleManager().bodyLineHeight
       val date = formatDate(time)
       val text = if (isToShowSubmissionsIds) {
         "$date submission.id = ${submission.id}"
