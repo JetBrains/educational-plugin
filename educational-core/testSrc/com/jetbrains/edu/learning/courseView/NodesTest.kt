@@ -502,4 +502,46 @@ class NodesTest : CourseViewTestBase() {
       |  FrameworkLessonNode lesson1
     """.trimMargin())
   }
+
+
+
+  fun `test course dirs first order`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          taskFile("XtaskFile.txt")
+          taskFile("AtaskFile.txt")
+          dir("x") {
+            taskFile("xTest.txt")
+          }
+          dir("a") {
+            taskFile("aTest.txt")
+          }
+          dir("test") {
+            dir("package") {
+              taskFile("packageTest.txt")
+            }
+            taskFile("testTest.txt")
+          }
+        }
+      }
+    }
+    assertCourseView("""
+      |-Project
+      | -CCCourseNode Test Course (Course Creation)
+      |  -CCLessonNode lesson1
+      |   -CCTaskNode task1
+      |    -CCNode a
+      |     aTest.txt
+      |    -CCNode test
+      |     -CCNode package
+      |      packageTest.txt
+      |     testTest.txt
+      |    -CCNode x
+      |     xTest.txt
+      |    AtaskFile.txt
+      |    CCStudentInvisibleFileNode task.md
+      |    XtaskFile.txt
+    """.trimMargin("|"))
+  }
 }
