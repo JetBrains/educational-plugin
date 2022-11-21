@@ -121,6 +121,7 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
 
 class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
   override val taskTemplateName: String = "Task.txt"
+  override val mainTemplateName: String = "Main.txt"
   override val testTemplateName: String = "Tests.txt"
 
   override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {

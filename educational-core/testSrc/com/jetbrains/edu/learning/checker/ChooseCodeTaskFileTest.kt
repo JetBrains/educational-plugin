@@ -7,12 +7,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class ChooseCodeTaskFileTest : EduTestCase() {
   fun `test choose the only task file`() = doTest("task1", "TheOnlyTaskFile.txt")
 
-  fun `test choose Main task file specified in configurator`() = doTest("task2", "Task.txt")
+  fun `test choose Main task file specified in configurator`() = doTest("task2", "Main.txt")
+
+  fun `test choose Task task file specified in configurator`() = doTest("task5", "Task.txt")
 
   fun `test choose task file opened in editor`() = doTest("task3", "2.txt", "lesson1/task3/2.txt")
 
   fun `test choose Main task file when file from other task is opened in editor`() =
-    doTest("task2", "Task.txt", "lesson1/task3/1.txt")
+    doTest("task2", "Main.txt", "lesson1/task3/1.txt")
 
   fun `test choose first suitable task file`() = doTest("task4", "3.txt")
 
@@ -37,6 +39,7 @@ class ChooseCodeTaskFileTest : EduTestCase() {
         eduTask {
           taskFile("Foo.kt")
           taskFile("Task.txt")
+          taskFile("Main.txt")
         }
         eduTask {
           taskFile("1.txt")
@@ -49,6 +52,11 @@ class ChooseCodeTaskFileTest : EduTestCase() {
             taskFile.isLearnerCreated = true
           }
           taskFile("3.txt")
+        }
+        eduTask {
+          taskFile("Foo.kt")
+          taskFile("Bar.txt")
+          taskFile("Task.txt")
         }
       }
     }

@@ -27,7 +27,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create output task`() = checkOutputTaskCreation(
     fullTaskStructure = {
       file("task.md")
-      file("Task.txt")
+      file("Main.txt")
       dir("tests") {
         file("input.txt")
         file("output.txt")
@@ -45,7 +45,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create theory task`() = checkTheoryTaskCreation(
     fullTaskStructure = {
       file("task.md")
-      file("Task.txt")
+      file("Main.txt")
     },
     taskStructureWithoutSources = {
       file("task.md")
@@ -55,7 +55,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create IDE task`() = checkIdeTaskCreation(
     fullTaskStructure = {
       file("task.md")
-      file("Task.txt")
+      file("Main.txt")
     },
     taskStructureWithoutSources = {
       file("task.md")
@@ -65,7 +65,7 @@ class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
   fun `test create choice task`() = checkChoiceTaskCreation(
     fullTaskStructure = {
       file("task.md")
-      file("Task.txt")
+      file("Main.txt")
     },
     taskStructureWithoutSources = {
       file("task.md")
