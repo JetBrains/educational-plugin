@@ -35,9 +35,9 @@ class NodesTest : CourseViewTestBase() {
     |   -TaskNode task1
     |    file.txt
     |   -TaskNode task2
-    |    file1.txt
     |    -DirectoryNode src
     |     file.txt
+    |    file1.txt
     """.trimMargin("|"))
   }
 
@@ -155,9 +155,9 @@ class NodesTest : CourseViewTestBase() {
            taskFile3.txt
           taskFile1.txt
          -TaskNode task2
-          additionalFile1.txt
           -DirectoryNode folder
            additionalFile3.txt
+          additionalFile1.txt
     """.trimIndent())
   }
 
@@ -175,11 +175,11 @@ class NodesTest : CourseViewTestBase() {
           taskFile1.txt
           CCStudentInvisibleFileNode taskFile2.txt
          -CCTaskNode task2
-          additionalFile1.txt
-          CCStudentInvisibleFileNode additionalFile2.txt
           -CCNode folder
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
+          additionalFile1.txt
+          CCStudentInvisibleFileNode additionalFile2.txt
           CCStudentInvisibleFileNode task.md
     """.trimIndent())
   }
@@ -205,12 +205,12 @@ class NodesTest : CourseViewTestBase() {
           taskFile1.txt
           CCStudentInvisibleFileNode taskFile2.txt
          -CCTaskNode task2
-          additionalFile1.txt
-          CCStudentInvisibleFileNode additionalFile2.txt
           -CCNode folder
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
            CCStudentInvisibleFileNode non_course_file3.txt (excluded)
+          additionalFile1.txt
+          CCStudentInvisibleFileNode additionalFile2.txt
           CCStudentInvisibleFileNode task.md
         CCStudentInvisibleFileNode non_course_file1.txt
     """.trimIndent())
@@ -263,22 +263,22 @@ class NodesTest : CourseViewTestBase() {
 
   fun `test course with tests inside test dir`() {
     createCourseWithTestsInsideTestDir(CourseMode.EDUCATOR)
-    assertCourseView("""
+    assertCourseView("""   
       |-Project
       | -CCCourseNode Test Course (Course Creation)
       |  -CCLessonNode lesson1
       |   -CCTaskNode task1
+      |    -CCNode tests
+      |     CCStudentInvisibleFileNode Tests.txt
       |    CCStudentInvisibleFileNode task.md
       |    taskFile1.txt
       |    taskFile2.txt
-      |    -CCNode tests
-      |     CCStudentInvisibleFileNode Tests.txt
       |   -CCTaskNode task2
-      |    additionalFile1.txt
-      |    additionalFile2.txt
       |    -CCNode folder
       |     additionalFile3.txt
       |     CCStudentInvisibleFileNode additionalFile4.txt
+      |    additionalFile1.txt
+      |    additionalFile2.txt
       |    CCStudentInvisibleFileNode task.md
     """.trimMargin("|"))
   }
@@ -293,10 +293,10 @@ class NodesTest : CourseViewTestBase() {
       |    taskFile1.txt
       |    taskFile2.txt
       |   -TaskNode task2
-      |    additionalFile1.txt
-      |    additionalFile2.txt
       |    -DirectoryNode folder
       |     additionalFile3.txt
+      |    additionalFile1.txt
+      |    additionalFile2.txt
     """.trimMargin("|"))
   }
 
@@ -329,19 +329,19 @@ class NodesTest : CourseViewTestBase() {
       | -CCCourseNode Test Course (Course Creation)
       |  -CCLessonNode lesson1
       |   -CCTaskNode task1
-      |    CCStudentInvisibleFileNode task.md
-      |    taskFile1.txt
-      |    taskFile2.txt
       |    -CCNode tests
       |     -CCNode package
       |      CCStudentInvisibleFileNode Tests.txt
       |     CCStudentInvisibleFileNode Tests.txt
+      |    CCStudentInvisibleFileNode task.md
+      |    taskFile1.txt
+      |    taskFile2.txt
       |   -CCTaskNode task2
-      |    additionalFile1.txt
-      |    additionalFile2.txt
       |    -CCNode folder
       |     additionalFile3.txt
       |     CCStudentInvisibleFileNode additionalFile4.txt
+      |    additionalFile1.txt
+      |    additionalFile2.txt
       |    CCStudentInvisibleFileNode task.md
     """.trimMargin("|"))
   }

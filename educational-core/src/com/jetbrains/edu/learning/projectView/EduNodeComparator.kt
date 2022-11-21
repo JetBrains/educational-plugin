@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ide.util.treeView.AlphaComparator
 import com.intellij.ide.util.treeView.NodeDescriptor
@@ -18,6 +19,10 @@ object EduNodeComparator : Comparator<NodeDescriptor<*>> {
         return taskFile1.index.compareTo(taskFile2.index)
       }
     }
+
+    if (o1 is PsiDirectoryNode && o2 !is PsiDirectoryNode) return -1
+    if (o1 !is PsiDirectoryNode && o2 is PsiDirectoryNode) return 1
+
     return AlphaComparator.INSTANCE.compare(o1, o2)
   }
 
