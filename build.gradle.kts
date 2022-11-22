@@ -132,7 +132,7 @@ val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
 plugins {
   idea
   kotlin("jvm") version "1.7.10"
-  id("org.jetbrains.intellij") version "1.10.0-SNAPSHOT"
+  id("org.jetbrains.intellij") version "1.10.0"
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
