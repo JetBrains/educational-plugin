@@ -119,7 +119,8 @@ val cppPlugins = listOf(
 
 val pythonPlugins = listOfNotNull(
   pythonPlugin,
-  gridImplPlugin
+  // `intellij.grid.impl` is dependency only of pythonPro plugin
+  if (pythonPlugin == pythonProPlugin) gridImplPlugin else null
 )
 
 
