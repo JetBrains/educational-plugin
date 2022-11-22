@@ -101,6 +101,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
       (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl = null
       SubmissionsManager.getInstance(project).clear()
 
+      TaskDescriptionView.getInstance(project).currentTask = null
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
     }
@@ -111,6 +112,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   @Throws(IOException::class)
   protected open fun createCourse() {
+    val course = EduCourse()
+    course.name = "Edu test course"
+    course.programmingLanguage = PlainTextLanguage.INSTANCE.id
+    StudyTaskManager.getInstance(project).course = course
   }
 
   @Throws(IOException::class)

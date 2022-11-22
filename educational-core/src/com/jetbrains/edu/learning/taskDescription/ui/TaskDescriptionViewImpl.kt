@@ -4,7 +4,6 @@ import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
@@ -35,7 +34,7 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider {
+class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), DataProvider {
   private var uiContent: UiContent? = null
   private lateinit var tabManager: TabManager
 
@@ -167,7 +166,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
       UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     })
-    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
   }
 
   override fun checkStarted(task: Task, startSpinner: Boolean) {

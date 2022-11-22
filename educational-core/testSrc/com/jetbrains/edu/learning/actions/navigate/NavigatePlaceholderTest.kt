@@ -1,12 +1,10 @@
 package com.jetbrains.edu.learning.actions.navigate
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.initializeCourse
-import com.jetbrains.edu.learning.testAction
 import org.junit.Assert.assertNotEquals
 import java.io.IOException
 
@@ -92,11 +90,12 @@ class NavigatePlaceholderTest : EduTestCase() {
     val course = EduCourse()
     course.name = "Edu test course"
     course.programmingLanguage = PlainTextLanguage.INSTANCE.id
+    StudyTaskManager.getInstance(project).course = course
     val lesson1 = createLesson(1, 2)
     val lesson2 = createLesson(2, 3)
     course.addLesson(lesson1)
     course.addLesson(lesson2)
-    initializeCourse(project, course)
+    course.init(false)
   }
 
   override fun getTestDataPath(): String {
