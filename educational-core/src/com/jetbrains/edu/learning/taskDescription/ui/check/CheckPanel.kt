@@ -186,12 +186,11 @@ class CheckPanel(val project: Project, parentDisposable: Disposable) : JPanel(Bo
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
-      CheckStatus.Failed -> {
+      CheckStatus.Failed, CheckStatus.Solved  -> {
         val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
                                                        isDefault = true)
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
-      CheckStatus.Solved -> Unit
     }
   }
 
