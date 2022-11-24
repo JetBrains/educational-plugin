@@ -194,10 +194,18 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   fun getServicePattern(suffix: String): Pattern = "^.*$serviceName$suffix".toPattern()
 
   protected open fun refreshTokens() {
-    val currentAccount = account ?: return
-    val tokens = getNewTokens()
-    currentAccount.tokenExpiresIn = tokens.expiresIn
-    currentAccount.saveTokens(tokens)
+    //synchronized block needed here because a number of threads can try to refresh tokens at the same time (e.g. 15 for Stepik startup
+    // which causes tokens corruption
+    synchronized(this) {
+      val currentAccount = account ?: return
+      if (currentAccount.isUpToDate()) {
+        return
+      }
+      val tokens = getNewTokens()
+      currentAccount.tokenExpiresIn = tokens.expiresIn
+      currentAccount.saveTokens(tokens)
+      LOG.info("successfully refreshed tokens for ${this.authorizationUrl}")
+    }
   }
 
   protected fun retrieveLoginToken(code: String, redirectUri: String): TokenInfo? {
