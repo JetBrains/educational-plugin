@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
@@ -8,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduBrowser
@@ -33,9 +35,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.edu.learning.taskDescription.ui.TopPanel
+import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
+import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.awt.BorderLayout
 import javax.swing.JPanel
+import javax.swing.JSeparator
 import javax.swing.event.HyperlinkEvent
 
 private val LOG: Logger = Logger.getInstance("HyperskillUtils")
@@ -80,8 +85,19 @@ fun getTopPanelForProblem(project: Project, course: HyperskillCourse, task: Task
   if (task == null || course.isTaskInProject(task) || CCUtils.isCourseCreator(project) || course.getProjectLesson() == null) {
     return null
   }
-  return TopPanel(EduCoreBundle.message("hyperskill.navigate.to.project", course.presentableName),
-                  NavigateToProjectAction(project, course))
+
+  val linkText = EduCoreBundle.message("hyperskill.navigate.to.project", course.presentableName)
+  val actionLink = LightColoredActionLink(linkText, NavigateToProjectAction(project, course), AllIcons.Actions.Back).apply {
+    border = JBUI.Borders.emptyBottom(8)
+  }
+
+  return JPanel().apply {
+    background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+    border = JBUI.Borders.empty(15, 0, 8, 15)
+    add(actionLink, BorderLayout.NORTH)
+    add(JSeparator(), BorderLayout.SOUTH)
+    maximumSize = JBUI.size(Int.MAX_VALUE, 30)
+  }
 }
 
 fun markStageAsCompleted(task: Task) {
