@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
+import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -163,7 +164,7 @@ sealed class ErrorState(
       }
 
     private fun errorMessageForRequiredPlugins(plugins: Collection<PluginInfo>): ValidationMessage {
-      return ValidationMessage(getRequiredPluginsMessage(plugins))
+      return ValidationMessage(getRequiredPluginsMessage(plugins, actionAsLink = true))
     }
 
     @JvmStatic

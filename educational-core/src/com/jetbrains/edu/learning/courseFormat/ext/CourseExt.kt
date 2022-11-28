@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
-import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
@@ -132,15 +131,16 @@ private fun Course.versionCompatibility(): CourseCompatibility? {
 
 // projectLanguage parameter should be passed only for hyperskill courses because for Hyperskill
 // it can differ from the course.programmingLanguage
-fun Course.validateLanguage(projectLanguage: String = programmingLanguage): Result<Unit, String> {
+fun Course.validateLanguage(projectLanguage: String = programmingLanguage): Result<Unit, CourseValidationResult> {
   val pluginCompatibility = pluginCompatibility()
   if (pluginCompatibility is CourseCompatibility.PluginsRequired) {
-    return Err(getRequiredPluginsMessage(pluginCompatibility.toInstallOrEnable))
+    return Err(PluginsRequired(pluginCompatibility.toInstallOrEnable))
   }
 
   if (configurator == null) {
-    return Err(EduCoreBundle.message("rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
-                                     projectLanguage.capitalize()))
+    val message = EduCoreBundle.message("rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+                                        projectLanguage.capitalize())
+    return Err(ValidationErrorMessage(message))
   }
   return Ok(Unit)
 }

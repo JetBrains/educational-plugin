@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.course
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
@@ -33,7 +34,8 @@ class StartStepikCourseAction : StartCourseAction(StepikNames.STEPIK) {
       }
       if (course.programmingLanguage.isNotEmpty()) {
         course.validateLanguage().onError {
-          Messages.showErrorDialog(it, message("error.failed.to.import.course"))
+          Messages.showErrorDialog(it.message, message("error.failed.to.import.course"))
+          logger<StartStepikCourseAction>().warn("Importing a course resulted in an error: ${it.message}. The error was shown inside an error dialog.")
           return null
         }
       }

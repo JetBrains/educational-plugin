@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
@@ -56,7 +57,8 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
     }
 
     val isOpened = HyperskillProjectAction.openHyperskillProject { errorMessage ->
-      Messages.showErrorDialog(errorMessage, EduCoreBundle.message("hyperskill.failed.to.open.project"))
+      Messages.showErrorDialog(errorMessage.message, EduCoreBundle.message("hyperskill.failed.to.open.project"))
+      logger<JetBrainsAcademyPlatformProvider>().warn("Joining a course resulted in an error: ${errorMessage.message}. The error was shown inside an error dialog.")
     }
 
     if (isOpened) {

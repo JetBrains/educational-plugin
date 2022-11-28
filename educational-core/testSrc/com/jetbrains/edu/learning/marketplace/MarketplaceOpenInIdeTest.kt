@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockProjectOpener
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -91,7 +93,7 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
 
   fun `test language supported with plugin`() {
     configureCoursesResponse("python_course_info.json")
-    doLanguageValidationTest {  assertTrue("actual: $it", it.contains(EduCoreBundle.message("course.dialog.error.plugin.install.and.enable"))) }
+    doLanguageValidationTest {  assertTrue("actual: $it", it is PluginsRequired) }
   }
 
   fun `test language not supported in IDE`() {
@@ -101,11 +103,11 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
         "rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
         "UnsupportedLanguage"
       )
-      assertEquals(expectedMessage, it)
+      assertEquals(expectedMessage, it.message)
     }
   }
 
-  private fun doLanguageValidationTest(checkError: (String) -> Unit) {
+  private fun doLanguageValidationTest(checkError: (CourseValidationResult) -> Unit) {
     mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1)).onError {
       checkError(it)
       return

@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
 import com.jetbrains.edu.learning.courseFormat.ext.validateLanguage
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
@@ -23,14 +25,14 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     return true
   }
 
-  override fun getCourse(request: MarketplaceOpenCourseRequest, indicator: ProgressIndicator): Result<Course, String> {
+  override fun getCourse(request: MarketplaceOpenCourseRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
     val course = MarketplaceConnector.getInstance().searchCourse(request.courseId)
     if (course == null) {
-      return Err(EduCoreBundle.message("marketplace.course.loading.failed"))
+      return Err(ValidationErrorMessage(EduCoreBundle.message("marketplace.course.loading.failed")))
     }
 
     if (course.environment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
-      return Err(EduCoreBundle.message("rest.service.android.not.supported"))
+      return Err(ValidationErrorMessage(EduCoreBundle.message("rest.service.android.not.supported")))
     }
 
     course.validateLanguage().onError { return Err(it) }

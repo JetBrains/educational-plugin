@@ -10,9 +10,7 @@ import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.validateLanguage
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.isDataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -92,16 +90,16 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   fun createHyperskillCourse(request: HyperskillOpenRequest,
                              hyperskillLanguage: String,
-                             hyperskillProject: HyperskillProject): Result<HyperskillCourse, String> {
+                             hyperskillProject: HyperskillProject): Result<HyperskillCourse, CourseValidationResult> {
     val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage)
-                      ?: return Err(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage))
+                      ?: return Err(ValidationErrorMessage(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage)))
 
     if (!hyperskillProject.useIde) {
-      return Err(EduCoreBundle.message("hyperskill.project.not.supported", HYPERSKILL_PROJECTS_URL))
+      return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("hyperskill.project.not.supported", HYPERSKILL_PROJECTS_URL)))
     }
 
     val eduEnvironment = hyperskillProject.eduEnvironment
-                         ?: return Err("Unsupported environment ${hyperskillProject.environment}")
+                         ?: return Err(ValidationErrorMessage("Unsupported environment ${hyperskillProject.environment}"))
 
     if (request is HyperskillOpenStepRequest) {
       // These condition is about opening e.g. Python problem with chosen Kotlin's project,
@@ -120,15 +118,15 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     // Android projects must be opened in Android Studio only
     if (eduEnvironment == EduNames.ANDROID && !EduUtils.isAndroidStudio()) {
-      return Err(EduCoreBundle.message("rest.service.android.not.supported"))
+      return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("rest.service.android.not.supported")))
     }
 
     return Ok(HyperskillCourse(hyperskillProject, eduLanguage, eduEnvironment))
   }
 
-  override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, String> {
+  override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
     val hyperskillProject = HyperskillConnector.getInstance().getProject(request.projectId).onError {
-      return Err(it)
+      return Err(ValidationErrorMessage(it))
     }
 
     val hyperskillLanguage = if (request is HyperskillOpenStepRequest) request.language else hyperskillProject.language

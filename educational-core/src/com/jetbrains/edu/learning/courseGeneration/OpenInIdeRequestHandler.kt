@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.DialogTitle
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 
 abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
   @Suppress("UnstableApiUsage")
@@ -13,5 +14,5 @@ abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
 
   abstract fun openInExistingProject(request: T, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean
 
-  abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, String>
+  abstract fun getCourse(request: T, indicator: ProgressIndicator): Result<Course, CourseValidationResult>
 }

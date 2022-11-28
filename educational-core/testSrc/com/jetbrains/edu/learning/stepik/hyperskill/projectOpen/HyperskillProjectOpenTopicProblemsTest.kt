@@ -5,6 +5,8 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -694,13 +696,13 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
   fun `test unknown language`() {
     val unknownLanguage = "Unknown language"
     doLanguageValidationTest(unknownLanguage) {
-      assertEquals(EduCoreBundle.message("hyperskill.unsupported.language", unknownLanguage), it)
+      assertEquals(EduCoreBundle.message("hyperskill.unsupported.language", unknownLanguage), it.message)
     }
   }
 
   fun `test language supported with plugin`() {
     doLanguageValidationTest("python") {
-      assertTrue("actual: $it", it.contains(EduCoreBundle.message("course.dialog.error.plugin.install.and.enable")))
+      assertTrue("actual: $it", it is PluginsRequired)
     }
   }
 
@@ -709,11 +711,11 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     doLanguageValidationTest(unsupportedLanguage) {
       val expectedMessage = EduCoreBundle.message("rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
                                                   unsupportedLanguage)
-      assertEquals(expectedMessage, it)
+      assertEquals(expectedMessage, it.message)
     }
   }
 
-  private fun doLanguageValidationTest(language: String, checkError: (String) -> Unit) {
+  private fun doLanguageValidationTest(language: String, checkError: (CourseValidationResult) -> Unit) {
     mockConnector.configureFromCourse(testRootDisposable, hyperskillCourse(projectId = null) {
       section(HYPERSKILL_TOPICS) {
         lesson(TOPIC_NAME) {

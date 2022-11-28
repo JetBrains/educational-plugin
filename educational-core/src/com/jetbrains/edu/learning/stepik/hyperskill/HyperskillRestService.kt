@@ -1,14 +1,16 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.*
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessageWithHyperlinks
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.notificationFromCourseValidation
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService.Companion.ReLoginDialogResult.*
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.*
@@ -147,7 +149,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     val projectId = getSelectedProjectIdUnderProgress()
     if (projectId == null) {
       LOG.warn("Can't open project for step_id: $stepId language: $language")
-      showError(SELECT_PROJECT)
+      showError(ValidationErrorMessageWithHyperlinks(SELECT_PROJECT))
       return SELECT_PROJECT
     }
     return openInIDE(HyperskillOpenStepRequest(projectId, stepId, language, isLanguageSelectedByUser), request, context)
@@ -157,7 +159,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return invokeAndWaitIfNeeded {
       val dialog = HyperskillChooseLanguageDialog()
       if (!dialog.areLanguagesAvailable()) {
-        showError(EduCoreBundle.message("hyperskill.error.no.supported.languages"))
+        showError(ValidationErrorMessage(EduCoreBundle.message("hyperskill.error.no.supported.languages")))
         return@invokeAndWaitIfNeeded Err("No available languages to choose")
       }
       if (!dialog.showAndGet()) {
@@ -213,19 +215,18 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         null
       }
       is Err -> {
-        val message = result.error
+        val validationResult = result.error
+        val message = validationResult.message
         LOG.warn(message)
-        showError(message)
+        showError(validationResult)
         sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
         message
       }
     }
   }
 
-  private fun showError(message: String) {
-    Notification("EduTools", EduNames.JBA, message, NotificationType.WARNING)
-      .setListener(HSHyperlinkListener(false))
-      .notify(null)
+  private fun showError(validationResult: CourseValidationResult) {
+    notificationFromCourseValidation(validationResult, EduNames.JBA).notify(null)
   }
 
   override fun isAccessible(request: HttpRequest): Boolean = isHyperskillSupportAvailable()

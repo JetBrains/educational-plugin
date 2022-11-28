@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
@@ -87,7 +88,8 @@ class OpenCourseButton : CourseButtonBase() {
           closeDialog()
           ProjectOpener.getInstance().apply {
             HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenStageRequest(course.id, null)).onError {
-              Messages.showErrorDialog(it, EduCoreBundle.message("course.dialog.error.restart.jba"))
+              Messages.showErrorDialog(it.message, EduCoreBundle.message("course.dialog.error.restart.jba"))
+              logger<HyperskillOpenInIdeRequestHandler>().warn("Opening a new project resulted in an error: ${it.message}. The error was shown inside an error dialog.")
             }
           }
         }

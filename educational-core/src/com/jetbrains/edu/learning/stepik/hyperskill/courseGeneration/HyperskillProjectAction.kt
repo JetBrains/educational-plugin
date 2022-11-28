@@ -12,6 +12,10 @@ import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessageWithHyperlinks
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -22,6 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.getSelectedProjectIdUnderPro
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillSupportAvailable
 import java.net.URL
 import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
 
 class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskill.open.project.text")) {
 
@@ -31,15 +36,33 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
 
   override fun actionPerformed(e: AnActionEvent) {
     if (HyperskillConnector.getInstance().getCurrentUserInfo() == null) {
-      showBalloon(e, "Please <a href=\"\">login to ${EduNames.JBA}</a> and select a project.", true)
+      showBalloon(e, "Please <a href=\"\">log in to ${EduNames.JBA}</a> and select a project.", HSHyperlinkListener(true))
+      return
     }
-    else {
-      openHyperskillProject { error -> showBalloon(e, error, false) }
+
+    openHyperskillProject { error ->
+
+      val hyperlinkListener = when (error) {
+        is PluginsRequired -> object: HyperlinkAdapter() {
+          override fun hyperlinkActivated(e: HyperlinkEvent) {
+            error.showPluginInstallAndEnableDialog()
+          }
+        }
+        is ValidationErrorMessage -> null
+        is ValidationErrorMessageWithHyperlinks -> HSHyperlinkListener(false)
+      }
+
+      val message = when (error) {
+        is PluginsRequired -> "${error.message} <a href=''>${error.actionText()}</a>"
+        else -> error.message
+      }
+
+      showBalloon(e, message, hyperlinkListener)
     }
   }
 
-  private fun showBalloon(e: AnActionEvent, message: String, authorize: Boolean) {
-    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.INFO, HSHyperlinkListener(authorize))
+  private fun showBalloon(e: AnActionEvent, message: String, hyperlinkListener: HyperlinkListener?) {
+    val builder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.INFO, hyperlinkListener)
     builder.setHideOnClickOutside(true)
     val balloon = builder.createBalloon()
 
@@ -54,10 +77,10 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
   }
 
   companion object {
-    fun openHyperskillProject(showError: (String) -> Unit): Boolean {
+    fun openHyperskillProject(showError: (CourseValidationResult) -> Unit): Boolean {
       val projectId = getSelectedProjectIdUnderProgress()
       if (projectId == null) {
-        showError(SELECT_PROJECT)
+        showError(ValidationErrorMessageWithHyperlinks(SELECT_PROJECT))
         return false
       }
 

@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -14,6 +11,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.notificationFromCourseValidation
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
 import java.lang.reflect.InvocationTargetException
@@ -76,11 +74,10 @@ abstract class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
         null
       }
       is Err -> {
-        val message = result.error
+        val validationResult = result.error
+        val message = validationResult.message
         LOG.warn(message)
-        Notification("EduTools", EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest), message, NotificationType.WARNING)
-          .setListener(NotificationListener.UrlOpeningListener(false))
-          .notify(null)
+        notificationFromCourseValidation(validationResult, EduCoreBundle.message("notification.title.failed.to.open.in.ide", openCourseRequest)).notify(null)
         sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
         message
       }

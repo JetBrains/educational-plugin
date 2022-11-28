@@ -3,6 +3,10 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ide.DataManager
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.ColorUtil
@@ -15,9 +19,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
@@ -60,21 +62,28 @@ fun Course.getScaledLogo(logoSize: Int, ancestor: Component): Icon? {
   return IconUtil.toSize(scaledIcon, JBUI.scale(logoSize), JBUI.scale(logoSize))
 }
 
-fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>): String {
+fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, actionAsLink: Boolean): String {
   if (plugins.isEmpty()) {
     return ""
   }
 
   val names = plugins.map { it.displayName ?: it.stringId }
-  return when (names.size) {
-    1 -> EduCoreBundle.message("validation.plugins.required.plugins.one", names[0], EduNames.PLUGINS_HELP_LINK)
-    2 -> EduCoreBundle.message("validation.plugins.required.plugins.two", names[0], names[1], EduNames.PLUGINS_HELP_LINK)
-    3 -> EduCoreBundle.message("validation.plugins.required.plugins.three", names[0], names[1], names[2], EduNames.PLUGINS_HELP_LINK)
+  val message = when (names.size) {
+    1 -> EduCoreBundle.message("validation.plugins.required.plugins.one", names[0])
+    2 -> EduCoreBundle.message("validation.plugins.required.plugins.two", names[0], names[1])
+    3 -> EduCoreBundle.message("validation.plugins.required.plugins.three", names[0], names[1], names[2])
     else -> {
       val restPluginsNumber = plugins.size - 2
-      EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber, EduNames.PLUGINS_HELP_LINK)
+      EduCoreBundle.message("validation.plugins.required.plugins.more", names[0], names[1], restPluginsNumber)
     }
   }
+
+  return if (actionAsLink) {
+    val link = EduNames.PLUGINS_HELP_LINK
+    val action = EduCoreBundle.message("validation.plugins.required.plugins.action")
+    "$message <a href='$link'>$action</a>"
+  } else
+    message
 }
 
 fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
@@ -165,4 +174,27 @@ fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = tr
   }
 
   return registrationOpensIn
+}
+
+fun notificationFromCourseValidation(result: CourseValidationResult, title: String): Notification {
+  val notification = Notification("EduTools", title, result.message, NotificationType.WARNING)
+
+  when (result) {
+    is PluginsRequired -> {
+
+      notification.addAction(object : AnAction(result.actionText()) {
+        override fun actionPerformed(e: AnActionEvent) {
+          result.showPluginInstallAndEnableDialog()
+        }
+      })
+
+    }
+    is ValidationErrorMessage -> {} // do nothing with the notification
+    is ValidationErrorMessageWithHyperlinks ->
+      //setting a listener is deprecated, so TextMessageWithHyperlinks should not be used.
+      //We need to reword such messages and make viewing a link an action inside a notification
+      notification.setListener(NotificationListener.UrlOpeningListener(false))
+  }
+
+  return notification
 }
