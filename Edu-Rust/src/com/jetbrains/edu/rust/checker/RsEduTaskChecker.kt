@@ -31,6 +31,10 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     val pkg = findCargoPackage() ?: return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))
     // `--color never` is needed to avoid unexpected color escape codes in output
+    //
+    // Actually, the more proper way to do it is to call `.copy(emulateTerminal = false)`,
+    // but it will add unnecessary dependency on `CargoCommandLine` implementation
+    // because any change in its properties will lead to binary incompatibility - `copy` call will have another signature
     val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run", "--color", "never"))
 
     val disposable = StudyTaskManager.getInstance(project)

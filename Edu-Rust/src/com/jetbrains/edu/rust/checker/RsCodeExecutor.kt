@@ -32,7 +32,12 @@ class RsCodeExecutor : CodeExecutor {
     val target = runReadAction { PsiManager.getInstance(project).findFile(mainVFile)?.rustFile?.containingCargoTarget }
                  ?: return resultUnchecked(EduRustBundle.message("error.failed.find.target.for.0", MAIN_RS_FILE))
     val cargo = project.rustSettings.toolchain?.cargo() ?: return resultUnchecked(EduRustBundle.message("error.no.toolchain"))
-    val cmd = CargoCommandLine.forTarget(target, "run")
+    // `--color never` is needed to avoid unexpected color escape codes in output
+    //
+    // Actually, the more proper way to do it is to call `.copy(emulateTerminal = false)`,
+    // but it will add unnecessary dependency on `CargoCommandLine` implementation
+    // because any change in its properties will lead to binary incompatibility - `copy` call will have another signature
+    val cmd = CargoCommandLine.forTarget(target, "run", listOf("--color", "never"))
 
     val disposable = StudyTaskManager.getInstance(project)
     val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable, input)
