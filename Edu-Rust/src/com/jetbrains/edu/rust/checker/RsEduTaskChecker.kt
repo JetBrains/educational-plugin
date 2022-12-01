@@ -31,11 +31,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult {
     val pkg = findCargoPackage() ?: return CheckResult(CheckStatus.Failed, message("error.no.package.for.task", task.name))
     // `--color never` is needed to avoid unexpected color escape codes in output
-    //
-    // Actually, the more proper way to do it is to call `.copy(emulateTerminal = false)`,
-    // but it will add unnecessary dependency on `CargoCommandLine` implementation
-    // because any change in its properties will lead to binary incompatibility - `copy` call will have another signature
-    val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run", "--color", "never"))
+    val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--no-run", "--color", "never")).copy(emulateTerminal = false)
 
     val disposable = StudyTaskManager.getInstance(project)
     val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
@@ -56,7 +52,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
 
     return configurations.ifEmpty {
       val pkg = findCargoPackage() ?: return@ifEmpty emptyList()
-      val cmd = CargoCommandLine.forPackage(pkg, "test")
+      val cmd = CargoCommandLine.forPackage(pkg, "test", listOf("--color", "never")).copy(emulateTerminal = false)
 
       val configurationSetting = RunManager.getInstance(project)
         .createConfiguration("tests", CargoCommandConfigurationType.getInstance().factory)
