@@ -41,7 +41,11 @@ const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 // Should be passed to gradle command to add `#educational_plugin` prefix for `run` task output
 const val EDUCATIONAL_RUN_PROPERTY = "-PeducationalRun=true"
 
-const val FORCE_USE_UTF_8_ENCODING="-Dorg.gradle.jvmargs=-Dfile.encoding=UTF-8"
+const val UTF_8_ENCODING_PARAM = "-Dfile.encoding=UTF-8"
+
+const val JAVA_HOME = "JAVA_HOME"
+
+const val JAVA_OPTS = "JAVA_OPTS"
 
 const val CHECKER_VERSION = "#educational_plugin_checker_version "
 
@@ -70,7 +74,8 @@ class GradleCommandLine private constructor(
     val output = try {
       val handler = CapturingProcessHandler(cmd)
       handler.runProcessWithProgressIndicator(indicator)
-    } catch (e: ExecutionException) {
+    }
+    catch (e: ExecutionException) {
       LOG.info("Failed to launch checking", e)
       return null
     }
@@ -113,7 +118,8 @@ class GradleCommandLine private constructor(
       if (line.startsWith(STUDY_PREFIX)) {
         val messageLine = line.removePrefix(STUDY_PREFIX)
         currentMessage.add(computeCurrentMessage(messageLine, checkerVersion))
-      } else {
+      }
+      else {
         addCurrentMessageIfNeeded()
         currentMessage.clear()
       }
@@ -136,14 +142,27 @@ class GradleCommandLine private constructor(
       val basePath = project.basePath ?: return null
       val projectJdkPath = ProjectRootManager.getInstance(project).projectSdk?.homePath ?: return null
       val projectPath = FileUtil.toSystemDependentName(basePath)
+      val javaOpts = calculateJavaOpts()
       val cmd = GeneralCommandLine()
-        .withEnvironment("JAVA_HOME", projectJdkPath)
+        .withEnvironment(JAVA_HOME, projectJdkPath)
+        .withEnvironment(JAVA_OPTS, javaOpts)
         .withWorkDirectory(FileUtil.toSystemDependentName(basePath))
         .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, GRADLE_WRAPPER_WIN) else "./$GRADLE_WRAPPER_UNIX")
         .withParameters(command)
+        .withCharset(Charsets.UTF_8)
         .withParameters(*additionalParams)
 
       return GradleCommandLine(cmd, command)
+    }
+
+    private fun calculateJavaOpts() : String {
+      val javaOpts = System.getenv(JAVA_OPTS) ?: return UTF_8_ENCODING_PARAM
+      return when {
+        javaOpts.isEmpty() -> UTF_8_ENCODING_PARAM
+        // don't override user's JAVA_OPTS and -Dfile.encoding
+        javaOpts.contains("file.encoding") -> javaOpts
+        else -> "$javaOpts $UTF_8_ENCODING_PARAM"
+      }
     }
   }
 }
@@ -167,12 +186,10 @@ fun runGradleRunTask(project: Project, task: Task, indicator: ProgressIndicator)
     project,
     taskName,
     "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName",
-    EDUCATIONAL_RUN_PROPERTY,
-    // if in future would require more 'soft' way, then pass encoding via `gradle.properties` using param `org.gradle.jvmargs=...`
-    FORCE_USE_UTF_8_ENCODING
+    EDUCATIONAL_RUN_PROPERTY
   )
-    ?.launch(indicator)
-    ?: return Err(GradleEnvironmentChecker.getFailedToLaunchCheckingResult(project))
+                       ?.launch(indicator)
+                     ?: return Err(GradleEnvironmentChecker.getFailedToLaunchCheckingResult(project))
 
   if (!gradleOutput.isSuccess) {
     return Err(
@@ -226,7 +243,8 @@ inline fun <T> withGradleTestRunner(project: Project, task: Task, action: () -> 
 
   return try {
     action()
-  } finally {
+  }
+  finally {
     settings.testRunner = oldValue
   }
 }
