@@ -105,6 +105,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       if (localTask != null) {
         val localTaskIsExpired = serverTask.updateDate.isSignificantlyAfter(localTask.updateDate)
         val serverTaskIsDifferent = taskIsDifferent(localTask, serverTask)
+        serverTask.parent = localTask.lesson
         if (localTaskIsExpired || serverTaskIsDifferent) {
           result.add(TaskUpdate(localTask, serverTask))
         }
