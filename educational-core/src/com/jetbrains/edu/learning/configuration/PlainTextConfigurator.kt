@@ -10,10 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import java.io.IOException
 import javax.swing.Icon
 
@@ -74,6 +75,9 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
       override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
         return object : TaskChecker<EduTask>(task, project) {
           override fun check(indicator: ProgressIndicator): CheckResult {
+            if (task is RemoteEduTask) {
+              error("No check for remote tasks")
+            }
             val taskDir = task.getDir(project.courseDir) ?: error("No taskDir in tests")
             val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
 
