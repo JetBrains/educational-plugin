@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.validateLanguage
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.isDataTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ALL_FILES
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType.TEXT
@@ -56,7 +57,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
           val projectLesson = hyperskillCourse.getProjectLesson() ?: return false
           val courseDir = project.courseDir
           GeneratorUtils.createLesson(project, projectLesson, courseDir)
-          GeneratorUtils.createAdditionalFiles(CourseInfoHolder.fromCourse(course, courseDir))
+          GeneratorUtils.unpackAdditionalFiles(CourseInfoHolder.fromCourse(course, courseDir), ALL_FILES)
           YamlFormatSynchronizer.saveAll(project)
           course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.DEPENDENCIES_UPDATED)
           synchronizeProjectOnStageOpening(project, hyperskillCourse, projectLesson.taskList)

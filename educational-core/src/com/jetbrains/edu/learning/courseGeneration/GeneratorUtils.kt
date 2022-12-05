@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.*
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -67,7 +68,7 @@ object GeneratorUtils {
       }
     }
     indicator.text = EduCoreBundle.message("generate.additional.files.progress.text")
-    createAdditionalFiles(holder)
+    unpackAdditionalFiles(holder, ALL_EXCEPT_IDEA_DIRECTORY)
 
     EduCounterUsageCollector.studyItemCreated(course)
   }
@@ -173,11 +174,20 @@ object GeneratorUtils {
     return createChildFile(holder, taskDir, descriptionFileName, task.descriptionText)
   }
 
+  enum class IdeaDirectoryUnpackMode(val insideIdeaDirectory: Boolean, val outsideIdeaDirectory: Boolean) {
+    ALL_FILES(true, true),
+    ONLY_IDEA_DIRECTORY(false, true),
+    ALL_EXCEPT_IDEA_DIRECTORY(true, false)
+  }
+
   @Throws(IOException::class)
-  fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+  fun unpackAdditionalFiles(holder: CourseInfoHolder<Course>, unpackMode: IdeaDirectoryUnpackMode) {
     val course = holder.course
     for (file in course.additionalFiles) {
-      createChildFile(holder, holder.courseDir, file.name, file.text, file.isEditable)
+      val insideIdeaDirectory = file.name == Project.DIRECTORY_STORE_FOLDER || file.name.startsWith("${Project.DIRECTORY_STORE_FOLDER}/")
+
+      if (insideIdeaDirectory && unpackMode.outsideIdeaDirectory || !insideIdeaDirectory && unpackMode.insideIdeaDirectory)
+        createChildFile(holder, holder.courseDir, file.name, file.text, file.isEditable)
     }
   }
 
@@ -185,14 +195,6 @@ object GeneratorUtils {
   @JvmStatic
   fun createChildFile(project: Project, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
     return createChildFile(project.toCourseInfoHolder(), parentDir, path, text)
-  }
-
-  @Throws(IOException::class)
-  @JvmStatic
-  fun createChildFile(holder: CourseInfoHolder<out Course?>, parentDir: VirtualFile, path: String, text: String): VirtualFile? {
-    return runInWriteActionAndWait(ThrowableComputable {
-      doCreateChildFile(holder, parentDir, path, text)
-    })
   }
 
   @Throws(IOException::class)

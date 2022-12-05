@@ -24,6 +24,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
@@ -64,10 +66,14 @@ fun Course.createCourseFiles(
 
   @Suppress("HardCodedStringLiteral")
   ProgressManager.getInstance().runProcessWithProgressSynchronously(Runnable {
+    val holder = CourseInfoHolder.fromCourse(this, baseDir)
+
     configurator
       ?.courseBuilder
       ?.getCourseProjectGenerator(this)
-      ?.createCourseStructure(CourseInfoHolder.fromCourse(this, baseDir))
+      ?.createCourseStructure(holder)
+
+    GeneratorUtils.unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
   }, "Course structure generation", false, project)
 }
 

@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -27,6 +28,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAdditionalFiles
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -133,13 +136,26 @@ abstract class CourseProjectGenerator<S : Any>(
       TrustedPaths.getInstance().setProjectPathTrusted(location.toPath(), true)
     }
 
+    val holder = CourseInfoHolder.fromCourse(course, baseDir)
     // @formatter:off
     ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
-       createCourseStructure(CourseInfoHolder.fromCourse(course, baseDir))
+      createCourseStructure(holder)
     }, EduCoreBundle.message("generate.project.generate.course.structure.progress.text"), false, null)
     // @formatter:on
 
-    return openNewCourseProject(course, location.toPath(), this::prepareToOpen)
+    val newProject = openNewCourseProject(course, location.toPath(), this::prepareToOpen) ?: return null
+
+    // @formatter:off
+    ProgressManager.getInstance().runProcessWithProgressSynchronously<Unit, IOException>({
+      unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
+    }, EduCoreBundle.message("generate.project.unpack.course.project.settings.progress.text"), false, newProject)
+    // @formatter:on
+
+    // after adding files with settings to .idea directory, almost all settings are synchronized automatically,
+    // but the inspection profiles are to be synchronized manually
+    ProjectInspectionProfileManager.getInstance(newProject).initializeComponent()
+
+    return newProject
   }
 
   /**

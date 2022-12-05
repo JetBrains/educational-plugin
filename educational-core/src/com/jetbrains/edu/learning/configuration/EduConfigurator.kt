@@ -4,6 +4,7 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.profile.codeInspection.PROFILE_DIR
 import com.intellij.util.ui.EmptyIcon
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
@@ -60,12 +61,21 @@ interface EduConfigurator<Settings : Any> {
     }
 
     val name = file.name
-    // Project related files
-    return ancestorNames.contains(Project.DIRECTORY_STORE_FOLDER) || "iml" == file.extension ||
+
+    val ideaFolderIndex = ancestorNames.indexOf(Project.DIRECTORY_STORE_FOLDER)
+
+    // Remove hidden files, except the .idea folder
+    for ((i, ancestorName) in ancestorNames.withIndex())
+      if (ancestorName.startsWith(".") && i != ideaFolderIndex)
+        return true
+
+    // Project related files: inside .idea include only .idea/scopes and .idea/inspectionProfiles
+    if (ideaFolderIndex == 0) return false
+    else if (ideaFolderIndex >= 1) return ancestorNames[ideaFolderIndex - 1] !in INCLUDED_SETTINGS_SUBDIRECTORIES
+
+    return "iml" == file.extension ||
            // Course structure files
            EduUtils.isTaskDescriptionFile(name) || isConfigFile(file) ||
-           // Hidden files
-           ancestorNames.any { ancestorName: String -> ancestorName.startsWith(".") } ||
            // Special files
            ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS == name || EduNames.STEPIK_IDS_JSON == name ||
            EduNames.COURSE_IGNORE == name
@@ -169,4 +179,8 @@ interface EduConfigurator<Settings : Any> {
     get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
 
   fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
+
+  companion object {
+    val INCLUDED_SETTINGS_SUBDIRECTORIES = setOf(PROFILE_DIR, "scopes")
+  }
 }

@@ -59,7 +59,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
-      ".idea", "EduTestRunner.java", GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN, LOCAL_PROPERTIES,
+      "EduTestRunner.java", GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN, LOCAL_PROPERTIES,
       SETTINGS_GRADLE, GRADLE_WRAPPER_JAR, GRADLE_WRAPPER_PROPERTIES
     )
 
