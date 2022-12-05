@@ -359,6 +359,17 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     task(dataTask, name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
     dataTask.attempt = attempt
   }
+
+  fun remoteEduTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    stepId: Int = 0,
+    updateDate: Date = Date(0),
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
+    val remoteEduTask = RemoteEduTask()
+    task(remoteEduTask, name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+  }
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {

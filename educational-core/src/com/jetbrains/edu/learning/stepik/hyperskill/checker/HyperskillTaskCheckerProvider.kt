@@ -5,9 +5,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -48,28 +47,6 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
       override fun clearState() = checker.clearState()
     }
   }
-
-  override fun getOutputTaskChecker(
-    task: OutputTask,
-    project: Project,
-    codeExecutor: CodeExecutor
-  ): OutputTaskChecker = baseProvider.getOutputTaskChecker(task, project, codeExecutor)
-
   override fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker =
     baseProvider.getTheoryTaskChecker(task, project)
-
-  override fun getChoiceTaskChecker(task: ChoiceTask, project: Project): TaskChecker<ChoiceTask>? =
-    baseProvider.getChoiceTaskChecker(task, project)
-
-  override fun getCodeTaskChecker(task: CodeTask, project: Project): TaskChecker<CodeTask>? =
-    baseProvider.getCodeTaskChecker(task, project)
-
-  override fun getIdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask> =
-    baseProvider.getIdeTaskChecker(task, project)
-
-  override fun getDataTaskChecker(task: DataTask, project: Project): TaskChecker<DataTask>? =
-    baseProvider.getDataTaskChecker(task, project)
-
-  override fun getStringTaskChecker(task: StringTask, project: Project): TaskChecker<StringTask>? =
-    baseProvider.getStringTaskChecker(task, project)
 }
