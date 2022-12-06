@@ -29,7 +29,7 @@ include(
   "sql:sql-jvm",
   "sql:Edu-Sql-Java",
   "sql:Edu-Sql-Kotlin",
-  "Edu-GitHub"
+  "github"
 )
 
 apply(from = "common.gradle.kts")

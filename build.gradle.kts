@@ -366,7 +366,7 @@ project(":") {
     implementation(project(":sql:sql-jvm"))
     implementation(project(":sql:Edu-Sql-Java"))
     implementation(project(":sql:Edu-Sql-Kotlin"))
-    implementation(project(":Edu-GitHub"))
+    implementation(project(":github"))
     implementation(project(":remote-env"))
   }
 
@@ -901,7 +901,7 @@ project("sql:Edu-Sql-Kotlin") {
   }
 }
 
-project(":Edu-GitHub") {
+project(":github") {
   intellij {
     localPath.set(null as String?)
     plugins.set(listOf(githubPlugin))
