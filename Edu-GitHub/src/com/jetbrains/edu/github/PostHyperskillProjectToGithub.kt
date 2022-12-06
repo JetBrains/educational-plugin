@@ -81,8 +81,13 @@ class HyperskillPostToGitHubActionProvider : PostToGithubActionProvider {
     }
 
     private fun generateGitignore(projectName: String, currentTask: Task, courseDir: VirtualFile) {
-      val solutionFileName = currentTask.taskFiles.filter { it.value.isVisible }.first().key
-      val solutionDir = solutionFileName.split("/").first()
+      val path = currentTask.taskFiles.filter { it.value.isVisible }.first().key
+      val solutionDir = if (path.contains("/")) {
+        path.split("/").first() + "/"
+      }
+      else {
+        path
+      }
       val templateVariables = mapOf(
         "project_name" to projectName,
         "solution-dir" to solutionDir
