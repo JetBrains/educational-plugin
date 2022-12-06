@@ -903,7 +903,7 @@ project("sql:Edu-Sql-Kotlin") {
 
 project(":Edu-GitHub") {
   intellij {
-    version.set(ideaVersion)
+    localPath.set(null as String?)
     plugins.set(listOf(githubPlugin))
   }
 
