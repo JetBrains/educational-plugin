@@ -1,0 +1,11 @@
+<idea-plugin package="com.jetbrains.edu.github">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.github"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <postToGithub implementation="com.jetbrains.edu.github.HyperskillPostToGitHubActionProvider"/>
+  </extensions>
+
+</idea-plugin>

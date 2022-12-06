@@ -17,6 +17,7 @@ exclude:
       - Edu-Rust/resources/fileTemplates
       - Edu-Scala/resources/fileTemplates
       - educational-core/resources/fileTemplates
+      - Edu-GitHub/resources/fileTemplates
   - name: SyntaxError
     paths:
       - Edu-Python/testSrc # not to produce Syntax Errors in python injections
