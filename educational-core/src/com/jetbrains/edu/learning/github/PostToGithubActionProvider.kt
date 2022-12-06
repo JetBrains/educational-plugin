@@ -1,20 +1,17 @@
 package com.jetbrains.edu.learning.github
 
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 
 interface PostToGithubActionProvider {
-  fun isAvailable(task: Task): Boolean
 
-  fun getAction(): AnAction
+  fun postToGitHub(project: Project, file: VirtualFile)
 
   companion object {
     @JvmStatic
     val EP_NAME: ExtensionPointName<PostToGithubActionProvider> = ExtensionPointName.create("Educational.postToGithub")
 
-    fun firstAvailable(task: Task): PostToGithubActionProvider? = EP_NAME.extensionList.firstOrNull {
-      it.isAvailable(task)
-    }
+    fun first(): PostToGithubActionProvider? = EP_NAME.extensionList.firstOrNull()
   }
 }

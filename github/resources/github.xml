@@ -5,7 +5,7 @@
   </dependencies>
 
   <extensions defaultExtensionNs="Educational">
-    <postToGithub implementation="com.jetbrains.edu.github.HyperskillPostToGitHubActionProvider"/>
+    <postToGithub implementation="com.jetbrains.edu.github.PostToGithubProviderImpl"/>
   </extensions>
 
 </idea-plugin>
