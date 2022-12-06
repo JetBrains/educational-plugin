@@ -16,6 +16,6 @@ build
 /${project_name}/*
 !/${project_name}/task/
 /${project_name}/task/*
-!/${project_name}/task/${solution-dir}/
+!/${project_name}/task/${solution-dir}
 !/${project_name}/task/build.gradle
 !/${project_name}/task/build.gradle.kts
