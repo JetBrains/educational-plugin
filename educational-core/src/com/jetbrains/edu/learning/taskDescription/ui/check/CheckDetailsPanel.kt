@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
+import com.jetbrains.edu.learning.github.PostToGithubActionProvider
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -80,9 +81,19 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
     addActionLinks(course, linksPanel, 16, 0)
 
-    if (course is HyperskillCourse && course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink(EduCoreBundle.message("hyperskill.review.topics.action.link"), SwitchTaskTabAction(project, 1))
-      linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
+    if (course is HyperskillCourse) {
+      if (course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
+        val showMoreInfo = LightColoredActionLink(EduCoreBundle.message("hyperskill.review.topics.action.link"),
+                                                  SwitchTaskTabAction(project, 1))
+        linksPanel.add(showMoreInfo)
+      }
+
+      val postActionProvider = PostToGithubActionProvider.firstAvailable(task)
+      if (postActionProvider != null) {
+
+        val postToGithub = LightColoredActionLink(EduCoreBundle.message("hyperskill.action.post.to.github"), postActionProvider.getAction())
+        linksPanel.add(postToGithub)
+      }
     }
 
     if (course !is CourseraCourse && task.showAnswerHints) {

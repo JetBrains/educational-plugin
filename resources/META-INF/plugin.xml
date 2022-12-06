@@ -37,5 +37,6 @@
     <module name="sql-jvm"/>
     <module name="Edu-Sql-Java"/>
     <module name="Edu-Sql-Kotlin"/>
+    <module name="Edu-GitHub"/>
   </content>
 </idea-plugin>

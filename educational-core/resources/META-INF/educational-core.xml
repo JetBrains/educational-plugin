@@ -58,6 +58,11 @@
     <extensionPoint qualifiedName="Educational.pathMacroProvider"
                     interface="com.jetbrains.edu.learning.courseGeneration.macro.EduMacroProvider"
                     dynamic="true"/>
+
+    <extensionPoint qualifiedName="Educational.postToGithub"
+                    interface="com.jetbrains.edu.learning.github.PostToGithubActionProvider"
+                    dynamic="true"/>
+
   </extensionPoints>
 
   <actions>

@@ -27,7 +27,8 @@ include(
   "sql",
   "sql:sql-jvm",
   "sql:Edu-Sql-Java",
-  "sql:Edu-Sql-Kotlin"
+  "sql:Edu-Sql-Kotlin",
+  "Edu-GitHub"
 )
 
 apply(from = "common.gradle.kts")
@@ -119,3 +120,4 @@ buildCache {
     removeUnusedEntriesAfterDays = 30
   }
 }
+include("Edu-GitHub")

@@ -82,6 +82,7 @@ val tomlPlugin = "org.toml.lang"
 val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
 val sqlPlugin = "com.intellij.database"
 val markdownPlugin = "org.intellij.plugins.markdown"
+val githubPlugin = "org.jetbrains.plugins.github"
 val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
 val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
 val intelliLangPlugin = "org.intellij.intelliLang"
@@ -374,6 +375,7 @@ project(":") {
     implementation(project(":sql:sql-jvm"))
     implementation(project(":sql:Edu-Sql-Java"))
     implementation(project(":sql:Edu-Sql-Kotlin"))
+    implementation(project(":Edu-GitHub"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -907,6 +909,20 @@ project("sql:Edu-Sql-Kotlin") {
     testImplementation(project(":sql", "testOutput"))
     testImplementation(project(":sql:sql-jvm", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
+  }
+}
+
+project(":Edu-GitHub") {
+  intellij {
+    localPath.set(null as String?)
+    version.set(ideaVersion)
+    plugins.set(listOf(githubPlugin))
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+
+    testImplementation(project(":educational-core", "testOutput"))
   }
 }
 
