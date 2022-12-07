@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.notifyJBAUnauthorized
 import com.jetbrains.edu.learning.stepik.hyperskill.profileUrl
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
-import com.jetbrains.rd.util.first
 import org.jetbrains.plugins.github.GithubShareAction
 
 class HyperskillPostToGitHubActionProvider : PostToGithubActionProvider {
@@ -81,16 +80,18 @@ class HyperskillPostToGitHubActionProvider : PostToGithubActionProvider {
     }
 
     private fun generateGitignore(projectName: String, currentTask: Task, courseDir: VirtualFile) {
-      val path = currentTask.taskFiles.filter { it.value.isVisible }.first().key
-      val solutionDir = if (path.contains("/")) {
-        path.split("/").first() + "/"
-      }
-      else {
-        path
-      }
+      val visibleTaskFiles = currentTask.taskFiles.filter { it.value.isVisible }
+      val gitIgnoreString = visibleTaskFiles
+        .map { it.key.split("/").first() }
+        .filter { it != "." }
+        .toSet()
+        .joinToString("\n") {
+          "!/$projectName/task/${it}"
+        }
+
       val templateVariables = mapOf(
         "project_name" to projectName,
-        "solution-dir" to solutionDir
+        "solution_dirs" to gitIgnoreString
       )
 
       GeneratorUtils.run {
