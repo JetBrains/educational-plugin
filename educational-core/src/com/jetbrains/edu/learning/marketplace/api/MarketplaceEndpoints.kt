@@ -10,9 +10,10 @@ interface MarketplaceEndpoints {
   fun getUserInfo(@Path(value = "id") userId: String): Call<MarketplaceUserInfo>
 }
 
-interface MarketplaceExtensionGrantsEndpoints {
-  @POST("oauth2/token")
+interface HubExtensionGrantsEndpoints {
+  @POST("/api/rest/oauth2/token")
   @FormUrlEncoded
   fun exchangeTokens(@Field("grant_type") grantType: String,
-                     @Field("token") token: String): Call<TokenInfo>
+                     @Field("token") token: String,
+                     @Field("scope") scope: String): Call<TokenInfo>
 }

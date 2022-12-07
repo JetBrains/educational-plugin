@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.api.ConnectorUtils
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo
@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.RestService
 
-abstract class CheckiOOAuthConnector : EduOAuthConnector<CheckiOAccount, CheckiOUserInfo>() {
+abstract class CheckiOOAuthConnector : EduOAuthCodeFlowConnector<CheckiOAccount, CheckiOUserInfo>() {
   override val authorizationUrl: String
     get() = URIBuilder(CHECKIO_URL)
       .setPath("/oauth/authorize/")

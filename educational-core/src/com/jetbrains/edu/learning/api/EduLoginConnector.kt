@@ -1,14 +1,10 @@
 package com.jetbrains.edu.learning.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.Urls
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.AUTHORIZATION_CODE
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.REFRESH_TOKEN
 import com.jetbrains.edu.learning.authUtils.TokenInfo
@@ -19,18 +15,19 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Authorizat
 import okhttp3.ConnectionPool
 import okhttp3.Interceptor
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.ide.RestService
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.io.IOException
 import java.util.regex.Pattern
 
-abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
+/**
+ * Base class for all connectors managing login.
+ * Connectors, using [Authorization Code Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow)
+ * should be inherited from [EduOAuthCodeFlowConnector]
+ */
+abstract class EduLoginConnector<Account : OAuthAccount<*>, SpecificUserInfo : UserInfo> {
   open var account: Account? = null
 
   protected open val redirectHost = "localhost"
-
-  protected abstract val authorizationUrl: String
 
   protected abstract val baseUrl: String
 
@@ -53,6 +50,11 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   protected val converterFactory: JacksonConverterFactory by lazy {
     JacksonConverterFactory.create(objectMapper)
   }
+
+  abstract fun doAuthorize(
+    vararg postLoginActions: Runnable,
+    authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN
+  )
 
   /**
    * Must be changed only with synchronization
@@ -80,23 +82,6 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
   }
 
   abstract fun getUserInfo(account: Account, accessToken: String?): SpecificUserInfo?
-
-  @Synchronized
-  open fun doAuthorize(
-    vararg postLoginActions: Runnable,
-    authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN
-  ) {
-    if (!OAuthUtils.checkBuiltinPortValid()) return
-
-    this.authorizationPlace = authorizationPlace
-    setPostLoginActions(postLoginActions.asList())
-    BrowserUtil.browse(authorizationUrl)
-  }
-
-  /**
-   * Must be synchronized to avoid race condition
-   */
-  abstract fun login(code: String): Boolean
 
   @Synchronized
   fun doLogout(authorizationPlace: AuthorizationPlace = AuthorizationPlace.UNKNOWN) {
@@ -136,7 +121,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   /**
    * No need to pass any arguments by default, but you need to pass
-   * account and accessToken for [com.jetbrains.edu.learning.api.EduOAuthConnector.getUserInfo]
+   * account and accessToken for [com.jetbrains.edu.learning.api.EduLoginConnector.getUserInfo]
    * because access token is not saved at the moment we want to get userInfo and check if current user isGuest
    */
   protected inline fun <reified Endpoints> getEndpoints(
@@ -167,25 +152,6 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     return response?.body() ?: error(EduCoreBundle.message("error.failed.to.refresh.tokens"))
   }
 
-  @Throws(IOException::class)
-  private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath) { code: String, _: String ->
-      if (!login(code)) "Failed to login to $platformName" else null
-    }
-  }
-
-  protected open fun getRedirectUri(): String =
-    if (EduUtils.isAndroidStudio()) {
-      val runningServer = CustomAuthorizationServer.getServerIfStarted(platformName)
-      val server = runningServer ?: createCustomServer()
-      server.handlingUri
-    }
-    else {
-      // port is already checked to be valid
-      val currentPort = BuiltInServerManager.getInstance().port
-      Urls.newHttpUrl("$redirectHost:${currentPort}", oAuthServicePath).toString()
-    }
-
   @JvmOverloads
   fun getOAuthPattern(suffix: String = """\?$CODE_ARGUMENT=(\w+)"""): Pattern {
     return "^.*$oAuthServicePath$suffix".toPattern()
@@ -204,7 +170,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
       val tokens = getNewTokens()
       currentAccount.tokenExpiresIn = tokens.expiresIn
       currentAccount.saveTokens(tokens)
-      LOG.info("successfully refreshed tokens for ${this.authorizationUrl}")
+      LOG.info("successfully refreshed tokens for $platformName")
     }
   }
 
@@ -248,7 +214,7 @@ abstract class EduOAuthConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
 
   companion object {
     @JvmStatic
-    protected val LOG = Logger.getInstance(EduOAuthConnector::class.java)
+    protected val LOG = Logger.getInstance(EduLoginConnector::class.java)
 
     @JvmStatic
     @NonNls

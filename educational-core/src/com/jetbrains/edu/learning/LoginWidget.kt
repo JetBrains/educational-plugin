@@ -17,7 +17,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.SyncCourseAction
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
@@ -36,7 +36,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
                                                       @Tooltip tooltipText: String,
                                                       private val icon: Icon
 ) : IconLikeCustomStatusBarWidget {
-  abstract val connector: EduOAuthConnector<T, *>
+  abstract val connector: EduLoginConnector<T, *>
 
   open val synchronizeCourseActionId: String? = null
 

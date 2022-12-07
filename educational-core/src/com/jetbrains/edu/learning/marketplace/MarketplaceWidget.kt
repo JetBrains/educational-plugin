@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction
@@ -13,7 +13,7 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(proj
                                                                             EduCoreBundle.message("marketplace.widget.title"),
                                                                             EduCoreBundle.message("marketplace.widget.tooltip"),
                                                                             EducationalCoreIcons.MARKETPLACE) {
-  override val connector: EduOAuthConnector<MarketplaceAccount, *>
+  override val connector: EduLoginConnector<MarketplaceAccount, *>
     get() = MarketplaceConnector.getInstance()
 
   override val synchronizeCourseActionId: String

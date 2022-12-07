@@ -6,7 +6,7 @@
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.marketplace.MarketplaceRestServiceImpl"/>
     <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory" order="before positionWidget"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.marketplace.MarketplaceStartupActivity"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader"/>

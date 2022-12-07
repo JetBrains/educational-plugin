@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.settings
 
 import com.intellij.ui.components.JBCheckBox
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
@@ -15,7 +15,7 @@ class HyperskillOptions : OAuthLoginOptions<HyperskillAccount>() {
   private var automaticUpdateCheckBox: JBCheckBox = JBCheckBox(EduCoreBundle.message("hyperskill.settings.auto.update"),
                                                                HyperskillSettings.INSTANCE.updateAutomatically)
 
-  override val connector: EduOAuthConnector<HyperskillAccount, *>
+  override val connector: EduOAuthCodeFlowConnector<HyperskillAccount, *>
     get() = HyperskillConnector.getInstance()
 
   override fun getDisplayName(): String = EduNames.JBA

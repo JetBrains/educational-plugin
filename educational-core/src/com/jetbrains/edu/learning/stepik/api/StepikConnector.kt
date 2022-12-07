@@ -8,7 +8,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -31,7 +31,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
 
-abstract class StepikConnector : EduOAuthConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
+abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUserInfo>(), StepikBasedConnector {
   override val platformName: String = StepikNames.STEPIK
 
   override var account: StepikUser?
