@@ -7,10 +7,8 @@ import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
-import com.jetbrains.edu.learning.authUtils.createResponse
 import com.jetbrains.edu.learning.authUtils.hasOpenDialogs
 import com.jetbrains.edu.learning.authUtils.sendPluginInfoResponse
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
@@ -18,11 +16,10 @@ import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenIn
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
-import org.jetbrains.io.send
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
-class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
+abstract class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
@@ -37,6 +34,8 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
     else super.isHostTrusted(request, urlDecoder)
   }
 
+  protected abstract fun processCodeFlowOAuth(code: String, context: ChannelHandlerContext, request: FullHttpRequest): String?
+
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
     if (uri.contains(INFO)) {
@@ -44,16 +43,10 @@ class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
       return null
     }
 
+    // BACKCOMPAT: 2022.1 remove part related to code flow oauth
     val code = getStringParameter(CODE_ARGUMENT, urlDecoder)
     if (code != null) {
-      val success = MarketplaceConnector.getInstance().login(code)
-      if (success) {
-        LOG.info("$myPlatformName: OAuth code is handled")
-        val pageContent = GeneratorUtils.getInternalTemplateText("marketplace.redirectPage.html")
-        createResponse(pageContent).send(context.channel(), request)
-        return null
-      }
-      return sendErrorResponse(request, context, "Failed to login using provided code")
+      return processCodeFlowOAuth(code, context, request)
     }
 
     if (hasOpenDialogs(MARKETPLACE)) {

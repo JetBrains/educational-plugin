@@ -1,8 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationAction
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -10,11 +8,9 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getPathInCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import javax.swing.event.HyperlinkEvent
 
 @Suppress("UnstableApiUsage")
 object CCNotificationUtils {
@@ -57,42 +53,6 @@ object CCNotificationUtils {
     showErrorNotification(project,
                           EduCoreBundle.message("notification.course.creator.access.denied.title"),
                           EduCoreBundle.message("notification.course.creator.access.denied.content"))
-  }
-
-  fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, action: () -> Unit) {
-    showErrorNotification(project,
-                          EduCoreBundle.message("notification.course.creator.access.denied.title"),
-                          EduCoreBundle.message("notification.course.creator.access.denied.content"),
-                          NotificationAction.createSimpleExpiring(
-                            EduCoreBundle.message("notification.course.creator.access.denied.action")) {
-                            course.convertToLocal()
-                            action()
-                          })
-  }
-
-  fun showAcceptDeveloperAgreementNotification(project: Project, action: () -> AnAction) {
-    showErrorNotification(project,
-                          EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
-                          EduCoreBundle.message("marketplace.plugin.development.agreement.not.accepted"),
-                          action()
-    )
-  }
-
-  fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
-    showErrorNotification(project,
-                          EduCoreBundle.message("error.failed.to.update"),
-                          EduCoreBundle.message("marketplace.failed.to.update.no.course"),
-                          action)
-  }
-
-  fun createPostCourseNotificationListener(course: EduCourse, action: () -> Unit): NotificationListener.Adapter {
-    return object : NotificationListener.Adapter() {
-      override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-        notification.expire()
-        course.convertToLocal()
-        action()
-      }
-    }
   }
 
   @JvmStatic

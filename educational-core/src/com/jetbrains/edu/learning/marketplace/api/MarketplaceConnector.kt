@@ -17,31 +17,27 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
-import com.jetbrains.edu.learning.api.EduOAuthConnector
-import com.jetbrains.edu.learning.authUtils.OAuthRestService.CODE_ARGUMENT
-import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showAcceptDeveloperAgreementNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoRightsToUpdateNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.apache.http.client.utils.URIBuilder
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
@@ -49,27 +45,12 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, MarketplaceUserInfo>(), CourseConnector {
+abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
     get() = MarketplaceSettings.INSTANCE.account
     set(account) {
       MarketplaceSettings.INSTANCE.account = account
     }
-
-  override val authorizationUrl: String
-    get() = URIBuilder(HUB_AUTH_URL)
-      .setPath("$HUB_API_PATH/oauth2/auth")
-      .addParameter("access_type", "offline")
-      .addParameter("client_id", EDU_CLIENT_ID)
-      .addParameter("redirect_uri", getRedirectUri())
-      .addParameter("response_type", CODE_ARGUMENT)
-      .addParameter("scope", "openid $EDU_CLIENT_ID $MARKETPLACE_CLIENT_ID")
-      .build()
-      .toString()
-
-  override val clientId: String = EDU_CLIENT_ID
-
-  override val clientSecret: String = EDU_CLIENT_SECRET
 
   override val objectMapper: ObjectMapper by lazy {
     val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
@@ -87,61 +68,8 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
   private val repositoryEndpoints: MarketplaceRepositoryEndpoints
     get() = getEndpoints(baseUrl = repositoryUrl)
 
-  private val extensionGrantsEndpoint: MarketplaceExtensionGrantsEndpoints
-    get() = getEndpoints(baseUrl = JB_ACCOUNT_URL)
-
 
   // Authorization requests:
-
-  @Synchronized
-  override fun login(code: String): Boolean {
-    val hubTokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
-    val account = MarketplaceAccount(hubTokenInfo.expiresIn)
-    val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return false
-    if (currentUser.isGuest) {
-      // it means that session is broken, so we should force user to re-login
-      LOG.warn("User ${currentUser.name} is anonymous")
-      this.account = null
-      return false
-    }
-    account.userInfo = currentUser
-
-    // Hub token and JBA token both have expiresIn times, which are of the same duration.
-    // We keep the hub token expiresIn interval as the shortest one.
-    val jBAccountTokenInfo = if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) {
-      retrieveJBAccountToken(hubTokenInfo.idToken)
-    }
-    else TokenInfo()
-
-    if (jBAccountTokenInfo == null) {
-      LOG.error("Failed to obtain JBA token via extension grants")
-      return false
-    }
-
-    this.account = account
-    account.saveTokens(hubTokenInfo)
-    account.saveJBAccountToken(jBAccountTokenInfo.idToken)
-    return true
-  }
-
-  private fun retrieveJBAccountToken(hubIdToken: String?): TokenInfo? {
-    if (hubIdToken.isNullOrEmpty()) {
-      LOG.error("Failed to obtain JB account token via extension grants. Hub id token is null")
-      return null
-    }
-    val response = extensionGrantsEndpoint.exchangeTokens(TOKEN_EXCHANGE, hubIdToken).executeHandlingExceptions()
-    return response?.body()
-  }
-
-  override fun refreshTokens() {
-    super.refreshTokens()
-
-    if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
-    val currentAccount = account ?: error("No logged in user")
-    val jBAccountToken = retrieveJBAccountToken(currentAccount.getHubIdToken()) ?: error(
-      "Failed to obtain JB account token via extension grants at token refresh")
-    currentAccount.saveJBAccountToken(jBAccountToken.idToken)
-  }
 
   override fun getNewTokens(): TokenInfo {
     val currentAccount = account ?: error("No logged in user")
@@ -159,7 +87,7 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   /**
    * For getting user info from Marketplace, account and access token must not to be passed to
-   * [com.jetbrains.edu.learning.api.EduOAuthConnector.getEndpoints]
+   * [com.jetbrains.edu.learning.api.EduLoginConnector.getEndpoints]
    */
   override fun getUserInfo(account: MarketplaceAccount, accessToken: String?): MarketplaceUserInfo? {
     val token = accessToken ?: return null
@@ -520,10 +448,6 @@ abstract class MarketplaceConnector : EduOAuthConnector<MarketplaceAccount, Mark
 
   companion object {
     private val LOG = logger<MarketplaceConnector>()
-
-    private val MARKETPLACE_CLIENT_ID: String = MarketplaceOAuthBundle.value("marketplaceHubClientId")
-    private val EDU_CLIENT_ID: String = MarketplaceOAuthBundle.value("eduHubClientId")
-    private val EDU_CLIENT_SECRET: String = MarketplaceOAuthBundle.value("eduHubClientSecret")
 
     private val XML_ID = "\\d{5,}-.*".toRegex()
     private const val PLUGIN_CONTAINS_VERSION_ERROR_TEXT = "plugin already contains version"

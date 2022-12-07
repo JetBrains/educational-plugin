@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.widget
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.LoginWidget
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -14,7 +14,7 @@ class HyperskillWidget(project: Project) : LoginWidget<HyperskillAccount>(projec
                                                                           EduCoreBundle.message("hyperskill.widget.title"),
                                                                           EduCoreBundle.message("hyperskill.widget.tooltip"),
                                                                           EducationalCoreIcons.JB_ACADEMY) {
-  override val connector: EduOAuthConnector<HyperskillAccount, *>
+  override val connector: EduOAuthCodeFlowConnector<HyperskillAccount, *>
     get() = HyperskillConnector.getInstance()
 
   override val synchronizeCourseActionId: String

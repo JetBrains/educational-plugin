@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.settings
 
 import com.intellij.ui.HyperlinkAdapter
-import com.jetbrains.edu.learning.api.EduOAuthConnector
+import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
 import javax.swing.event.HyperlinkEvent
 
 abstract class OAuthLoginOptions <T : OAuthAccount<out Any>> : LoginOptions<T>() {
-  protected abstract val connector: EduOAuthConnector<T, *>
+  protected abstract val connector: EduLoginConnector<T, *>
 
   override fun getCurrentAccount(): T? = connector.account
 

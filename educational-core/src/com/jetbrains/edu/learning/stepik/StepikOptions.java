@@ -15,14 +15,14 @@
  */
 package com.jetbrains.edu.learning.stepik;
 
-import com.jetbrains.edu.learning.api.EduOAuthConnector;
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector;
 import com.jetbrains.edu.learning.settings.OAuthLoginOptions;
 import com.jetbrains.edu.learning.stepik.api.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
 public class StepikOptions extends OAuthLoginOptions<StepikUser> {
   @Override
-  protected @NotNull EduOAuthConnector<StepikUser, ?> getConnector() {
+  protected @NotNull EduOAuthCodeFlowConnector<StepikUser, ?> getConnector() {
     return StepikConnector.getInstance();
   }
 
