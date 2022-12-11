@@ -1,6 +1,5 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
-import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
@@ -40,12 +39,6 @@ val baseVersion = when {
   isStudioIDE -> studioVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
-
-val studioPath: String
-  get() {
-    val androidStudioPath: String? by project
-    return androidStudioPath ?: downloadStudioIfNeededAndGetPath()
-  }
 
 // Probably, these versions should be extracted to version catalog
 // See https://docs.gradle.org/current/userguide/platforms.html#sub:conventional-dependencies-toml
@@ -134,7 +127,7 @@ val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
 plugins {
   idea
   kotlin("jvm") version "1.7.10"
-  id("org.jetbrains.intellij") version "1.10.0"
+  id("org.jetbrains.intellij") version "1.10.1"
   id("de.undercouch.download") version "5.1.0"
   id("net.saliman.properties") version "1.5.1"
   id("org.gradle.test-retry") version "1.3.1"
@@ -266,12 +259,7 @@ configure(allprojects.pluginModules()) {
     plugin("org.jetbrains.intellij")
   }
   intellij {
-    if (isStudioIDE) {
-      localPath.set(studioPath)
-    }
-    else {
       version.set(baseVersion)
-    }
   }
   dependencies {
     implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
@@ -637,7 +625,6 @@ project(":code-insight:yaml") {
 project(":jvm-core") {
   intellij {
     if (!isJvmCenteredIDE) {
-      localPath.set(null as String?)
       version.set(ideaVersion)
     }
     plugins.set(jvmPlugins)
@@ -652,7 +639,6 @@ project(":jvm-core") {
 
 project(":Edu-Java") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(jvmPlugins)
   }
@@ -669,7 +655,6 @@ project(":Edu-Java") {
 project(":Edu-Kotlin") {
   intellij {
     if (!isJvmCenteredIDE) {
-      localPath.set(null as String?)
       version.set(ideaVersion)
     }
     plugins.set(kotlinPlugins)
@@ -686,7 +671,6 @@ project(":Edu-Kotlin") {
 
 project(":Edu-Scala") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     val pluginsList = jvmPlugins + scalaPlugin
     plugins.set(pluginsList)
@@ -703,8 +687,7 @@ project(":Edu-Scala") {
 
 project(":Edu-Android") {
   intellij {
-    localPath.set(studioPath)
-    version.set(null as String?)
+    version.set(studioVersion)
     val pluginsList = jvmPlugins + androidPlugin
     plugins.set(pluginsList)
   }
@@ -745,7 +728,6 @@ project(":Edu-Python") {
 project(":Edu-Python:Idea") {
   intellij {
     if (!isJvmCenteredIDE || isStudioIDE) {
-      localPath.set(null as String?)
       version.set(ideaVersion)
     }
 
@@ -767,7 +749,6 @@ project(":Edu-Python:Idea") {
 project(":Edu-Python:PyCharm") {
   intellij {
     if (isStudioIDE) {
-      localPath.set(null as String?)
       version.set(ideaVersion)
     }
     plugins.set(pythonPlugins)
@@ -782,7 +763,6 @@ project(":Edu-Python:PyCharm") {
 
 project(":Edu-JavaScript") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(javaScriptPlugins)
   }
@@ -807,7 +787,6 @@ project(":Edu-Rust") {
 
 project(":Edu-Cpp") {
   intellij {
-    localPath.set(null as String?)
     version.set(clionVersion)
     plugins.set(cppPlugins)
   }
@@ -821,7 +800,6 @@ project(":Edu-Cpp") {
 
 project(":Edu-Go") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(goPlugin, intelliLangPlugin))
   }
@@ -835,7 +813,6 @@ project(":Edu-Go") {
 
 project(":Edu-Php") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(phpPlugin))
   }
@@ -850,7 +827,6 @@ project(":Edu-Php") {
 project(":sql") {
   intellij {
     if (isStudioIDE || isPycharmIDE) {
-      localPath.set(null as String?)
       version.set(ideaVersion)
     }
     plugins.set(listOf(sqlPlugin))
@@ -864,7 +840,6 @@ project(":sql") {
 
 project("sql:sql-jvm") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(sqlPlugin) + jvmPlugins)
   }
@@ -880,7 +855,6 @@ project("sql:sql-jvm") {
 
 project("sql:Edu-Sql-Java") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(sqlPlugin) + jvmPlugins)
   }
@@ -897,7 +871,6 @@ project("sql:Edu-Sql-Java") {
 
 project("sql:Edu-Sql-Kotlin") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(sqlPlugin) + kotlinPlugins)
   }
@@ -914,7 +887,6 @@ project("sql:Edu-Sql-Kotlin") {
 
 project(":Edu-GitHub") {
   intellij {
-    localPath.set(null as String?)
     version.set(ideaVersion)
     plugins.set(listOf(githubPlugin))
   }
@@ -923,66 +895,6 @@ project(":Edu-GitHub") {
     implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
-  }
-}
-
-fun downloadStudioIfNeededAndGetPath(): String {
-  if (!rootProject.hasProperty("studioVersion")) error("studioVersion is unspecified")
-
-  val osFamily = osFamily
-  val (archiveType, fileTreeMethod) = if (osFamily == "linux") "tar.gz" to this::tarTree else "zip" to this::zipTree
-  val studioArchive = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${osFamily}.$archiveType")
-  if (!studioArchive.exists()) {
-    download.run {
-      src(studioArtifactDownloadPath(archiveType))
-      retries(2)
-      readTimeout(3 * 60 * 1000) // 3 min
-      dest(studioArchive)
-    }
-    println("Download completed")
-  }
-
-  val studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion")
-  if (!studioFolder.exists()) {
-    copy {
-      from(fileTreeMethod(studioArchive))
-      into(studioFolder)
-    }
-  }
-
-  return studioPath(studioFolder)
-}
-
-fun studioArtifactDownloadPath(archiveType: String): String {
-  return if (inJetBrainsNetwork()) {
-    println("Downloading studio from JB repo...")
-    "https://repo.labs.intellij.net/edu-tools/android-studio-${studioVersion}-${osFamily}.$archiveType"
-  } else {
-    "http://dl.google.com/dl/android/studio/ide-zips/${studioVersion}/android-studio-${studioVersion}-${osFamily}.$archiveType"
-  }
-}
-
-fun studioPath(studioFolder: File): String {
-  return if (osFamily == "mac") {
-    val candidates = studioFolder.listFiles()
-      .orEmpty()
-      .filter { it.isDirectory && it.name.matches(Regex("Android Studio.*\\.app")) }
-    when (candidates.size) {
-      0 -> error("Can't find any folder matching `Android Studio*.app` in `$studioFolder`")
-      1 -> return "${candidates[0]}/Contents"
-      else -> error("More than one folder matching `Android Studio*.app` found in `$studioFolder`")
-    }
-  } else {
-    "$studioFolder/android-studio"
-  }
-}
-
-val osFamily: String get() {
-  return when {
-    Os.isFamily(Os.FAMILY_WINDOWS) -> "windows"
-    Os.isFamily(Os.FAMILY_MAC) -> "mac"
-    Os.isFamily(Os.FAMILY_UNIX) && !Os.isFamily(Os.FAMILY_MAC) -> "linux"
-    else -> error("current os family is unsupported")
   }
 }
 
