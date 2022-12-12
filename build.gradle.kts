@@ -1098,7 +1098,7 @@ publishing {
     create<MavenPublication>("edu-format") {
       groupId = "com.jetbrains.edu"
       artifactId = "edu-format"
-      version = "1.0-SNAPSHOT"
+      version = prop("publishingVersion")
       artifact("edu-format/build/libs/edu-format.jar")
     }
   }
