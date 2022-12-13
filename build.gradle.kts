@@ -1014,7 +1014,7 @@ publishing {
       groupId = "com.jetbrains.edu"
       artifactId = "edu-format"
       version = prop("publishingVersion")
-      artifact("build/distributions/edu-format.jar")
+      artifact(prop("eduFormatArtifactPath"))
     }
   }
   repositories {
