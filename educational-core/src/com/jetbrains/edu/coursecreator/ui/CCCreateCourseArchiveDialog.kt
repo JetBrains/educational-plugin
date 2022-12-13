@@ -12,7 +12,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private val myPanel: CCCreateCourseArchivePanel
 
   init {
-    title = EduCoreBundle.message("action.create.course.archive.text")
+    title = EduCoreBundle.message("course.creator.create.archive.dialog.title")
     myPanel = CCCreateCourseArchivePanel(project, courseName)
     myPreferredFocusedComponent = myPanel.locationField
     init()

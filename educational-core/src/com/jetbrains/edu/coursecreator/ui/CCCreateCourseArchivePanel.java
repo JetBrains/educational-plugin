@@ -36,7 +36,7 @@ public class CCCreateCourseArchivePanel extends JPanel {
     myLocationField.setText(getArchiveLocation(project, name));
     myCheckFlagCheckbox.setSelected(true);
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    myLocationField.addBrowseFolderListener(EduCoreBundle.message("course.creator.create.archive.dialog.title"), null, project, descriptor);
+    myLocationField.addBrowseFolderListener(EduCoreBundle.message("course.creator.create.archive.location.title"), null, project, descriptor);
     myAuthorLabel.setVisible(true);
     myAuthorField.setVisible(true);
     myCheckFlagCheckboxLabel.setVisible(true);
