@@ -246,6 +246,9 @@ allprojects {
     // Fail plugin build if there are errors in module packages
     rootProject.tasks.buildPlugin {
       dependsOn(verifyClasses)
+      doLast {
+        copyFormatJar()
+      }
     }
   }
 }
@@ -1011,7 +1014,7 @@ publishing {
       groupId = "com.jetbrains.edu"
       artifactId = "edu-format"
       version = prop("publishingVersion")
-      artifact("edu-format/build/libs/edu-format.jar")
+      artifact("build/distributions/edu-format.jar")
     }
   }
   repositories {
@@ -1040,5 +1043,13 @@ fun DependencyHandler.implementationWithoutKotlin(group: String, name: String, v
 fun DependencyHandler.testImplementationWithoutKotlin(dependencyNotation: String): ExternalModuleDependency {
   return testImplementation(dependencyNotation) {
     excludeKotlinDeps()
+  }
+}
+
+fun copyFormatJar() {
+  copy {
+    from("edu-format/build/libs/")
+    into("build/distributions")
+    include("edu-format.jar")
   }
 }
