@@ -99,10 +99,7 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       }
     }
     else {
-      EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
-        connector.doLogout(authorizationPlace = AuthorizationPlace.WIDGET)
-        updateContent(wrapperPanel, popup)
-      }
+      logOutActionLabel(wrapperPanel, popup)
     }
 
     val actionsPanel = JBUI.Panels.simplePanel(0, 10)
@@ -119,6 +116,13 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     contentPanel.addToBottom(actionsPanel)
 
     return contentPanel
+  }
+
+  open fun logOutActionLabel(wrapperPanel: JPanel, popup: JBPopup): EduHyperlinkLabel {
+    return EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
+      connector.doLogout(authorizationPlace = AuthorizationPlace.WIDGET)
+      updateContent(wrapperPanel, popup)
+    }
   }
 
   private fun getSynchronizeCourseAction(): SyncCourseAction? {

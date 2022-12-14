@@ -126,10 +126,14 @@ abstract class LoginOptions<T : Account<out Any>> : OptionsProvider {
     else {
       val info = selectedAccount.userInfo
       browseProfileLabel.text = EduCoreBundle.message("logged.in.as.verbose", "<a href=${profileUrl(selectedAccount)}>${info}</a>")
-      loginLink.text = EduCoreBundle.message("log.out")
-      loginListener = createLogOutListener()
+      prepareLogOutLink()
     }
 
     loginLink.addHyperlinkListener(loginListener)
+  }
+
+  open fun prepareLogOutLink() {
+    loginLink.text = EduCoreBundle.message("log.out")
+    loginListener = createLogOutListener()
   }
 }

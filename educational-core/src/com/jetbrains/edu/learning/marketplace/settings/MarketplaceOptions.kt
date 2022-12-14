@@ -14,4 +14,6 @@ class MarketplaceOptions : OAuthLoginOptions<MarketplaceAccount>() {
   override fun getDisplayName(): String = MARKETPLACE
 
   override fun profileUrl(account: MarketplaceAccount): String = MARKETPLACE_PROFILE_PATH
+
+  override fun prepareLogOutLink() {}
 }
