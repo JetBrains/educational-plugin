@@ -47,16 +47,8 @@ import java.net.URL
 
 abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
-    get() {
-      val hubAccount = MarketplaceSettings.INSTANCE.hubAccount
-      return if (hubAccount != null) {
-        hubAccount
-      }
-      else {
-        isLoggedIn()
-        return MarketplaceSettings.INSTANCE.hubAccount
-      }
-    }
+    get() = MarketplaceSettings.INSTANCE.hubAccount
+
     set(account) {
       MarketplaceSettings.INSTANCE.hubAccount = account
     }

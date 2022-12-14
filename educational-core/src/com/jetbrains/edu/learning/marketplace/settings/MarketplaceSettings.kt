@@ -20,11 +20,19 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
   @set:Transient
   @field:Volatile
   var hubAccount: MarketplaceAccount? = null
+    get() {
+      return if (field != null) {
+        field
+      }
+      else {
+        MarketplaceConnector.getInstance().autoLogIn()
+        return field
+      }
+    }
+
     set(account) {
       field = account
       MarketplaceConnector.getInstance().apply {
-        //TODO: do we need to notify user logged out here? as it's just hub logout, not a jb account one
-        // notify log in makes sense as jb account log is needed for hub log int
         if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
       }
     }
