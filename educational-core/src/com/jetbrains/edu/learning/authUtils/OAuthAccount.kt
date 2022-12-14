@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.authUtils
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonParser
@@ -72,9 +71,6 @@ class TokenInfo {
   @JsonProperty("expires_in")
   @JsonDeserialize(using = ExpiresDeserializer::class)
   var expiresIn: Long = -1
-
-  @JsonIgnore
-  var jwtToken: String = ""
 
   fun isUpToDate(): Boolean {
     return currentTimeSeconds() < expiresIn - 600 // refresh token before it's expired to avoid failed requests
