@@ -181,7 +181,7 @@ abstract class EduLoginConnector<Account : OAuthAccount<*>, SpecificUserInfo : U
     return response?.body()
   }
 
-  fun isLoggedIn(): Boolean = account != null
+  open fun isLoggedIn(): Boolean = account != null
 
   /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform

@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.marketplace.api
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
@@ -17,6 +19,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.EDU_
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.EDU_CLIENT_SECRET
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.MARKETPLACE_CLIENT_ID
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.checkIsGuestAndSave
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -37,6 +40,34 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     login()
   }
 
+  override fun isLoggedIn(): Boolean {
+    val jbaAccessToken = invokeAndWaitIfNeeded {
+      val jbAuthService = JBAccountInfoService.getInstance() ?: error("Failed to get JBAccountInfoService")
+      return@invokeAndWaitIfNeeded getJBAccessToken(jbAuthService)
+    } ?: return false
+
+    val account = MarketplaceSettings.INSTANCE.account
+    if (account != null) return true
+    return getHubTokenAndSave(jbaAccessToken)
+  }
+
+  private fun getJBAccessToken(jbAuthService: JBAccountInfoService): String? {
+    checkIsBackgroundThread()
+
+    val jbAccessToken: String? = try {
+      jbAuthService.accessToken.get(30, TimeUnit.SECONDS)
+    }
+    catch (e: InterruptedException) {
+      LOG.warn(e)
+      null
+    }
+    catch (e: ExecutionException) {
+      LOG.warn(e)
+      null
+    }
+    return jbAccessToken
+  }
+
   private fun login() {
     val jbAuthService = JBAccountInfoService.getInstance() ?: error("Failed to log in to $platformName")
     if (jbAuthService.userData == null) {
@@ -48,29 +79,25 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
 
   private fun getHubTokenAndSave(jbAuthService: JBAccountInfoService) {
     ApplicationManager.getApplication().executeOnPooledThread {
-      val jbAccessToken: String? = try {
-        jbAuthService.accessToken.get(30, TimeUnit.SECONDS)
-      }
-      catch (e: InterruptedException) {
-        LOG.warn(e)
-        null
-      }
-      catch (e: ExecutionException) {
-        LOG.warn(e)
-        null
-      }
+      val jbAccessToken: String? = getJBAccessToken(jbAuthService)
       if (jbAccessToken == null) {
         LOG.warn("Log in failed: JetBrains account token is null")
         showReloginToJBANeededNotification()
         return@executeOnPooledThread
       }
 
-      val hubTokenInfo = retrieveHubToken(jbAccessToken)
-
-      val account = MarketplaceAccount(hubTokenInfo.expiresIn)
-      val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return@executeOnPooledThread
-      if (!checkIsGuestAndSave(currentUser, account, hubTokenInfo)) error("User ${currentUser.name} is anonymous")
+      if (!getHubTokenAndSave(jbAccessToken)) error("Current hub user is anonymous")
     }
+  }
+
+  private fun getHubTokenAndSave(jbAccessToken: String): Boolean {
+    checkIsBackgroundThread()
+
+    val hubTokenInfo = retrieveHubToken(jbAccessToken)
+
+    val account = MarketplaceAccount(hubTokenInfo.expiresIn)
+    val currentUser = getUserInfo(account, hubTokenInfo.accessToken) ?: return false
+    return checkIsGuestAndSave(currentUser, account, hubTokenInfo)
   }
 
   private fun retrieveHubToken(jbaAccessToken: String): TokenInfo {
