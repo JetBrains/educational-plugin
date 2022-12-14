@@ -68,7 +68,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   public override fun setText(text: String, task: Task?) {
-    taskInfoTextPane.text = htmlWithResources(project, wrapHints(text, task))
+    taskInfoTextPane.text = htmlWithResources(project, wrapHints(text, task), task)
   }
 
   override fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String {

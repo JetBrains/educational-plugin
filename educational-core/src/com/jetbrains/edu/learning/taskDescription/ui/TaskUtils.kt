@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.IMG_TAG
 import com.jetbrains.edu.learning.taskDescription.SCRIPT_TAG
@@ -16,10 +17,14 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.File
 
-fun htmlWithResources(project: Project, content: String): String {
+fun htmlWithResources(
+  project: Project,
+  content: String,
+  task: Task? = EduUtils.getCurrentTask(project)
+): String {
   val templateText = loadText("/style/template.html.ft")
   val textWithResources = StrSubstitutor(StyleManager.resources(content)).replace(templateText) ?: "Cannot load task text"
-  return absolutizePaths(project, textWithResources)
+  return absolutizePaths(project, textWithResources, task)
 }
 
 fun loadText(filePath: String): String? {
@@ -68,16 +73,8 @@ fun wrapHintTagsInsideHTML(text: String, wrapHint: (e: Element, number: String, 
   return document.html()
 }
 
-private fun absolutizePaths(project: Project, content: String): String {
-  val task = EduUtils.getCurrentTask(project)
-  if (task == null) {
-    return content
-  }
-
-  val taskDir = task.getDir(project.courseDir)
-  if (taskDir == null) {
-    return content
-  }
+private fun absolutizePaths(project: Project, content: String, task: Task?): String {
+  val taskDir = task?.getDir(project.courseDir) ?: return content
 
   val document = Jsoup.parse(content)
   val imageElements = document.getElementsByTag(IMG_TAG)

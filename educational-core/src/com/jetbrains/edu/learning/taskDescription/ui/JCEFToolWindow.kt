@@ -85,7 +85,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     else {
       text
     }
-    val html = htmlWithResources(project, wrapHints(taskText, task))
+    val html = htmlWithResources(project, wrapHints(taskText, task), task)
     taskInfoJBCefBrowser.loadHTML(html)
   }
 
@@ -98,7 +98,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     currentTask = task
 
     taskSpecificJBCefBrowser.component.preferredSize = JBUI.size(Int.MAX_VALUE, 250)
-    val html = htmlWithResources(project, ChoiceTaskResourcesManager.getText(task))
+    val html = htmlWithResources(project, ChoiceTaskResourcesManager.getText(task), task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
   }
