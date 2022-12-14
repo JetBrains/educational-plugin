@@ -41,14 +41,22 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   override fun isLoggedIn(): Boolean {
-    val jbaAccessToken = invokeAndWaitIfNeeded {
-      val jbAuthService = JBAccountInfoService.getInstance() ?: error("Failed to get JBAccountInfoService")
-      return@invokeAndWaitIfNeeded getJBAccessToken(jbAuthService)
-    } ?: return false
+    var isLoggedIn = false
+    invokeAndWaitIfNeeded {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        val jbAuthService = JBAccountInfoService.getInstance() ?: error("Failed to get JBAccountInfoService")
+        val jbaAccessToken = getJBAccessToken(jbAuthService)
+        if (jbaAccessToken == null) return@executeOnPooledThread
 
-    val account = MarketplaceSettings.INSTANCE.hubAccount
-    if (account != null) return true
-    return getHubTokenAndSave(jbaAccessToken)
+        val account = MarketplaceSettings.INSTANCE.hubAccount
+        if (account != null) {
+          isLoggedIn = true
+          return@executeOnPooledThread
+        }
+        isLoggedIn = getHubTokenAndSave(jbaAccessToken)
+      }
+    }
+    return isLoggedIn
   }
 
   private fun getJBAccessToken(jbAuthService: JBAccountInfoService): String? {
