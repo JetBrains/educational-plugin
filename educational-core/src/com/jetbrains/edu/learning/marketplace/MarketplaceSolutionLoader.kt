@@ -12,15 +12,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadSolutionsInBackground() {
-    val account = MarketplaceSettings.INSTANCE.hubAccount ?: return
-    if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && account.isJwtTokenProvided()) {
+    if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && MarketplaceConnector.getInstance().isLoggedIn()) {
       super.loadSolutionsInBackground()
     }
   }
