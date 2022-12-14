@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadSolutionsInBackground() {
-    val account = MarketplaceSettings.INSTANCE.account ?: return
+    val account = MarketplaceSettings.INSTANCE.hubAccount ?: return
     if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && account.isJwtTokenProvided()) {
       super.loadSolutionsInBackground()
     }

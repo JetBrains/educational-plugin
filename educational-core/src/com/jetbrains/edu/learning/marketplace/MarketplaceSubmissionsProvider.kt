@@ -49,7 +49,7 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun isLoggedIn(): Boolean {
-    val account = MarketplaceSettings.INSTANCE.account ?: return false
+    val account = MarketplaceSettings.INSTANCE.hubAccount ?: return false
     return account.isJwtTokenProvided()
   }
 

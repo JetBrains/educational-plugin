@@ -46,7 +46,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
       return@invokeAndWaitIfNeeded getJBAccessToken(jbAuthService)
     } ?: return false
 
-    val account = MarketplaceSettings.INSTANCE.account
+    val account = MarketplaceSettings.INSTANCE.hubAccount
     if (account != null) return true
     return getHubTokenAndSave(jbaAccessToken)
   }

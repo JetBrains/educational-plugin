@@ -28,7 +28,7 @@ class MarketplaceStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsManager.submissionsSupported()) return
 
-    val account = MarketplaceSettings.INSTANCE.account
+    val account = MarketplaceSettings.INSTANCE.hubAccount
     if (account != null && account.isJwtTokenProvided()) {
       submissionsManager.prepareSubmissionsContent { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
     }
@@ -36,7 +36,7 @@ class MarketplaceStartupActivity : StartupActivity {
       val busConnection: MessageBusConnection = project.messageBus.connect(taskManager)
       busConnection.subscribe(MarketplaceSubmissionsConnector.GRAZIE_AUTHORIZATION_TOPIC, object : EduLogInListener {
         override fun userLoggedIn() {
-          val userAccount = MarketplaceSettings.INSTANCE.account
+          val userAccount = MarketplaceSettings.INSTANCE.hubAccount
           if (userAccount == null || userAccount.isJwtTokenProvided()) {
             return
           }

@@ -8,9 +8,9 @@ fun loginFakeMarketplaceUser() {
   val account = MarketplaceAccount()
   account.userInfo = MarketplaceUserInfo("Test User")
   account.saveJwtToken("not empty jwt token")
-  MarketplaceSettings.INSTANCE.account = account
+  MarketplaceSettings.INSTANCE.hubAccount = account
 }
 
 fun logoutFakeMarketplaceUser() {
-  MarketplaceSettings.INSTANCE.account = null
+  MarketplaceSettings.INSTANCE.hubAccount = null
 }

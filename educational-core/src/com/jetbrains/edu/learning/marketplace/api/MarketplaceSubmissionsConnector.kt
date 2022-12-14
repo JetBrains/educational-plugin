@@ -50,7 +50,7 @@ class MarketplaceSubmissionsConnector {
   }
 
   private val submissionsService: SubmissionsService
-    get() = submissionsService(MarketplaceSettings.INSTANCE.account?.getJwtToken())
+    get() = submissionsService(MarketplaceSettings.INSTANCE.hubAccount?.getJwtToken())
 
   private fun submissionsService(accessToken: String?): SubmissionsService {
     val retrofit = createRetrofitBuilder(grazieUrl, connectionPool, accessToken = accessToken, authHeaderName = "Grazie-Authenticate-JWT", authHeaderValue = null)
@@ -279,7 +279,7 @@ class MarketplaceSubmissionsConnector {
     fun getInstance(): MarketplaceSubmissionsConnector = service()
 
     fun isUserAuthorizedWithJwtToken(): Boolean {
-      val user = MarketplaceSettings.INSTANCE.account
+      val user = MarketplaceSettings.INSTANCE.hubAccount
       if (user == null) {
         // we check that user isn't null before `postCourse` call
         LOG.warn("User is null when posting the course")

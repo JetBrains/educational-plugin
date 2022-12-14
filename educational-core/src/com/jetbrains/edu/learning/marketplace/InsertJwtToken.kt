@@ -17,7 +17,7 @@ private const val LINK = "https://stgn.grazie.ai/auth/chrome/login/success"
 class InsertJwtToken : DumbAwareAction(ACTION_TITLE) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val account = MarketplaceSettings.INSTANCE.account
+    val account = MarketplaceSettings.INSTANCE.hubAccount
     if (account == null) {
       CCUtils.showLoginNeededNotification(project, e.presentation.text) { MarketplaceConnector.getInstance().doAuthorize() }
       LOG.warn("User not logged in to Marketplace when inserting JWT token")

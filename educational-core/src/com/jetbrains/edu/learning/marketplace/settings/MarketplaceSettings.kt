@@ -19,10 +19,12 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
   @field:Volatile
-  var account: MarketplaceAccount? = null
+  var hubAccount: MarketplaceAccount? = null
     set(account) {
       field = account
       MarketplaceConnector.getInstance().apply {
+        //TODO: do we need to notify user logged out here? as it's just hub logout, not a jb account one
+        // notify log in makes sense as jb account log is needed for hub log int
         if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
       }
     }
@@ -30,7 +32,7 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
   override fun getState(): Element? {
     val mainElement = Element(serviceName)
     XmlSerializer.serializeInto(this, mainElement)
-    val userElement = account?.serialize() ?: return null
+    val userElement = hubAccount?.serialize() ?: return null
     mainElement.addContent(userElement)
     return mainElement
   }
@@ -39,7 +41,7 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
     XmlSerializer.deserializeInto(this, settings)
     val accountClass = MarketplaceAccount::class.java
     val user = settings.getChild(accountClass.simpleName)
-    account = deserializeOAuthAccount(user, accountClass, MarketplaceUserInfo::class.java)
+    hubAccount = deserializeOAuthAccount(user, accountClass, MarketplaceUserInfo::class.java)
   }
 
   companion object {

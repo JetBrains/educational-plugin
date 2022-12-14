@@ -22,12 +22,12 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     }.apply { isMarketplace = true }
     val account = MarketplaceAccount()
     account.userInfo = MarketplaceUserInfo("User Name")
-    MarketplaceSettings.INSTANCE.account = account
+    MarketplaceSettings.INSTANCE.hubAccount = account
     addVendor(course)
 
     doTest()
 
-    MarketplaceSettings.INSTANCE.account = null
+    MarketplaceSettings.INSTANCE.hubAccount = null
   }
 
   fun `test course with author`() {

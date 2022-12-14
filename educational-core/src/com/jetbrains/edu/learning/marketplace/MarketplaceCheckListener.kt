@@ -14,7 +14,7 @@ class MarketplaceCheckListener: PostSolutionCheckListener() {
 
   override fun EduCourse.isToPostSubmissions(): Boolean {
     if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return false
-    val account = MarketplaceSettings.INSTANCE.account ?: return false
+    val account = MarketplaceSettings.INSTANCE.hubAccount ?: return false
     return isMarketplaceRemote && account.isJwtTokenProvided()
   }
 
