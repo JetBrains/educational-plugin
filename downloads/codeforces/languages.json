@@ -100,6 +100,16 @@
   "kotlin":
   [
     {
+      "languageIdWithVersion": "Kotlin 1.7",
+      "programTypeId": "83",
+      "version": "1.7"
+    },
+    {
+      "languageIdWithVersion": "Kotlin 1.6",
+      "programTypeId": "77",
+      "version": "1.6"
+    },
+    {
       "languageIdWithVersion": "Kotlin 1.5",
       "programTypeId": "72",
       "version": "1.5"
