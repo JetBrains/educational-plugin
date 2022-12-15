@@ -6,17 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.credentialStore.Credentials
 import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
 import java.util.*
+import java.util.concurrent.Future
 
 const val ID = "id"
 const val NAME = "name"
@@ -49,7 +55,6 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
 
   private val serviceNameForJwtToken @NlsSafe get() = "$servicePrefix jwt token"
   private val serviceNameForHubIdToken @NlsSafe get() = "$servicePrefix hub id token"
-  private val serviceNameForJBAccountToken @NlsSafe get() = "$servicePrefix jb account id token"
 
   @NlsSafe
   override val servicePrefix: String = MARKETPLACE
@@ -69,13 +74,15 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
     return getSecret(getUserName(), serviceNameForHubIdToken)
   }
 
-  fun getJBAccountToken(): String? {
-    return getSecret(getUserName(), serviceNameForJBAccountToken)
+  fun checkJbAccountLogin(): Boolean {
+    if (JBAccountInfoService.getInstance()?.idToken == null) {
+      MarketplaceSettings.INSTANCE.account = null
+    }
+    return true
   }
 
-  fun saveJBAccountToken(jBAccountToken: String) {
-    val userName = getUserName()
-    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForJBAccountToken), Credentials(userName, jBAccountToken))
+  fun getJBAccountAccessToken(): Future<String>? {
+    return JBAccountInfoService.getInstance()?.accessToken
   }
 
   fun saveJwtToken(jwtToken: String) {

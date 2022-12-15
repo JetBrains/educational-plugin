@@ -4,7 +4,6 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
@@ -22,7 +21,8 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
   @field:Volatile
   var account: MarketplaceAccount? = null
     get() {
-      return if (JBAccountInfoService.getInstance()?.idToken != null && field != null) {
+      val account = field
+      return if (account != null && account.checkJbAccountLogin()) {
         field
       }
       else {
