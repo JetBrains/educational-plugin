@@ -53,7 +53,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
         val jbaAccessToken = getJBAccessToken(jbAuthService)
         if (jbaAccessToken == null) return@executeOnPooledThread
 
-        val account = MarketplaceSettings.INSTANCE.hubAccount
+        val account = MarketplaceSettings.INSTANCE.account
         if (account != null) {
           success = true
           return@executeOnPooledThread

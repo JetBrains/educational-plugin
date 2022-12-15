@@ -58,7 +58,7 @@ class MarketplacePushCourse(
     val connector = MarketplaceConnector.getInstance()
 
     if (!checkIfAuthorized(project, e.presentation.text,
-                           MarketplaceSettings.INSTANCE.hubAccount != null) { connector.doAuthorize() }) {
+                           MarketplaceSettings.INSTANCE.account != null) { connector.doAuthorize() }) {
       return
     }
 

@@ -57,7 +57,7 @@ fun Course.setRemoteMarketplaceCourseVersion() {
 }
 
 fun addVendor(course: Course): Boolean {
-  val currentUser = MarketplaceSettings.INSTANCE.hubAccount ?: return false
+  val currentUser = MarketplaceSettings.INSTANCE.account ?: return false
   course.vendor = Vendor(currentUser.userInfo.name)
   return true
 }

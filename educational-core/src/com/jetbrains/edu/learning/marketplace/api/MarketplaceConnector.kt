@@ -47,10 +47,10 @@ import java.net.URL
 
 abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
-    get() = MarketplaceSettings.INSTANCE.hubAccount
+    get() = MarketplaceSettings.INSTANCE.account
 
     set(account) {
-      MarketplaceSettings.INSTANCE.hubAccount = account
+      MarketplaceSettings.INSTANCE.account = account
     }
 
   override val objectMapper: ObjectMapper by lazy {
