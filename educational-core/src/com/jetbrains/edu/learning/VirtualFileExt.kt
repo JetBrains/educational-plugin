@@ -233,7 +233,7 @@ fun VirtualFile.getTaskFile(holder: CourseInfoHolder<out Course?>): TaskFile? {
 }
 
 val VirtualFile.isToEncodeContent: Boolean
-  get(): Boolean = toEncodeFileContent(path)
+  get(): Boolean = toEncodeFileContent(this)
 
 fun VirtualFile.mimeType(): String? = mimeFileType(path)
 

@@ -1,0 +1,132 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "step-sources" : [
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "<p>You are working in a Pie company. The business going well and bakeries are selling abroad. Sometimes due to custom rules and trade regulations, it is necessary to package bakeries into the box with a more basic name like Bakery or Food. Full class hierarchy follows:</p>\n\n<pre><code class=\"language-java\">class Food {}\n\nclass Bakery extends Food {}\n\nclass Cake extends Bakery {}\n\nclass Pie extends Bakery {}\n\nclass Tart extends Bakery {}\n\ninterface Box&lt;T&gt; {\n    public void put(T item);\n    public T get();\n}</code></pre>\n\n<p>There is <code class=\"language-java\">Packer</code> class available, but it is designed with business rule violation and lacks implementation. Correct the Packer code to ensure that:</p>\n\n<ul>\n\t<li>Any kind of Bakery could be repacked to the Box with a more basic type (e.g. from box with Pie to box with Food)</li>\n\t<li>Basic stuff like food can't be repacked into narrowly typed Boxes (e.g. with Cakes)</li>\n\t<li>Arbitrary stuff like Strings or Objects can't be repacked without compile-time errors or warnings</li>\n\t<li>Repacking actually happens</li>\n</ul>\n\n<p>If you cannot solve this task too much time, try to skip it.</p>",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "java11" : {
+              "time" : 8,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "java11" : "/**\n    This packer has too much freedom and could repackage stuff in wrong direction.\n    Fix method types in signature and add implementation. \n*/\nclass Packer {\n\n\tpublic void repackage(Box to, Box from) {\n\t\t// Implement repackaging\n\t}\n\n}\n\n// Don't change classes below\nclass Box<T> {\n\n    private T item;\n\n    public void put(T item) {\n    \tthis.item = item;\n    }\n\n    public T get() {\n        return this.item;\n    }\n\n}\n\nclass Goods {}\n\nclass Food extends Goods {}\n\nclass Bakery extends Food {}\n\nclass Cake extends Bakery {}\n\nclass Pie extends Bakery {}\n\nclass Tart extends Bakery {}"
+          },
+          "code_templates_header_lines_count" : {
+            "java11" : 12
+          },
+          "code_templates_footer_lines_count" : {
+            "java11" : 101
+          },
+          "code_templates_options" : { },
+          "samples" : [ ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        }
+      },
+      "bloom_level" : 2,
+      "can_abandon" : true,
+      "can_skip" : true,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 30
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 11
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 1
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 17
+        }
+      ],
+      "content_created_at" : "2017-10-18T16:38:42Z",
+      "id" : 2640,
+      "is_abandoned" : false,
+      "is_completed" : false,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2021-02-01T14:25:41.746440Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 16
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 5
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 8
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 4
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 46
+        },
+        {
+          "subject" : "skip",
+          "value" : 0,
+          "total_count" : 1
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 98
+        },
+        {
+          "subject" : "skip",
+          "value" : 102,
+          "total_count" : 32
+        }
+      ],
+      "lesson_stepik_id" : 59009,
+      "position" : 1,
+      "seconds_to_complete" : 800.0,
+      "solved_by" : 673,
+      "stage" : null,
+      "stepik_id" : 232865,
+      "success_rate" : 0.359,
+      "title" : "Packing bakeries",
+      "topic" : 85,
+      "topic_theory" : 9455,
+      "type" : "practice",
+      "updated_at" : "2021-02-01T16:39:32.748810Z",
+      "content_updated_at" : "2021-02-01T16:39:15Z",
+      "progress_updated_at" : "2021-02-04T22:36:43.778249Z",
+      "popular_ide" : "idea",
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "error_issues_count" : 0,
+      "warning_issues_count" : 0
+    }
+  ]
+}

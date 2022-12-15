@@ -6,7 +6,6 @@ import com.intellij.externalDependencies.ProjectExternalDependency
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduNames
@@ -331,7 +330,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 
-    assertThrows(BrokenPlaceholderException::class.java, ThrowableRunnable<BrokenPlaceholderException> {
+    assertThrows(BrokenPlaceholderException::class.java, {
       CourseArchiveCreator.loadActualTexts(project, course)
     })
   }

@@ -60,13 +60,20 @@ inline fun invokeLater(modalityState: ModalityState, condition: Condition<*>, cr
  * Note: there are some unsupported cases in this method.
  * For example, some files have known file type but no extension
  */
-fun toEncodeFileContent(path: String): Boolean {
+fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
+  val path = virtualFile.path
   val name = PathUtil.getFileName(path)
   val extension = FileUtilRt.getExtension(name)
   if (isUnitTestMode && extension == EduUtils.EDU_TEST_BIN) {
     return true
   }
-  val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
+  val fileType = if (virtualFile.fileType !is UnknownFileType) {
+    virtualFile.fileType
+  }
+  else {
+    FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
+  }
+
   if (fileType !is UnknownFileType) {
     return fileType.isBinary
   }

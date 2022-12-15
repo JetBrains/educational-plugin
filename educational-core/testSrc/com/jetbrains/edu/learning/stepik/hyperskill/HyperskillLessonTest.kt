@@ -1,14 +1,21 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
+import com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikTestUtils
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.apache.commons.codec.binary.Base64
 import java.io.File
 
 class HyperskillLessonTest : EduTestCase() {
@@ -24,6 +31,40 @@ class HyperskillLessonTest : EduTestCase() {
     assertEquals(1, info.additionalFiles.size)
     assertEquals("package.json", info.additionalFiles[0].name)
     assertEquals("My cool dependencies", info.additionalFiles[0].text)
+  }
+
+  fun `test push course with binary file`() {
+    StepikTestUtils.loginFakeStepikUser()
+    val mockConnector = StepikConnector.getInstance() as MockStepikConnector
+
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      val responseFileName = when (path) {
+        "/api/lessons" -> "lessons_response_278738129.json"
+        "/api/step-sources" -> "step-source.json"
+        else -> ""
+      }
+      mockResponse(responseFileName)
+    }
+    val dbFilePath = "database.db"
+    val base64Text = "eAErKUpNVTA3ZjA0MDAzMVHITczM08suYTh0o+NNPdt26bgThdosKRdPVXHN/wNVUpSamJKbqldSUcKwosqLb/75qC5OmZAJs9O9Di0I/PoCAJ5FH4E="
+    val course = courseWithFiles("Test Course", courseMode = CourseMode.EDUCATOR, id = 1) {
+      frameworkLesson("lesson1") {
+        eduTask {
+          taskFile("taskFile1.txt")
+          taskFile(dbFilePath, base64Text, false)
+        }
+      }
+    }
+
+    val firstLesson = course.lessons.first()
+    val task = firstLesson.taskList.first()
+    val taskFile = task.taskFiles["database.db"]
+    runWriteAction {
+      taskFile!!.getVirtualFile(project)!!.setBinaryContent(Base64.decodeBase64("binary file"))
+    }
+
+    UIUtil.dispatchAllInvocationEvents()
+    PushHyperskillLesson.doPush(firstLesson, project)
   }
 
   fun `test receiving course additional files`() {
@@ -52,4 +93,9 @@ class HyperskillLessonTest : EduTestCase() {
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
+
+  override fun tearDown() {
+    super.tearDown()
+    EduSettings.getInstance().user = null
+  }
 }

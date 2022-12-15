@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
 import static com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash;
@@ -128,6 +129,7 @@ public class PushHyperskillLesson extends DumbAwareAction {
     return lesson;
   }
 
+  @VisibleForTesting
   public static void doPush(Lesson lesson, Project project) {
     String notification = lesson.getId() > 0 ? EduCoreBundle.message("action.push.custom.lesson.updated", HYPERSKILL)
                                              : EduCoreBundle.message("action.push.custom.lesson.uploaded", HYPERSKILL);
