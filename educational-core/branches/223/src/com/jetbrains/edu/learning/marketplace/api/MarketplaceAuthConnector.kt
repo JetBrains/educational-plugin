@@ -41,6 +41,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   override fun isLoggedIn(): Boolean {
+    if (JBAccountInfoService.getInstance()?.idToken != null && account != null) return true
     return autoLogIn()
   }
 
