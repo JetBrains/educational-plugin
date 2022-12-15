@@ -39,7 +39,9 @@ abstract class CCCreateStudyItemDialogBase(
   }
 
   override fun createCenterPanel(): JComponent {
-    addTextValidator(nameField)
+    if (showNameField()) {
+      addTextValidator(nameField)
+    }
     return panel {
       if (showNameField()) {
         row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") { nameField() }
