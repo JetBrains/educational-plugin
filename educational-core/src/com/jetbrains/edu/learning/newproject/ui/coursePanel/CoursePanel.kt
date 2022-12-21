@@ -89,6 +89,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     border = JBUI.Borders.customLine(DIVIDER_COLOR, 0, 0, 0, 0)
 
     layoutComponents()
+    doValidation()
     setButtonsEnabled(canStartCourse())
 
     ApplicationManager.getApplication()
@@ -146,12 +147,12 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     courseData = data
     (layout as CardLayout).show(this, CONTENT)
 
-    doValidation()
-
     buttonsPanel.apply {
       setStartButtonText(startButtonText(course))
     }
     content.update(data)
+
+    doValidation()
 
     revalidate()
     repaint()
@@ -261,7 +262,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     init {
       val contentPanel = NonOpaquePanel().apply {
         layout = FlowLayout(FlowLayout.LEFT, 0, 0)
-        border = JBUI.Borders.empty(0, HORIZONTAL_MARGIN - DEFAULT_BUTTON_OFFSET, 0, 0)
+        border = JBUI.Borders.emptyLeft(HORIZONTAL_MARGIN - DEFAULT_BUTTON_OFFSET)
       }
       buttons.forEach {
         contentPanel.add(it)

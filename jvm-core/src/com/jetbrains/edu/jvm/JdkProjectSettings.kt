@@ -8,14 +8,17 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.jetbrains.edu.learning.courseFormat.Course
 
 class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) {
 
   fun setUpProjectJdk(
     project: Project,
+    course: Course,
     getJdk: JdkProjectSettings.() -> Sdk? = { jdk }
   ): Sdk? {
     val jdk = getJdk()
@@ -31,6 +34,9 @@ class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) {
     runWriteAction {
       ProjectRootManager.getInstance(project).projectSdk = jdk
       addAnnotations(ProjectRootManager.getInstance(project).projectSdk?.sdkModificator)
+      val sdkVersion = course.minJvmSdkVersion
+      if (sdkVersion is JavaVersionParseSuccess)
+        LanguageLevelProjectExtension.getInstance(project).languageLevel = sdkVersion.javaSdkVersion.maxLanguageLevel
     }
     return jdk
   }

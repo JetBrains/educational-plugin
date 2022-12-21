@@ -148,6 +148,10 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
 
     course.additionalFiles = course.additionalFiles + builder.eduFile
   }
+
+  fun environmentSetting(key: String, value: String) {
+    course.environmentSettings = course.environmentSettings.plus(key to value)
+  }
 }
 
 class SectionBuilder(course: Course, val section: Section = Section()) : LessonOwnerBuilder(course) {

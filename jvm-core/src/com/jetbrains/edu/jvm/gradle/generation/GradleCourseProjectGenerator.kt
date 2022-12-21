@@ -13,7 +13,7 @@ open class GradleCourseProjectGenerator(
 ) : GradleCourseProjectGeneratorBase(builder, course) {
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
-    val jdk = projectSettings.setUpProjectJdk(project, ::getJdk)
+    val jdk = projectSettings.setUpProjectJdk(project, course, ::getJdk)
     setupGradleSettings(project, jdk)
     super.afterProjectGenerated(project, projectSettings)
   }

@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -57,4 +58,6 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
     const val MAIN_SCALA = "Main.scala"
     const val MOCK_SCALA = "Mock.scala"
   }
+
+  override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)
 }

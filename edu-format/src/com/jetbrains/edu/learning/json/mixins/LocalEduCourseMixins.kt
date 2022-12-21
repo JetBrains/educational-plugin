@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
@@ -96,6 +97,10 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(ENVIRONMENT)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   lateinit var environment: String
+
+  @JsonProperty(ENVIRONMENT_SETTINGS)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  lateinit var environmentSettings: Map<String, String>
 
   val itemType: String
     @JsonProperty(COURSE_TYPE)

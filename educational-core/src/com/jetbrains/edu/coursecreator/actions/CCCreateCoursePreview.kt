@@ -8,6 +8,7 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.updateEnvironmentSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 @Suppress("ComponentNotRegistered")  // educational-core.xml
@@ -18,6 +19,9 @@ class CCCreateCoursePreview : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     val currentCourse = StudyTaskManager.getInstance(project).course ?: return
     if (currentCourse !is EduCourse) return
     val configurator = currentCourse.configurator ?: return
+    // The course preview dialog opens BEFORE the course archive is created, so we need to update environment settings
+    // before creating the course archive.
+    currentCourse.updateEnvironmentSettings(project, configurator)
 
     CCCreateCoursePreviewDialog(project, currentCourse, configurator).show()
   }

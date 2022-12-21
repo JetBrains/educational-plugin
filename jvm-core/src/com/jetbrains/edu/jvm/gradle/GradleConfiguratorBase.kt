@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.course
@@ -67,4 +68,6 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
     private val LOG = Logger.getInstance(GradleConfiguratorBase::class.java)
   }
+
+  override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)
 }

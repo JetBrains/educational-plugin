@@ -14,6 +14,7 @@ import java.util.*
 abstract class Course : LessonContainer() {
   var description: String = ""
   var environment: String = DEFAULT_ENVIRONMENT
+  var environmentSettings: Map<String, String> = mapOf() // here we store a map with keys understandable by specific course builders
   var courseMode: CourseMode = CourseMode.STUDENT //this field is used to distinguish study and course creator modes
   var solutionsHidden: Boolean = false
 

@@ -16,6 +16,7 @@ object JsonMixinNames {
   const val PROGRAMMING_LANGUAGE = "programming_language"
   const val COURSE_TYPE = "course_type"
   const val ENVIRONMENT = "environment"
+  const val ENVIRONMENT_SETTINGS = "environment_settings"
   const val DESCRIPTION_TEXT = "description_text"
   const val DESCRIPTION_FORMAT = "description_format"
   const val ADDITIONAL_FILES = "additional_files"

@@ -1,0 +1,14 @@
+{
+  "summary" : "Test Course Description",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [ ],
+  "version" : 15,
+  "environment_settings" : {
+    "example key 1" : "example value 1",
+    "example key 2" : "example value 2"
+  },
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}

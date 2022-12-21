@@ -151,6 +151,16 @@ class CourseFormatTest : EduTestCase() {
     assertNull(course.languageVersion)
   }
 
+  fun testEnvironmentSettings() {
+    assertEquals(
+      mapOf(
+        "example key 1" to "example value 1",
+        "example key 2" to "example value 2"
+      ),
+      courseFromJson.environmentSettings
+    )
+  }
+
   private val courseFromJson: Course
     get() {
       val fileName = testFile

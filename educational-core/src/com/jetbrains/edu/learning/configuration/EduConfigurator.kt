@@ -180,6 +180,8 @@ interface EduConfigurator<Settings : Any> {
 
   fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
+  fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
+
   companion object {
     val INCLUDED_SETTINGS_SUBDIRECTORIES = setOf(PROFILE_DIR, "scopes")
   }

@@ -889,3 +889,17 @@
             }
     }
     ```
+    
+15. Courses now may have an `environment_settings` field with a value of type `Map<String, String>`.
+  Map keys may be arbitrary and are created and interpreted by a configurator.
+  If the map is empty, it is not written to JSON.
+    ```json
+    {
+      // other properties
+      "version" : 15,
+      "environment_settings" : {
+        "jvm_language_level" : "JDK_19_PREVIEW"
+      },
+      "edu_plugin_version" : "2023.1-2022.3-SNAPSHOT"
+    }
+    ```

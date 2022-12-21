@@ -799,6 +799,14 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest()
   }
 
+  fun `test environment settings serialization`() {
+    courseWithFiles {
+      environmentSetting("example key 1", "example value 1")
+      environmentSetting("example key 2", "example value 2")
+    }
+    doTest()
+  }
+
   override fun getTestDataPath(): String {
     return super.getTestDataPath() + "/actions/createCourseArchive"
   }

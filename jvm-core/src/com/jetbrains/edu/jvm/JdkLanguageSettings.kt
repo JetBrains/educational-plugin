@@ -3,10 +3,7 @@ package com.jetbrains.edu.jvm
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.JavaSdkType
-import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
@@ -19,6 +16,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
+import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JComponent
@@ -38,7 +36,14 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected open fun setupProjectSdksModel(model: ProjectSdksModel) {}
 
-  override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
+  @VisibleForTesting
+  fun selectJdk(jdk: Sdk?) {
+    this.jdk = jdk
+  }
+
+  override fun getLanguageSettingsComponents(course: Course,
+                                             disposable: Disposable,
+                                             context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
@@ -51,17 +56,51 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
   }
 
-  protected open fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
+  private fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
     if (jdkComboBox.selectedJdk != null) return
-    jdkComboBox.selectedJdk = sdksModel.sdks.firstOrNull { it.sdkType == JavaSdk.getInstance() }
+    jdkComboBox.selectedJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
-    if (jdk == null) {
-      return SettingsValidationResult.Ready(ValidationMessage(EduJVMBundle.message("error.no.jdk"), ENVIRONMENT_CONFIGURATION_LINK_JAVA))
+    fun ready(messageId: String, vararg additionalSubstitution: String): SettingsValidationResult {
+      val message = EduJVMBundle.message(messageId, *additionalSubstitution)
+
+      return SettingsValidationResult.Ready(ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_JAVA))
     }
-    return super.validate(course, courseLocation)
+
+    course ?: return super.validate(null, courseLocation)
+
+    // compare the version of the selected jdk to the minimum version required by the course
+    val selectedJavaVersion = ParsedJavaVersion.fromJavaSdkVersionString(jdk?.versionString)
+    val courseJavaVersion = minJvmSdkVersion(course)
+
+    if (courseJavaVersion is JavaVersionParseFailed)
+      return ready("error.unsupported.java.version", courseJavaVersion.versionAsText)
+    if (selectedJavaVersion is JavaVersionParseFailed)
+      return ready("failed.determine.java.version", selectedJavaVersion.versionAsText)
+
+    if (selectedJavaVersion == JavaVersionNotProvided)
+      return if (courseJavaVersion == JavaVersionNotProvided)
+        ready("error.no.jdk")
+      else
+        ready("error.no.jdk.need.at.least", (courseJavaVersion as JavaVersionParseSuccess).javaSdkVersion.description)
+    if (courseJavaVersion == JavaVersionNotProvided)
+      return SettingsValidationResult.OK
+
+    selectedJavaVersion as JavaVersionParseSuccess
+    courseJavaVersion as JavaVersionParseSuccess
+
+    return if (selectedJavaVersion isAtLeast courseJavaVersion)
+      SettingsValidationResult.OK
+    else
+      ready("error.old.java", courseJavaVersion.javaSdkVersion.description, selectedJavaVersion.javaSdkVersion.description)
   }
+
+  /**
+   * This is the minimum JDK version that we allow to use for the course.
+   * Basically, it is taken from environment settings, but for Java courses it is specified explicitly in [Course.languageVersion]
+   */
+  protected open fun minJvmSdkVersion(course: Course): ParsedJavaVersion = course.minJvmSdkVersion
 
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 
@@ -74,6 +113,21 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       // Try to find existing bundled jdk added by the plugin on previous course creation or by user
       val sdk = model.projectSdks.values.find { it.homePath == bundledJdkPath }
       return BundledJdkInfo(bundledJdkPath, sdk)
+    }
+
+    fun findSuitableJdk(courseSdkVersion: ParsedJavaVersion, sdkModel: ProjectSdksModel): Sdk? {
+      val jdks = sdkModel.sdks.filter { it.sdkType == JavaSdk.getInstance() }
+
+      if (courseSdkVersion !is JavaVersionParseSuccess)
+        return jdks.firstOrNull()
+
+      return jdks.find {
+        val jdkVersion = ParsedJavaVersion.fromJavaSdkVersionString(it.versionString)
+        if (jdkVersion is JavaVersionParseSuccess)
+          jdkVersion isAtLeast courseSdkVersion
+        else
+          false
+      }
     }
   }
 

@@ -2,6 +2,7 @@ package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.MainFileProvider
+import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
@@ -21,4 +22,6 @@ abstract class GradleHyperskillConfigurator<T : Any>(baseConfigurator: EduConfig
       null
     } ?: super.getCodeTaskFile(project, task)
   }
+
+  override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)
 }

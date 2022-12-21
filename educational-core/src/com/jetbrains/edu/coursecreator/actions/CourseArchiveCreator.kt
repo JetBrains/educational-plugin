@@ -30,9 +30,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
-import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -63,6 +61,7 @@ class CourseArchiveCreator(
     if (course != null && course.isMarketplace && !isUnitTestMode) {
       course.updateCourseItems()
     }
+    course?.updateEnvironmentSettings(project)
     val course = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")

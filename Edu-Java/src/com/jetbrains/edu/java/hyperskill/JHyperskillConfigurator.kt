@@ -4,8 +4,9 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.java.JConfigurator
 import com.jetbrains.edu.java.JCourseBuilder
-import com.jetbrains.edu.java.JLanguageSettings
+import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.ParsedJavaVersion
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.GradleHyperskillConfigurator
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
@@ -43,7 +44,10 @@ class JHyperskillConfigurator : GradleHyperskillConfigurator<JdkProjectSettings>
     GradleCourseProjectGenerator(builder, course) {
 
     override fun getJdk(settings: JdkProjectSettings): Sdk? {
-      return super.getJdk(settings) ?: JLanguageSettings.findSuitableJdk(course, settings.model)
+      return super.getJdk(settings) ?: JdkLanguageSettings.findSuitableJdk(
+        ParsedJavaVersion.fromJavaSdkDescriptionString(course.languageVersion),
+        settings.model
+      )
     }
   }
 

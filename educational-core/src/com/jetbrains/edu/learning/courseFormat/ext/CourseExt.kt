@@ -192,3 +192,8 @@ private fun Course.pluginCompatibility(): CourseCompatibility? {
 private fun Course.configuratorCompatibility(): CourseCompatibility? {
   return if (configurator == null) CourseCompatibility.Unsupported else null
 }
+
+fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
+  configurator ?: return
+  course.environmentSettings = configurator.getEnvironmentSettings(project)
+}
