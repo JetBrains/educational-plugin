@@ -41,7 +41,7 @@ class CheckiOMissionCheck(private val project: Project,
                           @NonNls private val interpreterName: String,
                           @NonNls private val testFormTargetUrl: String
 ) : Callable<CheckResult> {
-  private val jbCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
+  private val jbCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
   private val jbCefJSQuery = JBCefJSQuery.create(jbCefBrowser as JBCefBrowserBase)
   private lateinit var checkResult: CheckResult
   private val latch = CountDownLatch(1)

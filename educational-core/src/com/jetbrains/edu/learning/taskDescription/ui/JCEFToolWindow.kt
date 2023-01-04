@@ -23,8 +23,8 @@ import org.jsoup.nodes.Element
 import javax.swing.JComponent
 
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
-  private val taskInfoJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
-  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
+  private val taskInfoJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
+  private val taskSpecificJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
   private var currentTask: ChoiceTask? = null
 
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser as JBCefBrowserBase)

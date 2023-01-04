@@ -13,7 +13,7 @@ import javax.swing.JComponent
 
 
 class JCEFTextPanel(project: Project, plainText: Boolean) : TabTextPanel(project, plainText) {
-  private val jcefBrowser = JCEFHtmlPanel(JBCefApp.getInstance().createClient(), null)
+  private val jcefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
 
   override val component: JComponent
     get() = jcefBrowser.component
