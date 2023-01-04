@@ -93,7 +93,7 @@ class CodeforcesCoursesPanel(
     text.appendLine(EduCoreBundle.message("help.use.guide1") + " ", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
     @Suppress("DialogTitleCapitalization") // it's ok to start from lowercase as it's the second part of a sentence
     text.appendText(EduCoreBundle.message("help.use.guide2"),
-                    SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(EduNames.NO_COURSES_URL) }
+                    SimpleTextAttributes.LINK_ATTRIBUTES) { EduBrowser.getInstance().browse(EduNames.CODEFORCES_ANTI_CRAWLER_URL) }
   }
 
   private inner class CodeforcesCoursesListPanel : CoursesListWithResetFilters() {
