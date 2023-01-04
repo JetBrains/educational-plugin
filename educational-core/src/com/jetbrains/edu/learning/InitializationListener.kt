@@ -1,14 +1,18 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.ide.AppLifecycleListener
+import com.intellij.ide.BrowserUtil
+import com.intellij.ide.IdeBundle
 import com.intellij.ide.plugins.DynamicPluginListener
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.AppUIExecutor
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.ui.DialogBuilder
@@ -68,6 +72,11 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       propertiesComponent.setValue(STEPIK_AUTH_RESET, true)
     }
 
+    @Suppress("UnstableApiUsage", "DEPRECATION")
+    if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational()) {
+      showSwitchFromEduNotification()
+    }
+
     if (!CCPluginToggleAction.isCourseCreatorFeaturesPropertySet) {
       @Suppress("UnstableApiUsage", "DEPRECATION")
       if (!PlatformUtils.isPyCharmEducational() && !PlatformUtils.isIdeaEducational()) {
@@ -86,6 +95,38 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     }
   }
 
+  private fun showSwitchFromEduNotification() {
+    val notification = Notification(
+      "EduTools",
+      EduCoreBundle.message("notification.ide.switch.from.edu.ide.title", ApplicationNamesInfo.getInstance().fullProductNameWithEdition),
+      EduCoreBundle.message("notification.ide.switch.from.edu.ide.description",
+                            "${ApplicationNamesInfo.getInstance().fullProductName} Community"),
+      NotificationType.ERROR,
+    ).apply {
+      isSuggestionType = true
+    }
+
+    notification
+      .addAction(
+        NotificationAction.createSimple(EduCoreBundle.message("notification.ide.switch.from.edu.ide.acton.title")) {
+          @Suppress("UnstableApiUsage")
+          val link = if (PlatformUtils.isPyCharmEducational()) {
+            "https://www.jetbrains.com/pycharm/download/"
+          }
+          else {
+            "https://www.jetbrains.com/idea/download/"
+          }
+          BrowserUtil.browse(link)
+          notification.expire()
+        })
+      .addAction(NotificationAction.createSimple((IdeBundle.message("notifications.toolwindow.dont.show.again"))) {
+        @Suppress("UnstableApiUsage")
+        notification.setDoNotAskFor(null)
+        notification.expire()
+      })
+    notification.notify(null)
+  }
+
   private fun fillRecentCourses() {
     val state = recentProjectManagerEx().state
     val recentPathsInfo = state.additionalInfo
@@ -99,7 +140,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     }
   }
 
-  private fun deserializeCourse(projectPath: String) : Course? {
+  private fun deserializeCourse(projectPath: String): Course? {
     val projectFile = File(PathUtil.toSystemDependentName(projectPath))
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: return null
