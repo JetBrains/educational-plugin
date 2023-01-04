@@ -12,6 +12,7 @@ include(
   "code-insight:markdown",
   "code-insight:yaml",
   "jvm-core",
+  "remote-env",
   "Edu-Java",
   "Edu-Kotlin",
   "Edu-Scala",

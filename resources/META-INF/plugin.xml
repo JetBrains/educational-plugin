@@ -38,5 +38,6 @@
     <module name="Edu-Sql-Java"/>
     <module name="Edu-Sql-Kotlin"/>
     <module name="Edu-GitHub"/>
+    <module name="remote-env"/>
   </content>
 </idea-plugin>

@@ -367,6 +367,7 @@ project(":") {
     implementation(project(":sql:Edu-Sql-Java"))
     implementation(project(":sql:Edu-Sql-Kotlin"))
     implementation(project(":Edu-GitHub"))
+    implementation(project(":remote-env"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -637,6 +638,18 @@ project(":jvm-core") {
     implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":remote-env") {
+  if (isAtLeast223 && !isStudioIDE) {
+    intellij {
+      plugins.set(listOf("com.jetbrains.codeWithMe"))
+    }
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
   }
 }
 
