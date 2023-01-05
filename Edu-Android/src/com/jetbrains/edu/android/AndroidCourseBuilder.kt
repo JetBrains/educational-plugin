@@ -9,6 +9,7 @@ import com.android.tools.idea.sdk.AndroidSdks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.jetbrains.edu.android.AndroidCourseBuilder.Configuration.*
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateLesson
@@ -33,6 +34,7 @@ import com.jetbrains.edu.learning.kotlinVersion
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = "android-build.gradle"
+  override val settingGradleTemplateName: String = "android-settings.gradle"
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
@@ -102,9 +104,10 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       templates += TemplateFileInfo("android-MainActivity.kt", "src/main/java/$packagePath/MainActivity.kt", true)
       templates += TemplateFileInfo("android-AndroidManifest.xml", "src/main/AndroidManifest.xml", true)
       templates += TemplateFileInfo("android-activity_main.xml", "src/main/res/layout/activity_main.xml", true)
-      templates += TemplateFileInfo("android-styles.xml", "src/main/res/values/styles.xml", true)
       templates += TemplateFileInfo("android-strings.xml", "src/main/res/values/strings.xml", true)
       templates += TemplateFileInfo("android-colors.xml", "src/main/res/values/colors.xml", true)
+      templates += TemplateFileInfo("android-themes.xml", "src/main/res/values/themes.xml", true)
+      templates += TemplateFileInfo("android-themes-night.xml", "src/main/res/values-night/themes.xml", true)
     }
     if (withTests) {
       templates += TemplateFileInfo("android-ExampleUnitTest.kt", "src/test/java/$packagePath/ExampleUnitTest.kt", false)
@@ -126,22 +129,22 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       "MIN_ANDROID_SDK" to minAndroidSdk.toString(),
       "COMPILE_ANDROID_SDK" to compileAndroidSdk.toString(),
       "TARGET_ANDROID_SDK" to compileAndroidSdk.toString(),
-      "ANDROIDX_CORE_VERSION" to getLibraryVersion("androidx.core", "core-ktx", "1.0.2"),
-      "ANDROIDX_APP_COMPAT_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.0.2"),
-      "ANDROIDX_TEST_RUNNER_VERSION" to getLibraryVersion("androidx.test.ext", "junit", "1.1.1"),
-      "ANDROIDX_ESPRESSO_CORE_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.2.0"),
-      "ANDROIDX_RULES_VERSION" to getLibraryVersion(GoogleMavenArtifactId.ANDROIDX_TEST_RULES, "1.1.0")
+      "DEPENDENCIES_BLOCK" to generateDependencyBlock()
     )
-  }
-
-  private fun getLibraryVersion(mavenArtifactId: GoogleMavenArtifactId, defaultVersion: String): String {
-    return getLibraryVersion(mavenArtifactId.mavenGroupId, mavenArtifactId.mavenArtifactId, defaultVersion)
   }
 
   private fun getLibraryVersion(groupId: String, artifactId: String, defaultVersion: String): String {
     val gradleCoordinate = GradleCoordinate(groupId, artifactId, "+")
     val sdkHandler = AndroidSdks.getInstance().tryToChooseSdkHandler()
     return RepositoryUrlManager.get().resolveDynamicCoordinateVersion(gradleCoordinate, null, sdkHandler) ?: defaultVersion
+  }
+
+  private fun generateDependencyBlock(): String {
+    return DEPENDENCIES.joinToString("\n", prefix = "dependencies {\n", postfix = "\n}") { dependency ->
+      val (configuration, groupId, artifactId, defaultVersion) = dependency
+      val version = getLibraryVersion(groupId, artifactId, defaultVersion)
+      "    ${configuration.configurationName} '$groupId:$artifactId:$version'"
+    }
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()
@@ -160,5 +163,35 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       putUserData(MIN_ANDROID_SDK, androidSdkVersion ?: FormFactor.MOBILE.minOfflineApiLevel)
       putUserData(COMPILE_ANDROID_SDK, compileSdkVersion)
     }
+
+    private val DEPENDENCIES: List<Dependency> = listOf(
+      Dependency(IMPLEMENTATION, "androidx.core", "core-ktx", "1.7.0"),
+      Dependency(IMPLEMENTATION, GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, "1.5.1"),
+      Dependency(IMPLEMENTATION, GoogleMavenArtifactId.ANDROIDX_DESIGN, "1.7.0"),
+      Dependency(IMPLEMENTATION, GoogleMavenArtifactId.CONSTRAINT_LAYOUT, "2.1.4"),
+      Dependency(TEST_IMPLEMENTATION, "junit", "junit", "4.13.2"),
+      Dependency(ANDROID_TEST_IMPLEMENTATION, GoogleMavenArtifactId.ANDROIDX_TEST_EXT_JUNIT, "1.1.4"),
+      Dependency(ANDROID_TEST_IMPLEMENTATION, GoogleMavenArtifactId.ANDROIDX_ESPRESSO_CORE, "3.5.0"),
+      Dependency(ANDROID_TEST_IMPLEMENTATION, GoogleMavenArtifactId.ANDROIDX_TEST_RULES, "1.1.0")
+    )
+  }
+
+  private data class Dependency(
+    val configuration: Configuration,
+    val groupId: String,
+    val artifactId: String,
+    val defaultVersion: String
+  ) {
+    constructor(
+      configuration: Configuration,
+      mavenArtifactId: GoogleMavenArtifactId,
+      defaultVersion: String
+    ) : this(configuration, mavenArtifactId.mavenGroupId, mavenArtifactId.mavenArtifactId, defaultVersion)
+  }
+
+  private enum class Configuration(val configurationName: String) {
+    IMPLEMENTATION("implementation"),
+    TEST_IMPLEMENTATION("testImplementation"),
+    ANDROID_TEST_IMPLEMENTATION("androidTestImplementation");
   }
 }
