@@ -36,9 +36,12 @@ class AndroidCreateTaskTest : EduActionTestCase() {
                 file("activity_main.xml")
               }
               dir("values") {
-                file("styles.xml")
-                file("strings.xml")
                 file("colors.xml")
+                file("strings.xml")
+                file("themes.xml")
+              }
+              dir("values-night") {
+                file("themes.xml")
               }
             }
             file("AndroidManifest.xml")

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait

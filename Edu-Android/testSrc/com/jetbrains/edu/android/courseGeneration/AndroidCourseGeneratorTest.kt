@@ -2,11 +2,13 @@ package com.jetbrains.edu.android.courseGeneration
 
 import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
 import com.android.tools.idea.startup.GradleSpecificInitializer
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.impl.ActionConfigurationCustomizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.*
@@ -19,6 +21,7 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   override fun setUp() {
     super.setUp()
     disableUnnecessaryExtensions()
+    disableProjectSyncNotifications()
   }
 
   // Disables some extensions provided by AS.
@@ -58,9 +61,12 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
                 file("activity_main.xml")
               }
               dir("values") {
-                file("styles.xml")
-                file("strings.xml")
                 file("colors.xml")
+                file("strings.xml")
+                file("themes.xml")
+              }
+              dir("values-night") {
+                file("themes.xml")
               }
             }
             file("AndroidManifest.xml")
@@ -118,5 +124,21 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     }
     file("gradlew")
     file("gradlew.bat")
+  }
+
+  // Doesn't allow `ProjectSyncStatusNotificationProvider` to show `ProjectSyncStatusNotificationProvider.ProjectStructureNotificationPanel`.
+  // These tests are not intended to check Gradle sync, only file structure
+  private fun disableProjectSyncNotifications() {
+    val component = PropertiesComponent.getInstance()
+    val oldValue = component.getValue(PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP)
+    component.setValue(PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP, System.currentTimeMillis().toString())
+    Disposer.register(testRootDisposable) {
+      PropertiesComponent.getInstance().setValue(PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP, oldValue)
+    }
+  }
+
+  companion object {
+    // See com.android.tools.idea.gradle.notification.ProjectSyncStatusNotificationProvider.ProjectStructureNotificationPanel.userAllowsShow
+    private const val PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP = "PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP"
   }
 }
