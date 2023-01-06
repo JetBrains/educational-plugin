@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -211,8 +212,11 @@ fun Task.shouldGenerateTestsOnTheFly(): Boolean {
   return course.isStudy && course is EduCourse && course.isMarketplace && (this is EduTask || this is OutputTask)
 }
 
-fun Task.findTaskDescriptionFile(project: Project): VirtualFile {
+fun Task.findTaskDescriptionFile(project: Project): VirtualFile? {
   val taskDir = getDir(project.courseDir) ?: error(noDirForItemMessage(name, TASK))
   val file = taskDir.findChild(TASK_HTML) ?: taskDir.findChild(TASK_MD)
-  return file ?: error("No task description file for $name")
+
+  file ?: logger<Task>().warn("No task description file for $name")
+
+  return file
 }

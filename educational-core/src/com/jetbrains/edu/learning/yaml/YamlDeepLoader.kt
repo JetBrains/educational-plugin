@@ -177,8 +177,13 @@ object YamlDeepLoader {
     visitLessons { lesson ->
       lesson.visitTasks {
         val taskDescriptionFile = it.findTaskDescriptionFile(project)
-        it.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
-        it.descriptionText = VfsUtil.loadText(taskDescriptionFile)
+        if (taskDescriptionFile != null) {
+          it.descriptionFormat = taskDescriptionFile.toDescriptionFormat()
+          it.descriptionText = VfsUtil.loadText(taskDescriptionFile)
+        } else {
+          it.descriptionFormat = DescriptionFormat.HTML
+          it.descriptionText = EduCoreBundle.message("task.description.not.found")
+        }
       }
     }
   }
