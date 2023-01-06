@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.guessCourseDir
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LESSON
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SECTION
@@ -41,7 +41,7 @@ object YamlFormatSettings {
   const val REMOTE_TASK_CONFIG = "task-remote-info.yaml"
 
   @JvmStatic
-  fun Project.isEduYamlProject() = courseDir.findChild(COURSE_CONFIG) != null
+  fun Project.isEduYamlProject() = guessCourseDir()?.findChild(COURSE_CONFIG) != null
 
   // it is here because it's used in test and main code
   val YAML_TEST_PROJECT_READY = Key<Boolean>("EDU.yaml_test_project_ready")

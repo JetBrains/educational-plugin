@@ -80,12 +80,16 @@ private fun isGitObject(name: String): Boolean {
 
 val Project.courseDir: VirtualFile
   get() {
-    val projectDir = guessProjectDir() ?: error("Failed to find course dir for $this")
-    if (projectDir.name == Project.DIRECTORY_STORE_FOLDER) {
-      return projectDir.parent
-    }
-    return projectDir
+    return guessCourseDir() ?: error("Failed to find course dir for $this")
   }
+
+fun Project.guessCourseDir(): VirtualFile? {
+  val projectDir = guessProjectDir() ?: return null
+  return if (projectDir.name == Project.DIRECTORY_STORE_FOLDER) {
+    projectDir.parent
+  }
+  else projectDir
+}
 
 val Project.selectedEditor: Editor? get() = selectedVirtualFile?.getEditor(this)
 
