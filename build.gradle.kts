@@ -703,9 +703,9 @@ project(":Edu-Android") {
     testImplementation(project(":jvm-core", "testOutput"))
   }
 
-  // BACKCOMPAT: enable when 222 studio is available
+  // BACKCOMPAT: enable when 223 studio is available
   tasks.withType<Test> {
-    enabled = environmentName.toInt() < 222
+    enabled = environmentName.toInt() < 223
   }
 }
 
