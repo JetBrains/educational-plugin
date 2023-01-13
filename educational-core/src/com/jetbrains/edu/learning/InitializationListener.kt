@@ -104,6 +104,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       NotificationType.ERROR,
     ).apply {
       isSuggestionType = true
+      configureDoNotAsk(SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID, EduCoreBundle.message("notification.ide.switch.from.edu.ide.do.not.ask"))
     }
 
     notification
@@ -172,5 +173,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   companion object {
     const val RECENT_COURSES_FILLED = "Educational.recentCoursesFilled"
     const val STEPIK_AUTH_RESET = "Educational.stepikOAuthReset"
+    private const val SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID = "Edu IDEs aren't supported"
   }
 }
