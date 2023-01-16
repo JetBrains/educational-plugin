@@ -1,7 +1,12 @@
 package com.jetbrains.edu.learning.marketplace.api
 
+import com.intellij.ide.plugins.PluginManagerConfigurable
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.api.EduLoginConnector
 import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHANGE
@@ -11,12 +16,14 @@ import com.jetbrains.edu.learning.createRetrofitBuilder
 import com.jetbrains.edu.learning.executeHandlingExceptions
 import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginFailedNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.EDU_CLIENT_ID
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.EDU_CLIENT_SECRET
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.MARKETPLACE_CLIENT_ID
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnectorUtils.checkIsGuestAndSave
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import java.util.*
 import java.util.concurrent.ExecutionException
@@ -38,12 +45,27 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   private fun login() {
-    val jbAuthService = JBAccountInfoService.getInstance() ?: error("Failed to log in to $platformName")
+    val jbAuthService = JBAccountInfoService.getInstance()
+    if (jbAuthService == null) {
+      LOG.warn("JBAccountInfoService is null")
+
+      showInstallMarketplacePluginNotification(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
+        override fun actionPerformed(e: AnActionEvent) {
+          ShowSettingsUtil.getInstance().showSettingsDialog(ProjectManager.getInstance().defaultProject, PluginManagerConfigurable::class.java)
+        }
+      })
+
+      return
+    }
     if (jbAuthService.userData == null) {
-      jbAuthService.invokeJBALogin({ getHubTokenAndSave(jbAuthService) }, { showLoginFailedNotification(JET_BRAINS_ACCOUNT) })
+      invokeJbaLogin(jbAuthService)
       return
     }
     getHubTokenAndSave(jbAuthService)
+  }
+
+  fun invokeJbaLogin(jbAuthService: JBAccountInfoService) {
+    jbAuthService.invokeJBALogin({ getHubTokenAndSave(jbAuthService) }, { showLoginFailedNotification(JET_BRAINS_ACCOUNT) })
   }
 
   private fun getHubTokenAndSave(jbAuthService: JBAccountInfoService) {
@@ -59,9 +81,15 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
         LOG.warn(e)
         null
       }
+      // nullable jbAccessToken for logged in user is possible when logging in from toolbox. Solution is to relog inside the IDE
       if (jbAccessToken == null) {
         LOG.warn("Log in failed: JetBrains account token is null")
-        showReloginToJBANeededNotification()
+        showReloginToJBANeededNotification(object : AnAction(EduCoreBundle.message("action.relogin.to.jba")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            LOG.warn("Login failed: invokeJBALogin")
+            invokeJbaLogin(jbAuthService)
+          }
+        })
         return@executeOnPooledThread
       }
 

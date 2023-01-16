@@ -19,13 +19,27 @@ object MarketplaceNotificationUtils {
     ).notify(null)
   }
 
-  fun showReloginToJBANeededNotification() {
-    Notification(
+  fun showReloginToJBANeededNotification(action: AnAction) {
+    val notification = Notification(
       "EduTools",
       EduCoreBundle.message("jba.relogin.needed.title"),
       EduCoreBundle.message("jba.relogin.text"),
       NotificationType.ERROR
-    ).notify(null)
+    )
+    notification.addAction(action)
+    notification.notify(null)
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  fun showInstallMarketplacePluginNotification(action: AnAction) {
+    val notification = Notification(
+      "EduTools",
+      EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
+      EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
+      NotificationType.ERROR
+    )
+    notification.addAction(action)
+    notification.notify(null)
   }
 
   fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
