@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -592,6 +593,9 @@ class StudentYamlSerializationTest : EduTestCase() {
     testCodeTaskProgrammingLanguage("java256")
   }
 
+  fun `test code task with c++`() {
+    testCodeTaskProgrammingLanguage("c++")
+  }
   fun `test code task with python3_10`() {
     testCodeTaskProgrammingLanguage("python3.10")
   }
@@ -614,6 +618,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     doTest(task, getYAMLWithProgrammingLanguageWithVersion(programmingLanguage))
   }
 
+  @Language("YAML")
   private fun getYAMLWithProgrammingLanguageWithVersion(languageIdWithVersion: String): String {
     return """
     |type: code

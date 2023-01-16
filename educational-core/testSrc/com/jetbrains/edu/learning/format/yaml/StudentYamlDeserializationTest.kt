@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.STUDENT_MAPPER
 import junit.framework.TestCase
+import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -555,6 +556,10 @@ class StudentYamlDeserializationTest : EduTestCase() {
     testCodeTaskWithProgrammingLanguage("java17")
   }
 
+  fun `test code task with c++`() {
+    testCodeTaskWithProgrammingLanguage("c++")
+  }
+
   fun `test code task with python3_10`() {
     testCodeTaskWithProgrammingLanguage("python3.10")
   }
@@ -566,11 +571,12 @@ class StudentYamlDeserializationTest : EduTestCase() {
   private fun testCodeTaskWithProgrammingLanguage(programmingLanguage: String) {
     val yamlContent = getYAMLWithProgrammingLanguage(programmingLanguage)
     val task = deserializeTask(yamlContent)
-    assertTrue(task is CodeTask)
+    assertInstanceOf(task, CodeTask::class.java)
     task as CodeTask
     assertEquals(programmingLanguage, task.submissionLanguage)
   }
 
+  @Language("YAML")
   private fun getYAMLWithProgrammingLanguage(programmingLanguage: String): String {
     return """
     |type: code

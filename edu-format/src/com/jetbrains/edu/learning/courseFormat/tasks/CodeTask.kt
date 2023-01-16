@@ -9,10 +9,16 @@ class CodeTask : Task {
 
   constructor(name: String) : super(name)
 
-  constructor(name: String, id: Int, position: Int, updateDate: Date, status: CheckStatus, submissionLanguage: String? = null) :
-    super(name, id, position, updateDate, status) {
-      this.submissionLanguage = submissionLanguage
-    }
+  constructor(
+    name: String,
+    id: Int,
+    position: Int,
+    updateDate: Date,
+    status: CheckStatus,
+    submissionLanguage: String? = null
+  ) : super(name, id, position, updateDate, status) {
+    this.submissionLanguage = submissionLanguage
+  }
 
   var submissionLanguage: String? = null
   override val itemType: String = CODE_TASK_TYPE

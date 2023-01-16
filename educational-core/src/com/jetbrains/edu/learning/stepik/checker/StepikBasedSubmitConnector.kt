@@ -36,7 +36,7 @@ object StepikBasedSubmitConnector {
     }
 
     // getLanguage() needed for backwards compatibility
-    val defaultLanguage = task.submissionLanguage ?: getLanguage(task).onError { return Err(it) }
+    val submissionLanguage = task.submissionLanguage ?: getLanguage(task).onError { return Err(it) }
 
     val configurator = task.course.configurator
     val codeTaskText = configurator?.getCodeTaskFile(project, task)?.getText(project)
@@ -44,7 +44,7 @@ object StepikBasedSubmitConnector {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
       return Err(EduCoreBundle.message("error.failed.to.post.solution.to", connector.platformName))
     }
-    val submission = StepikBasedSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, defaultLanguage)
+    val submission = StepikBasedSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, submissionLanguage)
     return connector.postSubmission(submission)
   }
 

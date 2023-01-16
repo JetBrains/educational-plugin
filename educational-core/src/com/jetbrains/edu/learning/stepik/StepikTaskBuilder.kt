@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
 import com.jetbrains.edu.learning.xmlEscaped
+import com.jetbrains.rd.util.first
 import org.jetbrains.annotations.NonNls
 import java.util.Collections.unmodifiableList
 
@@ -54,7 +55,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   private val stepId: Int = stepSource.id
   private val stepPosition: Int = stepSource.position
   private val updateDate = stepSource.updateDate
-  private val expectedPatternGroupSize = 3 // group0: whole pattern, group1: language ID, group2: language version
 
   private val pluginTaskTypes: Map<String, (String) -> Task> = mapOf(
     // lexicographical order
@@ -154,7 +154,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
 
   private fun codeTask(name: String): CodeTask {
     val codeTemplates = step.pycharmOptions().codeTemplates
-    val (submissionLanguage, codeTemplate) = getCodeTemplateAndLang(codeTemplates)
+    val (submissionLanguage, codeTemplate) = getLangAndCodeTemplate(codeTemplates.orEmpty())
     val task = CodeTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked, submissionLanguage)
 
     task.fillDescription()
@@ -162,20 +162,21 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     return task
   }
 
-  private fun getCodeTemplateAndLang(codeTemplates: Map<String, String>?): Pair<String?, String?> =
-    when (codeTemplates?.size) {
+  private fun getLangAndCodeTemplate(codeTemplates: Map<String, String>): Pair<String?, String?> =
+    when (codeTemplates.size) {
       0 -> null to null
       1 -> codeTemplates.entries.first().toPair()
       else -> {
-        // Required to choose Java version.
-        // As Java has backwards compatibility it is more safe to use the latest version
-        val langWithMaxVersion= codeTemplates?.keys?.mapNotNull {
-          val groups = Regex("^(\\D+)\\s?([.|0-9]+)?$").matchEntire(it)?.groupValues
-          if (groups?.size != expectedPatternGroupSize) null
-          else groups
-        }?.reduce { max, curr -> if (VersionComparatorUtil.compare(max[2], curr[2]) > 0) max else curr }?.first()
+        // Select the latest programming language version. We assume that the latest version has backwards compatibility.
+        // For example, Java 17 and 11 or Python 3 and 3.10. See https://stepik.org/lesson/63139/step/11 for all available versions.
+        // Hyperskill uses more than one version when switches to a new one
+        val langWithMaxVersion = codeTemplates.keys
+          .mapNotNull { langAndVersionRegex.matchEntire(it)?.groupValues }
+          .reduceOrNull { max, curr -> if (VersionComparatorUtil.compare(max[2], curr[2]) > 0) max else curr }
+          ?.first()
 
-        langWithMaxVersion to codeTemplates?.get(langWithMaxVersion)
+        if (langWithMaxVersion == null) codeTemplates.first().toPair()
+        else langWithMaxVersion to codeTemplates[langWithMaxVersion]
       }
     }
 
@@ -389,6 +390,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     private const val DEFAULT_EDU_TASK_NAME = "Edu Task"
     private const val UNKNOWN_TASK_NAME = "Unknown Task"
     private val LOG = Logger.getInstance(StepikTaskBuilder::class.java)
+     val langAndVersionRegex = Regex("^([a-zA-Z+#]+)\\s?([.|0-9]+)\$")
 
     private fun addPlaceholdersTexts(file: TaskFile) {
       val fileText = file.text
