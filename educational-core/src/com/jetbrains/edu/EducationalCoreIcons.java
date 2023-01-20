@@ -20,8 +20,6 @@ public class EducationalCoreIcons {
   public static final Icon GoLogo = load("/icons/com/jetbrains/edu/learning/GoLogo.svg"); // 16x16
   public static final Icon PhpLogo = load("/icons/com/jetbrains/edu/learning/PhpLogo.svg"); // 16x16
 
-  public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
-
   public static final Icon Stepik = load("/icons/com/jetbrains/edu/learning/Stepik.png"); // 16x16
   public static final Icon StepikRefresh = load("/icons/com/jetbrains/edu/learning/StepikRefresh.png"); // 16x16
   public static final Icon StepikCourseTab = load("/icons/com/jetbrains/edu/learning/stepikTab.svg"); // 16x16
@@ -34,7 +32,6 @@ public class EducationalCoreIcons {
 
   public static final Icon Codeforces = load("/icons/com/jetbrains/edu/learning/codeforces.svg"); // 24x24
   public static final Icon CODEFORCES_SMALL = load("/icons/com/jetbrains/edu/learning/codeforcesSmall.svg"); // 16x16
-  public static final Icon CodeforcesGrayed = load("/icons/com/jetbrains/edu/learning/codeforcesGrayed.svg");
   public static final Icon LOGGED_IN_USER = load("/icons/com/jetbrains/edu/learning/loggedInUser.svg"); // 16x16
   public static final Icon Coursera = load("/icons/com/jetbrains/edu/learning/coursera.svg"); // 24x24
 
@@ -46,28 +43,28 @@ public class EducationalCoreIcons {
   public static final Icon Teacher = load("/icons/com/jetbrains/edu/Teacher.svg"); // 180x180
   public static final Icon TeacherHover = load("/icons/com/jetbrains/edu/TeacherActive.svg"); // 180x180
 
-  public static final Icon Task = load("/icons/com/jetbrains/edu/eduTaskDefault.png"); // 16x16
-  public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/eduTaskDone.png"); // 16x16
+  public static final Icon Task = load("/icons/com/jetbrains/edu/eduTaskDefault.svg"); // 16x16
+  public static final Icon TaskSolved = load("/icons/com/jetbrains/edu/eduTaskDone.svg"); // 16x16
   public static final Icon TaskSolvedNoFrame = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrame@2x.png"); //11x11
   public static final Icon TaskSolvedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskDoneNoFrameHighContrast@2x.png"); //11x11
-  public static final Icon TaskFailed = load("/icons/com/jetbrains/edu/eduTaskFailed.png"); // 16x16
+  public static final Icon TaskFailed = load("/icons/com/jetbrains/edu/eduTaskFailed.svg"); // 16x16
   public static final Icon TaskFailedNoFrame = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrame@2x.png"); // 11x11
   public static final Icon TaskFailedNoFrameHighContrast = load("/icons/com/jetbrains/edu/eduTaskFailedNoFrameHighContrast@2x.png");
-    // 11x11
-  public static final Icon IdeTask = load("/icons/com/jetbrains/edu/eduTaskIdeDefault.png"); // 16x16
-  public static final Icon IdeTaskSolved = load("/icons/com/jetbrains/edu/eduTaskIdeDone.png"); // 16x16
+  // 11x11
+  public static final Icon IdeTask = load("/icons/com/jetbrains/edu/eduTaskIdeDefault.svg"); // 16x16
+  public static final Icon IdeTaskSolved = load("/icons/com/jetbrains/edu/eduTaskIdeDone.svg"); // 16x16
 
-  public static final Icon TheoryTask = load("/icons/com/jetbrains/edu/eduTaskTheoryDefault.png"); // 16x16
+  public static final Icon TheoryTask = load("/icons/com/jetbrains/edu/eduTaskTheoryDefault.svg"); // 16x16
 
-  public static final Icon TheoryTaskSolved = load("/icons/com/jetbrains/edu/eduTaskTheoryDone.png"); // 16x16
+  public static final Icon TheoryTaskSolved = load("/icons/com/jetbrains/edu/eduTaskTheoryDone.svg"); // 16x16
 
-  public static final Icon Lesson = load("/icons/com/jetbrains/edu/eduLessonDefault.png"); // 16x16
-  public static final Icon LessonSolved = load("/icons/com/jetbrains/edu/eduLessonDone.png"); // 16x16
-  public static final Icon Section = load("/icons/com/jetbrains/edu/eduSectionDefault.png"); // 16x16
-  public static final Icon SectionSolved = load("/icons/com/jetbrains/edu/eduSectionDone.png"); // 16x16
+  public static final Icon Lesson = load("/icons/com/jetbrains/edu/eduLessonDefault.svg"); // 16x16
+  public static final Icon LessonSolved = load("/icons/com/jetbrains/edu/eduLessonDone.svg"); // 16x16
+  public static final Icon Section = load("/icons/com/jetbrains/edu/eduSectionDefault.svg"); // 16x16
+  public static final Icon SectionSolved = load("/icons/com/jetbrains/edu/eduSectionDone.svg"); // 16x16
 
-  public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
-  public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
+  public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.svg"); // 16x16
+  public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.svg"); // 16x16
   public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 
   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
