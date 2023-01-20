@@ -1,6 +1,7 @@
 package com.jetbrains.edu.remote
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.jetbrains.codeWithMe.model.projectViewModel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -19,7 +20,9 @@ class EduRemoteService(private val session: RemoteProjectSession) : LifetimedSer
         ApplicationManager.getApplication().executeOnPooledThread {
           while (true) {
             Thread.sleep(1000)
-            model.activate.fire(CourseViewPane.ID)
+            invokeAndWaitIfNeeded {
+              model.activate.fire(CourseViewPane.ID)
+            }
             if (model.currentPane.value == CourseViewPane.ID) {
               break
             }
