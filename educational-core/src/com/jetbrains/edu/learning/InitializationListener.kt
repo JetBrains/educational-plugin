@@ -104,7 +104,8 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       NotificationType.ERROR,
     ).apply {
       isSuggestionType = true
-      configureDoNotAsk(SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID, EduCoreBundle.message("notification.ide.switch.from.edu.ide.do.not.ask"))
+      configureDoNotAskOption(SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID,
+                              EduCoreBundle.message("notification.ide.switch.from.edu.ide.do.not.ask"))
     }
 
     notification

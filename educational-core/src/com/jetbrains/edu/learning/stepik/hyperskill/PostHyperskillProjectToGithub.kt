@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
@@ -16,7 +17,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 
-abstract class PostHyperskillProjectToGithubBase : AnAction() {
+class PostHyperskillProjectToGithub : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (project.isDisposed) {
@@ -35,6 +36,8 @@ abstract class PostHyperskillProjectToGithubBase : AnAction() {
     PostToGithubActionProvider.first()?.postToGitHub(project, courseDir) ?: error(
       "PostToGithubActionProvider not found for course ${course.name}")
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   private fun generateGitignore(projectName: String, currentTask: Task, courseDir: VirtualFile) {
     val visibleTaskFiles = currentTask.taskFiles.filter { it.value.isVisible }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.android
 
 import com.android.SdkConstants
+import com.android.tools.idea.gradle.util.GradleWrapper
 import com.android.tools.idea.sdk.IdeSdks
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
@@ -30,7 +31,7 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
     // But `GradleWrapper.create` works properly only for local file system
     if (holder.courseDir.fileSystem == LocalFileSystem.getInstance()) {
       invokeAndWaitIfNeeded {
-        createGradleWrapper(holder.courseDir)
+        GradleWrapper.create(holder.courseDir, GradleWrapper.getGradleVersionToUse(), null)
       }
     }
     // We have to create property files manually

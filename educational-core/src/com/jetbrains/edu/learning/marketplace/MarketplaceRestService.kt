@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.*
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
-abstract class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
+class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
 
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest, urlDecoder: QueryStringDecoder): Boolean {
@@ -32,19 +32,11 @@ abstract class MarketplaceRestService : OAuthRestService(MARKETPLACE) {
     else super.isHostTrusted(request, urlDecoder)
   }
 
-  protected abstract fun processCodeFlowOAuth(code: String, context: ChannelHandlerContext, request: FullHttpRequest): String?
-
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     val uri = urlDecoder.uri()
     if (uri.contains(INFO)) {
       sendPluginInfoResponse(request, context)
       return null
-    }
-
-    // BACKCOMPAT: 2022.1 remove part related to code flow oauth
-    val code = getStringParameter(CODE_ARGUMENT, urlDecoder)
-    if (code != null) {
-      return processCodeFlowOAuth(code, context, request)
     }
 
     if (hasOpenDialogs(MARKETPLACE)) {

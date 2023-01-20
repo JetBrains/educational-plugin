@@ -27,9 +27,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithubBase
+import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithub
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.github.PostHyperskillProjectToGithub
 import com.jetbrains.edu.learning.taskDescription.addActionLinks
 import com.jetbrains.edu.learning.taskDescription.ui.LightColoredActionLink
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
@@ -89,7 +88,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
         linksPanel.add(showMoreInfo)
       }
 
-      if (PostHyperskillProjectToGithubBase.isAvailable(task)) {
+      if (PostHyperskillProjectToGithub.isAvailable(task)) {
         val postToGithubLink = LightColoredActionLink(EduCoreBundle.message("hyperskill.action.post.to.github"),
                                                       PostHyperskillProjectToGithub())
         linksPanel.add(postToGithubLink)
