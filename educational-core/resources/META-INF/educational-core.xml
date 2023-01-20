@@ -328,6 +328,7 @@
     <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
+    <iconMapper mappingFile="EduToolsIconMappings.json"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
