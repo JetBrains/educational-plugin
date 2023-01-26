@@ -6,4 +6,8 @@
 
     <plugin id="com.intellij.database"/>
   </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity"/>
+  </extensions>
 </idea-plugin>

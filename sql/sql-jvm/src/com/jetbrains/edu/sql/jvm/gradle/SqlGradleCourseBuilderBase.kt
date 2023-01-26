@@ -8,7 +8,6 @@ import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
@@ -17,10 +16,6 @@ import javax.swing.JComponent
 abstract class SqlGradleCourseBuilderBase : GradleCourseBuilderBase() {
   override val taskTemplateName: String
     get() = SqlConfiguratorBase.TASK_SQL
-
-  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator {
-    return SqlGradleCourseProjectGenerator(this, course)
-  }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = BundledJdkProjectSettings()
 }
