@@ -123,6 +123,10 @@ class MarketplacePushCourse(
       }
     }
 
+    if (!isMarketplaceRemote && course.generatedEduId == null) {
+      course.generateEduId()
+    }
+
     YamlFormatSynchronizer.saveItem(course)
   }
 

@@ -75,6 +75,9 @@ object YamlMixinNames {
   @NlsSafe
   const val MARKETPLACE_COURSE_VERSION = "course_version"
 
+  @NlsSafe
+  const val GENERATED_EDU_ID = "generated_edu_id"
+
   // lesson
   @NlsSafe
   const val UNIT = "unit"
