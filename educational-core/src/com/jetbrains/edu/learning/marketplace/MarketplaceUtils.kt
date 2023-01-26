@@ -56,6 +56,12 @@ fun Course.setRemoteMarketplaceCourseVersion() {
   }
 }
 
+fun Course.generateEduId() {
+  if (generatedEduId != null) return
+
+  generatedEduId = "${name}_${vendor?.name}_$programmingLanguage"
+}
+
 fun addVendor(course: Course): Boolean {
   val currentUser = MarketplaceSettings.INSTANCE.account ?: return false
   course.vendor = Vendor(currentUser.userInfo.name)

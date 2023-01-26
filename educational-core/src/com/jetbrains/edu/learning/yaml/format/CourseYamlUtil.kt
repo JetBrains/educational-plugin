@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduNames.EDU
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -30,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.END_DATE_TIME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.GENERATED_EDU_ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ID
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_PRIVATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
@@ -110,6 +111,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val vendor: Vendor? = null
+
+  @JsonProperty(GENERATED_EDU_ID)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private val generatedEduId: String? = null
 
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -200,6 +205,7 @@ private class CourseBuilder(
   @JsonProperty(VENDOR) val yamlVendor: Vendor?,
   @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
   @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
+  @JsonProperty(GENERATED_EDU_ID) val yamlGeneratedEduId: String?,
   @JsonProperty(PROGRAMMING_LANGUAGE) val displayProgrammingLanguageName: String,
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) val language: String,
@@ -242,6 +248,7 @@ private class CourseBuilder(
       description = summary
       environment = yamlEnvironment ?: DEFAULT_ENVIRONMENT
       vendor = yamlVendor
+      generatedEduId = yamlGeneratedEduId
       isMarketplacePrivate = yamlIsPrivate ?: false
       feedbackLink = yamlFeedbackLink
       if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
@@ -302,6 +309,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
+    existingItem.generatedEduId = deserializedItem.generatedEduId
     existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
