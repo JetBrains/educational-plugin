@@ -126,11 +126,11 @@ val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
 
 plugins {
   idea
-  kotlin("jvm") version "1.7.10"
+  kotlin("jvm") version "1.8.0"
   id("org.jetbrains.intellij") version "1.10.1"
-  id("de.undercouch.download") version "5.1.0"
-  id("net.saliman.properties") version "1.5.1"
-  id("org.gradle.test-retry") version "1.3.1"
+  id("de.undercouch.download") version "5.3.0"
+  id("net.saliman.properties") version "1.5.2"
+  id("org.gradle.test-retry") version "1.5.1"
   `maven-publish`
 }
 
@@ -225,8 +225,10 @@ allprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = javaVersion.toString()
-        languageVersion = "1.6"
-        apiVersion = "1.5"
+        languageVersion = "1.8"
+        // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
+        // BACKCOMPAT: 2022.2. Use 1.7
+        apiVersion = "1.6"
         freeCompilerArgs = listOf("-Xjvm-default=all")
       }
     }
