@@ -177,7 +177,7 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
-  private fun getFirstTaskFile(taskDir: VirtualFile, task: Task): VirtualFile? {
+  fun getFirstTaskFile(taskDir: VirtualFile, task: Task): VirtualFile? {
     val taskFiles = task.taskFiles.values
     val firstVisibleTaskFile =
       if (task is CodeforcesTask) {
