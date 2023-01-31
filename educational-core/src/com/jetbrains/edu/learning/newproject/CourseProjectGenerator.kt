@@ -247,6 +247,7 @@ abstract class CourseProjectGenerator<S : Any>(
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CourseProjectGenerator::class.java)
+    private const val JETBRAINS_SRO_ORGANIZATION: String = "JetBrains s.r.o."
 
     @JvmField
     val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
@@ -261,6 +262,8 @@ abstract class CourseProjectGenerator<S : Any>(
       if (isNewCourseCreatorCourse) return true
       if (course !is EduCourse) return true
       if (course.visibility is FeaturedVisibility) return true
+      // Trust any marketplace course from JetBrains s.r.o. organization
+      if (course.isMarketplaceRemote && course.organization == JETBRAINS_SRO_ORGANIZATION) return true
       return course.isPreview
     }
   }
