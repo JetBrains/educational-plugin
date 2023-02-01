@@ -6,12 +6,13 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import javax.swing.JComponent
 
 class CheckDetailsViewImpl(val project: Project) : CheckDetailsView() {
 
   override fun showOutput(message: String) {
-    printToConsole("Output", message, ConsoleViewContentType.NORMAL_OUTPUT)
+    printToConsole(EduCoreBundle.message("check.details.feedback.title"), message, ConsoleViewContentType.NORMAL_OUTPUT)
   }
 
   override fun showCheckResultDetails(title: String, message: String) = printToConsole(title, message, ConsoleViewContentType.ERROR_OUTPUT)
