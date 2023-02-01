@@ -726,6 +726,23 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(course.isMarketplace)
   }
 
+  fun `test generatedEdId`() {
+    val generatedEduId = "generatedEduId"
+    val yamlContent = """
+      |type: marketplace
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?"
+      |programming_language: Plain text
+      |generated_edu_id: $generatedEduId
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertTrue(course is EduCourse)
+    assertEquals(generatedEduId, course.generatedEduId)
+  }
+
   fun `test private course`() {
     val yamlContent = """
       |title: Test Course
