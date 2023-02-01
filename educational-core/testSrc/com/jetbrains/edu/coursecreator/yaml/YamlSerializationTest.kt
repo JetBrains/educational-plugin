@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
@@ -895,6 +896,63 @@ class YamlSerializationTest : YamlTestCase() {
     """.trimMargin())
 
     Locale.setDefault(defaultLocale)
+  }
+
+  fun `test course with generatedEduId`() {
+    val generatedEduId = "generated_edu_id"
+
+    val course = course(courseMode = CourseMode.EDUCATOR) {
+      lesson("the first lesson")
+      lesson("the second lesson")
+    }
+    course.languageCode = "ru"
+    course.generatedEduId = generatedEduId
+    course.description = "This is a course about string theory.\nWhy not?"
+    doTest(course, """
+      |title: Test Course
+      |generated_edu_id: generated_edu_id
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |
+    """.trimMargin())
+  }
+
+  fun `test course with Vendor`() {
+    val vendor = Vendor().apply {
+      name = "Vendor name"
+      email = "email@gmail.com"
+      url = "https://vendor.com/"
+    }
+
+    val course = course(courseMode = CourseMode.EDUCATOR) {
+      lesson("the first lesson")
+      lesson("the second lesson")
+    }
+    course.languageCode = "ru"
+    course.vendor = vendor
+    course.description = "This is a course about string theory.\nWhy not?"
+    doTest(course, """
+      |title: Test Course
+      |language: Russian
+      |summary: |-
+      |  This is a course about string theory.
+      |  Why not?
+      |vendor:
+      |  name: Vendor name
+      |  email: email@gmail.com
+      |  url: https://vendor.com/
+      |programming_language: Plain text
+      |content:
+      |- the first lesson
+      |- the second lesson
+      |
+    """.trimMargin())
   }
 
   fun `test course with choice tasks`() {
