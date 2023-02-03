@@ -84,7 +84,7 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
 
     val initialState = InitialState(project, task, webSocketConfiguration.token)
     val finalState = connector.connectToWebSocketWithTimeout(CODE_TASK_CHECK_TIMEOUT,
-                                                             "wss://${getWebsocketHostName()}/ws/connection/websocket",
+                                                             "wss://${getWebsocketHostName()}/ws/connection/websocket?cf_protocol_version=v1",
                                                              initialState)
 
     return finalState.getResult()
