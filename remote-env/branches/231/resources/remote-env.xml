@@ -1,0 +1,10 @@
+<idea-plugin package="com.jetbrains.edu.remote">
+  <!--suppress PluginXmlValidity -->
+  <dependencies>
+    <plugin id="com.jetbrains.codeWithMe"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="com.jetbrains.edu.remote.EduRemoteService" preload="true" client="remote"/>
+  </extensions>
+</idea-plugin>

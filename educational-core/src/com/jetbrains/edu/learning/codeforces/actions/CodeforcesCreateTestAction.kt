@@ -69,8 +69,7 @@ class CodeforcesCreateTestAction : DumbAwareAction() {
       // BACKCOMPAT: 2022.2. Remove `Suppress` annotation
       @Suppress("UsePropertyAccessSyntax")
       val windows = fileEditorManagerEx.splitters.getWindows()
-      fileEditorManagerEx.openFileWithProviders(outputFile, false, windows[1])
-      fileEditorManagerEx.openFileWithProviders(inputFile, true, windows[0])
+      fileEditorManagerEx.openFiles(outputFile, inputFile, windows)
     }
     else {
       fileEditorManagerEx.openFile(inputFile, true, false)

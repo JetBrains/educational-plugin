@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.exists
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.NumericInputValidator
@@ -36,6 +35,7 @@ import twitter4j.conf.ConfigurationBuilder
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 object TwitterUtils {
   private val LOG = Logger.getInstance(TwitterUtils::class.java)

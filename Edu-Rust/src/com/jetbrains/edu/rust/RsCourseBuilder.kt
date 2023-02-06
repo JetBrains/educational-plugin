@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
@@ -41,6 +40,7 @@ import org.toml.lang.psi.ext.elementType
 import org.toml.lang.psi.ext.kind
 import org.toml.lang.psi.ext.name
 import java.nio.file.Path
+import kotlin.io.path.exists
 
 class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
