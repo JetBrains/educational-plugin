@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.startup.StartupManager
@@ -49,6 +50,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
         EditorFactory.getInstance().eventMulticaster.addDocumentListener(CourseIgnoreDocumentListener(project), manager)
       }
       EduDocumentListener.setGlobalListener(project, manager)
+    }
+
+    @Suppress("UnstableApiUsage")
+    StartupManager.getInstance(project).registerStartupActivity {
+      NOTIFICATIONS_SILENT_MODE.set(project, true)
     }
 
     connection.subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
