@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 object MarketplaceNotificationUtils {
   fun showLoginFailedNotification(loginProviderName: String) {
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("error.login.failed"),
       EduCoreBundle.message("error.failed.login.to.subsystem", loginProviderName),
       NotificationType.ERROR
@@ -25,7 +25,7 @@ object MarketplaceNotificationUtils {
 
   fun showReloginToJBANeededNotification(action: AnAction) {
     val notification = Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("jba.relogin.needed.title"),
       EduCoreBundle.message("jba.relogin.text"),
       NotificationType.ERROR
@@ -37,7 +37,7 @@ object MarketplaceNotificationUtils {
   @Suppress("DialogTitleCapitalization")
   fun showInstallMarketplacePluginNotification(notificationTitle: String, notificationType: NotificationType) {
     val notification = Notification(
-      "EduTools",
+      "JetBrains Academy",
       notificationTitle,
       EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
       notificationType

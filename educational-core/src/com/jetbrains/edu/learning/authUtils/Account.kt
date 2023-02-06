@@ -42,7 +42,7 @@ abstract class Account<UserInfo : Any> {
     serviceNameForPasswordSafe ?: return null
     val credentials = PasswordSafe.instance.get(credentialAttributes(userName, serviceNameForPasswordSafe)) ?: return null
     if (credentials == ACCESS_TO_KEY_CHAIN_DENIED) {
-      val notification = Notification("EduTools", EduCoreBundle.message("notification.tokens.access.denied.title", userName),
+      val notification = Notification("JetBrains Academy", EduCoreBundle.message("notification.tokens.access.denied.title", userName),
                                       EduCoreBundle.message("notification.tokens.access.denied.text"), NotificationType.ERROR)
       notification.notify(null)
       return null

@@ -97,7 +97,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
   private fun showSwitchFromEduNotification() {
     val notification = Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("notification.ide.switch.from.edu.ide.title", ApplicationNamesInfo.getInstance().fullProductNameWithEdition),
       EduCoreBundle.message("notification.ide.switch.from.edu.ide.description",
                             "${ApplicationNamesInfo.getInstance().fullProductName} Community"),
@@ -162,7 +162,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
   private fun notifyUnsupportedPort(port: Int) {
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduNames.JBA,
       EduCoreBundle.message("hyperskill.unsupported.port.extended.message", port.toString(), EduNames.OUTSIDE_OF_KNOWN_PORT_RANGE_URL),
       NotificationType.ERROR,

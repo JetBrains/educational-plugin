@@ -149,7 +149,7 @@ abstract class StepikBasedCheckConnector {
   protected fun showErrorDetails(project: Project, error: String) {
     if (error == EduCoreBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
       Notification(
-        "EduTools",
+        "JetBrains Academy",
         EduCoreBundle.message("error.failed.to.post.solution"),
         EduCoreBundle.message("error.access.denied.with.link"),
         NotificationType.ERROR
@@ -162,7 +162,7 @@ abstract class StepikBasedCheckConnector {
 
     LOG.warn(error)
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("error.failed.to.post.solution"),
       EduFormatBundle.message("help.use.guide", linkToHelp),
       NotificationType.ERROR

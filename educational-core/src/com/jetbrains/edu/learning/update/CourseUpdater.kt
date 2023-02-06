@@ -26,7 +26,7 @@ abstract class CourseUpdater(val project: Project) {
   }
 
   protected fun showUpdateCompletedNotification(message: String) {
-    Notification("EduTools", EduCoreBundle.message("update.notification.title"),
+    Notification("JetBrains Academy", EduCoreBundle.message("update.notification.title"),
                  message,
                  NotificationType.INFORMATION).notify(project)
   }

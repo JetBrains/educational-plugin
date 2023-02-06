@@ -64,7 +64,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
 
       updateDependentPlaceholders(project, task)
       EditorNotifications.getInstance(project).updateAllNotifications()
-      Notification("EduTools", "", EduCoreBundle.message("action.Educational.RefreshTask.result"), NotificationType.INFORMATION)
+      Notification("JetBrains Academy", "", EduCoreBundle.message("action.Educational.RefreshTask.result"), NotificationType.INFORMATION)
         .setIcon(EmptyIcon.ICON_16)
         .notify(project)
       ProjectView.getInstance(project).refresh()

@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import javax.swing.event.HyperlinkEvent
 
 class InvalidConfigNotification(project: Project, configFile: VirtualFile, cause: String) :
-  Notification("EduTools",
+  Notification("JetBrains Academy",
                EduCoreBundle.message("yaml.invalid.config.notification.title"),
                messageWithEditLink(project, configFile, cause),
                NotificationType.ERROR) {

@@ -190,7 +190,7 @@ fun Task.getRelatedTheoryTask(): TheoryTask? {
 }
 
 fun notifyJBAUnauthorized(project: Project, specificMessage: String) {
-  Notification("EduTools", specificMessage, EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
+  Notification("JetBrains Academy", specificMessage, EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content"),
                NotificationType.ERROR).apply {
     addAction(NotificationAction.createSimpleExpiring(
       EduCoreBundle.message("notification.hyperskill.no.next.activity.login.action")) { HyperskillLoginListener.doLogin() })
@@ -277,7 +277,7 @@ private fun getNextStep(taskId: Int): NextActivityInfo {
 
 private fun showNoNextActivityNotification(task: Task, project: Project) {
   Notification(
-    "EduTools",
+    "JetBrains Academy",
     EduCoreBundle.message("notification.hyperskill.no.next.activity.title"),
     EduCoreBundle.message("notification.hyperskill.no.next.activity.content", stepLink(task.id)),
     NotificationType.ERROR

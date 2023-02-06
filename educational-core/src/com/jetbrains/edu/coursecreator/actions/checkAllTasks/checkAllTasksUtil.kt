@@ -178,7 +178,7 @@ fun getVisitItemContainerFunc(itemContainer: ItemContainer): (((Task) -> Unit) -
 
 fun createFailedTasksNotification(failedTasks: List<Task>, tasksNum: Int, project: Project): Notification {
   val notification = Notification(
-    "EduTools",
+    "JetBrains Academy",
     EduCoreBundle.message("notification.title.check"),
     notificationContent(failedTasks),
     NotificationType.WARNING

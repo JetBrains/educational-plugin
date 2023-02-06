@@ -41,7 +41,7 @@ object CCNotificationUtils {
                             action: AnAction? = null
   ) {
     LOG.info(message)
-    val notification = Notification("EduTools", title, message.orEmpty(), NotificationType.ERROR)
+    val notification = Notification("JetBrains Academy", title, message.orEmpty(), NotificationType.ERROR)
     if (action != null) {
       notification.addAction(action)
     }
@@ -67,7 +67,7 @@ object CCNotificationUtils {
                        @NotificationTitle title: String,
                        @NotificationContent message: String,
                        notificationType: NotificationType = NotificationType.INFORMATION) {
-    val notification = Notification("EduTools", title, message, notificationType)
+    val notification = Notification("JetBrains Academy", title, message, notificationType)
     if (action != null) {
       notification.addAction(action)
     }
@@ -76,7 +76,7 @@ object CCNotificationUtils {
 
   fun showLoginSuccessfulNotification(userName: String) {
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("login.successful"),
       EduCoreBundle.message("logged.in.as", userName),
       NotificationType.INFORMATION

@@ -46,7 +46,7 @@ fun showQuestionnaireAdvertisingNotification(project: Project, course: Course) {
 }
 
 class MyNotification(@Suppress("UnstableApiUsage") @NotificationContent content: String, feedbackUrl: String) :
-  Notification("EduTools", EduCoreBundle.message("check.correct.solution.no.exclamation"), content, NotificationType.INFORMATION),
+  Notification("JetBrains Academy", EduCoreBundle.message("check.correct.solution.no.exclamation"), content, NotificationType.INFORMATION),
   NotificationFullContent {
   init {
     setListener(object : NotificationListener.Adapter() {

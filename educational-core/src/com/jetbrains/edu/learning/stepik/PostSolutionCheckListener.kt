@@ -45,7 +45,7 @@ abstract class PostSolutionCheckListener : CheckListener {
   }
 
   private fun showSubmissionNotPostedNotification(project: Project, course: EduCourse, taskName: String) {
-    Notification("EduTools",
+    Notification("JetBrains Academy",
                  EduCoreBundle.message("error.solution.not.posted"),
                  EduCoreBundle.message("notification.content.task.was.updated", taskName),
                  NotificationType.INFORMATION)

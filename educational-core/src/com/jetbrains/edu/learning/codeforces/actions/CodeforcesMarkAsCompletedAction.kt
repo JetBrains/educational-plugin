@@ -6,9 +6,9 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.SOLVED
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
+import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.SOLVED
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -33,7 +33,7 @@ class CodeforcesMarkAsCompletedAction : CodeforcesAction() {
 
   private fun showSuccessNotification(project: Project) {
     val notification = Notification(
-      "EduTools",
+      "JetBrains Academy",
       "",
       EduCoreBundle.message("codeforces.mark.as.completed.notification"),
       NotificationType.INFORMATION

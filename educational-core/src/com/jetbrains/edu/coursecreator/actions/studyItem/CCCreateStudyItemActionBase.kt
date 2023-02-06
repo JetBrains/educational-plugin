@@ -56,7 +56,7 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
     if (lessonsToWrap.size != 20) {
       return
     }
-    val notification = Notification("EduTools", EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
+    val notification = Notification("JetBrains Academy", EduCoreBundle.message("notification.title.wrap.lessons.with.section"),
                                     EduCoreBundle.message("notification.content.wrap.lessons.with.section"), NotificationType.INFORMATION)
     notification.addAction(object : DumbAwareAction(EduCoreBundle.lazyMessage("action.wrap.lessons.title")) {
       override fun actionPerformed(e: AnActionEvent) {

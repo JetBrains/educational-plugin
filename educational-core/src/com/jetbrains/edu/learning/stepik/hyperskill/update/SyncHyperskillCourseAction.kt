@@ -41,7 +41,7 @@ class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("h
 
   private fun showNothingToUpdateNotification(project: Project) {
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       EduCoreBundle.message("update.nothing.to.update"),
       EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
       NotificationType.INFORMATION

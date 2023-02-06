@@ -12,7 +12,7 @@ import javax.swing.event.HyperlinkEvent
 class UpdateNotification @Suppress("UnstableApiUsage") constructor(
   @NlsContexts.NotificationTitle title: String,
   @NlsContexts.NotificationContent content: String
-) : Notification("EduTools", title, content, NotificationType.WARNING) {
+) : Notification("JetBrains Academy", title, content, NotificationType.WARNING) {
   init {
     setListener(UpdateNotificationListener)
   }

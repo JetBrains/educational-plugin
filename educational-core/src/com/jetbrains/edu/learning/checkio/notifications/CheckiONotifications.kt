@@ -49,7 +49,7 @@ object CheckiONotifications {
     type: NotificationType,
     listener: NotificationListener?
   ): Notification {
-    val notification = Notification("EduTools", title, content, type).apply {
+    val notification = Notification("JetBrains Academy", title, content, type).apply {
       icon = EducationalCoreIcons.CheckiO
       this.subtitle = subtitle
     }

@@ -144,7 +144,7 @@ class DownloadDataset(
   private fun showDatasetFilePathNotification(project: Project,
                                               @NlsContexts.NotificationTitle message: String,
                                               @NlsContexts.NotificationContent filePath: String) {
-    Notification("EduTools", message, filePath, INFORMATION).apply {
+    Notification("JetBrains Academy", message, filePath, INFORMATION).apply {
       addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("copy.path.to.clipboard")) {
         CopyPasteManager.getInstance().setContents(StringSelection(filePath))
       })
@@ -164,7 +164,7 @@ class DownloadDataset(
 
   private fun showErrorNotification(project: Project) {
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       "",
       EduCoreBundle.message("hyperskill.download.dataset.failed.to.download.dataset"),
       NotificationType.ERROR

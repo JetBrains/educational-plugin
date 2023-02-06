@@ -17,7 +17,7 @@ class PyShowTutorialStartupActivity : StartupActivity {
     if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN) || !PlatformUtils.isPyCharmEducational()) return
 
     Notification(
-      "EduTools",
+      "JetBrains Academy",
       message("watch.tutorials.title"),
       XmlStringUtil.wrapInHtml(message("watch.tutorials.message.html")),
       NotificationType.INFORMATION

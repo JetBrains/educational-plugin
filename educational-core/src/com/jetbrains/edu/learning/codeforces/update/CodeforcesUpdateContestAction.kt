@@ -42,7 +42,7 @@ class CodeforcesUpdateContestAction : DumbAwareAction() {
 
   private fun showUpToDateNotification(project: Project) {
     val notification = Notification(
-      "EduTools",
+      "JetBrains Academy",
       "",
       EduCoreBundle.message("update.notification.text", CODEFORCES_TITLE, CONTEST),
       NotificationType.INFORMATION

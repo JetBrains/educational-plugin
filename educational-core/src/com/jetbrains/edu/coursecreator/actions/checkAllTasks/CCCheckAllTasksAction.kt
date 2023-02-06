@@ -12,7 +12,8 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
@@ -30,7 +31,7 @@ class CCCheckAllTasksAction : AnAction(EduCoreBundle.lazyMessage("action.check.t
       val failedTasks = checkAllStudyItems(project, course, studyItems, indicator) ?: return
       val notification = if (failedTasks.isEmpty()) {
         Notification(
-          "EduTools",
+          "JetBrains Academy",
           EduCoreBundle.message("notification.title.check.finished"),
           EduCoreBundle.message("notification.content.all.tasks.solved.correctly"),
           NotificationType.INFORMATION

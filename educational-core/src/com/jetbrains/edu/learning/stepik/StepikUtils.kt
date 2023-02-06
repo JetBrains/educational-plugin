@@ -50,7 +50,7 @@ fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: 
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
-  Notification("EduTools",
+  Notification("JetBrains Academy",
                EduCoreBundle.message("update.content"),
                EduCoreBundle.message("update.content.request"),
                NotificationType.INFORMATION)
@@ -73,7 +73,7 @@ fun notificationListener(project: Project,
 }
 
 fun notifyStepikUnauthorized(project: Project, specificMessage: String) {
-  Notification("EduTools", specificMessage, EduCoreBundle.message("stepik.auth.error.message"), NotificationType.ERROR)
+  Notification("JetBrains Academy", specificMessage, EduCoreBundle.message("stepik.auth.error.message"), NotificationType.ERROR)
     .notify(project)
 }
 

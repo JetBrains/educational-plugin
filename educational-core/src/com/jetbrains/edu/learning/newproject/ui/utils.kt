@@ -177,7 +177,7 @@ fun humanReadableDuration(duration: Duration, showHoursPartForDays: Boolean = tr
 }
 
 fun notificationFromCourseValidation(result: CourseValidationResult, title: String): Notification {
-  val notification = Notification("EduTools", title, result.message, NotificationType.WARNING)
+  val notification = Notification("JetBrains Academy", title, result.message, NotificationType.WARNING)
 
   when (result) {
     is PluginsRequired -> {
