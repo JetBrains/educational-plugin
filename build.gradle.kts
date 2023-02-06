@@ -310,7 +310,7 @@ project(":") {
   version = "$pluginVersion-$platformVersion-$buildNumber"
 
   intellij {
-    pluginName.set("EduTools")
+    pluginName.set("JetBrains Academy")
     updateSinceUntilBuild.set(true)
     downloadSources.set(false)
 
@@ -391,7 +391,7 @@ project(":") {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
     // The name differs from all module names to avoid collision during new jar file creation
-    archiveBaseName.set("EduTools")
+    archiveBaseName.set("JetBrains Academy")
 
     exclude("META-INF/MANIFEST.MF")
 
@@ -453,13 +453,13 @@ project(":") {
     buildSearchableOptions {
       enabled = findProperty("enableBuildSearchableOptions") != "false"
       // Force `mergePluginJarTask` be executed before `buildSearchableOptions`
-      // Otherwise, `buildSearchableOptions` task can't load EduTools plugin and searchable options are not built.
+      // Otherwise, `buildSearchableOptions` task can't load JetBrains Academy plugin and searchable options are not built.
       // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
       mustRunAfter(mergePluginJarTask)
     }
   }
 
-  // Generates event scheme for EduTools plugin FUS events to `build/eventScheme.json`
+  // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
   task<RunIdeTask>("buildEventsScheme") {
     dependsOn(tasks.prepareSandbox)
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")

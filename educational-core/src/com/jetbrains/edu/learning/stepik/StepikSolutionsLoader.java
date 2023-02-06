@@ -61,7 +61,7 @@ public class StepikSolutionsLoader implements Disposable {
   public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   public static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
-  private static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
+  private static final String EDU_TOOLS_COMMENT = " Posted from JetBrains Academy plugin\n";
 
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
   private final HashMap<Integer, Future<Boolean>> myFutures = new HashMap<>();

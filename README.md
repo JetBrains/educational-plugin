@@ -20,7 +20,8 @@ Building and taking courses is currently supported for the following languages:
  * [C++](https://isocpp.org/)
  * [Go](https://golang.org/)
 
-The best place to learn what this plugin is about is to check out the EduTools plugin [documentation](https://plugins.jetbrains.com/plugin/10081-edutools/docs).
+The best place to learn what this plugin is about is to check out the JetBrains Academy
+plugin [documentation](https://plugins.jetbrains.com/plugin/10081-edutools/docs).
 
 ### Issue tracker
 Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetbrains.com/issues/EDU).

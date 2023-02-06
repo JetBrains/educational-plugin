@@ -9,7 +9,7 @@ class EduDynamicPluginListener : DynamicPluginListener {
 
   override fun checkUnloadPlugin(pluginDescriptor: IdeaPluginDescriptor) {
     if (pluginDescriptor.pluginId == PluginId.getId(EduNames.PLUGIN_ID)) {
-      throw CannotUnloadPluginException("EduTools plugin unloading is not supported yet")
+      throw CannotUnloadPluginException("JetBrains Academy plugin unloading is not supported yet")
     }
   }
 }

@@ -40,7 +40,7 @@ class CreateNewYouTrackIssue : DumbAwareAction(
         appendLine("""
           ## Environment
           
-          * **EduTools plugin version:** $pluginVersion
+          * **JetBrains Academy plugin version:** $pluginVersion
           * **IDE name and version:** $ideNameAndVersion
           * **Operating system:** ${SystemInfo.getOsNameAndVersion()}
         """.trimIndent())

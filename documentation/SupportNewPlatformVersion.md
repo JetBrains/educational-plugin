@@ -1,6 +1,6 @@
 ## Supporting New IntelliJ Versions
 
-The EduTools plugin supports several versions of the IntelliJ platform.
+The JetBrains Academy plugin supports several versions of the IntelliJ platform.
 When the new IntelliJ version comes out, we need to prepare plugin's build with the new version and
 handle all the incompatible changes in API.
 To reduce the number of supported IntelliJ versions, we also drop versions support from time to time.
