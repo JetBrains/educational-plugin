@@ -21,7 +21,7 @@
                      bundle="messages.EduPythonBundle"
                      groupKey="python.inspection.group.name"
                      key="python.inspection.invalid.interpreter.display.name"
-                     groupPath="EduTools"
+                     groupPath="JetBrains Academy"
                      enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>

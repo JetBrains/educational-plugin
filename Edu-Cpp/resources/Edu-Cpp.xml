@@ -27,7 +27,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlCapitalization -->
-    <localInspection language="CMake" groupPath="EduTools" groupName="Course Creator"
+    <localInspection language="CMake" groupPath="JetBrains Academy" groupName="Course Creator"
                      displayName="Task project name isn't set"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.edu.cpp.inspections.NoTaskProjectNameInspection"/>
