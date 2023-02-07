@@ -24,21 +24,16 @@ class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
     label.foreground = JBColor.GRAY
     label.border = JBUI.Borders.emptyTop(5)
 
-    textArea.border = BorderFactory.createLineBorder(JBColor.border())
     textArea.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 60)
-    textArea.preferredSize = textArea.minimumSize
-    textArea.size = textArea.preferredSize
     textArea.addFocusListener(object : FocusAdapter() {
       override fun focusGained(e: FocusEvent?) {
         textArea.selectAll()
       }
     })
     textArea.font = UIUtil.getLabelFont()
-    textArea.lineWrap = true
 
     val scrollPane = JBScrollPane(textArea)
-    scrollPane.border = JBUI.Borders.empty()
-    scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+    scrollPane.border = BorderFactory.createLineBorder(JBColor.border())
     panel = panel {
       row { scrollPane() }
       row { label() }
