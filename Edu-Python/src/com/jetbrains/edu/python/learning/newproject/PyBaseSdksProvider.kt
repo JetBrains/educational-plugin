@@ -18,7 +18,7 @@ object PyBaseSdksProvider {
     val newDescriptors = mutableMapOf<String, PyBaseSdkDescriptor>()
 
     val flavor = PythonSdkFlavor.getApplicableFlavors(false).first()
-    val sdkPaths = flavor.suggestHomePaths(null, context)
+    val sdkPaths = suggestSdkPaths(flavor, context)
     for (sdkPath in sdkPaths) {
       val sdkDescriptor = oldDescriptors[sdkPath]
       if (sdkDescriptor != null) {
