@@ -5,20 +5,23 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.BaseFixture
-import com.intellij.testFramework.registerComponentInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlin.coroutines.EmptyCoroutineContext
 
 abstract class EduFileEditorTestFixtureBase(protected val fixture: CodeInsightTestFixture) : BaseFixture() {
+
   private lateinit var manager: FileEditorManagerImpl
 
   override fun setUp() {
     super.setUp()
-
-    manager = createFileEditorManager()
+    manager = createFileEditorManager(CoroutineScope(EmptyCoroutineContext))
 
     // Copied from TestEditorManagerImpl's constructor
     manager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
-    fixture.project.registerComponentInstance(FileEditorManager::class.java, manager, testRootDisposable)
+    replaceManager(manager)
   }
+
+  protected abstract fun replaceManager(manager: FileEditorManager)
 
   override fun tearDown() {
     try {
@@ -29,5 +32,5 @@ abstract class EduFileEditorTestFixtureBase(protected val fixture: CodeInsightTe
     }
   }
 
-  protected abstract fun createFileEditorManager(): FileEditorManagerImpl
+  protected abstract fun createFileEditorManager(scope: CoroutineScope): FileEditorManagerImpl
 }
