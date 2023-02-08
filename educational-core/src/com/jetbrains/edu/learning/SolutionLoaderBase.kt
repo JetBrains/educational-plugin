@@ -124,6 +124,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       this.futures = futures
     }
 
+    ProgressManager.checkCanceled()
     val connection = project.messageBus.connect()
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {

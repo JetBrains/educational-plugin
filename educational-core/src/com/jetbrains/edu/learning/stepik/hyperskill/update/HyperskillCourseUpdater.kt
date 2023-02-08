@@ -5,6 +5,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -38,7 +39,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       is Ok -> response.value
     }
     val languageId = HyperskillLanguages.getEduLanguage(hyperskillProject.language) ?: return null
-    val eduEnvironment = eduEnvironment ?: return null
+    val eduEnvironment = hyperskillProject.eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null
     return HyperskillCourse(hyperskillProject, languageId, eduEnvironment).apply {
       stages = stagesFromServer
@@ -141,6 +142,14 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       updateProjectLesson(remoteCourse)
     }
     updateProblems(problemsUpdates)
+
+    // update environment at the end as it requires project reload
+    if (remoteCourse != null && remoteCourse.environment != course.environment) {
+      course.updateDate = Date()
+      course.environment = remoteCourse.environment
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
+      ProjectManager.getInstance().reloadProject(project)
+    }
     showUpdateCompletedNotification(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
   }
 
