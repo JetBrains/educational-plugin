@@ -264,7 +264,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   // TODO: set up more items which are enabled in real course project
   // TODO: come up with better name when we set up not only virtual file listeners
   protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
-    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project)
+    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project, testRootDisposable)
 
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(VirtualFileManager.VFS_CHANGES, listener)

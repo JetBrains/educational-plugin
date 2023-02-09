@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
@@ -13,9 +14,16 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.yaml.format.TaskWithType
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
 
 abstract class VirtualFileListenerTestBase : EduTestCase() {
   protected abstract val courseMode: CourseMode
@@ -48,6 +56,140 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
     checksProducer(task).forEach(FileCheck::check)
   }
 
+  protected fun createCourseForCopyTests(): Course {
+    fun LessonBuilder<*>.taskTemplate(name: String) {
+      eduTask(name) {
+        dir("src") {
+          taskFile("Task1.kt")
+          dir("foo") {
+            taskFile("Task2.kt")
+            taskFile("Task3.kt")
+          }
+          taskFile("bar/Task4.kt")
+        }
+
+        taskFile("additional_file1.txt")
+        dir("foo") {
+          taskFile("additional_file2.txt")
+          taskFile("additional_file3.txt")
+        }
+        taskFile("bar/additional_file4.txt")
+
+        dir("test") {
+          taskFile("Tests1.kt")
+          dir("foo") {
+            taskFile("Tests2.kt")
+            taskFile("Tests3.kt")
+          }
+          taskFile("bar/Tests4.kt")
+        }
+      }
+    }
+
+    return courseWithFiles(
+      courseMode = courseMode,
+      language = FakeGradleBasedLanguage,
+      createYamlConfigs = true
+    ) {
+
+      lesson("lesson1") {
+        taskTemplate("task1")
+        taskTemplate("task2")
+        taskTemplate("task3")
+      }
+
+      lesson("lesson2") {
+        taskTemplate("task1")
+        taskTemplate("task2")
+      }
+
+      section("section1") {
+        lesson("lesson1") {
+          taskTemplate("task1")
+          taskTemplate("task2")
+          taskTemplate("task3")
+        }
+
+        lesson("lesson2") {
+          taskTemplate("task1")
+          taskTemplate("task2")
+        }
+
+        lesson("lesson3") {
+          taskTemplate("task1")
+        }
+      }
+
+      section("section2") {
+        lesson("lesson1") {
+          taskTemplate("task1")
+          taskTemplate("task2")
+          taskTemplate("task3")
+        }
+
+        lesson("lesson2") {
+          taskTemplate("task1")
+          taskTemplate("task2")
+        }
+      }
+    }
+  }
+
+  protected fun doCopyFileTest(filePathInCourse: String, newParentPath: String, copyName: String? = null, checksProducer: (Course) -> List<FileCheck>) {
+    val course = createCourseForCopyTests()
+
+    val requestor = VirtualFileListenerTestBase::class.java
+    val fileToCopy = findFile(filePathInCourse)
+    val newParentFolder = findFile(newParentPath)
+    val newName = copyName ?: fileToCopy.name
+
+    runWriteAction {
+      copy(requestor, fileToCopy, newParentFolder, newName)
+    }
+
+    checkAllStudyItemsAreNotTaskWithType(course)
+
+    checksProducer(course).forEach(FileCheck::check)
+  }
+
+  private fun checkAllStudyItemsAreNotTaskWithType(course: Course) {
+    fun checkLesson(lesson: Lesson) {
+      for (task in lesson.items)
+        if (task is TaskWithType)
+          error("There should be no instances of TaskWithType")
+    }
+
+    fun checkSection(section: Section) {
+      for (lesson in section.items)
+        checkLesson(lesson as Lesson)
+    }
+
+    for (courseItem in course.items) {
+      if (courseItem is Section)
+        checkSection(courseItem)
+      else
+        checkLesson(courseItem as Lesson)
+    }
+  }
+
+  /**
+   * This is a simple copy method, similar to [VfsUtil.copyFile], [VfsUtil.copy].
+   * To copy files, these methods first create a new file and then fill its contents.
+   * So no [VFileCopyEvent] is fired, instead, [VFileCreateEvent] and [VFileContentChangeEvent] are called.
+   * This [copy] method calls the [VirtualFile.copy], so it is theoretically possible to have the [VFileCopyEvent].
+   * Unfortunately, the file system used for tests is non-real, and it indirectly calls [VfsUtil.copyFile] to copy files.
+   */
+  protected fun copy(requestor: Any?, file: VirtualFile, newParent: VirtualFile, newName: String) {
+    @Suppress("UnsafeVfsRecursion")
+    if (file.isDirectory) {
+      val copiedDirectory = newParent.createChildDirectory(requestor, newName)
+      for (child in file.children) {
+        copy(requestor, child, copiedDirectory, child.name)
+      }
+    } else
+      file.copy(requestor, newParent, newName)
+  }
+
   protected fun doRemoveFileTest(filePathInCourse: String, checksProducer: (Course) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = courseMode,
@@ -66,6 +208,7 @@ abstract class VirtualFileListenerTestBase : EduTestCase() {
             taskFile("additional_file2.txt")
             taskFile("additional_file3.txt")
           }
+          taskFile("additional_files.txt") // some file with the name starting as the folder name
           dir("test/packageName") {
             taskFile("Tests2.kt")
             taskFile("Tests3.kt")

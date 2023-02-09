@@ -1,22 +1,33 @@
 package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.newvfs.events.*
+import com.intellij.util.ui.update.MergingUpdateQueue
+import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
+import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader
+import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
 
-class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
+class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : EduVirtualFileListener(project) {
+
+  private val projectRefreshRequestsQueue = MergingUpdateQueue(COURSE_REFRESH_REQUEST,
+                                                               300,
+                                                               true,
+                                                               null,
+                                                               parentDisposable).apply { setRestartTimerOnAdd(true) }
 
   override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
     super.taskFileCreated(taskFile, file)
@@ -27,9 +38,21 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
     when (fileInfo) {
-      is FileInfo.SectionDirectory -> deleteSection(fileInfo)
-      is FileInfo.LessonDirectory -> deleteLesson(fileInfo)
-      is FileInfo.TaskDirectory -> deleteTask(fileInfo)
+      is FileInfo.SectionDirectory -> {
+        deleteSection(fileInfo)
+        refreshCourse(fileInfo.section.course)
+      }
+
+      is FileInfo.LessonDirectory -> {
+        deleteLesson(fileInfo)
+        refreshCourse(fileInfo.lesson.course)
+      }
+
+      is FileInfo.TaskDirectory -> {
+        deleteTask(fileInfo)
+        refreshCourse(fileInfo.task.course)
+      }
+
       is FileInfo.FileInTask -> deleteFileInTask(fileInfo, file)
     }
   }
@@ -56,19 +79,16 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
   private fun deleteTask(info: FileInfo.TaskDirectory) {
     val task = info.task
-    val course = task.course
     val lesson = task.lesson
     lesson.removeTask(task)
     YamlFormatSynchronizer.saveItem(lesson)
-
-    course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
   }
 
   private fun deleteFileInTask(info: FileInfo.FileInTask, file: VirtualFile) {
     val (task, pathInTask) = info
 
     if (file.isDirectory) {
-      val toRemove = task.taskFiles.keys.filter { it.startsWith(pathInTask) }
+      val toRemove = task.taskFiles.keys.filter { pathInTask.isParentOf(it) }
       for (path in toRemove) {
         task.removeTaskFile(path)
       }
@@ -93,22 +113,84 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
   }
 
   override fun configUpdated(configEvents: List<VFileEvent>) {
-    val sortedConfigEvents = configEvents.sortedWith(CompareConfigs)
+    val sortedConfigEvents = configEvents.sortedWith(compareConfigs)
+    var needRefreshProject = false
+
     for (event in sortedConfigEvents) {
-      when (event) {
-        is VFileCreateEvent -> configCreated(event)
-        is VFileContentChangeEvent -> configChanged(event)
+      if (processOneConfigEvent(event)) {
+        needRefreshProject = true
       }
+    }
+
+    if (needRefreshProject) {
+      refreshCourse(project.course)
     }
   }
 
-  private fun configChanged(event: VFileContentChangeEvent) {
-    reloadConfig(event.file)
+  /**
+   * returns whether the course needs to be refreshed
+   */
+  private fun processOneConfigEvent(event: VFileEvent): Boolean {
+    val createdConfigFile = when (event) {
+      is VFileCreateEvent, is VFileMoveEvent -> event.file
+      is VFileCopyEvent -> event.newParent.findChild(event.newChildName)
+      else -> null
+    }
+
+    if (createdConfigFile != null)
+      return configCreated(createdConfigFile)
+
+    if (event is VFileContentChangeEvent)
+      return configChanged(event)
+
+    return false
   }
 
-  private fun configCreated(event: VFileCreateEvent) {
-    val file = event.file ?: return
-    reloadConfig(file)
+  private fun configChanged(event: VFileContentChangeEvent): Boolean {
+    val configAdded = tryAddItemToParentConfig(event.file)
+    reloadConfig(event.file)
+    return configAdded
+  }
+
+  private fun configCreated(configFile: VirtualFile): Boolean {
+    val configAdded = tryAddItemToParentConfig(configFile)
+    if (configAdded)
+      reloadConfig(configFile)
+    else
+      LOG.warn("Study item configuration file was created in a wrong location: $configFile")
+
+    return configAdded
+  }
+
+  /**
+   * returns whether the config was successfully added
+   */
+  private fun tryAddItemToParentConfig(configFile: VirtualFile): Boolean {
+    val itemDir = configFile.parent ?: return false
+    val parentItemDir = itemDir.parent ?: return false
+    val parentStudyItem = parentItemDir.getStudyItem(project) ?: return false
+
+    //if the study item is already inside the parent, do not add it
+    if (parentStudyItem is ItemContainer && parentStudyItem.getItem(itemDir.name) != null)
+      return false
+
+    val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlFormatSynchronizer.MAPPER
+    val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, true, mapper) ?: return false
+
+    if (!deserializedItem.couldBeInside(parentStudyItem))
+      return false
+
+    if (parentStudyItem !is ItemContainer) return false // this is mostly to cast the type, because the actual check is already performed
+
+    deserializedItem.name = itemDir.name
+    deserializedItem.deserializeChildrenIfNeeded(project, parentStudyItem.course)
+    deserializedItem.init(parentStudyItem, false)
+    parentStudyItem.addItem(deserializedItem)
+    deserializedItem.index = 1 + parentStudyItem.items.indexOf(deserializedItem)
+
+    YamlFormatSynchronizer.saveItem(parentStudyItem)
+
+    return true
   }
 
   private fun reloadConfig(file: VirtualFile) {
@@ -122,17 +204,34 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  private class CompareConfigs {
-    companion object : Comparator<VFileEvent> {
-      override fun compare(a: VFileEvent, b: VFileEvent): Int {
-        return when(a.file?.name) {
-          YamlFormatSettings.COURSE_CONFIG -> 0
-          YamlFormatSettings.SECTION_CONFIG -> 1
-          YamlFormatSettings.LESSON_CONFIG -> 2
-          YamlFormatSettings.TASK_CONFIG -> 3
-          else -> 4
-        }
-      }
+  private fun StudyItem.couldBeInside(parent: StudyItem): Boolean = when (this) {
+    is Course -> false
+    is Section -> parent is Course
+    is Lesson -> parent is Course || parent is Section
+    is Task -> parent is Lesson
+    else -> false
+  }
+
+  private val compareConfigs: Comparator<VFileEvent> = Comparator.comparingInt {
+    when (it?.file?.name) {
+      YamlFormatSettings.COURSE_CONFIG -> 0
+      YamlFormatSettings.SECTION_CONFIG -> 1
+      YamlFormatSettings.LESSON_CONFIG -> 2
+      YamlFormatSettings.TASK_CONFIG -> 3
+      else -> 4
     }
+  }
+
+  private fun refreshCourse(course: Course?) {
+    LOG.info("Requesting project refresh after yaml files update")
+    projectRefreshRequestsQueue.queue(Update.create(COURSE_REFRESH_REQUEST) {
+      LOG.info("Do actual project refresh after yaml files update")
+      course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    })
+  }
+
+  companion object {
+    private val LOG: Logger = Logger.getInstance(CCVirtualFileListener::class.java)
+    private const val COURSE_REFRESH_REQUEST: String = "Course project refresh request"
   }
 }

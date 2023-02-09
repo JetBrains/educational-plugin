@@ -4,6 +4,8 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.getStudyItem
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
 import com.jetbrains.edu.learning.`in`
@@ -13,7 +15,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
   override val courseMode: CourseMode = CourseMode.EDUCATOR
 
-  override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project)
+  override fun createListener(project: Project): EduVirtualFileListener = CCVirtualFileListener(project, testRootDisposable)
 
   fun `test delete task`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -108,7 +110,8 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       val task = course.findTask("lesson1", "task1")
       listOf(
         "additional_files/additional_file2.txt" notIn task,
-        "additional_files/additional_file2.txt" notIn task
+        "additional_files/additional_file2.txt" notIn task,
+        "additional_files.txt" `in` task
       )
     }
   }
@@ -302,4 +305,147 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       "non_course_dir/non_course_file2.txt" `in` task
     )
   }
+
+  fun `test copy task between lessons EDU-2796`() =
+    doCopyFileTest("lesson1/task1", "lesson2", "task1copy") { course ->
+      val task1copy = course.findTask("lesson2", "task1copy")
+
+      listOf(
+        "src/Task1.kt" `in` task1copy,
+        "src/foo/Task2.kt" `in` task1copy,
+        "src/foo/Task3.kt" `in` task1copy,
+        "src/bar/Task4.kt" `in` task1copy
+      )
+    }
+
+  fun `test copy lesson from course to inside a sections`() =
+    doCopyFileTest("lesson1", "section1", "lesson1copy") { course ->
+      val task3 = course.getSection("section1")?.getLesson("lesson1copy")?.getTask("task3") ?: error("there is no task3")
+
+      listOf(
+        "src/Task1.kt" `in` task3,
+        "src/foo/Task2.kt" `in` task3,
+        "src/foo/Task3.kt" `in` task3,
+        "src/bar/Task4.kt" `in` task3
+      )
+    }
+
+  fun `test copy lessons between sections`() =
+    doCopyFileTest("section1/lesson1", "section2", "lesson1copy") { course ->
+      val lesson1copy = course.getSection("section2")?.getLesson("lesson1copy") ?: error("there is no lesson1copy")
+      val task1 = lesson1copy.getTask("task1") ?: error("there is no task1 in the lesson1copy")
+
+      listOf(
+        "src/Task1.kt" `in` task1,
+        "src/foo/Task2.kt" `in` task1,
+        "additional_file1.txt" `in` task1,
+        "foo/additional_file2.txt" `in` task1
+      )
+    }
+
+  fun `test copy lesson from course to section`() =
+    doCopyFileTest("lesson1", "section1", "lesson1copy") { course ->
+      val lesson1copy = course.getSection("section1")?.getLesson("lesson1copy") ?: error("there is no lesson1copy")
+      val task1 = lesson1copy.getTask("task1") ?: error("there is no task1 in the lesson1copy")
+
+      listOf(
+        "src/Task1.kt" `in` task1,
+        "src/foo/Task2.kt" `in` task1,
+        "additional_file1.txt" `in` task1,
+        "foo/additional_file2.txt" `in` task1
+      )
+    }
+
+  fun `test copy lesson from section to course`() =
+    doCopyFileTest("section1/lesson1", "", "lesson1copy") { course ->
+      val lesson1copy = course.getLesson("lesson1copy") ?: error("there is no lesson1copy")
+      val task1 = lesson1copy.getTask("task1") ?: error("there is no task1 in the lesson1copy")
+
+      listOf(
+        "src/Task1.kt" `in` task1,
+        "src/foo/Task2.kt" `in` task1,
+        "additional_file1.txt" `in` task1,
+        "foo/additional_file2.txt" `in` task1
+      )
+    }
+
+  fun `test copy sections`() =
+    doCopyFileTest("section1", "", "section1copy") { course ->
+      val lesson1 = course.getSection("section1copy")?.getLesson("lesson1") ?: error("there is no lesson1")
+      val task1 = lesson1.getTask("task1") ?: error("there is no task1 in the lesson1copy")
+
+      listOf(
+        "src/Task1.kt" `in` task1,
+        "src/foo/Task2.kt" `in` task1,
+        "additional_file1.txt" `in` task1,
+        "foo/additional_file2.txt" `in` task1
+      )
+    }
+
+  fun `test copy pasted files are included into yaml EDU-5191`() {
+    doCopyFileTest("lesson1/task1/additional_file1.txt", "lesson1/task1", "additional_file1copy.txt") { course ->
+      val task1 = course.findTask("lesson1", "task1")
+
+      listOf(
+        "additional_file1.txt" `in` task1,
+        "additional_file1copy.txt" `in` task1
+      )
+    }
+  }
+
+  fun `test files copied from the other task are included into yaml`() {
+    doCopyFileTest("lesson1/task1/foo", "section1/lesson2/task2", "foo-copy") { course ->
+      val task = course.getSection("section1")?.getLesson("lesson2")?.getTask("task2") ?: error("there is no lesson1")
+
+      listOf(
+        "additional_file1.txt" `in` task,
+        "foo-copy/additional_file2.txt" `in` task,
+        "foo-copy/additional_file3.txt" `in` task
+      )
+    }
+  }
+
+  private fun doTestNumberOfItemsDidNotChange(filePathInCourse: String, newParentPath: String, copyName: String? = null) {
+    createCourseForCopyTests()
+
+    val fileToCopy = findFile(filePathInCourse)
+    val newParentFile = findFile(newParentPath)
+
+    val parentItemBefore = newParentFile.getStudyItem(project)
+    val itemsListBefore = (parentItemBefore as? ItemContainer)?.items?.toList() ?: listOf()
+
+    runWriteAction {
+      copy(CCVirtualFileListenerTest::class.java, fileToCopy, newParentFile, copyName ?: fileToCopy.name)
+    }
+
+    val parentItemAfter = newParentFile.getStudyItem(project)
+    val itemsListAfter = (parentItemAfter as? ItemContainer)?.items?.toList() ?: listOf()
+
+    assertEquals(parentItemBefore?.itemType, parentItemAfter?.itemType)
+    assertEquals(itemsListBefore.map {it.itemType}, itemsListAfter.map {it.itemType})
+  }
+
+  fun `test number of items do not change when copy task inside task`() =
+    doTestNumberOfItemsDidNotChange("lesson1/task1", "lesson1/task2")
+
+  fun `test number of items do not change when copy lesson inside task`() =
+    doTestNumberOfItemsDidNotChange("lesson1", "lesson2/task2")
+
+  fun `test number of items do not change when copy section inside task`() =
+    doTestNumberOfItemsDidNotChange("section1", "lesson1/task2")
+
+  fun `test number of items do not change when copy lesson inside lesson`() =
+    doTestNumberOfItemsDidNotChange("lesson1", "lesson2")
+
+  fun `test number of items do not change when copy section inside lesson`() =
+    doTestNumberOfItemsDidNotChange("section1", "lesson1")
+
+  fun `test number of items do not change when copy section inside lesson (2)`() =
+    doTestNumberOfItemsDidNotChange("section1", "section2/lesson1")
+
+  fun `test number of items do not change when copy task inside section`() =
+    doTestNumberOfItemsDidNotChange("lesson1/task1", "section1")
+
+  fun `test number of items do not change when copy section inside section`() =
+    doTestNumberOfItemsDidNotChange("section1", "section2")
 }

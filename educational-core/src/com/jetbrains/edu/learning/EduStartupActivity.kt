@@ -41,7 +41,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
     if (!isUnitTestMode) {
-      val vfsListener = if (EduUtils.isStudentProject(project)) UserCreatedFileListener(project) else CCVirtualFileListener(project)
+      val vfsListener = if (EduUtils.isStudentProject(project)) UserCreatedFileListener(project) else CCVirtualFileListener(project, manager)
       connection.subscribe(VirtualFileManager.VFS_CHANGES, vfsListener)
 
       if (CCUtils.isCourseCreator(project)) {

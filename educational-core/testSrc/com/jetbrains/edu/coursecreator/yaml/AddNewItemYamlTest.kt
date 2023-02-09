@@ -94,7 +94,7 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   fun `test missing lesson added to parent`() {
     val course = StudyTaskManager.getInstance(project).course!!
-    doToParentAddedTest(course)
+    doToParentAddedTest(course.getLesson("lesson1") ?: error("no lesson1 found"))
   }
 
   fun `test new lesson content added`() {

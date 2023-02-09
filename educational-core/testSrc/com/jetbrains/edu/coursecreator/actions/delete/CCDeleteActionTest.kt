@@ -15,7 +15,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     super.setUp()
     ApplicationManager.getApplication().messageBus
       .connect(testRootDisposable)
-      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project))
+      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project, testRootDisposable))
   }
 
   fun `test delete task`() {
@@ -185,7 +185,7 @@ class CCDeleteActionTest : EduActionTestCase() {
     }
 
     val sectionFile = findFile("section1")
-    
+
     val testDialog = TestDeleteDialog()
     withEduTestDialog(testDialog) {
       testAction(IdeActions.ACTION_DELETE, dataContext(sectionFile))
@@ -199,7 +199,7 @@ class CCDeleteActionTest : EduActionTestCase() {
       }
     }.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
-  
+
   fun `test delete middle section`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson()
@@ -252,7 +252,7 @@ class CCDeleteActionTest : EduActionTestCase() {
       }
       lesson()
     }
-    
+
     val sectionFile = findFile("section2")
     val testDialog = TestDeleteDialog()
     withEduTestDialog(testDialog) {

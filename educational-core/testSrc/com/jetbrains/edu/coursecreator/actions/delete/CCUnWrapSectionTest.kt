@@ -17,7 +17,7 @@ class CCUnWrapSectionTest : EduActionTestCase() {
     super.setUp()
     ApplicationManager.getApplication().messageBus
       .connect(testRootDisposable)
-      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project))
+      .subscribe(VirtualFileManager.VFS_CHANGES, CCVirtualFileListener(project, testRootDisposable))
   }
 
   fun `test unwrap lessons`() {

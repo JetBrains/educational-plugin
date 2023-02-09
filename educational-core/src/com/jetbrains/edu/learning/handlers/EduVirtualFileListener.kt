@@ -27,7 +27,8 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     val configEvents = events.filter { it.file != null && YamlFormatSynchronizer.isLocalConfigFile(it.file!!) }
     for (event in events - configEvents.toSet()) {
       when (event) {
-        is VFileCreateEvent -> fileCreated(event)
+        is VFileCreateEvent -> event.file?.let { fileCreated(it) }
+        is VFileCopyEvent -> event.newParent.findChild(event.newChildName)?.let { fileCreated(it) }
         is VFileMoveEvent -> fileMoved(event)
         is VFileDeleteEvent -> fileDeleted(event)
       }
@@ -37,8 +38,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
   protected open fun configUpdated(configEvents: List<VFileEvent>) {}
 
-  private fun fileCreated(event: VFileCreateEvent) {
-    val file = event.file ?: return
+  private fun fileCreated(file: VirtualFile) {
     if (file.isDirectory) return
     val fileInfo = file.fileInfo(project) as? FileInfo.FileInTask ?: return
     fileInTaskCreated(fileInfo, file)
@@ -54,9 +54,9 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
    * Generally, such checks are required because of tests.
    * In real life, project files are created before project opening and virtual file listener initialization,
    * so such situation shouldn't happen.
-   * But in tests, course files usually are created by [EduTestCase.courseWithFiles] which triggers virtual file listener because
-   * sometimes listener is initialized in `[TestCase.setUp] method and [EduTestCase.courseWithFiles] creates course files after it.
-   * In such cases, these checks prevent replacing correct task file
+   * But in tests, course files usually are created by [com.jetbrains.edu.learning.EduTestCase.courseWithFiles] which triggers virtual file listener because
+   * sometimes listener is initialized in `[com.jetbrains.edu.learning.EduTestCase.setUp] method and [com.jetbrains.edu.learning.EduTestCase.courseWithFiles] creates course files after it.
+   * In such cases, these checks prevent replacing a correct task file
    * with empty (without placeholders, hints, etc.) one.
    */
   private fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
@@ -81,12 +81,13 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     }
 
     if (event.file.isDirectory) {
-      val changedPaths = task.taskFiles.keys.filter { it.startsWith(oldPath) }
+      val changedPaths = task.taskFiles.keys.filter { oldPath.isParentOf(it) }
       for (oldObjectPath in changedPaths) {
         val newObjectPath = oldObjectPath.replaceFirst(oldPath, newPath)
         rename(oldObjectPath, newObjectPath)
       }
-    } else {
+    }
+    else {
       rename(oldPath, newPath)
     }
 
@@ -104,7 +105,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     }
 
     val affectedFiles = mutableListOf<TaskFile>()
-    val oldPaths = task.taskFiles.keys.filter { it.startsWith(oldPath) }
+    val oldPaths = task.taskFiles.keys.filter { oldPath == it || oldPath.isParentOf(it) }
 
     for (path in oldPaths) {
       val taskFile = task.removeTaskFile(path) ?: continue
@@ -148,7 +149,8 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
           return true
         }
       })
-    } else {
+    }
+    else {
       fileInTaskCreated(fileInfo, movedFile)
     }
   }
@@ -167,6 +169,8 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
       else -> null
     }
   }
+
+  protected fun String.isParentOf(child: String) = child.startsWith(this + VfsUtilCore.VFS_SEPARATOR_CHAR)
 
   protected open fun beforeFileDeletion(event: VFileDeleteEvent) {}
   protected open fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {}
