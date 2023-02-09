@@ -134,7 +134,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         null
       }
       NO -> action()
-      CANCEL -> "Mismatching JetBrains Academy Accounts dialog has been canceled"
+      CANCEL -> "Mismatching Hyperskill Accounts dialog has been canceled"
     }
   }
 

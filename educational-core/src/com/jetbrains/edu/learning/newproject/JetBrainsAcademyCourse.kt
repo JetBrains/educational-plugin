@@ -24,7 +24,7 @@ class JetBrainsAcademyCourse : Course() {
      
      - Develop projects and solve coding tasks with professional IDEs by JetBrains
      
-     JetBrains Academy experience starts in your browser 
+     Hyperskill experience starts in your browser 
      
      <a href="${wrapWithUtm("https://www.jetbrains.com/academy/", "browse-courses")}">Learn more</a>
    """.trimIndent()

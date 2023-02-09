@@ -28,7 +28,7 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 
 ### Resources
 * Sources of PyCharm Edu and IntelliJ IDEA Edu are stored in [IntelliJ IDEA repository](https://jetbrains.team/p/idea/code/intellij?path=%2Fedu).
-* This plugin comes with integration with [JetBrains Academy](https://www.jetbrains.com/academy/), a project-based learning platform.
+* This plugin comes with integration with [JetBrains Academy on Hyperskill](https://hi.hyperskill.org/how-we-teach), a project-based learning platform.
 * You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html).
 
 [plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-edutools?style=flat-square
