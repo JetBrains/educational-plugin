@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.logger
 import java.util.*
 
 /**
@@ -37,10 +36,6 @@ abstract class Task : StudyItem {
   var solutionHidden: Boolean? = null
   var record: Int = -1
   var isUpToDate: Boolean = true
-
-  // Used for marketplace courses. We need to store a meta-entity id (corresponding to list of submissions) to correctly process submissions
-  // storage on grazie platform
-  var submissionsId: String? = null
 
   protected var checkStatus: CheckStatus = CheckStatus.Unchecked
 

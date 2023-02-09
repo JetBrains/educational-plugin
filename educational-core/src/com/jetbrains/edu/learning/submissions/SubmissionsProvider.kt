@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.submissions
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 
 /**
  * Base class for loading submissions, should be called only from SubmissionsManager.
@@ -12,9 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
  */
 interface SubmissionsProvider {
 
-  fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<Submission>>
+  fun loadAllSubmissions(course: Course): Map<Int, List<Submission>>
 
-  fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>>
+  fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int, List<Submission>>
+
+  fun loadSolutionFiles(submission: MarketplaceSubmission) {}
 
   fun areSubmissionsAvailable(course: Course): Boolean
 

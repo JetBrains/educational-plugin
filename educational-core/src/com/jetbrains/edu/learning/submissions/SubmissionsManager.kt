@@ -4,13 +4,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
@@ -46,7 +46,7 @@ class SubmissionsManager(private val project: Project) {
     else {
       if (course == null) return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
-      val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
+      val submissionsById = submissionsProvider.loadSubmissions(tasks, course)
       submissions.putAll(submissionsById)
       updateSubmissionsTab()
       submissionsById.values.flatten()
@@ -57,8 +57,15 @@ class SubmissionsManager(private val project: Project) {
     return getOrLoadSubmissions(task)
   }
 
-  fun getSubmission(task: Task, submissionId: Int): Submission? {
-    return getOrLoadSubmissions(task).find { it.id == submissionId }
+  fun getSubmissionWithSolutionText(task: Task, submissionId: Int): Submission? {
+    val submission = getOrLoadSubmissions(task).find { it.id == submissionId } ?: return null
+
+    if (submission is MarketplaceSubmission && submission.solutionFiles == null) {
+      val course = this.course ?: return null
+      val submissionsProvider = course.getSubmissionsProvider() ?: return null
+      submissionsProvider.loadSolutionFiles(submission)
+    }
+    return submission
   }
 
   private fun getOrLoadSubmissions(task: Task): List<Submission> {
@@ -69,7 +76,7 @@ class SubmissionsManager(private val project: Project) {
       submissionsList
     }
     else {
-      val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course.id)
+      val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course)
       submissions.putAll(loadedSubmissions)
       updateSubmissionsTab()
       return loadedSubmissions[task.id] ?: emptyList()
@@ -136,7 +143,7 @@ class SubmissionsManager(private val project: Project) {
                                      submissionsProvider: SubmissionsProvider,
                                      taskDescriptionView: TaskDescriptionView,
                                      loadSolutions: () -> Unit) {
-    submissions.putAll(submissionsProvider.loadAllSubmissions(project, course))
+    submissions.putAll(submissionsProvider.loadAllSubmissions(course))
     loadSolutions()
     ApplicationManager.getApplication().invokeLater { taskDescriptionView.updateTab(SUBMISSIONS_TAB) }
   }

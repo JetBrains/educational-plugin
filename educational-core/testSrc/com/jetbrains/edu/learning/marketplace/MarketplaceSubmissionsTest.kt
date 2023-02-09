@@ -1,32 +1,96 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
+import com.jetbrains.edu.learning.submissions.SolutionFile
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.withFeature
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkConstructor
-import junit.framework.TestCase
+import io.mockk.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
 import org.intellij.lang.annotations.Language
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.time.Instant
 import java.util.*
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
 class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
   override fun setUp() {
     super.setUp()
     loginFakeMarketplaceUser()
+  }
 
-    courseWithFiles(
+  fun `test submission created after edu task check`() {
+    configureSubmissionsResponses()
+    createEduCourse()
+    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
+  }
+
+  fun `test all submissions loaded`() {
+    configureSubmissionsResponses(listOf(loadSubmissionsDataHasNext, loadSubmissionsData))
+    createEduCourse()
+    doTestSubmissionsLoaded(setOf(1, 2), mapOf(1 to 2, 2 to 2))
+  }
+
+  fun `test solution files loaded`() {
+    configureSubmissionsResponses(solutionsKeyTextMap = mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solution))
+    val course = createEduCourse()
+    val firstTask = course.allTasks[0]
+    val solutionFilesActual = getSolutionFiles(project, firstTask)
+    val firstSolutionFile = solutionFilesActual.first()
+    val placeholder = AnswerPlaceholder(2, "placeholder text")
+    placeholder.init(firstTask.taskFiles["src/Task.kt"]!!, false)
+    firstSolutionFile.placeholders = listOf(placeholder)
+
+    doTestSubmissionsLoaded(setOf(1, 2), mapOf(1 to 2, 2 to 1))
+
+    val submissionsManager = SubmissionsManager.getInstance(project)
+
+    val submission = submissionsManager.getSubmissionWithSolutionText(firstTask, 100022)
+    checkNotNull(submission)
+    val solutionFiles = submission.solutionFiles
+    checkNotNull(solutionFiles)
+    checkSolutionFiles(solutionFiles, solutionFilesActual)
+  }
+
+
+  private fun checkSolutionFiles(expectedList: List<SolutionFile>, actualList: List<SolutionFile>?) {
+    checkNotNull(actualList)
+    assertEquals(expectedList.size, actualList.size)
+    for (n in expectedList.indices) {
+      val expected = expectedList[n]
+      val actual = actualList[n]
+      assertEquals(expected.name, actual.name)
+      assertEquals(expected.isVisible, actual.isVisible)
+      assertEquals(expected.text, actual.text)
+      if (expected.placeholders.isNullOrEmpty()) continue
+      checkNotNull(actual.placeholders)
+      assertEquals(expected.placeholders!!.size, actual.placeholders!!.size)
+      val expectedPlaceholder = expected.placeholders!!.first()
+      val actualPlaceholder = actual.placeholders!!.first()
+      assertEquals(expectedPlaceholder.placeholderText, actualPlaceholder.placeholderText)
+      assertEquals(expectedPlaceholder.status, actualPlaceholder.status)
+      assertEquals(expectedPlaceholder.possibleAnswer, actualPlaceholder.possibleAnswer)
+      assertEquals(expectedPlaceholder.length, actualPlaceholder.length)
+      assertEquals(expectedPlaceholder.placeholderDependency, actualPlaceholder.placeholderDependency)
+      assertEquals(expectedPlaceholder.offset, actualPlaceholder.offset)
+    }
+  }
+
+  private fun createEduCourse(): EduCourse {
+    return courseWithFiles(
       language = FakeGradleBasedLanguage,
       courseProducer = ::EduCourse,
       id = 1
@@ -41,53 +105,10 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
           taskFile("test/Tests1.kt", "fun tests1() {}")
         }
       }
-    }.apply { isMarketplace = true } as EduCourse
-    configureSubmissionsResponses(listOf(submissionContent), versions)
-  }
-
-  fun `test submission document created after edu task check`() {
-    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
-    val firstTask = findTask(0, 0)
-    assertEquals("f53a097b-1486-43ae-8597-d464e74fe6a7", firstTask.submissionsId)
-  }
-
-  fun `test submission document updated after edu task check`() {
-    val firstTask = findTask(0, 0)
-    firstTask.submissionsId = "f53a097b-1486-43ae-8597-d464e74fe6a7"
-
-    doTestSubmissionAddedAfterTaskCheck(1, CORRECT)
-  }
-
-  fun `test versions list loaded for document id`() {
-    val versions = MarketplaceSubmissionsConnector.getInstance().getDocVersionsIds("1")
-    checkNotNull(versions) { "Versions list is null" }
-    assertTrue(versions.size == 2)
-    assertEquals("SlARMo.y2SqpGLAoFHHGxjNxKqo3PRf5", versions[0].id)
-    assertEquals(1626965426, versions[0].timestamp)
-  }
-
-  fun `test submission loaded`() {
-    val version = Version("1", 1626965426)
-    val submission = MarketplaceSubmissionsConnector.getInstance().getSubmission("1", version)
-    checkNotNull(submission) { "Content is null" }
-    assertEquals(Date.from(Instant.ofEpochSecond(version.timestamp)), submission.time)
-    assertEquals(CORRECT, submission.status)
-    assertEquals("solution text", submission.solutionFiles?.get(0)?.text)
-  }
-
-  fun `test get document id`() {
-    val documentId = MarketplaceSubmissionsConnector.getInstance().getDocumentId(1, 1)
-    assertEquals("b321c43b-46b9-488d-8947-10647795516a", documentId)
-  }
-
-  fun `test all submissions loaded`() {
-    val course = getCourse() as EduCourse
-    val submissionsByTaskId = MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(course)
-    val submissions = submissionsByTaskId[1]
-    checkNotNull(submissions) { "Submissions list is null" }
-    assertTrue(submissions.size == 2)
-    val firstTask = findTask(0, 0)
-    TestCase.assertEquals("b321c43b-46b9-488d-8947-10647795516a", firstTask.submissionsId)
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 1
+    } as EduCourse
   }
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
@@ -97,90 +118,166 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   }
 
   companion object {
-    fun configureSubmissionsResponses(submissionsList: List<String>, versions: String) {
-      val mapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
+    const val FIRST_TASK_SUBMISSION_AWS_KEY = "11"
+    const val SECOND_TASK_SUBMISSION_AWS_KEY = "12"
+
+    fun configureSubmissionsResponses(submissionsLists: List<String> = listOf(loadSubmissionsData),
+                                      solutionsKeyTextMap: Map<String, String> = emptyMap()) {
       mockkConstructor(Retrofit::class)
       val service = mockk<SubmissionsService>()
       every {
         anyConstructed<Retrofit>().create(SubmissionsService::class.java)
       } returns service
 
-      val createDocumentCall = mockk<Call<Document>>()
-      every { service.createDocument(any()) } returns createDocumentCall
-      val submissionDocResponse = mapper.treeToValue(mapper.readTree(submissionsDocument), Document::class.java)
-      every { createDocumentCall.execute() } returns Response.success(submissionDocResponse)
+      val mapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
 
-      every { service.addPathToDocument(any()).execute() } returns Response.success(mockk())
+      mockkStatic(JBAccountInfoService::class)
+      every { JBAccountInfoService.getInstance()?.accessToken } returns object : Future<String?> {
+        override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
+          return false
+        }
 
-      val updateDocumentResponse = mockk<Call<ResponseBody>>()
-      every { service.updateDocument(any()) } returns updateDocumentResponse
-      every { updateDocumentResponse.execute() } returns Response.success(mockk())
+        override fun isCancelled(): Boolean {
+          return false
+        }
 
-      val versionsListCall = mockk<Call<Versions>>()
-      every { service.getVersionsList(any()) } returns versionsListCall
-      val versionsResponse = mapper.treeToValue(mapper.readTree(versions), Versions::class.java)
-      every { versionsListCall.execute() } returns Response.success(versionsResponse)
+        override fun isDone(): Boolean {
+          return true
+        }
 
-      val contentCall = mockk<Call<Content>>()
-      every { service.getSubmissionContent(any()) } returns contentCall
-      val submissionContentResponse = submissionsList.map { Response.success(mapper.treeToValue(mapper.readTree(it), Content::class.java)) }
-      every { contentCall.execute() } returnsMany submissionContentResponse
+        override fun get(): String? {
+          return null
+        }
 
-      val descriptorsListCall = mockk<Call<Descriptors>>()
-      every { service.getDescriptorsList(any()) } returns descriptorsListCall
-      val descriptorsListResponse = mapper.treeToValue(mapper.readTree(descriptors), Descriptors::class.java)
-      every { descriptorsListCall.execute() } returns Response.success(descriptorsListResponse)
+        override fun get(timeout: Long, unit: TimeUnit): String {
+          return "test token"
+        }
+      }
+
+      for (i in submissionsLists.indices) {
+        val getAllSubmissionsPageableCall = mockk<Call<MarketplaceSubmissionsList>>()
+        every { service.getAllSubmissionsForCourse(any(), any(), i + 1) } returns getAllSubmissionsPageableCall
+        val getAllSubmissionsPageableResponse = mapper.treeToValue(mapper.readTree(submissionsLists[i]), MarketplaceSubmissionsList::class.java)
+        every { getAllSubmissionsPageableCall.execute() } returns Response.success(getAllSubmissionsPageableResponse)
+      }
+
+      val postSubmissionCall = mockk<Call<MarketplaceSubmission>>()
+      every { service.postSubmission(any(), any(), any(), any()) } returns postSubmissionCall
+      val postSubmissionResponse = mapper.treeToValue(mapper.readTree(postSubmissionData), MarketplaceSubmission::class.java)
+      every { postSubmissionCall.execute() } returns Response.success(postSubmissionResponse)
+
+      if (solutionsKeyTextMap.isNotEmpty()) {
+        mockkObject(MarketplaceSubmissionsConnector.Companion)
+
+        for (key in solutionsKeyTextMap.keys) {
+          val downloadLink = "downloadLink/key=$key"
+          val getSolutionLinkCall = mockk<Call<ResponseBody>>()
+          every { service.getSolutionDownloadLink(key) } returns getSolutionLinkCall
+          every { getSolutionLinkCall.execute() } returns Response.success(
+            ResponseBody.create("application/json; charset=UTF-8".toMediaType(), downloadLink))
+
+          every {
+            MarketplaceSubmissionsConnector.loadSolutionByLink(downloadLink)
+          } returns solutionsKeyTextMap.getOrDefault(key, "no solution present for $key")
+        }
+      }
     }
 
     @Language("JSON")
-    private val submissionsDocument = """
-    {
-       "id": "f53a097b-1486-43ae-8597-d464e74fe6a7"
-    }
+    private val postSubmissionData = """
+      {
+        "id" : 100022,
+        "task_id" : 1,
+        "solution_aws_key" : "11111/1/100/2023-01-12T07:55:18.061429680/11111111",
+        "time" : "2023-01-12T07:55:18.06143",
+        "format_version" : 13,
+        "update_version" : 1,
+        "status" : "correct",
+        "checker_output" : null
+      }
+    """
+
+    @Language("JSON")
+    private val loadSubmissionsData = """
+      {
+        "has_next" : false,
+        "submissions" : [
+          {
+            "id" : 100022,
+            "task_id" : 1,
+            "solution_aws_key" : $FIRST_TASK_SUBMISSION_AWS_KEY,
+            "time" : "2023-01-12T07:55:18.06143",
+            "format_version" : 13,
+            "update_version" : 1,
+            "status" : "correct",
+            "checker_output" : null
+          },
+          {
+            "id" : 100023,
+            "task_id" : 1,
+            "solution_aws_key" : $FIRST_TASK_SUBMISSION_AWS_KEY,
+            "time" : "2023-01-12T07:55:18.06143",
+            "format_version" : 13,
+            "update_version" : 1,
+            "status" : "correct",
+            "checker_output" : null
+          },
+          {
+            "id" : 100024,
+            "task_id" : 2,
+            "solution_aws_key" : $SECOND_TASK_SUBMISSION_AWS_KEY,
+            "time" : "2023-01-12T07:55:18.06143",
+            "format_version" : 13,
+            "update_version" : 1,
+            "status" : "correct",
+            "checker_output" : null
+          }
+        ]
+      }
   """
 
     @Language("JSON")
-    private val versions = """
-{
-  "versions": [
-    {
-      "id": "SlARMo.y2SqpGLAoFHHGxjNxKqo3PRf5",
-      "timestamp": 1626965426
-    },
-    {
-      "id": "x8JYWA8jtAL.ZGP1DXvBzmSG5gNiRLMs",
-      "timestamp": 1618268872
-    }
-  ]
-}
-  """
-
-    //correct format
-    @Language("JSON")
-    private val submissionContentCorrеctFormat = """
-  {
-   "content": "{\\\"id\\\":86515016,\\\"time\\\":1644312602091,\\\"status\\\":\\\"correct\\\",\\\"course_version\\\":4,\\\"task_id\\\":234720,\\\"solution\\\":[{\\\"name\\\":\\\"src/Task.kt\\\",\\\"text\\\":\\\"solution text\\\",\\\"is_visible\\\":true,\\\"placeholders\\\":[{\\\"offset\\\":22,\\\"length\\\":8,\\\"dependency\\\":null,\\\"possible_answer\\\":\\\"\\\\\\\"OK\\\\\\\"\\\",\\\"placeholder_text\\\":\\\"TODO()\\\",\\\"selected\\\":true}]}],\\\"version\\\":13}"
-  }
-  """
-
-    //format with a bug, will be fixed on grazie side
-    @Language("JSON")
-    private val submissionContent = """
-  {
-    "content": "{\"content\": \"{\\\"id\\\":86515016,\\\"time\\\":1644312602091,\\\"status\\\":\\\"correct\\\",\\\"course_version\\\":4,\\\"task_id\\\":234720,\\\"solution\\\":[{\\\"name\\\":\\\"src/Task.kt\\\",\\\"text\\\":\\\"solution text\\\",\\\"is_visible\\\":true,\\\"placeholders\\\":[{\\\"offset\\\":22,\\\"length\\\":8,\\\"dependency\\\":null,\\\"possible_answer\\\":\\\"\\\\\\\"OK\\\\\\\"\\\",\\\"placeholder_text\\\":\\\"TODO()\\\",\\\"selected\\\":true}]}],\\\"version\\\":13}\" }"
-  }
+    private val loadSubmissionsDataHasNext = """
+      {
+        "has_next" : true,
+        "submissions" : [
+          {
+            "id" : 100020,
+            "task_id" : 2,
+            "solution_aws_key" : $FIRST_TASK_SUBMISSION_AWS_KEY,
+            "time" : "2023-01-12T07:55:18.06143",
+            "format_version" : 13,
+            "update_version" : 1,
+            "status" : "correct",
+            "checker_output" : null
+          }
+        ]
+      }
   """
 
     @Language("JSON")
-    private val descriptors = """
-  {
-    "descriptors": [
-    {
-      "id": "b321c43b-46b9-488d-8947-10647795516a",
-      "path": "/1/1/000"
-    }
-    ]
-  }
-  """
+    private val solution = """
+      [
+        {
+          "name" : "src/Task.kt",
+          "placeholders" : [
+            {
+              "offset" : 2,
+              "length" : 16,
+              "possible_answer" : "",
+              "placeholder_text" : "placeholder text"
+            }
+          ],
+          "is_visible" : true,
+          "text" : "fun foo() {}"
+        },
+        {
+          "name" : "test/Tests1.kt",
+          "placeholders" : [ ],
+          "is_visible" : false,
+          "text" : "fun tests1() {}"
+        }
+      ]
+    """
   }
 }

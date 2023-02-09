@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 fun loginFakeMarketplaceUser() {
   val account = MarketplaceAccount()
   account.userInfo = MarketplaceUserInfo("Test User")
-  account.saveJwtToken("not empty jwt token")
   MarketplaceSettings.INSTANCE.account = account
 }
 

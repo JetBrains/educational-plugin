@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.marketplace.MarketplaceUtils;
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector;
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
@@ -137,7 +137,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         if (eduCourse.isStepikRemote() && EduSettings.isLoggedIn()) {
           StepikConnectorUtils.markTheoryTaskAsCompleted(theoryTask, project);
         }
-        else if (eduCourse.isMarketplaceRemote() && MarketplaceSubmissionsConnector.Companion.isUserAuthorizedWithJwtToken()) {
+        else if (eduCourse.isMarketplaceRemote() && MarketplaceConnector.getInstance().isLoggedIn()) {
           MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask);
         }
       }

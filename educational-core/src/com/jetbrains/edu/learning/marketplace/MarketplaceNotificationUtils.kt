@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.ide.plugins.PluginManagerConfigurable
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -31,14 +35,20 @@ object MarketplaceNotificationUtils {
   }
 
   @Suppress("DialogTitleCapitalization")
-  fun showInstallMarketplacePluginNotification(action: AnAction) {
+  fun showInstallMarketplacePluginNotification(notificationTitle: String, notificationType: NotificationType) {
     val notification = Notification(
       "EduTools",
-      EduCoreBundle.message("error.failed.login.to.subsystem", MARKETPLACE),
+      notificationTitle,
       EduCoreBundle.message("notification.marketplace.install.licensing.plugin"),
-      NotificationType.ERROR
+      notificationType
     )
-    notification.addAction(action)
+
+    notification.addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
+      override fun actionPerformed(e: AnActionEvent) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(ProjectManager.getInstance().defaultProject,
+                                                          PluginManagerConfigurable::class.java)
+      }
+    })
     notification.notify(null)
   }
 
@@ -48,7 +58,6 @@ object MarketplaceNotificationUtils {
                                               EduCoreBundle.message("marketplace.failed.to.update.no.course"),
                                               action)
   }
-
 
   fun showAcceptDeveloperAgreementNotification(project: Project, action: () -> AnAction) {
     CCNotificationUtils.showErrorNotification(project,

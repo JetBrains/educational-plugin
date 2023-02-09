@@ -5,6 +5,7 @@ import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -109,9 +110,11 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
         if (!url.startsWith(SUBMISSION_DIFF_URL)) return false
 
         val submissionId = url.substringAfter(SUBMISSION_DIFF_URL).toInt()
-        val submission = submissionsManager.getSubmission(task, submissionId) ?: return true
-        runInEdt {
-          showDiff(project, task, submission)
+        ApplicationManager.getApplication().executeOnPooledThread {
+          val submission = submissionsManager.getSubmissionWithSolutionText(task, submissionId) ?: return@executeOnPooledThread
+          runInEdt {
+            showDiff(project, task, submission)
+          }
         }
         return true
       }

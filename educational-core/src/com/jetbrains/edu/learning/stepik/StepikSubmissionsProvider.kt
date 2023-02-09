@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -16,7 +15,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class StepikSubmissionsProvider : SubmissionsProvider {
 
-  override fun loadAllSubmissions(project: Project, course: Course): Map<Int, List<StepikBasedSubmission>> {
+  override fun loadAllSubmissions(course: Course): Map<Int, List<StepikBasedSubmission>> {
     val submissionsById = mutableMapOf<Int, List<StepikBasedSubmission>>()
     if (course is EduCourse && course.isStepikRemote && isLoggedIn()) {
       val allTasks: List<Task> = course.allTasks
@@ -25,14 +24,14 @@ class StepikSubmissionsProvider : SubmissionsProvider {
           submissionsById[task.id] = listOf()
         }
         else if (task is CodeTask || task is EduTask) {
-          submissionsById.putAll(loadSubmissions(listOf(task), course.id))
+          submissionsById.putAll(loadSubmissions(listOf(task), course))
         }
       }
     }
     return submissionsById
   }
 
-  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int,List<StepikBasedSubmission>> {
+  override fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int,List<StepikBasedSubmission>> {
     return tasks.associate { Pair(it.id, StepikConnector.getInstance().getSubmissions(it.id)) }
   }
 

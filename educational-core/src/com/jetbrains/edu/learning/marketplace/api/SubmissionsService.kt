@@ -2,26 +2,21 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface SubmissionsService {
 
-  @POST("/api/document/create")
-  fun createDocument(@Body submissionDocument: SubmissionDocument): Call<Document>
+  @GET("/api/course/{marketplaceId}/{updateVersion}/submission")
+  fun getAllSubmissionsForCourse(@Path("marketplaceId") marketplaceId: Int,
+                                 @Path("updateVersion") updateVersion: Int,
+                                 @Query("page") page: Int): Call<MarketplaceSubmissionsList>
 
-  @POST("/api/document/update")
-  fun updateDocument(@Body submissionDocument: SubmissionDocument): Call<ResponseBody>
+  @POST("/api/course/{marketplaceId}/{courseUpdateVersion}/task/{taskId}/submission")
+  fun postSubmission(@Path("marketplaceId") marketplaceId: Int,
+                     @Path("courseUpdateVersion") courseUpdateVersion: Int,
+                     @Path("taskId") taskId: Int,
+                     @Body submission: MarketplaceSubmission): Call<MarketplaceSubmission>
 
-  @POST("/api/versions/list")
-  fun getVersionsList(@Body document: Document): Call<Versions>
-
-  @POST("/api/versions/get")
-  fun getSubmissionContent(@Body submissionDocument: SubmissionDocument): Call<Content>
-
-  @POST("/api/workspace/link")
-  fun addPathToDocument(@Body descriptor: Descriptor): Call<ResponseBody>
-
-  @POST("/api/workspace/list")
-  fun getDescriptorsList(@Body path: DocumentPath): Call<Descriptors>
+  @GET("/api/solution")
+  fun getSolutionDownloadLink(@Query("solutionKey") solutionKey: String): Call<ResponseBody>
 }

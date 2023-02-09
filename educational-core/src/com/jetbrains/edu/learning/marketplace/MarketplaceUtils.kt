@@ -124,6 +124,6 @@ fun EduCourse.updateFeaturedStatus() {
 fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
   if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
   runInBackground(project, EduCoreBundle.message("marketplace.posting.theory"), false) {
-    MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(project, task)
+    MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(task)
   }
 }
