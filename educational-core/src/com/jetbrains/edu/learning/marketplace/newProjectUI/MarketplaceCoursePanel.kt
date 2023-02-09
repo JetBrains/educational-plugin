@@ -33,11 +33,11 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
 
   private class LegalTermsPanel: NonOpaquePanel(), CourseSelectionListener {
 
-    private val textPanel = GrayTextHtmlPanel("")
+    private val textPanel = GrayTextHtmlPanel("text")
 
     init {
       add(textPanel)
-      border = JBUI.Borders.empty(0, 16, 0, 0)
+      border = JBUI.Borders.empty(2, 16, 0, 0)
     }
 
     override fun onCourseSelectionChanged(data: CourseBindData) {
