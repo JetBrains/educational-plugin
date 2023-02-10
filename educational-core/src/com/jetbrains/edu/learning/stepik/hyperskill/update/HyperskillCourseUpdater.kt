@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_ENVIRONMENT_UPDATE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -144,7 +145,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     updateProblems(problemsUpdates)
 
     // update environment at the end as it requires project reload
-    if (remoteCourse != null && remoteCourse.environment != course.environment) {
+    if (isFeatureEnabled(HYPERSKILL_ENVIRONMENT_UPDATE) && remoteCourse != null && remoteCourse.environment != course.environment) {
       course.updateDate = Date()
       course.environment = remoteCourse.environment
       YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
