@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -192,7 +191,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
         else -> if (StyleResourcesManager.isHighContrast()) EducationalCoreIcons.TaskFailedNoFrameHighContrast else EducationalCoreIcons.TaskFailedNoFrame
       }
       @Suppress("UnstableApiUsage")
-      return (icon as IconLoader.CachedImageIcon).url
+      return (icon as CachedIcon).url
     }
 
     private fun getLinkColor(submission: Submission): String {
