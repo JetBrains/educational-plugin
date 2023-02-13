@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtils
@@ -331,6 +332,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
+  private fun isCustomRunConfigurationFile(path: String) = VfsUtilCore.isEqualOrAncestor("runConfigurations/", path)
+
   private fun Map<String, String>.split(task: Task): Pair<Map<String, String>, Map<String, String>> {
     val configurator = task.course.configurator
     if (configurator == null) {
@@ -341,7 +344,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val testFiles = HashMap<String, String>()
 
     for ((path, text) in this) {
-      val isTestFile = configurator.isTestFile(task, path)
+      val isInvisibleRunConfigurationFile = isCustomRunConfigurationFile(path) && task.taskFiles[path]?.isVisible == false
+      val isTestFile = configurator.isTestFile(task, path) || isInvisibleRunConfigurationFile
       val state = if (isTestFile) testFiles else taskFiles
       state[path] = text
     }

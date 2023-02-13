@@ -486,6 +486,82 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  fun `test do not propagate runConfigurations files`() {
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage
+    ) {
+      frameworkLesson("lesson1", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("src/Task1.kt", "fun main() {}")
+          taskFile("src/Task2.kt", "fun main() {}")
+        }
+        eduTask("task2") {
+          taskFile("src/Task1.kt", "fun main() {}")
+          taskFile("src/Task2.kt", "fun main() {}")
+          taskFile("runConfigurations/a.kt", createRunConfigurationTemplate("task2", "Task1"), visible = false)
+        }
+        eduTask("task3") {
+          taskFile("src/Task1.kt", "fun main() {}")
+          taskFile("src/Task2.kt", "fun main() {}")
+          taskFile("runConfigurations/b.kt", createRunConfigurationTemplate("task3", "Task2"), visible = false)
+        }
+      }
+    }
+
+    val task1 = course.findTask("lesson1", "task1")
+    val task2 = course.findTask("lesson1", "task2")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/Task1.kt")
+      testAction(NextTaskAction.ACTION_ID)
+      task2.openTaskFileInEditor("src/Task2.kt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("runConfigurations") {
+            file("b.kt", createRunConfigurationTemplate("task3", "Task2"))
+          }
+          dir("src") {
+            file("Task1.kt", """
+              fun main() {}
+            """)
+            file("Task2.kt", """
+              fun main() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+        dir("task3") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  private fun createRunConfigurationTemplate(taskName: String, sourceFileName: String) = """
+    <component name="ProjectRunConfigurationManager">
+      <configuration default="false" name="${sourceFileName}Kt" type="JetRunConfigurationType" nameIsGenerated="true">
+        <option name="MAIN_CLASS_NAME" value="${sourceFileName}Kt" />
+        <module name="Test_Course.lesson1-${taskName}.main" />
+        <shortenClasspath name="NONE" />
+        <method v="2">
+          <option name="Make" enabled="true" />
+        </method>
+      </configuration>
+    </component>
+  """.trimIndent()
+
   private fun createFrameworkCourse(): Course = courseWithFiles(
     language = FakeGradleBasedLanguage
   ) {
