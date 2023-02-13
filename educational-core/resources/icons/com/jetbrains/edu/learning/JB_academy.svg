@@ -1,7 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <g fill="none" fill-rule="evenodd">
-    <path fill="#6E6E6E" d="M0,16 L16,16 L16,0 L0,0 L0,16 Z M1,15 L15,15 L15,1 L1,1 L1,15 Z"/>
-    <polygon fill="#FFF" points="1 15 15 15 15 1 1 1" opacity=".9"/>
-    <path fill="#6E6E6E" d="M15,1 L15,15 L1,15 L15,1 Z M12.9985,12.136 L9.494,12.136 L9.494,12.908 L12.9985,12.908 L12.9985,12.136 Z"/>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.1 13.98">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-3);
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient-4);
+      }
+
+      .cls-4 {
+        fill: url(#linear-gradient-2);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="9.25" y1="10.58" x2="13.4" y2="6.61" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#606060"/>
+      <stop offset="1" stop-color="#a2a2a2"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="3.19" y1="14.66" x2="6.99" y2="11.21" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#777"/>
+      <stop offset="1" stop-color="#adadad"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-3" x1="3.22" y1="6.72" x2="-.24" y2="10.67" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c5c5c5"/>
+      <stop offset="1" stop-color="#adadad"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-4" x1="8.77" y1="3.09" x2="4.66" y2="7.41" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c5c5c5"/>
+      <stop offset="1" stop-color="#919191"/>
+    </linearGradient>
+  </defs>
+  <path class="cls-1" d="m12.1,12.67c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31V1.31c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v11.36Z"/>
+  <path class="cls-4" d="m7.25,4.81c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-1.75c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v1.75Z"/>
+  <path class="cls-2" d="m2.42,8.3c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-2.62c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v2.62Z"/>
+  <path class="cls-3" d="m7.25,10.92c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-1.75c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v1.75Z"/>
 </svg>
