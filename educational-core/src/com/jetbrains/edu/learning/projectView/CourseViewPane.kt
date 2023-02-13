@@ -22,6 +22,7 @@ import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.BaseProjectTreeBuilder
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
@@ -149,7 +150,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   @TestOnly
   fun getProgressBar(): JProgressBar = progressBar
 
-  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {
+  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID), ProjectViewSettings {
     override fun createRoot(project: Project, settings: ViewSettings): AbstractTreeNode<*> {
       return RootNode(myProject, settings)
     }
@@ -162,6 +163,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
       elements.forEach { node -> node.setParent(element) }
       return ArrayUtil.toObjectArray(elements)
     }
+
+    override fun isShowExcludedFiles() = false
   }
 
   @Suppress("UnstableApiUsage")
