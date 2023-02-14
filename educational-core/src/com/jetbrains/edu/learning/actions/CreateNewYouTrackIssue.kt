@@ -33,16 +33,16 @@ class CreateNewYouTrackIssue : DumbAwareAction(
   }
 
   companion object {
-    
+
     private fun createIssueDescription(course: Course?): String {
       val pluginVersion = pluginVersion(EduNames.PLUGIN_ID)!!
       return buildString {
         appendLine("""
           ## Environment
           
-          * **JetBrains Academy plugin version:** $pluginVersion
-          * **IDE name and version:** $ideNameAndVersion
-          * **Operating system:** ${SystemInfo.getOsNameAndVersion()}
+          * **JetBrains Academy plugin version**: $pluginVersion
+          * **IDE name and version**: $ideNameAndVersion
+          * **Operating system**: ${SystemInfo.getOsNameAndVersion()}
         """.trimIndent())
         if (course != null) {
           appendLine("""
