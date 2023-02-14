@@ -115,8 +115,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
 
   private fun setAndroidSdkLocation(sdkLocation: File) {
     ApplicationUtils.invokeWriteActionAndWait(ModalityState.any()) {
-      // TODO Do we have to pass the default project here too instead of null?
-      IdeSdks.getInstance().setAndroidSdkPath(sdkLocation, null)
+      setAndroidSdkPath(sdkLocation)
     }
   }
 
