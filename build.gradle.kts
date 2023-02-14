@@ -310,7 +310,7 @@ project(":") {
   version = "$pluginVersion-$platformVersion-$buildNumber"
 
   intellij {
-    pluginName.set("JetBrains Academy")
+    pluginName.set("JetBrainsAcademy")
     updateSinceUntilBuild.set(true)
     downloadSources.set(false)
 
@@ -391,7 +391,7 @@ project(":") {
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
     // The name differs from all module names to avoid collision during new jar file creation
-    archiveBaseName.set("JetBrains Academy")
+    archiveBaseName.set("JetBrainsAcademy")
 
     exclude("META-INF/MANIFEST.MF")
 
