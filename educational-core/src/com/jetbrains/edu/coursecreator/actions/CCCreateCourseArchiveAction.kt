@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -13,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.create.course.archive.text")) {
 
   override fun update(e: AnActionEvent) {
@@ -32,6 +32,7 @@ class CCCreateCourseArchiveAction : AnAction(EduCoreBundle.lazyMessage("action.c
 
     ProgressManager.getInstance().run(CreateCourseArchiveProgressTask(project, course))
   }
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 
   companion object {
     @NonNls

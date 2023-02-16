@@ -92,7 +92,7 @@ class CreateCourseArchiveProgressTask(
     if (!dialog.showAndGet()) {
       return@getInEdt null
     }
-    Triple(dialog.locationPath, dialog.authorName, dialog.checkTasksFlag)
+    Triple(dialog.locationPath, dialog.authorName, dialog.checkAllTasksFlag)
   }
 
   private fun createSourceArchive(project: Project, course: Course, locationPath: String, authorName: String) {
