@@ -19,12 +19,13 @@
 
     <localInspection shortName="PyEduInterpreterInspection"
                      bundle="messages.EduPythonBundle"
-                     groupKey="python.inspection.group.name"
+                     groupKey="inspection.python.group.name"
                      key="python.inspection.invalid.interpreter.display.name"
-                     groupPath="JetBrains Academy"
+                     groupPathKey="inspection.group.path.key"
+                     groupBundle="messages.EduCoreBundle"
                      enabledByDefault="true"
                      level="WARNING"
-                     implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>
+                     implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection" language="Python"/>
     <configurationType implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer"/>
   </extensions>

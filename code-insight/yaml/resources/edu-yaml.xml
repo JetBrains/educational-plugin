@@ -14,14 +14,24 @@
     <psi.referenceContributor language="yaml"
                               implementation="com.jetbrains.edu.yaml.EduYamlReferenceContributor"/>
 
-    <localInspection language="yaml" groupPath="JetBrains Academy" groupName="Yaml configs"
-                     displayName="Task file not found"
-                     enabledByDefault="true" level="ERROR"
-                     implementationClass="com.jetbrains.edu.yaml.inspections.TaskFileNotFoundInspection"/>
+    <localInspection language="yaml"
+                     groupBundle="messages.EduCoreBundle"
+                     groupKey="inspection.yaml.group.key"
+                     groupPathKey="inspection.group.path.key"
+                     enabledByDefault="true"
+                     level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.TaskFileNotFoundInspection"
+                     key="inspection.task.file.not.found.display.name"
+                     bundle="messages.EduYAMLBundle"/>
 
-    <localInspection language="yaml" groupPath="JetBrains Academy" groupName="Yaml configs"
-                     displayName="Task, lesson or section not found"
-                     enabledByDefault="true" level="ERROR"
-                     implementationClass="com.jetbrains.edu.yaml.inspections.StudyItemNotFoundInspection"/>
+    <localInspection language="yaml"
+                     groupBundle="messages.EduCoreBundle"
+                     groupKey="inspection.yaml.group.key"
+                     groupPathKey="inspection.group.path.key"
+                     enabledByDefault="true"
+                     level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.StudyItemNotFoundInspection"
+                     key="inspection.study.item.not.found.display.name"
+                     bundle="messages.EduYAMLBundle"/>
   </extensions>
 </idea-plugin>
