@@ -1,15 +1,18 @@
-package com.jetbrains.edu.coursecreator.actions;
+package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.project.DumbAware;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.project.DumbAware
+import com.jetbrains.edu.coursecreator.CCUtils.updateActionGroup
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCProjectViewActionGroup extends DefaultActionGroup implements DumbAware {
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    CCUtils.updateActionGroup(e);
+@Suppress("ComponentNotRegistered") // educational-core.xml
+class CCProjectViewActionGroup : DefaultActionGroup(EduCoreBundle.lazyMessage("group.educator.projectView.text"),
+                                                    EduCoreBundle.lazyMessage("group.educator.projectView.description"), null), DumbAware {
+  override fun update(e: AnActionEvent) {
+    updateActionGroup(e)
   }
+
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
 }
