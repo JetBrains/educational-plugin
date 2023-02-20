@@ -16,7 +16,7 @@ rootProject.projectDir.eachDirRecurse {
     for (name in taskRelativePath) {
         parts.add(sanitizeName(name.toString()))
     }
-    def moduleName =  parts.join("-")
+    def moduleName = parts.join("-")
     include "$moduleName"
     project(":$moduleName").projectDir = it
 }

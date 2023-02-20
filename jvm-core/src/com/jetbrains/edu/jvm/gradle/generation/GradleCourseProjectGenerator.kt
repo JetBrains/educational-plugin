@@ -24,13 +24,29 @@ open class GradleCourseProjectGenerator(
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
-    if (EduGradleUtils.hasCourseHaveGradleKtsFiles(course)) {
-      return
-    }
-    EduGradleUtils.createProjectGradleFiles(holder,
-                                            gradleCourseBuilder.templates,
-                                            gradleCourseBuilder.templateVariables(holder.courseDir.name))
+    val templates = mapOf(
+      chooseTemplate(gradleCourseBuilder.buildGradleTemplate, gradleCourseBuilder.buildGradleKtsTemplate),
+      chooseTemplate(gradleCourseBuilder.settingsGradleTemplate, gradleCourseBuilder.settingsGradleKtsTemplate),
+    )
+    EduGradleUtils.createProjectGradleFiles(
+      holder,
+      templates,
+      gradleCourseBuilder.templateVariables(holder.courseDir.name)
+    )
   }
+
+  /**
+   * Select kotlin DSL template if it is defined for the current project generator
+   * If the course already has a default gradle file, then default gradle template is selected
+   */
+  private fun chooseTemplate(defaultTemplate: Pair<String, String>, ktsTemplate: Pair<String, String>?): Pair<String, String> {
+    if (ktsTemplate == null || course.hasAdditionalFile(defaultTemplate.first)) {
+      return defaultTemplate
+    }
+    return ktsTemplate
+  }
+
+  private fun Course.hasAdditionalFile(fileName: String): Boolean = additionalFiles.find { it.name == fileName } != null
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
     return settings.jdk

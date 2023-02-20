@@ -40,10 +40,6 @@ object EduGradleUtils {
     return File(project.basePath, GradleConstants.KOTLIN_DSL_SCRIPT_NAME).exists()
   }
 
-  @JvmStatic
-  fun hasCourseHaveGradleKtsFiles(course: Course): Boolean =
-    course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME } != null &&
-      course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME } != null
 
   @JvmStatic
   @Throws(IOException::class)

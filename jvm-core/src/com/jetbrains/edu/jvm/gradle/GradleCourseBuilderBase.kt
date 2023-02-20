@@ -11,20 +11,27 @@ import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
-import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
+import org.jetbrains.plugins.gradle.util.GradleConstants.*
 
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
   open val settingGradleTemplateName: String = SETTINGS_FILE_NAME
 
-  /**
-   * Map from config file name which should be created in project to template file name
-   */
-  val templates: Map<String, String>
-    get() = mapOf(DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
-                  SETTINGS_FILE_NAME to settingGradleTemplateName)
+  open val buildGradleKtsTemplateName: String? = null
+  open val settingGradleKtsTemplateName: String? = null
+
+  val buildGradleTemplate: Pair<String, String>
+    get() = DEFAULT_SCRIPT_NAME to buildGradleTemplateName
+
+  val settingsGradleTemplate: Pair<String, String>
+    get() = SETTINGS_FILE_NAME to settingGradleTemplateName
+
+  val buildGradleKtsTemplate: Pair<String, String>?
+    get() = buildGradleKtsTemplateName?.let { KOTLIN_DSL_SCRIPT_NAME to it }
+
+  val settingsGradleKtsTemplate: Pair<String, String>?
+    get() = settingGradleKtsTemplateName?.let { KOTLIN_DSL_SETTINGS_FILE_NAME to it }
 
   open fun templateVariables(projectName: String): Map<String, Any> {
     return mapOf(PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName))

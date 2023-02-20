@@ -1,0 +1,87 @@
+import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+  java
+  application
+  kotlin("jvm") version "${KOTLIN_VERSION}" apply false
+}
+
+buildscript {
+  extra["kotlin_version"] = "${KOTLIN_VERSION}"
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${KOTLIN_VERSION}")
+  }
+}
+
+subprojects {
+  apply {
+    plugin("application")
+    plugin("java")
+    plugin("kotlin")
+  }
+
+  java.sourceCompatibility = JavaVersion.VERSION_11
+
+  repositories {
+    mavenCentral()
+
+    maven("https://jitpack.io")
+  }
+
+
+  dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${KOTLIN_VERSION}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${KOTLIN_VERSION}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${KOTLIN_VERSION}")
+    testImplementation("com.github.hyperskill:hs-test:release-SNAPSHOT")
+  }
+
+  configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+  }
+
+  tasks {
+    withType<JavaCompile> {
+      sourceCompatibility = "11"
+      targetCompatibility = "11"
+
+      options.encoding = "utf-8"
+    }
+    withType<KotlinCompile> {
+      kotlinOptions.jvmTarget = "11"
+    }
+  }
+
+  sourceSets.main {
+    java.srcDir("src")
+  }
+
+  sourceSets.test {
+    java.srcDir("test")
+  }
+
+  tasks {
+    withType<Test> {
+      systemProperty("file.encoding", "utf-8")
+    }
+  }
+}
+
+project(":util") {
+  dependencies {
+    implementation("com.github.hyperskill:hs-test:release-SNAPSHOT")
+  }
+}
+
+configure(subprojects.filter { it.name != "util" }) {
+  dependencies {
+    testImplementation(project(":util").dependencyProject.sourceSets["main"].output)
+    testImplementation(project(":util").dependencyProject.sourceSets["test"].output)
+  }
+}

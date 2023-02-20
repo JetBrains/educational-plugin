@@ -17,10 +17,16 @@ class KtHyperskillConfigurator : HyperskillConfigurator<JdkProjectSettings>(KtCo
   private class KtHyperskillCourseBuilder : KtCourseBuilder() {
     override val buildGradleTemplateName: String = KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
     override val settingGradleTemplateName: String = HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
+
+    override val buildGradleKtsTemplateName: String = KOTLIN_HYPERSKILL_BUILD_GRADLE_KOTLIN_DSL_TEMPLATE_NAME
+    override val settingGradleKtsTemplateName: String = KOTLIN_HYPERSKILL_SETTINGS_GRADLE_KOTLIN_DSL_TEMPLATE_NAME
   }
 
   companion object {
     @VisibleForTesting
     const val KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME = "hyperskill-kotlin-build.gradle"
+
+    const val KOTLIN_HYPERSKILL_BUILD_GRADLE_KOTLIN_DSL_TEMPLATE_NAME = "hyperskill-kotlin-build.gradle.kts"
+    const val KOTLIN_HYPERSKILL_SETTINGS_GRADLE_KOTLIN_DSL_TEMPLATE_NAME = "hyperskill-settings.gradle.kts"
   }
 }
