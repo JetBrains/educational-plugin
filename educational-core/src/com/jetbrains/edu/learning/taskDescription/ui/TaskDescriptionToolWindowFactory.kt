@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -46,7 +47,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.component.putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
     toolWindow.initTitleActions()
-    addGotItTooltip()
+    addGotItTooltip(toolWindow.contentManager)
     taskDescriptionToolWindow.init(toolWindow)
     (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
   }
@@ -59,9 +60,9 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     setTitleActions(actions)
   }
 
-  private fun addGotItTooltip() {
+  private fun addGotItTooltip(parentDisposable: Disposable) {
     val action = EduActionUtils.getAction(CodeforcesShowLoginStatusAction.ACTION_ID)
-    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"))
+    val gotItTooltip = GotItTooltip("login.to.codeforces", EduCoreBundle.message("codeforces.login.to.codeforces.tooltip"), parentDisposable)
     gotItTooltip.assignTo(action.templatePresentation, GotItTooltip.BOTTOM_MIDDLE)
     val jComponent = action.templatePresentation.getClientProperty(CustomComponentAction.COMPONENT_KEY)
     if (jComponent != null && gotItTooltip.canShow() && !CodeforcesSettings.getInstance().isLoggedIn()) {
