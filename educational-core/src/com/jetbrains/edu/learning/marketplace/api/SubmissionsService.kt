@@ -6,9 +6,8 @@ import retrofit2.http.*
 
 interface SubmissionsService {
 
-  @GET("/api/course/{marketplaceId}/{updateVersion}/submission")
+  @GET("/api/course/{marketplaceId}/submission")
   fun getAllSubmissionsForCourse(@Path("marketplaceId") marketplaceId: Int,
-                                 @Path("updateVersion") updateVersion: Int,
                                  @Query("page") page: Int): Call<MarketplaceSubmissionsList>
 
   @POST("/api/course/{marketplaceId}/{courseUpdateVersion}/task/{taskId}/submission")

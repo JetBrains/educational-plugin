@@ -156,7 +156,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
       for (i in submissionsLists.indices) {
         val getAllSubmissionsPageableCall = mockk<Call<MarketplaceSubmissionsList>>()
-        every { service.getAllSubmissionsForCourse(any(), any(), i + 1) } returns getAllSubmissionsPageableCall
+        every { service.getAllSubmissionsForCourse(any(), i + 1) } returns getAllSubmissionsPageableCall
         val getAllSubmissionsPageableResponse = mapper.treeToValue(mapper.readTree(submissionsLists[i]), MarketplaceSubmissionsList::class.java)
         every { getAllSubmissionsPageableCall.execute() } returns Response.success(getAllSubmissionsPageableResponse)
       }

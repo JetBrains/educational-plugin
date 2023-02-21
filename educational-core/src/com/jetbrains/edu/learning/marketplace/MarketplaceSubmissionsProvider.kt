@@ -15,13 +15,13 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
   override fun loadAllSubmissions(course: Course): Map<Int, List<MarketplaceSubmission>> {
     if (course is EduCourse && course.isMarketplaceRemote && isLoggedIn()) {
-      return loadSubmissions(course.allTasks, course)
+      return loadSubmissions(course.allTasks, course.id)
     }
     return emptyMap()
   }
 
-  override fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int, List<MarketplaceSubmission>> {
-    val submissions = MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(course.id, course.marketplaceCourseVersion)
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<MarketplaceSubmission>> {
+    val submissions = MarketplaceSubmissionsConnector.getInstance().getAllSubmissions(courseId)
     val submissionsById = mutableMapOf<Int, MutableList<MarketplaceSubmission>>()
     return submissions.groupByTo(submissionsById) { it.taskId }
   }

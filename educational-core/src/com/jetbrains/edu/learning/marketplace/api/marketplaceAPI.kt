@@ -65,7 +65,6 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
     PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForHubIdToken), Credentials(userName, tokenInfo.idToken))
   }
 
-
 }
 
 class QueryData(graphqlQuery: String) {

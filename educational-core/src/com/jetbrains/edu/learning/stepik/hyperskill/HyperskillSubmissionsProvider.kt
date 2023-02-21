@@ -15,10 +15,10 @@ class HyperskillSubmissionsProvider : SubmissionsProvider {
 
   override fun loadAllSubmissions(course: Course): Map<Int, List<StepikBasedSubmission>> {
     if (!areSubmissionsAvailable(course) || !isLoggedIn()) return emptyMap()
-    return loadSubmissions(course.allTasks, course)
+    return loadSubmissions(course.allTasks, course.id)
   }
 
-  override fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int, List<StepikBasedSubmission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<StepikBasedSubmission>> {
     val stepIds = tasks.map { it.id }.toSet()
     val submissionsById = mutableMapOf<Int, MutableList<StepikBasedSubmission>>()
     val submissionsList = HyperskillConnector.getInstance().getSubmissions(stepIds)

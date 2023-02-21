@@ -46,7 +46,7 @@ class SubmissionsManager(private val project: Project) {
     else {
       if (course == null) return null
       val submissionsProvider = SubmissionsProvider.getSubmissionsProviderForCourse(course) ?: return null
-      val submissionsById = submissionsProvider.loadSubmissions(tasks, course)
+      val submissionsById = submissionsProvider.loadSubmissions(tasks, course.id)
       submissions.putAll(submissionsById)
       updateSubmissionsTab()
       submissionsById.values.flatten()
@@ -76,7 +76,7 @@ class SubmissionsManager(private val project: Project) {
       submissionsList
     }
     else {
-      val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course)
+      val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course.id)
       submissions.putAll(loadedSubmissions)
       updateSubmissionsTab()
       return loadedSubmissions[task.id] ?: emptyList()

@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import org.jdom.Element
 
-private const val serviceName = "MarketplaceSettings"
+private const val SERVICE_NAME = "MarketplaceSettings"
 
-@State(name = serviceName, storages = [Storage("other.xml")])
+@State(name = SERVICE_NAME, storages = [Storage("other.xml")])
 class MarketplaceSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient
@@ -28,7 +28,7 @@ class MarketplaceSettings : PersistentStateComponent<Element> {
     }
 
   override fun getState(): Element? {
-    val mainElement = Element(serviceName)
+    val mainElement = Element(SERVICE_NAME)
     XmlSerializer.serializeInto(this, mainElement)
     val userElement = account?.serialize() ?: return null
     mainElement.addContent(userElement)

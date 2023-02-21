@@ -14,7 +14,7 @@ interface SubmissionsProvider {
 
   fun loadAllSubmissions(course: Course): Map<Int, List<Submission>>
 
-  fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int, List<Submission>>
+  fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<Submission>>
 
   fun loadSolutionFiles(submission: MarketplaceSubmission) {}
 

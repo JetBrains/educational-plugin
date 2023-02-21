@@ -66,11 +66,11 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  fun getAllSubmissions(courseId: Int, updateVersion: Int): List<MarketplaceSubmission> {
+  fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
     var currentPage = 1
     val allSubmissions = mutableListOf<MarketplaceSubmission>()
     do {
-      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, updateVersion, currentPage).executeHandlingExceptions()?.body() ?: break
+      val submissionsList = submissionsService.getAllSubmissionsForCourse(courseId, currentPage).executeHandlingExceptions()?.body() ?: break
       val submissions = submissionsList.submissions
       allSubmissions.addAll(submissions)
       currentPage += 1

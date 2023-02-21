@@ -24,14 +24,14 @@ class StepikSubmissionsProvider : SubmissionsProvider {
           submissionsById[task.id] = listOf()
         }
         else if (task is CodeTask || task is EduTask) {
-          submissionsById.putAll(loadSubmissions(listOf(task), course))
+          submissionsById.putAll(loadSubmissions(listOf(task), course.id))
         }
       }
     }
     return submissionsById
   }
 
-  override fun loadSubmissions(tasks: List<Task>, course: Course): Map<Int,List<StepikBasedSubmission>> {
+  override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int,List<StepikBasedSubmission>> {
     return tasks.associate { Pair(it.id, StepikConnector.getInstance().getSubmissions(it.id)) }
   }
 
