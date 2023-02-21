@@ -85,6 +85,7 @@ val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val platformImagesPlugin = "com.intellij.platform.images"
 val gridImplPlugin = if (isAtLeast223) "intellij.grid.impl" else null
+val codeWithMePlugin = "com.jetbrains.codeWithMe"
 
 val jvmPlugins = listOf(
   javaPlugin,
@@ -644,9 +645,12 @@ project(":jvm-core") {
 }
 
 project(":remote-env") {
-  if (isAtLeast223 && !isStudioIDE) {
+  if (isAtLeast223) {
     intellij {
-      plugins.set(listOf("com.jetbrains.codeWithMe"))
+      if (isStudioIDE) {
+        version.set(ideaVersion)
+      }
+      plugins.set(listOf(codeWithMePlugin))
     }
   }
 
