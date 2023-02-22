@@ -69,8 +69,6 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
                                                                                                                                             task) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
     val objectMapper = HyperskillConnector.getInstance().objectMapper
-//    val dataKey = "data"
-//    val data = objectMapper.readTree(message).get("result").get(dataKey)?.get(dataKey) ?: return this
     val data = objectMapper.readTree(message).get("push").get("pub").get("data")?: return this
     for (receivedSubmission in objectMapper.treeToValue(data, SubmissionsList::class.java).submissions) {
       if (receivedSubmission.status == EVALUATION_STATUS) continue

@@ -200,9 +200,9 @@ class HyperskillCheckCodeTaskTest : EduTestCase() {
   @Language("JSON")
   private val submissionResult: String = """
     {
-      "result": {
+      "push": {
         "channel": "submission#6242591-0",
-        "data": {
+        "pub": {
           "data": $submissionWithWrongStatus
         }
       }

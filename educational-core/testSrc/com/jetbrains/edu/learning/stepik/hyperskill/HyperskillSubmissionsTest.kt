@@ -229,9 +229,9 @@ class HyperskillSubmissionsTest : SubmissionsTestBase() {
   @Language("JSON")
   private val submissionResult: String = """
     {
-      "result": {
+      "push": {
         "channel": "submission#6242591-0",
-        "data": {
+        "pub": {
           "data": $submissions
         }
       }
