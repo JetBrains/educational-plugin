@@ -21,11 +21,17 @@ import okhttp3.WebSocket
  * Communication protocol with Hyperskill WS is the following:
  *
  * 1. Retrieve token needed to authorize via API
- * 2. Send token to server when connection opens: {"params":{"token":"<actual token>"},"id":1}
+ * 2. Send token to server when connection opens: {"connect":{"token":"<actual token>"},"id":1}
  * 3. Receive OK message: {"id":1,"result":{"client":"<clientId>","version":"2.3.1","expires":true,"ttl":899}}
- * 4. Send message to subscribe to submission events: {"method":1,"params":{"channel":"submission#<userId>-0"},"id":2}
+ * 4. Send a message to subscribe to submission events: {"method":1,"subscribe":{"channel":"submission#<userId>-0"},"id":2}
  * 5. Receive OK message: {"id":2,"result":{}}
- * 6. Start receiving messages with submission events: {"result":{"channel":"submission#6242591-0","data":{"data": <submissionsData>}}}
+ * 6. Start receiving messages with submission events: {"push":{"channel":"submission#6242591-0","pub":{"data": <submissionsData>}}}
+ *
+ * Useful links for troubleshooting:
+ * @see <a href="https://centrifugal.dev/docs/getting-started/introduction">Centrifugo docs</a>
+ * @see <a href="https://github.com/centrifugal/protocol/blob/master/definitions/client.proto">Centrifugo client protocol github</a>
+ * @see <a href="https://github.com/centrifugal/centrifuge-java">Centrifugo Java client github</a>
+ *
  */
 abstract class WebSocketConnectionState(protected val project: Project, protected val task: CodeTask, val isTerminal: Boolean = false) {
   abstract fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState
@@ -63,8 +69,9 @@ private class ReceivingSubmissionsState(project: Project, task: CodeTask, val su
                                                                                                                                             task) {
   override fun handleEvent(webSocket: WebSocket, message: String): WebSocketConnectionState {
     val objectMapper = HyperskillConnector.getInstance().objectMapper
-    val dataKey = "data"
-    val data = objectMapper.readTree(message).get("result").get(dataKey)?.get(dataKey) ?: return this
+//    val dataKey = "data"
+//    val data = objectMapper.readTree(message).get("result").get(dataKey)?.get(dataKey) ?: return this
+    val data = objectMapper.readTree(message).get("push").get("pub").get("data")?: return this
     for (receivedSubmission in objectMapper.treeToValue(data, SubmissionsList::class.java).submissions) {
       if (receivedSubmission.status == EVALUATION_STATUS) continue
       if (submission.id == receivedSubmission.id) {
@@ -104,14 +111,14 @@ private fun WebSocket.send(message: WebSocketMessage) {
 private open class WebSocketMessage(@field:JsonProperty("id") val id: Int)
 
 private class OpenMessage(token: String) : WebSocketMessage(1) {
-  @JsonProperty("params")
-  val params = mapOf("token" to token)
+  @JsonProperty("connect")
+  val connect = mapOf("token" to token)
 }
 
 private class SubscribeToSubmissionsMessage(userId: Int) : WebSocketMessage(2) {
   @JsonProperty("method")
   val method = 1
 
-  @JsonProperty("params")
-  val params = mapOf("channel" to "submission#$userId-0")
+  @JsonProperty("subscribe")
+  val subscribe = mapOf("channel" to "submission#$userId-0")
 }

@@ -83,8 +83,9 @@ object HyperskillCheckConnector : StepikBasedCheckConnector() {
     }
 
     val initialState = InitialState(project, task, webSocketConfiguration.token)
+    // TODO: remove `cf_protocol_version=v2` after full transfer to the cf protocol version 2 (~Summer 2023).
     val finalState = connector.connectToWebSocketWithTimeout(CODE_TASK_CHECK_TIMEOUT,
-                                                             "wss://${getWebsocketHostName()}/ws/connection/websocket?cf_protocol_version=v1",
+                                                             "wss://${getWebsocketHostName()}/ws/connection/websocket?cf_protocol_version=v2",
                                                              initialState)
 
     return finalState.getResult()
