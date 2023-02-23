@@ -57,6 +57,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JProgressBar
 import javax.swing.border.EmptyBorder
+import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 class CourseViewPane(project: Project) : CourseViewPaneBase(project) {
@@ -182,8 +183,7 @@ class CourseViewPane(project: Project) : CourseViewPaneBase(project) {
     if (myProject.isDisposed) return null
 
     if (CCUtils.isCourseCreator(myProject)) {
-      val userObject = selectedNode?.userObject
-      val studyItem = when (userObject) {
+      val studyItem = when (val userObject = (selectedPath?.lastPathComponent as? DefaultMutableTreeNode)?.userObject) {
         is CCTaskNode -> userObject.item
         is CCLessonNode -> userObject.item
         is CCSectionNode -> userObject.item
