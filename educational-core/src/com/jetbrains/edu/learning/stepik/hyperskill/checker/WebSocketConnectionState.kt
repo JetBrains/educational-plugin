@@ -106,13 +106,16 @@ private fun WebSocket.send(message: WebSocketMessage) {
   send(HyperskillConnector.getInstance().objectMapper.writeValueAsString(message))
 }
 
+@Suppress("unused")
 private open class WebSocketMessage(@field:JsonProperty("id") val id: Int)
 
+@Suppress("unused")
 private class OpenMessage(token: String) : WebSocketMessage(1) {
   @JsonProperty("connect")
   val connect = mapOf("token" to token)
 }
 
+@Suppress("unused")
 private class SubscribeToSubmissionsMessage(userId: Int) : WebSocketMessage(2) {
   @JsonProperty("method")
   val method = 1
