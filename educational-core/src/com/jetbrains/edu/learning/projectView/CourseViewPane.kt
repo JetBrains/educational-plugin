@@ -20,18 +20,14 @@ package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
-import com.intellij.ide.projectView.BaseProjectTreeBuilder
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeNode
-import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.ide.util.treeView.NodeDescriptor
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
@@ -63,7 +59,7 @@ import javax.swing.JProgressBar
 import javax.swing.border.EmptyBorder
 import javax.swing.tree.DefaultTreeModel
 
-class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
+class CourseViewPane(project: Project) : CourseViewPaneBase(project) {
 
   private val myStudyItemDeleteProvider = CCStudyItemDeleteProvider()
 
@@ -74,9 +70,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
       override fun toString(): String = "$title ${super.toString()}"
     }
   }
-
-  @Suppress("UnstableApiUsage")
-  override fun createBuilder(treeModel: DefaultTreeModel): BaseProjectTreeBuilder? = null
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
@@ -166,9 +159,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     override fun isShowExcludedFiles() = false
   }
-
-  @Suppress("UnstableApiUsage")
-  override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = error("This tree is async now")
 
   override fun getTitle(): String = EduCoreBundle.message("project.view.course.pane.title")
 
