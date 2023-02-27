@@ -22,7 +22,6 @@ public class EducationalCoreIcons {
 
   public static final Icon Stepik = load("/icons/com/jetbrains/edu/learning/Stepik.png"); // 16x16
   public static final Icon StepikRefresh = load("/icons/com/jetbrains/edu/learning/StepikRefresh.png"); // 16x16
-  public static final Icon StepikCourseTab = load("/icons/com/jetbrains/edu/learning/stepikTab.svg"); // 16x16
 
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/PyCheckiO.svg");
   public static final Icon JSCheckiO = load("/icons/com/jetbrains/edu/learning/JSCheckiO.svg");

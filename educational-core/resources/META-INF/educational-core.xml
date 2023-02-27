@@ -344,9 +344,7 @@
                                     implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"
                                     implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.JetBrainsAcademyPlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="Stepik" order="after Marketplace"
-                                    implementation="com.jetbrains.edu.learning.stepik.StepikPlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="Coursera" order="after Stepik"
+    <coursesPlatformProviderFactory id="Coursera" order="after JetBrainsAcademy"
                                     implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="CheckiO" order="after Coursera"
                                     implementation="com.jetbrains.edu.learning.checkio.CheckiOPlatformProviderFactory"/>

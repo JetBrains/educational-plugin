@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.openapi.extensions.ExtensionPointName
 
 /**
- * Allows to create multiple providers with shareable state, for example, see [com.jetbrains.edu.learning.stepik.StepikPlatformProviderFactory]
- *
  * @property getProviders specifies the list of [CoursesPlatformProvider]. Each provider gives information for the tab on
  * [CoursesPanelWithTabs], e.g icon, list of courses.
  */
