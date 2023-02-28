@@ -29,6 +29,7 @@
             "eduLessonDefault.svg" : "icons/com/jetbrains/edu/eduLessonDefault.svg",
             "eduLessonDone.svg" : "icons/com/jetbrains/edu/eduLessonDone.svg",
             "eduSectionDefault.svg" : "icons/com/jetbrains/edu/eduSectionDefault.svg",
+            "eduSectionDone.svg" : "icons/com/jetbrains/edu/eduSectionDone.svg",
             "eduTaskDefault.svg" : "icons/com/jetbrains/edu/eduTaskDefault.svg",
             "eduTaskDone.svg" : "icons/com/jetbrains/edu/eduTaskDone.svg",
             "eduTaskFailed.svg" : "icons/com/jetbrains/edu/eduTaskFailed.svg",
