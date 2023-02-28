@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.SelectInTarget
