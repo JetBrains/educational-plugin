@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.course
 
 inline fun <reified I : PsiElement> psiElement(): PsiElementPattern.Capture<I> = PlatformPatterns.psiElement(I::class.java)
 
-fun <T, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(name: String, condition: (T, ProcessingContext?) -> Boolean): Self {
+fun <T : Any, Self : ObjectPattern<T, Self>> ObjectPattern<T, Self>.with(name: String, condition: (T, ProcessingContext?) -> Boolean): Self {
   return with(object : PatternCondition<T>(name) {
     override fun accepts(t: T, context: ProcessingContext?): Boolean = condition(t, context)
   })

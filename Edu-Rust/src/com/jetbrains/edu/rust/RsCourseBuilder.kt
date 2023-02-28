@@ -293,7 +293,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
   }
 
   private fun createNewline(project: Project): PsiElement =
-    PsiParserFacade.SERVICE.getInstance(project).createWhiteSpaceFromText("\n")
+    PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n")
 
   private fun PsiElement.saveDocument() {
     val document = PsiDocumentManager.getInstance(project).getDocument(containingFile) ?: error("Failed to find document for $containingFile")

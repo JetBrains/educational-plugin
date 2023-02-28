@@ -50,7 +50,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val newLesson = addNewLesson(project, "lesson2", 2, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newLessons = arrayListOf(newLesson))
 
@@ -69,7 +69,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val newSection = addNewSection(project, "section1", 2, localCourse, project.courseDir)
     val expectedInfo = StepikChangesInfo(newSections = arrayListOf(newSection))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -85,7 +85,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     localCourse.lessons.single().name = "renamed"
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = arrayListOf(localCourse.lessons.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -100,7 +100,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     localCourse.lessons.single().customPresentableName = "renamed"
     val expectedInfo = StepikChangesInfo(lessonAdditionalInfosToUpdate = arrayListOf(localCourse.lessons.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -119,7 +119,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     localCourse.items = mutableListOf<StudyItem>(localCourse.lessons[1], localCourse.lessons[0])
     localCourse.init(false)
     val expectedInfo = StepikChangesInfo(lessonsInfoToUpdate = localCourse.lessons.toMutableList())
@@ -138,7 +138,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val newName = "renamed"
     val changedSection = localCourse.sections.single()
     runWriteAction {
@@ -163,7 +163,7 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     localCourse.items = mutableListOf<StudyItem>(localCourse.sections[1], localCourse.sections[0])
     localCourse.init(false)
     val expectedInfo = StepikChangesInfo(sectionInfosToUpdate = localCourse.sections.toMutableList())
@@ -220,7 +220,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList[0]
 
     val newName = "renamed"
@@ -241,7 +241,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val lesson = localCourse.lessons.single()
     val changedTask = lesson.taskList[0]
 
@@ -264,7 +264,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val lesson = localCourse.lessons.single()
     val changedTask = lesson.taskList[0]
 
@@ -284,7 +284,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val lesson = localCourse.lessons.single()
     lesson.items = listOf<StudyItem>(lesson.taskList[2], lesson.taskList[1], lesson.taskList[0])
     localCourse.init(false)
@@ -300,7 +300,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val lesson = localCourse.lessons.single()
     val newTask = EduTask("task")
     newTask.id = 1
@@ -321,7 +321,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList[0]
     val newFileName = "new.txt"
 
@@ -342,7 +342,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList[0]
     val newFileName = "new.txt"
 
@@ -365,7 +365,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList[0]
 
     val taskDescriptionFile = changedTask.getDir(project.courseDir)!!.findChild(TASK_MD)
@@ -389,7 +389,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().name = "renamed.txt"
 
@@ -406,7 +406,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
 
     runWriteAction {
@@ -427,7 +427,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
 
     val taskFile = changedTask.taskFiles.values.single()
@@ -453,7 +453,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.offset = 10
@@ -473,7 +473,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.placeholderText = "new answer"
@@ -493,7 +493,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.length = 1
@@ -513,7 +513,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.placeholderDependency = AnswerPlaceholderDependency()
@@ -529,7 +529,7 @@ class StepikCompareCourseTest : EduTestCase() {
                                                                   "2" to ChoiceOptionStatus.INCORRECT))
       }
     }.asRemote()
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     (localCourse.lessons.single().taskList.single() as ChoiceTask).choiceOptions = listOf(ChoiceOption("1", ChoiceOptionStatus.CORRECT),
                                                                                           ChoiceOption("2", ChoiceOptionStatus.CORRECT))
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
@@ -543,7 +543,7 @@ class StepikCompareCourseTest : EduTestCase() {
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
       }
     }.asRemote()
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     (localCourse.lessons.single().taskList.single() as ChoiceTask).isMultipleChoice = true
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -556,7 +556,7 @@ class StepikCompareCourseTest : EduTestCase() {
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
       }
     }.asRemote()
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     (localCourse.lessons.single().taskList.single() as ChoiceTask).messageCorrect = "correct"
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -569,7 +569,7 @@ class StepikCompareCourseTest : EduTestCase() {
                                                                    "2" to ChoiceOptionStatus.INCORRECT))
       }
     }.asRemote()
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     (localCourse.lessons.single().taskList.single() as ChoiceTask).messageIncorrect = "incorrect"
     val expectedInfo = StepikChangesInfo(tasksToUpdate = mutableListOf(courseFromServer.lessons.single().taskList.single()))
     checkChangedItems(localCourse, courseFromServer, expectedInfo)
@@ -582,7 +582,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
     localCourse.solutionsHidden = true
 
     val expectedChangedItems = StepikChangesInfo(isCourseAdditionalInfoChanged = true)
@@ -597,7 +597,7 @@ class StepikCompareCourseTest : EduTestCase() {
       }
     }.asRemote()
 
-    val courseFromServer = localCourse.copy() as EduCourse
+    val courseFromServer = localCourse.copy()
 
     val localLesson = localCourse.getLesson("lesson1")!!
     localLesson.getTask("task1")!!.solutionHidden = true

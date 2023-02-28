@@ -154,7 +154,7 @@ class TaskDescriptionViewImpl(project: Project) : TaskDescriptionView(project), 
 
     uiContent = UiContent(topPanel, taskTextTW, checkPanel, separator)
 
-    val content = ContentFactory.SERVICE.getInstance()
+    val content = ContentFactory.getInstance()
       .createContent(panel, EduCoreBundle.message("label.description"), false)
       .apply { isCloseable = false }
     contentManager.addContent(content)

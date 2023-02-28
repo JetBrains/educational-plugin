@@ -51,6 +51,6 @@ abstract class AdditionalTab(val project: Project, val tabType: TabType) : JPane
 
   private fun createContent(): Content {
     val tabName = tabType.tabName
-    return ContentFactory.SERVICE.getInstance().createContent(this, tabName, false)
+    return ContentFactory.getInstance().createContent(this, tabName, false)
   }
 }
