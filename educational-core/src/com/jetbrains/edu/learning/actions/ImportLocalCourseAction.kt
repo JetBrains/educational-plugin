@@ -15,10 +15,8 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -38,6 +36,7 @@ open class ImportLocalCourseAction(
     FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
       val fileName = file.path
       val course = EduUtilsKt.getLocalCourse(fileName)
+      course?.isLocal = true
       if (course == null) {
         showInvalidCourseDialog()
         return@chooseFile
@@ -90,16 +89,8 @@ open class ImportLocalCourseAction(
     ImportCourseDialog(course).show()
   }
 
-  private class ImportCourseDialog(private val course: Course) : JoinCourseDialog(course) {
+  private class ImportCourseDialog(course: Course) : JoinCourseDialog(course) {
     override fun isToShowError(errorState: ErrorState): Boolean = errorState !is ErrorState.NotLoggedIn
-
-    override fun show() {
-      super.show()
-      val project = course.project ?: return
-      // IS_LOCAL_COURSE = true info is stored in PropertiesComponent to keep it after course restart on purpose
-      // not to show login widget for local course
-      PropertiesComponent.getInstance(project).setValue(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE, true)
-    }
   }
 
   private fun closeDialog(component: Component?) {

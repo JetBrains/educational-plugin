@@ -143,6 +143,5 @@ class CCCreateCoursePreviewDialog(
     private const val TMP_DIR_ERROR = "Failed to create temp directory for course preview"
 
     const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
-    const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
   }
 }

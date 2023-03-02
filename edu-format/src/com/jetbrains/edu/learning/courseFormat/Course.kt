@@ -33,6 +33,13 @@ abstract class Course : LessonContainer() {
   @Transient
   var authors: List<UserInfo> = emptyList()
 
+  /**
+   * Not intended to be used to check if it's a local course, needed to pass info for course creation
+   * to check if course is local use CCUtilsUtils.kt#Project.isLocalCourse
+   */
+  @Transient
+  var isLocal: Boolean = false
+
   open var languageCode: String = "en"
 
   // Marketplace:

@@ -1,12 +1,11 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
-import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
+import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 
@@ -20,7 +19,7 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   override fun isAvailable(project: Project): Boolean {
     if (!EduUtils.isEduProject(project)) return false
     val course = StudyTaskManager.getInstance(project).course
-    return if (course != null && !course.isPreview && !isLocalCourse(project)) {
+    return if (course != null && !course.isPreview && !project.isLocalCourse) {
       isWidgetAvailable(course)
     }
     else false
@@ -29,7 +28,4 @@ abstract class LoginWidgetFactory : StatusBarWidgetFactory {
   override fun disposeWidget(widget: StatusBarWidget) = Disposer.dispose(widget)
 
   abstract fun isWidgetAvailable(course: Course): Boolean
-
-  private fun isLocalCourse(project: Project): Boolean =
-    PropertiesComponent.getInstance(project).getBoolean(CCCreateCoursePreviewDialog.IS_LOCAL_COURSE)
 }

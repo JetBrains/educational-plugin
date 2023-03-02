@@ -22,6 +22,7 @@ import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -76,6 +77,10 @@ abstract class CourseProjectGenerator<S : Any>(
   }
 
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
+    // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
+    // not to show login widget for local course
+    project.isLocalCourse = course.isLocal
+
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
     statusBarWidgetsManager.updateAllWidgets()
 

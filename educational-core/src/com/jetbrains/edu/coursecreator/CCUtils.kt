@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator
 
 import com.intellij.CommonBundle
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -49,6 +50,11 @@ object CCUtils {
 
   const val GENERATED_FILES_FOLDER = ".coursecreator"
   const val DEFAULT_PLACEHOLDER_TEXT = "type here"
+  private const val IS_LOCAL_COURSE: String = "Edu.IsLocalCourse"
+
+  var Project.isLocalCourse: Boolean
+    get() = PropertiesComponent.getInstance(this).getBoolean(IS_LOCAL_COURSE)
+    set(value) = PropertiesComponent.getInstance(this).setValue(IS_LOCAL_COURSE, value)
 
   /**
    * This method decreases index and updates directory names of
