@@ -21,6 +21,7 @@ class SqlJCourseBuilderTest : JvmCourseGenerationTestBase() {
         dir("test") {
           file("Tests.java")
         }
+        file("init.sql")
         file("task.md")
       }
       file("build.gradle")
