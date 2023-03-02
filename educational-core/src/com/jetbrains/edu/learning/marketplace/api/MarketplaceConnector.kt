@@ -174,11 +174,12 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
 
     val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$buildNumber"
-    val tempFile = FileUtil.createTempFile("marketplace-${course.name}", ".zip", true)
+    val filePrefix = FileUtil.sanitizeFileName("marketplace-${course.name}")
+    val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
     DownloadUtil.downloadAtomically(null, link, tempFile)
 
-    val unpackedCourse = EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse ?: error(
-      message("dialog.title.failed.to.unpack.course"))
+    val unpackedCourse = EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
+                         ?: error(message("dialog.title.failed.to.unpack.course"))
 
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles

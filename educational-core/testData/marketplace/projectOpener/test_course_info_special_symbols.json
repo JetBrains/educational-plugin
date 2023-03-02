@@ -1,0 +1,27 @@
+{
+  "data" : {
+    "plugins" : {
+      "total" : 1,
+      "plugins" : [
+        {
+          "id" : "1",
+          "name" : "Introduction to Python<>:\"/\\|?*",
+          "description" : "Introduction course to Python",
+          "downloads" : 2,
+          "rating" : 5.0,
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
+          ],
+          "fields" : {
+            "programmingLanguage" : "FakeGradleBasedLanguage",
+            "language" : "en"
+          },
+          "link" : "courseLink",
+          "license" : "https://licenses/"
+        }
+      ]
+    }
+  }
+}

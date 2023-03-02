@@ -53,6 +53,35 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
 
     mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1))
 
+    checkTestCourseFileStructure()
+  }
+
+  // https://youtrack.jetbrains.com/issue/EDU-5697
+  fun `test open course with special symbols in new project`() {
+    configureCoursesResponse("test_course_info_special_symbols.json")
+
+    mockProjectOpener.open(MarketplaceOpenInIdeRequestHandler, MarketplaceOpenCourseRequest(1))
+
+    checkTestCourseFileStructure()
+  }
+
+  fun `test language supported with plugin`() {
+    configureCoursesResponse("python_course_info.json")
+    doLanguageValidationTest {  assertTrue("actual: $it", it is PluginsRequired) }
+  }
+
+  fun `test language not supported in IDE`() {
+    configureCoursesResponse("unsupported_language_course_info.json")
+    doLanguageValidationTest {
+      val expectedMessage = EduCoreBundle.message(
+        "rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
+        "UnsupportedLanguage"
+      )
+      assertEquals(expectedMessage, it.message)
+    }
+  }
+
+  private fun checkTestCourseFileStructure() {
     val fileTree = fileTree {
       dir("lesson1") {
         dir("task1") {
@@ -89,22 +118,6 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
       file("settings.gradle")
     }
     fileTree.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
-  }
-
-  fun `test language supported with plugin`() {
-    configureCoursesResponse("python_course_info.json")
-    doLanguageValidationTest {  assertTrue("actual: $it", it is PluginsRequired) }
-  }
-
-  fun `test language not supported in IDE`() {
-    configureCoursesResponse("unsupported_language_course_info.json")
-    doLanguageValidationTest {
-      val expectedMessage = EduCoreBundle.message(
-        "rest.service.language.not.supported", ApplicationNamesInfo.getInstance().productName,
-        "UnsupportedLanguage"
-      )
-      assertEquals(expectedMessage, it.message)
-    }
   }
 
   private fun doLanguageValidationTest(checkError: (CourseValidationResult) -> Unit) {
