@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
@@ -131,6 +132,11 @@ class SubmissionsManager(private val project: Project) {
     else {
       loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
     }
+  }
+
+  fun deleteCourseSubmissionsLocally() {
+    course?.allTasks?.forEach { submissions.remove(it.id) }
+    updateSubmissionsTab()
   }
 
   fun isLoggedIn(): Boolean = course?.getSubmissionsProvider()?.isLoggedIn() ?: false

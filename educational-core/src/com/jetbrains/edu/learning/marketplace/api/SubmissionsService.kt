@@ -18,4 +18,7 @@ interface SubmissionsService {
 
   @GET("/api/solution")
   fun getSolutionDownloadLink(@Query("solutionKey") solutionKey: String): Call<ResponseBody>
+
+  @DELETE("/api/course/submission")
+  fun deleteAllSubmissions(): Call<ResponseBody>
 }

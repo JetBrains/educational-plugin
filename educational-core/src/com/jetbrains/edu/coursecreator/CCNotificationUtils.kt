@@ -58,8 +58,16 @@ object CCNotificationUtils {
   @JvmStatic
   fun showNotification(project: Project,
                        @NotificationContent title: String,
-                       action: AnAction?) {
+                       action: AnAction? = null) {
   showNotification(project, action, title, "")
+  }
+
+  @JvmStatic
+  fun showNotification(project: Project,
+                       @NotificationTitle title: String,
+                       @NotificationContent message: String,
+                       action: AnAction? = null) {
+    showNotification(project, action, title, message)
   }
 
   fun showNotification(project: Project,

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -9,18 +11,23 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.*
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
+import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withFeature
 import io.mockk.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.intellij.lang.annotations.Language
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.net.HttpURLConnection
 import java.util.*
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -65,6 +72,65 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     checkSolutionFiles(solutionFiles, solutionFilesActual)
   }
 
+  fun `test delete submissions action success`() {
+    val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.name ?: error("nullable current user")
+
+    doTestSubmissionsDelete(true, EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)) {
+      checkSubmissionsDeleted(setOf(1, 2))
+    }
+  }
+
+  fun `test delete submissions action failed`() {
+    val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.name ?: error("nullable current user")
+
+    doTestSubmissionsDelete(false, EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)) {
+      checkSubmissionsNotDeleted(setOf(1, 2))
+    }
+  }
+
+  private fun doTestSubmissionsDelete(success: Boolean, notificationText: String, checkSubmissions: () -> Unit) {
+    configureSubmissionsResponses(submissionsDeleteRequestSuccess = success)
+
+    createEduCourse()
+
+    checkTask(0, 0)
+    checkTask(0, 0)
+    checkTask(0, 1)
+
+    val submissionsManager = SubmissionsManager.getInstance(project)
+    checkSubmissionsPresent(submissionsManager, 1, 2)
+    checkSubmissionsPresent(submissionsManager, 2, 1)
+
+    doTestWithNotification({ checkSubmissions() },
+                           { assertEquals(notificationText, it.content) })
+  }
+
+  private fun checkSubmissionsNotDeleted(taskIds: Set<Int>) {
+    val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
+    checkNotNull(submissions)
+    assertEquals(3, submissions.size)
+  }
+
+  private fun checkSubmissionsDeleted(taskIds: Set<Int>) {
+    val submissions = SubmissionsManager.getInstance(project).getSubmissionsFromMemory(taskIds)
+    assertNull(submissions)
+  }
+
+  private fun doTestWithNotification(checkSubmissions: () -> Unit, checkNotification: (Notification) -> Unit) {
+    var notificationShown = false
+    val connection = project.messageBus.connect(testRootDisposable)
+    connection.subscribe(Notifications.TOPIC, object: Notifications {
+      override fun notify(notification: Notification) {
+        notificationShown = true
+        checkNotification(notification)
+      }
+    })
+
+    testAction(DeleteAllSubmissionsAction.ACTION_ID)
+
+    checkSubmissions()
+    assertTrue("Notification wasn't shown", notificationShown)
+  }
 
   private fun checkSolutionFiles(expectedList: List<SolutionFile>, actualList: List<SolutionFile>?) {
     checkNotNull(actualList)
@@ -122,7 +188,8 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     const val SECOND_TASK_SUBMISSION_AWS_KEY = "12"
 
     fun configureSubmissionsResponses(submissionsLists: List<String> = listOf(loadSubmissionsData),
-                                      solutionsKeyTextMap: Map<String, String> = emptyMap()) {
+                                      solutionsKeyTextMap: Map<String, String> = emptyMap(),
+                                      submissionsDeleteRequestSuccess: Boolean = false) {
       mockkConstructor(Retrofit::class)
       val service = mockk<SubmissionsService>()
       every {
@@ -160,6 +227,11 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
         val getAllSubmissionsPageableResponse = mapper.treeToValue(mapper.readTree(submissionsLists[i]), MarketplaceSubmissionsList::class.java)
         every { getAllSubmissionsPageableCall.execute() } returns Response.success(getAllSubmissionsPageableResponse)
       }
+
+      val deleteSubmissionsCall = mockk<Call<ResponseBody>>()
+      every { service.deleteAllSubmissions() } returns deleteSubmissionsCall
+      val responseCode = if (submissionsDeleteRequestSuccess) HttpURLConnection.HTTP_NO_CONTENT else HttpURLConnection.HTTP_RESET
+      every { deleteSubmissionsCall.execute() } returns Response.success(responseCode, "empty response body".toResponseBody())
 
       val postSubmissionCall = mockk<Call<MarketplaceSubmission>>()
       every { service.postSubmission(any(), any(), any(), any()) } returns postSubmissionCall

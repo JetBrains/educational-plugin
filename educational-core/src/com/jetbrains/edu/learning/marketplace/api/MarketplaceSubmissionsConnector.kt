@@ -28,6 +28,7 @@ import okhttp3.ConnectionPool
 import org.jetbrains.annotations.VisibleForTesting
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.BufferedInputStream
+import java.net.HttpURLConnection.HTTP_NO_CONTENT
 import java.net.URL
 
 class MarketplaceSubmissionsConnector {
@@ -64,6 +65,21 @@ class MarketplaceSubmissionsConnector {
       .build()
 
     return retrofit.create(SubmissionsService::class.java)
+  }
+
+  fun deleteAllSubmissions(userName: String): Boolean {
+    LOG.info("Deleting submissions for user $userName")
+    val response = submissionsService.deleteAllSubmissions().executeParsingErrors().onError {
+      LOG.error("Failed to delete all submissions to user $userName. Error message: $it")
+      return false
+    }
+
+    if (response.code() == HTTP_NO_CONTENT) {
+      LOG.info("Successfully deleted all submissions for user $userName")
+      return true
+    }
+
+    return false
   }
 
   fun getAllSubmissions(courseId: Int): List<MarketplaceSubmission> {
