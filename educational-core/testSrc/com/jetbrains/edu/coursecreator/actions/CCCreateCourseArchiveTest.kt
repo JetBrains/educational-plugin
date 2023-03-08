@@ -127,7 +127,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   fun `test framework lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      frameworkLesson("my lesson") {
+      frameworkLesson("my lesson", customPresentableName = "custom name") {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
             placeholder(0, "\"Foo\"")
@@ -136,20 +136,18 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.description = "my summary"
-    course.lessons[0].customPresentableName = "custom name"
     doTest()
   }
 
   fun `test lesson with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson {
+      lesson(customPresentableName = "custom name") {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
     course.description = "my summary"
-    course.lessons[0].customPresentableName = "custom name"
     doTest()
   }
 
@@ -185,7 +183,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   fun `test section with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      section {
+      section(customPresentableName = "custom name") {
         lesson {
           eduTask {
             taskFile("taskFile1.txt")
@@ -194,8 +192,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     course.description = "my summary"
-    val section = course.sections[0]
-    section.customPresentableName = "custom name"
     doTest()
   }
 
@@ -411,14 +407,12 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   fun `test task with custom name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
-        eduTask {
+        eduTask(customPresentableName = "custom name") {
           taskFile("taskFile1.txt")
         }
       }
     }
     course.description = "my summary"
-    val task = course.lessons.first().taskList.first()
-    task.customPresentableName = "custom name"
     doTest()
   }
 

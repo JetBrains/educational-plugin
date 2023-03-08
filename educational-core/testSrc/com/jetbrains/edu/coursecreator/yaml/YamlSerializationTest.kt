@@ -83,7 +83,7 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test codeforces task`() {
     val course = course(courseProducer = ::CodeforcesCourse) {
       lesson {
-        codeforcesTask("first task", "") { }
+        codeforcesTask("first task", taskDescription = "") { }
       }
     }
 
@@ -398,13 +398,11 @@ class YamlSerializationTest : YamlTestCase() {
 
   fun `test lesson with custom presentable name`() {
     val lesson = course {
-      lesson {
+      lesson(customPresentableName = "my new lesson") {
         eduTask("Introduction Task")
         eduTask("Advanced Task")
       }
     }.items[0]
-    lesson.customPresentableName = "my new lesson"
-    @Suppress("DEPRECATION") // using `customPresentableName` here is ok
     doTest(lesson, """
       |custom_name: ${lesson.customPresentableName}
       |content:
@@ -437,7 +435,7 @@ class YamlSerializationTest : YamlTestCase() {
   fun `test use dir name for lesson with custom name`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
       section {
-        lesson {
+        lesson(customPresentableName = "my new lesson") {
           eduTask("Introduction Task")
           eduTask("Advanced Task")
         }
@@ -445,7 +443,6 @@ class YamlSerializationTest : YamlTestCase() {
     }
     val section = course.sections.first()
     val lesson = section.lessons.first()
-    lesson.customPresentableName = "my new lesson"
 
     doTest(section, """
       |content:
@@ -504,12 +501,10 @@ class YamlSerializationTest : YamlTestCase() {
 
   fun `test framework lesson with custom name`() {
     val course = course(courseMode = CourseMode.EDUCATOR) {
-      frameworkLesson("lesson")
+      frameworkLesson("lesson", customPresentableName = "my new lesson")
     }
 
-    val lesson = course.getItem("lesson")!!.apply {
-      customPresentableName = "my new lesson"
-    }
+    val lesson = course.getItem("lesson")!!
 
     doTest(lesson, """
       |type: framework
@@ -536,13 +531,12 @@ class YamlSerializationTest : YamlTestCase() {
 
   fun `test section with custom name`() {
     val section = course(courseMode = CourseMode.EDUCATOR) {
-      section {
+      section(customPresentableName = "custom section name") {
         lesson("Introduction Lesson")
         lesson("Advanced Lesson")
       }
     }.items[0]
 
-    section.customPresentableName = "custom section name"
     doTest(section, """
       |custom_name: custom section name
       |content:
@@ -600,13 +594,13 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with custom presentable name`() {
+    val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
-        eduTask { }
+        eduTask(customPresentableName = taskCustomName) { }
       }
     }.findTask("lesson1", "task1")
-    val taskCustomName = "task custom name"
-    task.customPresentableName = taskCustomName
+
     doTest(task, """
     |type: edu
     |custom_name: $taskCustomName
@@ -740,13 +734,13 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with hidden solution`() {
+    val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
-        eduTask {}
+        eduTask(customPresentableName = taskCustomName) {}
       }
     }.findTask("lesson1", "task1")
-    val taskCustomName = "task custom name"
-    task.customPresentableName = taskCustomName
+
     task.solutionHidden = true
     doTest(task, """
     |type: edu
@@ -756,13 +750,13 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   fun `test task with hidden solution = false`() {
+    val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {
-        eduTask {}
+        eduTask(customPresentableName = taskCustomName) {}
       }
     }.findTask("lesson1", "task1")
-    val taskCustomName = "task custom name"
-    task.customPresentableName = taskCustomName
+
     task.solutionHidden = false
     doTest(task, """
     |type: edu

@@ -58,7 +58,7 @@ class CopyStudyItemTest : EduTestCase() {
   fun `test copy theory task`() {
     val localCourse = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
-        theoryTask("theory", "my description", DescriptionFormat.MD, 4) { }
+        theoryTask("theory", taskDescription = "my description", taskDescriptionFormat = DescriptionFormat.MD, stepId = 4) { }
       }
     }
     val task = localCourse.lessons[0].taskList[0]

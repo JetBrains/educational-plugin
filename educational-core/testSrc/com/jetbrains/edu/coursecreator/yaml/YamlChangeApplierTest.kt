@@ -55,15 +55,12 @@ class YamlChangeApplierTest : YamlTestCase() {
 
   fun `test remove lesson custom presentable name`() {
     courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      lesson {
+      lesson(customPresentableName = "my best lesson") {
         eduTask("Introduction Task")
       }
     }
 
-    val lessonCustomName = "my best lesson"
     val lesson = findLesson(0)
-    lesson.customPresentableName = lessonCustomName
-
     val yamlContent = """
       |content:
       |- Introduction Task
@@ -92,15 +89,12 @@ class YamlChangeApplierTest : YamlTestCase() {
 
   fun `test remove section custom presentable name`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
-      section {
+      section(customPresentableName = "my best lesson") {
         lesson("lesson 1")
       }
     }
 
-    val customName = "my best lesson"
     val section = course.sections[0]
-    section.customPresentableName = customName
-
     val yamlContent = """
       |content:
       |- lesson 1
@@ -136,15 +130,11 @@ class YamlChangeApplierTest : YamlTestCase() {
   fun `test remove task custom presentable name`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson 1") {
-        eduTask {
+        eduTask(customPresentableName = "my custom name") {
           taskFile("task.txt")
         }
       }
     }.lessons[0].taskList[0]
-
-
-    val customName = "my custom name"
-    task.customPresentableName = customName
 
     val yamlContent = """
       |type: edu

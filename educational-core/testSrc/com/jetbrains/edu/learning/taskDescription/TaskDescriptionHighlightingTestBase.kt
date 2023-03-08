@@ -20,7 +20,7 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
   protected open fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
     courseWithFiles(language = language, environment = environment, settings = settings) {
       lesson("lesson1") {
-        eduTask("task1", taskDescription.trimIndent(), format)
+        eduTask("task1", taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
       }
     }
   }

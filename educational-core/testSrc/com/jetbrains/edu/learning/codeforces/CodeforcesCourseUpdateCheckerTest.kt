@@ -91,7 +91,7 @@ class CodeforcesCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       courseProducer = ::CodeforcesCourse
     ) {
       lesson(CODEFORCES_PROBLEMS) {
-        codeforcesTask(taskName, if (isCourseUpToDate) expectedTaskADescription else null)
+        codeforcesTask(taskName, taskDescription = if (isCourseUpToDate) expectedTaskADescription else null)
       }
     } as CodeforcesCourse
     course.apply {

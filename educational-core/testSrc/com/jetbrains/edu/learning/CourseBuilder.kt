@@ -82,28 +82,51 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected abstract val nextLessonIndex: Int
   protected abstract fun addLesson(lesson: Lesson)
 
-  fun frameworkLesson(name: String? = null, isTemplateBased: Boolean = true, buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}) {
+  fun frameworkLesson(
+    name: String? = null,
+    customPresentableName: String? = null,
+    isTemplateBased: Boolean = true,
+    buildLesson: LessonBuilder<FrameworkLesson>.() -> Unit = {}
+  ) {
     val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
-    lesson(name, lesson, buildLesson)
+    lesson(lesson, name, customPresentableName, buildLesson)
   }
 
-  fun stepikLesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {
+  fun stepikLesson(
+    name: String? = null,
+    customPresentableName: String? = null,
+    buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
+  ) {
     val stepikLesson = StepikLesson()
-    lesson(name, stepikLesson, buildLesson)
+    lesson(stepikLesson, name, customPresentableName, buildLesson)
   }
 
-  fun lesson(name: String? = null, buildLesson: LessonBuilder<Lesson>.() -> Unit = {}) {
-    lesson(name, Lesson(), buildLesson)
+  fun lesson(
+    name: String? = null,
+    customPresentableName: String? = null,
+    buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
+  ) {
+    lesson(Lesson(), name, customPresentableName, buildLesson)
   }
 
-  fun station(name: String? = null, buildLesson: LessonBuilder<CheckiOStation>.() -> Unit = {}) {
-    lesson(name, CheckiOStation(), buildLesson)
+  fun station(
+    name: String? = null,
+    customPresentableName: String? = null,
+    buildLesson: LessonBuilder<CheckiOStation>.() -> Unit = {}
+  ) {
+    lesson(CheckiOStation(), name, customPresentableName, buildLesson)
   }
 
-  protected fun <T : Lesson> lesson(name: String? = null, lesson: T, buildLesson: LessonBuilder<T>.() -> Unit) {
+  protected fun <T : Lesson> lesson(
+    lesson: T,
+    name: String? = null,
+    customPresentableName: String? = null,
+    buildLesson: LessonBuilder<T>.() -> Unit
+  ) {
     val lessonBuilder = LessonBuilder(course, null, lesson)
     lesson.index = nextLessonIndex
     lessonBuilder.withName(name ?: (LESSON + nextLessonIndex))
+    lessonBuilder.withCustomPresentableName(customPresentableName)
     addLesson(lesson)
     lessonBuilder.buildLesson()
   }
@@ -130,12 +153,17 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
     course.addLesson(lesson)
   }
 
-  fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit = {}) {
+  fun section(
+    name: String? = null,
+    customPresentableName: String? = null,
+    buildSection: SectionBuilder.() -> Unit = {}
+  ) {
     val sectionBuilder = SectionBuilder(course, Section())
     val section = sectionBuilder.section
     section.index = course.items.size + 1
     val nextSectionIndex = course.items.size + 1
     sectionBuilder.withName(name ?: (SECTION + nextSectionIndex))
+    sectionBuilder.withCustomPresentableName(customPresentableName)
     course.addSection(section)
     sectionBuilder.buildSection()
   }
@@ -168,6 +196,11 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
   fun withName(name: String) {
     section.name = name
   }
+
+  fun withCustomPresentableName(name: String?) {
+    @Suppress("deprecation")
+    section.customPresentableName = name
+  }
 }
 
 class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesson: T) {
@@ -180,9 +213,15 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     lesson.name = name
   }
 
+  fun withCustomPresentableName(name: String?) {
+    @Suppress("deprecation")
+    lesson.customPresentableName = name
+  }
+
   private fun task(
     task: Task,
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -195,6 +234,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name ?: (TASK + nextTaskIndex))
+    taskBuilder.withCustomPresentableName(customPresentableName)
     val descriptionFormat = if (task.course is HyperskillCourse) DescriptionFormat.HTML else taskDescriptionFormat
     taskBuilder.withTaskDescription(taskDescription ?: "solve task", descriptionFormat)
     taskBuilder.withStepId(stepId)
@@ -209,15 +249,17 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
 
   fun eduTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(EduTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun remoteEduTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -226,30 +268,33 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val remoteEduTask = RemoteEduTask()
-    task(remoteEduTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(remoteEduTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     remoteEduTask.checkProfile = checkProfile
   }
 
   fun theoryTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(TheoryTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun outputTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(OutputTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun choiceTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -264,7 +309,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val choiceTask = ChoiceTask()
-    task(choiceTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(choiceTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     if (stepId != 0) choiceTask.canCheckLocally = false
     choiceTask.choiceOptions = choiceOptions.map { ChoiceOption(it.key, it.value) }
     choiceTask.isMultipleChoice = isMultipleChoice
@@ -277,6 +322,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
 
   fun stringTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -284,11 +330,12 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val stringTask = StringTask()
-    task(stringTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(stringTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
   }
 
   fun numberTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -296,11 +343,12 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val numberTask = NumberTask()
-    task(numberTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(numberTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
   }
 
   fun mission(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     code: String = "",
@@ -308,13 +356,14 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val mission = CheckiOMission()
-    task(mission, name, taskDescription, taskDescriptionFormat, buildTask = buildTask)
+    task(mission, name, customPresentableName, taskDescription, taskDescriptionFormat, buildTask = buildTask)
     mission.code = code
     mission.secondsFromLastChangeOnServer = secondsFromChange
   }
 
   fun videoTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
@@ -325,7 +374,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val videoTask = VideoTask()
-    task(videoTask, name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+    task(videoTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
     videoTask.currentTime = currentTime
     videoTask.thumbnail = thumbnail
     videoTask.sources = sources.map { VideoSource(it.key, it.value) }
@@ -333,32 +382,36 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
 
   fun codeTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(CodeTask(), name, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
+  ) = task(CodeTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
   fun codeforcesTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val codeforcesTask = CodeforcesTask()
-    task(codeforcesTask, name, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
+    task(codeforcesTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, buildTask = buildTask)
   }
 
   fun ideTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(IdeTask(), name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+  ) = task(IdeTask(), name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
 
   fun dataTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
@@ -366,19 +419,20 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val dataTask = DataTask()
-    task(dataTask, name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+    task(dataTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
     dataTask.attempt = attempt
   }
 
   fun remoteEduTask(
     name: String? = null,
+    customPresentableName: String? = null,
     taskDescription: String? = null,
     stepId: Int = 0,
     updateDate: Date = Date(0),
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
     val remoteEduTask = RemoteEduTask()
-    task(remoteEduTask, name, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
+    task(remoteEduTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
   }
 }
 
@@ -394,6 +448,11 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   fun withName(name: String) {
     task.name = name
+  }
+
+  fun withCustomPresentableName(name: String?) {
+    @Suppress("deprecation")
+    task.customPresentableName = name
   }
 
   fun withTaskDescription(text: String, format: DescriptionFormat? = null) {
