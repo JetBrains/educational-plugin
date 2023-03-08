@@ -103,7 +103,8 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     course.visitTasks {
       val url = it.databaseUrl(project) ?: return@visitTasks
       dataSourceRegistry.builder
-        .withName(it.databaseName)
+        .withName(it.dataSourceName)
+        .withGroupName(it.dataSourceGroupName)
         .withUrl(url)
         .withAuthProviderId(DatabaseAuthProviderNames.NO_AUTH_ID)
         .withCallback(object : DataSourceDetector.Callback() {
@@ -130,20 +131,25 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     return "jdbc:h2:file:${taskDir.path}/db"
   }
 
-  private val Task.databaseName: String
+  private val Task.dataSourceGroupName: String
     get() {
       val lesson = lesson
       val section = lesson.section
       return buildString {
         if (section != null) {
-          append(section.presentableName)
+          append(section.presentableName.sanitizeGroupName())
           append("/")
         }
-        append(lesson.presentableName)
-        append("/")
-        append(presentableName)
+        append(lesson.presentableName.sanitizeGroupName())
       }
     }
+
+  // Database plugin uses group name as a some path in filesystem with `/` as path separator.
+  // We don't want to provide additional group inside Database View because of `/` inside section or lesson name
+  // so let's replace it with ` `
+  private fun String.sanitizeGroupName(): String = replace("/", " ")
+
+  private val Task.dataSourceName: String get() = presentableName
 
   companion object {
     private const val DATABASE_SETUP_DONE: String = "DATABASE_SETUP_DONE"

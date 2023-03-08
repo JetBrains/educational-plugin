@@ -2,6 +2,7 @@ package com.jetbrains.edu.sql.kotlin.courseGeneration
 
 import com.intellij.database.console.JdbcConsoleProvider
 import com.intellij.database.dataSource.LocalDataSourceManager
+import com.intellij.database.view.DatabaseView
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -68,6 +69,86 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     val sqlFile = findFile("lesson1/task2/src/task.sql")
     fileEditorManager.openFile(sqlFile, true)
     checkJdbcConsoleForFile(sqlFile)
+  }
+
+  fun `test database view structure`() {
+    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/task.sql")
+        }
+        eduTask("task2") {
+          taskFile("src/task.sql")
+        }
+      }
+      lesson("lesson2") {
+        eduTask("task3") {
+          taskFile("src/task.sql")
+        }
+        eduTask("task4") {
+          taskFile("src/task.sql")
+        }
+      }
+      section("section1") {
+        lesson("lesson3") {
+          eduTask("task5") {
+            taskFile("src/task.sql")
+          }
+          eduTask("task6") {
+            taskFile("src/task.sql")
+          }
+        }
+        lesson("lesson4") {
+          eduTask("task7") {
+            taskFile("src/task.sql")
+          }
+          eduTask("task8") {
+            taskFile("src/task.sql")
+          }
+        }
+      }
+      // check special symbols,
+      section("section2", customPresentableName = "section/2\\") {
+        lesson("lesson5", customPresentableName = "les/s/on5") {
+          eduTask("task9") {
+            taskFile("src/task.sql")
+          }
+          eduTask("task10", customPresentableName = "/task:1:0/") {
+            taskFile("src/task.sql")
+          }
+        }
+      }
+    }
+
+    createCourseStructure(course)
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+
+    val databaseView = DatabaseView.getDatabaseView(project)
+    val tree = databaseView.panel.tree
+
+    PlatformTestUtil.waitWhileBusy(tree)
+    PlatformTestUtil.expandAll(tree)
+
+    PlatformTestUtil.assertTreeEqual(tree, """
+      -Root Group
+       -Group (lesson1) inside Root Group
+        task1: DSN
+        task2: DSN
+       -Group (lesson2) inside Root Group
+        task3: DSN
+        task4: DSN
+       -Group (section1) inside Root Group
+        -Group (section1/lesson3) inside Group (section1) inside Root Group
+         task5: DSN
+         task6: DSN
+        -Group (section1/lesson4) inside Group (section1) inside Root Group
+         task7: DSN
+         task8: DSN
+       -Group (section 2\) inside Root Group
+        -Group (section 2\/les s on5) inside Group (section 2\) inside Root Group
+         /task:1:0/: DSN
+         task9: DSN
+    """.trimIndent())
   }
 
   private fun checkJdbcConsoleForFile(file: VirtualFile) {
