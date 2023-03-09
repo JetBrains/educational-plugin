@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -36,8 +37,16 @@ object ProgressUtil {
     var taskNum = 0
     var taskSolved = 0
     course.visitLessons { lesson ->
-      taskNum += lesson.taskList.size
-      taskSolved += getSolvedTasks(lesson)
+      if (lesson is FrameworkLesson) {
+        taskNum++
+        if (lesson.taskList.all { it.status == CheckStatus.Solved }) {
+          taskSolved++
+        }
+      }
+      else {
+        taskNum += lesson.taskList.size
+        taskSolved += getSolvedTasks(lesson)
+      }
     }
     return Pair(taskSolved, taskNum)
   }

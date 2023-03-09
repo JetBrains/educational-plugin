@@ -60,7 +60,7 @@ class CourseViewTest : CourseViewTestBase() {
     val model = pane.tree.model
 
     val structure = "-Project\n" +
-                    " +CourseNode Edu test course  0/3"
+                    " +CourseNode Edu test course  0/2"
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
 
     PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 3))

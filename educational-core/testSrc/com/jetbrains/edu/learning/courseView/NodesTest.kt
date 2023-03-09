@@ -498,7 +498,7 @@ class NodesTest : CourseViewTestBase() {
 
     assertCourseView("""
       |-Project
-      | -CourseNode Test Course  0/0
+      | -CourseNode Test Course  1/1
       |  FrameworkLessonNode lesson1
     """.trimMargin())
   }
