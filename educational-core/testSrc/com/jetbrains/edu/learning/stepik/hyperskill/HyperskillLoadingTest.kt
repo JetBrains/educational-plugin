@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -189,6 +190,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
     }
 
     HyperskillSolutionLoader.getInstance(project).loadAndApplySolutions(getCourse())
+    UIUtil.dispatchAllInvocationEvents()
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir(topicName) {
@@ -204,6 +206,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
       file("settings.gradle")
     }
     fileTree.assertEquals(rootDir, myFixture)
+
   }
 
   fun `test solution loading all stages solved`() {

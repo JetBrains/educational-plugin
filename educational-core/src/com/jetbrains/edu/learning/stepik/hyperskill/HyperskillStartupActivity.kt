@@ -28,7 +28,7 @@ class HyperskillStartupActivity : StartupActivity {
 
     if (HyperskillSettings.INSTANCE.account != null) {
       submissionsManager.prepareSubmissionsContent {
-        HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+        HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground()
       }
     }
     HyperskillConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {

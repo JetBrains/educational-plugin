@@ -28,7 +28,7 @@ class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("h
       }
     }
 
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground()
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }

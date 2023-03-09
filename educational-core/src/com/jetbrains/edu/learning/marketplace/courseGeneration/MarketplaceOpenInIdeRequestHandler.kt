@@ -47,6 +47,6 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     }
     course.checkForUpdates(project, true) {}
 
-    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
   }
 }

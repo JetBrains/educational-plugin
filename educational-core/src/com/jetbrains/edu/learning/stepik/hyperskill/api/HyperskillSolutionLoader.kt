@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -26,10 +27,12 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
 
   override fun loadSolution(task: Task, submissions: List<Submission>): TaskSolutions {
     // submission.taskId can differ from task.id because some hyperskill submissions were stored on stepik and got stepik step ID instead
-    // of  hyperskill task ID, see EDU-5186
-    val lastSubmission: Submission = submissions.firstOrNull { if (!task.course.isStudy) true else it.taskId == task.id } ?: return TaskSolutions.EMPTY
+    // of hyperskill task ID, see EDU-5186
+    val lastSubmission: Submission = submissions.firstOrNull { if (!task.course.isStudy) true else it.taskId == task.id }
+                                     ?: return TaskSolutions.EMPTY
     if (lastSubmission !is StepikBasedSubmission)
-      error("Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of ${StepikBasedSubmission::class.simpleName} class")
+      error(
+        "Hyperskill submission ${lastSubmission.id} for task ${task.name} is not instance of ${StepikBasedSubmission::class.simpleName} class")
 
     val files: Map<String, Solution> = when (task) {
       is EduTask -> lastSubmission.eduTaskFiles
@@ -62,6 +65,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
                            force: Boolean) {
     super.updateTasks(course, tasks, submissions, progressIndicator, force)
     runInEdt {
+      progressIndicator?.text = EduCoreBundle.message("update.setting.stage")
       openSelectedStage(course, project)
     }
   }

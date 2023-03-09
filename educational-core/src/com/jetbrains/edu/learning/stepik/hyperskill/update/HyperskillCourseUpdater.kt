@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -72,7 +73,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         }
         else {
           showUpdateAvailableNotification(project) {
-            runInBackground(project, EduCoreBundle.message("update.process"), false) {
+            runInBackground(project,  EduCoreBundle.message("update.process"), false) {
               doUpdate(courseFromServer, problemsUpdates)
             }
           }
@@ -80,7 +81,6 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       }
       invokeAndWaitIfNeeded {
         if (project.isDisposed) return@invokeAndWaitIfNeeded
-
         course.updateDate = Date()
         YamlFormatSynchronizer.saveRemoteInfo(course)
         onFinish(isUpdated)

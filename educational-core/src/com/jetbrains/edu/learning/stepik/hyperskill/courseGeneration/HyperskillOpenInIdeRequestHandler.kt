@@ -291,14 +291,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     val task = course.getProblem(stepId) ?: return
     val tasks = task.lesson.taskList.filter { HyperskillCourse.isStepSupported(it.itemType) }
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground(course, tasks, true)
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
     if (isUnitTestMode) {
       return
     }
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground(course, tasks, true)
     HyperskillStartupActivity.synchronizeTopics(project, course)
   }
 }

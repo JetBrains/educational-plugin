@@ -3,18 +3,14 @@ package com.jetbrains.edu.learning
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.*
 import com.intellij.openapi.application.ex.ApplicationUtil
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
@@ -42,21 +38,15 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private var futures: Map<Int, Future<Boolean>> = HashMap()
 
-  open fun loadSolutionsInBackground() {
+  open fun loadSolutionsInForeground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
-    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
-      override fun run(progressIndicator: ProgressIndicator) {
-        loadAndApplySolutions(course, progressIndicator)
-      }
-    })
+    computeUnderProgress(project, EduCoreBundle.message("update.loading.submissions")) { loadAndApplySolutions(course, it) }
   }
 
-  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
-    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.solutions")) {
-      override fun run(progressIndicator: ProgressIndicator) {
-        loadAndApplySolutions(course, tasksToUpdate, progressIndicator, force)
-      }
-    })
+  fun loadSolutionsInForeground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
+    computeUnderProgress(project, EduCoreBundle.message("update.loading.submissions")) {
+      loadAndApplySolutions(course, tasksToUpdate, it, force)
+    }
   }
 
   @VisibleForTesting
@@ -65,7 +55,9 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     loadAndApplySolutions(course, course.allTasks, progressIndicator)
   }
 
-  private fun loadAndApplySolutions(course: Course, tasksToUpdate: List<Task>, progressIndicator: ProgressIndicator? = null,
+  private fun loadAndApplySolutions(course: Course,
+                                    tasksToUpdate: List<Task>,
+                                    progressIndicator: ProgressIndicator?,
                                     force: Boolean = false) {
     val submissions = if (progressIndicator != null) {
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
@@ -75,6 +67,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
 
     if (submissions != null) {
+      progressIndicator?.text = EduCoreBundle.message("update.updating.tasks")
       updateTasks(course, tasksToUpdate, submissions, progressIndicator, force)
     }
     else {
@@ -82,7 +75,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  protected open fun updateTasks(course: Course, tasks: List<Task>, submissions: List<Submission>, progressIndicator: ProgressIndicator?,
+  protected open fun updateTasks(course: Course,
+                                 tasks: List<Task>,
+                                 submissions: List<Submission>,
+                                 progressIndicator: ProgressIndicator?,
                                  force: Boolean = false) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
@@ -109,8 +105,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
               progressIndicator.text = EduCoreBundle.message("loading.solution.progress", finishedTaskCount, tasksToUpdate.size)
             }
           }
-          invokeAndWaitIfNeeded {
-            if (project.isDisposed) return@invokeAndWaitIfNeeded
+          invokeLater {
+            if (project.isDisposed) return@invokeLater
             for (file in getOpenFiles(project, task)) {
               file.stopLoading(project)
               EditorNotifications.getInstance(project).updateNotifications(file)
@@ -147,8 +143,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     runInEdt {
       if (project.isDisposed) return@runInEdt
       if (needToShowNotification) {
-        // Suppression needed here because DialogTitleCapitalization is demanded by the superclass constructor, but the plugin naming with
-        // the capital letters used in the notification title
+        // Suppression is needed here because DialogTitleCapitalization is demanded by the superclass constructor,
+        // but the plugin naming with the capital letters used in the notification title
         @Suppress("DialogTitleCapitalization")
         UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
                            EduCoreBundle.message("notification.update.plugin.apply.solutions.content")).notify(project)
@@ -270,8 +266,8 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
                                task: Task,
                                taskSolutions: TaskSolutions,
                                force: Boolean) {
-      invokeAndWaitIfNeeded {
-        if (project.isDisposed) return@invokeAndWaitIfNeeded
+      invokeLater {
+        if (project.isDisposed) return@invokeLater
         task.status = taskSolutions.checkStatus
         YamlFormatSynchronizer.saveItem(task)
         val lesson = task.lesson

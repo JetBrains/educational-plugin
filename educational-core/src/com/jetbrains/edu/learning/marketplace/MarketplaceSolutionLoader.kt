@@ -19,9 +19,9 @@ import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
-  override fun loadSolutionsInBackground() {
+  override fun loadSolutionsInForeground() {
     if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && MarketplaceConnector.getInstance().isLoggedIn()) {
-      super.loadSolutionsInBackground()
+      super.loadSolutionsInForeground()
     }
   }
 

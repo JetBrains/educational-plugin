@@ -33,7 +33,7 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
       }
     }
 
-    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }

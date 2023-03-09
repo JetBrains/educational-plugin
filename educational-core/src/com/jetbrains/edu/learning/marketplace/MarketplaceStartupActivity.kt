@@ -28,7 +28,7 @@ class MarketplaceStartupActivity : StartupActivity {
     val marketplaceConnector = MarketplaceConnector.getInstance()
 
     if (marketplaceConnector.isLoggedIn()) {
-      submissionsManager.prepareSubmissionsContent { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground() }
+      submissionsManager.prepareSubmissionsContent { MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground() }
     }
 
     MarketplaceConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {
