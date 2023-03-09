@@ -9,10 +9,8 @@ import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_ENVIRONMENT_UPDATE
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
-import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -244,7 +242,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     val flm = FrameworkLessonManager.getInstance(project)
 
     if (lesson.currentTaskIndex != task.index - 1) {
-      updateTaskFiles(task, remoteTask.testFiles, false)
+      updateTaskFiles(task, remoteTask.invisibleFiles, false)
       flm.updateUserChanges(task, task.taskFiles.mapValues { (_, taskFile) -> taskFile.text })
     }
     else {
@@ -254,7 +252,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         updateTaskFiles(task, remoteTask.taskFiles, true)
       }
       else {
-        updateTaskFiles(task, remoteTask.testFiles, true)
+        updateTaskFiles(task, remoteTask.invisibleFiles, true)
       }
     }
   }
@@ -301,10 +299,9 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
   }
 }
 
-private val Task.testFiles: Map<String, TaskFile>
+private val Task.invisibleFiles: Map<String, TaskFile>
   get() {
-    val testDirs = lesson.course.testDirs
-    val defaultTestName = lesson.course.configurator?.testFileName ?: ""
-    return taskFiles.filterKeys { path -> path == defaultTestName || testDirs.any { path.startsWith(it) } }
+    return taskFiles.filter { !it.value.isVisible }
   }
+
 

@@ -9,12 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.isToEncodeContent
@@ -55,9 +53,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       "Only solutions of framework tasks can be saved"
     }
 
-    val taskFiles = task.allFiles.split(task).first
-    val externalTaskFiles = externalState.split(task).first
-    val changes = calculateChanges(taskFiles, externalTaskFiles)
+    val visibleFiles = task.allFiles.split(task).first
+    val externalVisibleFiles = externalState.split(task).first
+    val changes = calculateChanges(visibleFiles, externalVisibleFiles)
     val currentRecord = task.record
     task.record = try {
       storage.updateUserChanges(currentRecord, changes)
@@ -217,37 +215,77 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     targetState: Map<String, String>,
     showDialogIfConflict: Boolean
   ): UserChanges {
-    val (currentTaskFilesState, currentTestFilesState) = currentState.split(currentTask)
-    val (targetTaskFiles, targetTestFiles) = targetState.split(targetTask)
+    val (currentVisibleFilesState, currentInvisibleFilesState) = currentState.split(currentTask)
+    val (targetVisibleFilesState, targetInvisibleFilesState) = targetState.split(targetTask)
+
+    // A lesson may have files that are invisible in the previous step, but become visible in the new one.
+    // We allow files to change visibility from invisible to visible.
+    // Why is this necessary? Course creators often have such use-case:
+    // They want to make some files invisible on some prefix of the task list, and then have them visible in the rest of the tasks
+    // So that they will be shown to students and will participate in solving the problem
+    // For more detailed explanation, see the documentation:
+    // https://jetbrains.team/p/edu/repositories/internal-documentation/files/subsystems/Framework%20Lessons/internal-part-ru.md
+
+    // Calculate files that change visibility
+    val fromInvisibleToVisibleFilesState = targetVisibleFilesState.filter { it.key in currentInvisibleFilesState }
+    val fromVisibleToInvisibleFilesState = targetInvisibleFilesState.filter { it.key in currentVisibleFilesState }
+
+    // We assume that files could not change visibility from visible to invisible
+    // This behaviour is not intended
+    if (fromVisibleToInvisibleFilesState.isNotEmpty()) {
+      LOG.error("Visibility change from visible to invisible during navigation in non-template-based lessons is not supported")
+    }
+
+    // Only visible files that do not change visibility can participate in propagating user changes.
+    val currentVisibleFilesStateWithoutVisibilityChange = currentVisibleFilesState.filter { it.key !in targetInvisibleFilesState }
+    val targetVisibleFilesStateWithoutVisibilityChange = targetVisibleFilesState.filter { it.key !in currentInvisibleFilesState }
+
+    // Files that change visibility are processed separately:
+    // (Invisible -> Visible) - Changes for them are not propagated
+    // (Visible -> Invisible) - We assume that there are no such files
+
 
     // Creates [Change]s to propagates all current changes of task files to target task.
-    // Technically, we won't change text of task files, just add/remove user created/removed task files to/from target task
+    // During propagation, we assume that in the not-template-based framework lessons all the initial files are the same for each task.
+    // Therefore, we will only add user-created files and remove user-deleted files.
+    // During propagation, we do not change the text of the files.
     fun calculateCurrentTaskChanges(): UserChanges {
-      val toRemove = HashMap(targetTaskFiles)
-      val taskFileChanges = mutableListOf<Change>()
+      val toRemove = HashMap(targetVisibleFilesStateWithoutVisibilityChange)
+      val visibleFileChanges = mutableListOf<Change>()
 
-      for ((path, text) in currentTaskFilesState) {
+      for ((path, text) in currentVisibleFilesStateWithoutVisibilityChange) {
         val targetText = toRemove.remove(path)
+        // Propagate user-created files
         if (targetText == null) {
-          taskFileChanges += Change.PropagateLearnerCreatedTaskFile(path, text)
+          visibleFileChanges += Change.PropagateLearnerCreatedTaskFile(path, text)
         }
       }
 
+      // Remove user-deleted files
       for ((path, _) in toRemove) {
-        taskFileChanges += Change.RemoveTaskFile(path)
+        visibleFileChanges += Change.RemoveTaskFile(path)
       }
-      val testChanges = calculateChanges(currentTestFilesState, targetTestFiles)
-      return testChanges + taskFileChanges
+
+      // Calculate diff for invisible files and files that become visible and change them without propagation
+      val invisibleFileChanges = calculateChanges(
+        currentInvisibleFilesState,
+        targetInvisibleFilesState + fromInvisibleToVisibleFilesState
+      )
+      return invisibleFileChanges + visibleFileChanges
     }
 
     // target task initialization
     if (targetTask.record == -1) {
       return calculateCurrentTaskChanges()
     }
-    if (currentTaskFilesState == targetTaskFiles) {
-      // if current and target states of task files are the same
-      // it needs to calculate only diff for test files
-      return calculateChanges(currentTestFilesState, targetTestFiles)
+
+    // if current and target states of visible files are the same
+    // it needs to calculate only diff for invisible files and for files that change visibility from invisible to visible
+    if (currentVisibleFilesStateWithoutVisibilityChange == targetVisibleFilesStateWithoutVisibilityChange) {
+      return calculateChanges(
+        currentInvisibleFilesState,
+        targetInvisibleFilesState + fromInvisibleToVisibleFilesState
+      )
     }
 
     val keepConflictingChanges = if (showDialogIfConflict) {
@@ -332,25 +370,19 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
   private val Task.allFiles: Map<String, String> get() = taskFiles.mapValues { it.value.text }
 
-  private fun isCustomRunConfigurationFile(path: String) = VfsUtilCore.isEqualOrAncestor("runConfigurations/", path)
-
   private fun Map<String, String>.split(task: Task): Pair<Map<String, String>, Map<String, String>> {
-    val configurator = task.course.configurator
-    if (configurator == null) {
-      return this to emptyMap()
-    }
-
-    val taskFiles = HashMap<String, String>()
-    val testFiles = HashMap<String, String>()
+    val visibleFiles = HashMap<String, String>()
+    val invisibleFiles = HashMap<String, String>()
 
     for ((path, text) in this) {
-      val isInvisibleRunConfigurationFile = isCustomRunConfigurationFile(path) && task.taskFiles[path]?.isVisible == false
-      val isTestFile = configurator.isTestFile(task, path) || isInvisibleRunConfigurationFile
-      val state = if (isTestFile) testFiles else taskFiles
+      // TaskFiles and state may not be consistent due to external changes in hyperskill lessons.
+      // if there is a task in state that is not in taskFiles, then we know that it is a visible file.
+      val isVisibleFile = task.taskFiles[path]?.isVisible ?: true
+      val state = if (isVisibleFile) visibleFiles else invisibleFiles
       state[path] = text
     }
 
-    return taskFiles to testFiles
+    return visibleFiles to invisibleFiles
   }
 
   override fun dispose() {

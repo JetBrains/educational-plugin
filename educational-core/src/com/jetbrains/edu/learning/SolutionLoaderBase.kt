@@ -317,7 +317,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
           val vFile = taskDir.findFileByRelativePath(path) ?: continue
           taskFile.isVisible = solution.isVisible
 
-          if (vFile.isTestsFile(project)) continue
+          if (!taskFile.isVisible) continue
           updatePlaceholders(taskFile, solution.placeholders)
           EduDocumentListener.modifyWithoutListener(task, path) {
             runUndoTransparentWriteAction {

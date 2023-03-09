@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.actions.navigate.hyperskill.HyperskillNavigati
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -486,7 +487,277 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
-  fun `test do not propagate runConfigurations files`() {
+  fun `test invisible non-test files don't propagate, visible test files propagate`() {
+    val course = courseWithFiles(language = FakeGradleBasedLanguage) {
+      frameworkLesson("lesson", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("src/secret.kt", "fun f() = 17", visible = false)
+          taskFile("src/invisible1.kt", "Hello", visible = false)
+          taskFile("test/tests.kt", "fun tests1() {}", visible = true)
+        }
+        eduTask("task2") {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("src/secret.kt", "fun f() = 42", visible = false)
+          taskFile("src/invisible2.kt", "World!", visible = false)
+          taskFile("test/tests.kt", "fun tests2() {}", visible = true)
+        }
+      }
+    }
+    withVirtualFileListener(course) {
+      val task = course.findTask("lesson", "task1")
+      task.openTaskFileInEditor("src/Task.kt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", """
+              fun foo() {}
+            """)
+            file("secret.kt", """
+              fun f() = 42
+            """)
+            file("invisible2.kt", """
+              World!
+            """)
+          }
+          dir("test") {
+            file("tests.kt", """
+              fun tests1() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test propagate changes to tasks further the next one`() {
+    val course = courseWithFiles(language = FakeGradleBasedLanguage) {
+      frameworkLesson("lesson", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("test/tests.kt", "fun tests() {}", visible = true)
+
+          taskFile("src/invisible1.kt", "Hello", visible = false)
+          taskFile("test/tests1.kt", "fun tests1() {}")
+        }
+        eduTask("task2") {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("test/tests.kt", "fun tests() {}", visible = true)
+
+          taskFile("src/invisible2.kt", "World!", visible = false)
+          taskFile("test/tests2.kt", "fun tests2() {}")
+        }
+        eduTask("task3") {
+          taskFile("src/Task.kt", "fun foo() {}")
+          taskFile("test/tests.kt", "fun tests() {}", visible = true)
+
+          taskFile("src/invisible3.kt", "fun f() = 17", visible = false)
+          taskFile("test/tests3.kt", "fun tests3() {}")
+        }
+      }
+    }
+    val tasks = course.allTasks
+
+    withVirtualFileListener(course) {
+      for ((i, task) in tasks.withIndex()) {
+        task.openTaskFileInEditor("src/Task.kt")
+        myFixture.type("$i\n")
+        GeneratorUtils.createChildFile(project, rootDir, "lesson/task/src/tmp$i.kt", "fun f$i() = $i")
+        task.openTaskFileInEditor("test/tests.kt")
+        myFixture.type("$i$i\n")
+        if (i < tasks.size - 1) {
+          testAction(NextTaskAction.ACTION_ID)
+        }
+      }
+    }
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt", """
+              2
+              1
+              0
+              fun foo() {}
+            """)
+            file("invisible3.kt", """
+              fun f() = 17
+            """)
+            file("tmp0.kt", """
+              fun f0() = 0
+            """)
+            file("tmp1.kt", """
+              fun f1() = 1
+            """)
+            file("tmp2.kt", """
+              fun f2() = 2
+            """)
+          }
+          dir("test") {
+            file("tests.kt", """
+              22
+              11
+              00
+              fun tests() {}
+            """)
+            file("tests3.kt", """
+              fun tests3() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+        dir("task3") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test file visibility change from invisible to visible`() {
+    val course = createFrameworkCourseWithVisibilityChange()
+    val task1 = course.findTask("lesson", "task1")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/A.kt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          dir("src") {
+            file("A.kt", """
+              fun foo1() {}
+            """)
+            file("B.kt", """
+              fun tests2() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test file visibility change from invisible to visible during conflict, select replace changes`() {
+    val course = createFrameworkCourseWithVisibilityChange()
+    val task1 = course.findTask("lesson", "task1")
+    val task2 = course.findTask("lesson", "task2")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/A.kt")
+
+      testAction(NextTaskAction.ACTION_ID)
+      task2.openTaskFileInEditor("src/B.kt")
+      myFixture.type("2")
+
+      testAction(PreviousTaskAction.ACTION_ID)
+      task1.openTaskFileInEditor("src/A.kt")
+      myFixture.type("3")
+
+      withEduTestDialog(EduTestDialog(Messages.NO)) {
+        testAction(NextTaskAction.ACTION_ID)
+      }.checkWasShown()
+    }
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          dir("src") {
+            file("A.kt", """
+              3fun foo1() {}
+            """)
+            file("B.kt", """
+              2fun tests2() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test file visibility change from invisible to visible during conflict, select keep changes`() {
+    val course = createFrameworkCourseWithVisibilityChange()
+
+    val task1 = course.findTask("lesson", "task1")
+    val task2 = course.findTask("lesson", "task2")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("src/A.kt")
+
+      testAction(NextTaskAction.ACTION_ID)
+      task2.openTaskFileInEditor("src/B.kt")
+      myFixture.type("2")
+
+      testAction(PreviousTaskAction.ACTION_ID)
+      task1.openTaskFileInEditor("src/A.kt")
+      myFixture.type("3")
+
+      withEduTestDialog(EduTestDialog(Messages.YES)) {
+        testAction(NextTaskAction.ACTION_ID)
+      }.checkWasShown()
+    }
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          dir("src") {
+            file("A.kt", """
+              fun foo1() {}
+            """)
+            file("B.kt", """
+              2fun tests2() {}
+            """)
+          }
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test do not propagate invisible runConfigurations files`() {
     val course = courseWithFiles(
       language = FakeGradleBasedLanguage
     ) {
@@ -561,6 +832,20 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       </configuration>
     </component>
   """.trimIndent()
+
+  private fun createFrameworkCourseWithVisibilityChange(initialVisibilityFlag: Boolean = false): Course =
+    courseWithFiles(language = FakeGradleBasedLanguage) {
+      frameworkLesson("lesson", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("src/A.kt", "fun foo1() {}")
+          taskFile("src/B.kt", "fun tests1() {}", visible = initialVisibilityFlag)
+        }
+        eduTask("task2") {
+          taskFile("src/A.kt", "fun foo2() {}")
+          taskFile("src/B.kt", "fun tests2() {}", visible = !initialVisibilityFlag)
+        }
+      }
+    }
 
   private fun createFrameworkCourse(): Course = courseWithFiles(
     language = FakeGradleBasedLanguage
