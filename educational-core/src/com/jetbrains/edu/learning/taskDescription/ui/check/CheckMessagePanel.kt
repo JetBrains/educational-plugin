@@ -12,6 +12,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -103,7 +104,7 @@ class CheckMessagePanel private constructor() : JPanel() {
     if (!checkResult.severity.isInfo() || (checkResult.status == CheckStatus.Unchecked && checkResult.message.isNotBlank())) {
       val icon = when (checkResult.status) {
         CheckStatus.Unchecked -> if (checkResult.severity.isWaring()) AllIcons.General.BalloonWarning else AllIcons.General.BalloonInformation
-        CheckStatus.Failed -> AllIcons.General.BalloonError
+        CheckStatus.Failed -> EducationalCoreIcons.ResultIncorrect
         else -> null
       }
       messagePane.foreground = when (checkResult.status) {

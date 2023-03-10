@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.taskDescription.ui.check
 
-import com.intellij.icons.AllIcons
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
@@ -38,7 +37,7 @@ class CheckFeedbackPanel(task: Task, checkResult: CheckResult, alarm: Alarm) : J
 
       iconTextGap = JBUI.scale(4)
       icon = when (status) {
-        CheckStatus.Failed -> AllIcons.General.BalloonError
+        CheckStatus.Failed -> EducationalCoreIcons.ResultIncorrect
         CheckStatus.Solved -> EducationalCoreIcons.ResultCorrect
         else -> null
       }
