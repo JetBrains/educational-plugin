@@ -233,8 +233,12 @@ class TaskDescriptionTest : EduTestCase() {
   private fun runWithDarkTheme(doTest: () -> Unit) {
     val initialTheme = UIManager.getLookAndFeel()
     setLookAndFeel(DarculaLaf())
-    doTest()
-    setLookAndFeel(initialTheme)
+    try {
+      doTest()
+    }
+    finally {
+      setLookAndFeel(initialTheme)
+    }
   }
 
   private fun doTestArrowIconAdded(expectedLinkArrowUrl: String) {
