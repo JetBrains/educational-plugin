@@ -57,6 +57,7 @@ class HyperskillTaskBuilder(
   override fun createTask(type: String): Task? {
     val task = super.createTask(type) ?: return null
 
+    task.descriptionText = "<div class=\"step-text\">\n${task.descriptionText}\n</div>"
     task.apply {
       if (stepSource.isCompleted) {
         status = CheckStatus.Solved

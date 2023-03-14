@@ -1,3 +1,4 @@
+import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -40,6 +41,8 @@ val inJetBrainsNetwork: () -> Boolean by extra
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
+
+downloadHyperskillCss()
 
 fun configureSecretProperties() {
   if (inJetBrainsNetwork() || isTeamCity) {
@@ -85,6 +88,15 @@ fun configureSecretProperties() {
     "eduHubClientId",
     "eduHubClientSecret",
     "marketplaceHubClientId")
+}
+
+fun downloadHyperskillCss() {
+  try {
+    download(URL("https://hyperskill.org/static/shared.css"), "educational-core/resources/style/hyperskill_task.css")
+  }
+  catch (e: IOException) {
+    System.err.println("Error downloading: ${e.message}")
+  }
 }
 
 fun download(url: URL, dstPath: String) {

@@ -13,6 +13,7 @@ object StyleResourcesManager {
 
   private const val BROWSER_CSS: String = "/style/browser.css"
   private const val CODEFORCES_TASK_CSS: String = "/style/codeforces_task.css"
+  private const val HYPERSKILL_TASK_CSS: String = "/style/hyperskill_task.css"
   const val EXTERNAL_LINK_ARROW_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x.png"
   const val EXTERNAL_LINK_ARROW_DARK_PNG = "/icons/com/jetbrains/edu/learning/external_link_arrow@2x_dark.png"
 
@@ -50,6 +51,7 @@ object StyleResourcesManager {
   val resourcesList = listOf(
     BROWSER_CSS,
     CODEFORCES_TASK_CSS,
+    HYPERSKILL_TASK_CSS,
     EXTERNAL_LINK_ARROW_PNG,
     EXTERNAL_LINK_ARROW_DARK_PNG,
     JETBRAINS_ACADEMY_CSS_DARK,
@@ -129,6 +131,7 @@ object StyleResourcesManager {
     "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("stepik_link", STEPIK_LINK_CSS),
     resourcePair("codeforces_task", CODEFORCES_TASK_CSS),
+    resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
     resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),
     resourcePair("yaml_base_css", yamlTabCss),
