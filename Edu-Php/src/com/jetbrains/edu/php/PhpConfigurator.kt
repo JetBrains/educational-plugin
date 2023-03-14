@@ -5,7 +5,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PlatformUtils.isIntelliJ
 import com.intellij.util.PlatformUtils.isPhpStorm
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.EducationalCoreIcons
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -24,7 +26,8 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
     get() = PhpTaskCheckerProvider()
 
   override val logo: Icon
-    get() = icons.PhpIcons.PhpProject
+    // the default icon from plugin looks ugly, so we use ours
+    get() = EducationalCoreIcons.PhpLogo
 
   override val isEnabled: Boolean
     get() = isIntelliJ() || isPhpStorm()
