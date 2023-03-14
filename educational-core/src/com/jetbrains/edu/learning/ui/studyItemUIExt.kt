@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -36,6 +37,7 @@ fun Task.getUICheckLabel(): String {
     is TheoryTask -> EduCoreBundle.message("action.check.run.text")
     is CodeforcesTaskWithFileIO -> EduCoreBundle.message("codeforces.copy.and.submit")
     is DataTask -> EduCoreBundle.message("send.answer")
+    is UnsupportedTask -> EduCoreBundle.message("hyperskill.unsupported.check.task")
     else -> defaultMessage
   }
 }

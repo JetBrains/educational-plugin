@@ -35,6 +35,8 @@ interface StepikBasedConnector {
 
   fun getSubmission(id: Int): Result<StepikBasedSubmission, String>
 
+  fun getSubmissions(stepId: Int): List<StepikBasedSubmission>
+
   fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String>
 
   fun doRefreshTokens()

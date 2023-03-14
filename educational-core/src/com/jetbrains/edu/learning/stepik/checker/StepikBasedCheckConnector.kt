@@ -39,7 +39,8 @@ abstract class StepikBasedCheckConnector {
     CodeTask::class.java,
     DataTask::class.java,
     NumberTask::class.java,
-    StringTask::class.java
+    StringTask::class.java,
+    UnsupportedTask::class.java,
   )
 
   fun isRemotelyChecked(task: Task): Boolean = when (task) {
@@ -170,6 +171,26 @@ abstract class StepikBasedCheckConnector {
       .setListener(NotificationListener.URL_OPENING_LISTENER)
       .notify(project)
 }
+
+  fun checkUnsupportedTask(task: UnsupportedTask): CheckResult {
+    val checkIdResult = task.checkId()
+    if (checkIdResult != null) {
+      return checkIdResult
+    }
+
+    val connector = task.getStepikBasedConnector()
+    val submissions = connector.getSubmissions(task.id)
+
+    if (submissions.isEmpty()) {
+      return CheckResult(CheckStatus.Unchecked, EduCoreBundle.message("hyperskill.unsupported.check.task.no.submissions"))
+    }
+
+    if (submissions.any { it.toCheckResult().isSolved }) {
+      return CheckResult.SOLVED
+    }
+
+    return submissions.first().toCheckResult()
+  }
 
   companion object {
     @NonNls

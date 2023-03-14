@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LOGIN_NEEDED_MESSA
 import com.jetbrains.edu.learning.courseFormat.tasks.AnswerTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -28,6 +29,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
       is ChoiceTask -> StepikCheckConnector.checkChoiceTask(project, task)
       is CodeTask -> StepikCheckConnector.checkCodeTask(project, task)
       is DataTask -> StepikCheckConnector.checkDataTask(project, task, indicator)
+      is UnsupportedTask -> StepikCheckConnector.checkUnsupportedTask(task)
       else -> error("Can't check ${task.itemType} on ${StepikNames.STEPIK}")
     }
   }

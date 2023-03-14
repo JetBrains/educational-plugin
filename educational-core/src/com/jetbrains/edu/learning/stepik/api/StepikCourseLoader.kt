@@ -180,7 +180,6 @@ object StepikCourseLoader {
       val builder = StepikTaskBuilder(course, lesson, step)
 
       val type = step.block?.name ?: error("Can't get type from step source")
-      if (!builder.isSupported(type)) continue
 
       val task = builder.createTask(type) ?: continue
       tasks.add(task)

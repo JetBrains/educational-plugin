@@ -236,6 +236,8 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return allSubmissions
   }
 
+  override fun getSubmissions(stepId: Int) = getSubmissions(setOf(stepId))
+
   override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> {
     return withTokenRefreshIfFailed { hyperskillEndpoints.submission(id).executeAndExtractFirst(SubmissionsList::submissions) }
   }

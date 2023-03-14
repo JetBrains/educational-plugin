@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.hasHeaderOrFooter
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_COMMENT_ANCHOR
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepSource
@@ -50,7 +51,7 @@ class HyperskillTaskBuilder(
       blockName
     }
 
-    return if (isSupported(type)) createTask(type) else null
+    return createTask(type)
   }
 
   override fun createTask(type: String): Task? {
@@ -80,6 +81,11 @@ class HyperskillTaskBuilder(
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title)
         }
         is ChoiceTask, is StringTask, is NumberTask -> {
+          descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title)
+          name = stepSource.title
+        }
+        is UnsupportedTask -> {
+          descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, stepLink(stepSource.id), HYPERSKILL)
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title)
           name = stepSource.title
         }

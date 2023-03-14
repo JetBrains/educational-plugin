@@ -221,7 +221,6 @@ fun openNextActivity(project: Project, task: Task) {
       if (!HyperskillCourse.isStepSupported(nextStep.block?.name)) {
         EduBrowser.getInstance().browse(stepLink(nextStep.id))
         LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task.id} topic: ${topicId} ")
-        return
       }
 
       val course = task.course

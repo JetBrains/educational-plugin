@@ -31,7 +31,7 @@ class StepikTaskBuilderTest : EduTestCase() {
   override fun getTestDataPath(): String = "testData/stepikTaskBuilder"
 
   fun `test theory task`() = doTest<TheoryTask>(FakeGradleBasedLanguage)
-  fun `test unsupported task`() = doTest<TheoryTask>(FakeGradleBasedLanguage, false)
+  fun `test unsupported task`() = doTest<UnsupportedTask>(FakeGradleBasedLanguage)
   fun `test choice task`() {
     mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       MockResponseFactory.fromString(

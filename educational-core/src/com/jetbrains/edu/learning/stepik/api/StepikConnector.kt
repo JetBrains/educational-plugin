@@ -166,7 +166,7 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     return stepSource?.block
   }
 
-  fun getSubmissions(stepId: Int): List<StepikBasedSubmission> {
+  override fun getSubmissions(stepId: Int): List<StepikBasedSubmission> {
     if (!isUnitTestMode && !EduSettings.isLoggedIn()) return emptyList()
     var currentPage = 1
     val allSubmissions = mutableListOf<StepikBasedSubmission>()

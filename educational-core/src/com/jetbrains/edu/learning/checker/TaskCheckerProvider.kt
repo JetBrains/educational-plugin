@@ -29,7 +29,7 @@ interface TaskCheckerProvider {
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
       is RemoteEduTask,
-      is StringTask, is NumberTask, is CodeTask, is DataTask -> null
+      is StringTask, is NumberTask, is CodeTask, is DataTask, is UnsupportedTask -> null
 
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)

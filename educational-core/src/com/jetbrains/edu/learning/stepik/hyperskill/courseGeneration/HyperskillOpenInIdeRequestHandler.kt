@@ -166,7 +166,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
   private fun Lesson.addProblems(stepSources: List<HyperskillStepSource>): Result<List<Task>, String> {
     val existingTasksIds = items.map { it.id }
-    val stepsSourceForAdding = stepSources.filter { HyperskillCourse.isStepSupported(it.block?.name) && it.id !in existingTasksIds }
+    val stepsSourceForAdding = stepSources.filter { it.id !in existingTasksIds }
 
     val tasks = HyperskillConnector.getTasks(course, this, stepsSourceForAdding)
     tasks.forEach(this::addTask)
@@ -290,7 +290,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     }
 
     val task = course.getProblem(stepId) ?: return
-    val tasks = task.lesson.taskList.filter { HyperskillCourse.isStepSupported(it.itemType) }
+    val tasks = task.lesson.taskList
     HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground(course, tasks, true)
   }
 

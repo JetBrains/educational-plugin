@@ -111,6 +111,10 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
             file("Task.txt")
             file("task.html")
           }
+          dir(step7020.title) {
+            file("Task.txt")
+            file("task.html")
+          }
           dir(step13299.title) {
             file("Task.txt")
             file("task.html")
@@ -759,6 +763,7 @@ class HyperskillProjectOpenTopicProblemsTest : HyperskillProjectOpenerTestBase()
     private val step13295 = StepInfo(13295, "DeleteMapping request")
     private val step7018 = StepInfo(7018, "@GetMapping and @PostMapping")
     private val step13299 = StepInfo(13299, "Complete the handler description")
+    private val step7020 = StepInfo(7020, "Find a handler for the request")
 
     private val step525047 = StepInfo(525047, "Fix signature")
 

@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -74,15 +73,17 @@ class HyperskillNextActivityTest : EduTestCase() {
   fun `test next activity unsupported in IDE`() {
     val task = initProject()
 
-    val choiceTask = ChoiceTask()
-    choiceTask.canCheckLocally = false
-    choiceTask.parent = task.parent
+    val nextStepId = 3
+    val nextStep = StepInfo(nextStepId, "Test Matching Task")
 
     configureResponsesForCurrentTask(task)
+    configureResponseForNextStep(task, nextStep)
     configureResponseForTopicSteps()
 
+    (ProjectOpener.getInstance() as MockProjectOpener).project = project
     openNextActivity(project, task)
     assertEquals(stepLink(3), (EduBrowser.getInstance() as MockEduBrowser).lastVisitedUrl)
+    assertEquals(nextStepId, findTask(0, 0, 2).id)
   }
 
   fun `test open next step in IDE`() {
@@ -91,19 +92,6 @@ class HyperskillNextActivityTest : EduTestCase() {
     // mock responses setup
     val nextStepId = 5
     val nextStep = StepInfo(nextStepId, "Test Code Task 2")
-
-    fun configureResponseForNextStep(task: Task, nextStep: StepInfo) {
-      mockConnector.configureResponses(
-        StepMockResponse(nextStep.urlWithPrams, task) {
-          block!!.name = CodeTask.CODE_TASK_TYPE
-          topic = DEFAULT_TOPIC_ID
-          id = nextStep.id
-          topicTheory = theoryStepFromInitialProject.id
-          title = nextStep.title
-          isRecommended = true
-        }
-      )
-    }
 
     configureResponsesForCurrentTask(task)
     configureResponseForNextStep(task, nextStep)
@@ -174,6 +162,19 @@ class HyperskillNextActivityTest : EduTestCase() {
         isRecommended = true
       },
       StepMockResponse(codeStepFromInitialProject.urlWithPrams, task) { topic = DEFAULT_TOPIC_ID }
+    )
+  }
+
+  private fun configureResponseForNextStep(task: Task, nextStep: StepInfo) {
+    mockConnector.configureResponses(
+      StepMockResponse(nextStep.urlWithPrams, task) {
+        block!!.name = CodeTask.CODE_TASK_TYPE
+        topic = DEFAULT_TOPIC_ID
+        id = nextStep.id
+        topicTheory = theoryStepFromInitialProject.id
+        title = nextStep.title
+        isRecommended = true
+      }
     )
   }
 

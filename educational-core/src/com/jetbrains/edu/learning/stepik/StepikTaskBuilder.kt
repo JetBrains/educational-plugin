@@ -109,8 +109,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     return stepikTaskBuilders[type]?.invoke(taskName)
   }
 
-  fun isSupported(type: String): Boolean = stepikTaskBuilders.containsKey(type)
-
   private fun Step.pycharmOptions(): PyCharmStepOptions {
     return options as PyCharmStepOptions
   }
@@ -296,11 +294,10 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
   }
 
   private fun unsupportedTask(@NonNls name: String): Task {
-    val task = TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    task.descriptionText = "${name.lowercase().replaceFirstChar { it.titlecaseChar() }} tasks are not supported yet. <br>" +
-                           "View this step on <a href=\"${getStepikLink(task, lesson)}\">Stepik</a>."
+    val task = UnsupportedTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+
+    task.descriptionText = UnsupportedTask.getDescriptionTextTemplate(name, getStepikLink(task, lesson), StepikNames.STEPIK)
     task.descriptionFormat = DescriptionFormat.HTML
-    task.postSubmissionOnOpen = false
 
     initTaskFiles(task, "This is a ${name.lowercase()} task. You can use this editor as a playground\n")
     return task
