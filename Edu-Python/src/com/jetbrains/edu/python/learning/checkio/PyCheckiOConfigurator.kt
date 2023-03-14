@@ -27,7 +27,7 @@ class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
     get() = PyCheckiOTaskCheckerProvider()
 
   override val logo: Icon
-    get() = EducationalCoreIcons.CheckiO
+    get() = EducationalCoreIcons.PyCheckiO
 
   override val isCourseCreatorEnabled: Boolean = false
 
