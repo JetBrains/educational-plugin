@@ -5,12 +5,9 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.ui.SelectTaskUi
 import com.jetbrains.edu.coursecreator.ui.withMockSelectTaskUi
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.FileTreeBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.testAction
 
 class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 

@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.getActionById
 import com.jetbrains.edu.learning.testAction
 

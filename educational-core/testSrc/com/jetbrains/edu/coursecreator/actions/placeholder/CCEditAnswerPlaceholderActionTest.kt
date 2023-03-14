@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.yaml.configFileName
 

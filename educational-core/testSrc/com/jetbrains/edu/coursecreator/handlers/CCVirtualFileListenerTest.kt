@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.getStudyItem
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.VirtualFileListenerTestBase
 import com.jetbrains.edu.learning.`in`

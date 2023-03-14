@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.jetbrains.edu.learning.EduTestDialog
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.actions.navigate.hyperskill.HyperskillNavigationTest
@@ -12,10 +12,7 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.withEduTestDialog
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat

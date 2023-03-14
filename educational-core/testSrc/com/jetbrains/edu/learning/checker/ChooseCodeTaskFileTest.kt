@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.findTask
 
 class ChooseCodeTaskFileTest : EduTestCase() {
   fun `test choose the only task file`() = doTest("task1", "TheOnlyTaskFile.txt")

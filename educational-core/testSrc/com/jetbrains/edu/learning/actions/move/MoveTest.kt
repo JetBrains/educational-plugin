@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions.move
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.withEduTestDialog
 
 class MoveTest : MoveTestBase() {

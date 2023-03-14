@@ -231,10 +231,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
   protected fun findFile(path: String): VirtualFile =
     LightPlatformTestCase.getSourceRoot().findFileByRelativePath(path) ?: error("Can't find `$path`")
 
-  protected fun Course.findTask(lessonName: String, taskName: String): Task {
-    return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")
-  }
-
   protected fun Task.openTaskFileInEditor(taskFilePath: String, placeholderIndex: Int? = null) {
     val taskFile = getTaskFile(taskFilePath) ?: error("Can't find task file `$taskFilePath` in `$name`")
     val file = taskFile.getVirtualFile(project) ?: error("Can't find virtual file for `${taskFile.name}` task")

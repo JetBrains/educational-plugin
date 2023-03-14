@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.notIn
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.findTask
 
 class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask.ACTION_ID) {
 

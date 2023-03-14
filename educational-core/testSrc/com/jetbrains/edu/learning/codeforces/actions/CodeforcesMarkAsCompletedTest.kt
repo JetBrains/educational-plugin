@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.codeforces.actions
 
 import com.jetbrains.edu.learning.codeforces.CodeforcesTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.testAction
 
 class CodeforcesMarkAsCompletedTest : CodeforcesTestCase() {

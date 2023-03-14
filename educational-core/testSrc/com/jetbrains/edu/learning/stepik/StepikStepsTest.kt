@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class StepikStepsTest : EduTestCase() {

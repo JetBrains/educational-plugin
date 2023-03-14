@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.codeforces.ContestParameters
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.findTask
 import org.jsoup.Jsoup
 import java.time.ZonedDateTime
 

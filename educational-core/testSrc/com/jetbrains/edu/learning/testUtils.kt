@@ -17,6 +17,7 @@ import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
@@ -124,4 +125,8 @@ fun testAction(
 fun initializeCourse(project: Project, course: Course) {
   course.init(false)
   StudyTaskManager.getInstance(project).course = course
+}
+
+fun Course.findTask(lessonName: String, taskName: String): Task {
+  return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")
 }

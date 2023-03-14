@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.findTask
 
 class CCIncludeIntoTaskTest : CCChangeFileOwnerTestBase(CCIncludeIntoTask.ACTION_ID) {
 

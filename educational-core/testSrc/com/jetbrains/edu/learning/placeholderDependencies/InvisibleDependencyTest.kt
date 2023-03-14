@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.jetbrains.edu.learning.EduFileEditorTestFixture
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.findTask
 
 class InvisibleDependencyTest : EduTestCase() {
   private lateinit var fileEditorFixture: EduFileEditorTestFixture
