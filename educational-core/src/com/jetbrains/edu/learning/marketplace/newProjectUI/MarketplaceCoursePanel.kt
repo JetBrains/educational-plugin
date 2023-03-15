@@ -55,7 +55,7 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
     }
 
     companion object {
-      private const val PLUGIN_MARKETPLACE_AGREEMENT = "https://www.jetbrains.com/legal/docs/toolbox/user.html"
+      private const val PLUGIN_MARKETPLACE_AGREEMENT = "https://plugins.jetbrains.com/legal/terms-of-use"
     }
   }
 }
