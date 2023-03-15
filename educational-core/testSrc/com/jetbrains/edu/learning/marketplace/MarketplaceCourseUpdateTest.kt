@@ -5,8 +5,10 @@ import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
@@ -18,7 +20,8 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
   override val defaultSettings: Unit get() = Unit
 
   fun `test update date updated`() {
-    val course = createCourse(CheckStatus.Solved).apply { updateDate = Date(1619697473000) }
+    val course = createCourse(CheckStatus.Solved)
+    course.updateDate = Date(1619697473000)
 
     val serverCourse = course {
       lesson {
@@ -304,11 +307,244 @@ class MarketplaceCourseUpdateTest : CourseUpdateTestBase() {
         }
       }
     }
-
     doTest(course, serverCourse, expectedStructure, 2)
     val placeholder = course.allTasks[2].taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
     checkNotNull(placeholder)
     assertEquals("lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
+  }
+
+  fun `test framework lesson in section first task updated`() {
+    val taskFileName = "src/Task.kt"
+    val testFileName = "test/Tests.kt"
+    val oldTaskFileText = "fun foo() {}"
+    val oldTestFileText = "fun test() {}"
+    val oldTaskDescriptionText = "Old Description"
+    val updatedTaskFileText = "fun updated() {}"
+    val updatedTestFileText = "fun updatedTest() {}"
+    val updatedTaskDescriptionText = "New Description"
+
+    val course = course {
+      section("section1") {
+        frameworkLesson("lesson1") {
+          eduTask("task1", stepId = 1, taskDescription = oldTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile(taskFileName, oldTaskFileText)
+            taskFile(testFileName, oldTestFileText)
+          }
+          eduTask("task2", stepId = 2, taskDescription = oldTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile(taskFileName, oldTaskFileText)
+            taskFile(testFileName, oldTestFileText)
+          }
+        }
+      }
+    } as EduCourse
+    course.marketplaceCourseVersion = 1
+
+    val courseFromServer = course {
+      section("section1") {
+        frameworkLesson("lesson1") {
+          eduTask("task1", stepId = 1, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile(taskFileName, updatedTaskFileText)
+            taskFile(testFileName, updatedTestFileText)
+
+          }
+          eduTask("task2", stepId = 2, taskDescription = oldTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+            taskFile(taskFileName, oldTaskFileText)
+            taskFile(testFileName, oldTestFileText)
+          }
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task") {
+            dir("src") {
+              file("Task.kt")
+            }
+            dir("test") {
+              file("Tests.kt")
+            }
+          }
+          dir("task1") {
+            file("task.html")
+          }
+          dir("task2") {
+            file("task.html")
+          }
+        }
+      }
+    }
+
+    doTest(course, courseFromServer, expectedStructure, 2)
+
+    val firstTask = getFirstTask(course)
+    checkNotNull(firstTask)
+    checkTaskFiles(firstTask, updatedTaskFileText, updatedTestFileText, updatedTaskDescriptionText, taskFileName, testFileName)
+
+    val allTasks = course.allTasks
+    assertEquals(2, allTasks.size)
+    val secondTask = allTasks[1]
+    checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+  }
+
+  fun `test framework lesson not updated if tasks number on remote decreased`() {
+    val taskFileName = "src/Task.kt"
+    val testFileName = "test/Tests.kt"
+    val oldTaskFileText = "fun foo() {}"
+    val oldTestFileText = "fun test() {}"
+    val oldTaskDescriptionText = "Old Description"
+    val updatedTaskFileText = "fun updated() {}"
+    val updatedTestFileText = "fun updatedTest() {}"
+    val updatedTaskDescriptionText = "New Description"
+
+    val course = createCourseWithFrameworkLesson(
+      taskFileName,
+      testFileName,
+      oldTaskFileText,
+      oldTestFileText,
+      oldTaskDescriptionText
+    )
+    course.marketplaceCourseVersion = 1
+
+    val courseFromServer = course {
+      frameworkLesson("lesson1") {
+        eduTask("task1", stepId = 1, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(taskFileName, updatedTaskFileText)
+          taskFile(testFileName, updatedTestFileText)
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt")
+          }
+          dir("test") {
+            file("Tests.kt")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, courseFromServer, expectedStructure, 2)
+
+    val firstTask = getFirstTask(course)
+    checkNotNull(firstTask)
+    checkTaskFiles(firstTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+
+    val allTasks = course.allTasks
+    assertEquals(2, allTasks.size)
+    val secondTask = allTasks[1]
+    checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+  }
+
+  fun `test framework lesson not updated if tasks ids changed`() {
+    val taskFileName = "src/Task.kt"
+    val testFileName = "test/Tests.kt"
+    val oldTaskFileText = "fun foo() {}"
+    val oldTestFileText = "fun test() {}"
+    val oldTaskDescriptionText = "Old Description"
+    val updatedTaskFileText = "fun updated() {}"
+    val updatedTestFileText = "fun updatedTest() {}"
+    val updatedTaskDescriptionText = "New Description"
+
+    val course = createCourseWithFrameworkLesson(
+      taskFileName,
+      testFileName,
+      oldTaskFileText,
+      oldTestFileText,
+      oldTaskDescriptionText
+    )
+    course.marketplaceCourseVersion = 1
+
+    val courseFromServer = course {
+      frameworkLesson("lesson1") {
+        eduTask("task1", stepId = 3, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(taskFileName, updatedTaskFileText)
+          taskFile(testFileName, updatedTestFileText)
+        }
+        eduTask("task2", stepId = 4, taskDescription = updatedTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(taskFileName, updatedTaskFileText)
+          taskFile(testFileName, updatedTestFileText)
+        }
+      }
+    } as EduCourse
+
+    val expectedStructure = fileTree {
+      dir("lesson1") {
+        dir("task") {
+          dir("src") {
+            file("Task.kt")
+          }
+          dir("test") {
+            file("Tests.kt")
+          }
+        }
+        dir("task1") {
+          file("task.html")
+        }
+        dir("task2") {
+          file("task.html")
+        }
+      }
+    }
+
+    doTest(course, courseFromServer, expectedStructure, 2)
+
+    val firstTask = getFirstTask(course)
+    checkNotNull(firstTask)
+    checkTaskFiles(firstTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+
+    val allTasks = course.allTasks
+    assertEquals(2, allTasks.size)
+    val secondTask = allTasks[1]
+    checkTaskFiles(secondTask, oldTaskFileText, oldTestFileText, oldTaskDescriptionText, taskFileName, testFileName)
+  }
+
+  private fun createCourseWithFrameworkLesson(
+    taskFileName: String,
+    testFileName: String,
+    oldTaskFileText: String,
+    oldTestFileText: String,
+    oldTaskDescriptionText: String,
+    firstTaskName: String = "task1",
+    secondTaskName: String = "task2",
+    firstTaskId: Int = 1,
+    secondTaskId: Int = 2
+  ): EduCourse {
+    val course = course {
+      frameworkLesson("lesson1") {
+        eduTask(firstTaskName, stepId = firstTaskId, taskDescription = oldTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(taskFileName, oldTaskFileText)
+          taskFile(testFileName, oldTestFileText)
+        }
+        eduTask(secondTaskName, stepId = secondTaskId, taskDescription = oldTaskDescriptionText, taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile(taskFileName, oldTaskFileText)
+          taskFile(testFileName, oldTestFileText)
+        }
+      }
+    } as EduCourse
+    return course
+  }
+
+  private fun checkTaskFiles(task: Task,
+                             expectedTaskFileText: String,
+                             expectedTestFileText: String,
+                             expectedTaskDescriptionText: String,
+                             taskFileName: String,
+                             testFileName: String) {
+    assertEquals(expectedTaskFileText, task.getTaskFile(taskFileName)?.text)
+    assertEquals(expectedTestFileText, task.getTaskFile(testFileName)?.text)
+    assertEquals(expectedTaskDescriptionText, task.descriptionText)
   }
 
   private fun createCourse(firstTaskStatus: CheckStatus): EduCourse {

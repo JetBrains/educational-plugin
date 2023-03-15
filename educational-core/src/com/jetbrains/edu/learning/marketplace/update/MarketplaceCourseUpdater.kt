@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-class MarketplaceCourseUpdater(project: Project, course: EduCourse, val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
+class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
 
   override fun doUpdate(courseFromServer: EduCourse) {

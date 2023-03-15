@@ -17,11 +17,12 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import com.jetbrains.edu.learning.update.CourseUpdater
+import com.jetbrains.edu.learning.update.UpdateUtils.showUpdateCompletedNotification
+import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
-class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : CourseUpdater(project) {
-  override fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
+class CodeforcesCourseUpdater(private val project: Project, val course: CodeforcesCourse) {
+  fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val contestParameters = ContestParameters(
         id = course.id,
@@ -43,7 +44,7 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
         if (isUpdated) {
           TaskDescriptionView.getInstance(project).updateTaskDescription()
           updatedTasks.forEach {
-            showUpdateCompletedNotification(EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
+            showUpdateCompletedNotification(project, EduCoreBundle.message("codeforces.task.description.was.updated.notification", it))
           }
         }
 
@@ -60,7 +61,7 @@ class CodeforcesCourseUpdater(project: Project, val course: CodeforcesCourse) : 
     for ((task, remoteTask) in tasks.zip(remoteTasks)) {
       if (!task.needToBeUpdated(project, remoteTask)) continue
 
-      updateTaskDescription(task, remoteTask)
+      updateTaskDescription(project, task, remoteTask)
       YamlFormatSynchronizer.saveItem(task)
       updatedTasks.add(task.name)
     }

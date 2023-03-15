@@ -20,6 +20,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
+import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
+import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
+import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.net.URISyntaxException
@@ -136,7 +139,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       // lessons custom names should be copied before processModifiedLessons, otherwise lesson can be considered modified
       // because of difference in names
       processLessonsAfterUpdate(sectionFromServer.lessons, currentSection.lessons.associateBy { it.id })
-      processModifiedLessons(lessonsToUpdate, currentSection)
+      processModifiedLessons(lessonsToUpdate, currentSection, sectionFromServer)
       sectionFromServer.init(course, false)
     }
   }
@@ -157,7 +160,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
   open fun updateLessons(courseFromServer: EduCourse) {
     processNewLessons(courseFromServer)
     processDeletedLessons(courseFromServer)
-    processModifiedLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
+    processModifiedLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course, courseFromServer)
   }
 
   private fun processNewLessons(courseFromServer: Course) {
@@ -180,30 +183,80 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     deleteRemovedItems(lessonsFromServerIds, courseLessonsToProcess)
   }
 
-  private fun EduCourse.allLessons(): List<Lesson> = lessons + sections.flatMap { it.lessons }
+  private fun EduCourse.allLessons(): List<Lesson> = (lessons + sections.flatMap { it.lessons })
 
   @Throws(URISyntaxException::class, IOException::class)
-  private fun processModifiedLessons(lessonsFromServer: List<Lesson>, parent: LessonContainer) {
+  private fun processModifiedLessons(lessonsFromServer: List<Lesson>, parent: LessonContainer, remoteParent: LessonContainer) {
     for (lessonFromServer in lessonsFromServer) {
       lessonFromServer.parent = parent
       lessonFromServer.taskList.withIndex().forEach { (index, task) -> task.index = index + 1 }
       val lessonFromServerId = lessonFromServer.id
       val currentLesson = parent.getLesson(lessonFromServerId) ?: error("Local lesson with id $lessonFromServerId not found")
 
-      val taskIdsToUpdate = taskIdsToUpdate(lessonFromServer, currentLesson)
-
-      deleteRemovedItems(lessonFromServer.taskList.map { task -> task.id }, currentLesson.taskList)
-
-      val lessonContentChanged = taskIdsToUpdate.isNotEmpty()
-      if (lessonContentChanged) {
-        val lessonDir = constructDir(lessonFromServer, currentLesson)
-        updateTasks(taskIdsToUpdate, lessonFromServer, currentLesson, lessonDir)
+      if (lessonFromServer is FrameworkLesson) {
+        processFrameworkLessonModified(lessonFromServer, currentLesson as FrameworkLesson, remoteParent)
       }
-      else if (renamed(lessonFromServer, currentLesson)) {
-        constructDir(lessonFromServer, currentLesson)
+      else {
+        processNonFrameworkLessonModified(lessonFromServer, currentLesson)
       }
-
       lessonFromServer.init(parent, false)
+    }
+  }
+
+  private fun processNonFrameworkLessonModified(lessonFromServer: Lesson, currentLesson: Lesson) {
+    val taskIdsToUpdate = taskIdsToUpdate(lessonFromServer, currentLesson)
+
+    deleteRemovedItems(lessonFromServer.taskList.map { task -> task.id }, currentLesson.taskList)
+
+    val lessonContentChanged = taskIdsToUpdate.isNotEmpty()
+    if (lessonContentChanged) {
+      val lessonDir = constructDir(lessonFromServer, currentLesson)
+      updateTasks(taskIdsToUpdate, lessonFromServer, currentLesson, lessonDir)
+    }
+    else if (renamed(lessonFromServer, currentLesson)) {
+      constructDir(lessonFromServer, currentLesson)
+    }
+  }
+
+  private fun processFrameworkLessonModified(lessonFromServer: FrameworkLesson,
+                                             currentLesson: FrameworkLesson,
+                                             remoteParent: LessonContainer) {
+    if (currentLesson.shouldBeUpdated(lessonFromServer)) {
+      invokeAndWaitIfNeeded {
+        lessonFromServer.currentTaskIndex = currentLesson.currentTaskIndex
+        for ((task, remoteTask) in currentLesson.taskList.zip(lessonFromServer.taskList)) {
+          remoteTask.parent = lessonFromServer
+          if (taskChanged(remoteTask, task)) {
+            if (task.status != CheckStatus.Solved) {
+              updateFrameworkLessonFiles(project, currentLesson, task, remoteTask, true)
+            }
+            updateTaskDescription(project, task, remoteTask)
+            remoteTask.record = task.record
+            remoteTask.init(currentLesson, false)
+          }
+        }
+      }
+    }
+    else {
+      // when we don't want to update currentLesson we should substitute remote item with the local one, because we are
+      // setting remote items list to the course in setCourseItems(courseFromServer.items)
+
+      invokeAndWaitIfNeeded {
+        val modifiedRemoteItems = remoteParent.items.toMutableList()
+        val index = modifiedRemoteItems.indexOf(lessonFromServer)
+        modifiedRemoteItems[index] = currentLesson
+        remoteParent.items = modifiedRemoteItems
+      }
+    }
+  }
+
+  private fun FrameworkLesson.shouldBeUpdated(remoteLesson: FrameworkLesson): Boolean {
+    val tasksFromServer = remoteLesson.taskList
+    val localTasks = taskList
+    return when {
+      !shouldFrameworkLessonBeUpdated(remoteLesson) -> false
+      localTasks.zip(tasksFromServer).any { (task, remoteTask) -> taskChanged(remoteTask, task) } -> true
+      else -> false
     }
   }
 

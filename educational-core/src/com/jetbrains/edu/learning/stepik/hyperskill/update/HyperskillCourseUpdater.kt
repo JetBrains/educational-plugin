@@ -2,20 +2,20 @@ package com.jetbrains.edu.learning.stepik.hyperskill.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.HYPERSKILL_ENVIRONMENT_UPDATE
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -26,12 +26,15 @@ import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
-import com.jetbrains.edu.learning.update.CourseUpdater
+import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
+import com.jetbrains.edu.learning.update.UpdateUtils.showUpdateCompletedNotification
+import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
+import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.IOException
 import java.util.*
 
-class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : CourseUpdater(project) {
+class HyperskillCourseUpdater(private val project: Project, val course: HyperskillCourse) {
   private fun HyperskillProject.getCourseFromServer(): HyperskillCourse? {
     val connector = HyperskillConnector.getInstance()
     val hyperskillProject = when (val response = connector.getProject(id)) {
@@ -49,7 +52,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
   }
 
-  override fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
+  fun updateCourse(onFinish: (isUpdated: Boolean) -> Unit) {
     fun getProblemsUpdate(): List<TaskUpdate> {
       val legacyProblemLesson = course.getProblemsLesson()
       val newProblemLessons = course.getTopicsSection()?.lessons ?: emptyList()
@@ -73,7 +76,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         }
         else {
           showUpdateAvailableNotification(project) {
-            runInBackground(project,  EduCoreBundle.message("update.process"), false) {
+            runInBackground(project, EduCoreBundle.message("update.process"), false) {
               doUpdate(courseFromServer, problemsUpdates)
             }
           }
@@ -149,7 +152,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
       YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
       ProjectManager.getInstance().reloadProject(project)
     }
-    showUpdateCompletedNotification(EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
+    showUpdateCompletedNotification(project, EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT))
   }
 
   private fun updateCourse(remoteCourse: HyperskillCourse) {
@@ -175,7 +178,7 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
           // if name of remote task changes name of dir local task will not
           GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
         }
-        updateTaskDescription(localTask, taskFromServer)
+        updateTaskDescription(project, localTask, taskFromServer)
         localTask.updateDate = taskFromServer.updateDate
         if (localTask is RemoteEduTask && taskFromServer is RemoteEduTask) {
           localTask.checkProfile = taskFromServer.checkProfile
@@ -196,10 +199,12 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
         if (!task.updateDate.before(remoteTask.updateDate)) continue
 
         if (task.status != CheckStatus.Solved) {
-          updateFiles(lesson, task, remoteTask)
+          // With current logic of next/prev action for hyperskill tasks
+          // update of non-test files makes sense only for first task
+          updateFrameworkLessonFiles(project, lesson, task, remoteTask, task.index == 1 )
         }
 
-        updateTaskDescription(task, remoteTask)
+        updateTaskDescription(project, task, remoteTask)
         task.updateDate = remoteTask.updateDate
         YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
       }
@@ -211,63 +216,17 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
   }
 
-  private fun updateFiles(lesson: FrameworkLesson, task: Task, remoteTask: Task) {
-    fun updateTaskFiles(
-      task: Task,
-      remoteTaskFiles: Map<String, TaskFile>,
-      updateInLocalFS: Boolean
-    ) {
-      val taskFiles = task.taskFiles
-      for ((path, remoteTaskFile) in remoteTaskFiles) {
-        val taskFile = taskFiles[path]
-        val currentTaskFile = if (taskFile != null) {
-          taskFile.text = remoteTaskFile.text
-          taskFile
-        }
-        else {
-          task.addTaskFile(remoteTaskFile)
-          remoteTaskFile
-        }
-
-        if (updateInLocalFS) {
-          val taskDir = task.getDir(project.courseDir)
-          if (taskDir != null) {
-            GeneratorUtils.createChildFile(project, taskDir, path, currentTaskFile.text)
-          }
-        }
-      }
-      task.init(lesson, false)
-    }
-
-    val flm = FrameworkLessonManager.getInstance(project)
-
-    if (lesson.currentTaskIndex != task.index - 1) {
-      updateTaskFiles(task, remoteTask.invisibleFiles, false)
-      flm.updateUserChanges(task, task.taskFiles.mapValues { (_, taskFile) -> taskFile.text })
-    }
-    else {
-      // With current logic of next/prev action for hyperskill tasks
-      // update of non-test files makes sense only for first task
-      if (task.index == 1 && !task.hasChangedFiles(project)) {
-        updateTaskFiles(task, remoteTask.taskFiles, true)
-      }
-      else {
-        updateTaskFiles(task, remoteTask.invisibleFiles, true)
-      }
-    }
-  }
-
   companion object {
     private val LOG: Logger = Logger.getInstance(HyperskillCourseUpdater::class.java)
 
     @JvmStatic
     @VisibleForTesting
-    fun Lesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
-      val tasksFromServer = remoteCourse.getProjectLesson()?.taskList ?: return false
+    fun FrameworkLesson.shouldBeUpdated(project: Project, remoteCourse: HyperskillCourse): Boolean {
+      val lessonFromServer = remoteCourse.getProjectLesson() ?: return false
+      val tasksFromServer = lessonFromServer.taskList
       val localTasks = taskList
       return when {
-        localTasks.size > tasksFromServer.size -> false
-        localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
+        shouldFrameworkLessonBeUpdated(lessonFromServer) -> false
         localTasks.zip(tasksFromServer).any { (task, remoteTask) -> remoteTask.updateDate.isSignificantlyAfter(task.updateDate) } -> true
         needUpdateCourseAdditionalFiles(project, remoteCourse.additionalFiles) -> true
         else -> false
@@ -298,10 +257,3 @@ class HyperskillCourseUpdater(project: Project, val course: HyperskillCourse) : 
     }
   }
 }
-
-private val Task.invisibleFiles: Map<String, TaskFile>
-  get() {
-    return taskFiles.filter { !it.value.isVisible }
-  }
-
-
