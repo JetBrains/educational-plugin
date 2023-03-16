@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -21,9 +23,19 @@ object UpdateUtils {
     task.descriptionText = remoteTask.descriptionText
     task.descriptionFormat = remoteTask.descriptionFormat
     task.feedbackLink = remoteTask.feedbackLink
-    if (task is ChoiceTask && remoteTask is ChoiceTask) {
-      task.choiceOptions = remoteTask.choiceOptions
-      task.isMultipleChoice = remoteTask.isMultipleChoice
+
+    when {
+      (task is ChoiceTask && remoteTask is ChoiceTask) -> {
+        task.choiceOptions = remoteTask.choiceOptions
+        task.isMultipleChoice = remoteTask.isMultipleChoice
+      }
+      (task is SortingTask && remoteTask is SortingTask) -> {
+        task.options = remoteTask.options
+      }
+      (task is MatchingTask && remoteTask is MatchingTask) -> {
+        task.captions = remoteTask.captions
+        task.options = remoteTask.options
+      }
     }
 
     // Task Description file needs to be regenerated as it already exists

@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -81,7 +83,7 @@ class HyperskillTaskBuilder(
         is TheoryTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, title = stepSource.title)
         }
-        is ChoiceTask, is StringTask, is NumberTask -> {
+        is ChoiceTask, is StringTask, is NumberTask, is SortingTask, is MatchingTask -> {
           descriptionText = description(this@HyperskillTaskBuilder.course.languageID, stepSource.title)
           name = stepSource.title
         }

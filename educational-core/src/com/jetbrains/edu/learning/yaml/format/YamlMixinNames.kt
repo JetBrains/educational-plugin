@@ -123,6 +123,12 @@ object YamlMixinNames {
   const val OPTIONS = "options"
 
   @NlsSafe
+  const val ORDERING = "ordering"
+
+  @NlsSafe
+  const val CAPTIONS = "captions"
+
+  @NlsSafe
   const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
 
   @NlsSafe

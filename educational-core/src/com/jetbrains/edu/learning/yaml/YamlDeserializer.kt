@@ -43,6 +43,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -180,6 +184,8 @@ object YamlDeserializer {
       STRING_TASK_TYPE -> StringTask::class.java
       NUMBER_TASK_TYPE -> NumberTask::class.java
       UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java
+      MATCHING_TASK_TYPE -> MatchingTask::class.java
+      SORTING_TASK_TYPE -> SortingTask::class.java
       else -> formatError(unsupportedItemTypeMessage(type, TASK))
     }
     return treeToValue(treeNode, clazz)

@@ -13,7 +13,10 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
@@ -121,17 +124,27 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
    * It can happen because of bugs
    */
   private fun taskIsDifferent(first: Task, second: Task): Boolean {
-    var result = first.descriptionText != second.descriptionText ||
+    val result = first.descriptionText != second.descriptionText ||
                  first.feedbackLink != second.feedbackLink ||
                  first.name != second.name
+    if (result) return true
 
-    if (first is ChoiceTask && second is ChoiceTask) {
-      result = result || first.choiceOptions != second.choiceOptions
+    return when {
+      (first is UnsupportedTask && second !is UnsupportedTask) -> true
+      (first is ChoiceTask && second is ChoiceTask) -> {
+        first.choiceOptions != second.choiceOptions
+      }
+      (first is SortingTask && second is SortingTask) -> {
+        first.options != second.options
+      }
+      (first is MatchingTask && second is MatchingTask) -> {
+        (first.options != second.options) || (first.captions != second.captions)
+      }
+      (first is RemoteEduTask && second is RemoteEduTask) -> {
+        first.checkProfile != second.checkProfile
+      }
+      else -> false
     }
-    if (first is RemoteEduTask && second is RemoteEduTask) {
-      result = result || first.checkProfile != second.checkProfile
-    }
-    return result
   }
 
   class TaskUpdate(val localTask: Task, val taskFromServer: Task)
@@ -170,9 +183,13 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
 
-      problemsUpdates.forEach {
-        val localTask = it.localTask
-        val taskFromServer = it.taskFromServer
+      for (taskUpdate in problemsUpdates) {
+        val localTask = taskUpdate.localTask
+        val taskFromServer = taskUpdate.taskFromServer
+        if (localTask is UnsupportedTask && taskFromServer !is UnsupportedTask) {
+          updateUnsupportedTask(localTask, taskFromServer)
+          continue
+        }
         if (localTask.status != CheckStatus.Solved) {
           // if name of remote task changes name of dir local task will not
           GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
@@ -185,6 +202,21 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         YamlFormatSynchronizer.saveItemWithRemoteInfo(localTask)
       }
     }
+  }
+
+  private fun updateUnsupportedTask(localTask: UnsupportedTask, taskFromServer: Task) {
+    replaceTaskInCourse(localTask, taskFromServer)
+    GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
+    updateTaskDescription(project, localTask, taskFromServer)
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(taskFromServer)
+  }
+
+  private fun replaceTaskInCourse(localTask: UnsupportedTask, taskFromServer: Task) {
+    val lesson = localTask.parent
+    lesson.removeItem(localTask)
+    lesson.addItem(localTask.index - 1, taskFromServer)
+    taskFromServer.index = localTask.index
+    taskFromServer.name = localTask.name
   }
 
   private fun updateProjectLesson(remoteCourse: HyperskillCourse) {

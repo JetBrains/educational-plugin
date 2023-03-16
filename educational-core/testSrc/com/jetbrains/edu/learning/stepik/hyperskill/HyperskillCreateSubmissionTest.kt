@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmis
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createEduTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createNumberTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createRemoteEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createSortingBasedTaskSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createStringTaskSubmission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -195,6 +196,24 @@ class HyperskillCreateSubmissionTest : EduTestCase() {
       |reply:
       |  file: $answer
       |  version: $JSON_FORMAT_VERSION
+      |
+    """.trimMargin())
+  }
+
+  fun `test creating submission for sorting based task`() {
+    val attempt = Attempt().apply { id = 123 }
+
+    val ordering = intArrayOf(2, 0, 1)
+
+    val submission = createSortingBasedTaskSubmission(attempt, ordering)
+    doTest(submission, """
+      |attempt: 123
+      |reply:
+      |  version: $JSON_FORMAT_VERSION
+      |  ordering:
+      |  - 2
+      |  - 0
+      |  - 1
       |
     """.trimMargin())
   }

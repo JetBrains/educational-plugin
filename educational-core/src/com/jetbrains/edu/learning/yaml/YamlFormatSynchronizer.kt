@@ -40,6 +40,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
@@ -181,7 +183,8 @@ object YamlFormatSynchronizer {
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
     addMixIn(CodeforcesTask::class.java, CodeforcesTaskYamlMixin::class.java)
     addMixIn(CodeforcesTaskWithFileIO::class.java, CodeforcesTaskWithFileIOYamlMixin::class.java)
-
+    addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
+    addMixIn(MatchingTask::class.java, MatchingTaskYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }

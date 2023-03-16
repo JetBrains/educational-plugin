@@ -76,4 +76,10 @@ object HyperskillSubmissionFactory {
     reply.file = answer
     return StepikBasedSubmission(attempt, reply)
   }
+
+  fun createSortingBasedTaskSubmission(attempt: Attempt, ordering: IntArray): StepikBasedSubmission {
+    val reply = Reply()
+    reply.ordering = ordering
+    return StepikBasedSubmission(attempt, reply)
+  }
 }

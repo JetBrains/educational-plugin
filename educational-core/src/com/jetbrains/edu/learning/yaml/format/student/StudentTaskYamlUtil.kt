@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -82,6 +83,10 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
       is ChoiceTask -> {
         existingItem.record = deserializedItem.record
         existingItem.selectedVariants = (deserializedItem as ChoiceTask).selectedVariants
+      }
+      is SortingBasedTask -> {
+        existingItem.record = deserializedItem.record
+        existingItem.ordering = (deserializedItem as SortingBasedTask).ordering
       }
       is EduTask -> {
         if (existingItem is RemoteEduTask) {

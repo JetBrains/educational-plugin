@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
@@ -54,6 +56,10 @@ class StepikTaskBuilderTest : EduTestCase() {
   fun `test edu theory task python`() = doTest<TheoryTask>(PlainTextLanguage.INSTANCE)
   fun `test output task python`() = doTest<OutputTask>(PlainTextLanguage.INSTANCE)
   fun `test ide task python`() = doTest<IdeTask>(PlainTextLanguage.INSTANCE)
+
+  fun `test sorting task`() = doTest<SortingTask>(FakeGradleBasedLanguage)
+
+  fun `test matching task`() = doTest<MatchingTask>(FakeGradleBasedLanguage)
 
   // EDU-2730 old way: task text is get from `text` field that is displayed on Stepik
   fun `test edu task text from block`() {

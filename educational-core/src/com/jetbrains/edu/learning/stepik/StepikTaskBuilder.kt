@@ -30,6 +30,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -80,6 +84,8 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         StepikTaskType.STRING -> this::stringTask
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
+        StepikTaskType.MATCHING -> this::matchingTask
+        StepikTaskType.SORTING -> this::sortingTask
         else -> this::unsupportedTask
       }
     })
@@ -92,12 +98,12 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     DATASET(DATA_TASK_TYPE, "Data"),
     FREE_ANSWER("free-answer", "Free Response"),
     MANUAL_SCORE("manual-score", "Manual Score"),
-    MATCHING("matching", "Matching"),
+    MATCHING(MATCHING_TASK_TYPE, "Matching"),
     MATH("math", "Math"),
     NUMBER(NUMBER_TASK_TYPE, "Number"),
     PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
     REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
-    SORTING("sorting", "Sorting"),
+    SORTING(SORTING_TASK_TYPE, "Sorting"),
     STRING(STRING_TASK_TYPE, "Text"),
     TABLE("table", "Table"),
     TEXT("text", "Theory"),
@@ -214,6 +220,39 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       }
     }
     initTaskFiles(this)
+  }
+
+  private fun sortingTask(name: String): SortingTask {
+    val task = SortingTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+    task.descriptionText = step.text
+    task.descriptionFormat = DescriptionFormat.HTML
+
+    if (!isUnitTestMode) {
+      when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
+        is Ok -> fillSortingTask(result.value, task)
+        is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+      }
+    }
+
+    initTaskFiles(task)
+    return task
+  }
+
+  private fun matchingTask(name: String): MatchingTask {
+    val task = MatchingTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
+
+    task.descriptionText = step.text
+    task.descriptionFormat = DescriptionFormat.HTML
+
+    if (!isUnitTestMode) {
+      when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
+        is Ok -> fillMatchingTask(result.value, task)
+        is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+      }
+    }
+
+    initTaskFiles(task)
+    return task
   }
 
   private fun stringTask(name: String): StringTask {
@@ -408,6 +447,28 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       }
       task.choiceOptions = dataset.options.orEmpty().map(::ChoiceOption)
       task.isMultipleChoice = dataset.isMultipleChoice
+      return true
+    }
+
+    fun fillSortingTask(attempt: Attempt, task: SortingTask): Boolean {
+      val dataset = attempt.dataset
+      if (dataset?.options == null) {
+        LOG.warn("Dataset for step ${task.id} is null")
+        return false
+      }
+      task.options = dataset.options.orEmpty()
+      return true
+    }
+
+    fun fillMatchingTask(attempt: Attempt, task: MatchingTask): Boolean {
+      val dataset = attempt.dataset
+      if (dataset?.pairs == null) {
+        LOG.warn("Dataset for step ${task.id} is null")
+        return false
+      }
+      val pairs = dataset.pairs.orEmpty()
+      task.options = pairs.map { it.second }
+      task.captions = pairs.map { it.first }
       return true
     }
 

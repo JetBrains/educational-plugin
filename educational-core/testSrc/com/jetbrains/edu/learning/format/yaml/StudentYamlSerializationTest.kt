@@ -20,6 +20,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -210,6 +212,62 @@ class StudentYamlSerializationTest : EduTestCase() {
     |selected_options:
     |- 1
     |local_check: false
+    |""".trimMargin())
+  }
+
+  fun `test sorting task`() {
+    val task = courseWithFiles {
+      lesson {
+        sortingTask(
+          name = "task1",
+          options = listOf("first", "second"),
+          ordering = intArrayOf(1, 0),
+          status = CheckStatus.Solved,
+        )
+      }
+    }.findTask("lesson1", "task1") as SortingTask
+    task.record = 1
+
+    doTest(task, """
+    |type: sorting
+    |options:
+    |- first
+    |- second
+    |status: Solved
+    |record: 1
+    |ordering:
+    |- 1
+    |- 0
+    |""".trimMargin())
+  }
+
+  fun `test matching task`() {
+    val task = courseWithFiles {
+      lesson {
+        matchingTask(
+          name = "task1",
+          captions = listOf("dog", "cat"),
+          options = listOf("first", "second"),
+          ordering = intArrayOf(1, 0),
+          status = CheckStatus.Solved,
+        )
+      }
+    }.findTask("lesson1", "task1") as MatchingTask
+    task.record = 1
+
+    doTest(task, """
+    |type: matching
+    |captions:
+    |- dog
+    |- cat
+    |options:
+    |- first
+    |- second
+    |status: Solved
+    |record: 1
+    |ordering:
+    |- 1
+    |- 0
     |""".trimMargin())
   }
 

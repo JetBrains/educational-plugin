@@ -294,59 +294,19 @@
     },
     {
       "block" : {
-        "name" : "matching",
-        "text" : "<p>Match the error to its explanation.</p>",
+        "name" : "table",
+        "text" : "<p></p>\n<p>Distribute different errors by two groups: <strong>compile-time</strong> and <strong>run-time</strong> errors.</p>",
         "video" : null,
         "options" : {
-          "language" : ""
+          "language" : "",
+          "is_checkbox" : false
         },
-        "source" : {
-          "preserve_firsts_order" : true,
-          "is_html_enabled" : true,
-          "pairs" : [
-            {
-              "first" : "prnt(\"This is a test string.\")",
-              "second" : "the function is called by the wrong name"
-            },
-            {
-              "first" : "PRINT(\"This is a test string.\")",
-              "second" : "the function name is in the wrong case"
-            },
-            {
-              "first" : "print(\"THIS IS A TEST STRING.)",
-              "second" : "missing quote"
-            },
-            {
-              "first" : "print(\"This is a test string.\"",
-              "second" : "missing parentheses"
-            }
-          ]
-        },
-        "raw_text" : "<p>Match the error to its explanation.</p>",
         "table_of_contents" : [ ]
       },
       "can_abandon" : false,
-      "can_skip" : false,
+      "can_skip" : true,
       "check_profile" : "",
-      "comments_statistics" : [
-        {
-          "thread" : "comment",
-          "total_count" : 9
-        },
-        {
-          "thread" : "hint",
-          "total_count" : 5
-        },
-        {
-          "thread" : "useful link",
-          "total_count" : 1
-        },
-        {
-          "thread" : "solutions",
-          "total_count" : 0
-        }
-      ],
-      "content_created_at" : "2021-08-07T19:43:11Z",
+      "content_created_at" : "2020-11-07T10:26:42Z",
       "id" : 3,
       "is_abandoned" : false,
       "is_completed" : false,
@@ -354,74 +314,32 @@
       "is_recommended" : true,
       "is_next" : true,
       "is_skipped" : false,
-      "last_completed_at" : "2022-05-11T07:51:56.526527Z",
-      "likes_statistics" : [
-        {
-          "subject" : "skip",
-          "value" : 102,
-          "total_count" : 21
-        },
-        {
-          "subject" : "",
-          "value" : 2,
-          "total_count" : 773
-        },
-        {
-          "subject" : "",
-          "value" : 1,
-          "total_count" : 182
-        },
-        {
-          "subject" : "skip",
-          "value" : 101,
-          "total_count" : 11
-        },
-        {
-          "subject" : "skip",
-          "value" : 100,
-          "total_count" : 32
-        },
-        {
-          "subject" : "",
-          "value" : -1,
-          "total_count" : 7
-        },
-        {
-          "subject" : "",
-          "value" : 0,
-          "total_count" : 21
-        },
-        {
-          "subject" : "",
-          "value" : -2,
-          "total_count" : 13
-        }
-      ],
-      "lesson_stepik_id" : 569526,
-      "position" : 1,
-      "seconds_to_complete" : 60.001,
-      "solved_by" : 7908,
+      "last_completed_at" : "2023-03-29T14:06:02.371173Z",
+      "lesson_stepik_id" : 431128,
+      "position" : 8,
+      "seconds_to_complete" : 35.8534749999959,
+      "solved_by" : 3002,
       "stage" : null,
-      "stepik_id" : 2309081,
-      "success_rate" : 0.789,
-      "title" : "What's the error?",
-      "topic" : 1,
-      "topic_theory" : 5208,
+      "stepik_id" : 1678942,
+      "success_rate" : 0.738,
+      "title" : "Two groups of errors",
+      "topic" : 1092,
+      "topic_theory" : 11559,
       "type" : "practice",
-      "updated_at" : "2022-01-02T14:58:28.035296Z",
-      "content_updated_at" : "2021-08-16T17:22:13Z",
-      "progress_updated_at" : "2022-04-28T14:07:24.057688Z",
+      "updated_at" : "2023-02-28T19:50:27.913336Z",
+      "content_updated_at" : "2020-11-07T10:46:13Z",
+      "progress_updated_at" : null,
       "popular_ide" : null,
       "project" : null,
       "is_beta" : false,
       "is_deprecated" : false,
       "is_ide_compatible" : true,
       "is_remote_tested" : false,
-      "error_issues_count" : 0,
-      "warning_issues_count" : 0,
+      "error_issues_count" : null,
+      "warning_issues_count" : null,
       "error_issues" : [ ],
       "warning_issues" : [ ],
-      "can_see_admin_toolbar" : true
+      "can_see_admin_toolbar" : false
     }
   ]
 }

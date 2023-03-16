@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 
@@ -60,6 +62,44 @@ class StudentChangeApplierTest : YamlTestCase() {
 
     assertEquals(deserializedItem.record, existingItem.record)
     assertEquals(deserializedItem.choiceOptions, (existingItem as ChoiceTask).choiceOptions)
+  }
+
+  fun `test sorting task student fields applied`() {
+    val existingItem = courseWithFiles {
+      lesson {
+        sortingTask(options = listOf("1", "2"))
+      }
+    }.lessons.first().taskList.first()
+    val deserializedItem = SortingTask()
+    deserializedItem.name = "task1"
+    deserializedItem.options = listOf("right", "second")
+    deserializedItem.record = 1
+
+    getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)
+
+    assertEquals(deserializedItem.record, existingItem.record)
+    assertEquals(deserializedItem.options, (existingItem as SortingTask).options)
+    assertEquals(deserializedItem.ordering, existingItem.ordering)
+  }
+
+  fun `test matching task student fields applied`() {
+    val existingItem = courseWithFiles {
+      lesson {
+        matchingTask(options = listOf("1", "2"))
+      }
+    }.lessons.first().taskList.first()
+    val deserializedItem = MatchingTask()
+    deserializedItem.name = "task1"
+    deserializedItem.options = listOf("right", "second")
+    deserializedItem.captions = listOf("1", "2")
+    deserializedItem.record = 1
+
+    getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)
+
+    assertEquals(deserializedItem.record, existingItem.record)
+    assertEquals(deserializedItem.options, (existingItem as MatchingTask).options)
+    assertEquals(deserializedItem.captions, existingItem.captions)
+    assertEquals(deserializedItem.ordering, existingItem.ordering)
   }
 
   fun `test task file fields applied`() {

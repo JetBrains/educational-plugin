@@ -124,10 +124,12 @@ class HyperskillCourse : Course {
       StepikTaskType.CHOICE.type,
       StepikTaskType.CODE.type,
       StepikTaskType.DATASET.type,
+      StepikTaskType.MATCHING.type,
       StepikTaskType.NUMBER.type,
       StepikTaskType.PYCHARM.type,
+      StepikTaskType.SORTING.type,
       StepikTaskType.STRING.type,
-      StepikTaskType.TEXT.type
+      StepikTaskType.TEXT.type,
     )
 
     fun isStepSupported(type: String?): Boolean = type in SUPPORTED_STEP_TYPES

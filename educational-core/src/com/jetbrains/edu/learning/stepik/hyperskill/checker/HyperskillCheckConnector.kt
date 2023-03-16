@@ -16,6 +16,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
@@ -48,7 +51,8 @@ object HyperskillCheckConnector {
 
   fun isRemotelyChecked(task: Task): Boolean = when (task) {
     is ChoiceTask -> !task.canCheckLocally
-    is CodeTask, is DataTask, is NumberTask, is RemoteEduTask, is StringTask, is UnsupportedTask -> true
+    is CodeTask, is DataTask, is NumberTask, is RemoteEduTask, is StringTask,
+    is UnsupportedTask, is SortingTask, is MatchingTask -> true
     else -> false
   }
 
@@ -258,6 +262,17 @@ object HyperskillCheckConnector {
     }
 
     return submissions.first().toCheckResult()
+  }
+
+  fun checkSortingBasedTask(project: Project, task: SortingBasedTask): CheckResult {
+    val checkId = task.checkId()
+    if (checkId != null) {
+      return checkId
+    }
+    val submission = HyperskillSubmitConnector.submitSortingBasedTask(task).onError { error ->
+      return failedToSubmit(project, task, error)
+    }
+    return periodicallyCheckSubmissionResult(project, submission, task)
   }
 
   fun retryChoiceTask(task: ChoiceTask): Result<Boolean, String> {

@@ -41,7 +41,9 @@ const val ASSIGNMENT = "assignment"
 const val STEP = "step"
 const val IS_PASSED = "is_passed"
 const val IS_MULTIPLE_CHOICE = "is_multiple_choice"
+const val PAIRS = "pairs"
 const val OPTIONS = "options"
+const val ORDERING = "ordering"
 const val DATASET = "dataset"
 const val REPLY = "reply"
 const val HINT = "hint"
@@ -252,6 +254,9 @@ class Dataset {
   @JsonProperty(OPTIONS)
   var options: List<String>? = null
 
+  @JsonProperty(PAIRS)
+  var pairs: List<Pair>? = null
+
   constructor()
   constructor(emptyDataset: String)  // stepik returns empty string instead of null
 }
@@ -351,6 +356,9 @@ class Reply {
   @JsonProperty(CHECK_PROFILE)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   var checkProfile: String? = null
+
+  @JsonProperty(ORDERING)
+  var ordering: IntArray? = null
 
   @Suppress("ConvertSecondaryConstructorToPrimary") // used for deserialization
   constructor()
@@ -486,4 +494,12 @@ class StepikBasedSubmission : Submission {
     this.attempt = attempt.id
     this.reply = reply
   }
+}
+
+class Pair {
+  @JsonProperty("first")
+  val first: String = ""
+
+  @JsonProperty("second")
+  val second: String = ""
 }

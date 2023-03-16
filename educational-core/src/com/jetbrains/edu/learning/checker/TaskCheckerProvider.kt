@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 
 /**
@@ -29,7 +31,9 @@ interface TaskCheckerProvider {
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
       is RemoteEduTask,
-      is StringTask, is NumberTask, is CodeTask, is DataTask, is UnsupportedTask -> null
+      is StringTask, is NumberTask,
+      is MatchingTask, is SortingTask,
+      is CodeTask, is DataTask, is UnsupportedTask -> null
 
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)
