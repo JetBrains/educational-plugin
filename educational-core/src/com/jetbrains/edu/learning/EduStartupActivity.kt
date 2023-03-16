@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
@@ -24,9 +26,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -60,6 +64,12 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (course == null) {
         LOG.warn("Opened project is with null course")
         return@runWhenProjectIsInitialized
+      }
+
+      if (course is StepikCourse) {
+        val notification = Notification("JetBrains Academy", StepikNames.STEPIK, EduCoreBundle.message("stepik.is.not.supported"),
+                                        NotificationType.WARNING)
+        notification.notify(null)
       }
 
       val fileEditorManager = FileEditorManager.getInstance(project)
