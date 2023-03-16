@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning.json
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
@@ -78,14 +79,14 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
 }
 
 fun getCourseMapper(): ObjectMapper {
-  val mapper = ObjectMapper()
-  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-  mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-  mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-  mapper.disable(MapperFeature.AUTO_DETECT_CREATORS)
-  setDateFormat(mapper)
-  return mapper
+  return JsonMapper.builder()
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    .disable(MapperFeature.AUTO_DETECT_FIELDS)
+    .disable(MapperFeature.AUTO_DETECT_GETTERS)
+    .disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+    .disable(MapperFeature.AUTO_DETECT_CREATORS)
+    .setDateFormat()
+    .build()
 }
 
 fun ObjectMapper.configureCourseMapper(isEncrypted: Boolean) {
@@ -115,8 +116,8 @@ fun ObjectMapper.addStudyItemMixins() {
   addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
 }
 
-fun setDateFormat(mapper: ObjectMapper) {
+fun JsonMapper.Builder.setDateFormat(): JsonMapper.Builder {
   val mapperDateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH)
   mapperDateFormat.timeZone = TimeZone.getTimeZone("UTC")
-  mapper.dateFormat = mapperDateFormat
+  return defaultDateFormat(mapperDateFormat)
 }

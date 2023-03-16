@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
@@ -112,21 +113,21 @@ object YamlFormatSynchronizer {
   }
 
   private fun createMapper(): ObjectMapper {
-    val yamlFactory = YAMLFactory()
-    yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
-    yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-    yamlFactory.enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
+    val yamlFactory = YAMLFactory.builder()
+      .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+      .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+      .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
+      .build()
 
-    val mapper = ObjectMapper(yamlFactory)
-    mapper.registerKotlinModule()
-    mapper.registerModule(JavaTimeModule())
-    mapper.setLocale(Locale.ENGLISH)
-    mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    mapper.disable(MapperFeature.AUTO_DETECT_FIELDS, MapperFeature.AUTO_DETECT_GETTERS, MapperFeature.AUTO_DETECT_IS_GETTERS)
-
-    return mapper
+    return JsonMapper.builder(yamlFactory)
+      .addModule(kotlinModule())
+      .addModule(JavaTimeModule())
+      .defaultLocale(Locale.ENGLISH)
+      .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+      .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .disable(MapperFeature.AUTO_DETECT_FIELDS, MapperFeature.AUTO_DETECT_GETTERS, MapperFeature.AUTO_DETECT_IS_GETTERS)
+      .build()
   }
 
   private fun addMixIns(mapper: ObjectMapper) {

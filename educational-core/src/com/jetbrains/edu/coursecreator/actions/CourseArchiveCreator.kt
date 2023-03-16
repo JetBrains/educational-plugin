@@ -1,11 +1,11 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.google.common.annotations.VisibleForTesting
@@ -125,15 +125,16 @@ class CourseArchiveCreator(
 
   @VisibleForTesting
   fun getMapper(course: Course): ObjectMapper {
-    val factory = JsonFactory()
-    val mapper = ObjectMapper(factory)
     val module = SimpleModule()
-    module.addSerializer(EduCourse::class.java, EduCoursePluginVersionSerializer())
-    mapper.registerModule(module)
+      .addSerializer(EduCourse::class.java, EduCoursePluginVersionSerializer())
+
+    val mapper = JsonMapper.builder()
+      .addModule(module)
+      .addModule(EncryptionModule(aesKey))
+      .commonMapperSetup(course)
+      .setDateFormat()
+      .build()
     mapper.addStudyItemMixins()
-    mapper.registerModule(EncryptionModule(aesKey))
-    commonMapperSetup(mapper, course)
-    setDateFormat(mapper)
     return mapper
   }
 
@@ -176,22 +177,21 @@ class CourseArchiveCreator(
         return prettyPrinter
       }
 
-    // suppressing deprecation for ObjectMapper#disable()
-    @Suppress("DEPRECATION")
-    fun commonMapperSetup(mapper: ObjectMapper, course: Course) {
+    fun JsonMapper.Builder.commonMapperSetup(course: Course): JsonMapper.Builder {
       if (course is CourseraCourse) {
-        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
+        addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       }
       else {
-        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
+        addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
       }
-      mapper.addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
-      mapper.addMixIn(EduFile::class.java, EduFileMixin::class.java)
-      mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-      mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
-      mapper.disable(MapperFeature.AUTO_DETECT_FIELDS)
-      mapper.disable(MapperFeature.AUTO_DETECT_GETTERS)
-      mapper.disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+      addMixIn(PluginInfo::class.java, PluginInfoMixin::class.java)
+      addMixIn(EduFile::class.java, EduFileMixin::class.java)
+      addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
+      addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+      disable(MapperFeature.AUTO_DETECT_FIELDS)
+      disable(MapperFeature.AUTO_DETECT_GETTERS)
+      disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+      return this
     }
 
     @JvmStatic
