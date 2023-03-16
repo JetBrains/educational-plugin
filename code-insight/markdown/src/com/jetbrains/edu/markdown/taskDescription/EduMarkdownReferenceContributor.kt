@@ -8,7 +8,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.jetbrains.edu.codeInsight.EduReferenceContributorBase
 import com.jetbrains.edu.codeInsight.taskDescription.InCourseLinkReferenceProviderBase
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 
 class EduMarkdownReferenceContributor : EduReferenceContributorBase() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -21,7 +21,7 @@ private class MarkdownInCourseLinkReferenceProvider : InCourseLinkReferenceProvi
     get() = EduMarkdownPsiPatterns.markdownLinkDestination
   override val PsiElement.textWithOffset: TextWithOffset?
     get() {
-      val linkDestination = this as? MarkdownLinkDestinationImpl ?: return null
+      val linkDestination = this as? MarkdownLinkDestination ?: return null
       return TextWithOffset(linkDestination.text, 0)
     }
 
@@ -42,7 +42,7 @@ private class MarkdownInCourseLinkReferenceProvider : InCourseLinkReferenceProvi
 
   private class MarkdownInCourseLinkReference(reference: FileReference) : InCourseLinkReference(reference) {
     override fun rename(newName: String): PsiElement {
-      require(element is MarkdownLinkDestinationImpl)
+      require(element is MarkdownLinkDestination)
       val children = generateSequence(element.firstChild, PsiElement::getNextSibling).toList()
       // Markdown plugin parses course link as `course`, `:`, `//path` tokens instead of single one.
       // So we have to handle rename manually since base implementation expects single leaf child in MarkdownLinkDestinationImpl
