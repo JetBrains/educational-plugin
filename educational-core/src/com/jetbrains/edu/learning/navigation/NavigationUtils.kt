@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -223,10 +224,8 @@ object NavigationUtils {
     // We should save student answers and apply diffs only in student mode
     if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
       fromTask.saveStudentAnswersIfNeeded(project)
-      setFlagToEditableFiles(project, fromTask, false)
       prepareFilesForTargetTask(project, lesson, fromTask, task, showDialogIfConflict)
       project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
-      setFlagToEditableFiles(project, task, true)
     }
 
     val taskDir = task.getDir(project.courseDir) ?: return
@@ -307,6 +306,7 @@ object NavigationUtils {
     showDialogIfConflict: Boolean
   ) {
     val dir = currentTask.getDir(project.courseDir) ?: return
+    setReadOnlyFlagToNonEditableFiles(project, currentTask, false)
 
     val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
     @Suppress("NAME_SHADOWING")
@@ -320,6 +320,11 @@ object NavigationUtils {
       }
       currentTask = frameworkLesson.currentTask() ?: break
     }
+
+    runWriteAction {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+    setReadOnlyFlagToNonEditableFiles(project, currentTask, true)
   }
 
   private fun updateProjectView(project: Project, fileToActivate: VirtualFile) {
@@ -354,11 +359,11 @@ object NavigationUtils {
     }
   }
 
-  private fun setFlagToEditableFiles(project: Project, task: Task, flag: Boolean) {
+  private fun setReadOnlyFlagToNonEditableFiles(project: Project, task: Task, readOnlyFlag: Boolean) {
     runWriteAction {
       for (taskFile in task.taskFiles.values.filter { !it.isEditable }) {
         val virtualTaskFile = taskFile.getVirtualFile(project) ?: error("Cannot get a virtual file")
-        if (flag) {
+        if (readOnlyFlag) {
           GeneratorUtils.addNonEditableFileToCourse(task.course, virtualTaskFile)
         } else {
           GeneratorUtils.removeNonEditableFileFromCourse(task.course, virtualTaskFile)
