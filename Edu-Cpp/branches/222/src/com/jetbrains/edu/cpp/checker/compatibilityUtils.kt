@@ -8,3 +8,7 @@ import com.jetbrains.cidr.execution.CidrTargetRunConfigurationProducer
 fun findOrCreateConfigurationFromContext(project: Project, context: ConfigurationContext): ConfigurationFromContext? {
   return CidrTargetRunConfigurationProducer.getInstance(project)?.findOrCreateConfigurationFromContext(context)
 }
+
+fun <T> withoutTerminalEmulation(action: () -> T): T {
+  return action()
+}
