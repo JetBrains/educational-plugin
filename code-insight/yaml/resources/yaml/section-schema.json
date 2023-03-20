@@ -10,7 +10,7 @@
       "uniqueItems": true
     },
     "custom_name": {
-      "description": "Custom name for the task if it differs from its folder name",
+      "description": "Custom name for the section if it differs from its folder name",
       "type": "string"
     },
     "tags": {
