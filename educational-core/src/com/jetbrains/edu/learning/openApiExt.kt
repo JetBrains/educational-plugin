@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
+import com.intellij.openapi.fileTypes.impl.DetectedByContentFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -67,15 +68,15 @@ fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
   if (isUnitTestMode && extension == EduUtils.EDU_TEST_BIN) {
     return true
   }
-  val fileType = if (virtualFile.fileType !is UnknownFileType) {
-    virtualFile.fileType
-  }
-  else {
-    FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(extension)
-  }
-
-  if (fileType !is UnknownFileType) {
+  val fileType = FileTypeManagerEx.getInstance().getFileTypeByFile(virtualFile)
+  if (fileType !is UnknownFileType && fileType !is DetectedByContentFileType) {
     return fileType.isBinary
+  }
+  if (fileType is DetectedByContentFileType && extension == "db") {
+    /** We do encode *.db files when sending them to Stepik. When we get them back they have [DetectedByContentFileType] fileType and by
+     * default this file type is not binary, so we have to forcely specify it as binary
+     */
+    return true
   }
   val contentType = mimeFileType(path) ?: return isGitObject(name)
   return isBinary(contentType)

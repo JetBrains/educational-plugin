@@ -1,0 +1,70 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "lessons" : [
+    {
+      "id" : 929485,
+      "steps" : [
+        3885098
+      ],
+      "actions" : {
+        "learn_lesson" : "#",
+        "assist_lesson" : "#",
+        "view_all_submissions" : "#",
+        "edit_lesson" : "#",
+        "view_statistics" : "/lesson/929485/stats/",
+        "attachments" : "/lesson/929485/attachments/",
+        "clone_lesson" : "/lesson/929485/clone/",
+        "admin_lesson" : "#",
+        "edit_permissions" : "/lesson/929485/permissions/",
+        "delete_lesson" : "#"
+      },
+      "progress" : "76-929485",
+      "subscriptions" : [
+        "31-76-929485",
+        "30-76-929485"
+      ],
+      "viewed_by" : 1,
+      "passed_by" : 0,
+      "time_to_complete" : null,
+      "cover_url" : null,
+      "is_comments_enabled" : true,
+      "is_exam_without_progress" : false,
+      "is_blank" : true,
+      "is_draft" : false,
+      "is_orphaned" : true,
+      "courses" : [ ],
+      "units" : [ ],
+      "owner" : 1919984,
+      "language" : "en",
+      "is_featured" : false,
+      "is_public" : true,
+      "canonical_url" : "https://stepik.org/lesson/929485/",
+      "title" : "lesson1",
+      "slug" : "lesson1-929485",
+      "create_date" : "2023-03-21T10:47:22Z",
+      "update_date" : "2023-03-21T10:48:03Z",
+      "learners_group" : 6349139,
+      "testers_group" : 6349140,
+      "moderators_group" : 6349141,
+      "assistants_group" : 6349142,
+      "teachers_group" : 6349137,
+      "admins_group" : 6349138,
+      "discussions_count" : 0,
+      "discussion_proxy" : "76-929485-1",
+      "discussion_threads" : [
+        "76-929485-1"
+      ],
+      "epic_count" : 0,
+      "abuse_count" : 0,
+      "vote_delta" : 0,
+      "vote" : null,
+      "lti_consumer_key" : "",
+      "lti_secret_key" : "",
+      "lti_private_profile" : false
+    }
+  ]
+}
