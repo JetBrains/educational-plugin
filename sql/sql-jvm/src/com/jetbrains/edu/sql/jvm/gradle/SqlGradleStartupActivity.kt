@@ -5,31 +5,41 @@ import com.intellij.database.autoconfig.DataSourceConfigUtil
 import com.intellij.database.autoconfig.DataSourceDetector
 import com.intellij.database.autoconfig.DataSourceRegistry
 import com.intellij.database.console.JdbcConsoleProvider
+import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfiguration
+import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
 import com.intellij.database.console.session.DatabaseSessionManager
 import com.intellij.database.dataSource.DatabaseAuthProviderNames
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.dataSource.LocalDataSourceManager
 import com.intellij.database.dataSource.validation.DatabaseDriverValidator
 import com.intellij.database.model.DasDataSource
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.runBackgroundableTask
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.sql.SqlFileType
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
+import com.intellij.util.containers.addIfNotNull
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.runReadActionInSmartMode
+import com.jetbrains.edu.sql.core.EduSqlBundle
 
 class SqlGradleStartupActivity : StartupActivity.DumbAware {
 
@@ -60,6 +70,67 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     for (file in FileEditorManager.getInstance(project).openFiles) {
       attachSqlConsoleIfNeeded(project, file)
     }
+
+    // `runWhenSmart` here is needed mostly not to `Initialize tasks databases` show progress during indexing
+    DumbService.getInstance(project).runWhenSmart {
+      setSqlMappingForInitScripts(course, project)
+
+      runBackgroundableTask(EduSqlBundle.message("edu.sql.initialize.databases.progress.title"), project, false) {
+        val configurations = runReadActionInSmartMode(project) {
+          collectInitializeConfigurations(project, course)
+        }
+
+        CheckUtils.executeRunConfigurations(project, configurations, it)
+      }
+    }
+  }
+
+  // Workaround not to fail on `Application#assertReadAccessAllowed` during init script execution.
+  //
+  // Currently, init script execution may happen before
+  // `PushedFilePropertiesUpdater` updates all file properties (including sql dialect).
+  // In such cases, execution of `DatabaseScriptRunConfiguration` for init scripts
+  // will requires read action to get init file language.
+  // But currently, the corresponding code in database plugin is executed without read action
+  // and as a result, it may lead to triggered `assertReadAccessAllowed` assertion.
+  //
+  // Here we propagate sql dialect forcibly which helps
+  // to avoid necessity of read action during run configuration execution
+  private fun setSqlMappingForInitScripts(course: Course, project: Project) {
+    course.visitTasks {
+      val initSql = it.findInitSqlFile(project) ?: return@visitTasks
+      // Dependency on concrete database kind/SQL dialect
+      SqlDialectMappings.getInstance(project).setMapping(initSql, H2Dialect.INSTANCE)
+    }
+  }
+
+  private fun collectInitializeConfigurations(project: Project, course: Course): List<RunnerAndConfigurationSettings> {
+    val databaseConfigurations = mutableListOf<RunnerAndConfigurationSettings>()
+
+    course.visitTasks {
+      databaseConfigurations.addIfNotNull(it.createInitializeConfiguration(project))
+    }
+    return databaseConfigurations
+  }
+
+  private fun Task.createInitializeConfiguration(project: Project): RunnerAndConfigurationSettings? {
+    val file = findInitSqlFile(project) ?: return null
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
+    val dataSource = findDataSource(project) ?: return null
+    val configurationsFromContext = ConfigurationContext(psiFile).configurationsFromContext.orEmpty()
+    // @formatter:off
+    val configurationSettings = configurationsFromContext
+      .firstOrNull { it.configuration is DatabaseScriptRunConfiguration }
+      ?.configurationSettings
+      ?: return null
+    // @formatter:on
+
+    val target = DatabaseScriptRunConfigurationOptions.Target(dataSource.uniqueId, null)
+    // Safe cast because configuration was checked before
+    (configurationSettings.configuration as DatabaseScriptRunConfiguration).options.targets.add(target)
+    configurationSettings.isActivateToolWindowBeforeRun = false
+
+    return configurationSettings
   }
 
   private fun attachSqlConsoleIfNeeded(project: Project, file: VirtualFile) {
@@ -94,7 +165,6 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     }.queue()
   }
 
-  @Suppress("UnstableApiUsage")
   private fun createDataSources(project: Project, course: Course): List<LocalDataSource> {
     val dataSourceRegistry = DataSourceRegistry(project)
     val dataSources = mutableListOf<LocalDataSource>()
@@ -125,10 +195,9 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     return dataSources
   }
 
-  private fun Task.databaseUrl(project: Project): String? {
-    val taskDir = getDir(project.courseDir) ?: return null
-    // Dependency on concrete database kind/SQL dialect
-    return "jdbc:h2:file:${taskDir.path}/db"
+  private fun Task.findInitSqlFile(project: Project): VirtualFile? {
+    val taskFile = taskFiles[SqlGradleCourseBuilderBase.INIT_SQL] ?: return null
+    return taskFile.getVirtualFile(project)
   }
 
   private val Task.dataSourceGroupName: String

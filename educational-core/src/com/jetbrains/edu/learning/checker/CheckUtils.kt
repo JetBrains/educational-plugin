@@ -148,6 +148,8 @@ object CheckUtils {
     processListener: ProcessListener?,
     testEventsListener: SMTRunnerEventsListener?
   ): Boolean {
+    if (configurations.isEmpty()) return true
+
     testEventsListener?.let { connection.subscribe(SMTRunnerEventsListener.TEST_STATUS, it) }
 
     val rootDisposable = Disposer.newDisposable()

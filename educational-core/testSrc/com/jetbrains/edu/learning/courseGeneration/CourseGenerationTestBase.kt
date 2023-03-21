@@ -18,7 +18,7 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
-  protected fun createCourseStructure(course: Course) {
+  protected open fun createCourseStructure(course: Course) {
     val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
     val generator = configurator.courseBuilder.getCourseProjectGenerator(course)
                     ?: error("given builder returns null as course project generator")

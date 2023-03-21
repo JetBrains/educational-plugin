@@ -558,6 +558,13 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
 
+  fun sqlTaskFile(
+    name: String,
+    @Language("SQL") text: String = "",
+    visible: Boolean? = null,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, visible, buildTaskFile = buildTaskFile)
+
   fun taskFileFromResources(
     disposable: Disposable,
     name: String,
