@@ -1,42 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 12.1 13.98">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: url(#linear-gradient);
-      }
-
-      .cls-2 {
-        fill: url(#linear-gradient-3);
-      }
-
-      .cls-3 {
-        fill: url(#linear-gradient-4);
-      }
-
-      .cls-4 {
-        fill: url(#linear-gradient-2);
-      }
-    </style>
-    <linearGradient id="linear-gradient" x1="9.25" y1="10.58" x2="13.4" y2="6.61" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#606060"/>
-      <stop offset="1" stop-color="#a2a2a2"/>
-    </linearGradient>
-    <linearGradient id="linear-gradient-2" x1="3.19" y1="14.66" x2="6.99" y2="11.21" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#777"/>
-      <stop offset="1" stop-color="#adadad"/>
-    </linearGradient>
-    <linearGradient id="linear-gradient-3" x1="3.22" y1="6.72" x2="-.24" y2="10.67" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#c5c5c5"/>
-      <stop offset="1" stop-color="#adadad"/>
-    </linearGradient>
-    <linearGradient id="linear-gradient-4" x1="8.77" y1="3.09" x2="4.66" y2="7.41" gradientTransform="translate(0 16) scale(1 -1)" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#c5c5c5"/>
-      <stop offset="1" stop-color="#919191"/>
-    </linearGradient>
-  </defs>
-  <path class="cls-1" d="m12.1,12.67c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31V1.31c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v11.36Z"/>
-  <path class="cls-4" d="m7.25,4.81c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-1.75c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v1.75Z"/>
-  <path class="cls-2" d="m2.42,8.3c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-2.62c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v2.62Z"/>
-  <path class="cls-3" d="m7.25,10.92c0,.72-.54,1.31-1.21,1.31s-1.21-.59-1.21-1.31v-1.75c0-.72.54-1.31,1.21-1.31s1.21.59,1.21,1.31v1.75Z"/>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M13 1C12.4477 1 12 1.44772 12 2V14C12 14.5523 12.4477 15 13 15C13.5523 15 14 14.5523 14 14V2C14 1.44772 13.5523 1 13 1Z"
+        fill="#CED0D6"/>
+  <path d="M3 5C2.44772 5 2 5.44772 2 6V10C2 10.5523 2.44772 11 3 11C3.55228 11 4 10.5523 4 10V6C4 5.44772 3.55228 5 3 5Z" fill="#CED0D6"/>
+  <path d="M7 4C7 3.44772 7.44772 3 8 3C8.55228 3 9 3.44772 9 4V6C9 6.55228 8.55228 7 8 7C7.44772 7 7 6.55228 7 6V4Z" fill="#CED0D6"/>
+  <path d="M8 9C7.44772 9 7 9.44772 7 10V12C7 12.5523 7.44772 13 8 13C8.55228 13 9 12.5523 9 12V10C9 9.44772 8.55228 9 8 9Z"
+        fill="#CED0D6"/>
 </svg>
