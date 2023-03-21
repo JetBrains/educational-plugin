@@ -12,21 +12,21 @@ import com.jetbrains.edu.learning.stepik.hyperskill.wrapWithUtm
  */
 class JetBrainsAcademyCourse : Course() {
   init {
-    course.name = "JetBrains Academy Track"
+    course.name = "JetBrains Academy Project"
     visibility = CourseVisibility.FeaturedVisibility(1)
     programmingLanguage = "NoLanguage" // to avoid accidental usage of default value - Python
     description = """
-     Learn to program by creating working applications:
+     Project Information
      
-     - Choose a project and get a personal curriculum with all the concepts necessary to build it
+     Each project represents a real-world application, like a chat bot, game, or neural network. To get started:
+     - Log in to Hyperskill and select a learning track.
      
-     - See how it's all related with the Knowledge Map
+     - Pick a project based on your proficiency level.
      
-     - Develop projects and solve coding tasks with professional IDEs by JetBrains
+     - Follow your personalized study plan step by step.
      
-     Hyperskill experience starts in your browser 
-     
-     <a href="${wrapWithUtm("https://www.jetbrains.com/academy/", "browse-courses")}">Learn more</a>
+     Once you complete your project, you can publish it on GitHub right from your IDE.     
+     <a href="${wrapWithUtm("https://www.jetbrains.com/academy/", "browse-courses")}">Learn more about how to get started.</a>
    """.trimIndent()
   }
 
