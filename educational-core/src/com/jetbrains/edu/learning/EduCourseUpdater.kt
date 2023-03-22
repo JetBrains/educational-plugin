@@ -255,6 +255,8 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val localTasks = taskList
     return when {
       !shouldFrameworkLessonBeUpdated(remoteLesson) -> false
+      // currently we do not support adding new tasks to the framework lessons, to be fixed in https://youtrack.jetbrains.com/issue/EDU-5753
+      tasksFromServer.size != localTasks.size -> false
       localTasks.zip(tasksFromServer).any { (task, remoteTask) -> taskChanged(remoteTask, task) } -> true
       else -> false
     }
