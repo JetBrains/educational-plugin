@@ -39,6 +39,8 @@ interface CodeExecutor {
   fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration =
     EmptyCodeforcesRunConfiguration(project, factory)
 
+  fun tryToExtractCheckResultError(errorOutput: String): CheckResult?
+
   companion object {
     fun resultUnchecked(
       msg: @Nls(capitalization = Nls.Capitalization.Sentence) String

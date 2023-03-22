@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
+import com.intellij.execution.OutputListener
 import com.intellij.execution.configurations.RuntimeConfigurationException
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -10,8 +11,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.checker.CheckUtils.EXCEPTION_ERROR_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.courseFormat.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runReadActionInSmartMode
@@ -65,7 +68,7 @@ open class DefaultCodeExecutor : CodeExecutor {
       }
     }
 
-    val processListener = StdoutProcessListener()
+    val processListener = OutputListener()
 
     if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, executionListener, processListener))
       return logAndQuit(EduCoreBundle.message("error.execution.failed"))
@@ -73,12 +76,22 @@ open class DefaultCodeExecutor : CodeExecutor {
     if (indicator.isCanceled) return logAndQuit(EduCoreBundle.message("error.execution.canceled"))
     if (processNotStarted) return logAndQuit(EduCoreBundle.message("error.execution.failed"))
 
-    var outputString = processListener.output.joinToString("")
+    val output = processListener.output
+    val errorOutput = output.stderr
+
+    if (output.exitCode != 0) {
+      val err = tryToExtractCheckResultError(errorOutput) ?: CheckResult(CheckStatus.Failed, EXCEPTION_ERROR_MESSAGE, errorOutput)
+      return Err(err)
+    }
+
+    var outputString = output.stdout
     if (outputString.isEmpty()) {
       outputString = NO_OUTPUT
     }
     return Ok(outputString)
   }
+
+  override fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
 
   companion object {
     private val LOG = Logger.getInstance(DefaultCodeExecutor::class.java)

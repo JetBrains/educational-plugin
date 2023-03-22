@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.checker
 
+import com.intellij.execution.OutputListener
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -20,7 +21,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
       return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
-    val processListener = if (isUnitTestMode) StdoutProcessListener() else null
+    val processListener = if (isUnitTestMode) OutputListener() else null
 
     if (!CheckUtils.executeRunConfigurations(project, listOf(configuration), indicator, processListener = processListener)) {
       LOG.warn("Execution failed")
@@ -28,7 +29,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     }
 
     return if (isUnitTestMode) {
-      CheckResult(CheckStatus.Solved, processListener?.output.orEmpty().joinToString(""))
+      CheckResult(CheckStatus.Solved, processListener?.output?.stdout.orEmpty())
     }
     else {
       CheckResult.SOLVED

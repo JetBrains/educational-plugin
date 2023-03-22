@@ -70,6 +70,8 @@ open class PlainTextConfigurator : EduConfigurator<EmptyProjectSettings> {
                                     ?: return Err(CheckResult(CheckStatus.Unchecked, "No $CHECK_RESULT_FILE file"))
               return Ok(VfsUtil.loadText(checkResultFile))
             }
+
+            override fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
           }
         }
 
