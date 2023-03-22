@@ -8,14 +8,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.NameUtil
-import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission.Companion.CHECK_IO_MISSION_TASK_TYPE
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
@@ -75,10 +73,6 @@ import org.jetbrains.annotations.NonNls
  * should be applied to existing one that is done in [YamlLoader.loadItem].
  */
 object YamlDeserializer {
-  @NonNls
-  private const val TOPIC = "Loaded YAML"
-  val YAML_LOAD_TOPIC: Topic<YamlListener> = Topic.create(TOPIC, YamlListener::class.java)
-
   fun deserializeItem(configFile: VirtualFile, project: Project?, loadFromVFile: Boolean = true, mapper: ObjectMapper = MAPPER): StudyItem? {
     val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
     val configName = configFile.name
@@ -337,7 +331,6 @@ object YamlDeserializer {
     }
     runInEdt {
       val editor = configFile.getEditor(project)
-      ApplicationManager.getApplication().messageBus.syncPublisher(YAML_LOAD_TOPIC).yamlFailedToLoad(configFile, cause)
       if (editor == null) {
         val notification = InvalidConfigNotification(project, configFile, cause)
         notification.notify(project)

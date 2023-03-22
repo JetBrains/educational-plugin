@@ -100,9 +100,6 @@ class TabManagerImpl(private val project: Project, private val contentManager: C
         result.add(THEORY_TAB)
       }
     }
-    else {
-      result.add(YAML_HELP_TAB)
-    }
 
     return result
   }

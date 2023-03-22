@@ -36,9 +36,6 @@ object StyleResourcesManager {
 
   private const val STEPIK_LINK_CSS: String = "/style/stepikLink.css"
 
-  private const val YAML_TAB_BASE_CSS: String = "/style/yaml-tab/yaml-base.css"
-  private const val YAML_TAB_BASE_DARCULA_CSS: String = "/style/yaml-tab/yaml-base-darcula.css"
-
   private const val INTELLIJ_ICON_FONT_EOT: String = "/style/hint/fonts/intellij-icon-font.eot"
   private const val INTELLIJ_ICON_FONT_SVG: String = "/style/hint/fonts/intellij-icon-font.svg"
   private const val INTELLIJ_ICON_FONT_TTF: String = "/style/hint/fonts/intellij-icon-font.ttf"
@@ -69,8 +66,6 @@ object StyleResourcesManager {
     SCROLL_BARS_HIGH_CONTRAST_CSS,
     SCROLL_BARS_LIGHT_CSS,
     STEPIK_LINK_CSS,
-    YAML_TAB_BASE_CSS,
-    YAML_TAB_BASE_DARCULA_CSS,
     INTELLIJ_ICON_FONT_EOT,
     INTELLIJ_ICON_FONT_SVG,
     INTELLIJ_ICON_FONT_TTF,
@@ -108,12 +103,6 @@ object StyleResourcesManager {
       else -> SCROLL_BARS_LIGHT_CSS
     }
 
-  private val yamlTabCss: String
-    get() = when {
-      UIUtil.isUnderDarcula() -> YAML_TAB_BASE_DARCULA_CSS
-      else -> YAML_TAB_BASE_CSS
-    }
-
   private val jetbrainsAcademyStyle: String
     get() = if (UIUtil.isUnderDarcula()) {
       JETBRAINS_ACADEMY_CSS_DARK
@@ -134,7 +123,6 @@ object StyleResourcesManager {
     resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
     resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),
-    resourcePair("yaml_base_css", yamlTabCss),
     resourcePair("jetbrains_academy_style", jetbrainsAcademyStyle),
     resourcePair("jetbrains_academy_style_base", JETBRAINS_ACADEMY_CSS_BASE)
   )
