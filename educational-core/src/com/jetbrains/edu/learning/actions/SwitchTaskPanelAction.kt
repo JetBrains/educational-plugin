@@ -3,9 +3,13 @@ package com.jetbrains.edu.learning.actions
 import com.intellij.openapi.actionSystem.ActionPlaces.ACTION_SEARCH
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.dsl.builder.COLUMNS_SHORT
+import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary
@@ -14,9 +18,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
-import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
-import javax.swing.JLabel
 
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
@@ -24,44 +26,12 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
-    val result = createDialog().showAndGet()
+    val result = MyDialog(false).showAndGet()
     if (result && project != null) {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
       toolWindow.contentManager.removeAllContents(false)
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
       TaskDescriptionView.getInstance(project).updateTaskDescription()
-    }
-  }
-
-  private fun createDialog(): DialogWrapper = MyDialog(false)
-
-  class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
-    private val myComboBox: ComboBox<JavaUILibrary> = ComboBox()
-
-    override fun createCenterPanel(): JComponent = myComboBox
-
-    override fun createNorthPanel(): JComponent = JLabel(EduCoreBundle.message("ui.label.choose.panel"))
-
-    override fun getPreferredFocusedComponent(): JComponent = myComboBox
-
-    override fun doOKAction() {
-      super.doOKAction()
-      val selectedUILibrary = myComboBox.selectedItem as JavaUILibrary?
-      EduSettings.getInstance().javaUiLibrary = selectedUILibrary ?: SWING
-    }
-
-    init {
-      val comboBoxModel = DefaultComboBoxModel<JavaUILibrary>()
-      comboBoxModel.addElement(SWING)
-      if (EduUtils.hasJCEF()) {
-        comboBoxModel.addElement(JCEF)
-      }
-
-      comboBoxModel.selectedItem = EduSettings.getInstance().javaUiLibraryWithCheck
-      myComboBox.model = comboBoxModel
-      title = EduCoreBundle.message("dialog.title.switch.task.description.panel")
-      myComboBox.setMinimumAndPreferredWidth(250)
-      init()
     }
   }
 
@@ -74,5 +44,37 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
   companion object {
     @NonNls
     const val ACTION_ID = "Educational.SwitchTaskDescriptionPanel"
+  }
+
+  private class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
+
+    override fun createCenterPanel(): JComponent = panel {
+      row(EduCoreBundle.message("ui.label.choose.panel")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        comboBox(collectAvailableJavaUiLibraries())
+          .columns(COLUMNS_SHORT)
+          .resizableColumn()
+          .horizontalAlign(HorizontalAlign.FILL)
+          .focused()
+          .bindItem(
+            getter = { EduSettings.getInstance().javaUiLibraryWithCheck },
+            setter = { EduSettings.getInstance().javaUiLibrary = it ?: SWING }
+          )
+      }
+    }
+
+    init {
+      title = EduCoreBundle.message("dialog.title.switch.task.description.panel")
+      init()
+    }
+
+    private fun collectAvailableJavaUiLibraries(): List<JavaUILibrary> {
+      val availableJavaUiLibraries = mutableListOf(SWING)
+      if (EduUtils.hasJCEF()) {
+        availableJavaUiLibraries += JCEF
+      }
+      return availableJavaUiLibraries
+    }
   }
 }
