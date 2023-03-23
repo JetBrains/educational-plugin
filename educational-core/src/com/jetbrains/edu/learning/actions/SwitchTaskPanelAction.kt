@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionPlaces.ACTION_SEARCH
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
@@ -20,8 +21,6 @@ import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
-
-@Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.switch.task.description.text")) {
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -34,6 +33,8 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
     val place = e.place
