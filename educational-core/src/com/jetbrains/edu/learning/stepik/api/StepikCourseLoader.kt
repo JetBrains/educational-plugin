@@ -69,11 +69,6 @@ object StepikCourseLoader {
     }
   }
 
-  fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
-    val sections = StepikConnector.getInstance().getSections(remoteCourse.sectionIds)
-    return sections.flatMap { section -> section.units }.distinct()
-  }
-
   private fun getOrderedListOfSections(allSections: List<StepikSection>, remoteCourse: EduCourse): List<Section> {
     val loadSectionTasks = allSections.mapIndexed { index, section ->
       { loadSection(remoteCourse, section, index + 1) }
@@ -150,7 +145,7 @@ object StepikCourseLoader {
     return result
   }
 
-  fun getLessonsFromUnitIds(unitIds: List<Int>): List<StepikLesson> {
+  private fun getLessonsFromUnitIds(unitIds: List<Int>): List<StepikLesson> {
     val units = StepikConnector.getInstance().getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
     val lessons = StepikConnector.getInstance().getLessons(lessonIds)
