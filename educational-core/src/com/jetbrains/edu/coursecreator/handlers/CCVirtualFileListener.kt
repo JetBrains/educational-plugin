@@ -137,11 +137,13 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       else -> null
     }
 
-    if (createdConfigFile != null)
+    if (createdConfigFile != null) {
       return configCreated(createdConfigFile)
+    }
 
-    if (event is VFileContentChangeEvent)
+    if (event is VFileContentChangeEvent) {
       return configChanged(event)
+    }
 
     return false
   }
@@ -154,10 +156,12 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
 
   private fun configCreated(configFile: VirtualFile): Boolean {
     val configAdded = tryAddItemToParentConfig(configFile)
-    if (configAdded)
+    if (configAdded) {
       reloadConfig(configFile)
-    else
+    }
+    else {
       LOG.warn("Study item configuration file was created in a wrong location: $configFile")
+    }
 
     return configAdded
   }
@@ -171,14 +175,16 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val parentStudyItem = parentItemDir.getStudyItem(project) ?: return false
 
     //if the study item is already inside the parent, do not add it
-    if (parentStudyItem is ItemContainer && parentStudyItem.getItem(itemDir.name) != null)
+    if (parentStudyItem is ItemContainer && parentStudyItem.getItem(itemDir.name) != null) {
       return false
+    }
 
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlFormatSynchronizer.MAPPER
     val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, true, mapper) ?: return false
 
-    if (!deserializedItem.couldBeInside(parentStudyItem))
+    if (!deserializedItem.couldBeInside(parentStudyItem)) {
       return false
+    }
 
     if (parentStudyItem !is ItemContainer) return false // this is mostly to cast the type, because the actual check is already performed
 

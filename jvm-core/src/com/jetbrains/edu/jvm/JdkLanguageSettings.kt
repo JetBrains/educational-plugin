@@ -74,26 +74,34 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     val selectedJavaVersion = ParsedJavaVersion.fromJavaSdkVersionString(jdk?.versionString)
     val courseJavaVersion = minJvmSdkVersion(course)
 
-    if (courseJavaVersion is JavaVersionParseFailed)
+    if (courseJavaVersion is JavaVersionParseFailed) {
       return ready("error.unsupported.java.version", courseJavaVersion.versionAsText)
-    if (selectedJavaVersion is JavaVersionParseFailed)
+    }
+    if (selectedJavaVersion is JavaVersionParseFailed) {
       return ready("failed.determine.java.version", selectedJavaVersion.versionAsText)
+    }
 
-    if (selectedJavaVersion == JavaVersionNotProvided)
-      return if (courseJavaVersion == JavaVersionNotProvided)
+    if (selectedJavaVersion == JavaVersionNotProvided) {
+      return if (courseJavaVersion == JavaVersionNotProvided) {
         ready("error.no.jdk")
-      else
+      }
+      else {
         ready("error.no.jdk.need.at.least", (courseJavaVersion as JavaVersionParseSuccess).javaSdkVersion.description)
-    if (courseJavaVersion == JavaVersionNotProvided)
+      }
+    }
+    if (courseJavaVersion == JavaVersionNotProvided) {
       return SettingsValidationResult.OK
+    }
 
     selectedJavaVersion as JavaVersionParseSuccess
     courseJavaVersion as JavaVersionParseSuccess
 
-    return if (selectedJavaVersion isAtLeast courseJavaVersion)
+    return if (selectedJavaVersion isAtLeast courseJavaVersion) {
       SettingsValidationResult.OK
-    else
+    }
+    else {
       ready("error.old.java", courseJavaVersion.javaSdkVersion.description, selectedJavaVersion.javaSdkVersion.description)
+    }
   }
 
   /**
@@ -118,15 +126,18 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     fun findSuitableJdk(courseSdkVersion: ParsedJavaVersion, sdkModel: ProjectSdksModel): Sdk? {
       val jdks = sdkModel.sdks.filter { it.sdkType == JavaSdk.getInstance() }
 
-      if (courseSdkVersion !is JavaVersionParseSuccess)
+      if (courseSdkVersion !is JavaVersionParseSuccess) {
         return jdks.firstOrNull()
+      }
 
       return jdks.find {
         val jdkVersion = ParsedJavaVersion.fromJavaSdkVersionString(it.versionString)
-        if (jdkVersion is JavaVersionParseSuccess)
+        if (jdkVersion is JavaVersionParseSuccess) {
           jdkVersion isAtLeast courseSdkVersion
-        else
+        }
+        else {
           false
+        }
       }
     }
   }

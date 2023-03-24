@@ -65,13 +65,21 @@ interface EduConfigurator<Settings : Any> {
     val ideaFolderIndex = ancestorNames.indexOf(Project.DIRECTORY_STORE_FOLDER)
 
     // Remove hidden files, except the .idea folder
-    for ((i, ancestorName) in ancestorNames.withIndex())
-      if (ancestorName.startsWith(".") && i != ideaFolderIndex)
+    for ((i, ancestorName) in ancestorNames.withIndex()) {
+      if (ancestorName.startsWith(".") && i != ideaFolderIndex) {
         return true
+      }
+    }
 
     // Project related files: inside .idea include only .idea/scopes and .idea/inspectionProfiles
-    if (ideaFolderIndex == 0) return false
-    else if (ideaFolderIndex >= 1) return ancestorNames[ideaFolderIndex - 1] !in INCLUDED_SETTINGS_SUBDIRECTORIES
+    if (ideaFolderIndex == 0) {
+      return false
+    }
+    else {
+      if (ideaFolderIndex >= 1) {
+        return ancestorNames[ideaFolderIndex - 1] !in INCLUDED_SETTINGS_SUBDIRECTORIES
+      }
+    }
 
     return "iml" == file.extension ||
            // Course structure files

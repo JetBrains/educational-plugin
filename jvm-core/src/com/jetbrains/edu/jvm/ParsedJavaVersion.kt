@@ -41,10 +41,12 @@ sealed class ParsedJavaVersion {
     fun fromJavaSdkVersionString(versionString: String?): ParsedJavaVersion {
       versionString ?: return JavaVersionNotProvided
       val parsedVersion = JavaSdkVersion.fromVersionString(versionString)
-      return if (parsedVersion == null)
+      return if (parsedVersion == null) {
         JavaVersionParseFailed(versionString)
-      else
+      }
+      else {
         JavaVersionParseSuccess(parsedVersion)
+      }
     }
   }
 }

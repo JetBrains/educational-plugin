@@ -16,8 +16,10 @@ fun jvmEnvironmentSettings(project: Project): Map<String, String> = mapOf(
 
 @VisibleForTesting
 fun Course.setLanguageLevel(languageLevel: String?) {
-  if (languageLevel == null)
+  if (languageLevel == null) {
     course.environmentSettings = course.environmentSettings.minus(JVM_LANGUAGE_LEVEL)
-  else
+  }
+  else {
     course.environmentSettings = course.environmentSettings.plus(JVM_LANGUAGE_LEVEL to languageLevel)
+  }
 }

@@ -186,8 +186,9 @@ object GeneratorUtils {
     for (file in course.additionalFiles) {
       val insideIdeaDirectory = file.name == Project.DIRECTORY_STORE_FOLDER || file.name.startsWith("${Project.DIRECTORY_STORE_FOLDER}/")
 
-      if (insideIdeaDirectory && unpackMode.outsideIdeaDirectory || !insideIdeaDirectory && unpackMode.insideIdeaDirectory)
+      if (insideIdeaDirectory && unpackMode.outsideIdeaDirectory || !insideIdeaDirectory && unpackMode.insideIdeaDirectory) {
         createChildFile(holder, holder.courseDir, file.name, file.text, file.isEditable)
+      }
     }
   }
 

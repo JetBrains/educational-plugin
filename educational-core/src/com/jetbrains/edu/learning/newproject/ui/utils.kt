@@ -82,8 +82,10 @@ fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, actionAsLink: Boo
     val link = EduNames.PLUGINS_HELP_LINK
     val action = EduCoreBundle.message("validation.plugins.required.plugins.action")
     "$message <a href='$link'>$action</a>"
-  } else
+  }
+  else {
     message
+  }
 }
 
 fun createCourseDescriptionStylesheet() = CSSBuilder().apply {

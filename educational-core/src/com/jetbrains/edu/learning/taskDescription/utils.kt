@@ -181,13 +181,15 @@ fun replaceMediaForTheme(project: Project, task: Task, taskText: String): Docume
   val isDarkTheme = UIUtil.isUnderDarcula()
 
   val imageElements = document.getElementsByTag(IMG_TAG)
-  for (element in imageElements)
+  for (element in imageElements) {
     updateImageElementAccordingToUiTheme(element, isDarkTheme, task, project)
+  }
 
   if (isDarkTheme) {
     val iframeElements = document.getElementsByTag(IFRAME_TAG)
-    for (element in iframeElements)
+    for (element in iframeElements) {
       useDarkSrcCustomAttributeIfPresent(element)
+    }
   }
 
   return document

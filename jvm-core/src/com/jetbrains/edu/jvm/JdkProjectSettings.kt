@@ -35,8 +35,9 @@ class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) {
       ProjectRootManager.getInstance(project).projectSdk = jdk
       addAnnotations(ProjectRootManager.getInstance(project).projectSdk?.sdkModificator)
       val sdkVersion = course.minJvmSdkVersion
-      if (sdkVersion is JavaVersionParseSuccess)
+      if (sdkVersion is JavaVersionParseSuccess) {
         LanguageLevelProjectExtension.getInstance(project).languageLevel = sdkVersion.javaSdkVersion.maxLanguageLevel
+      }
     }
     return jdk
   }

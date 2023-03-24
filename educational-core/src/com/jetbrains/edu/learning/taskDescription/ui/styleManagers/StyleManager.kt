@@ -106,13 +106,11 @@ class StyleManager {
     }
 
   fun tablesStylesheet(): String {
-    val themeDependentBorderColor = if (UIUtil.isUnderDarcula()) {
-      if (StyleResourcesManager.isHighContrast())
-        Color(TaskDescriptionBundle.value("high.contrast.table.border.color"))
-      else
-        Color(TaskDescriptionBundle.value("dracula.table.border.color"))
-    } else
-      Color(TaskDescriptionBundle.value("light.table.border.color"))
+    val themeDependentBorderColor = when {
+      !UIUtil.isUnderDarcula() -> Color(TaskDescriptionBundle.value("light.table.border.color"))
+      StyleResourcesManager.isHighContrast() -> Color(TaskDescriptionBundle.value("high.contrast.table.border.color"))
+      else -> Color(TaskDescriptionBundle.value("dracula.table.border.color"))
+    }
 
     val cellsPadding = TaskDescriptionBundle.value("table.cell.padding")
 
