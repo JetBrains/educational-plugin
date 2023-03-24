@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
 import com.jetbrains.edu.learning.testAction
+import kotlin.test.assertNotEquals
 
 class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCourse>() {
 
@@ -24,8 +25,10 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
       testAction(NextTaskAction.ACTION_ID)
     }
 
+    val taskRecordIndexBeforeUpdate = task1.record
+
     assertEquals(1, getFirstLesson()?.currentTaskIndex)
-    assertEquals(1, task1.record)
+    assertNotEquals(-1, taskRecordIndexBeforeUpdate)
 
     val taskText = "fun foo2() {}"
     val testText = """
@@ -43,7 +46,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
     assertEquals(taskText, task.taskFiles["src/Task.kt"]!!.text)
     assertEquals(testText, task.taskFiles["test/Tests2.kt"]!!.text)
     assertEquals(1, getFirstLesson()?.currentTaskIndex)
-    assertEquals(1, localCourse.taskList[0].record)
+    assertEquals("Record index should be preserved after update", taskRecordIndexBeforeUpdate, localCourse.taskList[0].record)
 
     fileTree {
       dir("lesson1") {
