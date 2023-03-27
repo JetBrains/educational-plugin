@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
-import com.jetbrains.edu.learning.stepik.checker.StepikBasedSubmitConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLoginListener
@@ -146,7 +145,7 @@ object HyperskillCheckConnector {
       return@checkAnswerTask CheckResult(CheckStatus.Failed, it)
     }
 
-    val submission = StepikBasedSubmitConnector.submitAnswerTask(project, task).onError { error ->
+    val submission = HyperskillSubmitConnector.submitAnswerTask(project, task).onError { error ->
       return failedToSubmit(project, task, error)
     }
 
@@ -162,7 +161,7 @@ object HyperskillCheckConnector {
     if (checkId != null) {
       return checkId
     }
-    val submission = StepikBasedSubmitConnector.submitChoiceTask(task).onError { error ->
+    val submission = HyperskillSubmitConnector.submitChoiceTask(task).onError { error ->
       return failedToSubmit(project, task, error)
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
@@ -177,7 +176,7 @@ object HyperskillCheckConnector {
     return checkCodeTaskWithWebSockets(project, task).onError { submissionError ->
       LOG.info(submissionError.error)
       val submission = when (submissionError) {
-        is SubmissionError.NoSubmission -> StepikBasedSubmitConnector.submitCodeTask(project, task).onError { error ->
+        is SubmissionError.NoSubmission -> HyperskillSubmitConnector.submitCodeTask(project, task).onError { error ->
           return failedToSubmit(project, task, error)
         }
         is SubmissionError.WithSubmission -> submissionError.submission
@@ -208,7 +207,7 @@ object HyperskillCheckConnector {
       return EduCoreBundle.message("error.no.output").toCheckResult()
     }
 
-    val submission = StepikBasedSubmitConnector.submitDataTask(task, answer).onError { error ->
+    val submission = HyperskillSubmitConnector.submitDataTask(task, answer).onError { error ->
       return failedToSubmit(project, task, error)
     }
     return periodicallyCheckSubmissionResult(project, submission, task)
@@ -225,7 +224,7 @@ object HyperskillCheckConnector {
       return CheckResult.failedToCheck
     }
 
-    val submission = StepikBasedSubmitConnector.submitRemoteEduTask(task, files).onError { error ->
+    val submission = HyperskillSubmitConnector.submitRemoteEduTask(task, files).onError { error ->
       return failedToSubmit(project, task, error)
     }
 

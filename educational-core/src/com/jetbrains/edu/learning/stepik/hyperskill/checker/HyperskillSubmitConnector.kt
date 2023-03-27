@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.checker
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
-object StepikBasedSubmitConnector {
+object HyperskillSubmitConnector {
   fun submitCodeTask(project: Project, task: CodeTask): Result<StepikBasedSubmission, String> {
     val connector = task.getStepikBasedConnector()
     val attempt = connector.postAttempt(task).onError {
@@ -124,5 +124,5 @@ object StepikBasedSubmitConnector {
   }
 
   @JvmStatic
-  private val LOG: Logger = logger<StepikBasedSubmitConnector>()
+  private val LOG: Logger = logger<HyperskillSubmitConnector>()
 }
