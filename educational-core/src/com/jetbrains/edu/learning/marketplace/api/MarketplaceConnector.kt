@@ -167,31 +167,29 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return response?.body()?.data?.updates?.updateInfoList
   }
 
-  @Suppress("UnstableApiUsage")
   fun loadCourseStructure(course: EduCourse) {
-    val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginsCompatibleBuild
-
-    val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
-
-    val link = "$repositoryUrl/plugin/download?updateId=${course.getLatestUpdateId()}&uuid=$uuid&build=$buildNumber"
-    val filePrefix = FileUtil.sanitizeFileName("marketplace-${course.name}")
-    val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
-    DownloadUtil.downloadAtomically(null, link, tempFile)
-
-    val unpackedCourse = EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
-                         ?: error(message("dialog.title.failed.to.unpack.course"))
-
+    val unpackedCourse = loadCourse(course.id)
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
   }
 
-  private fun EduCourse.getLatestUpdateId(): Int {
-    val updateInfo = getLatestCourseUpdateInfo(id)
+  @Suppress("UnstableApiUsage")
+  fun loadCourse(courseId: Int): EduCourse {
+    val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginsCompatibleBuild
+    val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
+
+    val updateInfo = getLatestCourseUpdateInfo(courseId)
     if (updateInfo == null) {
-      error("Update info for course $id is null")
+      error("Update info for course ${courseId} is null")
     }
-    marketplaceCourseVersion = updateInfo.version
-    return updateInfo.updateId
+
+    val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber"
+    val filePrefix = FileUtil.sanitizeFileName("marketplace-${courseId}")
+    val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
+    DownloadUtil.downloadAtomically(null, link, tempFile)
+
+    return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
+                         ?: error(message("dialog.title.failed.to.unpack.course"))
   }
 
   private fun uploadUnderProgress(message: String, uploadAction: () -> Unit) =
