@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.getStepikBasedConnector
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
-import com.jetbrains.edu.learning.stepik.checker.StepikCheckConnector.showErrorDetails
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.showErrorDetails
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.TimeUnit
@@ -170,7 +170,7 @@ abstract class StepikBasedCheckConnector {
     )
       .setListener(NotificationListener.URL_OPENING_LISTENER)
       .notify(project)
-}
+  }
 
   fun checkUnsupportedTask(task: UnsupportedTask): CheckResult {
     val checkIdResult = task.checkId()

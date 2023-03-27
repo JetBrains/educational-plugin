@@ -344,7 +344,6 @@
                                     implementation="com.jetbrains.edu.learning.codeforces.CodeforcesPlatformProviderFactory"/>
 
 
-    <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsProvider"/>-->
 

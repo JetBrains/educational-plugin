@@ -9,7 +9,6 @@ object StepikNames {
   const val STEPIK_TYPE = STEPIK
   const val ARE_SOLUTIONS_UPDATED_PROPERTY = "Educational.StepikSolutionUpdated"
   const val STEPIK_DEFAULT_URL = "https://stepik.org"
-  const val STEPIK_HELP = "https://support.stepik.org/hc/en-us/articles/360010601539-Courses-at-Stepik-in-EduTools-JetBrains-plugin-"
   const val STEPIK_HOST_ORDINAL_PROPERTY = "stepik.host.ordinal"
   const val STEPIK_RELEASE_URL = "https://release.stepik.org"
 
