@@ -100,31 +100,31 @@ class MarketplacePushCourse(
 
   private fun EduCourse.prepareForUpload(project: Project) {
     if (isMarketplaceRemote) {
-      course.setRemoteMarketplaceCourseVersion()
+      setRemoteMarketplaceCourseVersion()
     }
 
     if (isStepikRemote) {
       // if the course is Stepik remote, that means that the course was opened
       // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
-      course.id = 0
+      id = 0
       CCNotificationUtils.showNotification(project, null, message("marketplace.course.converted"),
                                            message("marketplace.not.possible.to.post.updates.to.stepik"))
     }
 
-    if (course.marketplaceCourseVersion == 0) course.marketplaceCourseVersion = 1
+    if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
 
     if (!isUnitTestMode) {
-      course.updateCourseItems()
+      updateCourseItems()
     }
-    if (course.vendor == null) {
-      if (!addVendor(course)) {
+    if (vendor == null) {
+      if (!addVendor()) {
         Messages.showErrorDialog(project, message("marketplace.vendor.empty"), message("error.failed.to.create.course.archive"))
         return
       }
     }
 
-    if (!isMarketplaceRemote && course.generatedEduId == null) {
-      course.generateEduId()
+    if (!isMarketplaceRemote && generatedEduId == null) {
+      generateEduId()
     }
 
     YamlFormatSynchronizer.saveItem(course)
