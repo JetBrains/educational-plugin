@@ -88,10 +88,6 @@
       ],
       "additionalProperties": false
     },
-    "generated_edu_id": {
-      "type": "string",
-      "description": "Generated Marketplace courses unique identifier"
-    },
     "tags": {
       "description": "Tags for content",
       "type": "array",
