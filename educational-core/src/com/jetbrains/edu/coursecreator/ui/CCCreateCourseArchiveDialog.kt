@@ -98,7 +98,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
       val course = project.course
       if (course != null) {
         if (course.vendor == null) {
-          addVendor(course)
+          course.addVendor()
         }
         val vendor = course.vendor
         if (vendor != null) {

@@ -17,6 +17,8 @@ open class EduCourse : Course() {
   var learnersCount: Int = 0
   var reviewScore: Double = 0.0
 
+  var generatedEduId: String? = null
+
   // in CC mode is used to store top-level lessons' section id
   var sectionIds: List<Int> = emptyList()
   var instructors: List<Int> = emptyList()

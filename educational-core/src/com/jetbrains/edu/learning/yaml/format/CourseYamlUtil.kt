@@ -68,7 +68,7 @@ import java.util.*
  * Update [CourseChangeApplier] and [CourseBuilder] if new fields added to mixin
  */
 @Suppress("unused") // used for yaml serialization
-@JsonPropertyOrder(TYPE, TITLE, GENERATED_EDU_ID, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
+@JsonPropertyOrder(TYPE, TITLE, LANGUAGE, SUMMARY, VENDOR, IS_PRIVATE, PROGRAMMING_LANGUAGE,
                    PROGRAMMING_LANGUAGE_VERSION, ENVIRONMENT, SOLUTIONS_HIDDEN, CONTENT, FEEDBACK_LINK, TAGS)
 @JsonDeserialize(builder = CourseBuilder::class)
 abstract class CourseYamlMixin {
@@ -111,10 +111,6 @@ abstract class CourseYamlMixin {
   @JsonProperty(VENDOR)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private val vendor: Vendor? = null
-
-  @JsonProperty(GENERATED_EDU_ID)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private val generatedEduId: String? = null
 
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -161,20 +157,24 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
 }
 
 /**
- * Mixin class is used to deserialize remote information of [EduCourse] item stored on Stepik.
+ * Mixin class is used to deserialize remote information of [EduCourse] item
  */
 @Suppress("unused") // used for json serialization
-@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION)
+@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION, GENERATED_EDU_ID)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
 
   @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
   @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
   @JsonProperty(TOP_LEVEL_LESSONS_SECTION)
-  private lateinit var sectionIds: List<Int>
+  private lateinit var sectionIds: List<Int>   // applicable only to Stepik courses. To be removed
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
   private var marketplaceCourseVersion: Int? = 0
+
+  @JsonProperty(GENERATED_EDU_ID)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private val generatedEduId: String? = null
 }
 
 /**
@@ -238,6 +238,7 @@ private class CourseBuilder(
       MARKETPLACE -> {
         EduCourse().apply {
           isMarketplace = true
+          generatedEduId = yamlGeneratedEduId
         }
       }
       null -> EduCourse()
@@ -248,7 +249,6 @@ private class CourseBuilder(
       description = summary
       environment = yamlEnvironment ?: DEFAULT_ENVIRONMENT
       vendor = yamlVendor
-      generatedEduId = yamlGeneratedEduId
       isMarketplacePrivate = yamlIsPrivate ?: false
       feedbackLink = yamlFeedbackLink
       if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
@@ -309,7 +309,6 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.environment = deserializedItem.environment
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
-    existingItem.generatedEduId = deserializedItem.generatedEduId
     existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
     if (deserializedItem.languageVersion != null) {
@@ -333,6 +332,7 @@ class RemoteEduCourseChangeApplier : RemoteInfoChangeApplierBase<EduCourse>() {
     super.applyChanges(existingItem, deserializedItem)
     existingItem.sectionIds = deserializedItem.sectionIds
     existingItem.marketplaceCourseVersion = deserializedItem.marketplaceCourseVersion
+    existingItem.generatedEduId = deserializedItem.generatedEduId
   }
 }
 

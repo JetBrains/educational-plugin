@@ -51,7 +51,6 @@ abstract class Course : LessonContainer() {
   var createDate: Date = Date(0)
   var feedbackLink: String? = null
   var license: String? = null
-  var generatedEduId: String? = null
 
   /**
    * This method is needed to serialize language and its version as one property
