@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.checker
+package com.jetbrains.edu.learning.stepik.hyperskill.checker
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-abstract class StepikBasedCheckAnswerTaskTest : CheckersTestBase<Unit>() {
+abstract class HyperskillCheckAnswerTaskTest : CheckersTestBase<Unit>() {
   protected abstract val defaultResponseCode: Int
 
   protected abstract val mockConnector: MockStepikBasedConnector
