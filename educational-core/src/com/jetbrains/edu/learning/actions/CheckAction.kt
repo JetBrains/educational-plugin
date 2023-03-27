@@ -48,7 +48,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
-import com.jetbrains.edu.learning.stepik.checker.StepikBasedCheckConnector.Companion.failedToSubmit
+import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.failedToSubmit
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.getUICheckLabel

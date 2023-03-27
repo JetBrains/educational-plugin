@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -27,7 +28,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.runInBackground
-import com.jetbrains.edu.learning.stepik.checker.StepikBasedLoginListener
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAccount
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -150,12 +150,12 @@ fun getSelectedProjectIdUnderProgress(): Int? {
   }
 }
 
-object HyperskillLoginListener : StepikBasedLoginListener() {
+object HyperskillLoginListener : HyperlinkAdapter() {
   override fun hyperlinkActivated(e: HyperlinkEvent) {
     doLogin()
   }
 
-  override fun doLogin() {
+  fun doLogin() {
     HyperskillConnector.getInstance().doAuthorize(Runnable {
       val fullName = HyperskillSettings.INSTANCE.account?.userInfo?.getFullName() ?: return@Runnable
       showLoginSuccessfulNotification(fullName)
