@@ -23,7 +23,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
     val account = MarketplaceAccount()
     account.userInfo = MarketplaceUserInfo("User Name")
     MarketplaceSettings.INSTANCE.account = account
-    addVendor(course)
+    course.addVendor()
 
     doTest()
 
