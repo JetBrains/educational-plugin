@@ -177,11 +177,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   fun loadCourse(courseId: Int): EduCourse {
     val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginsCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
-
-    val updateInfo = getLatestCourseUpdateInfo(courseId)
-    if (updateInfo == null) {
-      error("Update info for course ${courseId} is null")
-    }
+    val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
 
     val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber"
     val filePrefix = FileUtil.sanitizeFileName("marketplace-${courseId}")
