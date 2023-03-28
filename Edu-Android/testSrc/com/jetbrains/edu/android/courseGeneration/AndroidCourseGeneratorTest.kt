@@ -2,8 +2,8 @@ package com.jetbrains.edu.android.courseGeneration
 
 import com.android.tools.idea.gradle.project.AndroidGradleProjectStartupActivity
 import com.android.tools.idea.startup.GradleSpecificInitializer
+import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.actionSystem.impl.ActionConfigurationCustomizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl
@@ -30,8 +30,9 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   private fun disableUnnecessaryExtensions() {
     val extensionArea = ApplicationManager.getApplication().extensionArea
 
+    @Suppress("UnstableApiUsage")
     extensionArea
-      .getExtensionPoint<ActionConfigurationCustomizer>("com.intellij.actionConfigurationCustomizer")
+      .getExtensionPoint<ApplicationInitializedListener>("com.intellij.applicationInitializedListener")
       .unregisterExtensionInTest(GradleSpecificInitializer::class.java)
 
     extensionArea.getExtensionPoint(StartupActivity.POST_STARTUP_ACTIVITY)
