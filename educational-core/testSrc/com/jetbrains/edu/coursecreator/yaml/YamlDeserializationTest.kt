@@ -740,7 +740,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertTrue(course is EduCourse)
-    assertEquals(generatedEduId, course.generatedEduId)
+    assertEquals(generatedEduId, (course as EduCourse).generatedEduId)
   }
 
   fun `test private course`() {
