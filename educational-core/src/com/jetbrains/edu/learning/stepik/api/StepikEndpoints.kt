@@ -13,24 +13,9 @@ interface StepikEndpoints {
   @GET("api/stepics/1/")
   fun getCurrentUser(): Call<UsersList>
 
-  @GET("api/enrollments/{id}/")
-  fun enrollments(@Path("id") courseId: Int): Call<Any>
-
-  @GET("api/courses")
-  fun courses(@Query("is_idea_compatible") isIdeaCompatible: Boolean,
-              @Query("is_public") isPublic: Boolean,
-              @Query("page") page: Int,
-              @Query("enrolled") enrolled: Boolean?): Call<CoursesList>
-
   @GET("api/courses/{id}")
   fun courses(@Path("id") courseId: Int,
               @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
-
-  @GET("api/courses")
-  fun courses(@Query("ids[]") vararg ids: Int): Call<CoursesList>
-
-  @GET("api/users")
-  fun users(@Query("ids[]") vararg ids: Int): Call<UsersList>
 
   @GET("api/sections")
   fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
@@ -40,9 +25,6 @@ interface StepikEndpoints {
 
   @GET("api/units")
   fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
-
-  @GET("api/units")
-  fun lessonUnit(@Query("lesson") lesson: Int): Call<UnitsList>
 
   @GET("api/steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
@@ -61,17 +43,11 @@ interface StepikEndpoints {
   @GET("api/attempts")
   fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
 
-  @GET("api/assignments")
-  fun assignments(@Query("ids[]") vararg ids: Int): Call<AssignmentsList>
-
   @GET("api/attachments")
   fun attachments(@Query("lesson") lessonId: Int? = null): Call<AttachmentsList>
 
   @GET("api/step-sources/{id}")
   fun choiceStepSource(@Path("id") stepId: Int): Call<ChoiceStepSourcesList>
-
-  @GET("api/course-review-summaries")
-  fun courseReviewSummaries(@Query("ids[]") vararg ids: Int): Call<CourseReviewSummariesList>
 
   @GET("api/attempts/{attempt_id}/file")
   fun dataset(@Path("attempt_id") attemptId: Int): Call<ResponseBody>
@@ -87,17 +63,11 @@ interface StepikEndpoints {
   @POST("api/step-sources")
   fun stepSource(@Body stepSourceData: StepSourceData): Call<StepSourcesList>
 
-  @POST("api/enrollments")
-  fun enrollment(@Body enrollment: EnrollmentData): Call<Any>
-
   @POST("api/submissions")
   fun submission(@Body submissionData: SubmissionData): Call<SubmissionsList>
 
   @POST("api/attempts")
   fun attempt(@Body attemptData: AttemptData): Call<AttemptsList>
-
-  @POST("api/views")
-  fun view(@Body viewData: ViewData): Call<ResponseBody>
 
   @Multipart
   @POST("api/attachments")

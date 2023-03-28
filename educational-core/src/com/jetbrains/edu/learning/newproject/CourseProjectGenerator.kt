@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.impl.TrustedPaths
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
@@ -35,11 +34,6 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.synchronizeCourse
-import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
@@ -56,26 +50,6 @@ abstract class CourseProjectGenerator<S : Any>(
 ) : PlatformCourseProjectGenerator() {
   private var alreadyEnrolled = false
 
-  open fun beforeProjectGenerated(): Boolean {
-    if (course !is EduCourse || !course.isStepikRemote) return true
-    val remoteCourse = course as EduCourse
-
-    if (remoteCourse.id <= 0) return true
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<Boolean, RuntimeException>(
-      {
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        if (EduSettings.getInstance().user != null) {
-          alreadyEnrolled = StepikConnector.getInstance().isEnrolledToCourse(remoteCourse.id)
-          if (!alreadyEnrolled) {
-            StepikConnector.getInstance().enrollToCourse(remoteCourse.id)
-          }
-        }
-        loadCourseStructure(remoteCourse)
-        course = remoteCourse
-        true
-      }, EduCoreBundle.message("generate.project.loading.course.progress.text"), true, null)
-  }
-
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
@@ -86,7 +60,6 @@ abstract class CourseProjectGenerator<S : Any>(
 
     setUpPluginDependencies(project, course)
 
-    loadSolutions(project, course)
     EduUtils.openFirstTask(course, project)
 
     YamlFormatSynchronizer.saveAll(project)
@@ -99,9 +72,6 @@ abstract class CourseProjectGenerator<S : Any>(
   //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
   fun doCreateCourseProject(location: String, projectSettings: Any): Project? {
-    if (!beforeProjectGenerated()) {
-      return null
-    }
     val createdProject = createProject(location) ?: return null
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
@@ -198,7 +168,7 @@ abstract class CourseProjectGenerator<S : Any>(
         CCUtils.initializeCCPlaceholders(holder)
       }
       GeneratorUtils.createCourse(holder, indicator)
-      if (course is EduCourse && (course.isStepikRemote || course.isMarketplaceRemote) && !course.isStudy) {
+      if (course is EduCourse && course.isMarketplaceRemote && !course.isStudy) {
         checkIfAvailableOnRemote(course)
       }
       createAdditionalFiles(holder, isNewCourseCreatorCourse)
@@ -208,31 +178,11 @@ abstract class CourseProjectGenerator<S : Any>(
   }
 
   private fun checkIfAvailableOnRemote(course: EduCourse) {
-    val remoteCourse = if (course.isMarketplace) {
-      MarketplaceConnector.getInstance().searchCourse(course.id, course.isMarketplacePrivate)
-    }
-    else {
-      StepikConnector.getInstance().getCourseInfo(course.id, null, true)
-    }
+    val remoteCourse = MarketplaceConnector.getInstance().searchCourse(course.id, course.isMarketplacePrivate)
     if (remoteCourse == null) {
-      val platformName = if (course.isMarketplace) MARKETPLACE else StepikNames.STEPIK
-      LOG.warn("Failed to get $platformName course for imported from zip course with id: ${course.id}")
+      LOG.warn("Failed to get $MARKETPLACE course for imported from zip course with id: ${course.id}")
       LOG.info("Converting course to local. Course id: ${course.id}")
       course.convertToLocal()
-    }
-  }
-
-  private fun loadSolutions(project: Project, course: Course) {
-    if (course.isStudy &&
-        course is EduCourse &&
-        course.isStepikRemote &&
-        EduSettings.isLoggedIn()) {
-      PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false)
-      if (alreadyEnrolled) {
-        val stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project)
-        stepikSolutionsLoader.loadSolutionsInBackground()
-        synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_GENERATION)
-      }
     }
   }
 

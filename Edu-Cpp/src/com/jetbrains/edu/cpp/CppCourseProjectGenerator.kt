@@ -18,25 +18,6 @@ import com.jetbrains.edu.learning.stepik.course.StepikCourse
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
   CourseProjectGenerator<CppProjectSettings>(builder, course) {
 
-  private fun deepRename(item: StudyItem) {
-    changeItemNameAndCustomPresentableName(item)
-    if (item is ItemContainer) {
-      item.items.forEach { deepRename(it) }
-    }
-  }
-
-  override fun beforeProjectGenerated(): Boolean {
-    if (!super.beforeProjectGenerated()) {
-      return false
-    }
-
-    if (course is StepikCourse) {
-      course.items.forEach(::deepRename)
-    }
-
-    return true
-  }
-
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     if (holder.courseDir.findChild(CMakeListsFileType.FILE_NAME) != null) return
 
@@ -74,15 +55,5 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
     super.afterProjectGenerated(project, projectSettings)
-  }
-
-  private fun changeItemNameAndCustomPresentableName(item: StudyItem) {
-    // We support courses, which section/lesson/task names can be in Russian,
-    // which may cause problems when creating a project with non-ascii paths.
-    // For example, CMake + MinGW and CLion + CMake + Cygwin does not work correctly with non-ascii symbols in project paths.
-    // Therefore, we generate folder names on the disk using ascii symbols (item.name)
-    // and in the course (item.customPresentableName) we show the names in the same form as in the remote course
-    item.customPresentableName = item.name
-    item.name = GeneratorUtils.getDefaultName(item)
   }
 }

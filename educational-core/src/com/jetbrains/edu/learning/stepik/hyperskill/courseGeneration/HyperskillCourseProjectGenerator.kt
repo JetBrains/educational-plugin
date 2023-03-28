@@ -11,9 +11,6 @@ open class HyperskillCourseProjectGenerator<T : Any>(
   builder: HyperskillCourseBuilder<T>,
   course: HyperskillCourse
 ) : CourseProjectGenerator<T>(builder, course) {
-  override fun beforeProjectGenerated(): Boolean {
-    return true
-  }
 
   override fun afterProjectGenerated(project: Project, projectSettings: T) = base.afterProjectGenerated(project, projectSettings)
 

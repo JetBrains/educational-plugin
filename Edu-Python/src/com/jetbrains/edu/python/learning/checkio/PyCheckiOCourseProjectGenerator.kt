@@ -9,8 +9,6 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
 
-  override fun beforeProjectGenerated(): Boolean = true
-
   override fun afterProjectGenerated(project: Project, projectSettings: PyNewProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     reformatCodeInAllTaskFiles(project, course)

@@ -120,40 +120,15 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     return response?.body()?.users?.firstOrNull()
   }
 
-  fun isEnrolledToCourse(courseId: Int): Boolean {
-    val response = stepikEndpoints.enrollments(courseId).executeHandlingExceptions(true)
-    return response?.code() == HttpStatus.SC_OK
-  }
-
-  fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?): CoursesList? {
-    val response = stepikEndpoints.courses(true, isPublic, currentPage, enrolled).executeHandlingExceptions(true)
-    return response?.body()
-  }
-
-  fun getCourses(ids: Set<Int>): List<EduCourse>? {
-    val response = stepikEndpoints.courses(*ids.toIntArray()).executeHandlingExceptions()
-    return response?.body()?.courses
-  }
-
   @JvmOverloads
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean? = null, optional: Boolean = false): EduCourse? {
     val response = stepikEndpoints.courses(courseId, isIdeaCompatible).executeHandlingExceptions(optional)
     return response?.body()?.courses?.firstOrNull()
   }
 
-  fun getSection(sectionId: Int): StepikSection? {
-    val response = stepikEndpoints.sections(sectionId).executeHandlingExceptions()
-    return response?.body()?.sections?.firstOrNull()
-  }
-
   fun getLesson(lessonId: Int): StepikLesson? {
     val response = stepikEndpoints.lessons(lessonId).executeHandlingExceptions()
     return response?.body()?.lessons?.firstOrNull()
-  }
-
-  fun getLessonUnit(lessonId: Int): StepikUnit? {
-    val response = stepikEndpoints.lessonUnit(lessonId).executeHandlingExceptions()
-    return response?.body()?.units?.firstOrNull()
   }
 
   fun getStep(stepId: Int): StepSource? {
@@ -210,18 +185,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     }
   }
 
-  fun getCourseReviewSummaries(ids: List<Int>): List<CourseReviewSummary> {
-    val courseIdsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allReviewSummaries = mutableListOf<CourseReviewSummary>()
-    courseIdsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.courseReviewSummaries(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.courseReviewSummaries
-      }
-      .forEach { allReviewSummaries.addAll(it) }
-    return allReviewSummaries
-  }
-
   // Post requests:
 
   fun postLesson(lesson: Lesson): StepikLesson? {
@@ -272,23 +235,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
       val response = stepikEndpoints.attempt(AttemptData(stepId)).executeParsingErrors().onError { return@withTokenRefreshIfFailed Err(it) }
       val attempt = response.body()?.attempts?.firstOrNull() ?:  return@withTokenRefreshIfFailed Err("Failed to make attempt $stepId")
       Ok(attempt)
-    }
-  }
-
-  fun postView(assignmentId: Int, stepId: Int) {
-    withTokenRefreshIfFailed {
-      val response = stepikEndpoints.view(ViewData(assignmentId, stepId)).executeHandlingExceptions()
-      if (response?.code() != HttpStatus.SC_CREATED) {
-        return@withTokenRefreshIfFailed Err("Error while Views post, code: " + response?.code())
-      }
-      Ok(response)
-    }
-  }
-
-  fun enrollToCourse(courseId: Int) {
-    val response = stepikEndpoints.enrollment(EnrollmentData(courseId)).executeHandlingExceptions()
-    if (response?.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to enroll user ${account?.id} to course $courseId")
     }
   }
 
@@ -361,18 +307,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
 
   // Multiple requests:
 
-  fun getUsers(result: List<EduCourse>): MutableList<StepikUserInfo> {
-    val instructorIds = result.flatMap { it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allUsers = mutableListOf<StepikUserInfo>()
-    instructorIds
-      .mapNotNull {
-        val response = stepikEndpoints.users(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.users
-      }
-      .forEach { allUsers.addAll(it) }
-    return allUsers
-  }
-
   fun getSections(sectionIds: List<Int>): List<StepikSection> {
     val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allSections = mutableListOf<StepikSection>()
@@ -407,19 +341,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
       }
       .forEach { allUnits.addAll(it) }
     return allUnits
-  }
-
-  fun getAssignments(ids: List<Int>): List<Assignment> {
-    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
-    val assignments = mutableListOf<Assignment>()
-    idsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.assignments(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.assignments
-      }
-      .forEach { assignments.addAll(it) }
-
-    return assignments
   }
 
   fun getStepSources(stepIds: List<Int>): List<StepSource> {

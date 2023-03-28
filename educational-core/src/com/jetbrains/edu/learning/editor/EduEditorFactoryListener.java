@@ -134,10 +134,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       }
       else if (course instanceof EduCourse) {
         EduCourse eduCourse = (EduCourse)course;
-        if (eduCourse.isStepikRemote() && EduSettings.isLoggedIn()) {
-          StepikConnectorUtils.markTheoryTaskAsCompleted(theoryTask, project);
-        }
-        else if (eduCourse.isMarketplaceRemote() && MarketplaceConnector.getInstance().isLoggedIn()) {
+        if (eduCourse.isMarketplaceRemote() && MarketplaceConnector.getInstance().isLoggedIn()) {
           MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask);
         }
       }
