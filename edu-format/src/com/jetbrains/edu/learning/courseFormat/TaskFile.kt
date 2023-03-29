@@ -50,6 +50,10 @@ class TaskFile : EduFile {
     _answerPlaceholders.add(answerPlaceholder)
   }
 
+  fun removeAnswerPlaceholder(answerPlaceholder: AnswerPlaceholder) {
+    _answerPlaceholders.remove(answerPlaceholder)
+  }
+
   fun getAnswerPlaceholder(offset: Int): AnswerPlaceholder? {
     return _answerPlaceholders.firstOrNull { offset in it.offset..it.endOffset }
   }

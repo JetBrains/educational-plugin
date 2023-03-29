@@ -1,160 +1,132 @@
-package com.jetbrains.edu.coursecreator.actions.placeholder;
+package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.DocumentUtil;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog.DependencyInfo;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.PlaceholderPainter;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
+import com.intellij.util.DocumentUtil
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.PlaceholderPainter.hidePlaceholder
+import com.jetbrains.edu.learning.PlaceholderPainter.showPlaceholder
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency.Companion.create
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 
-import java.util.List;
-
-public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
-
-  public CCAddAnswerPlaceholder() {
-    super(EduCoreBundle.lazyMessage("action.add.answer.placeholder.text"),
-          EduCoreBundle.lazyMessage("action.add.answer.placeholder.description"));
-  }
-
-
-  private static boolean arePlaceholdersIntersect(@NotNull final TaskFile taskFile, int start, int end) {
-    List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
-    for (AnswerPlaceholder existingAnswerPlaceholder : answerPlaceholders) {
-      int twStart = existingAnswerPlaceholder.getOffset();
-      int twEnd = existingAnswerPlaceholder.getPossibleAnswer().length() + twStart;
-      if ((start >= twStart && start < twEnd) || (end > twStart && end <= twEnd) ||
-          (twStart >= start && twStart < end) || (twEnd > start && twEnd <= end)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private void addPlaceholder(@NotNull Project project, @NotNull EduState state) {
-    Editor editor = state.getEditor();
-    Document document = editor.getDocument();
-    FileDocumentManager.getInstance().saveDocument(document);
-    final SelectionModel model = editor.getSelectionModel();
-    final int offset = model.hasSelection() ? model.getSelectionStart() : editor.getCaretModel().getOffset();
-    TaskFile taskFile = state.getTaskFile();
-    final AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
-    int index = taskFile.getAnswerPlaceholders().size();
-    answerPlaceholder.setIndex(index);
-    answerPlaceholder.setTaskFile(taskFile);
-    taskFile.sortAnswerPlaceholders();
-    answerPlaceholder.setOffset(offset);
-
-    @NonNls String defaultPlaceholderText = getDefaultPlaceholderText(project);
-    answerPlaceholder.setPlaceholderText(defaultPlaceholderText);
-    CCCreateAnswerPlaceholderDialog dlg = createDialog(project, answerPlaceholder);
+open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction(
+  lazyMessage("action.add.answer.placeholder.text"),
+  lazyMessage("action.add.answer.placeholder.description")
+) {
+  private fun addPlaceholder(project: Project, state: EduState) {
+    val editor = state.editor
+    val document = editor.document
+    FileDocumentManager.getInstance().saveDocument(editor.document)
+    val model = editor.selectionModel
+    val offset = if (model.hasSelection()) model.selectionStart else editor.caretModel.offset
+    val taskFile = state.taskFile
+    val answerPlaceholder = AnswerPlaceholder()
+    val index = taskFile.answerPlaceholders.size
+    answerPlaceholder.index = index
+    answerPlaceholder.taskFile = taskFile
+    answerPlaceholder.offset = offset
+    val defaultPlaceholderText = defaultPlaceholderText(project)
+    answerPlaceholder.placeholderText = defaultPlaceholderText
+    val dlg = createDialog(project, answerPlaceholder)
     if (!dlg.showAndGet()) {
-      return;
+      return
     }
-    String answerPlaceholderText = dlg.getPlaceholderText();
-    String possibleAnswer = model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText;
+    val answerPlaceholderText = dlg.getPlaceholderText()
+    var possibleAnswer = if (model.hasSelection()) model.selectedText else defaultPlaceholderText
     if (possibleAnswer == null) {
-      possibleAnswer = defaultPlaceholderText;
+      possibleAnswer = defaultPlaceholderText
     }
-    answerPlaceholder.setPlaceholderText(answerPlaceholderText);
-    answerPlaceholder.setLength(possibleAnswer.length());
-    final DependencyInfo dependencyInfo = dlg.getDependencyInfo();
+    answerPlaceholder.placeholderText = answerPlaceholderText
+    answerPlaceholder.length = possibleAnswer.length
+    val dependencyInfo = dlg.getDependencyInfo()
     if (dependencyInfo != null) {
-      answerPlaceholder.setPlaceholderDependency(
-        AnswerPlaceholderDependency.create(answerPlaceholder, dependencyInfo.getDependencyPath(), dependencyInfo.isVisible()));
+      answerPlaceholder.placeholderDependency = create(answerPlaceholder, dependencyInfo.dependencyPath, dependencyInfo.isVisible)
     }
-
     if (!model.hasSelection()) {
-      DocumentUtil.writeInRunUndoTransparentAction(() -> document.insertString(offset, defaultPlaceholderText));
+      DocumentUtil.writeInRunUndoTransparentAction { document.insertString(offset, defaultPlaceholderText) }
     }
-
-    AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.add.answer.placeholder.text"), action);
+    val action = AddAction(project, answerPlaceholder, taskFile, editor)
+    EduUtils.runUndoableAction(project, message("action.add.answer.placeholder.text"), action)
   }
 
-  @NotNull
-  private static String getDefaultPlaceholderText(@NotNull final Project project) {
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return CCUtils.DEFAULT_PLACEHOLDER_TEXT;
-    }
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) {
-      return CCUtils.DEFAULT_PLACEHOLDER_TEXT;
-    }
-    return configurator.getDefaultPlaceholderText();
+  open fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
+    return CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder)
   }
 
-  static class AddAction extends TaskFileUndoableAction {
-    private final AnswerPlaceholder myPlaceholder;
-
-    public AddAction(@NotNull Project project, @NotNull AnswerPlaceholder placeholder,
-                     @NotNull TaskFile taskFile, @NotNull Editor editor) {
-      super(project, taskFile, editor);
-      myPlaceholder = placeholder;
-    }
-
-    @Override
-    public boolean performUndo() {
-      final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
-      if (answerPlaceholders.contains(myPlaceholder)) {
-        answerPlaceholders.remove(myPlaceholder);
-        PlaceholderPainter.hidePlaceholder(myPlaceholder);
-        return true;
+  internal open class AddAction(
+    project: Project,
+    private val placeholder: AnswerPlaceholder,
+    taskFile: TaskFile,
+    editor: Editor
+  ) : TaskFileUndoableAction(project, taskFile, editor) {
+    override fun performUndo(): Boolean {
+      if (taskFile.answerPlaceholders.contains(placeholder)) {
+        taskFile.removeAnswerPlaceholder(placeholder)
+        taskFile.sortAnswerPlaceholders()
+        hidePlaceholder(placeholder)
+        return true
       }
-
-      return false;
+      return false
     }
 
-    @Override
-    public void performRedo() {
-      getTaskFile().addAnswerPlaceholder(myPlaceholder);
-      PlaceholderPainter.showPlaceholder(getProject(), myPlaceholder);
+    override fun performRedo() {
+      taskFile.addAnswerPlaceholder(placeholder)
+      taskFile.sortAnswerPlaceholders()
+      showPlaceholder(project, placeholder)
     }
   }
 
-  @Override
-  protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
-    addPlaceholder(project, state);
+  override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
+    addPlaceholder(project, state)
   }
 
-  @Override
-  protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
-    presentation.setVisible(true);
+  override fun updatePresentation(eduState: EduState, presentation: Presentation) {
+    presentation.isVisible = true
     if (canAddPlaceholder(eduState)) {
-      presentation.setEnabled(true);
+      presentation.isEnabled = true
     }
   }
 
-  private static boolean canAddPlaceholder(@NotNull EduState state) {
-    Editor editor = state.getEditor();
-    SelectionModel selectionModel = editor.getSelectionModel();
-    TaskFile taskFile = state.getTaskFile();
-    if (selectionModel.hasSelection()) {
-      int start = selectionModel.getSelectionStart();
-      int end = selectionModel.getSelectionEnd();
-      return !arePlaceholdersIntersect(taskFile, start, end);
+  companion object {
+    private fun arePlaceholdersIntersect(taskFile: TaskFile, start: Int, end: Int): Boolean {
+      val answerPlaceholders = taskFile.answerPlaceholders
+      for (existingAnswerPlaceholder in answerPlaceholders) {
+        val twStart = existingAnswerPlaceholder.offset
+        val twEnd = existingAnswerPlaceholder.possibleAnswer.length + twStart
+        if (start in twStart until twEnd || end in (twStart + 1)..twEnd ||
+            twStart in start until end || twEnd in (start + 1)..end) {
+          return true
+        }
+      }
+      return false
     }
-    int offset = editor.getCaretModel().getOffset();
-    return taskFile.getAnswerPlaceholder(offset) == null;
-  }
 
-  protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
-    return new CCCreateAnswerPlaceholderDialog(project, false, answerPlaceholder);
+    private fun defaultPlaceholderText(project: Project): String {
+      val course = StudyTaskManager.getInstance(project).course ?: return CCUtils.DEFAULT_PLACEHOLDER_TEXT
+      val configurator = course.configurator ?: return CCUtils.DEFAULT_PLACEHOLDER_TEXT
+      return configurator.defaultPlaceholderText
+    }
+
+    private fun canAddPlaceholder(state: EduState): Boolean {
+      val editor = state.editor
+      val selectionModel = editor.selectionModel
+      val taskFile = state.taskFile
+      if (selectionModel.hasSelection()) {
+        val start = selectionModel.selectionStart
+        val end = selectionModel.selectionEnd
+        return !arePlaceholdersIntersect(taskFile, start, end)
+      }
+      val offset = editor.caretModel.offset
+      return taskFile.getAnswerPlaceholder(offset) == null
+    }
   }
 }
