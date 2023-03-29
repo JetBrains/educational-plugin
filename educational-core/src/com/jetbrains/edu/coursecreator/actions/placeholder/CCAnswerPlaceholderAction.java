@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -71,4 +72,9 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
   protected abstract void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation);
 
   protected abstract void performAnswerPlaceholderAction(@NotNull Project project, final @NotNull EduState state);
+
+  @Override
+  public @NotNull ActionUpdateThread getActionUpdateThread() {
+    return ActionUpdateThread.EDT;
+  }
 }
