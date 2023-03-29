@@ -25,8 +25,8 @@ class MarketplaceStartupActivity : StartupActivity {
 
     if (course.courseMode == CourseMode.EDUCATOR && course.generatedEduId == null) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        val courseFromMarketplace = MarketplaceConnector.getInstance().loadCourse(course.id)
-        course.generatedEduId = courseFromMarketplace.generatedEduId
+        val generatedId = MarketplaceConnector.getInstance().loadCourse(course.id).generatedEduId ?: course.generateEduId()
+        course.generatedEduId = generatedId
         YamlFormatSynchronizer.saveRemoteInfo(course)
       }
       return

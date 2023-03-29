@@ -124,7 +124,7 @@ class MarketplacePushCourse(
     }
 
     if (!isMarketplaceRemote && generatedEduId == null) {
-      generateEduId()
+      generatedEduId = generateEduId()
     }
 
     YamlFormatSynchronizer.saveItem(course)
