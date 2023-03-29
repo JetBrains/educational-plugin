@@ -142,6 +142,12 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val LANGUAGE_FIELD = EventFields.String(LANGUAGE,
                                                     listOf("JAVA", "kotlin", "Python", "Scala",
                                                            "JavaScript", "Rust", "ObjectiveC", "go", "PHP"))
+    private val YAML_CONFIG_TYPE = EventFields.String(TYPE, listOf("course",
+                                                                   "section",
+                                                                   "lesson",
+                                                                   "task"))
+    private val YAML_FILE_EVENT_TYPE = EventFields.String(EVENT, listOf("opened",
+                                                                        "edited"))
 
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent("navigate.to.task", enumField<TaskNavigationPlace>(SOURCE))
@@ -183,6 +189,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val VIEW_EVENT = GROUP.registerEvent("open.task", COURSE_MODE_FIELD, ITEM_TYPE_FIELD)
     private val CREATE_NEW_COURSE_CLICK_EVENT = GROUP.registerEvent("create.new.course.clicked",
                                                                     enumField<CourseActionSource>(SOURCE))
+    private val YAML_FILE_EVENT = GROUP.registerEvent("yaml.file", YAML_CONFIG_TYPE, YAML_FILE_EVENT_TYPE)
 
 
     @JvmStatic
@@ -283,6 +290,28 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun viewEvent(task: Task?) {
       val course = task?.course ?: return
       VIEW_EVENT.log(course.courseMode, course.itemType)
+    }
+
+    fun yamlFileOpened(configFileName: String) {
+      val configType = when(configFileName) {
+        "course-info.yaml" -> "course"
+        "section-info.yaml" -> "section"
+        "lesson-info.yaml" -> "lesson"
+        "task-info.yaml" -> "task"
+        else -> ""
+      }
+      YAML_FILE_EVENT.log(configType, "opened")
+    }
+
+    fun yamlFileEdited(configFileName: String) {
+      val configType = when(configFileName) {
+        "course-info.yaml" -> "course"
+        "section-info.yaml" -> "section"
+        "lesson-info.yaml" -> "lesson"
+        "task-info.yaml" -> "task"
+        else -> ""
+      }
+      YAML_FILE_EVENT.log(configType, "edited")
     }
   }
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.EduDocumentListenerBase
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isLocalConfigFile
 
 class YamlSynchronizationListener(private val project: Project) : EduDocumentListenerBase(project) {
@@ -18,6 +19,7 @@ class YamlSynchronizationListener(private val project: Project) : EduDocumentLis
     }
     val loadFromConfig = configFile.getUserData(YamlFormatSynchronizer.LOAD_FROM_CONFIG) ?: true
     if (loadFromConfig) {
+      EduCounterUsageCollector.yamlFileEdited(configFile.name)
       runInEdt {
         YamlLoader.loadItem(project, configFile, false)
         ProjectView.getInstance(project).refresh()

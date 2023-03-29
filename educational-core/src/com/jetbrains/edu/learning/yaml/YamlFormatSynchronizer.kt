@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.TEST_AES_KEY
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
@@ -261,6 +262,8 @@ object YamlFormatSynchronizer {
             return
           }
 
+          // we want to collect only educator file usages
+          EduCounterUsageCollector.yamlFileOpened(file.name)
           // load item to show editor notification if config file is invalid
           YamlLoader.loadItem(project, file, false)
         }
