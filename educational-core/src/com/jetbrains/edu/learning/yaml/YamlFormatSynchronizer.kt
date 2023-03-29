@@ -256,9 +256,7 @@ object YamlFormatSynchronizer {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         if (isLocalConfigFile(file)) {
           if (EduUtils.isStudentProject(project)) {
-            @NonNls
-            val errorMessageToLog = "Can't find editor for a file: ${file.name}"
-            val editor = file.getEditor(project) ?: error(errorMessageToLog)
+            val editor = file.getEditor(project) ?: error("Can't find editor for a file: ${file.name}")
             showNoEditingNotification(editor)
             return
           }
