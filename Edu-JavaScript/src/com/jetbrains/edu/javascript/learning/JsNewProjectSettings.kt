@@ -1,15 +1,7 @@
-package com.jetbrains.edu.javascript.learning;
+package com.jetbrains.edu.javascript.learning
 
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 
-public class JsNewProjectSettings {
-  private NodeJsInterpreter mySelectedInterpreter;
-
-  public NodeJsInterpreter getSelectedInterpreter() {
-    return mySelectedInterpreter;
-  }
-
-  public void setSelectedInterpreter(NodeJsInterpreter selectedInterpreter) {
-    mySelectedInterpreter = selectedInterpreter;
-  }
+class JsNewProjectSettings {
+  var selectedInterpreter: NodeJsInterpreter? = null
 }
