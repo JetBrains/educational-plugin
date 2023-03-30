@@ -27,7 +27,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
   override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
     val standards = when (course) {
       is StepikCourse -> arrayOf(CPP11.standard, CPP14.standard)
-      is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard)
+      is CodeforcesCourse -> arrayOf(CPP11.standard, CPP14.standard, CPP17.standard, CPP20.standard)
       else -> getLanguageVersions().toTypedArray()
     }
 
