@@ -1,11 +1,6 @@
-package com.jetbrains.edu.javascript.learning.checkio.connectors;
+package com.jetbrains.edu.javascript.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthRestService;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthRestService
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
-import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.JS_CHECKIO;
-
-public class JsCheckiOOAuthRestService extends CheckiOOAuthRestService {
-  protected JsCheckiOOAuthRestService() {
-    super(JS_CHECKIO, JsCheckiOOAuthConnector.INSTANCE);
-  }
-}
+class JsCheckiOOAuthRestService : CheckiOOAuthRestService(CheckiONames.JS_CHECKIO, JsCheckiOOAuthConnector)
