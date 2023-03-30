@@ -128,7 +128,7 @@ val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
 plugins {
   idea
   kotlin("jvm") version "1.8.0"
-  id("org.jetbrains.intellij") version "1.13.3"
+  id("org.jetbrains.intellij") version "1.10.1"
   id("de.undercouch.download") version "5.3.0"
   id("net.saliman.properties") version "1.5.2"
   id("org.gradle.test-retry") version "1.5.1"
@@ -347,30 +347,30 @@ project(":") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":code-insight", "instrumentedJar"))
-    implementation(project(":code-insight:html", "instrumentedJar"))
-    implementation(project(":code-insight:markdown", "instrumentedJar"))
-    implementation(project(":code-insight:yaml", "instrumentedJar"))
-    implementation(project(":jvm-core", "instrumentedJar"))
-    implementation(project(":Edu-Java", "instrumentedJar"))
-    implementation(project(":Edu-Kotlin", "instrumentedJar"))
-    implementation(project(":Edu-Python", "instrumentedJar"))
-    implementation(project(":Edu-Python:Idea", "instrumentedJar"))
-    implementation(project(":Edu-Python:PyCharm", "instrumentedJar"))
-    implementation(project(":Edu-Scala", "instrumentedJar"))
-    implementation(project(":Edu-Android", "instrumentedJar"))
-    implementation(project(":Edu-JavaScript", "instrumentedJar"))
-    implementation(project(":Edu-Rust", "instrumentedJar"))
-    implementation(project(":Edu-Cpp", "instrumentedJar"))
-    implementation(project(":Edu-Go", "instrumentedJar"))
-    implementation(project(":Edu-Php", "instrumentedJar"))
-    implementation(project(":sql", "instrumentedJar"))
-    implementation(project(":sql:sql-jvm", "instrumentedJar"))
-    implementation(project(":sql:Edu-Sql-Java", "instrumentedJar"))
-    implementation(project(":sql:Edu-Sql-Kotlin", "instrumentedJar"))
-    implementation(project(":github", "instrumentedJar"))
-    implementation(project(":remote-env", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
+    implementation(project(":code-insight:html"))
+    implementation(project(":code-insight:markdown"))
+    implementation(project(":code-insight:yaml"))
+    implementation(project(":jvm-core"))
+    implementation(project(":Edu-Java"))
+    implementation(project(":Edu-Kotlin"))
+    implementation(project(":Edu-Python"))
+    implementation(project(":Edu-Python:Idea"))
+    implementation(project(":Edu-Python:PyCharm"))
+    implementation(project(":Edu-Scala"))
+    implementation(project(":Edu-Android"))
+    implementation(project(":Edu-JavaScript"))
+    implementation(project(":Edu-Rust"))
+    implementation(project(":Edu-Cpp"))
+    implementation(project(":Edu-Go"))
+    implementation(project(":Edu-Php"))
+    implementation(project(":sql"))
+    implementation(project(":sql:sql-jvm"))
+    implementation(project(":sql:Edu-Sql-Java"))
+    implementation(project(":sql:Edu-Sql-Kotlin"))
+    implementation(project(":github"))
+    implementation(project(":remote-env"))
   }
 
   val removeIncompatiblePlugins = task<Delete>("removeIncompatiblePlugins") {
@@ -572,7 +572,7 @@ project(":educational-core") {
 
 project(":code-insight") {
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -580,8 +580,8 @@ project(":code-insight") {
 
 project(":code-insight:html") {
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":code-insight", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":code-insight", "testOutput"))
@@ -607,8 +607,8 @@ project(":code-insight:markdown") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":code-insight", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":code-insight", "testOutput"))
@@ -621,8 +621,8 @@ project(":code-insight:yaml") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":code-insight", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":code-insight"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":code-insight", "testOutput"))
@@ -638,7 +638,7 @@ project(":jvm-core") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -655,7 +655,7 @@ project(":remote-env") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
   }
 }
 
@@ -666,8 +666,8 @@ project(":Edu-Java") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":jvm-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
@@ -683,8 +683,8 @@ project(":Edu-Kotlin") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":jvm-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
@@ -699,8 +699,8 @@ project(":Edu-Scala") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":jvm-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
@@ -715,8 +715,8 @@ project(":Edu-Android") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    implementation(project(":jvm-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    implementation(project(":jvm-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
@@ -739,7 +739,7 @@ project(":Edu-Python") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":Edu-Python:Idea"))
@@ -762,8 +762,8 @@ project(":Edu-Python:Idea") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    compileOnly(project(":Edu-Python", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    compileOnly(project(":Edu-Python"))
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -777,8 +777,8 @@ project(":Edu-Python:PyCharm") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
-    compileOnly(project(":Edu-Python", "instrumentedJar"))
+    implementation(project(":educational-core"))
+    compileOnly(project(":Edu-Python"))
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -789,7 +789,7 @@ project(":Edu-JavaScript") {
     plugins.set(javaScriptPlugins)
   }
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -801,7 +801,7 @@ project(":Edu-Rust") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -814,7 +814,7 @@ project(":Edu-Cpp") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -827,7 +827,7 @@ project(":Edu-Go") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -840,7 +840,7 @@ project(":Edu-Php") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
@@ -855,7 +855,7 @@ project(":sql") {
   }
 
   dependencies {
-    api(project(":educational-core", "instrumentedJar"))
+    api(project(":educational-core"))
     testImplementation(project(":educational-core", "testOutput"))
   }
 }
@@ -867,8 +867,8 @@ project("sql:sql-jvm") {
   }
 
   dependencies {
-    api(project(":sql", "instrumentedJar"))
-    api(project(":jvm-core", "instrumentedJar"))
+    api(project(":sql"))
+    api(project(":jvm-core"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
     testImplementation(project(":jvm-core", "testOutput"))
@@ -882,8 +882,8 @@ project("sql:Edu-Sql-Java") {
   }
 
   dependencies {
-    implementation(project(":sql:sql-jvm", "instrumentedJar"))
-    implementation(project(":Edu-Java", "instrumentedJar"))
+    implementation(project(":sql:sql-jvm"))
+    implementation(project(":Edu-Java"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
     testImplementation(project(":sql:sql-jvm", "testOutput"))
@@ -898,8 +898,8 @@ project("sql:Edu-Sql-Kotlin") {
   }
 
   dependencies {
-    implementation(project(":sql:sql-jvm", "instrumentedJar"))
-    implementation(project(":Edu-Kotlin", "instrumentedJar"))
+    implementation(project(":sql:sql-jvm"))
+    implementation(project(":Edu-Kotlin"))
     testImplementation(project(":educational-core", "testOutput"))
     testImplementation(project(":sql", "testOutput"))
     testImplementation(project(":sql:sql-jvm", "testOutput"))
@@ -913,7 +913,7 @@ project(":github") {
   }
 
   dependencies {
-    implementation(project(":educational-core", "instrumentedJar"))
+    implementation(project(":educational-core"))
 
     testImplementation(project(":educational-core", "testOutput"))
   }
