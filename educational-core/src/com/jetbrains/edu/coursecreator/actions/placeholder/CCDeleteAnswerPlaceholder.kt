@@ -1,59 +1,45 @@
-package com.jetbrains.edu.coursecreator.actions.placeholder;
+package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 
-public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
-
-  @NonNls
-  public static final String ACTION_ID = "Educational.Educator.DeleteAnswerPlaceholder";
-
-  public CCDeleteAnswerPlaceholder() {
-    super();
+class CCDeleteAnswerPlaceholder : CCAnswerPlaceholderAction() {
+  override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
+    deletePlaceholder(project, state)
   }
 
-  @Override
-  protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
-    deletePlaceholder(project, state);
+  override fun updatePresentation(eduState: EduState, presentation: Presentation) {
+    presentation.isEnabledAndVisible = canDeletePlaceholder(eduState)
   }
 
-  private static void deletePlaceholder(@NotNull Project project, @NotNull EduState state) {
-    TaskFile taskFile = state.getTaskFile();
-    AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
-    if (answerPlaceholder == null) {
-      throw new IllegalStateException("Delete Placeholder action called, but no placeholder found");
+  companion object {
+    const val ACTION_ID: String = "Educational.Educator.DeleteAnswerPlaceholder"
+    private fun deletePlaceholder(project: Project, state: EduState) {
+      val taskFile = state.taskFile
+      val answerPlaceholder = state.answerPlaceholder
+                              ?: throw IllegalStateException("Delete Placeholder action called, but no placeholder found")
+      EduUtils.runUndoableAction(project, message("action.Educational.Educator.DeleteAnswerPlaceholder.text.full"),
+        object : CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.editor) {
+          override fun undo() {
+            super.redo()
+          }
+
+          override fun redo() {
+            super.undo()
+          }
+        })
     }
 
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.Educational.Educator.DeleteAnswerPlaceholder.text.full"),
-                               new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
-                                 @Override
-                                 public void undo() {
-                                   super.redo();
-                                 }
-
-                                 @Override
-                                 public void redo() {
-                                   super.undo();
-                                 }
-                               });
-  }
-
-  private static boolean canDeletePlaceholder(@NotNull EduState state) {
-    if (state.getEditor().getSelectionModel().hasSelection()) {
-      return false;
+    private fun canDeletePlaceholder(state: EduState): Boolean {
+      return if (state.editor.selectionModel.hasSelection()) {
+        false
+      }
+      else {
+        state.answerPlaceholder != null
+      }
     }
-    return state.getAnswerPlaceholder() != null;
-  }
-
-  @Override
-  protected void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation) {
-    presentation.setEnabledAndVisible(canDeletePlaceholder(eduState));
   }
 }
