@@ -58,6 +58,10 @@ class TaskFile : EduFile {
     return _answerPlaceholders.firstOrNull { offset in it.offset..it.endOffset }
   }
 
+  fun removeAllPlaceholders() {
+    _answerPlaceholders.clear()
+  }
+
   fun sortAnswerPlaceholders() {
     _answerPlaceholders.sortWith(AnswerPlaceholderComparator)
     for (i in _answerPlaceholders.indices) {
