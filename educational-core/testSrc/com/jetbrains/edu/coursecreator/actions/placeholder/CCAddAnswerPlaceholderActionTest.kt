@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.DEFAULT_PLACEHOLDER_TEXT
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 
 class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
@@ -75,6 +76,36 @@ class CCAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() 
     doTest("lesson1/task2/Task.kt",
            CCTestAddAnswerPlaceholder(CCCreateAnswerPlaceholderDialog.DependencyInfo("lesson1#task1#Task.kt#1", true)), taskFile,
            taskFileExpected)
+  }
+  fun `test sort placeholders`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = TODO()")
+        }
+      }
+    }
+
+    val taskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"]!!
+    val virtualFile = findFile("lesson1/task1/Task.kt")
+    myFixture.openFileInEditor(virtualFile)
+    myFixture.editor.selectionModel.setSelection(10, 12)
+    testAction(CCTestAddAnswerPlaceholder())
+    myFixture.editor.selectionModel.setSelection(0, 2)
+    testAction(CCTestAddAnswerPlaceholder())
+
+    val actual = course.mapper.writeValueAsString(taskFile)
+    assertEquals("""
+      |name: Task.kt
+      |visible: true
+      |placeholders:
+      |- offset: 0
+      |  length: 2
+      |  placeholder_text: type here
+      |- offset: 10
+      |  length: 2
+      |  placeholder_text: type here
+      |""".trimMargin(), actual)
   }
 
   fun `test add placeholder action is disabled in non templated based framework lesson`() {

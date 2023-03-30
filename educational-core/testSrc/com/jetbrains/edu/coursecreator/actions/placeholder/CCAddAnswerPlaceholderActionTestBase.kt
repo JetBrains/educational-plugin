@@ -25,7 +25,6 @@ abstract class CCAddAnswerPlaceholderActionTestBase : CCAnswerPlaceholderTestBas
   }
 
   protected fun TaskFile.createExpectedPlaceholder(offset: Int, text: String, possibleAnswer: String, index: Int = 0): AnswerPlaceholder {
-
     val placeholderExpected = AnswerPlaceholder()
     placeholderExpected.offset = offset
     placeholderExpected.length = possibleAnswer.length
