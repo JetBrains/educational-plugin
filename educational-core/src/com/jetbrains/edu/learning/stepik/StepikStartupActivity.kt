@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -31,17 +29,10 @@ class StepikStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsManager.submissionsSupported()) return
 
-    if (EduSettings.getInstance().user != null) {
-      submissionsManager.prepareSubmissionsContent {
-        loadSolutionsFromStepik(project, course)
-      }
-    }
-
     val updateChecker = StepikUpdateChecker.getInstance(project)
     StepikConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {
       override fun userLoggedIn() {
         if (project.isDisposed) return
-        submissionsManager.prepareSubmissionsContent()
         if (!course.isStepikPublic) {
           updateChecker.check()
         }
@@ -76,23 +67,6 @@ class StepikStartupActivity : StartupActivity {
     builder.setHideOnCloseClick(true)
     val balloon = builder.createBalloon()
     balloon.showInCenterOf(widgetComponent)
-  }
-
-  private fun loadSolutionsFromStepik(project: Project, course: EduCourse) {
-    if (project.isDisposed || !course.isStepikRemote) return
-
-    val component = PropertiesComponent.getInstance(project)
-    if (component.getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      component.setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false)
-      return
-    }
-    try {
-      StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
-      EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.PROJECT_REOPEN)
-    }
-    catch (e: Exception) {
-      LOG.warn(e)
-    }
   }
 
   companion object {

@@ -9,15 +9,12 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.messages.EduCoreBundle;
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector;
 import com.jetbrains.edu.learning.stepik.CourseUpdateInfo;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.hyperskill.StepikUpdateChecker;
-import com.jetbrains.edu.learning.submissions.SubmissionsManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,21 +39,16 @@ public class SyncStepikCourseAction extends SyncCourseAction {
     ProgressManager.getInstance().run(new Task.Backgroundable(project, EduCoreBundle.message("stepik.updating.course"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        doSynchronizeCourse(project, (EduCourse)course, indicator);
+        doSynchronizeCourse(project, (EduCourse)course);
       }
     });
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET);
   }
 
-  private void doSynchronizeCourse(@NotNull Project project, @NotNull EduCourse course, @NotNull ProgressIndicator indicator) {
+  private void doSynchronizeCourse(@NotNull Project project, @NotNull EduCourse course) {
     updateCourseStructure(project, course);
     StepikUpdateChecker.getInstance(project).queueNextCheck();
-    SubmissionsManager submissionsManager = SubmissionsManager.getInstance(project);
-    if (submissionsManager.submissionsSupported()) {
-      submissionsManager.getSubmissions(CourseExt.getAllTasks(course));
-      StepikSolutionsLoader.getInstance(project).loadSolutions(course, indicator);
-    }
   }
 
   public void updateCourseStructure(@NotNull Project project, @NotNull EduCourse course) {

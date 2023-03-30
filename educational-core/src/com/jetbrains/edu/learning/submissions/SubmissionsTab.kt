@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
@@ -84,6 +83,8 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
     private const val SUBMISSION_PROTOCOL = "submission://"
     private const val SUBMISSION_DIFF_URL = "${SUBMISSION_PROTOCOL}diff/"
     private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
+    const val OPEN_PLACEHOLDER_TAG = "<placeholder>"
+    const val CLOSE_PLACEHOLDER_TAG = "</placeholder>"
 
     private val textStyleHeader: String
       get() = StyleManager().textStyleHeader
@@ -150,9 +151,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
           null
         }
         else {
-          val submissionFileContent = DiffContentFactory.getInstance().create(
-            StepikSolutionsLoader.removeAllTags(submissionText),
-            virtualFile.fileType)
+          val submissionFileContent = DiffContentFactory.getInstance().create(submissionText.removeAllTags(), virtualFile.fileType)
           SimpleDiffRequest(EduCoreBundle.message("submissions.compare"),
                             currentFileContent,
                             submissionFileContent,
@@ -162,6 +161,9 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       }
       DiffManager.getInstance().showDiff(project, SimpleDiffRequestChain(requests), DiffDialogHints.FRAME)
     }
+
+    private fun String.removeAllTags(): String =
+      replace(OPEN_PLACEHOLDER_TAG.toRegex(), "").replace(CLOSE_PLACEHOLDER_TAG.toRegex(), "")
 
     private fun submissionLink(submission: Submission, isToShowSubmissionsIds: Boolean): String? {
       val time = submission.time ?: return null

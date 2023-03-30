@@ -217,7 +217,6 @@
     <projectService serviceInterface="com.jetbrains.edu.learning.framework.FrameworkLessonManager"
                     serviceImplementation="com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
-    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>

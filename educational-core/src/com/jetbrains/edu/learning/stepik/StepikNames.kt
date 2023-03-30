@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.stepik.changeHost.StepikHost
 object StepikNames {
   const val STEPIK = "Stepik"
   const val STEPIK_TYPE = STEPIK
-  const val ARE_SOLUTIONS_UPDATED_PROPERTY = "Educational.StepikSolutionUpdated"
   const val STEPIK_DEFAULT_URL = "https://stepik.org"
   const val STEPIK_HOST_ORDINAL_PROPERTY = "stepik.host.ordinal"
   const val STEPIK_RELEASE_URL = "https://release.stepik.org"

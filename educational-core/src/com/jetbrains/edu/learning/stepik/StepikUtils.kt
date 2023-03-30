@@ -45,8 +45,6 @@ fun getStepikLink(task: Task, lesson: Lesson): String {
  */
 fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
   StepikCourseUpdater(project, course).updateCourse(courseFromStepik)
-  SubmissionsManager.getInstance(project).getSubmissions(course.allTasks)
-  StepikSolutionsLoader.getInstance(project).loadSolutionsInBackground()
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {

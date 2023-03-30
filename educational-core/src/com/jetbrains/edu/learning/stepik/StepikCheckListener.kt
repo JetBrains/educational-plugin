@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 
 class StepikCheckListener: PostSolutionCheckListener() {
 
-  override fun postSubmission(project: Project, task: Task): StepikBasedSubmission? = StepikSolutionsLoader.postSolution(project, task)
+  override fun postSubmission(project: Project, task: Task): StepikBasedSubmission? = null
 
   override fun isUpToDate(course: EduCourse, task: Task): Boolean = task.isUpToDate
 

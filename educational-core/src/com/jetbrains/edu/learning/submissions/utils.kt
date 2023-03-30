@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.CLOSE_PLACEHOLDER_TAG
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.OPEN_PLACEHOLDER_TAG
+import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.CLOSE_PLACEHOLDER_TAG
+import com.jetbrains.edu.learning.submissions.SubmissionsTab.Companion.OPEN_PLACEHOLDER_TAG
 import java.util.*
 
 private const val MAX_FILE_SIZE: Int = 5 * 1024 * 1024 // 5 Mb
