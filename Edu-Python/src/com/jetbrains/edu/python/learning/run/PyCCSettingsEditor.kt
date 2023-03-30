@@ -1,68 +1,54 @@
-package com.jetbrains.edu.python.learning.run;
+package com.jetbrains.edu.python.learning.run
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.python.run.AbstractPyCommonOptionsForm;
-import com.jetbrains.python.run.AbstractPythonRunConfiguration;
-import com.jetbrains.python.run.PyCommonOptionsFormData;
-import com.jetbrains.python.run.PyCommonOptionsFormFactory;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.project.Project
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle
+import com.jetbrains.python.run.AbstractPyCommonOptionsForm
+import com.jetbrains.python.run.AbstractPythonRunConfiguration
+import com.jetbrains.python.run.PyCommonOptionsFormData
+import com.jetbrains.python.run.PyCommonOptionsFormFactory
+import javax.swing.JComponent
+import javax.swing.JTextField
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.List;
+class PyCCSettingsEditor(private val project: Project) : SettingsEditor<PyCCRunTestConfiguration>() {
+  private lateinit var form: AbstractPyCommonOptionsForm
+  private lateinit var pathToTestFileField: JTextField
 
-public class PyCCSettingsEditor extends SettingsEditor<PyCCRunTestConfiguration> {
-  private AbstractPyCommonOptionsForm myForm;
-  private final Project myProject;
-  private JTextField myPathToTestFileField;
-  private JPanel myPanel;
-
-  public PyCCSettingsEditor(Project project) {
-    myProject = project;
+  override fun resetEditorFrom(configuration: PyCCRunTestConfiguration) {
+    AbstractPythonRunConfiguration.copyParams(configuration, form)
+    pathToTestFileField.text = configuration.pathToTest
   }
 
-  @Override
-  protected void resetEditorFrom(@NotNull PyCCRunTestConfiguration s) {
-    AbstractPythonRunConfiguration.copyParams(s, myForm);
-    myPathToTestFileField.setText(s.getPathToTest());
+  override fun applyEditorTo(configuration: PyCCRunTestConfiguration) {
+    AbstractPythonRunConfiguration.copyParams(form, configuration)
+    configuration.pathToTest = pathToTestFileField.text
   }
 
-  @Override
-  protected void applyEditorTo(@NotNull PyCCRunTestConfiguration s) {
-    AbstractPythonRunConfiguration.copyParams(myForm, s);
-    s.setPathToTest(myPathToTestFileField.getText());
-  }
-
-  @NotNull
-  @Override
-  protected JComponent createEditor() {
-    final JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(myPanel, BorderLayout.NORTH);
-    myForm = createEnvPanel();
-    mainPanel.add(myForm.getMainPanel(), BorderLayout.SOUTH);
-    return mainPanel;
-  }
-
-
-  @NotNull
-  private AbstractPyCommonOptionsForm createEnvPanel() {
-    return PyCommonOptionsFormFactory.getInstance().createForm(new PyCommonOptionsFormData() {
-      @Override
-      public Project getProject() {
-        return myProject;
+  override fun createEditor(): JComponent {
+    form = createEnvPanel()
+    return panel {
+      row(EduPythonBundle.message("run.configuration.path.to.tests")) {
+        // BACKCOMPAT: 2022.2 Replace with `align(Align.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        pathToTestFileField = textField().horizontalAlign(HorizontalAlign.FILL).component
       }
-
-      @Override
-      public List<Module> getValidModules() {
-        return AbstractPythonRunConfiguration.getValidModules(myProject);
+      row {
+        // BACKCOMPAT: 2022.2 Replace with `align(Align.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(form.mainPanel).horizontalAlign(HorizontalAlign.FILL)
       }
+    }
+  }
 
-      @Override
-      public boolean showConfigureInterpretersLink() {
-        return false;
-      }
-    });
+  private fun createEnvPanel(): AbstractPyCommonOptionsForm {
+    return PyCommonOptionsFormFactory.getInstance().createForm(object : PyCommonOptionsFormData {
+      override fun getProject() = this@PyCCSettingsEditor.project
+
+      override fun getValidModules() = AbstractPythonRunConfiguration.getValidModules(this@PyCCSettingsEditor.project)
+
+      override fun showConfigureInterpretersLink() = false
+    })
   }
 }

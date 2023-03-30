@@ -42,6 +42,8 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private fun createPanel(project: Project): DialogPanel {
     return panel {
       row {
+        // BACKCOMPAT: 2022.2 Replace `horizontalAlign(HorizontalAlign.FILL)` with `align(Align.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
         textFieldWithBrowseButton(EduCoreBundle.message("course.creator.create.archive.location.title"),
                                   project, FileChooserDescriptorFactory.createSingleFolderDescriptor())
           .label(EduCoreBundle.message("course.creator.create.archive.panel.location"))
@@ -50,6 +52,8 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
           .validation { validateArchivePath(it.text) }
       }.layout(RowLayout.LABEL_ALIGNED)
       row {
+        // BACKCOMPAT: 2022.2 Replace `horizontalAlign(HorizontalAlign.FILL)` with `align(Align.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
         textField()
           .label(EduCoreBundle.message("course.creator.create.archive.panel.author"))
           .bindText(::authorName)
