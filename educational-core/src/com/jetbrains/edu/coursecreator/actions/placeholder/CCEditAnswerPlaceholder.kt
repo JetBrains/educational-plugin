@@ -7,13 +7,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.configFileName
 import org.jetbrains.annotations.NonNls
 
-open class CCEditAnswerPlaceholder :
-  CCAnswerPlaceholderAction(EduCoreBundle.lazyMessage("action.edit.answer.placeholder.text"),
-                            EduCoreBundle.lazyMessage("action.edit.answer.placeholder.description")) {
+open class CCEditAnswerPlaceholder : CCAnswerPlaceholderAction() {
 
   override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
     val answerPlaceholder = state.answerPlaceholder ?: return

@@ -20,8 +20,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   public static final String ACTION_ID = "Educational.Educator.DeleteAllPlaceholders";
 
   public CCDeleteAllAnswerPlaceholdersAction() {
-    super(() -> EduCoreBundle.message("action.delete.all.answer.placeholders.text"),
-          () -> EduCoreBundle.message("action.delete.all.answer.placeholders.description"));
+    super();
   }
 
   @Override
@@ -32,7 +31,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   @Override
   protected void performAnswerPlaceholderAction(@NotNull Project project, @NotNull EduState state) {
     final ClearPlaceholders action = new ClearPlaceholders(project, state.getTaskFile(), state.getEditor());
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.delete.all.answer.placeholders.text"), action,
+    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.Educational.Educator.DeleteAllPlaceholders.text"), action,
                                UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 

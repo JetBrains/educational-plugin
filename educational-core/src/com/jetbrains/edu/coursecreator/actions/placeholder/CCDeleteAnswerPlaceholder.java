@@ -16,7 +16,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
   public static final String ACTION_ID = "Educational.Educator.DeleteAnswerPlaceholder";
 
   public CCDeleteAnswerPlaceholder() {
-    super(EduCoreBundle.lazyMessage("label.delete"), EduCoreBundle.lazyMessage("action.delete.answer.placeholder.description"));
+    super();
   }
 
   @Override
@@ -31,7 +31,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
       throw new IllegalStateException("Delete Placeholder action called, but no placeholder found");
     }
 
-    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.delete.answer.placeholder.text"),
+    EduUtils.runUndoableAction(project, EduCoreBundle.message("action.Educational.Educator.DeleteAnswerPlaceholder.text.full"),
                                new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
                                  public void undo() {

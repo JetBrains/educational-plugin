@@ -15,36 +15,31 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency.Companion.create
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.messages.EduCoreBundle.lazyMessage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 
-open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction(
-  lazyMessage("action.add.answer.placeholder.text"),
-  lazyMessage("action.add.answer.placeholder.description")
-) {
+open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
   private fun addPlaceholder(project: Project, state: EduState) {
     val editor = state.editor
-    val document = editor.document
     FileDocumentManager.getInstance().saveDocument(editor.document)
     val model = editor.selectionModel
     val offset = if (model.hasSelection()) model.selectionStart else editor.caretModel.offset
     val taskFile = state.taskFile
-    val answerPlaceholder = AnswerPlaceholder()
-    val index = taskFile.answerPlaceholders.size
-    answerPlaceholder.index = index
-    answerPlaceholder.taskFile = taskFile
-    answerPlaceholder.offset = offset
     val defaultPlaceholderText = defaultPlaceholderText(project)
-    answerPlaceholder.placeholderText = defaultPlaceholderText
+
+    val answerPlaceholder = AnswerPlaceholder().apply {
+      index = taskFile.answerPlaceholders.size
+      this.taskFile = taskFile
+      this.offset = offset
+      placeholderText = defaultPlaceholderText
+    }
+
     val dlg = createDialog(project, answerPlaceholder)
     if (!dlg.showAndGet()) {
       return
     }
     val answerPlaceholderText = dlg.getPlaceholderText()
-    var possibleAnswer = if (model.hasSelection()) model.selectedText else defaultPlaceholderText
-    if (possibleAnswer == null) {
-      possibleAnswer = defaultPlaceholderText
-    }
+    val selectedText = model.selectedText
+    val possibleAnswer = if (model.hasSelection() && selectedText != null) selectedText else defaultPlaceholderText
     answerPlaceholder.placeholderText = answerPlaceholderText
     answerPlaceholder.length = possibleAnswer.length
     val dependencyInfo = dlg.getDependencyInfo()
@@ -52,10 +47,10 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction(
       answerPlaceholder.placeholderDependency = create(answerPlaceholder, dependencyInfo.dependencyPath, dependencyInfo.isVisible)
     }
     if (!model.hasSelection()) {
-      DocumentUtil.writeInRunUndoTransparentAction { document.insertString(offset, defaultPlaceholderText) }
+      DocumentUtil.writeInRunUndoTransparentAction { editor.document.insertString(offset, defaultPlaceholderText) }
     }
     val action = AddAction(project, answerPlaceholder, taskFile, editor)
-    EduUtils.runUndoableAction(project, message("action.add.answer.placeholder.text"), action)
+    EduUtils.runUndoableAction(project, message("action.Educational.Educator.AddAnswerPlaceholder.text"), action)
   }
 
   open fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
