@@ -1,53 +1,37 @@
-package com.jetbrains.edu.javascript.learning.checkio;
+package com.jetbrains.edu.javascript.learning.checkio
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.annotations.Tag;
-import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
+import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
+import org.jdom.Element
 
-@State(name = JsCheckiOSettings.SERVICE_NAME, storages = @Storage("other.xml"))
-public class JsCheckiOSettings implements PersistentStateComponent<Element> {
-  protected static final String SERVICE_NAME = "JsCheckiOSettings";
-  @Nullable
-  @Tag("JsAccount")
-  private volatile CheckiOAccount myCheckiOAccount;
-
-  @Nullable
-  @Override
-  public Element getState() {
-    return myCheckiOAccount != null ? myCheckiOAccount.serializeIntoService(SERVICE_NAME): null;
-  }
-
-  @Override
-  public void loadState(@NotNull Element settings) {
-    myCheckiOAccount = CheckiOAccount.fromElement(settings);
-  }
-
-  @NotNull
-  public static JsCheckiOSettings getInstance() {
-    return ServiceManager.getService(JsCheckiOSettings.class);
-  }
-
-  @Nullable
-  @Transient
-  public CheckiOAccount getAccount() {
-    return myCheckiOAccount;
-  }
-
-  @Transient
-  public void setAccount(@Nullable CheckiOAccount account) {
-    myCheckiOAccount = account;
-    if (account != null) {
-      JsCheckiOOAuthConnector.INSTANCE.notifyUserLoggedIn();
-    } else {
-      JsCheckiOOAuthConnector.INSTANCE.notifyUserLoggedOut();
+@State(name = JsCheckiOSettings.SERVICE_NAME, storages = [Storage("other.xml")])
+class JsCheckiOSettings : PersistentStateComponent<Element?> {
+  @get:Transient
+  @set:Transient
+  var account: CheckiOAccount? = null
+    set(account) {
+      field = account
+      JsCheckiOOAuthConnector.apply {
+        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
+      }
     }
+
+  override fun getState(): Element? {
+    return account?.serializeIntoService(SERVICE_NAME)
+  }
+
+  override fun loadState(settings: Element) {
+    account = CheckiOAccount.fromElement(settings)
+  }
+
+  companion object {
+    const val SERVICE_NAME = "JsCheckiOSettings"
+    @JvmStatic
+    fun getInstance(): JsCheckiOSettings = service()
   }
 }
