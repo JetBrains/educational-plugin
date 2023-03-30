@@ -8,9 +8,9 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.PlaceholderPainter.hidePlaceholders
 import com.jetbrains.edu.learning.PlaceholderPainter.showPlaceholders
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import org.jetbrains.annotations.VisibleForTesting
 
 class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
   override fun updatePresentation(eduState: EduState, presentation: Presentation) {
@@ -19,7 +19,12 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
 
   override fun performAnswerPlaceholderAction(project: Project, state: EduState) {
     val action = ClearPlaceholders(project, state.taskFile, state.editor)
-    EduUtils.runUndoableAction(project, message("action.Educational.Educator.DeleteAllPlaceholders.text"), action, UndoConfirmationPolicy.REQUEST_CONFIRMATION)
+    EduUtils.runUndoableAction(
+      project,
+      message("action.Educational.Educator.DeleteAllPlaceholders.text"),
+      action,
+      UndoConfirmationPolicy.REQUEST_CONFIRMATION
+    )
   }
 
   private class ClearPlaceholders(project: Project, taskFile: TaskFile, editor: Editor) : TaskFileUndoableAction(
@@ -27,11 +32,7 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
     taskFile,
     editor
   ) {
-    private val placeholders: List<AnswerPlaceholder>
-
-    init {
-      placeholders = ArrayList(taskFile.answerPlaceholders)
-    }
+    private val placeholders = ArrayList(taskFile.answerPlaceholders)
 
     override fun performUndo(): Boolean {
       placeholders.forEach {
@@ -50,6 +51,7 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
   }
 
   companion object {
+    @VisibleForTesting
     const val ACTION_ID = "Educational.Educator.DeleteAllPlaceholders"
   }
 }

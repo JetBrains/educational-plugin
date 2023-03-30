@@ -1,76 +1,44 @@
-package com.jetbrains.edu.coursecreator.actions.placeholder;
+package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.eduState
 
-abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
-
-  protected CCAnswerPlaceholderAction() {
-    super();
+abstract class CCAnswerPlaceholderAction protected constructor() : DumbAwareAction() {
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
+    val eduState = getEduState(project) ?: return
+    performAnswerPlaceholderAction(project, eduState)
   }
 
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    Project project = e.getProject();
-    if (project == null) {
-      return;
-    }
-
-    EduState eduState = getEduState(project);
-    if (eduState == null) {
-      return;
-    }
-    performAnswerPlaceholderAction(project, eduState);
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+    val project = e.project ?: return
+    val state = getEduState(project)
+    state?.let { updatePresentation(it, presentation) }
   }
 
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    Presentation presentation = e.getPresentation();
-    presentation.setEnabledAndVisible(false);
-    Project project = e.getProject();
-    if (project == null) {
-      return;
-    }
+  protected abstract fun updatePresentation(eduState: EduState, presentation: Presentation)
+  protected abstract fun performAnswerPlaceholderAction(project: Project, state: EduState)
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
-    EduState state = getEduState(project);
-    if (state != null) {
-      updatePresentation(state, presentation);
+  private fun getEduState(project: Project): EduState? {
+    if (!isCourseCreator(project)) {
+      return null
     }
-  }
-
-  @Nullable
-  private static EduState getEduState(@NotNull Project project) {
-    if (!CCUtils.isCourseCreator(project)) {
-      return null;
-    }
-    EduState state = OpenApiExtKt.getEduState(project);
-    if (state == null) {
-      return null;
-    }
-    Lesson lesson = state.getTaskFile().getTask().getLesson();
+    val state = project.eduState ?: return null
+    val lesson = state.taskFile.task.lesson
     // Disable all placeholder actions in non template based framework lessons for now
-    if (lesson instanceof FrameworkLesson && !((FrameworkLesson)lesson).isTemplateBased()) {
-      return null;
+    return if (lesson is FrameworkLesson && !lesson.isTemplateBased) {
+      null
     }
-    return state;
-  }
-
-  protected abstract void updatePresentation(@NotNull EduState eduState, @NotNull Presentation presentation);
-
-  protected abstract void performAnswerPlaceholderAction(@NotNull Project project, final @NotNull EduState state);
-
-  @Override
-  public @NotNull ActionUpdateThread getActionUpdateThread() {
-    return ActionUpdateThread.EDT;
+    else state
   }
 }
