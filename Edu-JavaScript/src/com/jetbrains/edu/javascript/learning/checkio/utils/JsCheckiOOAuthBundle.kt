@@ -8,7 +8,7 @@ import org.jetbrains.annotations.PropertyKey
 private const val BUNDLE_NAME = "checkio.js-checkio-oauth"
 
 object JsCheckiOOAuthBundle : EduPropertiesBundle(BUNDLE_NAME) {
-  fun value(key: @PropertyKey(resourceBundle = BUNDLE_NAME) String): String {
+  fun value(@PropertyKey(resourceBundle = BUNDLE_NAME) key:  String): String {
     return valueOrEmpty(key)
   }
 }
