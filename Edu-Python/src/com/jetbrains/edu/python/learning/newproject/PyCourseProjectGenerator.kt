@@ -15,8 +15,6 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.getBaseSdk
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.PyDetectedSdk
@@ -34,7 +32,7 @@ open class PyCourseProjectGenerator(
     var sdk = projectSettings.sdk
     if (sdk is PySdkToInstall) {
       ApplicationManager.getApplication().invokeAndWait {
-        installSdk(sdk as PySdkToInstall)
+        PyLanguageSettings.installSdk(sdk as PySdkToInstall)
       }
       createAndAddVirtualEnv(project, projectSettings)
       sdk = projectSettings.sdk
@@ -83,7 +81,7 @@ open class PyCourseProjectGenerator(
         val sdk = settings.sdk
         return sdk?.homePath
       }
-      return getBaseSdk(course)?.path
+      return PyLanguageSettings.getBaseSdk(course)?.path
     }
 
     private fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {
