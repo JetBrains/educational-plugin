@@ -1,33 +1,24 @@
 package com.jetbrains.edu.python.learning.run
 
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.ExecutionResult
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.target.TargetEnvironment
 import com.intellij.execution.target.TargetEnvironmentRequest
 import com.intellij.execution.target.value.constant
 import com.intellij.execution.ui.ConsoleView
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.python.learning.getCurrentTaskFilePath
-import com.jetbrains.python.run.CommandLinePatcher
 import com.jetbrains.python.run.PythonCommandLineState
 import com.jetbrains.python.run.PythonExecution
 import com.jetbrains.python.run.PythonScriptExecution
@@ -67,16 +58,7 @@ class PyCCCommandLineState private constructor(
     return console
   }
 
-  @Throws(ExecutionException::class)
-  override fun execute(executor: Executor, processStarter: PythonProcessStarter, vararg patchers: CommandLinePatcher): ExecutionResult {
-    invokeAndWaitIfNeeded {
-      runWriteAction {
-        CheckUtils.flushWindows(task, taskDir)
-      }
-    }
-    return super.execute(executor, processStarter, *patchers)
-  }
-
+  @Suppress("UnstableApiUsage")
   override fun buildPythonExecution(helpersAwareRequest: HelpersAwareTargetEnvironmentRequest): PythonExecution {
     val pythonScriptExecution = PythonScriptExecution()
     pythonScriptExecution.pythonScriptPath = constant(runConfiguration.pathToTest)
@@ -90,21 +72,10 @@ class PyCCCommandLineState private constructor(
     return pythonScriptExecution
   }
 
-  override fun getPythonExecutionWorkingDir(targetEnvironmentRequest: TargetEnvironmentRequest): Function<TargetEnvironment, String>? {
+  @Suppress("UnstableApiUsage")
+  override fun getPythonExecutionWorkingDir(targetEnvironmentRequest: TargetEnvironmentRequest): Function<TargetEnvironment, String> {
     return constant(taskDir.path)
   }
-
-  @Throws(ExecutionException::class)
-  override fun doCreateProcess(commandLine: GeneralCommandLine): ProcessHandler {
-    val handler = super.doCreateProcess(commandLine)
-    handler.addProcessListener(object : ProcessAdapter() {
-      override fun processTerminated(event: ProcessEvent) {
-        ApplicationManager.getApplication().invokeLater { EduUtils.deleteWindowDescriptions(task, taskDir) }
-      }
-    })
-    return handler
-  }
-
   companion object {
     private val LOG = Logger.getInstance(PyCCCommandLineState::class.java)
 

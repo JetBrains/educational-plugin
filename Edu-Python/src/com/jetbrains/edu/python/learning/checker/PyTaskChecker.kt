@@ -8,7 +8,6 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -16,12 +15,12 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiManager
 import com.intellij.util.text.nullize
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.createRunConfiguration
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -112,17 +111,6 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     ApplicationManager.getApplication().invokeLater {
       val taskDir = task.getDir(project.courseDir)
       if (taskDir == null) return@invokeLater
-      for ((_, taskFile) in task.taskFiles) {
-        if (taskFile.answerPlaceholders.size < 2) {
-          continue
-        }
-        val course = task.lesson.course
-        if (course.isStudy) {
-          runUndoTransparentWriteAction {
-            PySmartChecker.runSmartTestProcess(taskDir, PyTestRunner(taskDir), taskFile, project)
-          }
-        }
-      }
       val eduState = project.eduState ?: return@invokeLater
       CheckUtils.navigateToFailedPlaceholder(eduState, task, taskDir, project)
     }

@@ -77,13 +77,6 @@ object CheckUtils {
   fun fillWithIncorrect(message: String): String =
     message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
 
-  fun flushWindows(task: Task, taskDir: VirtualFile) {
-    for ((_, taskFile) in task.taskFiles) {
-      val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-      EduUtils.flushWindows(taskFile, virtualFile)
-    }
-  }
-
   fun createDefaultRunConfiguration(project: Project, task: Task): RunnerAndConfigurationSettings? {
     val taskFile = task.getCodeTaskFile(project) ?: return null
     return runReadAction {

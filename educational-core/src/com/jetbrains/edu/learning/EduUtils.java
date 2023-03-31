@@ -21,8 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts.Command;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,8 +29,6 @@ import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.util.io.zip.JBZipEntry;
-import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -40,19 +36,17 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.json.CourseArchiveReader;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.ProgressUtil;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionUtil;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -105,18 +99,6 @@ public class EduUtils {
   public static void updateToolWindows(@NotNull final Project project) {
     TaskDescriptionView.getInstance(project).updateTaskDescription();
     ProgressUtil.updateCourseProgress(project);
-  }
-
-  public static void deleteFile(@Nullable final VirtualFile file) {
-    if (file == null) {
-      return;
-    }
-    try {
-      file.delete(EduUtils.class);
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
   }
 
   public static boolean isTestsFile(@NotNull Task task, @NotNull String path) {
@@ -253,20 +235,6 @@ public class EduUtils {
     return CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? DescriptionFormat.HTML : DescriptionFormat.MD;
   }
 
-  @Nullable
-  public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return null;
-    Lesson lesson = course.getLessons().get(lessonIndex - 1);
-    Task task = lesson.getTaskList().get(taskIndex - 1);
-    @SystemIndependent String basePath = project.getBasePath();
-    if (basePath == null) return null;
-    String filePath = FileUtil.join(basePath, lesson.getName(), task.getName(), fileName);
-
-    VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
-  }
-
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
     int startOffset = answerPlaceholder.getOffset();
     final int endOffset = answerPlaceholder.getEndOffset();
@@ -320,7 +288,6 @@ public class EduUtils {
     return taskRef.get();
   }
 
-  @SuppressWarnings("UnstableApiUsage")
   public static void runUndoableAction(Project project,
                                        @Command String name,
                                        UndoableAction action,
@@ -340,6 +307,7 @@ public class EduUtils {
   }
 
   public static boolean isAndroidStudio() {
+    //noinspection UnstableApiUsage
     return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
   }
 
@@ -347,32 +315,6 @@ public class EduUtils {
                                        @Nls(capitalization = Nls.Capitalization.Title) String name,
                                        UndoableAction action) {
     runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
-  }
-
-  static void deleteWindowsFile(@NotNull final VirtualFile taskDir, @NotNull final String name) {
-    final VirtualFile fileWindows = taskDir.findChild(name);
-    if (fileWindows != null && fileWindows.exists()) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        try {
-          fileWindows.delete(taskDir);
-        }
-        catch (IOException e) {
-          LOG.warn("Tried to delete non existed _windows file");
-        }
-      });
-    }
-  }
-
-  public static void deleteWindowDescriptions(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
-    for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      VirtualFile virtualFile = findTaskFileInDir(entry.getValue(), taskDir);
-      if (virtualFile == null) {
-        continue;
-      }
-      String windowsFileName = virtualFile.getNameWithoutExtension() + EduNames.WINDOWS_POSTFIX;
-      VirtualFile parentDir = virtualFile.getParent();
-      deleteWindowsFile(parentDir, windowsFileName);
-    }
   }
 
   public static void replaceAnswerPlaceholder(@NotNull final Document document,
@@ -387,43 +329,6 @@ public class EduUtils {
     FileDocumentManager.getInstance().saveAllDocuments();
     SaveAndSyncHandler.getInstance().refreshOpenFiles();
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
-  }
-
-  @Nullable
-  public static VirtualFile flushWindows(@NotNull final TaskFile taskFile, @NotNull final VirtualFile file) {
-    final VirtualFile taskDir = file.getParent();
-    VirtualFile fileWindows = null;
-    final Document document = FileDocumentManager.getInstance().getDocument(file);
-    if (document == null) {
-      LOG.debug("Couldn't flush windows");
-      return null;
-    }
-    if (taskDir != null) {
-      final String name = file.getNameWithoutExtension() + EduNames.WINDOWS_POSTFIX;
-      deleteWindowsFile(taskDir, name);
-      PrintWriter printWriter = null;
-      try {
-        fileWindows = taskDir.createChildData(taskFile, name);
-        printWriter = new PrintWriter(new FileOutputStream(fileWindows.getPath()));
-        for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-          int start = answerPlaceholder.getOffset();
-          int end = answerPlaceholder.getEndOffset();
-          final String windowDescription = document.getText(new TextRange(start, end));
-          printWriter.println("#educational_plugin_window = " + windowDescription);
-        }
-        ApplicationManager.getApplication().runWriteAction(() -> FileDocumentManager.getInstance().saveDocument(document));
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-      finally {
-        if (printWriter != null) {
-          printWriter.close();
-        }
-        synchronize();
-      }
-    }
-    return fileWindows;
   }
 
   public static String addMnemonic(String text) {
