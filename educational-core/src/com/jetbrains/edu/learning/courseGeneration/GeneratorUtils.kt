@@ -376,24 +376,6 @@ object GeneratorUtils {
     }
   }
 
-  /**
-   * Reformat the code so that learners do not see tons of IDE highlighting.
-   * Should be used for third-party sources of courses when language style guide is systematically ignored.
-   * */
-  @JvmStatic
-  fun reformatCodeInAllTaskFiles(project: Project, course: Course) {
-    course.visitTasks {
-      for ((_, file) in it.taskFiles) {
-        val virtualFile = file.getVirtualFile(project) ?: continue
-        val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: continue
-        runInEdt {
-          WriteCommandAction.runWriteCommandAction(project) {
-            CodeStyleManager.getInstance(project).reformat(psiFile)
-          }
-        }
-      }
-    }
-  }
 
   private val GRADLE_INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
   private val LEADING_AND_TRAILING_DOTS = "(^[.]+)|([.]+\$)".toRegex()

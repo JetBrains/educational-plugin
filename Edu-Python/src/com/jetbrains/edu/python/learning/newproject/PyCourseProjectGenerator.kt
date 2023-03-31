@@ -1,124 +1,98 @@
-package com.jetbrains.edu.python.learning.newproject;
+package com.jetbrains.edu.python.learning.newproject
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
-import com.jetbrains.python.newProject.PyNewProjectSettings;
-import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.sdk.PyDetectedSdk;
-import com.jetbrains.python.sdk.PySdkExtKt;
-import com.jetbrains.python.sdk.PySdkToInstall;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.ExecutionException
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.python.learning.installRequiredPackages
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
+import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.getBaseSdk
+import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
+import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.python.packaging.PyPackageManager
+import com.jetbrains.python.sdk.PyDetectedSdk
+import com.jetbrains.python.sdk.PySdkToInstall
+import com.jetbrains.python.sdk.associateWithModule
+import com.jetbrains.python.sdk.createSdkByGenerateTask
 
-import java.io.IOException;
-import java.util.List;
+open class PyCourseProjectGenerator(
+  builder: EduCourseBuilder<PyNewProjectSettings>,
+  course: Course
+) : CourseProjectGenerator<PyNewProjectSettings>(builder, course) {
 
-import static com.jetbrains.edu.python.learning.PyEduUtils.installRequiredPackages;
-
-public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
-  private static final Logger LOG = Logger.getInstance(PyCourseProjectGenerator.class);
-
-  public PyCourseProjectGenerator(@NotNull EduCourseBuilder<PyNewProjectSettings> builder, @NotNull Course course) {
-    super(builder, course);
-  }
-
-  @Override
-  public void createAdditionalFiles(@NotNull CourseInfoHolder<Course> holder,
-                                    boolean isNewCourse) throws IOException {
-    final String testHelper = EduNames.TEST_HELPER;
-    if (holder.getCourseDir().findChild(testHelper) != null) return;
-    final String templateText = GeneratorUtils.getInternalTemplateText("test_helper");
-    GeneratorUtils.createChildFile(holder, holder.getCourseDir(), testHelper, templateText, true);
-  }
-
-  @Override
-  public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
-    super.afterProjectGenerated(project, settings);
-    Sdk sdk = settings.getSdk();
-
-    if (sdk instanceof PySdkToInstall) {
-      Sdk selectedSdk = sdk;
-      ApplicationManager.getApplication().invokeAndWait(() -> {
-        PyLanguageSettings.installSdk((PySdkToInstall)selectedSdk);
-      });
-      createAndAddVirtualEnv(project, settings);
-      sdk = settings.getSdk();
-    }
-
-    if (sdk != null && sdk.getSdkType() == PyFakeSdkType.INSTANCE) {
-      createAndAddVirtualEnv(project, settings);
-      sdk = settings.getSdk();
-    }
-    sdk = updateSdkIfNeeded(project, sdk);
-    SdkConfigurationUtil.setDirectoryProjectSdk(project, sdk);
-
-    if (sdk == null) {
-      return;
-    }
-    installRequiredPackages(project, sdk);
-  }
-
-  public void createAndAddVirtualEnv(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return;
-    }
-
-    final String baseSdkPath = getBaseSdkPath(settings, course);
-    if (baseSdkPath != null) {
-      final PyDetectedSdk baseSdk = new PyDetectedSdk(baseSdkPath);
-      final String virtualEnvPath = project.getBasePath() + "/.idea/VirtualEnvironment";
-      final Sdk sdk = PySdkExtKt.createSdkByGenerateTask(new Task.WithResult<>(
-        project,
-        EduPythonBundle.message("creating.virtual.environment"),
-        false) {
-        @Override
-        protected String compute(@NotNull ProgressIndicator indicator) throws ExecutionException {
-          indicator.setIndeterminate(true);
-          final PyPackageManager packageManager = PyPackageManager.getInstance(baseSdk);
-          return packageManager.createVirtualEnv(virtualEnvPath, false);
-        }
-      }, getAllSdks(), baseSdk, project.getBasePath(), null);
-      if (sdk == null) {
-        LOG.warn("Failed to create virtual env in " + virtualEnvPath);
-        return;
+  override fun afterProjectGenerated(project: Project, projectSettings: PyNewProjectSettings) {
+    super.afterProjectGenerated(project, projectSettings)
+    var sdk = projectSettings.sdk
+    if (sdk is PySdkToInstall) {
+      ApplicationManager.getApplication().invokeAndWait {
+        installSdk(sdk as PySdkToInstall)
       }
-      settings.setSdk(sdk);
-      SdkConfigurationUtil.addSdk(sdk);
-      PySdkExtKt.associateWithModule(sdk, null, project.getBasePath());
+      createAndAddVirtualEnv(project, projectSettings)
+      sdk = projectSettings.sdk
     }
-  }
-
-  @Nullable
-  private static String getBaseSdkPath(@NotNull PyNewProjectSettings settings, Course course) {
-    if (OpenApiExtKt.isUnitTestMode()) {
-      Sdk sdk = settings.getSdk();
-      return sdk != null ? sdk.getHomePath() : null;
+    if (sdk != null && sdk.sdkType === PyFakeSdkType) {
+      createAndAddVirtualEnv(project, projectSettings)
+      sdk = projectSettings.sdk
     }
-    PyBaseSdkDescriptor baseSdk = PyLanguageSettings.getBaseSdk(course);
-    return baseSdk == null ? null : baseSdk.getPath();
+    sdk = updateSdkIfNeeded(project, sdk)
+    SdkConfigurationUtil.setDirectoryProjectSdk(project, sdk)
+    if (sdk == null) {
+      return
+    }
+    installRequiredPackages(project, sdk)
   }
 
-  @Nullable
-  private static Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk) {
-    PySdkSettingsHelper helper = PySdkSettingsHelper.firstAvailable();
-    return helper.updateSdkIfNeeded(project, sdk);
+  private fun createAndAddVirtualEnv(project: Project, settings: PyNewProjectSettings) {
+    val course = StudyTaskManager.getInstance(project).course ?: return
+    val baseSdkPath = getBaseSdkPath(settings, course) ?: return
+    val baseSdk = PyDetectedSdk(baseSdkPath)
+    val virtualEnvPath = project.basePath + "/.idea/VirtualEnvironment"
+    val sdk = createSdkByGenerateTask(object : Task.WithResult<String, ExecutionException>(
+      project,
+      message("creating.virtual.environment"),
+      false
+    ) {
+      override fun compute(indicator: ProgressIndicator): String {
+        indicator.isIndeterminate = true
+        return PyPackageManager.getInstance(baseSdk).createVirtualEnv(virtualEnvPath, false)
+      }
+    }, allSdks, baseSdk, project.basePath, null)
+    if (sdk == null) {
+      LOG.warn("Failed to create virtual env in $virtualEnvPath")
+      return
+    }
+    settings.sdk = sdk
+    SdkConfigurationUtil.addSdk(sdk)
+    sdk.associateWithModule(null, project.basePath)
   }
 
-  @NotNull
-  private static List<Sdk> getAllSdks() {
-    PySdkSettingsHelper helper = PySdkSettingsHelper.firstAvailable();
-    return helper.getAllSdks();
+  companion object {
+    private val LOG = Logger.getInstance(PyCourseProjectGenerator::class.java)
+
+    private fun getBaseSdkPath(settings: PyNewProjectSettings, course: Course): String? {
+      if (isUnitTestMode) {
+        val sdk = settings.sdk
+        return sdk?.homePath
+      }
+      return getBaseSdk(course)?.path
+    }
+
+    private fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {
+      return PySdkSettingsHelper.firstAvailable().updateSdkIfNeeded(project, sdk)
+    }
+
+    private val allSdks: List<Sdk>
+      get() {
+        return PySdkSettingsHelper.firstAvailable().getAllSdks()
+      }
   }
 }

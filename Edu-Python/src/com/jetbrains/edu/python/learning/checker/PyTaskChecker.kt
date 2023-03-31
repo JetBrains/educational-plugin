@@ -36,7 +36,6 @@ import java.io.IOException
 /**
  * Checker for legacy python courses
  * @see com.jetbrains.edu.python.learning.PyConfigurator
- * @see fileTemplates.internal (test_helper.py)
  */
 open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 

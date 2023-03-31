@@ -23,12 +23,6 @@ fun VirtualFile.fileInfo(project: Project): FileInfo? {
 
   val taskRelativePath = pathRelativeToTask(project)
 
-  if (taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
-      || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
-      || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
-    return null
-  }
-
   return FileInfo.FileInTask(task, taskRelativePath)
 }
 
@@ -37,8 +31,7 @@ private fun shouldIgnore(file: VirtualFile, project: Project, task: Task): Boole
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
   if (course.configurator?.excludeFromArchive(project, file) == true) return true
-  if (task.shouldBeEmpty(file.path)) return true
-  return false
+  return task.shouldBeEmpty(file.path)
 }
 
 sealed class FileInfo {

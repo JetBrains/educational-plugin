@@ -2,7 +2,6 @@ package com.jetbrains.edu.python.learning
 
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
-import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -26,9 +25,7 @@ class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
   override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
-    return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
-      override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
-    }
+    return PyCourseProjectGenerator(this@PyNewCourseBuilder, course)
   }
 
   override fun getDefaultTaskTemplates(
