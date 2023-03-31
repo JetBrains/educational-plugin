@@ -35,9 +35,7 @@ class StepikSubmissionsProvider : SubmissionsProvider {
     return tasks.associate { Pair(it.id, StepikConnector.getInstance().getSubmissions(it.id)) }
   }
 
-  override fun areSubmissionsAvailable(course: Course): Boolean {
-    return course is EduCourse && course.isStudy && course.isStepikRemote
-  }
+  override fun areSubmissionsAvailable(course: Course): Boolean = false
 
   override fun getPlatformName(): String = StepikNames.STEPIK
 
