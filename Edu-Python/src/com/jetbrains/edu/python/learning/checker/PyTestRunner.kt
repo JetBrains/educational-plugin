@@ -1,61 +1,45 @@
-package com.jetbrains.edu.python.learning.checker;
+package com.jetbrains.edu.python.learning.checker
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames;
-import com.jetbrains.python.PythonLanguage;
-import com.jetbrains.python.sdk.PythonSdkUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager.findConfigurator
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.python.PythonLanguage
+import com.jetbrains.python.sdk.PythonSdkUtil
+import java.io.File
 
-import java.io.File;
-import java.util.Map;
+internal class PyTestRunner(private val taskDir: VirtualFile) {
+  fun createCheckProcess(project: Project, executablePath: String): Process? {
+    val module = ModuleManager.getInstance(project).modules[0]
+    val sdk = PythonSdkUtil.findPythonSdk(module)
+    val configurator = findConfigurator(EduFormatNames.PYCHARM, DEFAULT_ENVIRONMENT, PythonLanguage.getInstance())
+    if (configurator == null) {
+      LOG.warn("Plugin configurator for Python is null")
+      return null
+    }
+    val commandLine = GeneralCommandLine()
+    commandLine.withWorkDirectory(taskDir.path)
+    commandLine.environment[PYTHONPATH] = project.courseDir.path
 
-import static com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT;
-
-class PyTestRunner {
-  private static final Logger LOG = Logger.getInstance(PyTestRunner.class);
-  private static final String PYTHONPATH = "PYTHONPATH";
-  @NotNull private final VirtualFile myTaskDir;
-  private GeneralCommandLine myCommandLine;
-
-  PyTestRunner(@NotNull final VirtualFile taskDir) {
-    myTaskDir = taskDir;
+    if (sdk != null) {
+      val pythonPath = sdk.homePath ?: return null
+      commandLine.exePath = pythonPath
+      val testRunner = File(taskDir.path, configurator.testFileName)
+      commandLine.addParameter(testRunner.path)
+      commandLine.addParameter(FileUtil.toSystemDependentName(executablePath))
+      return commandLine.createProcess()
+    }
+    return null
   }
 
-  Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
-    final Sdk sdk = PythonSdkUtil.findPythonSdk(ModuleManager.getInstance(project).getModules()[0]);
-    EduConfigurator<?> configurator = EduConfiguratorManager.findConfigurator(EduFormatNames.PYCHARM, DEFAULT_ENVIRONMENT,
-                                                                              PythonLanguage.getInstance());
-    if (configurator == null) {
-      LOG.warn("Plugin configurator for Python is null");
-      return null;
-    }
-    final String testsFileName = configurator.getTestFileName();
-    final File testRunner = new File(myTaskDir.getPath(), testsFileName);
-    myCommandLine = new GeneralCommandLine();
-    myCommandLine.withWorkDirectory(myTaskDir.getPath());
-    final Map<String, String> env = myCommandLine.getEnvironment();
-
-    final VirtualFile courseDir = OpenApiExtKt.getCourseDir(project);
-    env.put(PYTHONPATH, courseDir.getPath());
-    if (sdk != null) {
-      String pythonPath = sdk.getHomePath();
-      if (pythonPath != null) {
-        myCommandLine.setExePath(pythonPath);
-        myCommandLine.addParameter(testRunner.getPath());
-        myCommandLine.addParameter(FileUtil.toSystemDependentName(executablePath));
-        return myCommandLine.createProcess();
-      }
-    }
-    return null;
+  companion object {
+    private val LOG = Logger.getInstance(PyTestRunner::class.java)
+    private const val PYTHONPATH = "PYTHONPATH"
   }
 }
