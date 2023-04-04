@@ -44,6 +44,14 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
           taskFile("src/task.sql")
         }
       }
+      frameworkLesson("framework_lesson2") {
+        eduTask("task3") {
+          taskFile("src/task.sql")
+        }
+        eduTask("task4") {
+          taskFile("src/task.sql")
+        }
+      }
     }
 
     createCourseStructure(course)

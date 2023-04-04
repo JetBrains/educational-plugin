@@ -169,7 +169,6 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     val dataSourceRegistry = DataSourceRegistry(project)
     val dataSources = mutableListOf<LocalDataSource>()
 
-    // TODO: support framework lessons
     course.visitTasks {
       val url = it.databaseUrl(project) ?: return@visitTasks
       dataSourceRegistry.builder
