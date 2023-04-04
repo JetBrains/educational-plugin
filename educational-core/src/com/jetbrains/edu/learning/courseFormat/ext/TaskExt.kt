@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.selectedTaskFile
@@ -197,6 +198,9 @@ fun Task.revertTaskParameters(project: Project) {
     }
     is DataTask -> {
       attempt = null
+    }
+    is SortingBasedTask -> {
+      restoreInitialOrdering()
     }
   }
 }

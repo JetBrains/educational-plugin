@@ -59,7 +59,7 @@ class SwingToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun updateTaskSpecificPanel(task: Task?) {
     taskSpecificPanel.removeAll()
-    val panel = task.createSpecificPanel()
+    val panel = createSpecificPanel(task)
     if (panel != null) {
       taskSpecificPanel.add(panel, BorderLayout.CENTER)
       taskSpecificPanel.revalidate()

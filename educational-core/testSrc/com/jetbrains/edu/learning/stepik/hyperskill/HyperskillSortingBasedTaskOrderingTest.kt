@@ -65,4 +65,12 @@ class HyperskillSortingBasedTaskOrderingTest : EduTestCase() {
       task.moveOptionDown(2)
     }
   }
+
+  fun `test restore initial ordering`() {
+    val task = SortingTask()
+    task.options = listOf("A", "B", "C")
+    task.ordering = intArrayOf(2, 1, 0)
+    task.restoreInitialOrdering()
+    assertEquals(listOf(0, 1, 2), task.ordering.toList())
+  }
 }

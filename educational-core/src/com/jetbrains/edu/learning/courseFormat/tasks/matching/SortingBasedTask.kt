@@ -76,6 +76,10 @@ sealed class SortingBasedTask: Task {
     ordering[j] = ri
   }
 
+  fun restoreInitialOrdering() {
+    ordering = IntArray(options.size) { it }
+  }
+
   companion object {
     private val LOG: Logger = Logger.getInstance(FrameworkLessonManagerImpl::class.java)
   }
