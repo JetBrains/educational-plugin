@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
-class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("action.synchronize.course.description"),
+class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("action.synchronize.course.text"),
                                                      EduCoreBundle.lazyMessage("action.synchronize.course.description"), null) {
 
   override fun synchronizeCourse(project: Project) {

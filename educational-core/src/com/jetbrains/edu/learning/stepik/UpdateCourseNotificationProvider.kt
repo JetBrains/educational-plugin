@@ -51,13 +51,9 @@ class UpdateCourseNotificationProvider : EditorNotificationProvider, DumbAware {
   }
 
   private fun updateCourse(project: Project, course: EduCourse) {
-    when (course.isMarketplace) {
-      true -> {
-        val updateInfo = course.getUpdateInfo() ?: return
-        if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return
-        MarketplaceCourseUpdater(project, course, updateInfo.version).updateCourse()
-      }
-      false -> updateCourseOnStepik(project, course)
-    }
+    if (!course.isMarketplace) return
+    val updateInfo = course.getUpdateInfo() ?: return
+    if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return
+    MarketplaceCourseUpdater(project, course, updateInfo.version).updateCourse()
   }
 }

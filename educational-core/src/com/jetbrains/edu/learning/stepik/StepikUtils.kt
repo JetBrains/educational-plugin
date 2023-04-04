@@ -23,28 +23,14 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.getStepikProfilePath
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
 
 fun getStepikLink(task: Task, lesson: Lesson): String {
   return "${StepikNames.getStepikUrl()}/lesson/${lesson.id}/step/${task.index}"
-}
-
-/**
- * Pass [courseFromStepik] to avoid additional network request to get remote course info
- * if you already have up to date result of such request.
- * In case of `null`, remote course info will be retrieved via [com.jetbrains.edu.learning.stepik.api.StepikConnector.getCourseInfo].
- * Don't pass [courseFromStepik], if `[updateCourseOnStepik]` may be called after an indeterminate amount of time (e.g. in notification action)
- * after retrieving of remote course object. It may lead to outdated course info even after update
- */
-fun updateCourseOnStepik(project: Project, course: EduCourse, courseFromStepik: EduCourse? = null) {
-  StepikCourseUpdater(project, course).updateCourse(courseFromStepik)
 }
 
 fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {

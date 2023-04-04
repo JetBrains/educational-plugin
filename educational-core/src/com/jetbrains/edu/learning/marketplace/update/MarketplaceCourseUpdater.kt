@@ -6,6 +6,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.getChangeNotesVirtualFile
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.EduCourseUpdater
@@ -25,7 +26,18 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   override fun doUpdate(courseFromServer: EduCourse) {
     tasksStatuses.clear()
 
-    super.doUpdate(courseFromServer)
+    courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
+
+    setCourseInfo(courseFromServer)
+    updateSections(courseFromServer)
+    updateLessons(courseFromServer)
+    updateAdditionalMaterialsFiles(courseFromServer)
+    setCourseItems(courseFromServer.items)
+    setUpdated(courseFromServer)
+
+    //remove editor notification, suggesting to update course
+    EditorNotifications.getInstance(project).updateAllNotifications()
+
     saveLearningProgress(courseFromServer)
     showUpdateNotification()
   }
@@ -46,12 +58,10 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     CCNotificationUtils.showNotification(project, EduCoreBundle.message("action.course.updated"), openChangeNotesAction)
   }
 
-  override fun setUpdated(courseFromServer: EduCourse) {
-    super.setUpdated(courseFromServer)
+  private fun setUpdated(courseFromServer: EduCourse) {
+    course.updateDate = courseFromServer.updateDate
     course.marketplaceCourseVersion = remoteCourseVersion
   }
-
-  override fun sectionShouldBeSkipped(sectionId: Int): Boolean = false
 
   override fun courseFromServer(currentCourse: EduCourse, courseInfo: EduCourse?): EduCourse? {
     val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.id, currentCourse.isMarketplacePrivate)

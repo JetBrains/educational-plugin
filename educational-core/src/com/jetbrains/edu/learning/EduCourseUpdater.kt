@@ -9,7 +9,6 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.*
@@ -36,10 +35,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
 
   abstract fun taskChanged(newTask: Task, task: Task): Boolean
 
-  open fun processLessonsAfterUpdate(lessonsFromServer: List<Lesson>, courseLessonsById: Map<Int, Lesson>) {}
-
-  abstract fun sectionShouldBeSkipped(sectionId: Int): Boolean
-
   fun updateCourse(courseInfo: EduCourse? = null) {
     checkIsBackgroundThread()
     oldLessonDirectories.clear()
@@ -64,34 +59,18 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     }
   }
 
-  open fun doUpdate(courseFromServer: EduCourse) {
-    courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
+  abstract fun doUpdate(courseFromServer: EduCourse)
 
-    setCourseInfo(courseFromServer)
-    updateSections(courseFromServer)
-    updateLessons(courseFromServer)
-    updateAdditionalMaterialsFiles(courseFromServer)
-    setCourseItems(courseFromServer.items)
-    setUpdated(courseFromServer)
-
-    //remove editor notification, suggesting to update course
-    EditorNotifications.getInstance(project).updateAllNotifications()
-  }
-
-  protected open fun setUpdated(courseFromServer: EduCourse) {
-    course.updateDate = courseFromServer.updateDate
-  }
-
-  private fun setCourseItems(remoteItems: List<StudyItem>) {
+  protected fun setCourseItems(remoteItems: List<StudyItem>) {
     course.items = Lists.newArrayList(remoteItems)
   }
 
-  private fun setCourseInfo(courseFromServer: Course) {
+  protected fun setCourseInfo(courseFromServer: Course) {
     course.name = courseFromServer.name
     course.description = courseFromServer.description
   }
 
-  open fun updateSections(courseFromServer: EduCourse) {
+  protected fun updateSections(courseFromServer: EduCourse) {
     val sectionIds = course.sections.map { it.id }
 
     processNewSections(courseFromServer, sectionIds)
@@ -119,7 +98,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
       val sectionFromServerId = sectionFromServer.id
-      if (sectionShouldBeSkipped(sectionFromServerId)) return
 
       val currentSection = sectionsById[sectionFromServerId] ?: error("Section with id $sectionFromServerId not found in local course")
       val currentLessonsIds = currentSection.lessons.map { it.id }
@@ -136,9 +114,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
       }
 
       val lessonsToUpdate = sectionFromServer.lessons.filter { it.id in currentLessonsIds }
-      // lessons custom names should be copied before processModifiedLessons, otherwise lesson can be considered modified
-      // because of difference in names
-      processLessonsAfterUpdate(sectionFromServer.lessons, currentSection.lessons.associateBy { it.id })
       processModifiedLessons(lessonsToUpdate, currentSection, sectionFromServer)
       sectionFromServer.init(course, false)
     }
@@ -157,7 +132,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     }
   }
 
-  open fun updateLessons(courseFromServer: EduCourse) {
+  protected fun updateLessons(courseFromServer: EduCourse) {
     processNewLessons(courseFromServer)
     processDeletedLessons(courseFromServer)
     processModifiedLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course, courseFromServer)
@@ -308,7 +283,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     }
   }
 
-  private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
+  protected fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
     val filesToCreate = courseFromServer.additionalFiles
     val baseDir = project.courseDir
     for (file in filesToCreate) {

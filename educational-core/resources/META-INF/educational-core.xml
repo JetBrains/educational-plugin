@@ -185,7 +185,6 @@
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
     <action id="Educational.SolveAllTasksBefore" class="com.jetbrains.edu.coursecreator.actions.CCSolveAllTasksBeforeAction"/>
-    <action id="Educational.Stepik.UpdateCourse" class="com.jetbrains.edu.learning.actions.SyncStepikCourseAction"/>
     <action id="Educational.CreateNewIssue"
             class="com.jetbrains.edu.learning.actions.CreateNewYouTrackIssue"
             icon="/icons/com/jetbrains/edu/eduCourseAction.svg">
@@ -207,7 +206,6 @@
                         serviceImplementation="com.jetbrains.edu.learning.courseGeneration.ProjectOpenerImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.MockProjectOpener"/>
 
-    <statusBarWidgetFactory implementation="com.jetbrains.edu.learning.stepik.StepikWidgetFactory" order="before positionWidget"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView"
                     serviceImplementation="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionViewImpl"
                     testServiceImplementation="com.jetbrains.edu.learning.taskDescription.ui.MockTaskDescriptionView"/>
@@ -219,7 +217,6 @@
     <projectService serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
-    <postStartupActivity implementation="com.jetbrains.edu.learning.stepik.StepikStartupActivity"/>
 
     <registryKey key="edu.task.description.update.delay"
                  description="The delay in ms before loading page by Task Description view. \nRequires project reopening"

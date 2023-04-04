@@ -12,7 +12,7 @@ class StepikCheckListener: PostSolutionCheckListener() {
 
   override fun isUpToDate(course: EduCourse, task: Task): Boolean = task.isUpToDate
 
-  override fun updateCourseAction(project: Project, course: EduCourse) = updateCourseOnStepik(project, course)
+  override fun updateCourseAction(project: Project, course: EduCourse) = Unit
 
   override fun EduCourse.isToPostSubmissions(): Boolean = isStepikRemote && EduSettings.isLoggedIn()
 }
