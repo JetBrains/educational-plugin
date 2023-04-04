@@ -1,15 +1,18 @@
-package com.jetbrains.edu.learning.stepik.submissions
+package com.jetbrains.edu.learning.stepik.hyperskill.submissions
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt
-import com.jetbrains.edu.learning.stepik.api.*
+import com.jetbrains.edu.learning.stepik.api.Attempt
+import com.jetbrains.edu.learning.stepik.api.Feedback
+import com.jetbrains.edu.learning.stepik.api.Reply
+import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
-object StepikBasedSubmissionFactory {
+object HyperskillSubmissionFactory {
   @JvmStatic
   fun createCodeTaskSubmission(attempt: Attempt, answer: String, language: String): StepikBasedSubmission {
     val reply = Reply()
@@ -21,18 +24,6 @@ object StepikBasedSubmissionFactory {
   fun createEduTaskSubmission(task: Task, attempt: Attempt, files: List<SolutionFile>, feedback: String): StepikBasedSubmission {
     val reply = Reply()
     reply.feedback = Feedback(feedback)
-    reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
-    reply.solution = files
-    return StepikBasedSubmission(attempt, reply)
-  }
-
-  @JvmStatic
-  fun createStepikSubmission(task: Task, attempt: Attempt, files: List<SolutionFile> = emptyList()): StepikBasedSubmission {
-    val objectMapper = StepikConnector.getInstance().objectMapper
-    val serializedTask = objectMapper.writeValueAsString(TaskData(task))
-
-    val reply = Reply()
-    reply.eduTask = serializedTask
     reply.score = if (task.status == CheckStatus.Solved) "1" else "0"
     reply.solution = files
     return StepikBasedSubmission(attempt, reply)
@@ -56,7 +47,7 @@ object StepikBasedSubmissionFactory {
   private fun createChoiceTaskAnswerArray(task: ChoiceTask, attempt: Attempt): BooleanArray {
     val options = attempt.dataset?.options
     val answer = BooleanArray(task.choiceOptions.size)
-    if (options != null && options.isNotEmpty()) {
+    if (!options.isNullOrEmpty()) {
       // Every attempt of choiceTask can return options in different order
       task.selectedVariants
         .map { selectedIndex -> task.choiceOptions[selectedIndex] }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.checker.CheckUtils.CONGRATULATIONS
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -8,24 +9,23 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.stepik.StepikBasedCreateSubmissionTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.api.Dataset
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createChoiceTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createCodeTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createDataTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createEduTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createNumberTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createRemoteEduTaskSubmission
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory.createStringTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createChoiceTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createCodeTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createDataTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createNumberTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createRemoteEduTaskSubmission
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory.createStringTaskSubmission
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.util.*
 
-class HyperskillCreateSubmissionTest : StepikBasedCreateSubmissionTest() {
+class HyperskillCreateSubmissionTest : EduTestCase() {
   private val hyperskillCourse: HyperskillCourse by lazy {
     courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::HyperskillCourse) {
       section("Topics") {

@@ -32,14 +32,6 @@ interface StepikEndpoints {
   @GET("api/progresses")
   fun progresses(@Query("ids[]") vararg ids: String): Call<ProgressesList>
 
-  @GET("api/submissions")
-  fun submissions(@Query("step") step: Int,
-                  @Query("page") page: Int,
-                  @Query("order") order: String = "desc"): Call<SubmissionsList>
-
-  @GET("api/submissions/{id}")
-  fun submissionById(@Path("id") id: Int): Call<SubmissionsList>
-
   @GET("api/attempts")
   fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
 
@@ -62,9 +54,6 @@ interface StepikEndpoints {
 
   @POST("api/step-sources")
   fun stepSource(@Body stepSourceData: StepSourceData): Call<StepSourcesList>
-
-  @POST("api/submissions")
-  fun submission(@Body submissionData: SubmissionData): Call<SubmissionsList>
 
   @POST("api/attempts")
   fun attempt(@Body attemptData: AttemptData): Call<AttemptsList>

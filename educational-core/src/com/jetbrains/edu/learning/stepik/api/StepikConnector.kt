@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.apache.http.HttpStatus
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.annotations.NonNls
 import java.io.BufferedReader
@@ -141,27 +140,13 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     return stepSource?.block
   }
 
-  override fun getSubmissions(stepId: Int): List<StepikBasedSubmission> {
-    if (!isUnitTestMode && !EduSettings.isLoggedIn()) return emptyList()
-    var currentPage = 1
-    val allSubmissions = mutableListOf<StepikBasedSubmission>()
-    do {
-      val submissionsList = stepikEndpoints.submissions(stepId, currentPage).executeHandlingExceptions()?.body() ?: break
-      val submissions = submissionsList.submissions
-      allSubmissions.addAll(submissions)
-      currentPage += 1
-    }
-    while (submissions.isNotEmpty() && submissionsList.meta.containsKey("has_next") && submissionsList.meta["has_next"] == true)
-    return allSubmissions
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun getSubmissions(stepId: Int): List<StepikBasedSubmission> = emptyList()
 
-  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> {
-    return withTokenRefreshIfFailed {
-      val submission = stepikEndpoints.submissionById(id).executeHandlingExceptions()?.body()?.submissions?.firstOrNull()
-                       ?: return@withTokenRefreshIfFailed Err("Failed to load submission with id = $id")
-      Ok(submission)
-    }
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> = Err("No submission")
 
   override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
     return withTokenRefreshIfFailed {
@@ -214,20 +199,9 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     return response?.body()?.steps?.firstOrNull()
   }
 
-  override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> {
-    val submissionData = SubmissionData(submission)
-    return withTokenRefreshIfFailed {
-      val response = stepikEndpoints.submission(submissionData).executeHandlingExceptions()
-      val submissions = response?.body()?.submissions
-      if (submissions.isNullOrEmpty() || response.code() != HttpStatus.SC_CREATED) {
-        return@withTokenRefreshIfFailed Err("Failed to make submission $submissions")
-      }
-      if (submissions.size > 1) {
-        LOG.warn("Got a submission wrapper with incorrect submissions number: ${submissions.size}")
-      }
-      Ok(submissions.first())
-    }
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> = Err("Not available")
 
   override fun postAttempt(task: Task): Result<Attempt, String> {
     val stepId = task.id

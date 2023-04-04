@@ -342,7 +342,6 @@
 
 
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
-    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.StepikSubmissionsProvider"/>-->
 
     <!-- Course compatibility providers   -->
     <compatibilityProvider language="JAVA"

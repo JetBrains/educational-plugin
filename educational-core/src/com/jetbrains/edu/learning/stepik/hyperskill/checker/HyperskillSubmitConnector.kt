@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SolutionFile
 
 object HyperskillSubmitConnector {
@@ -44,7 +44,7 @@ object HyperskillSubmitConnector {
       LOG.error("Unable to create submission: file with code is not found for the task ${task.name}")
       return Err(EduCoreBundle.message("error.failed.to.post.solution.to", connector.platformName))
     }
-    val submission = StepikBasedSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, submissionLanguage)
+    val submission = HyperskillSubmissionFactory.createCodeTaskSubmission(attempt, codeTaskText, submissionLanguage)
     return connector.postSubmission(submission)
   }
 
@@ -89,14 +89,14 @@ object HyperskillSubmitConnector {
       return Err(it)
     }
 
-    val submission = StepikBasedSubmissionFactory.createChoiceTaskSubmission(task, attempt)
+    val submission = HyperskillSubmissionFactory.createChoiceTaskSubmission(task, attempt)
     return connector.postSubmission(submission)
   }
 
   fun submitDataTask(task: DataTask, answer: String): Result<StepikBasedSubmission, String> {
     val attempt = task.attempt ?: return Err("Impossible to submit data task without active attempt")
     val connector = task.getStepikBasedConnector()
-    val submission = StepikBasedSubmissionFactory.createDataTaskSubmission(attempt, answer)
+    val submission = HyperskillSubmissionFactory.createDataTaskSubmission(attempt, answer)
     return connector.postSubmission(submission)
   }
 
@@ -107,8 +107,8 @@ object HyperskillSubmitConnector {
     }
 
     val submission = when (task) {
-      is StringTask -> StepikBasedSubmissionFactory.createStringTaskSubmission(attempt, task.getInputAnswer(project))
-      is NumberTask -> StepikBasedSubmissionFactory.createNumberTaskSubmission(attempt, task.getInputAnswer(project))
+      is StringTask -> HyperskillSubmissionFactory.createStringTaskSubmission(attempt, task.getInputAnswer(project))
+      is NumberTask -> HyperskillSubmissionFactory.createNumberTaskSubmission(attempt, task.getInputAnswer(project))
     }
     return connector.postSubmission(submission)
   }
@@ -119,7 +119,7 @@ object HyperskillSubmitConnector {
       return Err(it)
     }
 
-    val taskSubmission = StepikBasedSubmissionFactory.createRemoteEduTaskSubmission(task, attempt, files)
+    val taskSubmission = HyperskillSubmissionFactory.createRemoteEduTaskSubmission(task, attempt, files)
     return connector.postSubmission(taskSubmission)
   }
 

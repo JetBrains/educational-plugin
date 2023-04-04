@@ -29,7 +29,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
-import com.jetbrains.edu.learning.stepik.submissions.StepikBasedSubmissionFactory
+import com.jetbrains.edu.learning.stepik.hyperskill.submissions.HyperskillSubmissionFactory
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
@@ -94,7 +94,7 @@ object HyperskillCheckConnector {
       LOG.error(error)
       return
     }
-    val submission = StepikBasedSubmissionFactory.createEduTaskSubmission(task, attempt, files, feedback)
+    val submission = HyperskillSubmissionFactory.createEduTaskSubmission(task, attempt, files, feedback)
     when (val response = HyperskillConnector.getInstance().postSubmission(submission)) {
       is Err -> showErrorDetails(project, response.error)
       is Ok -> SubmissionsManager.getInstance(project).addToSubmissionsWithStatus(task.id, task.status, response.value)

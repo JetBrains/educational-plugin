@@ -10,7 +10,6 @@ import java.util.*
 const val IS_VISIBLE = "is_visible"
 const val PLACEHOLDERS = "placeholders"
 const val STATUS = "status"
-const val SUBMISSION = "submission"
 const val TEXT = "text"
 
 abstract class Submission {

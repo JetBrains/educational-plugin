@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.ID
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
@@ -486,16 +485,5 @@ class StepikBasedSubmission : Submission {
   constructor(attempt: AttemptBase, reply: Reply) {
     this.attempt = attempt.id
     this.reply = reply
-  }
-}
-
-class SubmissionData {
-  @JsonProperty(SUBMISSION)
-  lateinit var submission: StepikBasedSubmission
-
-  constructor()
-
-  constructor(submission: StepikBasedSubmission) {
-    this.submission = submission
   }
 }
