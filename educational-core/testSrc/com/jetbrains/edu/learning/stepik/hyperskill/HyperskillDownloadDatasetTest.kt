@@ -9,16 +9,19 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.StepikBasedDownloadDatasetTest
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.hyperskill.actions.DownloadDatasetAction
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import org.intellij.lang.annotations.Language
 import org.jetbrains.ide.BuiltInServerManager
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
+class HyperskillDownloadDatasetTest : EduActionTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun setUp() {
@@ -167,7 +170,100 @@ class HyperskillDownloadDatasetTest : StepikBasedDownloadDatasetTest() {
     testAction(DownloadDatasetAction.ACTION_ID, dataContext(taskFile))
   }
 
+  private fun now(): String? {
+    val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+    return ZonedDateTime.now(ZoneId.of("GMT0")).format(format)
+  }
+
+  @Language("JSON")
+  private val existingAttemptForTask2 = """
+    {
+      "meta": {
+        "page": 1,
+        "has_next": false,
+        "has_previous": false
+      },
+      "attempts": [
+        {
+          "dataset": "",
+          "id": 102,
+          "status": "active",
+          "step": 2,
+          "time": "${now()}",
+          "time_left": 300,
+          "user": 123
+        }
+      ]
+    }
+  """
+
+  @Language("JSON")
+  private val existingAttemptForTask3 = """
+    {
+      "meta": {
+        "page": 1,
+        "has_next": false,
+        "has_previous": false
+      },
+      "attempts": [
+        {
+          "dataset": "",
+          "id": 103,
+          "status": "active",
+          "step": 3,
+          "time": "${now()}",
+          "time_left": 0,
+          "user": 123
+        }
+      ]
+    }
+  """
+
+  @Language("JSON")
+  private val newAttemptForTask1 = """
+    {
+      "meta": {
+        "page": 1,
+        "has_next": false,
+        "has_previous": false
+      },
+      "attempts": [
+        {
+          "dataset": "",
+          "id": 101,
+          "status": "active",
+          "step": 1,
+          "time": "${now()}",
+          "time_left": null,
+          "user": 123
+        }
+      ]
+    }
+  """
+
+  @Language("JSON")
+  private val noAttempts = """
+    {
+      "meta": {
+        "page": 1,
+        "has_next": false,
+        "has_previous": false
+      },
+      "attempts": [ ]
+    }
+  """
+
   companion object {
     private const val TOPIC_NAME: String = "Topic"
+
+    private const val DATA_TASK_1: String = "Data Task 1"
+    private const val DATA_TASK_2: String = "Data Task 2"
+    private const val DATA_TASK_3: String = "Data Task 3"
+    private const val SOME_FILE_TXT: String = "someFile.txt"
+    private const val TASK_1_DATASET_TEXT: String = "dataset text"
+    private const val TASK_2_OLD_DATASET_TEXT: String = "old dataset for task 2 text"
+    private const val TASK_2_NEW_DATASET_TEXT: String = "new dataset for task 2 text"
+    private const val TASK_3_OLD_DATASET_TEXT: String = "old dataset for task 3 text"
+    private const val TASK_3_NEW_DATASET_TEXT: String = "new dataset for task 3 text"
   }
 }

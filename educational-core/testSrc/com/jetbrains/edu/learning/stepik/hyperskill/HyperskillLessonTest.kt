@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikTestUtils
+import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -65,6 +66,7 @@ class HyperskillLessonTest : EduTestCase() {
 
     UIUtil.dispatchAllInvocationEvents()
     PushHyperskillLesson.doPush(firstLesson, project)
+    logOutFakeStepikUser()
   }
 
   fun `test receiving course with binary files`() {

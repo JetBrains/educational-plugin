@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
@@ -148,27 +147,13 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   @Deprecated("Stepik support is dropped")
   override fun getSubmission(id: Int): Result<StepikBasedSubmission, String> = Err("No submission")
 
-  override fun getActiveAttempt(task: Task): Result<Attempt?, String> {
-    return withTokenRefreshIfFailed {
-      val userId = account?.id ?: return@withTokenRefreshIfFailed Err("Attempt to get list of attempts for unauthorized user")
-      val attempts = stepikEndpoints.attempts(task.id, userId)
-        .executeParsingErrors(true)
-        .flatMap {
-          val result = it.body()?.attempts
-          if (result == null) Err(it.message()) else Ok(result)
-        }
-        .onError { return@withTokenRefreshIfFailed Err(it) }
-      val activeAttempt = attempts.firstOrNull { it.isActive }
-      Ok(activeAttempt)
-    }
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun getActiveAttempt(task: Task): Result<Attempt?, String> = Err("No active attempt")
 
-  override fun getDataset(attempt: Attempt): Result<String, String> {
-    return stepikEndpoints.dataset(attempt.id).executeParsingErrors().flatMap {
-      val responseBody = it.body() ?: return@flatMap Err(EduCoreBundle.message("error.failed.to.parse.response"))
-      Ok(responseBody.string())
-    }
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun getDataset(attempt: Attempt): Result<String, String> = Err("No dataset")
 
   // Post requests:
 
@@ -203,14 +188,9 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   @Deprecated("Stepik support is dropped")
   override fun postSubmission(submission: StepikBasedSubmission): Result<StepikBasedSubmission, String> = Err("Not available")
 
-  override fun postAttempt(task: Task): Result<Attempt, String> {
-    val stepId = task.id
-    return withTokenRefreshIfFailed {
-      val response = stepikEndpoints.attempt(AttemptData(stepId)).executeParsingErrors().onError { return@withTokenRefreshIfFailed Err(it) }
-      val attempt = response.body()?.attempts?.firstOrNull() ?:  return@withTokenRefreshIfFailed Err("Failed to make attempt $stepId")
-      Ok(attempt)
-    }
-  }
+  @Suppress("DeprecatedCallableAddReplaceWith")
+  @Deprecated("Stepik support is dropped")
+  override fun postAttempt(task: Task): Result<Attempt, String> = Err("Not available")
 
   private fun postLessonAttachment(info: LessonAdditionalInfo, lessonId: Int) : Int {
     val fileBody = objectMapper.writeValueAsString(info).toRequestBody("multipart/form-data".toMediaTypeOrNull())
@@ -327,19 +307,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
       }
       .forEach { steps.addAll(it) }
     return steps
-  }
-
-  fun taskStatuses(ids: List<String>): Map<String, Boolean> {
-    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
-    val progresses = mutableListOf<Progress>()
-    idsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.progresses(*it.toTypedArray()).executeHandlingExceptions()
-        response?.body()?.progresses
-      }
-      .forEach { progresses.addAll(it) }
-
-    return progresses.associate { it.id to it.isPassed }
   }
 
   // attachments
