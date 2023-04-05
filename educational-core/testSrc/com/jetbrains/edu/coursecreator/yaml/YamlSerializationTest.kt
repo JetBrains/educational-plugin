@@ -5,10 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.Vendor
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -301,6 +298,38 @@ class YamlSerializationTest : YamlTestCase() {
     |      file: Test.java
     |      placeholder: 1
     |      is_visible: true
+    |""".trimMargin())
+  }
+
+  fun `test edu task with files with turned off highlighting`() {
+    val task = course(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("A.java", "a java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.NONE)
+          }
+          taskFile("B.java", "b java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.ALL_PROBLEMS)
+          }
+          taskFile("C.java", "c java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION)
+          }
+          taskFile("D.java", "d java")
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |files:
+    |- name: A.java
+    |  visible: true
+    |  highlight_level: NONE
+    |- name: B.java
+    |  visible: true
+    |- name: C.java
+    |  visible: true
+    |- name: D.java
+    |  visible: true
     |""".trimMargin())
   }
 

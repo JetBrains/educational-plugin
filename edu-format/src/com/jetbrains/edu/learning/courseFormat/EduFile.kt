@@ -5,7 +5,7 @@ open class EduFile {
   var text: String = ""
 
   var isTrackChanges: Boolean = true
-  var isHighlightErrors: Boolean = false
+  var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
   var isVisible: Boolean = true
   var isEditable: Boolean = true
 

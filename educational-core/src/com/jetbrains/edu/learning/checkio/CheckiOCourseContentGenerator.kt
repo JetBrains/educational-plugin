@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getSolutionsLink
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames.getTaskLink
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.util.*
@@ -59,7 +60,7 @@ class CheckiOCourseContentGenerator @JvmOverloads constructor(private val fileTy
 
   private fun generateTaskFile(mission: CheckiOMission) {
     val taskFile = TaskFile("mission.${fileType.defaultExtension}", mission.code)
-    taskFile.isHighlightErrors = true
+    taskFile.errorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
     mission.addTaskFile(taskFile)
   }
 }

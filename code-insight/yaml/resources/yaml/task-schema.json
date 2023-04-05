@@ -130,6 +130,14 @@
         "editable": {
           "type": "boolean",
           "description": "False if learner can't change file, absent if can"
+        },
+        "highlight_level": {
+          "type" : "string",
+          "enum": [
+            "NONE",
+            "ALL_PROBLEMS"
+          ],
+          "description" : "File highlight level: it is currently possible to either highlight all problems in a file or highlight nothing"
         }
       },
       "required": [

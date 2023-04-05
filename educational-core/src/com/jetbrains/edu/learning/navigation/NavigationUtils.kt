@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
@@ -279,6 +280,22 @@ object NavigationUtils {
 
     selectFirstAnswerPlaceholder(project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+
+    if (lesson is FrameworkLesson && lesson.course.isStudy) {
+      runInEdt {
+        runWriteAction {
+          setHighlightLevelForFilesInTask(task, project)
+        }
+      }
+    }
+  }
+
+  fun setHighlightLevelForFilesInTask(task: Task, project: Project) {
+    checkIsWriteActionAllowed()
+    for (taskFile in task.taskFiles.values) {
+      val virtualFile = taskFile.getVirtualFile(project)
+      virtualFile?.setHighlightLevelInsideWriteAction(project, taskFile.errorHighlightLevel)
+    }
   }
 
   private fun openCCTaskFiles(project: Project, task: Task) {

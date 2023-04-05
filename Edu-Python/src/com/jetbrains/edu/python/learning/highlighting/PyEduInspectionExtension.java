@@ -6,6 +6,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.VirtualFileExt;
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.PyElement;
@@ -24,7 +25,7 @@ public class PyEduInspectionExtension extends PyInspectionExtension {
       return false;
     }
     TaskFile taskFile = VirtualFileExt.getTaskFile(file.getVirtualFile(), project);
-    if (taskFile == null || taskFile.isHighlightErrors()) {
+    if (taskFile == null || taskFile.getErrorHighlightLevel() != EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION) {
       return false;
     }
     if (PsiTreeUtil.getParentOfType(element, PyImportStatementBase.class) != null) {

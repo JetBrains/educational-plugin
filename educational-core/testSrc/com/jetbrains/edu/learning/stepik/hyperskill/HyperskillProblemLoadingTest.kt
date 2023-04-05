@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
@@ -28,18 +28,19 @@ class HyperskillProblemLoadingTest : EduTestCase() {
     super.tearDown()
   }
 
-  fun `test load step with hidden header and footer`() = doTest("steps_response_header_footer.json", shouldContainWarning = true)
-  fun `test load step with hidden header`() = doTest("steps_response_header.json", shouldContainWarning = true)
-  fun `test load step with hidden footer`() = doTest("steps_response_footer.json", shouldContainWarning = true)
-  fun `test load step without hidden header or footer`() = doTest("steps_response_no_header_footer.json", shouldContainWarning = false)
+  fun `test load step with hidden header and footer`() = doTest("steps_response_header_footer.json", shouldDisableHighlight = true)
+  fun `test load step with hidden header`() = doTest("steps_response_header.json", shouldDisableHighlight = true)
+  fun `test load step with hidden footer`() = doTest("steps_response_footer.json", shouldDisableHighlight = true)
+  fun `test load step without hidden header or footer`() = doTest("steps_response_no_header_footer.json", shouldDisableHighlight = false)
 
-  private fun doTest(responseFileName: String, shouldContainWarning: Boolean) {
+  private fun doTest(responseFileName: String, shouldDisableHighlight: Boolean) {
     configureResponse(responseFileName)
     val course = createHyperskillCourse()
     val task = course.getTopicsSection()?.getLesson(step4894.title)?.getTask(step4894.title)
                ?: error("Can't find task from topics section")
-    assertEquals(shouldContainWarning,
-                 EduCoreBundle.message("hyperskill.hidden.content", EduCoreBundle.message("check.title")) in task.descriptionText)
+    for ((_, taskFile) in task.taskFiles) {
+      assertEquals(shouldDisableHighlight, taskFile.errorHighlightLevel == EduFileErrorHighlightLevel.NONE)
+    }
   }
 
   private fun createHyperskillCourse(): HyperskillCourse {

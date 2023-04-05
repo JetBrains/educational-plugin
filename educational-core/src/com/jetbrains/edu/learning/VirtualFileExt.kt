@@ -2,7 +2,11 @@
 
 package com.jetbrains.edu.learning
 
+import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightingSettingsPerFile
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -20,6 +24,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.util.ui.UIUtil
@@ -298,6 +303,30 @@ fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
     LOG.error("Failed to convert `${path}` to student file")
   }
   return null
+}
+
+fun VirtualFile.setHighlightLevel(project: Project, highlightLevel: EduFileErrorHighlightLevel) {
+  runInEdt {
+    runWriteAction {
+      setHighlightLevelInsideWriteAction(project, highlightLevel)
+    }
+  }
+}
+
+fun VirtualFile.setHighlightLevelInsideWriteAction(project: Project, highlightLevel: EduFileErrorHighlightLevel) {
+  checkIsWriteActionAllowed()
+
+  // files may disappear for example in framework lessons
+  if (!exists())
+    return
+
+  val fileHighlightLevel = if (highlightLevel == EduFileErrorHighlightLevel.NONE) {
+    FileHighlightingSetting.SKIP_HIGHLIGHTING
+  } else {
+    FileHighlightingSetting.FORCE_HIGHLIGHTING
+  }
+  val psiFile = PsiManager.getInstance(project).findFile(this) ?: return
+  HighlightingSettingsPerFile.getInstance(project).setHighlightingSettingForRoot(psiFile, fileHighlightLevel)
 }
 
 private val LOG = Logger.getInstance("com.jetbrains.edu.learning.VirtualFileExt")

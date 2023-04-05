@@ -218,6 +218,9 @@ object YamlMixinNames {
   @NlsSafe
   const val EDITABLE = "editable"
 
+  @NlsSafe
+  const val HIGHLIGHT_LEVEL = "highlight_level"
+
   // placeholder
   @NlsSafe
   const val OFFSET = "offset"

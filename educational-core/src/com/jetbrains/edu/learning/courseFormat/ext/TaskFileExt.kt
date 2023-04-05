@@ -11,6 +11,7 @@ import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -49,7 +50,9 @@ fun TaskFile.revert(project: Project) {
   if (virtualFile != null) {
     WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile)
   }
-  isHighlightErrors = false
+  if (errorHighlightLevel == EduFileErrorHighlightLevel.ALL_PROBLEMS) {
+    errorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
+  }
   YamlFormatSynchronizer.saveItem(task)
 }
 

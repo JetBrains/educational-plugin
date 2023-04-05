@@ -5,11 +5,8 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
@@ -669,6 +666,25 @@ class YamlDeserializationTest : YamlTestCase() {
     val task = MAPPER.deserializeTask(yamlContent)
     assertTrue(task is EduTask)
     assertEquals(contentTags, task.contentTags)
+  }
+
+  fun `test edu task with turned off highlighting`() {
+    val taskYaml = """
+    |type: edu
+    |files:
+    |- name: A.java
+    |  visible: true
+    |  highlight_level: NONE
+    |- name: B.java
+    |  visible: true
+    |  highlight_level: ALL_PROBLEMS
+    |- name: C.java
+    |  visible: true
+    |""".trimMargin()
+    val task = MAPPER.deserializeTask(taskYaml)
+    assertEquals(task.taskFiles["A.java"]?.errorHighlightLevel, EduFileErrorHighlightLevel.NONE)
+    assertEquals(task.taskFiles["B.java"]?.errorHighlightLevel, EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION)
+    assertEquals(task.taskFiles["C.java"]?.errorHighlightLevel, EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION)
   }
 
   fun `test feedback link`() {

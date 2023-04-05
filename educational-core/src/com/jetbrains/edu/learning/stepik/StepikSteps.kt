@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -194,10 +193,9 @@ open class PyCharmStepOptions : StepOptions {
   }
 }
 
-fun PyCharmStepOptions.hasHeaderOrFooter(langId: String): Boolean {
-  val lang = HyperskillLanguages.getLanguageName(langId) ?: return false
-  val header = codeTemplatesHeader?.get(lang) ?: return false
-  val footer = codeTemplatesFooter?.get(lang) ?: return false
+fun PyCharmStepOptions.hasHeaderOrFooter(submissionLanguage: String): Boolean {
+  val header = codeTemplatesHeader?.get(submissionLanguage) ?: return false
+  val footer = codeTemplatesFooter?.get(submissionLanguage) ?: return false
   return header > 0 || footer > 0
 }
 

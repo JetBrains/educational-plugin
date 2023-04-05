@@ -5,11 +5,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.learning.VirtualFileExt;
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class EduHighlightErrorFilter extends HighlightErrorFilter{
+public class EduHighlightErrorFilter extends HighlightErrorFilter {
   @Override
   public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement element) {
     PsiFile file = element.getContainingFile();
@@ -21,6 +21,6 @@ public class EduHighlightErrorFilter extends HighlightErrorFilter{
       return true;
     }
     TaskFile taskFile = VirtualFileExt.getTaskFile(virtualFile, element.getProject());
-    return taskFile == null || taskFile.isHighlightErrors();
+    return taskFile == null || taskFile.getErrorHighlightLevel() != EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION;
   }
 }

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.yaml.format.TaskFileBuilder
 import com.jetbrains.edu.learning.yaml.format.TaskFileYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDITABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENCRYPTED_TEXT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LEARNER_CREATED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
@@ -18,7 +20,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
 @Suppress("unused") // used for yaml serialization
 @JsonDeserialize(builder = StudentTaskFileBuilder::class)
-@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE, TEXT, LEARNER_CREATED)
+@JsonPropertyOrder(NAME, VISIBLE, PLACEHOLDERS, EDITABLE, HIGHLIGHT_LEVEL, TEXT, LEARNER_CREATED)
 abstract class StudentTaskFileYamlMixin : TaskFileYamlMixin() {
 
   @JsonProperty(TEXT)
@@ -37,8 +39,9 @@ class StudentTaskFileBuilder(
   name: String?,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),
   visible: Boolean = true,
-  editable: Boolean = true
-) : TaskFileBuilder(name, placeholders, visible, editable) {
+  editable: Boolean = true,
+  @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
+) : TaskFileBuilder(name, placeholders, visible, editable, errorHighlightLevel) {
   override fun createTaskFile(): TaskFile {
     return super.createTaskFile().apply {
       if (encryptedTextFromConfig != null) {

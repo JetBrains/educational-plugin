@@ -694,6 +694,10 @@ class TaskFileBuilder(val task: Task? = null) {
     }
   }
 
+  fun withHighlightLevel(highlightLevel: EduFileErrorHighlightLevel) {
+    taskFile.errorHighlightLevel = highlightLevel
+  }
+
   fun placeholder(index: Int, possibleAnswer: String? = null, placeholderText: String? = null,
                   dependency: String = "", isVisible: Boolean = true) {
     val answerPlaceholder = taskFile.answerPlaceholders[index]

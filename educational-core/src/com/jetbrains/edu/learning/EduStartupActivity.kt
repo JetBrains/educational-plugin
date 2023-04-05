@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -86,8 +87,15 @@ class EduStartupActivity : StartupActivity.DumbAware {
       if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
         coursesStorage.addCourse(course, location)
       }
-      ApplicationManager.getApplication().invokeLater {
-        runWriteAction { EduCounterUsageCollector.eduProjectOpened(course) }
+
+      runWriteAction {
+        if (EduUtils.isStudentProject(project)) {
+          course.visitTasks {
+            setHighlightLevelForFilesInTask(it, project)
+          }
+        }
+
+        EduCounterUsageCollector.eduProjectOpened(course)
       }
     }
   }

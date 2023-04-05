@@ -11,7 +11,10 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
@@ -36,7 +39,14 @@ class EduDocumentListener private constructor(
     if (!taskFile.isTrackChanges) {
       return
     }
-    taskFile.isHighlightErrors = true
+    if (taskFile.errorHighlightLevel == EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION) {
+      taskFile.errorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
+
+      val project = holder.course?.project
+      if (project != null) {
+        taskFile.getVirtualFile(project)?.setHighlightLevel(project, taskFile.errorHighlightLevel)
+      }
+    }
   }
 
   override fun documentChanged(e: DocumentEvent) {

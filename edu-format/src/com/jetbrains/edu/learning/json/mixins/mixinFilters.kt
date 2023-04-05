@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.json.mixins
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.message
 
 /**
@@ -49,4 +50,11 @@ class IntValueFilter {
   private val defaultValue: Int = 0
 
   override fun equals(other: Any?): Boolean = other is Int && other == defaultValue
+}
+
+@Suppress("EqualsOrHashCode")
+class HighlightLevelValueFilter {
+  override fun equals(other: Any?): Boolean {
+    return other == EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION || other == EduFileErrorHighlightLevel.ALL_PROBLEMS
+  }
 }
