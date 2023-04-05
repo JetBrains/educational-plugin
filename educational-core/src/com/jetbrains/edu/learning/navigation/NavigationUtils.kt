@@ -208,6 +208,20 @@ object NavigationUtils {
     closeOpenedFiles: Boolean = true,
     fileToActivate: VirtualFile? = null
   ) {
+    navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate)
+    TaskNavigationExtension.EP.forEachExtensionSafe {
+      it.onTaskNavigation(project, task, fromTask)
+    }
+  }
+
+  private fun navigateToTaskInternal(
+    project: Project,
+    task: Task,
+    fromTask: Task?,
+    showDialogIfConflict: Boolean,
+    closeOpenedFiles: Boolean,
+    fileToActivate: VirtualFile?
+  ) {
     if (closeOpenedFiles) {
       for (file in FileEditorManager.getInstance(project).openFiles) {
         FileEditorManager.getInstance(project).closeFile(file)

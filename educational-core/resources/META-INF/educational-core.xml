@@ -63,6 +63,10 @@
                     interface="com.jetbrains.edu.learning.github.PostToGithubActionProvider"
                     dynamic="true"/>
 
+    <extensionPoint qualifiedName="Educational.taskNavigationExtension"
+                    interface="com.jetbrains.edu.learning.navigation.TaskNavigationExtension"
+                    dynamic="true"/>
+
   </extensionPoints>
 
   <actions>
