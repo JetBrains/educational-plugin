@@ -7,5 +7,4 @@ object EduExperimentalFeatures {
   const val MARKETPLACE_PRIVATE_COURSES = "edu.course.marketplace.show.private"
   const val MARKETPLACE_SUBMISSIONS = "edu.course.marketplace.submissions"
   const val SQL_COURSES = "edu.course.sql"
-  const val HYPERSKILL_ENVIRONMENT_UPDATE = "edu.hyperskill.environment.update"
 }

@@ -26,10 +26,6 @@
       <description>Enables action to push Hyperskill lesson to Stepik</description>
     </experimentalFeature>
 
-    <experimentalFeature id="edu.hyperskill.environment.update" percentOfUsers="0">
-      <description>Enables course environment value update on project start</description>
-    </experimentalFeature>
-
     <registryKey defaultValue="10" description="Hyperskill metrics sending interval in minutes" key="edu.hyperskill.metrics"
                  restartRequired="true"/>
   </extensions>
