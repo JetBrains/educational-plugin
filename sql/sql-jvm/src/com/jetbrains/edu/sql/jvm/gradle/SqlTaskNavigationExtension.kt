@@ -16,6 +16,10 @@ class SqlTaskNavigationExtension : TaskNavigationExtension {
           attachSqlConsoleIfNeeded(project, file)
         }
       }
+      // Navigation was performed from another task of the same framework lessons
+      if (fromTask != null && fromTask.lesson == lesson) {
+        executeInitScripts(project, listOf(task))
+      }
     }
   }
 }

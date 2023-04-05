@@ -12,9 +12,11 @@ import com.intellij.database.util.TreePattern
 import com.intellij.database.util.TreePatternUtils
 import com.intellij.database.view.DatabaseView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueueImpl
 import com.intellij.sql.SqlFileType
@@ -235,19 +237,71 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     checkTable(course.findTask("lesson1", "task2"), "STUDENTS_2")
   }
 
+  @Suppress("SqlDialectInspection", "SqlNoDataSourceInspection")
+  fun `test database initialization in framework lessons`() {
+    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/task.sql")
+          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+            create table if not exists STUDENTS_1;
+          """)
+        }
+        eduTask("task2") {
+          taskFile("src/task.sql")
+          sqlTaskFile(SqlGradleCourseBuilderBase.INIT_SQL, """
+            create table if not exists STUDENTS_2;
+          """)
+        }
+      }
+    }
+
+    createCourseStructure(course)
+
+    val task1 = course.findTask("lesson1", "task1")
+    val task2 = course.findTask("lesson1", "task2")
+
+    checkTable(task1, "STUDENTS_1")
+    checkTable(task2, "STUDENTS_2", shouldExist = false)
+
+    withVirtualFileListener(course) {
+      // Hack to check the plugin doesn't evaluate init.sql script twice
+      // If script is evaluated the second time, it will create `STUDENTS_1_1` table that test checks below
+      val initSql = findFile("lesson1/task/${SqlGradleCourseBuilderBase.INIT_SQL}")
+      runWriteAction {
+        // language=SQL
+        VfsUtil.saveText(initSql, """
+          create table if not exists STUDENTS_1_1;          
+        """.trimIndent())
+      }
+
+      task1.status = CheckStatus.Solved
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    checkTable(task2, "STUDENTS_2")
+
+    withVirtualFileListener(course) {
+      testAction(PreviousTaskAction.ACTION_ID)
+    }
+
+    checkTable(task1, "STUDENTS_1_1", shouldExist = false)
+  }
+
   override fun createCourseStructure(course: Course) {
     super.createCourseStructure(course)
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
   }
 
-  private fun checkTable(task: Task, tableName: String) {
+  private fun checkTable(task: Task, tableName: String, shouldExist: Boolean = true) {
     val dataSource = task.findDataSource(project) ?: error("Can't find data source for `${task.name}`")
     val scope = TreePattern(
       TreePatternUtils.create(
         ObjectName.quoted("DB"),
         ObjectKind.DATABASE,
         TreePatternUtils.create(ObjectName.quoted("PUBLIC"), ObjectKind.SCHEMA)
-      ))
+      )
+    )
     dataSource.introspectionScope = scope
 
     refreshDataSource(dataSource)
@@ -255,7 +309,12 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     val tables = DasUtil.getTables(dataSource as DasDataSource).toList()
     val table = tables.find { it.name.equals(tableName, ignoreCase = true) }
 
-    assertNotNull("Failed to find `$tableName` for `${task.name}` task ", table)
+    if (shouldExist) {
+      assertNotNull("Failed to find `$tableName` table for `${task.name}` task ", table)
+    }
+    else {
+      assertNull("`${task.name}`'s data source shouldn't contain `$tableName` table", table)
+    }
   }
 
   // Approach is taken from tests of database plugin
