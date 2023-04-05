@@ -489,6 +489,20 @@ class YamlDeserializationTest : YamlTestCase() {
     assertNull(task.solutionHidden)
   }
 
+  fun `test empty placeholders`() {
+    val yamlContent = """
+    |type: edu
+    |files:
+    |- name: Test.java
+    |  placeholders:
+    |  - 
+    |""".trimMargin()
+    val task = MAPPER.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholders = task.taskFiles["Test.java"]!!.answerPlaceholders
+    assertTrue(answerPlaceholders.isEmpty())
+  }
+
   fun `test remote edu task with check profile`() {
     val checkProfile = "hyperskill_go"
     val yamlContent = """

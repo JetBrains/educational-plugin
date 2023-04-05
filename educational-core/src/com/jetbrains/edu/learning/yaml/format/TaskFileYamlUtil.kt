@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.yaml.format
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -39,6 +37,7 @@ abstract class TaskFileYamlMixin {
 
 @JsonPOJOBuilder(withPrefix = "")
 open class TaskFileBuilder(@JsonProperty(NAME) val name: String?,
+                           @JsonSetter(contentNulls = Nulls.SKIP)
                            @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
                            @JsonProperty(VISIBLE) val visible: Boolean = true,
                            @JsonProperty(EDITABLE) val editable: Boolean = true) {
