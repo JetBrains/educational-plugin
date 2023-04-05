@@ -10,4 +10,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="com.jetbrains.edu.sql.jvm.gradle.SqlGradleStartupActivity"/>
   </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <taskNavigationExtension implementation="com.jetbrains.edu.sql.jvm.gradle.SqlTaskNavigationExtension"/>
+  </extensions>
 </idea-plugin>

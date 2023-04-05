@@ -5,7 +5,6 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Document
@@ -17,10 +16,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.checker.CheckActionListener
@@ -42,7 +39,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
-import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -256,19 +252,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
     runWriteAction { file.delete(this) }
   }
 
-  // TODO: set up more items which are enabled in real course project
-  // TODO: come up with better name when we set up not only virtual file listeners
   protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
-    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project, testRootDisposable)
-
-    val connection = ApplicationManager.getApplication().messageBus.connect()
-    connection.subscribe(VirtualFileManager.VFS_CHANGES, listener)
-    try {
-      action()
-    }
-    finally {
-      connection.disconnect()
-    }
+    withVirtualFileListener(project, course, testRootDisposable, action)
   }
 
   protected fun Course.asRemote(courseMode: CourseMode = CourseMode.EDUCATOR): EduCourse {

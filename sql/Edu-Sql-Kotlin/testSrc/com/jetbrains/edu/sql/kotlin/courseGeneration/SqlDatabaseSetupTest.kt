@@ -22,15 +22,17 @@ import com.intellij.sql.psi.SqlLanguage
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
-import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.actions.NextTaskAction
+import com.jetbrains.edu.learning.actions.PreviousTaskAction
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.getTask
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilderBase
 import com.jetbrains.edu.sql.jvm.gradle.findDataSource
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertNotNull
 
 class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
 
@@ -95,6 +97,38 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     val sqlFile = findFile("lesson1/task2/src/task.sql")
     fileEditorManager.openFile(sqlFile, true)
     checkJdbcConsoleForFile(sqlFile)
+  }
+
+  fun `test attach jdbc console for framework tasks`() {
+    val course = course(language = SqlLanguage.INSTANCE, environment = "Kotlin") {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile("src/task.sql")
+        }
+        eduTask("task2") {
+          taskFile("src/task.sql")
+          taskFile("src/task2.sql")
+        }
+      }
+    }
+
+    createCourseStructure(course)
+
+    checkJdbcConsoleForFile("lesson1/task/src/task.sql")
+
+    withVirtualFileListener(course) {
+      course.findTask("lesson1", "task1").status = CheckStatus.Solved
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    checkJdbcConsoleForFile("lesson1/task/src/task.sql")
+    checkJdbcConsoleForFile("lesson1/task/src/task2.sql")
+
+    withVirtualFileListener(course) {
+      testAction(PreviousTaskAction.ACTION_ID)
+    }
+
+    checkJdbcConsoleForFile("lesson1/task/src/task.sql")
   }
 
   fun `test database view structure`() {
@@ -248,12 +282,29 @@ class SqlDatabaseSetupTest : JvmCourseGenerationTestBase() {
     }
   }
 
+  private inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
+    withVirtualFileListener(project, course, testRootDisposable, action)
+  }
+
+  private fun checkJdbcConsoleForFile(path: String) {
+    val fileEditorManager = FileEditorManager.getInstance(project)
+    val sqlFile = findFile(path)
+    fileEditorManager.openFile(sqlFile, true)
+    checkJdbcConsoleForFile(sqlFile)
+  }
+
   private fun checkJdbcConsoleForFile(file: VirtualFile) {
     if (file.fileType != SqlFileType.INSTANCE) return
     // `SqlGradleStartupActivity` attaches console using `invokeLater` so we have to dispatch events in EDT
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     val console = JdbcConsoleProvider.getValidConsole(project, file)
-    assertNotNull("Can't find jdbc console for `$file`", console)
+
+    assertNotNull(console, "Can't find jdbc console for `$file`")
+
+    val task = file.getTaskFile(project)?.task ?: error("Can't find task for $file")
+    val taskDataSource = task.findDataSource(project) ?: error("Can't find data source for `${task.name}`")
+
+    assertEquals("Wrong data source url", taskDataSource.url, console.dataSource.url)
   }
 
   companion object {

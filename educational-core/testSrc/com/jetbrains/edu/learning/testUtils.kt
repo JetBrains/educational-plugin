@@ -10,14 +10,18 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.ui.TestDialogManager
 import com.intellij.openapi.ui.TestInputDialog
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
@@ -129,4 +133,19 @@ fun initializeCourse(project: Project, course: Course) {
 
 fun Course.findTask(lessonName: String, taskName: String): Task {
   return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")
+}
+
+// TODO: set up more items which are enabled in real course project
+// TODO: come up with better name when we set up not only virtual file listeners
+inline fun withVirtualFileListener(project: Project, course: Course, disposable: Disposable, action: () -> Unit) {
+  val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project, disposable)
+
+  val connection = ApplicationManager.getApplication().messageBus.connect()
+  connection.subscribe(VirtualFileManager.VFS_CHANGES, listener)
+  try {
+    action()
+  }
+  finally {
+    connection.disconnect()
+  }
 }

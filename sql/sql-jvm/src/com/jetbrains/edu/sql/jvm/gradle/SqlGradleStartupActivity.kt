@@ -4,10 +4,8 @@ import com.intellij.database.access.DatabaseCredentials
 import com.intellij.database.autoconfig.DataSourceConfigUtil
 import com.intellij.database.autoconfig.DataSourceDetector
 import com.intellij.database.autoconfig.DataSourceRegistry
-import com.intellij.database.console.JdbcConsoleProvider
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfiguration
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
-import com.intellij.database.console.session.DatabaseSessionManager
 import com.intellij.database.dataSource.DatabaseAuthProviderNames
 import com.intellij.database.dataSource.LocalDataSource
 import com.intellij.database.dataSource.LocalDataSourceManager
@@ -17,7 +15,6 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
@@ -27,7 +24,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.sql.SqlFileType
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
 import com.intellij.util.containers.addIfNotNull
@@ -37,7 +33,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 import com.jetbrains.edu.sql.core.EduSqlBundle
 
@@ -131,27 +126,6 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     configurationSettings.isActivateToolWindowBeforeRun = false
 
     return configurationSettings
-  }
-
-  private fun attachSqlConsoleIfNeeded(project: Project, file: VirtualFile) {
-    if (file.fileType != SqlFileType.INSTANCE) return
-
-    val task = file.getTaskFile(project)?.task ?: return
-    val url = task.databaseUrl(project) ?: return
-    val dataSource = LocalDataSourceManager.getInstance(project).dataSources.find { it.url == url } ?: return
-    // `DatabaseStartupActivity` also installs `FileEditorManagerListener` to restore jdbc console for a file.
-    // Since order of listeners is not specified, it's possible to attach console from our side,
-    // and listener from `DatabaseStartupActivity` will attach this console again (probably, it's a bug database plugin),
-    // that leads to unexpected exceptions and behaviour.
-    // So let's postpone console attaching to avoid described situation
-    invokeLater {
-      if (project.isDisposed) return@invokeLater
-      val currentConsole = JdbcConsoleProvider.getValidConsole(project, file)
-      if (currentConsole != null) return@invokeLater
-
-      val session = DatabaseSessionManager.getSession(project, dataSource, task.presentableName)
-      JdbcConsoleProvider.reattachConsole(project, session, file)
-    }
   }
 
   private fun loadDatabaseDriver(project: Project, dataSources: List<LocalDataSource>) {
