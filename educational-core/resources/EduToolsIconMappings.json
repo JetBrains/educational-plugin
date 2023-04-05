@@ -25,8 +25,7 @@
               "checkiOJS.svg" : "icons/com/jetbrains/edu/learning/JSCheckiO.svg",
               "marketplaceCourses@24x24.svg" : "icons/com/jetbrains/edu/learning/marketplace_courses_tab.svg",
               "eduCourseAction.svg" : [
-                "icons/com/jetbrains/edu/learning/marketplace_courses.svg",
-                "icons/com/jetbrains/edu/eduCourseAction.svg"
+                "icons/com/jetbrains/edu/learning/marketplace_courses.svg"
               ],
               "resetTask.svg" : "icons/com/jetbrains/edu/learning/resetTask.svg",
               "resultCorrect.svg" : "icons/com/jetbrains/edu/learning/resultCorrect.svg",
