@@ -14,11 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
-import com.jetbrains.edu.learning.yaml.YamlDeserializer
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.*
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
-import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeChildrenIfNeeded
 
 class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : EduVirtualFileListener(project) {
@@ -159,9 +156,6 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (configAdded) {
       reloadConfig(configFile)
     }
-    else {
-      LOG.warn("Study item configuration file was created in a wrong location: $configFile")
-    }
 
     return configAdded
   }
@@ -172,17 +166,31 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
   private fun tryAddItemToParentConfig(configFile: VirtualFile): Boolean {
     val itemDir = configFile.parent ?: return false
     val parentItemDir = itemDir.parent ?: return false
-    val parentStudyItem = parentItemDir.getStudyItem(project) ?: return false
+    val parentStudyItem = parentItemDir.getStudyItem(project)
+
+    if (parentStudyItem == null) {
+      if (configFile.name != YamlFormatSettings.COURSE_CONFIG)
+        LOG.warn("Study item configuration file was created without a parent study item: $configFile. This could be a temporary issue, if a parent item is created soon.")
+      return false
+    }
 
     //if the study item is already inside the parent, do not add it
-    if (parentStudyItem is ItemContainer && parentStudyItem.getItem(itemDir.name) != null) {
-      return false
+    if (parentStudyItem is ItemContainer) {
+      val previousItem = parentStudyItem.getItem(itemDir.name)
+      if (previousItem != null) {
+        if (previousItem.configFileName != configFile.name) {
+          LOG.warn("Study item configuration file was created near another study item configuration file: $configFile")
+        }
+
+        return false
+      }
     }
 
     val mapper = StudyTaskManager.getInstance(project).course?.mapper ?: YamlFormatSynchronizer.MAPPER
     val deserializedItem = YamlDeserializer.deserializeItem(configFile, project, true, mapper) ?: return false
 
     if (!deserializedItem.couldBeInside(parentStudyItem)) {
+      LOG.warn("Study item configuration file was created in a child folder of another study item, but the upper study item can not contain the created one: $configFile")
       return false
     }
 
