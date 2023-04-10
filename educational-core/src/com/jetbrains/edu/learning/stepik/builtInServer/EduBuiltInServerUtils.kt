@@ -7,9 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
-import com.intellij.util.xmlb.XmlSerializationException
-import com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.recentProjectManagerEx
@@ -17,11 +14,7 @@ import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfo
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import org.jdom.Element
-import org.jdom.JDOMException
-import org.jdom.input.SAXBuilder
 import java.io.File
-import java.io.IOException
 
 object EduBuiltInServerUtils {
 
@@ -52,14 +45,9 @@ object EduBuiltInServerUtils {
   @JvmStatic
   fun openRecentProject(coursePredicate: (Course) -> Boolean): Pair<Project, Course>? {
     val recentPaths = recentProjectManagerEx().getRecentPaths()
-    val parser = SAXBuilder()
 
     for (projectPath in recentPaths) {
-      val component = readComponent(parser, projectPath)
-      val course = if (component != null) getCourse(component) else getCourseFromYaml(projectPath)
-      if (course == null) {
-        continue
-      }
+      val course = getCourseFromYaml(projectPath) ?: continue
       if (coursePredicate(course)) {
         val project = openProject(projectPath) ?: continue
         val realProjectCourse = project.course ?: continue
@@ -80,35 +68,4 @@ object EduBuiltInServerUtils {
       localCourse
     }
   }
-
-  private fun readComponent(parser: SAXBuilder, projectPath: String): Element? {
-    var component: Element? = null
-    try {
-      val studyProjectXML = projectPath + STUDY_PROJECT_XML_PATH
-      val xmlDoc = parser.build(File(studyProjectXML))
-      val root = xmlDoc.rootElement
-      component = root.getChild("component")
-    }
-    catch (ignored: JDOMException) {
-    }
-    catch (ignored: IOException) {
-    }
-
-    return component
-  }
-
-  private fun getCourse(component: Element): Course? {
-    try {
-      val studyTaskManager = StudyTaskManager()
-      studyTaskManager.loadState(component)
-      return studyTaskManager.course
-    }
-    catch (ignored: IllegalStateException) {
-    }
-    catch (ignored: XmlSerializationException) {
-    }
-
-    return null
-  }
-
 }

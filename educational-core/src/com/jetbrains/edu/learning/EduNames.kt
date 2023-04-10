@@ -28,7 +28,6 @@ object EduNames {
   const val TEST = "test"
   const val BUILD = "build"
   const val OUT = "out"
-  const val STUDY_PROJECT_XML_PATH = "/.idea/study_project.xml"
   const val STEPIK_IDS_JSON = "stepik_ids.json"
   const val COURSE_IGNORE = ".courseignore"
   const val CHANGE_NOTES = "change-notes.txt"
