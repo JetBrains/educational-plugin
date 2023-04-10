@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TESTS_PY
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PyNewProjectSettings
 
 
 class PyHyperskillCourseGenerationTest : EduTestCase() {
@@ -24,8 +23,7 @@ class PyHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
-                    settings = PyNewProjectSettings()) {}
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = PythonLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR) {}
 
     checkFileTree {
       dir("lesson1/task1") {

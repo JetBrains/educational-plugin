@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
 
   protected abstract val language: Language
-  protected abstract val settings: Any
   protected open val environment: String = ""
   protected open val courseProducer: () -> Course = ::EduCourse
 
@@ -70,7 +69,6 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
   ) {
     val course = courseWithFiles(
       language = language,
-      settings = settings,
       environment = environment,
       courseMode = CourseMode.EDUCATOR,
       courseProducer = courseProducer

@@ -2,12 +2,10 @@ package com.jetbrains.edu.kotlin.actions
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = KotlinLanguage.INSTANCE
-  override val settings: Any get() = JdkProjectSettings.emptySettings()
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

@@ -2,14 +2,12 @@ package com.jetbrains.edu.java.actions
 
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class JAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = JavaLanguage.INSTANCE,
-                                 settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = JavaLanguage.INSTANCE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

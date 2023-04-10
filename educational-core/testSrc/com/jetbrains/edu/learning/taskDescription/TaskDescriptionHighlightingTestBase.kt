@@ -9,7 +9,6 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
 
   protected abstract val language: com.intellij.lang.Language
   open val environment: String = ""
-  protected abstract val settings: Any
 
   protected fun doHtmlTest(@Language("HTML") taskDescription: String, @Language("HTML") expectedText: String) =
     doTest(taskDescription, DescriptionFormat.HTML, expectedText)
@@ -18,7 +17,7 @@ abstract class TaskDescriptionHighlightingTestBase : EduTestCase() {
     doTest(taskDescription, DescriptionFormat.MD, expectedText)
 
   protected open fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
-    courseWithFiles(language = language, environment = environment, settings = settings) {
+    courseWithFiles(language = language, environment = environment) {
       lesson("lesson1") {
         eduTask("task1", taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
       }

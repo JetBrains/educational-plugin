@@ -8,7 +8,6 @@ import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
 import org.rust.cargo.CargoConstants
 import org.rust.lang.RsLanguage
@@ -110,8 +109,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson item with section`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       section("section1") {
         lesson("lesson1") {
@@ -150,8 +148,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add the first lesson in course`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       section("section1")
       additionalFile("Cargo.toml", """
@@ -184,8 +181,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson in the middle of course`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1")
@@ -227,8 +223,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test do not modify manifest on empty lesson creation`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1")
@@ -266,8 +261,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test do not modify manifest on non first task creation`() {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1")
@@ -306,8 +300,7 @@ class RsCreateLessonTest : RsActionTestBase() {
   private fun addLastLesson(@Language("TOML") before: String, @Language("TOML") after: String) {
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1")

@@ -1,15 +1,17 @@
 package com.jetbrains.edu.scala.actions
 
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.jetbrains.plugins.scala.ScalaLanguage
 
 class ScalaSbtAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = ScalaLanguage.INSTANCE,
-                                 environment = "sbt", settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(
+      courseMode = CourseMode.EDUCATOR,
+      language = ScalaLanguage.INSTANCE,
+      environment = "sbt"
+    ) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

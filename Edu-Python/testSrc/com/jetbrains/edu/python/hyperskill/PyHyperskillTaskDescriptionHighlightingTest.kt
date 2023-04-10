@@ -5,7 +5,6 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskDescriptionHighlightingTest
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHighlightingTest() {
 
@@ -18,9 +17,6 @@ class PyHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHig
 
   override val language: Language
     get() = PythonLanguage.INSTANCE
-
-  override val settings: Any
-    get() = PyNewProjectSettings()
 
   override val codeSample: String
     get() = """print(1)"""

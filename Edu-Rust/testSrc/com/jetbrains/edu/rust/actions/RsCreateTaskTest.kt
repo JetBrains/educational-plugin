@@ -11,7 +11,6 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.cargo.CfgOptions
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.model.impl.TestCargoProjectsServiceImpl
@@ -29,8 +28,7 @@ class RsCreateTaskTest : RsActionTestBase() {
     // Should be synchronized with workspace structure provided by RsProjectDescriptor
     courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {

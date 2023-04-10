@@ -6,7 +6,6 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 class CCNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = PlainTextLanguage.INSTANCE
-  override val settings: Any get() = Unit
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

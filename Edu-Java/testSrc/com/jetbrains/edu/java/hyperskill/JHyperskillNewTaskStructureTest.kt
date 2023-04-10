@@ -4,13 +4,11 @@ import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class JHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = JavaLanguage.INSTANCE
-  override val settings: Any get() = JdkProjectSettings.emptySettings()
   override val courseProducer: () -> Course = ::HyperskillCourse
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {

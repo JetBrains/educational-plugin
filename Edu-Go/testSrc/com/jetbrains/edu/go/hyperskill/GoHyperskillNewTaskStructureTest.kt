@@ -1,7 +1,6 @@
 package com.jetbrains.edu.go.hyperskill
 
 import com.goide.GoLanguage
-import com.goide.sdk.GoSdk
 import com.intellij.lang.Language
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
@@ -9,14 +8,12 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.GO_MOD
 import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
-import com.jetbrains.edu.go.GoProjectSettings
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class GoHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = GoLanguage.INSTANCE
-  override val settings: Any get() = GoProjectSettings(GoSdk.NULL)
   override val courseProducer: () -> Course = ::HyperskillCourse
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {

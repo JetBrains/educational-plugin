@@ -3,12 +3,10 @@ package com.jetbrains.edu.android.actions
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class AndroidNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = KotlinLanguage.INSTANCE
-  override val settings: Any get() = JdkProjectSettings.emptySettings()
   override val environment: String = "Android"
 
   override fun createMockUi(taskName: String, taskType: String): MockNewStudyItemUi =

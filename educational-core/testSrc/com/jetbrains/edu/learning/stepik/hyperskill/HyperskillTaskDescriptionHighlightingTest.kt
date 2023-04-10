@@ -12,7 +12,7 @@ abstract class HyperskillTaskDescriptionHighlightingTest : TaskDescriptionHighli
     get() = """<span style="...">$codeSample</span>"""
 
   override fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = language, environment = environment, settings = settings) {
+    courseWithFiles(courseProducer = ::HyperskillCourse, language = language, environment = environment) {
       lesson {
         eduTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
       }

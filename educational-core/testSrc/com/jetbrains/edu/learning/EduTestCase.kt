@@ -185,7 +185,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
     description: String = "Test Course Description",
     environment: String = "",
     language: Language = PlainTextLanguage.INSTANCE,
-    settings: Any = Unit,
     courseVendor: Vendor? = null,
     courseProducer: () -> Course = ::EduCourse,
     createYamlConfigs: Boolean = false,

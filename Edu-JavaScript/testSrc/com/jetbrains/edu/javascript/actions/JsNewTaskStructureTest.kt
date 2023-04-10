@@ -3,11 +3,9 @@ package com.jetbrains.edu.javascript.actions
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 
 class JsNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = JavascriptLanguage.INSTANCE
-  override val settings: Any get() = JsNewProjectSettings()
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

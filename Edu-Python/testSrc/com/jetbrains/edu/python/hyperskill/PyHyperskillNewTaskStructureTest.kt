@@ -7,11 +7,9 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyHyperskillNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = PythonLanguage.INSTANCE
-  override val settings: Any get() = PyNewProjectSettings()
   override val courseProducer: () -> Course = ::HyperskillCourse
 
   override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {

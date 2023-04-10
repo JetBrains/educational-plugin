@@ -1,15 +1,12 @@
 package com.jetbrains.edu.go.actions
 
 import com.goide.GoLanguage
-import com.goide.sdk.GoSdk
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.go.GoProjectSettings
 
 class GoNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = GoLanguage.INSTANCE
-  override val settings: Any get() = GoProjectSettings(GoSdk.NULL)
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

@@ -13,8 +13,9 @@ import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
 class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
+  private val settings: CppProjectSettings get() = CppProjectSettings()
+
   override val language: Language get() = OCLanguage.getInstance()
-  override val settings: CppProjectSettings get() = CppProjectSettings()
   override val environment: String get() = "Catch"
 
   fun `test create edu task`() = checkEduTaskCreation(

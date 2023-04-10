@@ -2,13 +2,11 @@ package com.jetbrains.edu.java.taskDescription
 
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 
 class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = JavaLanguage.INSTANCE
-  override val settings: Any get() = JdkProjectSettings.emptySettings()
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:

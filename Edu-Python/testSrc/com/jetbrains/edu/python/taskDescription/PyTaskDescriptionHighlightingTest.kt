@@ -3,12 +3,10 @@ package com.jetbrains.edu.python.taskDescription
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PythonProjectGenerator
 
 class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
 
   override val language: Language = PythonLanguage.INSTANCE
-  override val settings: Any get() = PythonProjectGenerator.NO_SETTINGS
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:

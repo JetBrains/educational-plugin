@@ -3,7 +3,6 @@ package com.jetbrains.edu.android.actions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -14,8 +13,11 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class AndroidCreateTaskTest : EduActionTestCase() {
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, environment = EduNames.ANDROID,
-                                 language = KotlinLanguage.INSTANCE, settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(
+      courseMode = CourseMode.EDUCATOR,
+      environment = EduNames.ANDROID,
+      language = KotlinLanguage.INSTANCE
+    ) {
       lesson()
     }
     val lessonFile = findFile("lesson1")

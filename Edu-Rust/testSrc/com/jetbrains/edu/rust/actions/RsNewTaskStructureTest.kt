@@ -2,13 +2,11 @@ package com.jetbrains.edu.rust.actions
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.lang.RsLanguage
 
 class RsNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   override val language: Language get() = RsLanguage
-  override val settings: Any get() = RsProjectSettings()
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

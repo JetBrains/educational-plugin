@@ -3,7 +3,6 @@ package com.jetbrains.edu.javascript.hyperskill
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.javascript.learning.JsConfigurator.Companion.TASK_JS
-import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator.Companion.HYPERSKILL_TEST_DIR
@@ -17,8 +16,11 @@ class JsHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse, language = JavascriptLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR,
-                    settings = JsNewProjectSettings()) {}
+    courseWithFiles(
+      courseProducer = ::HyperskillCourse,
+      language = JavascriptLanguage.INSTANCE,
+      courseMode = CourseMode.EDUCATOR
+    ) {}
 
     checkFileTree {
       dir("lesson1/task1") {

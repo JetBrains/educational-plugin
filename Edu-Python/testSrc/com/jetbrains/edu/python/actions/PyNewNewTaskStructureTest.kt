@@ -3,11 +3,9 @@ package com.jetbrains.edu.python.actions
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyNewNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = PythonLanguage.INSTANCE
-  override val settings: Any get() = PyNewProjectSettings()
   override val environment: String = "unittest"
 
   fun `test create edu task`() = checkEduTaskCreation(

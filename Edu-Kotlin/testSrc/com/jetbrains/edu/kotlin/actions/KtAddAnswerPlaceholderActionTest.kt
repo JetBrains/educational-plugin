@@ -1,15 +1,13 @@
 package com.jetbrains.edu.kotlin.actions
 
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtAddAnswerPlaceholderActionTest : CCAddAnswerPlaceholderActionTestBase() {
 
   fun `test placeholder text`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = KotlinLanguage.INSTANCE,
-                                 settings = JdkProjectSettings.emptySettings()) {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = KotlinLanguage.INSTANCE) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("Task.kt", DEFAULT_TASK_TEXT)

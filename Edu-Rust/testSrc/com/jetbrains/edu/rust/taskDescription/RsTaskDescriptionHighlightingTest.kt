@@ -2,12 +2,10 @@ package com.jetbrains.edu.rust.taskDescription
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.taskDescription.TaskDescriptionHighlightingTestBase
-import com.jetbrains.edu.rust.RsProjectSettings
 import org.rust.lang.RsLanguage
 
 class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
   override val language: Language = RsLanguage
-  override val settings: Any = RsProjectSettings(null)
 
   fun `test markdown description highlighting`() = doMarkdownTest("""
     Code block with default language:

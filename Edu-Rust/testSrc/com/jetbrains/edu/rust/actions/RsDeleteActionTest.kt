@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.withEduTestDialog
-import com.jetbrains.edu.rust.RsProjectSettings
 import org.intellij.lang.annotations.Language
 import org.rust.lang.RsLanguage
 
@@ -43,8 +42,7 @@ class RsDeleteActionTest : RsActionTestBase() {
   fun `test delete last lesson with trailing comma`() {
     val course = courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -143,8 +141,7 @@ class RsDeleteActionTest : RsActionTestBase() {
   private fun createRustCourse(): Course {
     return courseWithFiles(
       courseMode = CourseMode.EDUCATOR,
-      language = RsLanguage,
-      settings = RsProjectSettings()
+      language = RsLanguage
     ) {
       lesson("lesson1") {
         eduTask("task1") {

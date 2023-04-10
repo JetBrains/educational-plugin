@@ -1,7 +1,6 @@
 package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.kotlin.KtCourseBuilder.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
@@ -22,10 +21,11 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test course structure creation`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse,
-                    language = KotlinLanguage.INSTANCE,
-                    courseMode = CourseMode.EDUCATOR,
-                    settings = JdkProjectSettings.emptySettings()) {}
+    courseWithFiles(
+      courseProducer = ::HyperskillCourse,
+      language = KotlinLanguage.INSTANCE,
+      courseMode = CourseMode.EDUCATOR
+    ) {}
 
     checkFileTree {
       dir("lesson1/task1") {
@@ -43,9 +43,10 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test build gradle file`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse,
-                    language = KotlinLanguage.INSTANCE,
-                    settings = JdkProjectSettings.emptySettings()) {}
+    courseWithFiles(
+      courseProducer = ::HyperskillCourse,
+      language = KotlinLanguage.INSTANCE
+    ) {}
     val actualBuildGradleContent = findFile(DEFAULT_SCRIPT_NAME).document.text
     val expectedBuildGradleContent = GeneratorUtils.getInternalTemplateText(KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME,
                                                                             getKotlinTemplateVariables())
@@ -54,9 +55,10 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
   }
 
   fun `test settings gradle file`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse,
-                    language = KotlinLanguage.INSTANCE,
-                    settings = JdkProjectSettings.emptySettings()) {}
+    courseWithFiles(
+      courseProducer = ::HyperskillCourse,
+      language = KotlinLanguage.INSTANCE
+    ) {}
     val actualSettingsGradleContent = findFile(SETTINGS_FILE_NAME).document.text
     val expectedSettingsGradleContent = GeneratorUtils.getInternalTemplateText(HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME)
 

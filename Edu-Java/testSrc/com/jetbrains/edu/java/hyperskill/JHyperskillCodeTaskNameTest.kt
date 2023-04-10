@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
@@ -21,8 +20,7 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
   fun `test find taskFile for uploading`() {
     val course = courseWithFiles(
       language = JavaLanguage.INSTANCE,
-      courseProducer = ::HyperskillCourse,
-      settings = JdkProjectSettings.emptySettings()
+      courseProducer = ::HyperskillCourse
     ) {
       frameworkLesson("lesson1") {
         eduTask("task1", stepId = 1) {
@@ -53,8 +51,7 @@ class JHyperskillCodeTaskNameTest : EduTestCase() {
   fun `test create name for taskfile`() {
     val course = courseWithFiles(
       language = JavaLanguage.INSTANCE,
-      courseProducer = ::HyperskillCourse,
-      settings = JdkProjectSettings.emptySettings()
+      courseProducer = ::HyperskillCourse
     ) {} as HyperskillCourse
     course.hyperskillProject = HyperskillProject()
     course.stages = listOf(HyperskillStage(1, "", 1))

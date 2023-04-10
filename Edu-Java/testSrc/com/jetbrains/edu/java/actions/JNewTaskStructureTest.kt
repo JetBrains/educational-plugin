@@ -3,11 +3,9 @@ package com.jetbrains.edu.java.actions
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 
 class JNewTaskStructureTest : CCNewTaskStructureTestBase() {
   override val language: Language get() = JavaLanguage.INSTANCE
-  override val settings: Any get() = JdkProjectSettings.emptySettings()
 
   fun `test create edu task`() = checkEduTaskCreation(
     fullTaskStructure = {

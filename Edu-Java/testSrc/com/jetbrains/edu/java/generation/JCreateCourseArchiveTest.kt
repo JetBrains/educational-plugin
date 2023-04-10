@@ -2,7 +2,6 @@ package com.jetbrains.edu.java.generation
 
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveTestBase
-import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
@@ -13,7 +12,6 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
   fun `test custom command`() {
     courseWithFiles(
       language = JavaLanguage.INSTANCE,
-      settings = JdkProjectSettings.emptySettings(),
       courseMode = CourseMode.EDUCATOR,
       description = "my summary"
     ) {
