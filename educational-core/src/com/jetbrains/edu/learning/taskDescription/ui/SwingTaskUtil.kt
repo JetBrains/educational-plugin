@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.colors.FontPreferences
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -95,7 +96,7 @@ private fun createListener(task: ChoiceTask, index: Int): ItemListener {
   }
 }
 
-fun createTextPane(editorKit: HTMLEditorKit = UIUtil.JBWordWrapHtmlEditorKit()): JTextPane {
+fun createTextPane(editorKit: HTMLEditorKit = HTMLEditorKitBuilder().withWordWrapViewFactory().build()): JTextPane {
   prepareCss(editorKit)
 
   val textPane = object : JTextPane() {

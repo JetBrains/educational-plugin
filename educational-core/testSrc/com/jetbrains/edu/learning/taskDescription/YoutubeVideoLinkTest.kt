@@ -5,22 +5,22 @@ import com.jetbrains.edu.learning.EduTestCase
 class YoutubeVideoLinkTest : EduTestCase() {
   private val videoId = "0zM3nApSvMg"
 
-  fun `test get video id watch?v=${videoId}`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}")
+  fun `test get video id watch v=${videoId}`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}")
 
-  fun `test get video id watch?v=${videoId}?start`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}?start=60")
+  fun `test get video id watch v=${videoId}&start`() = doTestGetYoutubeVideoId("https://www.youtube.com/watch?v=${videoId}&start=10")
 
-  fun `test get video id watch?v=${videoId}&feature`() = doTestGetYoutubeVideoId(
+  fun `test get video id watch v=${videoId}&feature`() = doTestGetYoutubeVideoId(
     "http://www.youtube.com/watch?v=${videoId}&feature=feedrec_grec_index")
 
   fun `test get video id youtu_be${videoId}`() = doTestGetYoutubeVideoId("https://youtu.be/${videoId}")
 
   fun `test get video id embed${videoId}`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}")
 
-  fun `test get video id embed${videoId}?start`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}?start=60")
+  fun `test get video id embed${videoId}&start`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}&start=10")
 
   fun `test get video id embed${videoId}&feature`() = doTestGetYoutubeVideoId("https://www.youtube.com/embed/${videoId}&feature")
 
-  fun `test get video id ?v=${videoId}&feature`() = doTestGetYoutubeVideoId("http://youtube.com/?v=${videoId}&feature")
+  fun `test get video id v=${videoId}&feature`() = doTestGetYoutubeVideoId("http://youtube.com/?v=${videoId}&feature")
 
   fun `test video tag substituted`() {
     val taskDescriptionWithVideoTag = """

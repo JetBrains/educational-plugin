@@ -62,7 +62,7 @@ class CCCreateTaskFilePreviewTest : EduActionTestCase() {
         }
       }
     }
-    val placeholder = course.lessons.first().taskList.first().taskFiles["fizz.kt"]!!.answerPlaceholders?.firstOrNull()
+    val placeholder = course.lessons.first().taskList.first().taskFiles["fizz.kt"]!!.answerPlaceholders.firstOrNull()
                       ?: error("Cannot find placeholder")
     placeholder.offset = 1000
 

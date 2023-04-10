@@ -39,6 +39,7 @@ abstract class StudyItem() {
   // but original non unique name is displayed
   @get:Deprecated("Should be used only for deserialization. Use {@link StudyItem#getPresentableName()} instead")
   var customPresentableName: String? = null
+  @Suppress("DEPRECATION")
   val presentableName: String
     get() = customPresentableName ?: name
 

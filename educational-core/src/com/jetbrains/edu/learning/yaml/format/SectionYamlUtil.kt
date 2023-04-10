@@ -47,7 +47,7 @@ private class SectionBuilder(@JsonProperty(CONTENT) val content: List<String?> =
     val section = Section()
     val items = content.mapIndexed { index: Int, title: String? ->
       if (title == null) {
-        throw formatError(unnamedItemAtMessage(index + 1))
+        formatError(unnamedItemAtMessage(index + 1))
       }
       val titledStudyItem = TitledStudyItem(title)
       titledStudyItem.index = index + 1

@@ -30,7 +30,7 @@ class PyPyCharmSdkSettingsHelper : PySdkSettingsHelper {
     }
 
     val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
-    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
+    val sdkChooser = PythonSdkChooserCombo(null, null, sdks) { true }
     sdkChooser.addChangedListener {
       val sdk = sdkChooser.comboBox.selectedItem as? Sdk
       onSdkSelected(sdk)

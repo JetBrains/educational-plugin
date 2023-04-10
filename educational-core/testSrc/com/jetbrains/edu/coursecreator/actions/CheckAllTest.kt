@@ -7,12 +7,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.messages.MessageBusConnection
 import com.jetbrains.edu.coursecreator.actions.checkAllTasks.CCCheckAllTasksAction
-import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkTask
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 

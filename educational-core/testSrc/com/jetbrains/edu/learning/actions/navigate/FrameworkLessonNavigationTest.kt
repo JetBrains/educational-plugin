@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
-import junit.framework.TestCase
 
 // Note, `CodeInsightTestFixture#type` can trigger completion (e.g. it inserts paired `"`)
 class FrameworkLessonNavigationTest : NavigationTestBase() {

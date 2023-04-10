@@ -304,7 +304,7 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<Unit>() {
       }
     }
     doTest(course, serverCourse, expectedStructure, 2)
-    val placeholder = course.allTasks[2].taskFiles?.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
+    val placeholder = course.allTasks[2].taskFiles.firstOrNull()?.value?.answerPlaceholders?.firstOrNull()
     checkNotNull(placeholder)
     assertEquals("lesson1#task2#TaskFile2.kt#1", placeholder.placeholderDependency.toString())
   }

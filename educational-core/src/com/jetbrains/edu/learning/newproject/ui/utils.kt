@@ -133,7 +133,7 @@ fun getColorFromScheme(colorId: String, default: Color): JBColor {
   if (lookAndFeel is UIThemeBasedLookAndFeelInfo && UIManager.getColor(colorId) == null) {
     LOG.warn("Cannot find $colorId for ${lookAndFeel.name}")
   }
-  return JBColor { UIManager.getColor(colorId) ?: default }
+  return JBColor.lazy { UIManager.getColor(colorId) ?: default }
 }
 
 fun createUsersNumberLabel(usersCount: Int): JBLabel {

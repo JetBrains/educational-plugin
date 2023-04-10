@@ -3,6 +3,7 @@ package com.jetbrains.edu.go
 import com.goide.GoConstants.SDK_TYPE_ID
 import com.goide.sdk.GoSdk
 import com.goide.sdk.combobox.GoSdkChooserCombo
+import com.intellij.facet.ui.ValidationResult
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Disposer
@@ -24,7 +25,7 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
   override fun getSettings(): GoProjectSettings = GoProjectSettings(selectedSdk ?: GoSdk.NULL)
 
   override fun getLanguageSettingsComponents(course: Course, disposable: Disposable, context: UserDataHolder?): List<LabeledComponent<JComponent>> {
-    val sdkChooser = GoSdkChooserCombo()
+    val sdkChooser = GoSdkChooserCombo({ null }, { true }, { ValidationResult.OK })
     Disposer.register(disposable, sdkChooser)
 
     selectedSdk = sdkChooser.sdk

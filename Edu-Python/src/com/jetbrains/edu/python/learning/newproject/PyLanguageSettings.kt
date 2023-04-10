@@ -22,7 +22,7 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PySdkToInstall
-import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.sdk.PySdkUtil
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addBaseInterpretersAsync
 import com.jetbrains.python.sdk.detectSystemWideSdks
@@ -101,7 +101,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         }
       }
       else {
-        PythonSdkType.getLanguageLevelForSdk(this)
+        PySdkUtil.getLanguageLevelForSdk(this)
       }
     }
 
