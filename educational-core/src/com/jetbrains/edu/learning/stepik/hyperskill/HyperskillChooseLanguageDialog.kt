@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.EduLanguage
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
@@ -27,7 +27,7 @@ class HyperskillChooseLanguageDialog : DialogWrapper(false) {
 
   override fun createCenterPanel(): JComponent = panel {
     row("${EduCoreBundle.message("label.language")}:") {
-      languageComboBox()
+      cell(languageComboBox)
     }
   }
 
