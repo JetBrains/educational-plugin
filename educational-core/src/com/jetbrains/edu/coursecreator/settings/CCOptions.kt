@@ -1,10 +1,9 @@
 package com.jetbrains.edu.coursecreator.settings
 
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBRadioButton
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
@@ -50,19 +49,17 @@ class CCOptions : OptionsProvider {
     if (!isCourseCreatorFeaturesEnabled) return null
 
     return panel {
-      row {
-        cell {
+      group(displayName) {
+        row {
           label(EduCoreBundle.message("ccoptions.description.format"))
-          htmlRadioButton()
-          markdownRadioButton()
+          cell(htmlRadioButton)
+          cell(markdownRadioButton)
+        }
+        row { cell(copyTestsCheckBox) }
+        if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
+          row { cell(showSplitEditorCheckBox) }
         }
       }
-      row { copyTestsCheckBox() }
-      if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
-        row { showSplitEditorCheckBox() }
-      }
-    }.apply {
-      border = IdeBorderFactory.createTitledBorder(displayName)
     }
   }
 
