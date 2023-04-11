@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.moveItemMessage
 import javax.swing.JComponent
