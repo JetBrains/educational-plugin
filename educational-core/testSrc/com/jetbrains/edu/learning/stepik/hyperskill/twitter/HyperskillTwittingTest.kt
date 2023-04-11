@@ -23,11 +23,11 @@ class HyperskillTwittingTest : EduActionTestCase() {
 
   override fun setUp() {
     super.setUp()
-    TwitterSettings.getInstance().setAskToTweet(true)
+    TwitterSettings.getInstance().askToTweet = true
   }
 
   override fun tearDown() {
-    TwitterSettings.getInstance().setAskToTweet(false)
+    TwitterSettings.getInstance().askToTweet = false
     super.tearDown()
   }
 

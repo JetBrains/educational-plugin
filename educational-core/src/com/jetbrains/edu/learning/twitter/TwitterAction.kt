@@ -17,7 +17,7 @@ class TwitterAction : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val settings = TwitterSettings.getInstance()
-    if (!settings.askToTweet()) return
+    if (!settings.askToTweet) return
 
     for (twitterPluginConfigurator in TwitterPluginConfigurator.EP_NAME.extensionList) {
       if (twitterPluginConfigurator.askToTweet(project, task, statusBeforeCheck!!)) {

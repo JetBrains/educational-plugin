@@ -37,7 +37,7 @@ class TwitterDialog(
   private class TwitterDoNotAskOption : com.intellij.openapi.ui.DoNotAskOption {
     override fun setToBeShown(toBeShown: Boolean, exitCode: Int) {
       if (exitCode == CANCEL_EXIT_CODE || exitCode == OK_EXIT_CODE) {
-        TwitterSettings.getInstance().setAskToTweet(toBeShown)
+        TwitterSettings.getInstance().askToTweet = toBeShown
       }
     }
     override fun isToBeShown(): Boolean = true

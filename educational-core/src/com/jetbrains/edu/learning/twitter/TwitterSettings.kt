@@ -8,11 +8,7 @@ import java.util.*
 @State(name = "StudyTwitterSettings", storages = [Storage("study_twitter_settings.xml", roamingType = RoamingType.DISABLED)])
 class TwitterSettings : SimplePersistentStateComponent<TwitterSettings.State>(State()) {
 
-  fun askToTweet(): Boolean = state.askToTweet
-
-  fun setAskToTweet(askToTweet: Boolean) {
-    state.askToTweet = askToTweet
-  }
+  var askToTweet: Boolean by state::askToTweet
 
   var userId: String
     get() {
