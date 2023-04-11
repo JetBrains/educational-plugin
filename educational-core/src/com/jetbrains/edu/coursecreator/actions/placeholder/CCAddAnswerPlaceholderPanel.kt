@@ -2,7 +2,9 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -14,7 +16,6 @@ import java.awt.event.FocusEvent
 import javax.swing.*
 
 class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
-  private val panel: JPanel
   private val textArea: JTextArea = JTextArea(placeholderText, 0, 0)
 
   init {
@@ -37,9 +38,17 @@ class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
     val scrollPane = JBScrollPane(textArea)
     scrollPane.border = BorderFactory.createLineBorder(JBColor.border())
     scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-    panel = panel {
-      row { scrollPane() }
-      row { label() }
+    val panel = panel {
+      row {
+        resizableRow()
+        // BACKCOMPAT: 2022.2.
+        // Use `align(Align.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)` and `verticalAlign(VerticalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(scrollPane)
+          .horizontalAlign(HorizontalAlign.FILL)
+          .verticalAlign(VerticalAlign.FILL)
+      }
+      row { cell(label) }
     }
     panel.minimumSize = JBUI.size(PLACEHOLDER_PANEL_WIDTH, 100)
     panel.alignmentX = Component.LEFT_ALIGNMENT

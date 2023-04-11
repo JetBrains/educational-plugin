@@ -5,10 +5,10 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperPeer
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.HideableDecorator
-import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JComponent
-import javax.swing.JLabel
 import javax.swing.JPanel
 
 open class CCCreateAnswerPlaceholderDialog(
@@ -33,7 +32,6 @@ open class CCCreateAnswerPlaceholderDialog(
     EduCoreBundle.message("label.visible"),
     placeholder.placeholderDependency?.isVisible == true
   )
-  private val pathLabel: JLabel = JLabel(EduCoreBundle.message("ui.dialog.create.answer.placeholder.path.pattern"))
   private val isFirstTask: Boolean = placeholder.taskFile.task.isFirstInCourse
   private val currentText: String get() = dependencyPathField.text ?: ""
 
@@ -49,14 +47,20 @@ open class CCCreateAnswerPlaceholderDialog(
 
   override fun createCenterPanel(): JComponent {
     dependencyPathField.putClientProperty(DialogWrapperPeer.HAVE_INITIAL_SELECTION, true)
-    pathLabel.foreground = JBColor.GRAY
 
     if (!isFirstTask) {
       val dependencyPanel = JPanel(BorderLayout())
       val contentPanel = panel {
-        row { dependencyPathField() }
-        row { pathLabel() }
-        row { visibilityCheckBox() }
+        row {
+          // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+          @Suppress("UnstableApiUsage", "DEPRECATION")
+          cell(dependencyPathField)
+            .horizontalAlign(HorizontalAlign.FILL)
+        }
+        row {
+          comment(EduCoreBundle.message("ui.dialog.create.answer.placeholder.path.pattern"))
+        }
+        row { cell(visibilityCheckBox) }
       }
       contentPanel.border = JBUI.Borders.emptyBottom(5)
       val decorator = HideableDecorator(dependencyPanel, EduCoreBundle.message("ui.dialog.create.answer.placeholder.dependency"), true)
