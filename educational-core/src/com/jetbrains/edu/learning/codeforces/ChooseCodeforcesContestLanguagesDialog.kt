@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.ui.layout.*
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -20,7 +22,6 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
   private val textLanguageComboBox: ComboBox<TaskTextLanguage> = ComboBox<TaskTextLanguage>()
   private val languageComboBox: ComboBox<String> = ComboBox<String>()
   private val doNotShowLanguageDialogCheckBox: JCheckBox = JCheckBox(EduCoreBundle.message("codeforces.prefer.selected.languages"))
-  private val comboBoxesWidth: Int = JBUI.scale(300)
   private val courseSettingsPanel: CourseSettingsPanel =
     CourseSettingsPanel(disposable, true, EduCoreBundle.message("codeforces.project.settings"))
 
@@ -71,14 +72,19 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
   }
 
   override fun createCenterPanel(): JComponent = panel {
-    row("${EduCoreBundle.message("label.codeforces.programming.language")}: ") {
-      languageComboBox()
+    row("${EduCoreBundle.message("label.codeforces.programming.language")}:") {
+      cell(languageComboBox)
+        .columns(COLUMNS_MEDIUM)
     }
-    row("${EduCoreBundle.message("label.codeforces.display.in")}: ") {
-      textLanguageComboBox()
+    row("${EduCoreBundle.message("label.codeforces.display.in")}:") {
+      cell(textLanguageComboBox)
+        .columns(COLUMNS_MEDIUM)
     }
     row {
-      courseSettingsPanel()
+      // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+      @Suppress("UnstableApiUsage", "DEPRECATION")
+      cell(courseSettingsPanel)
+        .horizontalAlign(HorizontalAlign.FILL)
     }
   }
 
@@ -98,9 +104,6 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
     TaskTextLanguage.values().forEach {
       textLanguageComboBox.addItem(it)
     }
-
-
-    textLanguageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 
   private fun initLanguageComboBox() {
@@ -112,7 +115,5 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
     if (defaultLanguageId != null) {
       languageComboBox.selectedItem = CodeforcesLanguageProvider.getPreferableCodeforcesLanguage(defaultLanguageId)
     }
-
-    languageComboBox.setMinimumAndPreferredWidth(comboBoxesWidth)
   }
 }
