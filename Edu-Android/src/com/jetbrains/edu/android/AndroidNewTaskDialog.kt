@@ -6,7 +6,8 @@ import com.android.tools.idea.npw.model.NewProjectModel
 import com.android.tools.idea.npw.platform.AndroidVersionsInfo
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.android.AndroidCourseBuilder.Companion.DEFAULT_PACKAGE_NAME
 import com.jetbrains.edu.android.AndroidCourseBuilder.Companion.initAndroidProperties
 import com.jetbrains.edu.android.messages.EduAndroidBundle
@@ -59,7 +60,7 @@ class AndroidNewTaskAfterPopupDialog(
 
   override fun createNewStudyItemInfo(): NewStudyItemInfo = currentInfo
 
-  override fun createAdditionalFields(builder: LayoutBuilder) {
+  override fun createAdditionalFields(panel: Panel) {
     val androidVersionsInfo = AndroidVersionsInfo()
     androidVersionsInfo.loadLocalVersions()
     androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel, Consumer { items ->
@@ -71,9 +72,19 @@ class AndroidNewTaskAfterPopupDialog(
     })
     addTextValidator(packageNameField)
 
-    with(builder) {
-      row(EduAndroidBundle.message("package.colon")) { packageNameField() }
-      row(EduAndroidBundle.message("min.sdk.colon")) { comboBoxWrapper.combobox(CCFlags.growX) }
+    with(panel) {
+      row(EduAndroidBundle.message("package.colon")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(packageNameField)
+          .horizontalAlign(HorizontalAlign.FILL)
+      }
+      row(EduAndroidBundle.message("min.sdk.colon")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(comboBoxWrapper.combobox)
+          .horizontalAlign(HorizontalAlign.FILL)
+      }
     }
   }
 

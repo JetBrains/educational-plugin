@@ -3,7 +3,9 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
@@ -11,7 +13,6 @@ import com.jetbrains.edu.coursecreator.createItemTitleMessage
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel.Companion.AFTER_DELTA
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 abstract class CCCreateStudyItemDialogBase(
@@ -44,13 +45,17 @@ abstract class CCCreateStudyItemDialogBase(
     }
     return panel {
       if (showNameField()) {
-        row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") { nameField() }
+        row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") {
+          // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+          @Suppress("UnstableApiUsage", "DEPRECATION")
+          cell(nameField)
+            .focused()
+            .horizontalAlign(HorizontalAlign.FILL)
+        }
       }
       createAdditionalFields(this)
     }
   }
-
-  override fun getPreferredFocusedComponent(): JComponent? = nameField
 
   open fun showAndGetResult(): NewStudyItemInfo? =
     if (showAndGet()) createNewStudyItemInfo() else null
@@ -63,7 +68,7 @@ abstract class CCCreateStudyItemDialogBase(
     )
   }
 
-  protected open fun createAdditionalFields(builder: LayoutBuilder) {}
+  protected open fun createAdditionalFields(panel: Panel) {}
   protected open fun showNameField(): Boolean = true
 
   companion object {
