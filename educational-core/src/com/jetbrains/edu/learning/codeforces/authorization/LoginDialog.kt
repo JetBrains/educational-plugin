@@ -5,8 +5,9 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBPasswordField
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -17,30 +18,27 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Authorizat
 import javax.swing.JComponent
 
 class LoginDialog(private val authorizationPlace: AuthorizationPlace) : DialogWrapper(false) {
-  val loginField = JBTextField()
-  val passwordField = JBPasswordField()
-  private val fieldSize = JBUI.size(350, 15)
+  private val loginField = JBTextField()
+  private val passwordField = JBPasswordField()
 
   init {
     title = EduCoreBundle.message("dialog.title.login.to", CodeforcesNames.CODEFORCES_TITLE)
     setOKButtonText(EduCoreBundle.message("course.dialog.button.login"))
     loginField.emptyText.text = EduCoreBundle.message("label.enter.handle.or.email")
-    loginField.preferredSize = fieldSize
-    passwordField.preferredSize = fieldSize
+    isResizable = false
     init()
-  }
-
-  override fun getPreferredFocusedComponent(): JComponent {
-    return loginField
   }
 
   override fun createCenterPanel(): JComponent {
     return panel {
       row("${EduCoreBundle.message("label.handle.email")}:") {
-        loginField()
+        cell(loginField)
+          .columns(COLUMNS_MEDIUM)
+          .focused()
       }
       row("${EduCoreBundle.message("label.password")}:") {
-        passwordField()
+        cell(passwordField)
+          .columns(COLUMNS_MEDIUM)
       }
     }
   }
