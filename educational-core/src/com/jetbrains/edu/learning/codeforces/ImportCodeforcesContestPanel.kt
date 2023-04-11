@@ -1,14 +1,15 @@
 package com.jetbrains.edu.learning.codeforces
 
-import com.intellij.ui.layout.*
-import com.intellij.util.ui.JBUI
+import com.intellij.ui.dsl.builder.COLUMNS_LARGE
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestIdFromLink
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_HELP_TEXT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.apache.commons.lang.math.NumberUtils.isDigits
-import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -18,7 +19,6 @@ class ImportCodeforcesContestPanel {
   val panel: JPanel
   val contestURLTextField: JTextField = JTextField()
   private val helpLabel: JLabel = JLabel(CODEFORCES_HELP_TEXT)
-  private val panelSize: Dimension = Dimension(500, 60)
 
   fun getContestId(): Int = CodeforcesContestConnector.getContestId(contestURLTextField.text)
 
@@ -31,11 +31,13 @@ class ImportCodeforcesContestPanel {
 
     panel = panel {
       row("${EduCoreBundle.message("label.codeforces.contest.url")}:") {
-        contestURLTextField(comment = helpLabel.text)
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(contestURLTextField)
+          .columns(COLUMNS_LARGE)
+          .horizontalAlign(HorizontalAlign.FILL)
+          .comment(CODEFORCES_HELP_TEXT)
       }
-    }.apply {
-      preferredSize = JBUI.size(panelSize)
-      minimumSize = preferredSize
     }
   }
 
