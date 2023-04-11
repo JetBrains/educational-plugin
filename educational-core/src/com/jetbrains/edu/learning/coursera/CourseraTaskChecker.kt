@@ -17,7 +17,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.addProxy
@@ -135,11 +137,19 @@ class CourseraTaskChecker : RemoteTaskChecker {
         val messageLabel = JBLabel(message)
         messageLabel.foreground = JBColor.RED
         messageLabel.withFont(JBUI.Fonts.label().asBold())
-        row { messageLabel() }
+        row { cell(messageLabel) }
       }
-      row("${EduCoreBundle.message("label.coursera.email")}:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
-      row("${EduCoreBundle.message("label.coursera.token")}:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
-      noteRow(EduCoreBundle.message("label.coursera.obtain.token", getLinkToToken(task)))
+      row("${EduCoreBundle.message("label.coursera.email")}:") {
+        cell(emailField)
+          .columns(COLUMNS_MEDIUM)
+      }
+      row("${EduCoreBundle.message("label.coursera.token")}:") {
+        cell(tokenField)
+          .columns(COLUMNS_MEDIUM)
+      }
+      row {
+        comment(EduCoreBundle.message("label.coursera.obtain.token", getLinkToToken(task)))
+      }
     }
     var refusedToProvideCredentials = false
 

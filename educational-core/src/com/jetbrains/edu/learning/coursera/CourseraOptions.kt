@@ -1,34 +1,20 @@
 package com.jetbrains.edu.learning.coursera
 
-import com.intellij.ui.IdeBorderFactory
-import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.*
+import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.dsl.builder.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
-import javax.swing.JComponent
 
-class CourseraOptions : OptionsProvider {
-  private val emailField = JBTextField()
-  private val loginPanel = panel {
-    row("${EduCoreBundle.message("label.coursera.email")}:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
+class CourseraOptions : BoundConfigurable(CourseraNames.COURSERA), OptionsProvider {
+
+  override fun createPanel(): DialogPanel = panel {
+    group(displayName) {
+      row("${EduCoreBundle.message("label.coursera.email")}:") {
+        textField()
+          .columns(COLUMNS_MEDIUM)
+          .bindText(CourseraSettings.getInstance()::email)
+      }
+    }
   }
-
-  init {
-    loginPanel.border = IdeBorderFactory.createTitledBorder(CourseraNames.COURSERA)
-  }
-
-  override fun isModified() = CourseraSettings.getInstance().email != emailField.text
-
-
-  override fun getDisplayName() = CourseraNames.COURSERA
-
-  override fun apply() {
-    CourseraSettings.getInstance().email = emailField.text
-  }
-
-  override fun reset() {
-    emailField.text = CourseraSettings.getInstance().email
-  }
-
-  override fun createComponent(): JComponent = loginPanel
 }
