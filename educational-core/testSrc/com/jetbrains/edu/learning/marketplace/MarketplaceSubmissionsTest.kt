@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.ui.JBAccountInfoService
-import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -18,7 +16,6 @@ import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.withFeature
 import io.mockk.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.ResponseBody
@@ -175,12 +172,6 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       isMarketplace = true
       marketplaceCourseVersion = 1
     } as EduCourse
-  }
-
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS, true) {
-      super.runTestRunnable(context)
-    }
   }
 
   companion object {

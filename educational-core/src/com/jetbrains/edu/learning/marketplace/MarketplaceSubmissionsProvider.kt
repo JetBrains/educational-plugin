@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -33,7 +31,7 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun areSubmissionsAvailable(course: Course): Boolean {
-    return isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && course is EduCourse && course.isStudy && course.isMarketplaceRemote
+    return course is EduCourse && course.isStudy && course.isMarketplaceRemote
   }
 
   override fun isLoggedIn(): Boolean {

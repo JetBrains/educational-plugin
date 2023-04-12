@@ -6,11 +6,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
@@ -124,7 +122,6 @@ fun EduCourse.updateFeaturedStatus() {
 }
 
 fun markTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
-  if (!isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS)) return
   runInBackground(project, EduCoreBundle.message("marketplace.posting.theory"), false) {
     MarketplaceSubmissionsConnector.getInstance().markTheoryTaskAsCompleted(task)
   }
