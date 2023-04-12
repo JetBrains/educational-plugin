@@ -78,7 +78,7 @@ private class FileState(
       PlaceholderHighlightingManager.showPlaceholders(project, taskFile)
     }
     else {
-      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(project, taskFile.answerPlaceholders)
     }
   }
 }

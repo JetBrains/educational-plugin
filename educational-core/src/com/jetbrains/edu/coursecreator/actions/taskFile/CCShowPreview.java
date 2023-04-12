@@ -58,6 +58,7 @@ import java.util.Calendar;
 
 import static com.intellij.openapi.ui.Messages.showErrorDialog;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
+import static com.jetbrains.edu.learning.VirtualFileExt.TASK_FILE;
 
 @SuppressWarnings("ComponentNotRegistered")  // educational-core.xml
 public class CCShowPreview extends DumbAwareAction {
@@ -152,6 +153,7 @@ public class CCShowPreview extends DumbAwareAction {
     final FrameWrapper showPreviewFrame = new FrameWrapper(project);
     final LightVirtualFile userFile = new LightVirtualFile(PathUtil.getFileName(taskFile.getName()), taskFile.getText());
     showPreviewFrame.setTitle(userFile.getName());
+    userFile.putUserData(TASK_FILE, taskFile);
     LabeledEditor labeledEditor = new LabeledEditor(null);
     final EditorFactory factory = EditorFactory.getInstance();
     Document document = FileDocumentManager.getInstance().getDocument(userFile);

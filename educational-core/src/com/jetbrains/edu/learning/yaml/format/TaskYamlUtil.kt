@@ -131,8 +131,9 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   private fun TaskFile.applyPlaceholderChanges(deserializedTaskFile: TaskFile) {
-    PlaceholderHighlightingManager.hidePlaceholders(this)
+    val oldPlaceholders = answerPlaceholders
     answerPlaceholders = deserializedTaskFile.answerPlaceholders
+    PlaceholderHighlightingManager.hidePlaceholders(project, oldPlaceholders)
   }
 
   private fun paintPlaceholdersForOpenedFiles(project: Project, task: Task) {
@@ -140,7 +141,7 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   private fun hideOldPlaceholdersForOpenedFiles(project: Project, task: Task) {
-    getOpenedTaskFiles(project, task).forEach { PlaceholderHighlightingManager.hidePlaceholders(it) }
+    getOpenedTaskFiles(project, task).forEach { PlaceholderHighlightingManager.hidePlaceholders(project, it.answerPlaceholders) }
   }
 
   private fun getOpenedTaskFiles(project: Project, task: Task): List<TaskFile> {

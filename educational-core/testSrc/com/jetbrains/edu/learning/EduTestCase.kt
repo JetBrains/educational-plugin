@@ -55,6 +55,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected lateinit var testPluginDescriptor: IdeaPluginDescriptor
 
+  protected open val useDocumentListener: Boolean = true
+
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
@@ -82,7 +84,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
     val connection = project.messageBus.connect(testRootDisposable)
     connection.subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
       override fun courseSet(course: Course) {
-        EduDocumentListener.setGlobalListener(project, testRootDisposable)
+        if (useDocumentListener) {
+          EduDocumentListener.setGlobalListener(project, testRootDisposable)
+        }
         connection.disconnect()
       }
     })

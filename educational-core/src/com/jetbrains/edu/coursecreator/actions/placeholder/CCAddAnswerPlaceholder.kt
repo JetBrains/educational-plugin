@@ -66,7 +66,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
       if (taskFile.answerPlaceholders.contains(placeholder)) {
         taskFile.removeAnswerPlaceholder(placeholder)
         taskFile.sortAnswerPlaceholders()
-        PlaceholderHighlightingManager.hidePlaceholder(placeholder)
+        PlaceholderHighlightingManager.hidePlaceholder(project, placeholder)
         return true
       }
       return false

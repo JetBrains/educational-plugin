@@ -109,7 +109,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
     for (path in oldPaths) {
       val taskFile = task.removeTaskFile(path) ?: continue
-      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(project, taskFile.answerPlaceholders)
       affectedFiles += taskFile
     }
 
