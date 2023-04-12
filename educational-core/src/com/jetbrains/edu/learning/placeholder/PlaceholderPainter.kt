@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.placeholder
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.IdeGlassPaneUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.scale.JBUIScale
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile

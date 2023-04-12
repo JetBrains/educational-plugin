@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
-import com.jetbrains.edu.learning.PlaceholderPainter.getPaintedPlaceholder
+import com.jetbrains.edu.learning.placeholder.PlaceholderPainter.getPaintedPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 

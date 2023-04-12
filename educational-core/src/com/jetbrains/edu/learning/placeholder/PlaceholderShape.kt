@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.placeholder
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor

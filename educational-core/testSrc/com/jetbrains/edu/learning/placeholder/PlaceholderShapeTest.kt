@@ -1,12 +1,13 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.placeholder
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import java.awt.Point
 
-class PlaceholderPainterTest : EduTestCase() {
+class PlaceholderShapeTest : EduTestCase() {
 
   fun `test inline placeholder`() {
     checkRectangular("""

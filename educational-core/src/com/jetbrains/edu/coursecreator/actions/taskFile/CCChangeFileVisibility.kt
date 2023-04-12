@@ -4,12 +4,12 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathRelativeToTask
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import org.jetbrains.annotations.NonNls
 import java.util.function.Supplier
 
@@ -75,9 +75,10 @@ private class FileState(
   private fun onVisibilityChange(project: Project, taskFile: TaskFile, file: VirtualFile, visibility: Boolean) {
     if (taskFile.answerPlaceholders.isEmpty() || !FileEditorManager.getInstance(project).isFileOpen(file)) return
     if (visibility) {
-      PlaceholderPainter.showPlaceholders(project, taskFile)
-    } else {
-      PlaceholderPainter.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.showPlaceholders(project, taskFile)
+    }
+    else {
+      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
     }
   }
 }
