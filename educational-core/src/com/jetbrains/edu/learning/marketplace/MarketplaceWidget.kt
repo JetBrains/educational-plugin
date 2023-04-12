@@ -13,10 +13,12 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import javax.swing.JPanel
 
-class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(project,
-                                                                            EduCoreBundle.message("marketplace.widget.title"),
-                                                                            EduCoreBundle.message("marketplace.widget.tooltip"),
-                                                                            EducationalCoreIcons.MARKETPLACE) {
+class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(
+  project,
+  EduCoreBundle.message("marketplace.widget.title"),
+  EduCoreBundle.message("marketplace.widget.tooltip"),
+  EducationalCoreIcons.CourseAction
+) {
   override val connector: EduLoginConnector<MarketplaceAccount, *>
     get() = MarketplaceConnector.getInstance()
 
