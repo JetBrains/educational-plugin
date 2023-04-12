@@ -16,7 +16,7 @@ class StyleManager {
   val bodyFontSize = typographyManager.bodyFontSize
   private val codeFontSize = typographyManager.codeFontSize
   val bodyLineHeight = typographyManager.bodyLineHeight
-  private val codeLineHeight = typographyManager.codeLineHeight
+  val codeLineHeight = typographyManager.codeLineHeight
   val bodyFont = typographyManager.bodyFont
   val codeFont = typographyManager.codeFont
 

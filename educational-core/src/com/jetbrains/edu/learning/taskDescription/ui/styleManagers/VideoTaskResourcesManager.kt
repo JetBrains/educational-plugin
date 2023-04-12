@@ -13,27 +13,29 @@ import kotlinx.css.properties.lh
 /**
  * Provides resources and stylesheet to stepikVideo.html.ft
  */
-class VideoTaskResourcesManager {
-
-  val videoResources = mapOf(
+class VideoTaskResourcesManager: TaskResourcesManager<VideoTask> {
+  override val resources = mapOf(
     "video_style" to videoStylesheet(),
     "videojs-resolution-switcher" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.js",
     "video.js" to "http://vjs.zencdn.net/7.6.5/video.js",
     "video-js.css" to "http://vjs.zencdn.net/7.6.5/video-js.css"
   )
 
-  private fun getResources(task: VideoTask, lesson: Lesson) = mapOf(
+  private fun getTaskResources(task: VideoTask, lesson: Lesson) = mapOf(
     "thumbnail" to task.thumbnail,
     "sources" to Gson().toJson(task.sources),
     "currentTime" to task.currentTime.toString(),
     "stepikLink" to getStepikLink(task, lesson)
   )
 
-  fun getText(task: VideoTask, lesson: Lesson): String = if (task.sources.isNotEmpty()) {
-    GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, getResources(task, lesson))
-  }
-  else {
-    EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
+  override fun getText(task: VideoTask): String {
+    val lesson = task.parent as Lesson
+    return if (task.sources.isNotEmpty()) {
+      GeneratorUtils.getInternalTemplateText(VIDEO_TEMPLATE, getTaskResources(task, lesson))
+    }
+    else {
+      EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
+    }
   }
 
   private fun videoStylesheet(): String {

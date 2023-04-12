@@ -16,14 +16,12 @@ import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import kotlinx.css.*
 import kotlinx.css.properties.*
 
-object ChoiceTaskResourcesManager {
-  private const val CHOICE_TASK_TEMPLATE = "choiceTask.html"
-
-  val choiceTaskResources
+class ChoiceTaskResourcesManager: TaskResourcesManager<ChoiceTask> {
+  override val resources: Map<String, String>
     get() = mapOf("choice_options_style" to choiceOptionsStylesheet())
 
   // because task object is inserted after html is loaded
-  private fun getResources(task: ChoiceTask): Map<String, Any> = mapOf(
+  private fun getTaskResources(task: ChoiceTask): Map<String, Any> = mapOf(
     "text" to task.quizHeader,
     "selected_variants" to task.selectedVariants,
     "choice_options" to Gson().toJson(task.choiceOptions.map { it.text }),
@@ -31,13 +29,15 @@ object ChoiceTaskResourcesManager {
     "is_disabled" to (task.status == CheckStatus.Failed && task.isChangedOnFailed)
   )
 
-  fun getText(task: ChoiceTask): String = if (task.choiceOptions.isNotEmpty()) {
-    GeneratorUtils.getInternalTemplateText(CHOICE_TASK_TEMPLATE, getResources(task))
-  }
-  else {
-    when (task.course) {
-      is HyperskillCourse -> EduCoreBundle.message("ui.task.specific.panel", stepLink(task.id), EduNames.JBA)
-      else -> EduCoreBundle.message("ui.task.specific.panel", getStepikLink(task, task.lesson), StepikNames.STEPIK)
+  override fun getText(task: ChoiceTask): String {
+    return if (task.choiceOptions.isNotEmpty()) {
+      GeneratorUtils.getInternalTemplateText(CHOICE_TASK_TEMPLATE, getTaskResources(task))
+    }
+    else {
+      when (task.course) {
+        is HyperskillCourse -> EduCoreBundle.message("ui.task.specific.panel", stepLink(task.id), EduNames.JBA)
+        else -> EduCoreBundle.message("ui.task.specific.panel", getStepikLink(task, task.lesson), StepikNames.STEPIK)
+      }
     }
   }
 
@@ -157,5 +157,9 @@ object ChoiceTaskResourcesManager {
       }.toString()
     }
     return ""
+  }
+
+  companion object {
+    private const val CHOICE_TASK_TEMPLATE = "choiceTask.html"
   }
 }

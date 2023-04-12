@@ -121,12 +121,8 @@ fun wrapHintSwing(project: Project, hintElement: Element, displayedHintNumber: S
   }
 }
 
-fun JPanel.withBorder(newBorder: Border?): JPanel {
+fun JPanel.addBorder(newBorder: Border?): JPanel {
   return apply {
     border = JBUI.Borders.compound(newBorder, border)
   }
-}
-
-fun JPanel.withEmptyBorder(borderSize: Int): JPanel {
-  return withBorder(JBUI.Borders.empty(0, borderSize))
 }

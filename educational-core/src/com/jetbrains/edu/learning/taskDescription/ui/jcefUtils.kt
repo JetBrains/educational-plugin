@@ -3,12 +3,24 @@ package com.jetbrains.edu.learning.taskDescription.ui
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.ui.jcef.JBCefBrowser
 import com.intellij.util.io.URLUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.course.StepikCourse
 import com.jetbrains.edu.learning.taskDescription.containsYoutubeLink
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.ChoiceTaskQueryManager
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.MatchingTaskQueryManager
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.SortingTaskQueryManager
+import com.jetbrains.edu.learning.taskDescription.ui.jcefSpecificQueries.TaskQueryManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
 import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
@@ -136,4 +148,18 @@ fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: St
   else {
     String.format(HINT_EXPANDED_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
   }
+}
+
+fun getHTMLTemplateText(task: Task?): String? = when (task) {
+  is ChoiceTask -> ChoiceTaskResourcesManager().getText(task)
+  is SortingTask -> SortingTaskResourcesManager().getText(task)
+  is MatchingTask -> MatchingTaskResourcesManager().getText(task)
+  else -> null
+}
+
+fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQueryManager<out Task>? = when(task) {
+  is ChoiceTask -> ChoiceTaskQueryManager(task, browserBase)
+  is SortingTask -> SortingTaskQueryManager(task, browserBase)
+  is MatchingTask -> MatchingTaskQueryManager(task, browserBase)
+  else -> null
 }

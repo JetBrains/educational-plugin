@@ -10,6 +10,7 @@ import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -316,3 +317,6 @@ fun String.toShortcut(): String = "${SHORTCUT_ENTITY}$this;"
 fun String.containsShortcut(): Boolean = startsWith(SHORTCUT_ENTITY) || startsWith(SHORTCUT_ENTITY_ENCODED)
 
 fun link(url: String, text: String, right: Boolean = false): String = """<a${if (right) " class=right " else " "}href="$url">$text</a>"""
+
+@Suppress("UnstableApiUsage")
+fun isNewUI() = ExperimentalUI.isNewUI()

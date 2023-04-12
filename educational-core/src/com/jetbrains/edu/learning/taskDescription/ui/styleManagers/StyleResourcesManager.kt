@@ -6,6 +6,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.taskDescription.ui.EduToolsResourcesRequestHandler
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
 import java.net.URL
 
 object StyleResourcesManager {
@@ -45,6 +47,28 @@ object StyleResourcesManager {
   private const val INTELLIJ_ICON_FONT_DARCULA_TTF: String = "/style/hint/fonts/intellij-icon-font-darcula.ttf"
   private const val INTELLIJ_ICON_FONT_DARCULA_WOFF: String = "/style/hint/fonts/intellij-icon-font-darcula.woff"
 
+  private const val SORTING_BASED_TASKS_MOVE_UP = "/icons/com/jetbrains/edu/learning/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK = "/icons/com/jetbrains/edu/learning/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN = "/icons/com/jetbrains/edu/learning/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK = "/icons/com/jetbrains/edu/learning/moveDown_dark.svg"
+
+  private const val SORTING_BASED_TASKS_MOVE_UP_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp.svg"
+  private const val SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveUp_dark.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown.svg"
+  private const val SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI = "/icons/com/jetbrains/edu/expui/learning/moveDown_dark.svg"
+
+  val sortingBasedTaskResourcesList = listOf(
+    SORTING_BASED_TASKS_MOVE_UP,
+    SORTING_BASED_TASKS_MOVE_UP_DARK,
+    SORTING_BASED_TASKS_MOVE_DOWN,
+    SORTING_BASED_TASKS_MOVE_DOWN_DARK,
+
+    SORTING_BASED_TASKS_MOVE_UP_EXPUI,
+    SORTING_BASED_TASKS_MOVE_UP_DARK_EXPUI,
+    SORTING_BASED_TASKS_MOVE_DOWN_EXPUI,
+    SORTING_BASED_TASKS_MOVE_DOWN_DARK_EXPUI,
+  )
+
   val resourcesList = listOf(
     BROWSER_CSS,
     CODEFORCES_TASK_CSS,
@@ -73,8 +97,8 @@ object StyleResourcesManager {
     INTELLIJ_ICON_FONT_DARCULA_EOT,
     INTELLIJ_ICON_FONT_DARCULA_SVG,
     INTELLIJ_ICON_FONT_DARCULA_TTF,
-    INTELLIJ_ICON_FONT_DARCULA_WOFF
-  )
+    INTELLIJ_ICON_FONT_DARCULA_WOFF,
+  ) + sortingBasedTaskResourcesList
 
   private val panelSpecificHintResources: Map<String, String>
     get() = if (isJCEF()) {
@@ -127,8 +151,10 @@ object StyleResourcesManager {
     resourcePair("jetbrains_academy_style_base", JETBRAINS_ACADEMY_CSS_BASE)
   )
     .plus(panelSpecificHintResources)
-    .plus(VideoTaskResourcesManager().videoResources)
-    .plus(ChoiceTaskResourcesManager.choiceTaskResources)
+    .plus(VideoTaskResourcesManager().resources)
+    .plus(ChoiceTaskResourcesManager().resources)
+    .plus(MatchingTaskResourcesManager().resources)
+    .plus(SortingTaskResourcesManager().resources)
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 

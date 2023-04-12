@@ -1,38 +1,44 @@
 package com.jetbrains.edu.learning.taskDescription.ui.specificTaskSwingPanels
 
-import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.observable.properties.AtomicProperty
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.RoundedLineBorder
+import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.Gaps
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalGaps
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskDescription.ui.withBorder
-import com.jetbrains.edu.learning.taskDescription.ui.withEmptyBorder
+import com.jetbrains.edu.learning.taskDescription.ui.MatchingTaskUI
+import com.jetbrains.edu.learning.taskDescription.ui.addBorder
+import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
+import java.awt.Font
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.math.max
 
 class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel() {
-  private val emptyBorderSize = 12
-  private val roundedBorderSize = 2
+  private val emptyBorder = JBUI.Borders.empty(8, 12, 8, 6)
+  private val roundedBorderSize = 1
 
-  private val arcSize = 10
+  private val arcSize = 8
 
-  private val gapSize = 15
+  private val rowGapSize = 12
+  private val columnGapSize = 8
 
-  private val optionPanelBorderColor = JBUI.CurrentTheme.Button.buttonColorEnd()
-  private val indexPanelBackgroundColor = JBUI.CurrentTheme.ActionButton.hoverBackground()
-  private val indexPanelBorderColor = indexPanelBackgroundColor
+  private val codeFont = Font.decode(StyleManager().codeFont)
 
   private val model: Model
 
@@ -42,7 +48,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
       for (index in task.ordering.indices) {
         createOption(task, index)
           .layout(RowLayout.PARENT_GRID)
-          .customize(VerticalGaps(bottom = gapSize))
+          .customize(VerticalGaps(bottom = rowGapSize))
       }
       // BACKCOMPAT: 2022.2. Use align(Align.FILL)
       @Suppress("UnstableApiUsage", "DEPRECATION")
@@ -58,20 +64,27 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
 
   private fun Panel.createOption(task: SortingBasedTask, index: Int): Row = row {
     val indexPanel = createIndexPanel(task, index)
-      ?.withEmptyBorder(emptyBorderSize)
-      ?.withBorder(RoundedLineBorder(indexPanelBorderColor, arcSize, roundedBorderSize))
+      ?.addBorder(emptyBorder)
+      ?.addBorder(RoundedLineBorder(MatchingTaskUI.Key.background(), arcSize, roundedBorderSize))
+      ?.apply {
+        foreground = MatchingTaskUI.Key.foreground()
+        background = MatchingTaskUI.Key.background()
+      }
 
     val optionPanel = createOptionPanel(task, index)
-      .withEmptyBorder(emptyBorderSize)
-      .withBorder(RoundedLineBorder(optionPanelBorderColor, arcSize, roundedBorderSize))
+      .addBorder(emptyBorder)
+      .addBorder(RoundedLineBorder(MatchingTaskUI.Value.borderColor(), arcSize, roundedBorderSize))
+      .apply {
+        foreground = MatchingTaskUI.Value.foreground()
+        background = MatchingTaskUI.Value.background()
+      }
 
     syncHeight(indexPanel, optionPanel)
 
     if (indexPanel != null) {
-      indexPanel.background = indexPanelBackgroundColor
       cell(RoundedWrapper(indexPanel, arcSize))
         .widthGroup("IndexPanel")
-        .customize(Gaps(right = gapSize))
+        .customize(Gaps(right = columnGapSize))
     }
 
     // BACKCOMPAT: 2022.2. Use align(AlignX.FILL)
@@ -88,8 +101,8 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
     val maxHeight = max(height1, height2)
     val dh1 = maxHeight - height1
     val dh2 = maxHeight - height2
-    panel1.withBorder(JBUI.Borders.empty(dh1 / 2, 0, dh1 / 2 + dh1 % 2, 0))
-    panel2.withBorder(JBUI.Borders.empty(dh2 / 2, 0, dh2 / 2 + dh2 % 2, 0))
+    panel1.addBorder(JBUI.Borders.empty(dh1 / 2, 0, dh1 / 2 + dh1 % 2, 0))
+    panel2.addBorder(JBUI.Borders.empty(dh2 / 2, 0, dh2 / 2 + dh2 % 2, 0))
   }
 
   private fun createIndexPanel(task: SortingBasedTask, index: Int): DialogPanel? {
@@ -100,6 +113,9 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
         @Suppress("UnstableApiUsage", "DEPRECATION")
         text(task.captions[index])
           .verticalAlign(VerticalAlign.CENTER)
+          .apply {
+            component.font = Font(codeFont.name, codeFont.style, 13)
+          }
       }
     }
   }
@@ -114,11 +130,14 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
           .bindText(model.getProperty(index))
           .verticalAlign(VerticalAlign.CENTER)
           .resizableColumn()
+          .apply {
+            component.font = Font(codeFont.name, codeFont.style, 13)
+          }
 
 
         // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER) and align(AlignX.RIGHT)
         @Suppress("UnstableApiUsage", "DEPRECATION")
-        panel { createNavigationsButtonsPanelContent(task, index) }
+        cell(createNavigationsButtonsPanel(task, index))
           // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER)
           .verticalAlign(VerticalAlign.CENTER)
           .horizontalAlign(HorizontalAlign.RIGHT)
@@ -127,20 +146,31 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
     }
   }
 
-  private fun Panel.createNavigationsButtonsPanelContent(task: SortingBasedTask, index: Int) {
-    row {
-      actionButton(createUpAction(task, index))
+  private fun createNavigationsButtonsPanel(task: SortingBasedTask, index: Int): JComponent {
+    return NonOpaquePanel(VerticalFlowLayout(0, 0)).apply {
+      addActionButton(createUpAction(task, index))
+      addActionButton(createDownAction(task, index))
+      border = JBUI.Borders.empty()
     }
-    row {
-      actionButton(createDownAction(task, index))
+  }
+
+  private fun NonOpaquePanel.addActionButton(action: DumbAwareAction) {
+    val actionButton = ActionButton(
+      action,
+      action.templatePresentation.clone(),
+      "unknown",
+      ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
+    ).apply {
+      border = JBUI.Borders.empty()
     }
+    add(actionButton)
   }
 
   private fun createUpAction(task: SortingBasedTask, index: Int): DumbAwareAction {
     return object : DumbAwareAction(
       EduCoreBundle.lazyMessage("sorting.based.task.move.up"),
       EduCoreBundle.lazyMessage("sorting.based.task.move.up.description"),
-      AllIcons.Actions.PreviousOccurence
+      EducationalCoreIcons.MoveUpMatching
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
@@ -159,7 +189,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
     return object : DumbAwareAction(
       EduCoreBundle.lazyMessage("sorting.based.task.move.down"),
       EduCoreBundle.lazyMessage("sorting.based.task.move.down.description"),
-      AllIcons.Actions.NextOccurence
+      EducationalCoreIcons.MoveDownMatching
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 

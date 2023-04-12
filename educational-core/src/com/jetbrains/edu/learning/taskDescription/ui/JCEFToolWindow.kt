@@ -5,18 +5,12 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
-import com.intellij.ui.jcef.JBCefBrowserBase
-import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.getStepikLink
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.ChoiceTaskResourcesManager
-import org.cef.browser.CefBrowser
-import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import org.jsoup.nodes.Element
@@ -25,10 +19,8 @@ import javax.swing.JComponent
 class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   private val taskInfoJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
   private val taskSpecificJBCefBrowser = JCEFHtmlPanel(true, JBCefApp.getInstance().createClient(), null)
-  private var currentTask: ChoiceTask? = null
 
-  private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskSpecificJBCefBrowser as JBCefBrowserBase)
-  private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskSpecificJBCefBrowser as JBCefBrowserBase)
+  private var taskSpecificLoadHandler: CefLoadHandlerAdapter? = null
 
   init {
     val jcefLinkInToolWindowHandler = JCefToolWindowLinkHandler(project)
@@ -36,29 +28,6 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
     val taskInfoLifeSpanHandler = JCEFTaskInfoLifeSpanHandler(jcefLinkInToolWindowHandler)
     taskInfoJBCefBrowser.jbCefClient.addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
-    taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(TaskSpecificLoadHandler(), taskSpecificJBCefBrowser.cefBrowser)
-
-    jsQuerySetScrollHeight.addHandler { height ->
-      try {
-        taskSpecificJBCefBrowser.component.preferredSize = JBUI.size(Int.MAX_VALUE, height.toInt() + 20)
-        taskSpecificJBCefBrowser.component.revalidate()
-      }
-      catch (ignored: NumberFormatException) {
-      }
-      null
-    }
-
-    jsQueryGetChosenTasks.addHandler { query ->
-      if (query.isBlank()) return@addHandler null
-      if (currentTask == null) return@addHandler null
-      try {
-        val values = query.split(",").map { it.toInt() }.toMutableList()
-        currentTask?.selectedVariants = values
-      }
-      catch (ignored: NumberFormatException) {
-      }
-      null
-    }
 
     Disposer.register(this, taskInfoJBCefBrowser)
     Disposer.register(this, taskSpecificJBCefBrowser)
@@ -91,38 +60,22 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
 
   override fun updateTaskSpecificPanel(task: Task?) {
     taskSpecificJBCefBrowser.component.isVisible = false
-    if (task !is ChoiceTask) {
-      return
+
+    val taskText = getHTMLTemplateText(task) ?: return
+
+    val newLoadHandler = getTaskSpecificQueryManager(task, taskSpecificJBCefBrowser)?.getTaskSpecificLoadHandler() ?: return
+
+    taskSpecificLoadHandler?.let {
+      taskSpecificJBCefBrowser.jbCefClient.removeLoadHandler(it, taskSpecificJBCefBrowser.cefBrowser)
     }
 
-    currentTask = task
+    taskSpecificJBCefBrowser.jbCefClient.addLoadHandler(newLoadHandler, taskSpecificJBCefBrowser.cefBrowser)
+    taskSpecificLoadHandler = newLoadHandler
 
     taskSpecificJBCefBrowser.component.preferredSize = JBUI.size(Int.MAX_VALUE, 250)
-    val html = htmlWithResources(project, ChoiceTaskResourcesManager.getText(task), task)
+    val html = htmlWithResources(project, taskText, task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
-  }
-
-  private inner class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
-    override fun onLoadEnd(browser: CefBrowser, frame: CefFrame?, httpStatusCode: Int) {
-      browser.mainFrame.executeJavaScript(
-        "var height = document.getElementById('choiceOptions').scrollHeight;" +
-        jsQuerySetScrollHeight.inject("height"),
-        browser.url, 0
-      )
-
-      browser.mainFrame.executeJavaScript(
-        """
-          inputs = document.getElementsByTagName('input');
-          [].slice.call(inputs).forEach(input => {
-            input.addEventListener('change', function (event) {
-              let value = getSelectedVariants();
-              ${jsQueryGetChosenTasks.inject("value")}
-            })
-          })
-          """.trimIndent(), taskSpecificJBCefBrowser.cefBrowser.url, 0
-      )
-    }
   }
 
   companion object {

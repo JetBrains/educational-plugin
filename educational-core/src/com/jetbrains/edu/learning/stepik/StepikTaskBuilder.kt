@@ -294,7 +294,8 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     if (video != null) {
       task.thumbnail = video.thumbnail
       task.sources = unmodifiableList(video.listUrls?.map { VideoSource(it.url, it.quality) } ?: emptyList())
-      descriptionText = VideoTaskResourcesManager().getText(task, lesson)
+      task.parent = lesson
+      descriptionText = VideoTaskResourcesManager().getText(task)
     }
     else {
       LOG.warn("Video for step $stepId is null")
