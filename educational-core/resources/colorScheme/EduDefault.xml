@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<list>
+  <option name="com.jetbrains.edu.PLACEHOLDER_UNCHECKED">
+    <value>
+      <option name="EFFECT_COLOR" value="C9D2DC"/>
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
+  <option name="com.jetbrains.edu.PLACEHOLDER_SOLVED">
+    <value>
+      <option name="EFFECT_COLOR" value="B2DBBB"/>
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
+  <option name="com.jetbrains.edu.PLACEHOLDER_FAILED">
+    <value>
+      <option name="EFFECT_COLOR" value="F2BFBF"/>
+      <option name="EFFECT_TYPE" value="0" />
+    </value>
+  </option>
+</list>

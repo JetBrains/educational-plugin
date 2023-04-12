@@ -233,8 +233,15 @@
                 factoryClass="com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true" doNotActivateOnStart="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"/>
-    <!-- placeholder size listener -->
+
+    <!-- placeholders -->
     <editorFactoryListener implementation="com.jetbrains.edu.learning.editor.EduEditorFactoryListener"/>
+    <highlightingPassFactory implementation="com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingPassFactory"/>
+    <additionalTextAttributes scheme="Default" file="colorScheme/EduDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorScheme/EduDarcula.xml"/>
+    <registryKey key="edu.placeholder.highlighting.pass" defaultValue="false" restartRequired="true"
+                 description="Render answer placeholders in JetBrains Academy courses using highlighting API"/>
+
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
 

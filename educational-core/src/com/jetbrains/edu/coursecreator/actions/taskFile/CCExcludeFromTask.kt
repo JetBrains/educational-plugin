@@ -36,7 +36,7 @@ private class RemoveFileFromTask(private val info: FileInfo.FileInTask) : State 
   override fun changeState(project: Project) {
     val taskFile = info.task.removeTaskFile(info.pathInTask)
     if (taskFile != null) {
-      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(project, taskFile.answerPlaceholders)
     }
   }
 

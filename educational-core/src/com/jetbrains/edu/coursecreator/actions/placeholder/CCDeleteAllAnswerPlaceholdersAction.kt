@@ -42,8 +42,9 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
     }
 
     override fun performRedo() {
-      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
+      val placeholders = taskFile.answerPlaceholders
       taskFile.removeAllPlaceholders()
+      PlaceholderHighlightingManager.hidePlaceholders(project, placeholders)
     }
 
     override fun isGlobal(): Boolean = true

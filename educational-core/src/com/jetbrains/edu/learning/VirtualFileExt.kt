@@ -13,6 +13,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtil
@@ -223,7 +224,17 @@ fun VirtualFile.isTaskRunConfigurationFile(holder: CourseInfoHolder<out Course?>
   return grandParent != null && grandParent.getTaskDir(holder) == grandParent
 }
 
+/**
+ * It's supposed to be used to associate [TaskFile] with virtual file which is not located on disk,
+ * for example, [LightVirtualFile]
+ */
+@JvmField
+val TASK_FILE: Key<TaskFile> = Key.create("TASK_FILE")
+
 fun VirtualFile.getTaskFile(project: Project): TaskFile? {
+  val taskFile = getUserData(TASK_FILE)
+  if (taskFile != null) return taskFile
+
   return getTaskFile(project.toCourseInfoHolder())
 }
 
