@@ -6,9 +6,9 @@ import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.jetbrains.edu.learning.FileInfo
-import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 abstract class EduVirtualFileListener(protected val project: Project) : BulkFileListener {
@@ -109,7 +109,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
     for (path in oldPaths) {
       val taskFile = task.removeTaskFile(path) ?: continue
-      PlaceholderPainter.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
       affectedFiles += taskFile
     }
 

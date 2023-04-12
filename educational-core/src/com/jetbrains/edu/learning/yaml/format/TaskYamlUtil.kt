@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TAGS
-import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlLoader.addItemAsNew
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_NAME
@@ -131,16 +131,16 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
   }
 
   private fun TaskFile.applyPlaceholderChanges(deserializedTaskFile: TaskFile) {
-    PlaceholderPainter.hidePlaceholders(this)
+    PlaceholderHighlightingManager.hidePlaceholders(this)
     answerPlaceholders = deserializedTaskFile.answerPlaceholders
   }
 
   private fun paintPlaceholdersForOpenedFiles(project: Project, task: Task) {
-    getOpenedTaskFiles(project, task).forEach { PlaceholderPainter.showPlaceholders(project, it) }
+    getOpenedTaskFiles(project, task).forEach { PlaceholderHighlightingManager.showPlaceholders(project, it) }
   }
 
   private fun hideOldPlaceholdersForOpenedFiles(project: Project, task: Task) {
-    getOpenedTaskFiles(project, task).forEach { PlaceholderPainter.hidePlaceholders(it) }
+    getOpenedTaskFiles(project, task).forEach { PlaceholderHighlightingManager.hidePlaceholders(it) }
   }
 
   private fun getOpenedTaskFiles(project: Project, task: Task): List<TaskFile> {

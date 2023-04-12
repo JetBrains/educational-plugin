@@ -17,7 +17,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -26,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.marketplace.MarketplaceUtils;
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt;
@@ -91,7 +91,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          PlaceholderPainter.showPlaceholders(project, taskFile, editor);
+          PlaceholderHighlightingManager.showPlaceholders(project, taskFile, editor);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }

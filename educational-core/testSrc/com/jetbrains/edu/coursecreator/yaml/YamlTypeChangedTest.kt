@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.jetbrains.edu.learning.PlaceholderPainter
+import com.jetbrains.edu.learning.placeholder.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course

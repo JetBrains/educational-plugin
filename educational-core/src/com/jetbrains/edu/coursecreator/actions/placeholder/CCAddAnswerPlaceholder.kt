@@ -8,14 +8,13 @@ import com.intellij.util.DocumentUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.PlaceholderPainter.hidePlaceholder
-import com.jetbrains.edu.learning.PlaceholderPainter.showPlaceholder
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency.Companion.create
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 
 open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
   private fun addPlaceholder(project: Project, state: EduState) {
@@ -67,7 +66,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
       if (taskFile.answerPlaceholders.contains(placeholder)) {
         taskFile.removeAnswerPlaceholder(placeholder)
         taskFile.sortAnswerPlaceholders()
-        hidePlaceholder(placeholder)
+        PlaceholderHighlightingManager.hidePlaceholder(placeholder)
         return true
       }
       return false
@@ -76,7 +75,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
     override fun performRedo() {
       taskFile.addAnswerPlaceholder(placeholder)
       taskFile.sortAnswerPlaceholders()
-      showPlaceholder(project, placeholder)
+      PlaceholderHighlightingManager.showPlaceholder(project, placeholder)
     }
   }
 

@@ -6,10 +6,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.PlaceholderPainter.hidePlaceholders
-import com.jetbrains.edu.learning.PlaceholderPainter.showPlaceholders
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import org.jetbrains.annotations.VisibleForTesting
 
 class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
@@ -38,12 +37,12 @@ class CCDeleteAllAnswerPlaceholdersAction : CCAnswerPlaceholderAction() {
       placeholders.forEach {
         taskFile.addAnswerPlaceholder(it)
       }
-      showPlaceholders(project, taskFile)
+      PlaceholderHighlightingManager.showPlaceholders(project, taskFile)
       return true
     }
 
     override fun performRedo() {
-      hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
       taskFile.removeAllPlaceholders()
     }
 

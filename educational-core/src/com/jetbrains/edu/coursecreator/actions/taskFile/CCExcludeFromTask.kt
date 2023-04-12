@@ -3,12 +3,12 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.FileInfo
-import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.belongsToTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import org.jetbrains.annotations.NonNls
 
 class CCExcludeFromTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.task.title")) {
@@ -36,12 +36,12 @@ private class RemoveFileFromTask(private val info: FileInfo.FileInTask) : State 
   override fun changeState(project: Project) {
     val taskFile = info.task.removeTaskFile(info.pathInTask)
     if (taskFile != null) {
-      PlaceholderPainter.hidePlaceholders(taskFile)
+      PlaceholderHighlightingManager.hidePlaceholders(taskFile)
     }
   }
 
   override fun restoreState(project: Project) {
     info.task.addTaskFile(initialValue)
-    PlaceholderPainter.showPlaceholders(project, initialValue)
+    PlaceholderHighlightingManager.showPlaceholders(project, initialValue)
   }
 }
