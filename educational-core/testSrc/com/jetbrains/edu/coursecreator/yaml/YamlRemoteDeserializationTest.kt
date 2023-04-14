@@ -7,12 +7,10 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
 import com.jetbrains.edu.learning.stepik.api.Attempt
-import com.jetbrains.edu.learning.stepik.course.StepikLesson
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_COURSE_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -123,21 +121,6 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val section = YamlDeserializer.deserializeRemoteItem(configFile)
     assertEquals(1, section.id)
     assertEquals(Date(0), section.updateDate)
-  }
-
-  fun `test top-level lesson`() {
-    val id = 1
-    val yamlText = """
-    |id: $id
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |unit: $id
-    |""".trimMargin()
-
-    val configFile = createConfigFile(yamlText, REMOTE_LESSON_CONFIG)
-    val lesson = YamlDeserializer.deserializeRemoteItem(configFile) as StepikLesson
-    assertEquals(1, lesson.id)
-    assertEquals(1, lesson.unitId)
-    assertEquals(Date(0), lesson.updateDate)
   }
 
   fun `test task`() {

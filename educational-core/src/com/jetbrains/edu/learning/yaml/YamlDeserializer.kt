@@ -152,17 +152,7 @@ object YamlDeserializer {
       FrameworkLesson().itemType -> FrameworkLesson::class.java
       CheckiOStation().itemType -> CheckiOStation::class.java // for student projects only
       StepikLesson().itemType -> StepikLesson::class.java
-      null, Lesson().itemType -> {
-        // migration: previously we stored remote info for lessons from Stepik in `Lesson` items
-        if (remoteConfigFile != null) {
-          val remoteTreeNode = REMOTE_MAPPER.readTree(VfsUtil.loadText(remoteConfigFile))
-          val unit = remoteTreeNode.get(YamlMixinNames.UNIT)
-          if (unitIsEmpty(unit)) Lesson::class.java else StepikLesson::class.java
-        }
-        else {
-          Lesson::class.java
-        }
-      }
+      null, Lesson().itemType -> Lesson::class.java
       else -> formatError(unsupportedItemTypeMessage(type, LESSON))
     }
     return treeToValue(treeNode, clazz)
@@ -222,10 +212,7 @@ object YamlDeserializer {
 
   private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {
     val treeNode = REMOTE_MAPPER.readTree(configFileText)
-    val unit = treeNode.get(YamlMixinNames.UNIT)
-    val clazz = if (unitIsEmpty(unit)) RemoteStudyItem::class.java else StepikLesson::class.java
-
-    return REMOTE_MAPPER.treeToValue(treeNode, clazz)
+    return REMOTE_MAPPER.treeToValue(treeNode, RemoteStudyItem::class.java)
   }
 
   private fun unitIsEmpty(unit: JsonNode?) = unit == null || unit.asInt() == 0
