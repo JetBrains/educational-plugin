@@ -144,6 +144,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     val unpackedCourse = loadCourse(course.id)
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
+    course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
   }
 
   @Suppress("UnstableApiUsage")
