@@ -27,6 +27,7 @@ include(
   "Edu-Cpp",
   "Edu-Go",
   "Edu-Php",
+  "Edu-Shell",
   "sql",
   "sql:sql-jvm",
   "sql:Edu-Sql-Java",

@@ -1,0 +1,138 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "text",
+        "text" : "text",
+        "video" : null,
+        "options" : {
+          "language" : ""
+        },
+        "table_of_contents" : [
+          {
+            "id" : "search-word-in-a-file",
+            "title" : "Search word in a file"
+          },
+          {
+            "id" : "ignore-case",
+            "title" : "Ignore case"
+          },
+          {
+            "id" : "show-a-line-number",
+            "title" : "Show a line number"
+          },
+          {
+            "id" : "inverted-search",
+            "title" : "Inverted search"
+          },
+          {
+            "id" : "filtering-output-of-utilities",
+            "title" : "Filtering output of utilities"
+          },
+          {
+            "id" : "conclusion",
+            "title" : "Conclusion"
+          }
+        ]
+      },
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 1
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 0
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 1
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 0
+        }
+      ],
+      "content_created_at" : "2023-05-22T22:13:23.019000Z",
+      "id" : 12713,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2023-06-07T14:48:33.181559Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : -2,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : -1,
+          "total_count" : 1
+        },
+        {
+          "subject" : "",
+          "value" : 0,
+          "total_count" : 2
+        },
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 11
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 61
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : 0,
+          "total_count" : 1
+        },
+        {
+          "subject" : "cheatsheet",
+          "value" : 1,
+          "total_count" : 2
+        }
+      ],
+      "lesson_stepik_id" : 25453,
+      "position" : 1,
+      "seconds_to_complete" : 528.8101639999761,
+      "solved_by" : 589,
+      "stage" : null,
+      "stepik_id" : 33521,
+      "success_rate" : null,
+      "title" : "Grep basic options",
+      "topic" : 1316,
+      "topic_theory" : 12713,
+      "type" : "theory",
+      "updated_at" : "2023-05-31T22:32:51.349173Z",
+      "content_updated_at" : "2023-05-22T22:13:23.167000Z",
+      "progress_updated_at" : "2023-05-02T15:14:32.424990Z",
+      "popular_ide" : "idea",
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "is_ide_compatible" : true,
+      "is_remote_tested" : false,
+      "error_issues_count" : null,
+      "warning_issues_count" : null,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : false,
+      "readiness" : "stable"
+    }
+  ]
+}

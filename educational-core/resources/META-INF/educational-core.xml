@@ -396,6 +396,8 @@
     <compatibilityProvider language="SQL"
                            environment="Kotlin"
                            implementationClass="com.jetbrains.edu.learning.compatibility.SqlKtCourseCompatibilityProvider"/>
+    <compatibilityProvider language="Shell Script"
+                           implementationClass="com.jetbrains.edu.learning.compatibility.ShellCourseCompatibilityProvider"/>
 
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>

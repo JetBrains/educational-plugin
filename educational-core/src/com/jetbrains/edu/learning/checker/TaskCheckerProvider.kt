@@ -23,7 +23,7 @@ interface TaskCheckerProvider {
   val envChecker: EnvironmentChecker
     get() = EnvironmentChecker()
 
-  fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>
+  fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>?
 
   fun getTheoryTaskChecker(task: TheoryTask, project: Project): TheoryTaskChecker = TheoryTaskChecker(task, project)
 
@@ -34,7 +34,6 @@ interface TaskCheckerProvider {
       is StringTask, is NumberTask,
       is MatchingTask, is SortingTask,
       is CodeTask, is DataTask, is UnsupportedTask -> null
-
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)
       is TheoryTask -> getTheoryTaskChecker(task, project)

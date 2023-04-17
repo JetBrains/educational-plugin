@@ -1,0 +1,6 @@
+package com.jetbrains.edu.shell.compatibility
+
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
+import com.jetbrains.edu.learning.compatibility.ShellCourseCompatibilityProvider
+
+class ShellCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(ShellCourseCompatibilityProvider::class)

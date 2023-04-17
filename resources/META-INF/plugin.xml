@@ -33,6 +33,7 @@
     <module name="Edu-Cpp"/>
     <module name="Edu-Go"/>
     <module name="Edu-Php"/>
+    <module name="Edu-Shell"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
     <module name="Edu-Sql-Java"/>

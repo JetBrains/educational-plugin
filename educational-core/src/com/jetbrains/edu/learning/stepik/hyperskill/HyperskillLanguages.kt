@@ -16,6 +16,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
     override val requestLanguage: String = "python"
   },
   SCALA(EduNames.SCALA, "scala"),
+  SHELL(EduNames.SHELL, "shell"),
 
   // last three needed for tests
   PLAINTEXT("TEXT", "TEXT"),

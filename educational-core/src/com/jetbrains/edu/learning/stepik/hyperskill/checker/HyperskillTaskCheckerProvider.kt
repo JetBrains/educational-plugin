@@ -18,8 +18,8 @@ class HyperskillTaskCheckerProvider(private val baseProvider: TaskCheckerProvide
   override val envChecker: EnvironmentChecker
     get() = baseProvider.envChecker
 
-  override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
-    val checker = baseProvider.getEduTaskChecker(task, project)
+  override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask>? {
+    val checker = baseProvider.getEduTaskChecker(task, project) ?: return null
 
     return object : TaskChecker<EduTask>(task, project) {
       override fun check(indicator: ProgressIndicator): CheckResult {

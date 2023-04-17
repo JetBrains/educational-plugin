@@ -1,0 +1,118 @@
+{
+  "meta" : {
+    "page" : 1,
+    "has_next" : false,
+    "has_previous" : false
+  },
+  "steps" : [
+    {
+      "block" : {
+        "name" : "code",
+        "text" : "<p></p>\n<p>Using <code class=\"java\">grep</code>, print the lines from the file <em>/tmp/movies.txt </em>that contain the substring \"me\" no matter what case it has.</p>",
+        "video" : null,
+        "options" : {
+          "execution_time_limit" : 5,
+          "execution_memory_limit" : 256,
+          "limits" : {
+            "shell" : {
+              "time" : 5,
+              "memory" : 256
+            }
+          },
+          "code_templates" : {
+            "shell" : "solve() {\n# add your solution here\n\n}"
+          },
+          "code_templates_header_lines_count" : {
+            "shell" : 0
+          },
+          "code_templates_footer_lines_count" : {
+            "shell" : 2
+          },
+          "code_templates_options" : { },
+          "samples" : [
+            [
+              "2014 - Birdman\n2006 - A Scanner Darkly\n2007 - No Country for Old Men\n2015 - The Visit\n1990 - Misery",
+              "2007 - No Country for Old Men"
+            ]
+          ],
+          "is_run_user_code_allowed" : true,
+          "language" : ""
+        },
+        "table_of_contents" : [ ]
+      },
+      "can_abandon" : false,
+      "can_skip" : false,
+      "check_profile" : "",
+      "comments_statistics" : [
+        {
+          "thread" : "comment",
+          "total_count" : 3
+        },
+        {
+          "thread" : "hint",
+          "total_count" : 1
+        },
+        {
+          "thread" : "useful link",
+          "total_count" : 1
+        },
+        {
+          "thread" : "solutions",
+          "total_count" : 42
+        }
+      ],
+      "content_created_at" : "2023-05-22T22:13:55.627000Z",
+      "id" : 12720,
+      "is_abandoned" : false,
+      "is_completed" : true,
+      "is_cribbed" : false,
+      "is_recommended" : true,
+      "is_next" : false,
+      "is_skipped" : false,
+      "last_completed_at" : "2023-06-07T14:42:46.301030Z",
+      "likes_statistics" : [
+        {
+          "subject" : "",
+          "value" : 1,
+          "total_count" : 7
+        },
+        {
+          "subject" : "",
+          "value" : 2,
+          "total_count" : 57
+        },
+        {
+          "subject" : "skip",
+          "value" : 100,
+          "total_count" : 4
+        }
+      ],
+      "lesson_stepik_id" : 25453,
+      "position" : 8,
+      "seconds_to_complete" : 60.003,
+      "solved_by" : 489,
+      "stage" : null,
+      "stepik_id" : 33571,
+      "success_rate" : 0.5916666666666667,
+      "title" : "Me",
+      "topic" : 1316,
+      "topic_theory" : 12713,
+      "type" : "practice",
+      "updated_at" : "2023-05-31T22:32:53.703809Z",
+      "content_updated_at" : "2023-05-22T22:13:55.795000Z",
+      "progress_updated_at" : "2023-05-02T15:14:32.424990Z",
+      "popular_ide" : "idea",
+      "project" : null,
+      "is_beta" : true,
+      "is_deprecated" : false,
+      "is_ide_compatible" : false,
+      "is_remote_tested" : false,
+      "error_issues_count" : null,
+      "warning_issues_count" : null,
+      "error_issues" : [ ],
+      "warning_issues" : [ ],
+      "can_see_admin_toolbar" : false,
+      "readiness" : "stable"
+    }
+  ]
+}

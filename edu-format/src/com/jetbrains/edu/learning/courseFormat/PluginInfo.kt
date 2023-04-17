@@ -45,5 +45,7 @@ open class PluginInfo {
     val PHP: PluginInfo = PluginInfo("com.jetbrains.php", "PHP")
 
     val SQL: PluginInfo = PluginInfo("com.intellij.database", "Database Tools and SQL")
+
+    val SHELL: PluginInfo = PluginInfo("com.jetbrains.sh", "Shell Script")
   }
 }

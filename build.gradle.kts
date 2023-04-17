@@ -70,6 +70,7 @@ val rustPlugin: String by project
 val tomlPlugin = "org.toml.lang"
 val goPlugin: String by project
 val sqlPlugin = "com.intellij.database"
+val shellScriptPlugin = "com.jetbrains.sh"
 val markdownPlugin = "org.intellij.plugins.markdown"
 val githubPlugin = "org.jetbrains.plugins.github"
 val psiViewerPlugin: String by project
@@ -324,6 +325,7 @@ project(":") {
     )
     pluginsList += rustPlugins
     pluginsList += pythonPlugins
+    pluginsList += shellScriptPlugin
     if (isJvmCenteredIDE) {
       pluginsList += jvmPlugins
       pluginsList += listOf(kotlinPlugin, scalaPlugin)
@@ -358,6 +360,7 @@ project(":") {
     implementation(project(":Edu-Cpp"))
     implementation(project(":Edu-Go"))
     implementation(project(":Edu-Php"))
+    implementation(project(":Edu-Shell"))
     implementation(project(":sql"))
     implementation(project(":sql:sql-jvm"))
     implementation(project(":sql:Edu-Sql-Java"))
@@ -828,6 +831,18 @@ project(":Edu-Php") {
   intellij {
     version.set(ideaVersion)
     plugins.set(listOf(phpPlugin))
+  }
+
+  dependencies {
+    implementation(project(":educational-core"))
+
+    testImplementation(project(":educational-core", "testOutput"))
+  }
+}
+
+project(":Edu-Shell") {
+  intellij {
+    plugins.set(listOf(shellScriptPlugin))
   }
 
   dependencies {
