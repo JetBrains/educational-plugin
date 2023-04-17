@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.submissions
 
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -10,11 +11,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.taskDescription.ui.tab.TabType.SUBMISSIONS_TAB
 import org.jetbrains.annotations.TestOnly
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
@@ -117,21 +118,18 @@ class SubmissionsManager(private val project: Project) {
     return submissionsProvider.areSubmissionsAvailable(course)
   }
 
-  fun prepareSubmissionsContent(loadSolutions: () -> Unit = {}) {
+  fun prepareSubmissionsContentWhenLoggedIn(loadSolutions: () -> Unit = {}) {
     val course = this.course
     val submissionsProvider = course?.getSubmissionsProvider() ?: return
 
     val taskDescriptionView = TaskDescriptionView.getInstance(project)
     taskDescriptionView.showLoadingSubmissionsPanel(getPlatformName())
 
-    if (!isUnitTestMode) {
-      ApplicationManager.getApplication().executeOnPooledThread {
+    CompletableFuture.runAsync({
+      if (isLoggedIn()) {
         loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
       }
-    }
-    else {
-      loadSubmissionsContent(course, submissionsProvider, taskDescriptionView, loadSolutions)
-    }
+    }, ProcessIOExecutorService.INSTANCE)
   }
 
   fun deleteCourseSubmissionsLocally() {
@@ -143,7 +141,7 @@ class SubmissionsManager(private val project: Project) {
 
   fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
-  fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize()
+  fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
 
   private fun loadSubmissionsContent(course: Course,
                                      submissionsProvider: SubmissionsProvider,

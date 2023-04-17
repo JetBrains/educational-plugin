@@ -133,12 +133,12 @@ private class UserInfoToString : StdConverter<UserInfo, String?>() {
   override fun convert(value: UserInfo?): String? = value?.getFullName()
 }
 
-private class MarketplaceUserInfoFromString : StdConverter<String?, MarketplaceUserInfo?>() {
-  override fun convert(value: String?): MarketplaceUserInfo? {
+private class MarketplaceUserInfoFromString : StdConverter<String?, JBAccountUserInfo?>() {
+  override fun convert(value: String?): JBAccountUserInfo? {
     if (value == null) {
       return null
     }
-    return MarketplaceUserInfo(value)
+    return JBAccountUserInfo(value)
   }
 }
 

@@ -6,6 +6,7 @@ import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -17,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
@@ -45,11 +47,19 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
   override fun update(task: Task) {
     if (!task.supportSubmissions) return
 
+    MarketplaceConnector.getInstance().isLoggedInAsync().thenApply { isLoggedIn ->
+      invokeLater {
+        updateSubmissionsContent(task, isLoggedIn)
+      }
+    }
+  }
+
+  private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
     val descriptionText = StringBuilder()
     var customLinkHandler: SwingToolWindowLinkHandler? = null
 
-    if (submissionsManager.isLoggedIn()) {
+    if (isLoggedIn) {
       val submissionsList = submissionsManager.getSubmissionsFromMemory(setOf(task.id))
       if (submissionsList.isNullOrEmpty()) {
         descriptionText.addEmptySubmissionsMessage()

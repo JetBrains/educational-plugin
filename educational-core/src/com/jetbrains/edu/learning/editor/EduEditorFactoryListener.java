@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.editor;
 
-
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -17,7 +16,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.PlaceholderPainter;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.VirtualFileExt;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -26,7 +28,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
-import com.jetbrains.edu.learning.stepik.api.StepikConnectorUtils;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillUtilsKt;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionToolWindowFactory;
@@ -134,8 +135,9 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       }
       else if (course instanceof EduCourse) {
         EduCourse eduCourse = (EduCourse)course;
-        if (eduCourse.isMarketplaceRemote() && MarketplaceConnector.getInstance().isLoggedIn()) {
-          MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask);
+        if (eduCourse.isMarketplaceRemote()) {
+          MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync(
+            isLoggedIn -> MarketplaceUtils.markTheoryTaskAsCompleted(project, theoryTask));
         }
       }
 

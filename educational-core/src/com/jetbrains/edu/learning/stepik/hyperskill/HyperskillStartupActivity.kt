@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillSolutionLoader
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
@@ -26,15 +25,14 @@ class HyperskillStartupActivity : StartupActivity {
     val submissionsManager = SubmissionsManager.getInstance(project)
     if (!submissionsManager.submissionsSupported()) return
 
-    if (HyperskillSettings.INSTANCE.account != null) {
-      submissionsManager.prepareSubmissionsContent {
-        HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground()
-      }
+    submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+      HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground()
     }
+
     HyperskillConnector.getInstance().setSubmissionTabListener(object : EduLogInListener {
       override fun userLoggedIn() {
         if (project.isDisposed) return
-        submissionsManager.prepareSubmissionsContent()
+        submissionsManager.prepareSubmissionsContentWhenLoggedIn()
       }
 
       override fun userLoggedOut() {

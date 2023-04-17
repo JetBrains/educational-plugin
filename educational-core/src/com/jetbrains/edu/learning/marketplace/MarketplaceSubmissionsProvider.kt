@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.submissions.SubmissionsProvider
 
 class MarketplaceSubmissionsProvider : SubmissionsProvider {
   override fun loadAllSubmissions(course: Course): Map<Int, List<MarketplaceSubmission>> {
-    if (course is EduCourse && course.isMarketplaceRemote && isLoggedIn()) {
+    if (course is EduCourse && course.isMarketplaceRemote) {
       return loadSubmissions(course.allTasks, course.id)
     }
     return emptyMap()
@@ -40,9 +40,9 @@ class MarketplaceSubmissionsProvider : SubmissionsProvider {
     return MarketplaceConnector.getInstance().isLoggedIn()
   }
 
-  override fun getPlatformName(): String = MARKETPLACE
+  override fun getPlatformName(): String = JET_BRAINS_ACCOUNT
 
-  override fun doAuthorize() {
-    MarketplaceConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.SUBMISSIONS_TAB)
+  override fun doAuthorize(vararg postLoginActions: Runnable) {
+    MarketplaceConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.SUBMISSIONS_TAB)
   }
 }

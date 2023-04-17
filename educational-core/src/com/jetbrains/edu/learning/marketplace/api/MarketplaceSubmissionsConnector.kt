@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBAccountInfoService
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -52,13 +53,11 @@ class MarketplaceSubmissionsConnector {
     get() = submissionsService()
 
   // should be called only from background thread because of jbAccessToken
+  @RequiresBackgroundThread
   private fun submissionsService(): SubmissionsService {
-    if (!isUnitTestMode)
-      checkIsBackgroundThread()
-
     val jbAuthService = JBAccountInfoService.getInstance() ?: error("Nullable JBAccountInfoService")
     val marketplaceConnector = MarketplaceConnector.getInstance()
-    val jbAccessToken = marketplaceConnector.getJBAccessToken(jbAuthService) ?: error("Nullable JB account access token")
+    val jbAccessToken = marketplaceConnector.account?.getJBAccessToken(jbAuthService) ?: error("Nullable JB account access token")
 
     val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, jbAccessToken)
       .addConverterFactory(converterFactory)
@@ -101,9 +100,8 @@ class MarketplaceSubmissionsConnector {
     doPostSubmission(task.course.id, task.id, emptySubmission)
   }
 
+  @RequiresBackgroundThread
   fun loadSolutionFiles(solutionKey: String): List<SolutionFile> {
-    if (!isUnitTestMode)
-      checkIsBackgroundThread()
 
     val solutionsDownloadLink = submissionsService.getSolutionDownloadLink(solutionKey).executeParsingErrors().onError {
       error("failed to obtain download link for solution key $solutionKey")

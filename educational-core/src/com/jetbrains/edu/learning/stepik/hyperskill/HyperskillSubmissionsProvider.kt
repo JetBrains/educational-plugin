@@ -33,7 +33,7 @@ class HyperskillSubmissionsProvider : SubmissionsProvider {
 
   override fun isLoggedIn(): Boolean = HyperskillSettings.INSTANCE.account != null
 
-  override fun doAuthorize() {
+  override fun doAuthorize(vararg postLoginActions: Runnable) {
     HyperskillConnector.getInstance().doAuthorize(authorizationPlace = AuthorizationPlace.SUBMISSIONS_TAB)
   }
 }

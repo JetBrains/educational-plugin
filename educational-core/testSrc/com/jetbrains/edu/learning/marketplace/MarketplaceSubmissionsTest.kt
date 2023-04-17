@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
-import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -11,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.*
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
@@ -29,8 +27,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.net.HttpURLConnection
 import java.util.*
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.CompletableFuture
 
 class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
@@ -73,7 +70,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test delete submissions action success`() {
-    val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.name ?: error("nullable current user")
+    val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
     doTestSubmissionsDelete(true, EduCoreBundle.message("marketplace.delete.submissions.success.message", userName)) {
       checkSubmissionsDeleted(setOf(1, 2))
@@ -81,7 +78,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   }
 
   fun `test delete submissions action failed`() {
-    val userName = MarketplaceSettings.INSTANCE.account?.userInfo?.name ?: error("nullable current user")
+    val userName = MarketplaceConnector.getInstance().account?.userInfo?.name ?: error("nullable current user")
 
     doTestSubmissionsDelete(false, EduCoreBundle.message("marketplace.delete.submissions.failed.message", userName)) {
       checkSubmissionsNotDeleted(setOf(1, 2))
@@ -93,16 +90,18 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
     createEduCourse()
 
-    checkTask(0, 0)
-    checkTask(0, 0)
-    checkTask(0, 1)
+    CompletableFuture.runAsync {
+      checkTask(0, 0)
+      checkTask(0, 0)
+      checkTask(0, 1)
+    }.thenApply {
+      val submissionsManager = SubmissionsManager.getInstance(project)
+      checkSubmissionsPresent(submissionsManager, 1, 2)
+      checkSubmissionsPresent(submissionsManager, 2, 1)
 
-    val submissionsManager = SubmissionsManager.getInstance(project)
-    checkSubmissionsPresent(submissionsManager, 1, 2)
-    checkSubmissionsPresent(submissionsManager, 2, 1)
-
-    doTestWithNotification({ checkSubmissions() },
-                           { assertEquals(notificationText, it.content) })
+      doTestWithNotification({ checkSubmissions() },
+        { assertEquals(notificationText, it.content) })
+    }
   }
 
   private fun checkSubmissionsNotDeleted(taskIds: Set<Int>) {
@@ -198,28 +197,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
 
       val mapper = MarketplaceSubmissionsConnector.getInstance().objectMapper
 
-      mockkStatic(JBAccountInfoService::class)
-      every { JBAccountInfoService.getInstance()?.accessToken } returns object : Future<String?> {
-        override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
-          return false
-        }
-
-        override fun isCancelled(): Boolean {
-          return false
-        }
-
-        override fun isDone(): Boolean {
-          return true
-        }
-
-        override fun get(): String? {
-          return null
-        }
-
-        override fun get(timeout: Long, unit: TimeUnit): String {
-          return "test token"
-        }
-      }
+      mockJBAccount()
 
       for (i in submissionsLists.indices) {
         val getAllSubmissionsPageableCall = mockk<Call<MarketplaceSubmissionsList>>()

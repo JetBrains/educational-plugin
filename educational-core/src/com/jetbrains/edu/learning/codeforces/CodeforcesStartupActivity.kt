@@ -17,17 +17,14 @@ class CodeforcesStartupActivity : StartupActivity {
 
     val submissionsManager = SubmissionsManager.getInstance(project)
 
-    if (CodeforcesSettings.getInstance().isLoggedIn()) {
-      submissionsManager.prepareSubmissionsContent {
-        updateCheckStatus(project)
-      }
+    submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+      updateCheckStatus(project)
     }
+
     project.messageBus.connect().subscribe(CodeforcesSettings.AUTHENTICATION_TOPIC, object : EduLogInListener {
       override fun userLoggedIn() {
-        if (CodeforcesSettings.getInstance().isLoggedIn()) {
-          submissionsManager.prepareSubmissionsContent {
-            updateCheckStatus(project)
-          }
+        submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+          updateCheckStatus(project)
         }
       }
 

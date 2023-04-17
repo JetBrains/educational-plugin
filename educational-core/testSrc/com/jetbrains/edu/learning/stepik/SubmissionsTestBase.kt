@@ -6,19 +6,23 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
+import java.util.concurrent.CompletableFuture
 
 abstract class SubmissionsTestBase : EduTestCase() {
 
   protected fun doTestSubmissionsLoaded(taskIds: Set<Int>, taskIdsToSubmissionsNumber: Map<Int, Int>) {
     val submissionsManager = SubmissionsManager.getInstance(project)
-    assertNull("SubmissionsManager should not contain submissions before submissions loading",
-               submissionsManager.getSubmissionsFromMemory(taskIds))
-    submissionsManager.prepareSubmissionsContent()
-
-    for (taskId in taskIds) {
-      val submissionsNumber = taskIdsToSubmissionsNumber[taskId] ?: error("Submissions number for taskId ${taskId} is null")
-      checkSubmissionsPresent(submissionsManager, taskId, submissionsNumber)
-    }
+    assertNull(
+      "SubmissionsManager should not contain submissions before submission loading",
+      submissionsManager.getSubmissionsFromMemory(taskIds)
+    )
+    CompletableFuture.runAsync { submissionsManager.prepareSubmissionsContentWhenLoggedIn() }
+      .thenApply {
+        for (taskId in taskIds) {
+          val submissionsNumber = taskIdsToSubmissionsNumber[taskId] ?: error("Number of submissions for taskId ${taskId} is null")
+          checkSubmissionsPresent(submissionsManager, taskId, submissionsNumber)
+        }
+      }
   }
 
   private fun checkSubmissionPresentWithStatus(submissionsManager: SubmissionsManager,
@@ -43,9 +47,7 @@ abstract class SubmissionsTestBase : EduTestCase() {
     assertNull("SubmissionsManager should not contain submissions before task check",
                submissionsManager.getSubmissionsFromMemory(setOf(taskId)))
 
-    checkTask()
-
-    checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus)
+    CompletableFuture.runAsync { checkTask() }.thenApply { checkSubmissionPresentWithStatus(submissionsManager, taskId, checkStatus) }
   }
 
   protected fun checkTask(lessonIndex: Int = 0, taskIndex: Int = 0) {

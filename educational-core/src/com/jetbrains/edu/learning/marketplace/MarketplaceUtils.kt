@@ -7,10 +7,12 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.api.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount.Companion.getJBAIdToken
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
@@ -22,20 +24,19 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.update.UpdateNotification
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.util.*
 
-private const val DATA_DELIMITER = ";"
 private const val DELIMITER = "."
 
-fun decodeHubToken(token: String): String? {
-  val parts = token.split(DATA_DELIMITER)
-  if (parts.size != 2) {
-    error("Hub oauth token data part is malformed")
+fun getJBAUserInfo(): JBAccountUserInfo? {
+  val jbaIdToken = getJBAIdToken() ?: return null
+
+  val parts: List<String> = jbaIdToken.split(DELIMITER)
+  if (parts.size < 2) {
+    error("JB Account id token data part is malformed")
   }
-  val userData = parts[0].split(DELIMITER)
-  if (userData.size != 4) {
-    error("Hub oauth token data part is malformed")
-  }
-  return userData[2].ifEmpty { null }
+  val payload = String(Base64.getUrlDecoder().decode(parts[1]))
+  return ConnectorUtils.createMapper().readValue(payload, JBAccountUserInfo::class.java)
 }
 
 fun Course.updateCourseItems() {
@@ -59,8 +60,8 @@ fun Course.setRemoteMarketplaceCourseVersion() {
 fun EduCourse.generateEduId() = "${name}_${vendor?.name}_$programmingLanguage"
 
 fun Course.addVendor(): Boolean {
-  val currentUser = MarketplaceSettings.INSTANCE.account ?: return false
-  vendor = Vendor(currentUser.userInfo.name)
+  val currentUser = MarketplaceSettings.INSTANCE.getMarketplaceAccount() ?: return false
+  vendor = Vendor(currentUser.userInfo.getFullName())
   return true
 }
 

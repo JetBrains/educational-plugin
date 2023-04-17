@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
+import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
 import com.jetbrains.edu.learning.marketplace.REVIEWS
 import java.util.*
@@ -71,5 +71,5 @@ private class MarketplaceCourseBuilder(
 }
 
 fun Course.setMarketplaceAuthorsAsString(authors: List<Author>) {
-  this.authors = authors.map { MarketplaceUserInfo(it.name) }
+  this.authors = authors.map { JBAccountUserInfo(it.name) }
 }

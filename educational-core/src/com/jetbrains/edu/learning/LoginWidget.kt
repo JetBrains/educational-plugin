@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.popup.ActiveIcon
@@ -18,6 +20,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.SyncCourseAction
 import com.jetbrains.edu.learning.api.EduLoginConnector
+import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationPlace
@@ -25,6 +28,7 @@ import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import java.awt.BorderLayout
 import java.awt.Point
 import java.awt.event.MouseEvent
+import java.util.concurrent.CompletableFuture
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -53,15 +57,22 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     object : ClickListener() {
       override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
         if (clickCount != 1) return false
-        val popup = createPopup()
-        val preferredSize = popup.content.preferredSize
-        val point = Point(-preferredSize.width, -preferredSize.height)
-        popup.show(RelativePoint(component, point))
+        CompletableFuture.supplyAsync({ connector.isLoggedIn() }, ProcessIOExecutorService.INSTANCE).thenAccept {
+          invokeLater { showPopup(it) }
+        }
+
         return true
       }
     }.installOn(component)
 
-  private fun createPopup(): JBPopup {
+  private fun showPopup(isLoggedIn: Boolean) {
+    val popup = createPopup(isLoggedIn)
+    val preferredSize = popup.content.preferredSize
+    val point = Point(-preferredSize.width, -preferredSize.height)
+    popup.show(RelativePoint(component, point))
+  }
+
+  private fun createPopup(isLoggedIn: Boolean): JBPopup {
     val wrapperPanel = JPanel(BorderLayout())
     wrapperPanel.border = DialogWrapper.createDefaultBorder()
     val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(wrapperPanel, null)
@@ -69,20 +80,20 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
       .setTitleIcon(ActiveIcon(icon, icon))
       .createPopup()
 
-    updateContent(wrapperPanel, popup)
+    updateContent(wrapperPanel, popup, isLoggedIn)
     return popup
   }
 
-  private fun updateContent(wrapperPanel: JPanel, popup: JBPopup) {
+  private fun updateContent(wrapperPanel: JPanel, popup: JBPopup, isLoggedIn: Boolean) {
     wrapperPanel.removeAll()
-    wrapperPanel.add(createWidgetContent(connector.account, popup, wrapperPanel), BorderLayout.CENTER)
+    wrapperPanel.add(createWidgetContent(connector.account, popup, wrapperPanel, isLoggedIn), BorderLayout.CENTER)
     wrapperPanel.revalidate()
     wrapperPanel.repaint()
     UIUtil.setBackgroundRecursively(wrapperPanel, UIUtil.getListBackground())
   }
 
-  private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel): JPanel {
-    val accountInfoText = if (currentAccount != null) {
+  private fun createWidgetContent(currentAccount: T?, popup: JBPopup, wrapperPanel: JPanel, isLoggedIn: Boolean): JPanel {
+    val accountInfoText = if (currentAccount != null && isLoggedIn) {
       EduCoreBundle.message("account.widget.login.message", profileUrl(currentAccount), currentAccount.userInfo)
     }
     else {
@@ -92,21 +103,20 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     val contentPanel = JBUI.Panels.simplePanel(0, 10)
     contentPanel.addToTop(EduHyperlinkLabel(accountInfoText))
 
-    val accountActionLabel = if (currentAccount == null) {
+    val accountActionLabel = if (!isLoggedIn) {
       EduHyperlinkLabel(EduCoreBundle.message("account.widget.login"), true) {
-        connector.doAuthorize(authorizationPlace = AuthorizationPlace.WIDGET)
+        connector.doAuthorize(Runnable{ postLoginActions() }, authorizationPlace = AuthorizationPlace.WIDGET)
         popup.closeOk(null)
       }
     }
     else {
-      EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
-        connector.doLogout(authorizationPlace = AuthorizationPlace.WIDGET)
-        updateContent(wrapperPanel, popup)
-      }
+      addLogoutLabel(wrapperPanel, popup)
     }
 
     val actionsPanel = JBUI.Panels.simplePanel(0, 10)
-    actionsPanel.addToCenter(accountActionLabel)
+    if (accountActionLabel != null) {
+      actionsPanel.addToCenter(accountActionLabel)
+    }
 
     val synchronizeCourseAction = getSynchronizeCourseAction()
     if (!loginNeeded() && synchronizeCourseAction != null && synchronizeCourseAction.isAvailable(project)) {
@@ -121,6 +131,14 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
     return contentPanel
   }
 
+  open fun addLogoutLabel(wrapperPanel: JPanel, popup: JBPopup): EduHyperlinkLabel? {
+    val currentConnector = connector as? EduOAuthCodeFlowConnector ?: return null
+    return EduHyperlinkLabel(EduCoreBundle.message("account.widget.logout"), true) {
+      currentConnector.doLogout(authorizationPlace = AuthorizationPlace.WIDGET)
+      updateContent(wrapperPanel, popup, false)
+    }
+  }
+
   private fun getSynchronizeCourseAction(): SyncCourseAction? {
     val synchronizeCourseActionId = synchronizeCourseActionId ?: return null
     return EduActionUtils.getAction(synchronizeCourseActionId) as? SyncCourseAction
@@ -128,6 +146,8 @@ abstract class LoginWidget<T : OAuthAccount<out Any>>(val project: Project,
   }
 
   open fun loginNeeded(): Boolean = !connector.isLoggedIn()
+
+  open fun postLoginActions() {}
 
   override fun getComponent(): JComponent = component
 

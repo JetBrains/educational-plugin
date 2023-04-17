@@ -1,48 +1,38 @@
 package com.jetbrains.edu.learning.marketplace.settings
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
-import com.intellij.util.xmlb.XmlSerializer
-import com.intellij.util.xmlb.annotations.Transient
-import com.jetbrains.edu.learning.authUtils.deserializeOAuthAccount
-import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import org.jdom.Element
+import com.jetbrains.edu.learning.marketplace.getJBAUserInfo
 
-private const val SERVICE_NAME = "MarketplaceSettings"
+class MarketplaceSettings {
+  private var account: MarketplaceAccount? = null
 
-@State(name = SERVICE_NAME, storages = [Storage("other.xml")])
-class MarketplaceSettings : PersistentStateComponent<Element> {
-  @get:Transient
-  @set:Transient
-  @field:Volatile
-  var account: MarketplaceAccount? = null
-    set(account) {
-      field = account
-      MarketplaceConnector.getInstance().apply {
-        if (account != null) notifyUserLoggedIn() else notifyUserLoggedOut()
-      }
+  fun getMarketplaceAccount(): MarketplaceAccount? {
+    if (!MarketplaceAccount.isJBALoggedIn()) {
+      account = null
+      return null
+    }
+    val currentAccount = account
+    val jbaUserInfo = getJBAUserInfo()
+    if (jbaUserInfo == null) {
+      LOG.error("User info is null for account ${account?.userInfo?.name}")
+      account = null
+    }
+    else if (currentAccount == null || !currentAccount.checkTheSameUserAndUpdate(jbaUserInfo)) {
+      account = MarketplaceAccount(jbaUserInfo)
     }
 
-  override fun getState(): Element? {
-    val mainElement = Element(SERVICE_NAME)
-    XmlSerializer.serializeInto(this, mainElement)
-    val userElement = account?.serialize() ?: return null
-    mainElement.addContent(userElement)
-    return mainElement
+    return account
   }
 
-  override fun loadState(settings: Element) {
-    XmlSerializer.deserializeInto(this, settings)
-    val accountClass = MarketplaceAccount::class.java
-    val user = settings.getChild(accountClass.simpleName)
-    account = deserializeOAuthAccount(user, accountClass, MarketplaceUserInfo::class.java)
+  fun setAccount(value: MarketplaceAccount?) {
+    account = value
   }
 
   companion object {
+    private val LOG = logger<MarketplaceSettings>()
+
     val INSTANCE: MarketplaceSettings
       get() = service()
   }

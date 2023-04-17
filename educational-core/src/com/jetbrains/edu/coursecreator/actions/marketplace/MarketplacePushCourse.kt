@@ -1,29 +1,35 @@
 package com.jetbrains.edu.coursecreator.actions.marketplace
 
 import com.intellij.CommonBundle
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
-import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorized
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.CCUtils.showLoginNeededNotification
 import com.jetbrains.edu.coursecreator.actions.CourseArchiveCreator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.*
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToPushCourseNotification
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 @Suppress("ComponentNotRegistered") // Marketplace.xml
 class MarketplacePushCourse(
@@ -57,11 +63,31 @@ class MarketplacePushCourse(
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val connector = MarketplaceConnector.getInstance()
 
-    if (!checkIfAuthorized(project, e.presentation.text,
-                           MarketplaceSettings.INSTANCE.account != null) { connector.doAuthorize() }) {
+    val currentAccount = connector.account
+    if (currentAccount == null) {
+      showLoginNeededNotification(project, e.presentation.text) { connector.doAuthorize() }
       return
     }
 
+    CompletableFuture.supplyAsync({ connector.loadHubToken(currentAccount) }, ProcessIOExecutorService.INSTANCE)
+      .handle { hubToken, exception ->
+        if (exception != null) {
+          showFailedToPushCourseNotification(project, course.name)
+        }
+        else if (hubToken == null) {
+          LOG.warn("Login failed: JetBrains account token is null")
+          val jbAccountInfoService = JBAccountInfoService.getInstance() ?: return@handle
+          showReloginToJBANeededNotification(connector.invokeJBALoginAction(jbAccountInfoService))
+        }
+        else {
+          invokeLater {
+            prepareAndPush(project, course, connector, e.presentation.text, hubToken)
+          }
+        }
+      }
+  }
+
+  private fun prepareAndPush(project: Project, course: EduCourse, connector: MarketplaceConnector, actionName: String, hubToken: String) {
     course.prepareForUpload(project)
 
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
@@ -72,20 +98,20 @@ class MarketplacePushCourse(
     }
 
     if (!course.isMarketplacePrivate && course.vendor?.name == JB_VENDOR_NAME) {
-      val result = showConfirmationDialog(e.presentation.text)
+      val result = showConfirmationDialog(actionName)
       if (result != Messages.OK) return
     }
 
-    doPush(project, connector, course, tempFile)
+    doPush(project, connector, course, tempFile, hubToken)
   }
 
-  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File) {
+  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File, hubToken: String) {
     if (course.isMarketplaceRemote) {
-      connector.uploadCourseUpdateUnderProgress(project, course, tempFile)
+      connector.uploadCourseUpdateUnderProgress(project, course, tempFile, hubToken)
       EduCounterUsageCollector.updateCourse()
     }
     else {
-      connector.uploadNewCourseUnderProgress(project, course, tempFile)
+      connector.uploadNewCourseUnderProgress(project, course, tempFile, hubToken)
       EduCounterUsageCollector.uploadCourse()
     }
   }
@@ -96,7 +122,7 @@ class MarketplacePushCourse(
     actionTitle,
     CommonBundle.getCancelButtonText(),
     null
-    )
+  )
 
   private fun EduCourse.prepareForUpload(project: Project) {
     if (isMarketplaceRemote) {
@@ -131,6 +157,8 @@ class MarketplacePushCourse(
   }
 
   companion object {
+    private val LOG = logger<MarketplacePushCourse>()
+
     @NonNls
     const val ACTION_ID: String = "Educational.Educator.MarketplacePushCourse"
   }

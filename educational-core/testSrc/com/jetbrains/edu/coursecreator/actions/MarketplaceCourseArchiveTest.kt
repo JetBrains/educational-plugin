@@ -3,17 +3,20 @@ package com.jetbrains.edu.coursecreator.actions
 import com.jetbrains.edu.learning.EduUtils.getFirstTask
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
+import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.api.Author
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.setMarketplaceAuthorsAsString
+import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 
 class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   fun `test user name as vendor`() {
+    mockJBAccount()
+
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -21,13 +24,13 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("test.txt", "some text")
     }.apply { isMarketplace = true }
     val account = MarketplaceAccount()
-    account.userInfo = MarketplaceUserInfo("User Name")
-    MarketplaceSettings.INSTANCE.account = account
+    account.userInfo = JBAccountUserInfo("Zinaida Smirnova")
+    MarketplaceSettings.INSTANCE.setAccount(account)
     course.addVendor()
 
     doTest()
 
-    MarketplaceSettings.INSTANCE.account = null
+    MarketplaceSettings.INSTANCE.setAccount(null)
   }
 
   fun `test course with author`() {

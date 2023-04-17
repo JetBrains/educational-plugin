@@ -293,7 +293,11 @@ object CCUtils {
   @Suppress("UnstableApiUsage")
   @JvmStatic
   @JvmOverloads
-  fun askToWrapTopLevelLessons(project: Project, course: EduCourse, @Button yesText: String = EduCoreBundle.message("label.wrap")): Boolean {
+  fun askToWrapTopLevelLessons(
+    project: Project,
+    course: EduCourse,
+    @Button yesText: String = EduCoreBundle.message("label.wrap")
+  ): Boolean {
     val result = Messages.showYesNoDialog(
       project,
       EduCoreBundle.message("notification.wrap.lessons.into.section.message"),
@@ -320,9 +324,16 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun showLoginNeededNotification(project: Project, failedActionTitle: String, notificationTitle: String =  EduCoreBundle.message("notification.title.authorization.required"),authAction: () -> Unit) {
-    val notification = Notification("JetBrains Academy", notificationTitle,
-                                    EduCoreBundle.message("notification.content.authorization", failedActionTitle), NotificationType.ERROR)
+  fun showLoginNeededNotification(
+    project: Project,
+    failedActionTitle: String,
+    notificationTitle: String = EduCoreBundle.message("notification.title.authorization.required"),
+    authAction: () -> Unit
+  ) {
+    val notification = Notification(
+      "JetBrains Academy", notificationTitle,
+      EduCoreBundle.message("notification.content.authorization", failedActionTitle), NotificationType.ERROR
+    )
     notification.addAction(object : DumbAwareAction(EduCoreBundle.message("notification.content.authorization.action")) {
       override fun actionPerformed(e: AnActionEvent) {
         authAction()
@@ -332,10 +343,12 @@ object CCUtils {
     notification.notify(project)
   }
 
-  fun checkIfAuthorized(project: Project,
-                        failedActionTitle: String,
-                        isLoggedIn: Boolean,
-                        authAction: () -> Unit): Boolean {
+  private fun checkIfAuthorized(
+    project: Project,
+    failedActionTitle: String,
+    isLoggedIn: Boolean,
+    authAction: () -> Unit
+  ): Boolean {
     val indicator = ProgressManager.getInstance().progressIndicator
     indicator?.checkCanceled()
 

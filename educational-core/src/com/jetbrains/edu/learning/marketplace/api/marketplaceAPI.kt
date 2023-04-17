@@ -3,16 +3,13 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.intellij.credentialStore.Credentials
-import com.intellij.ide.passwordSafe.PasswordSafe
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.ui.JBAccountInfoService
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
-import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
-import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.stepik.api.SOLUTION
@@ -21,6 +18,7 @@ import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import org.jetbrains.annotations.TestOnly
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val ID = "id"
 const val NAME = "name"
@@ -43,13 +41,11 @@ private const val UPDATES = "updates"
 private const val VERSION = "version"
 private const val HAS_NEXT = "has_next"
 
-class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
+class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
   @TestOnly
   constructor() : super()
 
-  constructor(tokenExpiresIn: Long) : super(tokenExpiresIn)
-
-  private val serviceNameForHubIdToken @NlsSafe get() = "$servicePrefix hub id token"
+  constructor(jbAccountUserInfo: JBAccountUserInfo) : super(jbAccountUserInfo)
 
   @NlsSafe
   override val servicePrefix: String = MARKETPLACE
@@ -58,13 +54,40 @@ class MarketplaceAccount : OAuthAccount<MarketplaceUserInfo> {
     return userInfo.getFullName()
   }
 
-  override fun saveTokens(tokenInfo: TokenInfo) {
-    super.saveTokens(tokenInfo)
-
-    val userName = getUserName()
-    PasswordSafe.instance.set(credentialAttributes(userName, serviceNameForHubIdToken), Credentials(userName, tokenInfo.idToken))
+  fun isJBAccessTokenAvailable(jbAccountInfoService: JBAccountInfoService): Boolean {
+    return getJBAccessToken(jbAccountInfoService) != null
   }
 
+  @RequiresBackgroundThread
+  fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
+    return try {
+      jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
+    }
+    catch (e: Exception) {
+      LOG.warn(e)
+      null
+    }
+  }
+
+  fun checkTheSameUserAndUpdate(currentJbaUser: JBAccountUserInfo): Boolean {
+    return if (userInfo.jbaLogin == currentJbaUser.jbaLogin) {
+      //update username and email in case changed on remote
+      userInfo.email = currentJbaUser.email
+      userInfo.name = currentJbaUser.name
+      true
+    }
+    else {
+      false
+    }
+  }
+
+  companion object {
+    private val LOG = logger<MarketplaceAccount>()
+
+    fun isJBALoggedIn(): Boolean = JBAccountInfoService.getInstance()?.userData != null
+
+    fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
+  }
 }
 
 class QueryData(graphqlQuery: String) {

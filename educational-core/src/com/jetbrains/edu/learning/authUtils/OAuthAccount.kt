@@ -27,6 +27,10 @@ abstract class OAuthAccount<UserInfo : Any> : Account<UserInfo> {
     this.tokenExpiresIn = tokenExpiresIn
   }
 
+  constructor(userInfo: UserInfo) {
+    this.userInfo = userInfo
+  }
+
   override fun isUpToDate() = TokenInfo().apply { expiresIn = tokenExpiresIn }.isUpToDate()
 
   fun getAccessToken(): String? {
@@ -66,8 +70,6 @@ class TokenInfo {
   var accessToken: String = ""
   @JsonProperty("refresh_token")
   var refreshToken: String = ""
-  @JsonProperty("id_token")
-  var idToken: String = ""
   @JsonProperty("expires_in")
   @JsonDeserialize(using = ExpiresDeserializer::class)
   var expiresIn: Long = -1

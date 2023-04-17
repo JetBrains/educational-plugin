@@ -24,7 +24,7 @@ interface SubmissionsProvider {
 
   fun getPlatformName(): String
 
-  fun doAuthorize()
+  fun doAuthorize(vararg postLoginActions: Runnable)
 
   companion object {
     private val EP_NAME = ExtensionPointName.create<SubmissionsProvider>("Educational.submissionsProvider")

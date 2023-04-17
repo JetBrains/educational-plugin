@@ -30,6 +30,6 @@ class CodeforcesSubmissionsProvider : SubmissionsProvider {
 
   override fun getPlatformName(): String = CodeforcesNames.CODEFORCES
 
-  override fun doAuthorize() = LoginDialog(AuthorizationPlace.SUBMISSIONS_TAB).show()
+  override fun doAuthorize(vararg postLoginActions: Runnable) = LoginDialog(AuthorizationPlace.SUBMISSIONS_TAB).show()
 
 }

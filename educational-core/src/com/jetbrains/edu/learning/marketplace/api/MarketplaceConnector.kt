@@ -2,13 +2,13 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
@@ -19,16 +19,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
-import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLoginSuccessfulNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.api.ConnectorUtils
-import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.MarketplaceUserInfo
+import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showAcceptDeveloperAgreementNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
@@ -44,12 +41,13 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.concurrent.CompletableFuture
 
 abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
-    get() = MarketplaceSettings.INSTANCE.account
-    set(account) {
-      MarketplaceSettings.INSTANCE.account = account
+    get () = MarketplaceSettings.INSTANCE.getMarketplaceAccount()
+    set(value) {
+      MarketplaceSettings.INSTANCE.setAccount(value)
     }
 
   override val objectMapper: ObjectMapper by lazy {
@@ -62,38 +60,13 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
   protected abstract val repositoryUrl: String
 
-  private val marketplaceEndpoints: MarketplaceEndpoints
-    get() = getEndpoints()
-
-  private val repositoryEndpoints: MarketplaceRepositoryEndpoints
-    get() = getEndpoints(baseUrl = repositoryUrl)
-
-
-  // Authorization requests:
-
-  override fun getNewTokens(): TokenInfo {
-    val currentAccount = account ?: error("No logged in user")
-    val tokens = super.getNewTokens()
-    if (tokens.refreshToken.isEmpty()) {
-      // hub documentation https://www.jetbrains.com/help/hub/Refresh-Token.html#AccessTokenRequestError
-      // says that new refresh token may be issued by hub, but that's not obligatory,
-      // old refresh token should be used in this case
-      tokens.refreshToken = currentAccount.getRefreshToken() ?: error("Refresh token is null")
-    }
-    return tokens
+  private fun getRepositoryEndpoints(hubToken: String? = null): MarketplaceRepositoryEndpoints {
+    return getEndpoints(baseUrl = repositoryUrl, accessToken = hubToken)
   }
 
   // Get requests:
-
-  /**
-   * For getting user info from Marketplace, account and access token must not to be passed to
-   * [com.jetbrains.edu.learning.api.EduLoginConnector.getEndpoints]
-   */
-  override fun getUserInfo(account: MarketplaceAccount, accessToken: String?): MarketplaceUserInfo? {
-    val token = accessToken ?: return null
-    val userId = decodeHubToken(token) ?: return null
-    val response = marketplaceEndpoints.getUserInfo(userId).executeHandlingExceptions()
-    return response?.body()
+  override fun getCurrentUserInfo(): JBAccountUserInfo? {
+    return account?.userInfo
   }
 
   fun searchCourses(): List<EduCourse> {
@@ -139,13 +112,13 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
 
   private fun getCoursesInfoList(offset: Int, searchPrivate: Boolean): CoursesInfoList? {
     val query = QueryData(GraphqlQuery.search(offset, searchPrivate))
-    val response = repositoryEndpoints.search(query).executeHandlingExceptions()
+    val response = getRepositoryEndpoints().search(query).executeHandlingExceptions()
     return response?.body()?.data?.myCoursesInfoList
   }
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
     val query = QueryData(GraphqlQuery.searchById(courseId, searchPrivate))
-    val response = repositoryEndpoints.search(query).executeHandlingExceptions()
+    val response = getRepositoryEndpoints().search(query).executeHandlingExceptions()
     val coursesInfoList = response?.body()?.data?.myCoursesInfoList ?: return null
     val course = updateFormatVersions(coursesInfoList)?.firstOrNull()
     course?.id = courseId
@@ -163,7 +136,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   private fun getUpdateInfoList(courseIds: List<Int>): List<UpdateInfo>? {
-    val response = repositoryEndpoints.getUpdateId(QueryData(GraphqlQuery.lastUpdatesList(courseIds))).executeHandlingExceptions()
+    val response = getRepositoryEndpoints().getUpdateId(QueryData(GraphqlQuery.lastUpdatesList(courseIds))).executeHandlingExceptions()
     return response?.body()?.data?.updates?.updateInfoList
   }
 
@@ -197,17 +170,16 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
         }
       }, message, true, null)
 
-  fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File) {
+  fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File, hubToken: String) {
     uploadUnderProgress(message("action.push.course")) {
-      uploadNewCourse(project, course, file)
+      uploadNewCourse(project, course, file, hubToken)
     }
   }
 
-  private fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
-    if (!isUserAuthorized()) return
+  private fun uploadNewCourse(project: Project, course: EduCourse, file: File, hubToken: String) {
     LOG.info("Uploading new course from ${file.absolutePath}")
 
-    val response = repositoryEndpoints.uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
+    val response = getRepositoryEndpoints(hubToken).uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.upload.course.title"),
                                   showLogAction,
@@ -241,7 +213,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   }
 
   private fun onAuthFailedActions(project: Project, failedActionTitle: String) {
-    doLogout()
+    account = null
     CCUtils.showLoginNeededNotification(project, message("item.upload.to.0.course.title", MARKETPLACE), failedActionTitle) { doAuthorize() }
   }
 
@@ -296,11 +268,11 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     }
   }
 
-  fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File) {
+  fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File, hubToken: String) {
     var courseVersionMismatch = false
     invokeAndWaitIfNeeded {
       uploadUnderProgress(message("push.course.updating.progress.title")) {
-        courseVersionMismatch = uploadCourseUpdate(project, course, file)
+        courseVersionMismatch = uploadCourseUpdate(project, course, file, hubToken)
       }
     }
     if (courseVersionMismatch) {
@@ -315,22 +287,21 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     }
   }
 
-  private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File): Boolean {
-    if (!isUserAuthorized()) return false
+  private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File, hubToken: String): Boolean {
     LOG.info("Uploading course update from ${file.absolutePath}")
     val uploadAsNewCourseAction: AnAction = NotificationAction.createSimpleExpiring(
       message("notification.course.creator.access.denied.action")) {
       course.convertToLocal()
-      uploadNewCourseUnderProgress(project, course, file)
+      uploadNewCourseUnderProgress(project, course, file, hubToken)
     }
 
-    repositoryEndpoints.uploadCourseUpdate(file.toMultipartBody(), course.id)
+    getRepositoryEndpoints(hubToken).uploadCourseUpdate(file.toMultipartBody(), course.id)
       .executeUploadParsingErrors(project,
                                   message("notification.course.creator.failed.to.update.course.title"),
                                   uploadAsNewCourseAction,
                                   {
                                     showNoRightsToUpdateNotification(project, course) {
-                                      uploadNewCourseUnderProgress(project, course, file)
+                                      uploadNewCourseUnderProgress(project, course, file, hubToken)
                                     }
                                   },
                                   {
@@ -354,25 +325,6 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     LOG.info(message)
     YamlFormatSynchronizer.saveItem(course)
     return false
-  }
-
-  private fun isUserAuthorized(): Boolean {
-    if (account == null) {
-      // we check that user isn't null before `postCourse` call
-      LOG.warn("User is null when posting the course")
-      return false
-    }
-    return true
-  }
-
-  override fun setPostLoginActions(postLoginActions: List<Runnable>) {
-    val requestFocus = Runnable { runInEdt { requestFocus() } }
-    val showNotification = Runnable {
-      val userName = account?.userInfo?.getFullName() ?: return@Runnable
-      showLoginSuccessfulNotification(userName)
-    }
-    val actions = postLoginActions + listOf(requestFocus, showNotification)
-    super.setPostLoginActions(actions)
   }
 
   /**
@@ -439,6 +391,10 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
                                NumericInputValidator(message("marketplace.insert.course.version.validation.empty"),
                                                      message("marketplace.insert.course.version.validation.not.numeric")))?.toIntOrNull()
     }
+  }
+
+  fun isLoggedInAsync(): CompletableFuture<Boolean> {
+    return CompletableFuture.supplyAsync({ isLoggedIn() }, ProcessIOExecutorService.INSTANCE)
   }
 
   companion object {

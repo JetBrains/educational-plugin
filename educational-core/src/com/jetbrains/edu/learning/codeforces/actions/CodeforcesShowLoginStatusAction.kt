@@ -87,7 +87,7 @@ class CodeforcesShowLoginStatusAction : CodeforcesAction() {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       contentPanel.add(ClickableLabel(EduCoreBundle.message("codeforces.reload.submissions")) {
         popup.closeOk(null)
-        SubmissionsManager.getInstance(project).prepareSubmissionsContent {
+        SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
           updateCheckStatus(project)
         }
       })

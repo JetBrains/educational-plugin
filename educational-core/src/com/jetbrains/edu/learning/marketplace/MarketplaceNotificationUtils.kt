@@ -11,7 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 
 object MarketplaceNotificationUtils {
   fun showLoginFailedNotification(loginProviderName: String) {
@@ -52,6 +54,24 @@ object MarketplaceNotificationUtils {
     notification.notify(null)
   }
 
+  fun showLoginToUseSubmissionsNotification(project: Project) {
+    val notification = Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("submissions.login", JET_BRAINS_ACCOUNT),
+      NotificationType.INFORMATION
+    )
+    notification.addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {
+      override fun actionPerformed(e: AnActionEvent) {
+        MarketplaceConnector.getInstance().doAuthorize(Runnable {
+          SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
+            MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
+          }
+        })
+        notification.notify(project)
+      }
+    })
+  }
+
   fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
     CCNotificationUtils.showErrorNotification(project,
                                               EduCoreBundle.message("error.failed.to.update"),
@@ -76,5 +96,14 @@ object MarketplaceNotificationUtils {
                                                 course.convertToLocal()
                                                 action()
                                               })
+  }
+
+  fun showFailedToPushCourseNotification(project: Project, courseName: String) {
+    Notification(
+      "JetBrains Academy",
+      EduCoreBundle.message("marketplace.push.course.failed.title"),
+      EduCoreBundle.message("marketplace.push.course.failed.text", courseName),
+      NotificationType.ERROR
+    ).notify(project)
   }
 }

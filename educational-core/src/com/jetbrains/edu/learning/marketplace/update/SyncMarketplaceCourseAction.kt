@@ -2,16 +2,15 @@ package com.jetbrains.edu.learning.marketplace.update
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.SyncCourseAction
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginToUseSubmissionsNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.isRemoteUpdateFormatVersionCompatible
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 
@@ -33,7 +32,14 @@ class SyncMarketplaceCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("
       }
     }
 
-    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
+    MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
+      if (isLoggedIn) {
+        MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
+      }
+      else {
+        showLoginToUseSubmissionsNotification(project)
+      }
+    }
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }
