@@ -13,9 +13,6 @@
     <experimentalFeature id="edu.course.marketplace.show.private" percentOfUsers="0">
       <description>Enables displaying private courses in browse courses dialog</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.marketplace.submissions" percentOfUsers="0">
-      <description>Enables submissions support for marketplace courses</description>
-    </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
