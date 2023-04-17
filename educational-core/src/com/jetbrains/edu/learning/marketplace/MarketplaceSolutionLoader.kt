@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.SolutionLoaderBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStatus
@@ -11,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -20,8 +18,8 @@ import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
   override fun loadSolutionsInForeground() {
-    MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync {
-      if (isFeatureEnabled(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS) && it) {
+    MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
+      if (isLoggedIn) {
         super.loadSolutionsInForeground()
       }
     }

@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.json.mixins.TaskFileMixin
-import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_STAGING_URL
+import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.checkNotEmpty
@@ -43,7 +43,7 @@ class MarketplaceSubmissionsConnector {
     objectMapper
   }
 
-  private val submissionsServiceUrl: String = SUBMISSIONS_SERVICE_STAGING_URL
+  private val submissionsServiceUrl: String = SUBMISSIONS_SERVICE_PRODUCTION_URL
 
   init {
     converterFactory = JacksonConverterFactory.create(objectMapper)

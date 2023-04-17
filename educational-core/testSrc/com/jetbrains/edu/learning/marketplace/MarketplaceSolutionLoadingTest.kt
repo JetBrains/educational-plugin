@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace
 
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -289,12 +288,6 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     isMarketplace = true
     marketplaceCourseVersion = courseVersion
   } as EduCourse
-
-  override fun runTestRunnable(context: ThrowableRunnable<Throwable>) {
-    withFeature(EduExperimentalFeatures.MARKETPLACE_SUBMISSIONS, true) {
-      super.runTestRunnable(context)
-    }
-  }
 
   private fun getConfiguredSubmissionsList(firstTaskId: Int = 1,
                                            secondTaskId: Int = 2,

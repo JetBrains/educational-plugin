@@ -17,3 +17,4 @@ const val MARKETPLACE_COURSES_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-edutools/d
 const val JB_VENDOR_NAME = "JetBrains"
 const val REVIEWS = "/reviews"
 const val SUBMISSIONS_SERVICE_STAGING_URL = "https://educational-service-dev.labs.jb.gg"
+const val SUBMISSIONS_SERVICE_PRODUCTION_URL = "https://educational-service.labs.jb.gg/"
