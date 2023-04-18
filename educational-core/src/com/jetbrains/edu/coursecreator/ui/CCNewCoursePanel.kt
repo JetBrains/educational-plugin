@@ -7,7 +7,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
-import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.observable.util.whenItemSelected
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.Disposer
@@ -15,8 +15,9 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
@@ -39,7 +40,6 @@ import com.jetbrains.edu.learning.newproject.ui.errors.*
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.event.ItemEvent
 import java.io.File
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -53,7 +53,6 @@ class CCNewCoursePanel(
   course: Course? = null,
   courseProducer: () -> Course = ::EduCourse,
 ) : JPanel() {
-  private val courseDataComboBox: ComboBox<CourseData> = ComboBox()
   private val titleField: CourseTitleField = CourseTitleField()
   private val descriptionTextArea: JTextArea = JTextArea()
 
@@ -95,8 +94,6 @@ class CCNewCoursePanel(
     descriptionTextArea.lineWrap = true
     descriptionTextArea.wrapStyleWord = true
 
-    val scrollPane = JBScrollPane(descriptionTextArea)
-
     titleField.document = CourseTitleDocument()
     titleField.complementaryTextField = pathField
     pathField.complementaryTextField = titleField
@@ -108,48 +105,48 @@ class CCNewCoursePanel(
     bottomPanel.add(errorComponent, BorderLayout.SOUTH)
     bottomPanel.add(settings, BorderLayout.NORTH)
 
-    add(panel {
-      row(EduCoreBundle.message("cc.new.course.title")) { titleField(CCFlags.pushX) }
-      row(EduCoreBundle.message("cc.new.course.type")) { courseDataComboBox(CCFlags.growX) }
-      row(EduCoreBundle.message("cc.new.course.description")) { scrollPane(CCFlags.growX) }
-    }, BorderLayout.NORTH)
-    add(bottomPanel, BorderLayout.SOUTH)
+    val courseData = collectCoursesData(course)
+    val defaultCourseType = getDefaultCourseType(courseData)
 
-    courseDataComboBox.renderer = object : DefaultListCellRenderer() {
-      override fun getListCellRendererComponent(list: JList<*>,
-                                                value: Any?,
-                                                index: Int,
-                                                isSelected: Boolean,
-                                                cellHasFocus: Boolean): Component {
-        val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        if (component is JLabel && value is CourseData) {
-          component.text = value.displayName
-          component.icon = value.icon
-        }
-        return component
+    val topPanel = panel {
+      row(EduCoreBundle.message("cc.new.course.title")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        cell(titleField)
+          .horizontalAlign(HorizontalAlign.FILL)
+      }
+      row(EduCoreBundle.message("cc.new.course.type")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        comboBox(courseData, CourseDataRenderer())
+          .enabled(course == null)
+          .horizontalAlign(HorizontalAlign.FILL)
+          .applyToComponent {
+            whenItemSelected {
+              onCourseDataSelected(it)
+            }
+          }
+          .bindItem({ defaultCourseType }, {})
+      }
+      row(EduCoreBundle.message("cc.new.course.description")) {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
+        scrollCell(descriptionTextArea)
+          .horizontalAlign(HorizontalAlign.FILL)
       }
     }
+    add(topPanel, BorderLayout.NORTH)
+    add(bottomPanel, BorderLayout.SOUTH)
 
-    val courseData = collectCoursesData(course)
-    courseData.forEach { courseDataComboBox.addItem(it) }
-
-    val defaultCourseType = getDefaultCourseType(courseData)
     if (defaultCourseType != null) {
-      courseDataComboBox.selectedItem = defaultCourseType
       onCourseDataSelected(defaultCourseType)
     }
 
-    courseDataComboBox.addItemListener {
-      if (it.stateChange == ItemEvent.SELECTED) {
-        onCourseDataSelected(it.item as CourseData)
-      }
-    }
     setupValidation()
 
     if (course != null) {
       descriptionTextArea.text = course.description
       titleField.setTextManually(course.name)
-      courseDataComboBox.isEnabled = false
     }
   }
 
@@ -357,6 +354,23 @@ class CCNewCoursePanel(
       if (lastSeparatorIndex >= 0) {
         complementaryTextField.setTextManually(path.substring(0, lastSeparatorIndex + 1) + courseName)
       }
+    }
+  }
+
+  private class CourseDataRenderer : DefaultListCellRenderer() {
+    override fun getListCellRendererComponent(
+      list: JList<*>,
+      value: Any?,
+      index: Int,
+      isSelected: Boolean,
+      cellHasFocus: Boolean
+    ): Component {
+      val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+      if (component is JLabel && value is CourseData) {
+        component.text = value.displayName
+        component.icon = value.icon
+      }
+      return component
     }
   }
 }
