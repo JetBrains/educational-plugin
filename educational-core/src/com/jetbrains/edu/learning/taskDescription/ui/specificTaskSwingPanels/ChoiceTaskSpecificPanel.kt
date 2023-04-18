@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.specificTaskSwingPanels
 
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.ui.components.panels.Wrapper
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -9,10 +10,10 @@ import java.awt.event.ItemEvent
 import java.awt.event.ItemListener
 import javax.swing.*
 
-class ChoiceTaskSpecificPanel(task: ChoiceTask): SpecificTaskPanel() {
+class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
   init {
     val panel = NonOpaquePanel(VerticalFlowLayout())
-      .apply { border = JBUI.Borders.empty(specificPanelInsets) }
+      .apply { border = JBUI.Borders.empty(15, 0, 10, 10) }
       .addBox(task, task.isMultipleChoice)
     setContent(panel)
   }

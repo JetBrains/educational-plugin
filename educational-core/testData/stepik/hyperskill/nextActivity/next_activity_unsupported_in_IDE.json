@@ -295,7 +295,7 @@
     {
       "block" : {
         "name" : "table",
-        "text" : "<p></p>\n<p>Distribute different errors by two groups: <strong>compile-time</strong> and <strong>run-time</strong> errors.</p>",
+        "text" : "<p></p>\n<p>Distribute different errors into two groups: <strong>compile-time</strong> and <strong>run-time</strong> errors.</p>",
         "video" : null,
         "options" : {
           "language" : "",

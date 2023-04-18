@@ -26,11 +26,13 @@ object MatchingTaskUI {
       }
     }
   }
+
   object Value {
     fun foreground(): JBColor {
       return if (isNewUI()) {
         JBColor(Color(0x000000), Color(0xDFE1E5))
-      } else {
+      }
+      else {
         JBColor(Color(0x000000), Color(0xBBBBBB))
       }
     }
@@ -38,7 +40,8 @@ object MatchingTaskUI {
     fun background(): JBColor {
       return if (isNewUI()) {
         JBColor(Color(0xFFFFFF), Color(0x2B2D30))
-      } else {
+      }
+      else {
         JBColor(Color(0xFFFFFF), Color(0x3C3F41))
       }
     }
@@ -46,7 +49,8 @@ object MatchingTaskUI {
     fun borderColor(): JBColor {
       return if (isNewUI()) {
         JBColor(Color(0xC9CCD6), Color(0x4E5157))
-      } else {
+      }
+      else {
         JBColor(Color(0xD1D1D1), Color(0x5E6060))
       }
     }

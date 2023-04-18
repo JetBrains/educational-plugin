@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.Gaps
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
@@ -29,7 +30,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.math.max
 
-class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel() {
+class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
   private val emptyBorder = JBUI.Borders.empty(8, 12, 8, 6)
   private val roundedBorderSize = 1
 
@@ -57,7 +58,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask): SpecificTaskPanel()
       verticalAlign(VerticalAlign.FILL)
     }.apply {
       isOpaque = false
-      border = JBUI.Borders.empty(specificPanelInsets)
+      border = JBUI.Borders.empty(15, 0, 10, 10)
     }
     setContent(panel)
   }

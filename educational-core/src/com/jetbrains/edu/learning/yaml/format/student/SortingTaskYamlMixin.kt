@@ -18,10 +18,10 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CAPTIONS
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, OPTIONS, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD, ORDERING, TAGS)
 abstract class SortingBasedTaskYamlMixin : StudentTaskYamlMixin() {
   @JsonProperty(OPTIONS)
-  private lateinit var options : List<String>
+  private lateinit var options: List<String>
 
   @JsonProperty(ORDERING)
-  private lateinit var ordering : IntArray
+  private lateinit var ordering: IntArray
 }
 
 @Suppress("unused") // used for yaml serialization
@@ -30,7 +30,7 @@ abstract class SortingTaskYamlMixin : SortingBasedTaskYamlMixin()
 
 @Suppress("unused") // used for yaml serialization
 @JsonPropertyOrder(TYPE, CUSTOM_NAME, CAPTIONS, OPTIONS, FILES, FEEDBACK_LINK, STATUS, FEEDBACK, RECORD, ORDERING, TAGS)
-abstract class MatchingTaskYamlMixin : SortingBasedTaskYamlMixin()  {
+abstract class MatchingTaskYamlMixin : SortingBasedTaskYamlMixin() {
   @JsonProperty(CAPTIONS)
-  private lateinit var captions : List<String>
+  private lateinit var captions: List<String>
 }

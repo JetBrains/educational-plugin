@@ -8,7 +8,7 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 
-abstract class TaskQueryManager<T: Task>(task: T, taskJBCefBrowser: JBCefBrowserBase) {
+abstract class TaskQueryManager<T : Task>(task: T, taskJBCefBrowser: JBCefBrowserBase) {
   private val jsQuerySetScrollHeight = JBCefJSQuery.create(taskJBCefBrowser)
 
   protected val jcefBrowserUrl: String = taskJBCefBrowser.cefBrowser.url
@@ -33,7 +33,7 @@ abstract class TaskQueryManager<T: Task>(task: T, taskJBCefBrowser: JBCefBrowser
     }
   }
 
-  protected abstract inner class TaskSpecificLoadHandler: CefLoadHandlerAdapter() {
+  protected abstract inner class TaskSpecificLoadHandler : CefLoadHandlerAdapter() {
     abstract val parentDocumentId: String
     override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
       browser?.mainFrame?.executeJavaScript(

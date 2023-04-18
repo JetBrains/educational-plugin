@@ -40,8 +40,7 @@ class HyperskillSolutionLoader(project: Project) : SolutionLoaderBase(project) {
     val files: Map<String, Solution> = when (task) {
       is EduTask -> lastSubmission.eduTaskFiles
       is CodeTask -> lastSubmission.codeTaskFiles(task)
-      is SortingTask, is MatchingTask,
-      is ChoiceTask, is UnsupportedTask -> emptyMap()
+      is SortingTask, is MatchingTask, is ChoiceTask, is UnsupportedTask -> emptyMap()
       else -> {
         LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
         emptyMap()

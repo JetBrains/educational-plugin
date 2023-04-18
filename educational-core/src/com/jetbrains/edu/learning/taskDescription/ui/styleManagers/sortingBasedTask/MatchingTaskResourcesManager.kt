@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.newproject.ui.asCssColor
 import com.jetbrains.edu.learning.taskDescription.ui.MatchingTaskUI
 import kotlinx.css.*
 
-class MatchingTaskResourcesManager: SortingBasedTaskResourcesManager<MatchingTask>() {
+class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTask>() {
   override val templateName: String = "matchingTask.html"
 
   override val resources: Map<String, String>

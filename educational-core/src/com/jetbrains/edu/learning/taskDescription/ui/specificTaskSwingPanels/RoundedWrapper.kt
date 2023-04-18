@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.taskDescription.ui.specificTaskSwingPanels
 
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.VerticalLayout
-import com.intellij.util.ui.*
+import com.intellij.util.ui.GraphicsUtil
+import com.intellij.util.ui.JBInsets
+import com.intellij.util.ui.UIUtil
 import java.awt.*
 import java.awt.geom.RoundRectangle2D
 import javax.swing.JComponent
@@ -22,7 +24,8 @@ class RoundedWrapper(
     try {
       g2.clip(getShape())
       super.paintChildren(g)
-    } finally {
+    }
+    finally {
       g2.dispose()
     }
   }
@@ -33,7 +36,8 @@ class RoundedWrapper(
       GraphicsUtil.setupRoundedBorderAntialiasing(g2)
       g2.clip(getShape())
       super.paintComponent(g)
-    } finally {
+    }
+    finally {
       g2.dispose()
     }
   }

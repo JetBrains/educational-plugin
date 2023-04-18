@@ -25,7 +25,8 @@ import org.apache.commons.lang.StringEscapeUtils
 import org.apache.commons.lang3.StringUtils
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
-import org.cef.handler.*
+import org.cef.handler.CefLifeSpanHandlerAdapter
+import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
 import org.jsoup.nodes.Element
 

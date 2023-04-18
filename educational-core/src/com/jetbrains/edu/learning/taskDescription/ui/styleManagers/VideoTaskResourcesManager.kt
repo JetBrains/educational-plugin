@@ -13,7 +13,7 @@ import kotlinx.css.properties.lh
 /**
  * Provides resources and stylesheet to stepikVideo.html.ft
  */
-class VideoTaskResourcesManager: TaskResourcesManager<VideoTask> {
+class VideoTaskResourcesManager : TaskResourcesManager<VideoTask> {
   override val resources = mapOf(
     "video_style" to videoStylesheet(),
     "videojs-resolution-switcher" to "https://cdnjs.cloudflare.com/ajax/libs/videojs-resolution-switcher/0.4.2/videojs-resolution-switcher.min.js",

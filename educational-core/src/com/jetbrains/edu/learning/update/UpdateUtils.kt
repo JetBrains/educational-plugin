@@ -25,14 +25,14 @@ object UpdateUtils {
     task.feedbackLink = remoteTask.feedbackLink
 
     when {
-      (task is ChoiceTask && remoteTask is ChoiceTask) -> {
+      task is ChoiceTask && remoteTask is ChoiceTask -> {
         task.choiceOptions = remoteTask.choiceOptions
         task.isMultipleChoice = remoteTask.isMultipleChoice
       }
-      (task is SortingTask && remoteTask is SortingTask) -> {
+      task is SortingTask && remoteTask is SortingTask -> {
         task.options = remoteTask.options
       }
-      (task is MatchingTask && remoteTask is MatchingTask) -> {
+      task is MatchingTask && remoteTask is MatchingTask -> {
         task.captions = remoteTask.captions
         task.options = remoteTask.options
       }

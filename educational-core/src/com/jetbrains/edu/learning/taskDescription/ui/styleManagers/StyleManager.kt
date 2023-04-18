@@ -16,7 +16,7 @@ class StyleManager {
   val bodyFontSize = typographyManager.bodyFontSize
   private val codeFontSize = typographyManager.codeFontSize
   val bodyLineHeight = typographyManager.bodyLineHeight
-  val codeLineHeight = typographyManager.codeLineHeight
+  private val codeLineHeight = typographyManager.codeLineHeight
   val bodyFont = typographyManager.bodyFont
   val codeFont = typographyManager.codeFont
 
@@ -114,7 +114,7 @@ class StyleManager {
 
     val cellsPadding = TaskDescriptionBundle.value("table.cell.padding")
 
-    val tableCss =  if (JavaUILibrary.isJCEF())
+    val tableCss = if (JavaUILibrary.isJCEF())
       CSSBuilder().apply {
         "table" {
           borderCollapse = BorderCollapse.collapse

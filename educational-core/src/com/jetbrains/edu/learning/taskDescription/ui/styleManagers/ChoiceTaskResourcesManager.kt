@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import kotlinx.css.*
 import kotlinx.css.properties.*
 
-class ChoiceTaskResourcesManager: TaskResourcesManager<ChoiceTask> {
+class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
   override val resources: Map<String, String>
     get() = mapOf("choice_options_style" to choiceOptionsStylesheet())
 
@@ -58,10 +58,10 @@ class ChoiceTaskResourcesManager: TaskResourcesManager<ChoiceTask> {
         textAlign = TextAlign.left
         paddingLeft = 8.px
       }
-      "#choiceOptions .text"{
+      "#choiceOptions .text" {
         marginBottom = 7.px
       }
-      "#choiceOptions .checkbox, .radio"{
+      "#choiceOptions .checkbox, .radio" {
         marginTop = 2.px
         marginRight = 9.px
         verticalAlign = VerticalAlign("middle")
@@ -124,24 +124,50 @@ class ChoiceTaskResourcesManager: TaskResourcesManager<ChoiceTask> {
       .plus(getSystemSpecificCss())
   }
 
-  private fun getBackgroundColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.value("choice.options.background.color"))
+  private fun getBackgroundColor(): Color {
+    return if (UIUtil.isUnderDarcula()) {
+      Color(TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+    }
+    else {
+      Color(TaskDescriptionBundle.value("choice.options.background.color"))
+    }
+  }
 
-  private fun getBorderColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.value("choice.options.border.color"))
+  private fun getBorderColor(): Color {
+    return if (UIUtil.isUnderDarcula()) {
+      Color(TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+    }
+    else {
+      Color(TaskDescriptionBundle.value("choice.options.border.color"))
+    }
+  }
 
-  private fun getRadioButtonCheckedBorderColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.value("darcula.choice.options.background.color"))
-  else Color(TaskDescriptionBundle.value("choice.options.checked.border.color"))
+  private fun getRadioButtonCheckedBorderColor(): Color {
+    return if (UIUtil.isUnderDarcula()) {
+      Color(TaskDescriptionBundle.value("darcula.choice.options.background.color"))
+    }
+    else {
+      Color(TaskDescriptionBundle.value("choice.options.checked.border.color"))
+    }
+  }
 
-  private fun getRadioButtonCheckedBackgroundColor() = if (UIUtil.isUnderDarcula()) Color(
-    TaskDescriptionBundle.value("choice.options.border.color"))
-  else Color(TaskDescriptionBundle.value("choice.options.background.color"))
+  private fun getRadioButtonCheckedBackgroundColor(): Color {
+    return if (UIUtil.isUnderDarcula()) {
+      Color(TaskDescriptionBundle.value("choice.options.border.color"))
+    }
+    else {
+      Color(TaskDescriptionBundle.value("choice.options.background.color"))
+    }
+  }
 
-  private fun getFocusColor() = if (UIUtil.isUnderDarcula()) Color(TaskDescriptionBundle.value("darcula.choice.options.focus.color"))
-  else Color(TaskDescriptionBundle.value("choice.options.focus.color"))
+  private fun getFocusColor(): Color {
+    return if (UIUtil.isUnderDarcula()) {
+      Color(TaskDescriptionBundle.value("darcula.choice.options.focus.color"))
+    }
+    else {
+      Color(TaskDescriptionBundle.value("choice.options.focus.color"))
+    }
+  }
 
   private fun getSystemSpecificCss(): String {
     if (SystemInfo.isWindows) {

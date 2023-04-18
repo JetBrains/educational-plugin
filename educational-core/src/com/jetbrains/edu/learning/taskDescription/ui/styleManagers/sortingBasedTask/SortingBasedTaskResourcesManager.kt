@@ -19,7 +19,7 @@ import kotlinx.css.properties.Timing
 import kotlinx.css.properties.s
 import kotlinx.css.properties.transition
 
-abstract class SortingBasedTaskResourcesManager<T: SortingBasedTask>: TaskResourcesManager<T> {
+abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskResourcesManager<T> {
   protected abstract val templateName: String
 
   protected open fun getTextResources(task: T): Map<String, String> {

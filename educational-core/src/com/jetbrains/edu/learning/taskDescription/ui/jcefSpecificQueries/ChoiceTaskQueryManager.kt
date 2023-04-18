@@ -7,7 +7,7 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 
-class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBase): TaskQueryManager<ChoiceTask>(task, taskJBCefBrowser) {
+class ChoiceTaskQueryManager(task: ChoiceTask, taskJBCefBrowser: JBCefBrowserBase) : TaskQueryManager<ChoiceTask>(task, taskJBCefBrowser) {
   private val jsQueryGetChosenTasks = JBCefJSQuery.create(taskJBCefBrowser)
 
   init {

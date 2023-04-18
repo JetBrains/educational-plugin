@@ -130,17 +130,17 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     if (result) return true
 
     return when {
-      (first is UnsupportedTask && second !is UnsupportedTask) -> true
-      (first is ChoiceTask && second is ChoiceTask) -> {
+      first is UnsupportedTask && second !is UnsupportedTask -> true
+      first is ChoiceTask && second is ChoiceTask -> {
         first.choiceOptions != second.choiceOptions
       }
-      (first is SortingTask && second is SortingTask) -> {
+      first is SortingTask && second is SortingTask -> {
         first.options != second.options
       }
-      (first is MatchingTask && second is MatchingTask) -> {
+      first is MatchingTask && second is MatchingTask -> {
         (first.options != second.options) || (first.captions != second.captions)
       }
-      (first is RemoteEduTask && second is RemoteEduTask) -> {
+      first is RemoteEduTask && second is RemoteEduTask -> {
         first.checkProfile != second.checkProfile
       }
       else -> false
@@ -183,14 +183,14 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     invokeAndWaitIfNeeded {
       if (project.isDisposed) return@invokeAndWaitIfNeeded
 
-      for (taskUpdate in problemsUpdates) {
-        val localTask = taskUpdate.localTask
-        val taskFromServer = taskUpdate.taskFromServer
-        if (localTask is UnsupportedTask && taskFromServer !is UnsupportedTask) {
-          updateUnsupportedTask(localTask, taskFromServer)
-          continue
+      problemsUpdates.forEach {
+        val localTask = it.localTask
+        val taskFromServer = it.taskFromServer
+        val hasLocalTaskBecomeSupported = localTask is UnsupportedTask && taskFromServer !is UnsupportedTask
+        if (hasLocalTaskBecomeSupported) {
+          replaceTaskInCourse(localTask as UnsupportedTask, taskFromServer)
         }
-        if (localTask.status != CheckStatus.Solved) {
+        if (localTask.status != CheckStatus.Solved || hasLocalTaskBecomeSupported) {
           // if name of remote task changes name of dir local task will not
           GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
         }
@@ -202,13 +202,6 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         YamlFormatSynchronizer.saveItemWithRemoteInfo(localTask)
       }
     }
-  }
-
-  private fun updateUnsupportedTask(localTask: UnsupportedTask, taskFromServer: Task) {
-    replaceTaskInCourse(localTask, taskFromServer)
-    GeneratorUtils.createTaskContent(project, taskFromServer, localTask.getDir(project.courseDir)!!)
-    updateTaskDescription(project, localTask, taskFromServer)
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(taskFromServer)
   }
 
   private fun replaceTaskInCourse(localTask: UnsupportedTask, taskFromServer: Task) {
@@ -232,7 +225,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         if (task.status != CheckStatus.Solved) {
           // With current logic of next/prev action for hyperskill tasks
           // update of non-test files makes sense only for first task
-          updateFrameworkLessonFiles(project, lesson, task, remoteTask, task.index == 1 )
+          updateFrameworkLessonFiles(project, lesson, task, remoteTask, task.index == 1)
         }
 
         updateTaskDescription(project, task, remoteTask)

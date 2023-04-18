@@ -9,7 +9,7 @@ import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 
-abstract class SortingBasedTaskQueryManager<T: SortingBasedTask>(
+abstract class SortingBasedTaskQueryManager<T : SortingBasedTask>(
   task: T,
   taskJBCefBrowser: JBCefBrowserBase
 ) : TaskQueryManager<T>(task, taskJBCefBrowser) {
@@ -32,7 +32,7 @@ abstract class SortingBasedTaskQueryManager<T: SortingBasedTask>(
     }
   }
 
-  protected abstract inner class SortingBasedTaskSpecificLoadHandler: TaskSpecificLoadHandler() {
+  protected abstract inner class SortingBasedTaskSpecificLoadHandler : TaskSpecificLoadHandler() {
     override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
       super.onLoadEnd(browser, frame, httpStatusCode)
 
@@ -54,7 +54,7 @@ abstract class SortingBasedTaskQueryManager<T: SortingBasedTask>(
 class SortingTaskQueryManager(
   task: SortingTask,
   taskJBCefBrowser: JBCefBrowserBase
-): SortingBasedTaskQueryManager<SortingTask>(task, taskJBCefBrowser) {
+) : SortingBasedTaskQueryManager<SortingTask>(task, taskJBCefBrowser) {
   override fun getTaskSpecificLoadHandler(): CefLoadHandlerAdapter = object : SortingBasedTaskSpecificLoadHandler() {
     override val parentDocumentId: String = "sortingOptions"
   }
@@ -63,7 +63,7 @@ class SortingTaskQueryManager(
 class MatchingTaskQueryManager(
   task: MatchingTask,
   taskJBCefBrowser: JBCefBrowserBase
-): SortingBasedTaskQueryManager<MatchingTask>(task, taskJBCefBrowser) {
+) : SortingBasedTaskQueryManager<MatchingTask>(task, taskJBCefBrowser) {
   override fun getTaskSpecificLoadHandler(): CefLoadHandlerAdapter = object : SortingBasedTaskSpecificLoadHandler() {
     override val parentDocumentId: String = "matchingOptions"
   }

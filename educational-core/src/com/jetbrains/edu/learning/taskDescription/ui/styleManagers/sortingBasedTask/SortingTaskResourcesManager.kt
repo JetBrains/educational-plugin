@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBased
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import kotlinx.css.*
 
-class SortingTaskResourcesManager: SortingBasedTaskResourcesManager<SortingTask>() {
+class SortingTaskResourcesManager : SortingBasedTaskResourcesManager<SortingTask>() {
   override val templateName: String = "sortingTask.html"
   override val resources: Map<String, String>
     get() = mapOf("sorting_style" to stylesheet)

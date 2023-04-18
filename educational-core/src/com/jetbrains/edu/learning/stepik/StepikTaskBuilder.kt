@@ -78,14 +78,14 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         StepikTaskType.CHOICE -> this::choiceTask
         StepikTaskType.CODE -> this::codeTask
         StepikTaskType.DATASET -> this::dataTask
+        StepikTaskType.MATCHING -> this::matchingTask
         StepikTaskType.NUMBER -> this::numberTask
         StepikTaskType.PYCHARM -> { _: String -> pycharmTask() }
         StepikTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
+        StepikTaskType.SORTING -> this::sortingTask
         StepikTaskType.STRING -> this::stringTask
         StepikTaskType.TEXT -> this::theoryTask
         StepikTaskType.VIDEO -> this::videoTask
-        StepikTaskType.MATCHING -> this::matchingTask
-        StepikTaskType.SORTING -> this::sortingTask
         else -> this::unsupportedTask
       }
     })
@@ -230,7 +230,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     if (!isUnitTestMode) {
       when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
         is Ok -> fillSortingTask(result.value, task)
-        is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+        is Err -> LOG.warn("Can't get attempt for Sorting task of $courseType course: ${result.error}")
       }
     }
 
@@ -247,7 +247,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     if (!isUnitTestMode) {
       when (val result = course.getStepikBasedConnector().getActiveAttemptOrPostNew(task)) {
         is Ok -> fillMatchingTask(result.value, task)
-        is Err -> LOG.warn("Can't get attempt for Choice task of $courseType course: ${result.error}")
+        is Err -> LOG.warn("Can't get attempt for Matching task of $courseType course: ${result.error}")
       }
     }
 
@@ -451,7 +451,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       return true
     }
 
-    fun fillSortingTask(attempt: Attempt, task: SortingTask): Boolean {
+    private fun fillSortingTask(attempt: Attempt, task: SortingTask): Boolean {
       val dataset = attempt.dataset
       if (dataset?.options == null) {
         LOG.warn("Dataset for step ${task.id} is null")
@@ -461,7 +461,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
       return true
     }
 
-    fun fillMatchingTask(attempt: Attempt, task: MatchingTask): Boolean {
+    private fun fillMatchingTask(attempt: Attempt, task: MatchingTask): Boolean {
       val dataset = attempt.dataset
       if (dataset?.pairs == null) {
         LOG.warn("Dataset for step ${task.id} is null")
