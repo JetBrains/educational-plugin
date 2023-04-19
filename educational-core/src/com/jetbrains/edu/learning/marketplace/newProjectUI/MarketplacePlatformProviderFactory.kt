@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.asList
@@ -58,7 +58,7 @@ class MarketplacePlatformProvider : CoursesPlatformProvider() {
     return CoursesGroup(courses).asList()
   }
 
-  override fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
+  override fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     courseInfo.course.loadMarketplaceCourseStructure()
     super.joinAction(courseInfo, courseMode, coursePanel)
   }

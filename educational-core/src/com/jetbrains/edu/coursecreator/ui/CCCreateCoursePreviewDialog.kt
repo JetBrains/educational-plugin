@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.copy
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -81,7 +81,7 @@ class CCCreateCoursePreviewDialog(
 
     override fun showError(errorState: ErrorState) {}
 
-    override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+    override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
       createCoursePreview()
     }
 

@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.LanguageSettings.SettingsChangeListener
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
@@ -131,7 +132,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     buttonsPanel.border = JBUI.Borders.emptyTop(17)
   }
 
-  protected abstract fun joinCourseAction(info: CourseInfo, mode: CourseMode)
+  protected abstract fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode)
 
   protected open fun createCourseDetailsPanel(): NonOpaquePanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
 
@@ -247,7 +248,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
       setError(locationErrorState)
     }
     else {
-      val courseInfo = CourseInfo(course, { locationString }, { languageSettings })
+      val courseInfo = CourseCreationInfo(course, currentLocation, languageSettings?.getSettings())
       joinCourseAction(courseInfo, courseMode)
     }
   }
@@ -255,7 +256,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
   @VisibleForTesting
   inner class ButtonsPanel : NonOpaquePanel(), CourseSelectionListener {
     @VisibleForTesting
-    val buttons: List<CourseButtonBase> = mutableListOf(
+    val buttons: List<CourseButtonBase> = listOf(
       StartCourseButton(joinCourse = { course, courseMode -> joinCourse(course, courseMode) }),
       OpenCourseButton()
     )

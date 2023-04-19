@@ -13,7 +13,6 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -73,10 +72,6 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     @Suppress("UnstableApiUsage")
     DisabledPluginsState.addDisablePluginListener(disablePluginListener)
   }
-
-
-  override val courseInfo: CourseInfo
-    get() = CourseInfo(panel.selectedCourse ?: error("The course was not selected"), { panel.locationString }, { panel.languageSettings })
 
   override fun createCenterPanel(): JComponent = panel
 

@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProviderFactory
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.onError
@@ -43,7 +43,7 @@ class JetBrainsAcademyPlatformProvider : CoursesPlatformProvider() {
   override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = JetBrainsAcademyCoursesPanel(this, scope,
                                                                                                                        disposable)
 
-  override fun joinAction(courseInfo: CourseInfo,
+  override fun joinAction(courseInfo: CourseCreationInfo,
                           courseMode: CourseMode,
                           coursePanel: CoursePanel) {
 

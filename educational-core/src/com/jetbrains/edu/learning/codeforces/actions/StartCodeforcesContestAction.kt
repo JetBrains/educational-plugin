@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.codeforces.newProjectUI.CodeforcesCoursesPanel
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.Companion.joinCourse
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import org.jetbrains.annotations.NonNls
 import javax.swing.JPanel
 
@@ -80,7 +80,7 @@ class StartCodeforcesContestAction : DumbAwareAction() {
       )
 
       val contest = loadContestAndProcessErrors(contestParameters)
-      val contestInfo = CourseInfo(contest, { dialog.contestLocation() }, { dialog.languageSettings() })
+      val contestInfo = CourseCreationInfo(contest, dialog.contestLocation(), dialog.languageSettings()?.getSettings())
 
       joinCourse(contestInfo, CourseMode.STUDENT, component) {}
     }

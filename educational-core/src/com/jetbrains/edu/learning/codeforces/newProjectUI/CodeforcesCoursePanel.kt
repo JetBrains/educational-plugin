@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseDetailsPanel.Companion.formatNumber
@@ -70,7 +71,7 @@ class CodeforcesCoursePanel(disposable: Disposable) : CoursePanel(disposable, fa
 
   override fun validateSettings(it: Course): SettingsValidationResult = SettingsValidationResult.OK
 
-  override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+  override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
     val codeforcesCourse = info.course as? CodeforcesCourse ?: return
     if (codeforcesCourse.isRegistrationOpen && !codeforcesCourse.isOngoing) {
       val registrationLink = CodeforcesNames.CODEFORCES_URL + codeforcesCourse.registrationLink

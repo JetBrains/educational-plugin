@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
@@ -30,7 +30,7 @@ abstract class CoursesPlatformProvider {
 
   abstract fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel
 
-  open fun joinAction(courseInfo: CourseInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
+  open fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
     joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
   }
 
@@ -60,15 +60,15 @@ abstract class CoursesPlatformProvider {
   protected abstract suspend fun doLoadCourses(): List<CoursesGroup>
 
   companion object {
-    fun joinCourse(courseInfo: CourseInfo,
-                   courseMode: CourseMode,
-                   component: JPanel?,
-                   errorHandler: (ErrorState) -> Unit
+    fun joinCourse(
+      courseInfo: CourseCreationInfo,
+      courseMode: CourseMode,
+      component: JPanel?,
+      errorHandler: (ErrorState) -> Unit
     ) {
-      val (course, getLocation, _) = courseInfo
+      val (course, location, projectSettings) = courseInfo
 
       // location is null for course preview dialog only
-      val location = getLocation()
       if (location == null) {
         return
       }
@@ -76,7 +76,6 @@ abstract class CoursesPlatformProvider {
       val configurator = course.configurator
       // If `configurator != null` than `projectSettings` is always not null
       // because project settings are produced by configurator itself
-      val projectSettings = courseInfo.projectSettings
       if (configurator != null && projectSettings != null) {
         try {
           configurator.beforeCourseStarted(course)

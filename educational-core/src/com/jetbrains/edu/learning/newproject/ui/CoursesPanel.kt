@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseInfo
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
@@ -263,7 +263,7 @@ abstract class CoursesPanel(
   }
 
   private inner class DialogCoursePanel(disposable: Disposable) : CoursePanel(disposable, true) {
-    override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+    override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
       coursesProvider.joinAction(info, mode, this)
     }
   }

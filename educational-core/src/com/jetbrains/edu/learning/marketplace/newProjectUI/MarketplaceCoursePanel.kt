@@ -5,6 +5,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.*
 
@@ -27,7 +28,7 @@ class MarketplaceCoursePanel(disposable: Disposable): CoursePanel(disposable, tr
     }
   }
 
-  override fun joinCourseAction(info: CourseInfo, mode: CourseMode) {
+  override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
     MarketplacePlatformProvider().joinAction(info, mode, this)
   }
 
