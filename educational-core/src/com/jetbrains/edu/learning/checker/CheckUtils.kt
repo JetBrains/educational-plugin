@@ -44,9 +44,11 @@ object CheckUtils {
   val COMPILATION_FAILED_MESSAGE = EduCoreBundle.message("check.error.compilation.failed")
   val NOT_RUNNABLE_MESSAGE = EduCoreBundle.message("check.error.solution.not.runnable")
   val SYNTAX_ERROR_MESSAGE = EduCoreBundle.message("check.error.syntax.error")
-  val EXCEPTION_ERROR_MESSAGE = "Exception during execution"
-  val ERRORS = listOf(COMPILATION_FAILED_MESSAGE, EduFormatBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE,
-                      EXCEPTION_ERROR_MESSAGE)
+  val EXECUTION_ERROR_MESSAGE = EduCoreBundle.message("check.execution.error")
+  val ERRORS = listOf(
+    COMPILATION_FAILED_MESSAGE, EduFormatBundle.message("error.failed.to.launch.checking"), SYNTAX_ERROR_MESSAGE,
+    EXECUTION_ERROR_MESSAGE
+  )
 
   private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
     return taskFile.answerPlaceholders.isNotEmpty() && taskFile.hasFailedPlaceholders()
@@ -160,8 +162,10 @@ object CheckUtils {
 
     runInEdt {
       val environments = mutableListOf<ExecutionEnvironment>()
-      connection.subscribe(ExecutionManager.EXECUTION_TOPIC,
-                           CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, environments, latch, executionListener))
+      connection.subscribe(
+        ExecutionManager.EXECUTION_TOPIC,
+        CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, environments, latch, executionListener)
+      )
 
       for (configuration in configurations) {
         if (isConfigurationBroken) {

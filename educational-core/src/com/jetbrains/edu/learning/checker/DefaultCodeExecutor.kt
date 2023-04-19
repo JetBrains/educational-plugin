@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.checker.CheckUtils.EXCEPTION_ERROR_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.EXECUTION_ERROR_MESSAGE
 import com.jetbrains.edu.learning.checker.CodeExecutor.Companion.resultUnchecked
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -80,7 +80,7 @@ open class DefaultCodeExecutor : CodeExecutor {
     val errorOutput = output.stderr
 
     if (output.exitCode != 0) {
-      val err = tryToExtractCheckResultError(errorOutput) ?: CheckResult(CheckStatus.Failed, EXCEPTION_ERROR_MESSAGE, errorOutput)
+      val err = tryToExtractCheckResultError(errorOutput) ?: CheckResult(CheckStatus.Failed, EXECUTION_ERROR_MESSAGE, errorOutput)
       return Err(err)
     }
 
