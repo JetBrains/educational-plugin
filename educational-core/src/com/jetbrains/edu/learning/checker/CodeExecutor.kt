@@ -39,7 +39,7 @@ interface CodeExecutor {
   fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration =
     EmptyCodeforcesRunConfiguration(project, factory)
 
-  fun tryToExtractCheckResultError(errorOutput: String): CheckResult?
+  fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
 
   companion object {
     fun resultUnchecked(

@@ -51,9 +51,6 @@ class RsCodeExecutor : CodeExecutor {
     return RsCodeforcesRunConfiguration(project, factory)
   }
 
-  // `execute` method is overriden and handles errors
-  override fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
-
   private fun String.prepareToCheck(): String {
     var programOutputStarted = false
     val outputBuffer = StringBuilder()
