@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.codeforces.run.CodeforcesRunConfiguration
-import com.jetbrains.edu.learning.codeforces.run.InvalidCodeforcesRunConfiguration
+import com.jetbrains.edu.learning.codeforces.run.EmptyCodeforcesRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -37,7 +37,7 @@ interface CodeExecutor {
   ): RunnerAndConfigurationSettings? = CheckUtils.createDefaultRunConfiguration(project, task)
 
   fun createCodeforcesConfiguration(project: Project, factory: ConfigurationFactory): CodeforcesRunConfiguration =
-    InvalidCodeforcesRunConfiguration(project, factory)
+    EmptyCodeforcesRunConfiguration(project, factory)
 
   companion object {
     fun resultUnchecked(

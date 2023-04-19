@@ -14,10 +14,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.getContainingTask
 
 class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<CodeforcesRunConfiguration>() {
-  override fun setupConfigurationFromContext(configuration: CodeforcesRunConfiguration,
-                                             context: ConfigurationContext,
-                                             sourceElement: Ref<PsiElement>): Boolean {
-    if (configuration is InvalidCodeforcesRunConfiguration) return false
+  override fun setupConfigurationFromContext(
+    configuration: CodeforcesRunConfiguration,
+    context: ConfigurationContext,
+    sourceElement: Ref<PsiElement>
+  ): Boolean {
+    if (configuration is EmptyCodeforcesRunConfiguration) return false
 
     val project = context.project
     val selectedFile = context.location?.virtualFile ?: return false
@@ -37,7 +39,7 @@ class CodeforcesRunConfigurationProducer : LazyRunConfigurationProducer<Codeforc
   }
 
   override fun isConfigurationFromContext(configuration: CodeforcesRunConfiguration, context: ConfigurationContext): Boolean {
-    if (configuration is InvalidCodeforcesRunConfiguration) return false
+    if (configuration is EmptyCodeforcesRunConfiguration) return false
     val selectedFiles = context.dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
     if (selectedFiles.size != 1) return false
     val selectedFile = selectedFiles.firstOrNull() ?: return false
