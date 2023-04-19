@@ -8,13 +8,14 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EnumComboBoxModel
-import com.intellij.ui.layout.*
+import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
+import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
 import org.jetbrains.annotations.NonNls
 import javax.swing.JComponent
 
-@Suppress("ComponentNotRegistered")
 class StepikChangeHost : DumbAwareAction(EduCoreBundle.message("stepik.change.host")) {
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -48,7 +49,10 @@ class StepikChangeHostDialog : DialogWrapper(true) {
   }
 
   override fun createCenterPanel(): JComponent = panel {
-    row(EduCoreBundle.message("stepik.url")) { hostsCombo() }
+    row(EduCoreBundle.message("stepik.url")) {
+      cell(hostsCombo)
+        .columns(COLUMNS_MEDIUM)
+    }
   }
 
   override fun getPreferredFocusedComponent(): JComponent = hostsCombo
