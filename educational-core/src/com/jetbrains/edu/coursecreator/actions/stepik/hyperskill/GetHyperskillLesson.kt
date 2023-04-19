@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsContexts
@@ -17,15 +16,18 @@ import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.loadAndFillAdditionalCourseInfo
 import com.jetbrains.edu.learning.stepik.api.loadAndFillLessonAdditionalInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
@@ -51,7 +53,7 @@ class GetHyperskillLesson : DumbAwareAction(
       EducationalCoreIcons.JB_ACADEMY
     )
     if (!lessonId.isNullOrEmpty()) {
-      ProgressManager.getInstance().run(object : Task.Modal(
+      ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Modal(
         project,
         EduCoreBundle.message("action.get.course.loading"),
         true
@@ -89,7 +91,7 @@ class GetHyperskillLesson : DumbAwareAction(
         return null
       }
       val allStepSources = StepikConnector.getInstance().getStepSources(lesson.stepIds)
-      val tasks = StepikCourseLoader.getTasks(course, lesson, allStepSources)
+      val tasks = getTasks(course, lesson, allStepSources)
       for (task in tasks) {
         lesson.addTask(task)
       }
@@ -124,6 +126,13 @@ class GetHyperskillLesson : DumbAwareAction(
       }
       showError(message, EduCoreBundle.message("error.failed.to.get.lesson"))
     }
+
+    private fun getTasks(course: Course, lesson: Lesson, allStepSources: List<StepSource>): List<Task> =
+      allStepSources.mapNotNull { step ->
+        val builder = StepikTaskBuilder(course, lesson, step)
+        val type = step.block?.name ?: error("Can't get type from step source")
+        builder.createTask(type)
+      }
 
     @Suppress("UnstableApiUsage")
     private fun showError(@NlsContexts.DialogMessage message: String,

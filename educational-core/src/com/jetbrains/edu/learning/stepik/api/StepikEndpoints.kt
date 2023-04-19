@@ -17,14 +17,8 @@ interface StepikEndpoints {
   fun courses(@Path("id") courseId: Int,
               @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
 
-  @GET("api/sections")
-  fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
-
   @GET("api/lessons")
   fun lessons(@Query("ids[]") vararg ids: Int): Call<LessonsList>
-
-  @GET("api/units")
-  fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
 
   @GET("api/steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>

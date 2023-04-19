@@ -261,42 +261,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
 
   // Multiple requests:
 
-  fun getSections(sectionIds: List<Int>): List<StepikSection> {
-    val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allSections = mutableListOf<StepikSection>()
-    sectionIdsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.sections(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.sections
-      }
-      .forEach { allSections.addAll(it) }
-    return allSections
-  }
-
-  fun getLessons(lessonIds: List<Int>): List<StepikLesson> {
-    val lessonsIdsChunks = lessonIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allLessons = mutableListOf<StepikLesson>()
-    lessonsIdsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.lessons(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.lessons
-      }
-      .forEach { allLessons.addAll(it) }
-    return allLessons
-  }
-
-  fun getUnits(unitIds: List<Int>): List<StepikUnit> {
-    val unitsIdsChunks = unitIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val allUnits = mutableListOf<StepikUnit>()
-    unitsIdsChunks
-      .mapNotNull {
-        val response = stepikEndpoints.units(*it.toIntArray()).executeHandlingExceptions()
-        response?.body()?.units
-      }
-      .forEach { allUnits.addAll(it) }
-    return allUnits
-  }
-
   fun getStepSources(stepIds: List<Int>): List<StepSource> {
     val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val steps = mutableListOf<StepSource>()
