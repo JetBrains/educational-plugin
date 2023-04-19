@@ -5,6 +5,7 @@ import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.requests.SimpleDiffRequest
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runInEdt
@@ -18,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.ui.SwingToolWindowLinkHandler
@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.ui.EduColors
 import java.net.URL
 import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB) {
   override val plainText: Boolean = true
@@ -47,11 +48,13 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
   override fun update(task: Task) {
     if (!task.supportSubmissions) return
 
-    MarketplaceConnector.getInstance().isLoggedInAsync().thenApply { isLoggedIn ->
+    CompletableFuture.runAsync({
+      val submissionsManager = SubmissionsManager.getInstance(project)
+      val isLoggedIn = submissionsManager.isLoggedIn()
       invokeLater {
         updateSubmissionsContent(task, isLoggedIn)
       }
-    }
+    }, ProcessIOExecutorService.INSTANCE)
   }
 
   private fun updateSubmissionsContent(task: Task, isLoggedIn: Boolean) {
