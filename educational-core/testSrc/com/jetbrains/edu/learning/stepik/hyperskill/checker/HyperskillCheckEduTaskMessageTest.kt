@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
@@ -17,10 +18,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.logInFakeHyperskillUser
 import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import org.intellij.lang.annotations.Language
 
-class HyperskillCheckEduTaskMessageTest : CheckersTestBase<Unit>() {
+class HyperskillCheckEduTaskMessageTest : CheckersTestBase<EmptyProjectSettings>() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   override fun createCourse(): Course {
     val course = course(courseProducer = ::HyperskillCourse) {

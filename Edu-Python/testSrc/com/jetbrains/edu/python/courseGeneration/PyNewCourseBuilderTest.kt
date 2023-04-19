@@ -6,12 +6,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.PythonLanguage
-import com.jetbrains.python.newProject.PyNewProjectSettings
-import com.jetbrains.python.newProject.PythonProjectGenerator
 
-class PyNewCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
-  override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
+class PyNewCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
+  override val defaultSettings: PyProjectSettings = PyProjectSettings()
 
   fun `test new educator course`() {
     val course = pythonCourse(CourseMode.EDUCATOR)

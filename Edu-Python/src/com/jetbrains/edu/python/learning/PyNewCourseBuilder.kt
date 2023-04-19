@@ -13,19 +13,19 @@ import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_N
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.PyNames
-import com.jetbrains.python.newProject.PyNewProjectSettings
 
-class PyNewCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
+class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
   override val taskTemplateName: String = TASK_PY
   override val mainTemplateName: String = MAIN_PY
   override val testTemplateName: String = TEST_FILE_NAME
 
-  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 
   override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings> {
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings> {
     return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
       override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
     }

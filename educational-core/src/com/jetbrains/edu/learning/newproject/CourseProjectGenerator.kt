@@ -43,7 +43,7 @@ import kotlin.system.measureTimeMillis
  * If you add any new public methods here, please do not forget to add it also to
  * @see HyperskillCourseProjectGenerator
  */
-abstract class CourseProjectGenerator<S : Any>(
+abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected var course: Course
 ) : PlatformCourseProjectGenerator() {
@@ -69,7 +69,7 @@ abstract class CourseProjectGenerator<S : Any>(
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
-  fun doCreateCourseProject(location: String, projectSettings: Any): Project? {
+  fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
     val createdProject = createProject(location) ?: return null
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S

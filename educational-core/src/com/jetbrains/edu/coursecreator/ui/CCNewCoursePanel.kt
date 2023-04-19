@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
 import org.jetbrains.annotations.Nls
@@ -79,7 +80,7 @@ class CCNewCoursePanel(
     }
 
 
-  val projectSettings: Any get() = languageSettings.getSettings()
+  val projectSettings: EduProjectSettings get() = languageSettings.getSettings()
   val locationString: String get() = locationField.component.text
 
   init {

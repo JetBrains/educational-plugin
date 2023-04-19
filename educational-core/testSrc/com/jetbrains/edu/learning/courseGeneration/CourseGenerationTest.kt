@@ -13,18 +13,19 @@ import com.jetbrains.edu.learning.courseFormat.ext.getAllTestVFiles
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 
-class CourseGenerationTest : CourseGenerationTestBase<Unit>() {
+class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override fun tearDown() {
     super.tearDown()
     CoursesStorage.getInstance().state.courses.clear()
   }
 
-  override val defaultSettings: Unit = Unit
+  override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
   fun `test do not open invisible files after course creation`() {
     val course = course {

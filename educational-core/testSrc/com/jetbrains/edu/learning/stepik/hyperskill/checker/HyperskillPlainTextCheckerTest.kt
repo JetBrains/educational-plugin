@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStage
@@ -14,9 +15,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.stepik.hyperskill.markStageAsCompleted
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-class HyperskillPlainTextCheckerTest : CheckersTestBase<Unit>() {
+class HyperskillPlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   override fun createCourse(): Course {
     val course = course(courseProducer = ::HyperskillCourse) {

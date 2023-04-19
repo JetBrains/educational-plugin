@@ -21,13 +21,14 @@ import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import java.io.IOException
 import javax.swing.Icon
 
 
-open class PlainTextConfigurator : EduConfigurator<Unit> {
-  override val courseBuilder: EduCourseBuilder<Unit>
+open class PlainTextConfigurator : EduConfigurator<EmptyProjectSettings> {
+  override val courseBuilder: EduCourseBuilder<EmptyProjectSettings>
     get() = PlainTextCourseBuilder()
 
   override val testFileName: String
@@ -123,18 +124,21 @@ open class PlainTextConfigurator : EduConfigurator<Unit> {
   }
 }
 
-class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
+class PlainTextCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
   override val taskTemplateName: String = "Task.txt"
   override val mainTemplateName: String = "Main.txt"
   override val testTemplateName: String = "Tests.txt"
 
-  override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
-    override fun getSettings() {}
+  override fun getLanguageSettings(): LanguageSettings<EmptyProjectSettings> = object : LanguageSettings<EmptyProjectSettings>() {
+    override fun getSettings(): EmptyProjectSettings = EmptyProjectSettings
   }
 
   override fun getSupportedLanguageVersions(): List<String> = listOf("1.42")
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<EmptyProjectSettings> = PlainTextCourseGenerator(this, course)
 }
 
-class PlainTextCourseGenerator(builder: EduCourseBuilder<Unit>, course: Course) : CourseProjectGenerator<Unit>(builder, course)
+class PlainTextCourseGenerator(
+  builder: EduCourseBuilder<EmptyProjectSettings>,
+  course: Course
+) : CourseProjectGenerator<EmptyProjectSettings>(builder, course)

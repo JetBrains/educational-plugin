@@ -7,13 +7,13 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType
-import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import java.nio.file.Paths
 
-class PyCheckerFixture : EduCheckerFixture<PyNewProjectSettings>() {
-  override val projectSettings: PyNewProjectSettings = PyNewProjectSettings()
+class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
+  override val projectSettings: PyProjectSettings = PyProjectSettings()
 
   private val sdkLocation: String? by lazy {
     val location = System.getenv(PYTHON_SDK) ?: return@lazy null

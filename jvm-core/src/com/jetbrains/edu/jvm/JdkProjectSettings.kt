@@ -13,8 +13,9 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
-class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) {
+class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
 
   fun setUpProjectJdk(
     project: Project,

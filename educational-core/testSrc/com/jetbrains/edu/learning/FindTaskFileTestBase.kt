@@ -4,8 +4,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
-abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Settings>() {
+abstract class FindTaskFileTestBase<Settings : EduProjectSettings> : CourseGenerationTestBase<Settings>() {
 
   protected fun doTestGetTaskDir(pathToCourseJson: String, filePath: String, taskDirPath: String) {
     generateCourseStructure(pathToCourseJson)

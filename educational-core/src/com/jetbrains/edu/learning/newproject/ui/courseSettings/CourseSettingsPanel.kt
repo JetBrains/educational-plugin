@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.JetBrainsAcademyCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
@@ -129,7 +130,7 @@ class CourseSettingsPanel(
     }
   }
 
-  fun getProjectSettings(): Any? = languageSettings?.getSettings()
+  fun getProjectSettings(): EduProjectSettings? = languageSettings?.getSettings()
 
   fun validateSettings(course: Course?): SettingsValidationResult {
     val settingsValidationResult = languageSettings?.validate(course, locationString) ?: SettingsValidationResult.OK

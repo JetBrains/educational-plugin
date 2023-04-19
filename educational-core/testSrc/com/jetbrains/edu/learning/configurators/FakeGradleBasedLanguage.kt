@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import javax.swing.Icon
 
@@ -28,7 +29,7 @@ object FakeGradleFileType : LanguageFileType(FakeGradleBasedLanguage) {
   override fun getDescription(): String = "File type for fake gradle based language"
 }
 
-class FakeGradleConfigurator : EduConfigurator<Unit> {
+class FakeGradleConfigurator : EduConfigurator<EmptyProjectSettings> {
   override val sourceDir: String
     get() = EduNames.SRC
 
@@ -58,11 +59,11 @@ class FakeGradleConfigurator : EduConfigurator<Unit> {
   }
 }
 
-class FakeGradleHyperskillConfigurator : HyperskillConfigurator<Unit>(FakeGradleConfigurator())
+class FakeGradleHyperskillConfigurator : HyperskillConfigurator<EmptyProjectSettings>(FakeGradleConfigurator())
 
-class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
-  override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
-    override fun getSettings() {}
+class FakeGradleCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
+  override fun getLanguageSettings(): LanguageSettings<EmptyProjectSettings> = object : LanguageSettings<EmptyProjectSettings>() {
+    override fun getSettings(): EmptyProjectSettings = EmptyProjectSettings
   }
 
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
@@ -76,8 +77,8 @@ class FakeGradleCourseBuilder : EduCourseBuilder<Unit> {
 class FakeGradleCourseProjectGenerator(
   builder: FakeGradleCourseBuilder,
   course: Course
-) : CourseProjectGenerator<Unit>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: Unit) {}
+) : CourseProjectGenerator<EmptyProjectSettings>(builder, course) {
+  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings) {}
 
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     super.createAdditionalFiles(holder, isNewCourse)

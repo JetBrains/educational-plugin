@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseBuilder
 import javax.swing.Icon
@@ -18,7 +19,7 @@ import javax.swing.Icon
  *
  * @see com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.GetHyperskillLesson
  */
-abstract class HyperskillConfigurator<T : Any>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> {
+abstract class HyperskillConfigurator<T : EduProjectSettings>(private val baseConfigurator: EduConfigurator<T>) : EduConfigurator<T> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = HyperskillTaskCheckerProvider(baseConfigurator.taskCheckerProvider)

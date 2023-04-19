@@ -10,18 +10,19 @@ import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.learning.checker.PlaintTextCheckerFixture
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.api.MockStepikBasedConnector
 import com.jetbrains.edu.learning.pathWithoutPrams
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-abstract class HyperskillCheckAnswerTaskTest : CheckersTestBase<Unit>() {
+abstract class HyperskillCheckAnswerTaskTest : CheckersTestBase<EmptyProjectSettings>() {
   protected abstract val defaultResponseCode: Int
 
   protected abstract val mockConnector: MockStepikBasedConnector
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   protected fun configureResponses(succeed: Boolean) {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->

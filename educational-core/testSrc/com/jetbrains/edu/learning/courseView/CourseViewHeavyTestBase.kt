@@ -6,11 +6,12 @@ import com.intellij.testFramework.ProjectViewTestUtil
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
-abstract class CourseViewHeavyTestBase : CourseGenerationTestBase<Unit>() {
+abstract class CourseViewHeavyTestBase : CourseGenerationTestBase<EmptyProjectSettings>() {
 
-  override val defaultSettings: Unit = Unit
+  override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
   protected fun createCourseAndChangeView(course: Course, openFirstTask: Boolean = true): ProjectView {
     createCourseStructure(course)

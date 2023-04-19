@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
-import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PySdkToInstall
 import com.jetbrains.python.sdk.PySdkUtil
@@ -32,9 +31,9 @@ import java.awt.BorderLayout
 import java.awt.event.ItemEvent
 import javax.swing.JComponent
 
-open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
+open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
-  private val mySettings: PyNewProjectSettings = PyNewProjectSettings()
+  private val projectSettings: PyProjectSettings = PyProjectSettings()
   private var isSettingsInitialized = false
 
   override fun getLanguageSettingsComponents(
@@ -46,7 +45,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     val sdkField = PySdkPathChoosingComboBox()
     sdkField.childComponent.addItemListener {
       if (it.stateChange == ItemEvent.SELECTED) {
-        mySettings.sdk = sdkField.selectedSdk
+        projectSettings.sdk = sdkField.selectedSdk
         notifyListeners()
       }
     }
@@ -57,7 +56,7 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
         sdkField.addSdkItemOnTop(fakeSdk)
         sdkField.selectedSdk = fakeSdk
       }
-      mySettings.sdk = sdkField.selectedSdk
+      projectSettings.sdk = sdkField.selectedSdk
       isSettingsInitialized = true
       notifyListeners()
     }
@@ -67,11 +66,11 @@ open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
     )
   }
 
-  override fun getSettings(): PyNewProjectSettings = mySettings
+  override fun getSettings(): PyProjectSettings = projectSettings
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
     course ?: return SettingsValidationResult.OK
-    val sdk = mySettings.sdk ?: return if (isSettingsInitialized) {
+    val sdk = projectSettings.sdk ?: return if (isSettingsInitialized) {
       ValidationMessage(EduPythonBundle.message("error.no.python.interpreter", ENVIRONMENT_CONFIGURATION_LINK_PYTHON),
                         ENVIRONMENT_CONFIGURATION_LINK_PYTHON).ready()
     }

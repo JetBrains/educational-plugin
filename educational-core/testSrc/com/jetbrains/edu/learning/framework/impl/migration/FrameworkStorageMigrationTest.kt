@@ -6,10 +6,11 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.framework.impl.Change
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorage
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
-class FrameworkStorageMigrationTest : CourseGenerationTestBase<Unit>() {
+class FrameworkStorageMigrationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
 
-  override val defaultSettings: Unit get() = Unit
+  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
   override fun setUpProject() {
     val course = course {}

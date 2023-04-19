@@ -11,7 +11,6 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
@@ -63,9 +62,6 @@ fun Course.createCourseFiles(
   project: Project,
   baseDir: VirtualFile = LightPlatformTestCase.getSourceRoot()
 ) {
-  @Suppress("UNCHECKED_CAST")
-  val configurator = configurator as? EduConfigurator<Any>
-
   @Suppress("HardCodedStringLiteral")
   ProgressManager.getInstance().runProcessWithProgressSynchronously(Runnable {
     val holder = CourseInfoHolder.fromCourse(this, baseDir)

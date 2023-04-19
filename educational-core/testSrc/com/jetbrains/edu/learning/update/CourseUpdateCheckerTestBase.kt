@@ -11,13 +11,14 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
 
-abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<Unit>() {
-  override val defaultSettings: Unit get() = Unit
+abstract class CourseUpdateCheckerTestBase : CourseGenerationTestBase<EmptyProjectSettings>() {
+  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
   protected fun doTest(updateChecker: CourseUpdateChecker,
                        isCourseUpToDate: Boolean,

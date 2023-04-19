@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DAT
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTaskAttempt.Companion.toDataTaskAttempt
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.api.Attempt
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -25,7 +26,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.logOutFakeHyperskillUser
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckDataTaskTest : CheckersTestBase<Unit>() {
+class HyperskillCheckDataTaskTest : CheckersTestBase<EmptyProjectSettings>() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   override fun checkTask(task: Task): List<AssertionError> {
@@ -34,7 +35,7 @@ class HyperskillCheckDataTaskTest : CheckersTestBase<Unit>() {
     return assertions
   }
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   override fun createCourse(): Course = course(courseProducer = ::HyperskillCourse) {
     section("Topics") {

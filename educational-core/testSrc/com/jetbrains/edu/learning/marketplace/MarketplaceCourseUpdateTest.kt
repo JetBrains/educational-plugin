@@ -9,11 +9,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.rd.util.firstOrNull
 import java.util.*
 
-class MarketplaceCourseUpdateTest : CourseGenerationTestBase<Unit>() {
-  override val defaultSettings: Unit get() = Unit
+class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSettings>() {
+  override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
   fun `test update date updated`() {
     val course = createCourse(CheckStatus.Solved)

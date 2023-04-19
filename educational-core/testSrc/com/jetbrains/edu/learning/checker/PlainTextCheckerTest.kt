@@ -12,10 +12,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.document
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 
-class PlainTextCheckerTest : CheckersTestBase<Unit>() {
+class PlainTextCheckerTest : CheckersTestBase<EmptyProjectSettings>() {
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   override fun createCourse(): Course {
     return course {

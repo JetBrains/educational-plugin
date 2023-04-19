@@ -4,9 +4,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-open class HyperskillCourseProjectGenerator<T : Any>(
+open class HyperskillCourseProjectGenerator<T : EduProjectSettings>(
   private val base: CourseProjectGenerator<T>,
   builder: HyperskillCourseBuilder<T>,
   course: HyperskillCourse

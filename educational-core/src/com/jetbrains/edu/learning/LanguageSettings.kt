@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import javax.swing.JComponent
 
@@ -12,7 +13,7 @@ import javax.swing.JComponent
  *
  * @param Settings container type holds project settings state
  */
-abstract class LanguageSettings<Settings : Any> {
+abstract class LanguageSettings<Settings : EduProjectSettings> {
   private val listeners: MutableSet<SettingsChangeListener> = mutableSetOf()
 
   /**

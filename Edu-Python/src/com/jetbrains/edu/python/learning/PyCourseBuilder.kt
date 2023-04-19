@@ -9,18 +9,18 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
-import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 
-open class PyCourseBuilder : EduCourseBuilder<PyNewProjectSettings> {
+open class PyCourseBuilder : EduCourseBuilder<PyProjectSettings> {
   override val taskTemplateName: String? = PyConfigurator.TASK_PY
   override val mainTemplateName: String? = PyConfigurator.MAIN_PY
   override val testTemplateName: String? = PyConfigurator.TESTS_PY
 
-  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 
   override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings>? =
     PyCourseProjectGenerator(this, course)
 
   override fun refreshProject(project: Project, cause: RefreshCause) {

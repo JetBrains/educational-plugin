@@ -8,9 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.createCourseFromJson
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 
-abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
+abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
 
   abstract val defaultSettings: Settings
 
@@ -22,7 +23,7 @@ abstract class CourseGenerationTestBase<Settings> : HeavyPlatformTestCase() {
     val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
     val generator = configurator.courseBuilder.getCourseProjectGenerator(course)
                     ?: error("given builder returns null as course project generator")
-    val project = generator.doCreateCourseProject(rootDir.path, defaultSettings as Any) ?: error("Cannot create project")
+    val project = generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
 
     TaskDescriptionView.getInstance(project).currentTask = EduUtils.getCurrentTask(project)
     runInEdtAndWait {

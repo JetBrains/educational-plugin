@@ -3,10 +3,11 @@ package com.jetbrains.edu.sql.core
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import icons.DatabaseIcons
 import javax.swing.Icon
 
-interface SqlConfiguratorBase<Settings : Any>: EduConfigurator<Settings> {
+interface SqlConfiguratorBase<Settings : EduProjectSettings>: EduConfigurator<Settings> {
   override val logo: Icon
     get() = DatabaseIcons.Sql
 

@@ -8,11 +8,12 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import javax.swing.JTree
 
 class CourseViewHeavyTest : CourseViewHeavyTestBase() {
-  override val defaultSettings: Unit = Unit
+  override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
   fun testProjectOpened() {
     val projectView = createCourseAndChangeView()

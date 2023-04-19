@@ -5,11 +5,11 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesLanguageProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.python.learning.PyNewConfigurator
-import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import javax.swing.Icon
 
 class PyCodeforcesLanguageProvider : CodeforcesLanguageProvider() {
-  override val configurator: EduConfigurator<PyNewProjectSettings> = PyNewConfigurator()
+  override val configurator: EduConfigurator<PyProjectSettings> = PyNewConfigurator()
   override val languageId: String = EduNames.PYTHON
   override val templateFileName: String = "codeforces.Python main.py"
   override val displayTemplateName: String = "main.py"

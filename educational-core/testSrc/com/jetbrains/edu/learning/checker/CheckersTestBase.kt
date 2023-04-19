@@ -27,10 +27,11 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import org.junit.ComparisonFailure
 
-abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
+abstract class CheckersTestBase<Settings : EduProjectSettings> : HeavyPlatformTestCase() {
     protected lateinit var myCourse: Course
 
     private val checkerFixture: EduCheckerFixture<Settings> by lazy {
@@ -166,7 +167,7 @@ abstract class CheckersTestBase<Settings> : HeavyPlatformTestCase() {
                 val rootDir = tempDir.createVirtualDir()
                 val generator = myCourse.configurator?.courseBuilder?.getCourseProjectGenerator(myCourse)
                                 ?: error("Failed to get `CourseProjectGenerator`")
-                myProject = generator.doCreateCourseProject(rootDir.path, settings as Any)
+                myProject = generator.doCreateCourseProject(rootDir.path, settings)
                             ?: error("Cannot create project with name ${projectName()}")
             }
         }

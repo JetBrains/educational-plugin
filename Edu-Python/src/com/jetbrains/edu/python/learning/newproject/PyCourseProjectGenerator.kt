@@ -18,7 +18,6 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.getBaseSdk
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.installSdk
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
-import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PySdkToInstall
@@ -27,9 +26,9 @@ import com.jetbrains.python.sdk.createSdkByGenerateTask
 import java.io.IOException
 
 open class PyCourseProjectGenerator(
-  builder: EduCourseBuilder<PyNewProjectSettings>,
+  builder: EduCourseBuilder<PyProjectSettings>,
   course: Course
-) : CourseProjectGenerator<PyNewProjectSettings>(builder, course) {
+) : CourseProjectGenerator<PyProjectSettings>(builder, course) {
   @Throws(IOException::class)
   override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
     val testHelper = EduNames.TEST_HELPER
@@ -38,7 +37,7 @@ open class PyCourseProjectGenerator(
     createChildFile(holder, holder.courseDir, testHelper, templateText, true)
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PyNewProjectSettings) {
+  override fun afterProjectGenerated(project: Project, projectSettings: PyProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     var sdk = projectSettings.sdk
     if (sdk is PySdkToInstall) {
@@ -61,7 +60,7 @@ open class PyCourseProjectGenerator(
     installRequiredPackages(project, sdk)
   }
 
-  private fun createAndAddVirtualEnv(project: Project, settings: PyNewProjectSettings) {
+  private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings) {
     val course = StudyTaskManager.getInstance(project).course ?: return
     val baseSdkPath = getBaseSdkPath(settings, course) ?: return
     val baseSdk = PyDetectedSdk(baseSdkPath)
@@ -90,7 +89,7 @@ open class PyCourseProjectGenerator(
   companion object {
     private val LOG = logger<PyCourseProjectGenerator>()
 
-    private fun getBaseSdkPath(settings: PyNewProjectSettings, course: Course): String? {
+    private fun getBaseSdkPath(settings: PyProjectSettings, course: Course): String? {
       if (isUnitTestMode) {
         val sdk = settings.sdk
         return sdk?.homePath

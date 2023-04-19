@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.checker
 
-class PlaintTextCheckerFixture : EduCheckerFixture<Unit>() {
-  override val projectSettings: Unit get() = Unit
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+
+class PlaintTextCheckerFixture : EduCheckerFixture<EmptyProjectSettings>() {
+  override val projectSettings: EmptyProjectSettings get() = EmptyProjectSettings
 }

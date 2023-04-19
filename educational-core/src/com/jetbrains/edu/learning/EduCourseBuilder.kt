@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase.Companion.OU
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import org.jetbrains.annotations.Nls
 import java.io.IOException
 
@@ -32,7 +33,7 @@ import java.io.IOException
  * If you add any new methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillCourseBuilder
  */
-interface EduCourseBuilder<Settings : Any> {
+interface EduCourseBuilder<Settings : EduProjectSettings> {
   /**
    * Shows UI for new study item creation
    *

@@ -11,11 +11,12 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.checkConfigsExistAndNotEmpty
 
-class YamlGeneratorTest : CourseGenerationTestBase<Unit>() {
-  override val defaultSettings: Unit = Unit
+class YamlGeneratorTest : CourseGenerationTestBase<EmptyProjectSettings>() {
+  override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
 
   override fun setUp() {
     super.setUp()

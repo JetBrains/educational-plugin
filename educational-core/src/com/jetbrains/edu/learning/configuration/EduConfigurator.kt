@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
+import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
 import org.jetbrains.annotations.SystemIndependent
 import javax.swing.Icon
@@ -44,7 +45,7 @@ import javax.swing.Icon
  * If you add any new methods here, please do not forget to add it also to
  * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
  */
-interface EduConfigurator<Settings : Any> {
+interface EduConfigurator<Settings : EduProjectSettings> {
   val courseBuilder: EduCourseBuilder<Settings>
   val testFileName: String
   val taskCheckerProvider: TaskCheckerProvider

@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.format
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
@@ -23,12 +24,12 @@ import org.apache.http.HttpStatus
 import org.intellij.lang.annotations.Language
 import java.util.*
 
-class HyperskillCheckSortingBasedTaskTest : CheckersTestBase<Unit>() {
+class HyperskillCheckSortingBasedTaskTest : CheckersTestBase<EmptyProjectSettings>() {
   private val defaultResponseCode: Int = HttpStatus.SC_OK
 
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
-  override fun createCheckerFixture(): EduCheckerFixture<Unit> = PlaintTextCheckerFixture()
+  override fun createCheckerFixture(): EduCheckerFixture<EmptyProjectSettings> = PlaintTextCheckerFixture()
 
   override fun setUp() {
     super.setUp()

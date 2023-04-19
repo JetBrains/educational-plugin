@@ -15,12 +15,12 @@ import com.jetbrains.edu.python.learning.checkio.checker.PyCheckiOTaskCheckerPro
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames.PY_CHECKIO_URL
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.python.PythonFileType
-import com.jetbrains.python.newProject.PyNewProjectSettings
 import javax.swing.Icon
 
 class PyCheckiOConfigurator : PyConfigurator(), CheckiOConnectorProvider {
-  override val courseBuilder: EduCourseBuilder<PyNewProjectSettings>
+  override val courseBuilder: EduCourseBuilder<PyProjectSettings>
     get() = PyCheckiOCourseBuilder()
 
   override val taskCheckerProvider: TaskCheckerProvider
