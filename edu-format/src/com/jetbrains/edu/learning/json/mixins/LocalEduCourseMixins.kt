@@ -413,7 +413,6 @@ fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCode
     IdeTask.IDE_TASK_TYPE -> objectMapper.treeToValue(node, IdeTask::class.java)
     ChoiceTask.CHOICE_TASK_TYPE -> objectMapper.treeToValue(node, ChoiceTask::class.java)
     TheoryTask.THEORY_TASK_TYPE -> objectMapper.treeToValue(node, TheoryTask::class.java)
-    VideoTask.VIDEO_TASK_TYPE -> objectMapper.treeToValue(node, VideoTask::class.java)
     CodeTask.CODE_TASK_TYPE -> objectMapper.treeToValue(node, CodeTask::class.java)
     // deprecated: old courses have pycharm tasks
     EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {

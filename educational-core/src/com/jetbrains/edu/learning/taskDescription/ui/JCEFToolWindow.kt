@@ -8,9 +8,6 @@ import com.intellij.ui.jcef.JBCefApp
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.getStepikLink
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.annotations.TestOnly
 import org.jsoup.nodes.Element
@@ -48,13 +45,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
   }
 
   override fun setText(text: String, task: Task?) {
-    val taskText = if (task is VideoTask) {
-      EduCoreBundle.message("stepik.view.video", getStepikLink(task, task.lesson))
-    }
-    else {
-      text
-    }
-    val html = htmlWithResources(project, wrapHints(taskText, task), task)
+    val html = htmlWithResources(project, wrapHints(text), task)
     taskInfoJBCefBrowser.loadHTML(html)
   }
 

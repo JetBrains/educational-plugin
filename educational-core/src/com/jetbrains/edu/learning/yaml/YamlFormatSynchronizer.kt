@@ -36,7 +36,9 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTaskWithFile
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -179,8 +181,6 @@ object YamlFormatSynchronizer {
     addMixIn(RemoteEduTask::class.java, RemoteEduTaskYamlMixin::class.java)
     addMixIn(TheoryTask::class.java, TheoryTaskYamlUtil::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
-    addMixIn(VideoTask::class.java, VideoTaskYamlMixin::class.java)
-    addMixIn(VideoSource::class.java, VideoSourceYamlMixin::class.java)
     addMixIn(CheckiOMission::class.java, CheckiOMissionYamlMixin::class.java)
     addMixIn(CodeforcesTask::class.java, CodeforcesTaskYamlMixin::class.java)
     addMixIn(CodeforcesTaskWithFileIO::class.java, CodeforcesTaskWithFileIOYamlMixin::class.java)

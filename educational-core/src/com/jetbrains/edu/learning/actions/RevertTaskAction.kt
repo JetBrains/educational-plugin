@@ -62,7 +62,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
     fun revert(project: Project, task: Task) {
       task.apply {
         revertTaskFiles(project)
-        revertTaskParameters(project)
+        revertTaskParameters()
         YamlFormatSynchronizer.saveItem(this)
       }
 

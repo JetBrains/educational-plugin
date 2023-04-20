@@ -37,7 +37,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask.Companion.UNSUPPORTED_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -172,7 +171,6 @@ object YamlDeserializer {
       OUTPUT_TASK_TYPE -> OutputTask::class.java
       THEORY_TASK_TYPE -> TheoryTask::class.java
       DATA_TASK_TYPE -> DataTask::class.java
-      VIDEO_TASK_TYPE -> VideoTask::class.java
       CHOICE_TASK_TYPE -> ChoiceTask::class.java
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode

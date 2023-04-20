@@ -3,8 +3,6 @@
 package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES_TASK_TYPE
@@ -15,7 +13,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
@@ -330,41 +327,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |feedback:
     |  time: "Thu, 01 Jan 1970 00:00:00 UTC"
     |record: 1
-    |""".trimMargin())
-  }
-
-  fun `test video task`() {
-    val firstSrc = "https://stepikvideo.blob.core.windows.net/video/29279/1080/f3d83.mp4"
-    val firstRes = "1080"
-    val secondSrc = "https://stepikvideo.blob.core.windows.net/video/29279/720/8c1aa1.mp4"
-    val secondRes = "720"
-    val thumbnail = "https://stepikvideo.blob.core.windows.net/thumbnail/29279.jpg"
-
-    val task: VideoTask = courseWithFiles {
-      lesson {
-        videoTask(sources = mapOf(firstSrc to firstRes, secondSrc to secondRes),
-                  thumbnail = thumbnail)
-      }
-    }.findTask("lesson1", "task1") as VideoTask
-    task.status = CheckStatus.Solved
-    task.record = 1
-
-    doTest(task, """
-    |type: video
-    |thumbnail: $thumbnail
-    |sources:
-    |- src: $firstSrc
-    |  res: $firstRes
-    |  type: video/mp4
-    |  label: ${firstRes}p
-    |- src: $secondSrc
-    |  res: $secondRes
-    |  type: video/mp4
-    |  label: ${secondRes}p
-    |currentTime: 0
-    |status: Solved
-    |record: 1
-    |post_submission_on_open: true
     |""".trimMargin())
   }
 

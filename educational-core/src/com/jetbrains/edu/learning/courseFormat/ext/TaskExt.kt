@@ -23,7 +23,10 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_HTML
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK_MD
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.data.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -32,7 +35,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.taskDescription.addHeader
 import com.jetbrains.edu.learning.taskDescription.removeHyperskillTags
 import com.jetbrains.edu.learning.taskDescription.replaceActionIDsWithShortcuts
-import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
 import kotlin.collections.component1
@@ -191,13 +193,9 @@ fun Task.revertTaskFiles(project: Project) {
 }
 
 @JvmName("revertTaskParameters")
-fun Task.revertTaskParameters(project: Project) {
+fun Task.revertTaskParameters() {
   status = CheckStatus.Unchecked
   when (this) {
-    is VideoTask -> {
-      currentTime = 0
-      TaskDescriptionView.getInstance(project).updateTaskDescription()
-    }
     is ChoiceTask -> {
       clearSelectedVariants()
     }

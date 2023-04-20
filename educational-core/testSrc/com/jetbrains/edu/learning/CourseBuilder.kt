@@ -357,25 +357,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     mission.secondsFromLastChangeOnServer = secondsFromChange
   }
 
-  fun videoTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    thumbnail: String = "",
-    sources: Map<String, String>,
-    currentTime: Int = 0,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val videoTask = VideoTask()
-    task(videoTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-    videoTask.currentTime = currentTime
-    videoTask.thumbnail = thumbnail
-    videoTask.sources = sources.map { VideoSource(it.key, it.value) }
-  }
-
   fun codeTask(
     name: String? = null,
     customPresentableName: String? = null,

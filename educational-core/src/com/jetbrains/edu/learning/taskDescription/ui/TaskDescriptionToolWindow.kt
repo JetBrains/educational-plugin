@@ -25,7 +25,6 @@ import com.intellij.util.ui.update.Update
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskTextFromTask
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.taskDescription.processImagesAndLinks
@@ -48,11 +47,7 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  protected fun wrapHints(text: String, task: Task?): String {
-    if (task is VideoTask) return text
-
-    return wrapHintTagsInsideHTML(text, this::wrapHint)
-  }
+  protected fun wrapHints(text: String): String = wrapHintTagsInsideHTML(text, this::wrapHint)
 
   protected abstract fun wrapHint(hintElement: Element, displayedHintNumber: String, hintTitle: String): String
 
@@ -74,12 +69,8 @@ abstract class TaskDescriptionToolWindow(protected val project: Project) : Dispo
     fun getTaskDescriptionWithCodeHighlighting(project: Project, task: Task?): String {
       if (task == null) return EduCoreBundle.message("label.open.task")
       val taskText = task.getTaskTextFromTask(project)
-      if (taskText != null) {
-        if (task is VideoTask) {
-          return taskText
-        }
-
-        val processedText = processImagesAndLinks(project, task, taskText)
+        if (taskText != null) {
+          val processedText = processImagesAndLinks(project, task, taskText)
 
         val course = task.course
         val language = if (course is HyperskillCourse) PlainTextLanguage.INSTANCE else course.languageById ?: return processedText

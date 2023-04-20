@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask.Companion.VIDEO_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
@@ -43,11 +42,9 @@ import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_TYPE
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
-import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.VideoTaskResourcesManager
 import com.jetbrains.edu.learning.xmlEscaped
 import com.jetbrains.rd.util.first
 import org.jetbrains.annotations.NonNls
-import java.util.Collections.unmodifiableList
 
 open class StepikTaskBuilder(private val course: Course, private val lesson: Lesson, stepSource: StepSource) {
   private val courseType: String = course.itemType
@@ -85,7 +82,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
         StepikTaskType.SORTING -> this::sortingTask
         StepikTaskType.STRING -> this::stringTask
         StepikTaskType.TEXT -> this::theoryTask
-        StepikTaskType.VIDEO -> this::videoTask
         else -> this::unsupportedTask
       }
     })
@@ -107,7 +103,7 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     STRING(STRING_TASK_TYPE, "Text"),
     TABLE("table", "Table"),
     TEXT("text", "Theory"),
-    VIDEO(VIDEO_TASK_TYPE, "Video")
+    VIDEO("video", "Video")
   }
 
   open fun createTask(type: String): Task? {
@@ -283,26 +279,6 @@ open class StepikTaskBuilder(private val course: Course, private val lesson: Les
     task.descriptionText = step.text
     task.descriptionFormat = DescriptionFormat.HTML
 
-    initTaskFiles(task)
-    return task
-  }
-
-  private fun videoTask(name: String): VideoTask {
-    val task = VideoTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked)
-    var descriptionText = EduCoreBundle.message("stepik.view.video", getStepikLink(task, lesson))
-    val video = step.video
-    if (video != null) {
-      task.thumbnail = video.thumbnail
-      task.sources = unmodifiableList(video.listUrls?.map { VideoSource(it.url, it.quality) } ?: emptyList())
-      task.parent = lesson
-      descriptionText = VideoTaskResourcesManager().getText(task)
-    }
-    else {
-      LOG.warn("Video for step $stepId is null")
-    }
-
-    task.descriptionText = descriptionText
-    task.descriptionFormat = DescriptionFormat.HTML
     initTaskFiles(task)
     return task
   }

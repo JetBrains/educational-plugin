@@ -22,14 +22,11 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isJCEF
 import com.jetbrains.edu.learning.actions.EduActionUtils
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.actions.CodeforcesShowLoginStatusAction
-import com.jetbrains.edu.learning.courseFormat.tasks.VideoTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.MouseInfo
@@ -50,7 +47,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     toolWindow.initTitleActions()
     addGotItTooltip(toolWindow.contentManager)
     taskDescriptionToolWindow.init(toolWindow)
-    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize(project)))
+    (toolWindow as ToolWindowEx).setAdditionalGearActions(DefaultActionGroup(AdjustFontSize()))
   }
 
   private fun ToolWindow.initTitleActions() {
@@ -76,8 +73,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
    */
   private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
 
-  private inner class AdjustFontSize(private val project: Project) : DumbAwareAction
-                                                                     (EduCoreBundle.message("action.adjust.font.size.text")) {
+  private inner class AdjustFontSize : DumbAwareAction(EduCoreBundle.message("action.adjust.font.size.text")) {
     override fun actionPerformed(e: AnActionEvent) {
       val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
       fontSizeSlider.minorTickSpacing = 1
@@ -88,9 +84,6 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       fontSizeSlider.addChangeListener(ChangeListener {
         val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_SIZE_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
-        if (!(project.getCurrentTask() is VideoTask && isJCEF())) {
-          TaskDescriptionView.updateAllTabs(project)
-        }
       })
       val popup = JBPopupFactory.getInstance().createComponentPopupBuilder(fontSizeSlider, fontSizeSlider).createPopup()
       val location = MouseInfo.getPointerInfo().location

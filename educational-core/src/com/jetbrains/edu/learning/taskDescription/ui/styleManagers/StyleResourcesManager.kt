@@ -151,7 +151,6 @@ object StyleResourcesManager {
     resourcePair("jetbrains_academy_style_base", JETBRAINS_ACADEMY_CSS_BASE)
   )
     .plus(panelSpecificHintResources)
-    .plus(VideoTaskResourcesManager().resources)
     .plus(ChoiceTaskResourcesManager().resources)
     .plus(MatchingTaskResourcesManager().resources)
     .plus(SortingTaskResourcesManager().resources)
