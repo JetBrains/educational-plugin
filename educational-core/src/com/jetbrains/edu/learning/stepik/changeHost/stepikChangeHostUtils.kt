@@ -33,6 +33,6 @@ interface StepikChangeHostUI {
 class DialogStepikChangeHostUI : StepikChangeHostUI {
   override fun showDialog(): StepikHost? {
     val dialog = StepikChangeHostDialog()
-    return if (dialog.showAndGet()) dialog.getSelectedItem() else null
+    return if (dialog.showAndGet()) dialog.selectedHost else null
   }
 }

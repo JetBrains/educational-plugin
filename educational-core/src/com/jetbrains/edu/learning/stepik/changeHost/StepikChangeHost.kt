@@ -5,11 +5,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EnumComboBoxModel
-import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
-import com.intellij.ui.dsl.builder.columns
+import com.intellij.ui.dsl.builder.bindItemNullable
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_HOST_ORDINAL_PROPERTY
@@ -39,23 +37,23 @@ class StepikChangeHost : DumbAwareAction(EduCoreBundle.message("stepik.change.ho
 }
 
 class StepikChangeHostDialog : DialogWrapper(true) {
-  private val hostsCombo = ComboBox(EnumComboBoxModel(StepikHost::class.java))
+  var selectedHost: StepikHost? = StepikHost.getSelectedHost()
+    private set
 
   init {
     title = EduCoreBundle.message("stepik.change.host")
     setOKButtonText(EduCoreBundle.message("stepik.select"))
-    hostsCombo.selectedItem = StepikHost.getSelectedHost()
+    isResizable = false
     init()
   }
 
   override fun createCenterPanel(): JComponent = panel {
     row(EduCoreBundle.message("stepik.url")) {
-      cell(hostsCombo)
-        .columns(COLUMNS_MEDIUM)
+      @Suppress("UnstableApiUsage", "DEPRECATION")
+      comboBox(EnumComboBoxModel(StepikHost::class.java))
+        // BACKCOMPAT: 2022.3. Use bindItem instead
+        .bindItemNullable(::selectedHost)
+        .focused()
     }
   }
-
-  override fun getPreferredFocusedComponent(): JComponent = hostsCombo
-
-  fun getSelectedItem(): StepikHost? = hostsCombo.selectedItem as StepikHost?
 }
