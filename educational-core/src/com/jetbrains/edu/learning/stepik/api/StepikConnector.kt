@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.*
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientId
 import com.jetbrains.edu.learning.stepik.StepikNames.getClientSecret
@@ -24,7 +23,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.client.utils.URIBuilder
-import org.jetbrains.annotations.NonNls
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.URL
@@ -73,19 +71,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
 
   // Authorization requests:
 
-  override fun doAuthorize(
-    vararg postLoginActions: Runnable,
-    authorizationPlace: EduCounterUsageCollector.AuthorizationPlace) {
-    super.doAuthorize(*postLoginActions, authorizationPlace = authorizationPlace)
-
-    // EDU-4767
-    val redirectUrl = getRedirectUri()
-    if (redirectUrl == EXTERNAL_REDIRECT_URL) {
-      val dialog = OAuthDialog()
-      dialog.show()
-    }
-  }
-
   @Synchronized
   override fun login(code: String): Boolean {
     val tokenInfo = retrieveLoginToken(code, getRedirectUri()) ?: return false
@@ -101,14 +86,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
     stepikUser.saveTokens(tokenInfo)
     account = stepikUser
     return true
-  }
-
-  override fun getRedirectUri(): String {
-    return try {
-      super.getRedirectUri()
-    } catch (e: IOException) {
-      EXTERNAL_REDIRECT_URL
-    }
   }
 
   // Get requests:
@@ -288,9 +265,6 @@ abstract class StepikConnector : EduOAuthCodeFlowConnector<StepikUser, StepikUse
   companion object {
     private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
     private val LOG = Logger.getInstance(StepikConnector::class.java)
-
-    @NonNls
-    private const val EXTERNAL_REDIRECT_URL: String = "https://example.com"
 
     @JvmStatic
     fun getInstance(): StepikConnector = service()
