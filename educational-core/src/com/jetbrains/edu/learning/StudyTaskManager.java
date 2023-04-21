@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware, Disposable {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private volatile boolean courseLoadedWithError = false;
+  private boolean courseIsBeingLoaded = false;
 
   @Transient
   private Course myCourse;
@@ -64,7 +65,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   @Override
-  public void dispose() {}
+  public void dispose() { }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {
     StudyTaskManager manager = ServiceManager.getService(project, StudyTaskManager.class);
@@ -74,12 +75,22 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         manager.getCourse() == null &&
         YamlFormatSettings.isEduYamlProject(project) &&
         !manager.courseLoadedWithError) {
-      Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
-      manager.courseLoadedWithError = course == null;
-      if (course != null) {
-        manager.setCourse(course);
+      synchronized (manager) {
+        if (!manager.courseIsBeingLoaded) {
+          manager.courseIsBeingLoaded = true;
+          try {
+            Course course = ApplicationManager.getApplication().runReadAction((Computable<Course>)() -> YamlDeepLoader.loadCourse(project));
+            manager.courseLoadedWithError = course == null;
+            if (course != null) {
+              manager.setCourse(course);
+            }
+            YamlFormatSynchronizer.startSynchronization(project);
+          }
+          finally {
+            manager.courseIsBeingLoaded = manager.getCourse() != null;
+          }
+        }
       }
-      YamlFormatSynchronizer.startSynchronization(project);
     }
     return manager;
   }
