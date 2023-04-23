@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
@@ -104,6 +105,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
       TaskDescriptionView.getInstance(project).currentTask = null
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
+      YamlLoadingErrorManager.getInstance(project).removeAllErrors()
     }
     finally {
       super.tearDown()

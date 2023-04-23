@@ -40,6 +40,49 @@ class YamlConfigNotificationTest : NotificationsTestBase() {
     )
   }
 
+  fun `test several invalid configs`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
+      lesson {
+        eduTask("task1")
+        eduTask("task2")
+      }
+    }
+
+    val configFile1 = changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+      it.setText("random text")
+    }
+    val configFile2 = changeConfigFileAndLoad("lesson1/task2/${YamlFormatSettings.TASK_CONFIG}") {
+      it.insertString(it.textLength, "\n0")
+    }
+
+    checkEditorNotification<YamlConfigNotificationProvider>(
+      configFile1,
+      "Failed to apply configuration: task type is not specified"
+    )
+
+    checkEditorNotification<YamlConfigNotificationProvider>(
+      configFile2,
+      "Failed to apply configuration: could not find expected ':' at line 3"
+    )
+  }
+
+  fun `test do not show yaml loading error in non config file`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
+      lesson {
+        eduTask("task1") {
+          taskFile("TaskFile.txt")
+        }
+      }
+    }
+
+    changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+      it.setText("random text")
+    }
+
+    val taskFile = findFile("lesson1/task1/TaskFile.txt")
+    checkNoEditorNotification<YamlConfigNotificationProvider>(taskFile)
+  }
+
   private fun changeConfigFileAndLoad(configPath: String, applyChange: (Document) -> Unit): VirtualFile {
     val configFile = findFile(configPath)
     myFixture.openFileInEditor(configFile)

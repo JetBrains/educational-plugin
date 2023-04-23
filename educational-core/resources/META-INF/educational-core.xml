@@ -20,6 +20,8 @@
   <projectListeners>
     <listener class="com.jetbrains.edu.learning.checker.EduRunManagerListener"
               topic="com.intellij.execution.RunManagerListener"/>
+    <listener class="com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager$Listener"
+              topic="com.jetbrains.edu.learning.yaml.YamlListener"/>
   </projectListeners>
 
   <extensionPoints>
