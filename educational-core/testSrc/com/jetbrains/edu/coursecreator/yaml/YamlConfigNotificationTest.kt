@@ -1,12 +1,11 @@
 package com.jetbrains.edu.coursecreator.yaml
 
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.NotificationsTestBase
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.learning.yaml.YamlLoader
@@ -14,39 +13,43 @@ import com.jetbrains.edu.learning.yaml.YamlLoader
 class YamlConfigNotificationTest : NotificationsTestBase() {
 
   fun `test correct config`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {
-        eduTask { }
+        eduTask("task1")
       }
     }
 
-    val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getDir(project.courseDir)
-    createConfigFiles(project)
-    val configFile = taskDir!!.findChild(YamlFormatSettings.TASK_CONFIG)
-    checkNoEditorNotification<YamlConfigNotificationProvider>(configFile!!)
+    val configFile = findFile("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}")
+    checkNoEditorNotification<YamlConfigNotificationProvider>(configFile)
   }
 
   fun `test invalid config`() {
-    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
       lesson {
-        eduTask { }
+        eduTask("task1")
       }
     }
 
-    val task = course.findTask("lesson1", "task1")
-    val taskDir = task.getDir(project.courseDir)
-    createConfigFiles(project)
-    val configFile = taskDir!!.findChild(YamlFormatSettings.TASK_CONFIG)!!
-    myFixture.openFileInEditor(configFile)
-    runWriteAction { configFile.document.setText("random text") }
-    withOriginalException {
-      YamlLoader.loadItem(project, configFile, false)
+    val configFile = changeConfigFileAndLoad("lesson1/task1/${YamlFormatSettings.TASK_CONFIG}") {
+      it.setText("random text")
     }
+
     checkEditorNotification<YamlConfigNotificationProvider>(
       configFile,
       "Failed to apply configuration: task type is not specified"
     )
+  }
+
+  private fun changeConfigFileAndLoad(configPath: String, applyChange: (Document) -> Unit): VirtualFile {
+    val configFile = findFile(configPath)
+    myFixture.openFileInEditor(configFile)
+    WriteCommandAction.runWriteCommandAction(project) {
+      applyChange(configFile.document)
+    }
+    withOriginalException {
+      YamlLoader.loadItem(project, configFile, false)
+    }
+    return configFile
   }
 
   private fun withOriginalException(action: () -> Unit) {
