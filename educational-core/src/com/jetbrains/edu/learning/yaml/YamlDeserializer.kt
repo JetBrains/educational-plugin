@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsSafe
@@ -330,7 +329,7 @@ object YamlDeserializer {
     }
     runInEdt {
       val editor = configFile.getEditor(project)
-      ApplicationManager.getApplication().messageBus.syncPublisher(YAML_LOAD_TOPIC).yamlFailedToLoad(configFile, cause)
+      project.messageBus.syncPublisher(YAML_LOAD_TOPIC).yamlFailedToLoad(configFile, cause)
       if (editor == null) {
         val notification = InvalidConfigNotification(project, configFile, cause)
         notification.notify(project)

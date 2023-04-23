@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,7 +28,7 @@ import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 object YamlLoader {
 
   fun loadItem(project: Project, configFile: VirtualFile, loadFromVFile: Boolean) {
-    ApplicationManager.getApplication().messageBus.syncPublisher(YamlDeserializer.YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
+    project.messageBus.syncPublisher(YamlDeserializer.YAML_LOAD_TOPIC).beforeYamlLoad(configFile)
     try {
       doLoad(project, configFile, loadFromVFile)
     }
