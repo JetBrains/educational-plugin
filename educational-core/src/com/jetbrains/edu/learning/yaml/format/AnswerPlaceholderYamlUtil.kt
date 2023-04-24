@@ -56,6 +56,7 @@ open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
     placeholder.placeholderText = placeholderText
     placeholder.offset = offset
     placeholder.placeholderDependency = dependency
+    placeholder.init()
     return placeholder
   }
 }
