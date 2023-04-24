@@ -9,7 +9,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
@@ -36,12 +35,7 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     val disposable = StudyTaskManager.getInstance(project)
     val cargo = project.rustSettings.toolchain?.cargo() ?: return CheckResult(CheckStatus.Failed, message("error.no.toolchain"))
     val processOutput = cargo.toGeneralCommandLine(project, cmd).executeCargoCommandLine(disposable)
-    for (line in processOutput.stdoutLines) {
-      if (line.trimStart().startsWith(COMPILATION_ERROR_MESSAGE, true)) {
-        return CheckResult(CheckStatus.Failed, CheckUtils.COMPILATION_FAILED_MESSAGE, processOutput.stdout)
-      }
-    }
-    return super.computePossibleErrorResult(indicator, stderr)
+    return RsStderrAnalyzer.tryToGetCheckResult(processOutput.stdout) ?: super.computePossibleErrorResult(indicator, stderr)
   }
 
   override val preferredConfigurationType: ConfigurationType

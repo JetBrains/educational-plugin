@@ -106,13 +106,6 @@ object CheckUtils {
     }
   }
 
-  fun hasCompilationErrors(processOutput: ProcessOutput): Boolean {
-    for (error in COMPILATION_ERRORS) {
-      if (processOutput.stderr.contains(error)) return true
-    }
-    return false
-  }
-
   fun postProcessOutput(output: String): String {
     return output.replace(System.getProperty("line.separator"), "\n")
   }

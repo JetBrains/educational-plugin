@@ -16,7 +16,6 @@ import com.jetbrains.edu.jvm.MainFileProvider
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
-import com.jetbrains.edu.learning.checker.CheckUtils.hasCompilationErrors
 import com.jetbrains.edu.learning.checker.CheckUtils.postProcessOutput
 import com.jetbrains.edu.learning.checker.CodeExecutor
 import com.jetbrains.edu.learning.checker.TestsOutputParser
@@ -86,7 +85,7 @@ class GradleCommandLine private constructor(
     }
 
     //gradle prints compilation failures to error stream
-    if (hasCompilationErrors(output)) {
+    if (GradleStderrAnalyzer.tryToGetCheckResult(stderr) != null) {
       return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE, output.stderr))
     }
 

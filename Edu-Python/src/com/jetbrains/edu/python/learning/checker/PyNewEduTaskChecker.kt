@@ -7,12 +7,10 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.python.testing.AbstractPythonTestRunConfiguration
@@ -40,7 +38,7 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
   }
 
   override fun computePossibleErrorResult(indicator: ProgressIndicator, stderr: String): CheckResult =
-    if (SYNTAX_ERRORS.any { it in stderr }) CheckResult(CheckStatus.Failed, CheckUtils.SYNTAX_ERROR_MESSAGE, stderr) else CheckResult.SOLVED
+    PyStderrAnalyzer.tryToGetCheckResult(stderr) ?: CheckResult.SOLVED
 
   override fun getErrorMessage(node: SMTestProxy): String {
     return node.stacktrace?.lineSequence()?.firstOrNull { it.startsWith(ASSERTION_ERROR) }?.substringAfter(ASSERTION_ERROR)
@@ -53,7 +51,6 @@ class PyNewEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project
   }
 
   companion object {
-    private val SYNTAX_ERRORS = listOf("SyntaxError", "IndentationError", "TabError")
     private const val ASSERTION_ERROR = "AssertionError: "
   }
 }
