@@ -45,6 +45,7 @@ open class CCAddAnswerPlaceholder : CCAnswerPlaceholderAction() {
     if (dependencyInfo != null) {
       answerPlaceholder.placeholderDependency = create(answerPlaceholder, dependencyInfo.dependencyPath, dependencyInfo.isVisible)
     }
+    answerPlaceholder.init()
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction { editor.document.insertString(offset, defaultPlaceholderText) }
     }

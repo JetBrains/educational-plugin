@@ -60,5 +60,3 @@ open class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
     return placeholder
   }
 }
-
-
