@@ -265,7 +265,8 @@ configure(allprojects.pluginModules()) {
     plugin("org.jetbrains.intellij")
   }
   intellij {
-      version.set(baseVersion)
+    version.set(baseVersion)
+    instrumentCode.set(false)
   }
   dependencies {
     implementationWithoutKotlin(group = "org.twitter4j", name = "twitter4j-core", version = "4.0.1")
