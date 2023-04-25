@@ -17,6 +17,7 @@ abstract class GradleCourseProjectGeneratorBase(
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
   override suspend fun prepareToOpen(project: Project, module: Module) {
+    super.prepareToOpen(project, module)
     @Suppress("UnstableApiUsage")
     writeAction {
       GeneratorUtils.removeModule(project, module)
