@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.HIGHLIGHT_LEVEL
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
@@ -274,7 +275,7 @@ abstract class ChoiceOptionLocalMixin {
   private var status: ChoiceOptionStatus = ChoiceOptionStatus.UNKNOWN
 }
 
-@JsonPropertyOrder(NAME, IS_VISIBLE, TEXT, IS_EDITABLE)
+@JsonPropertyOrder(NAME, IS_VISIBLE, TEXT, IS_EDITABLE, HIGHLIGHT_LEVEL)
 abstract class EduFileMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -289,9 +290,13 @@ abstract class EduFileMixin {
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
   @JsonProperty(IS_EDITABLE)
   var isEditable: Boolean = true
+
+  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = HighlightLevelValueFilter::class)
+  @JsonProperty(HIGHLIGHT_LEVEL)
+  var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
 }
 
-@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE)
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT, IS_EDITABLE, HIGHLIGHT_LEVEL)
 abstract class TaskFileMixin : EduFileMixin() {
   @JsonProperty(PLACEHOLDERS)
   private lateinit var _answerPlaceholders: List<AnswerPlaceholder>

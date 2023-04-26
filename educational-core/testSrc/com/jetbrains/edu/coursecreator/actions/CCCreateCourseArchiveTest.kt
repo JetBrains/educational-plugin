@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -798,6 +799,26 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     courseWithFiles {
       environmentSetting("example key 1", "example value 1")
       environmentSetting("example key 2", "example value 2")
+    }
+    doTest()
+  }
+
+  fun `test task file highlighting level serialization`() {
+    courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("a.java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.NONE)
+          }
+          taskFile("b.java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.ALL_PROBLEMS)
+          }
+          taskFile("c.java") {
+            withHighlightLevel(EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION)
+          }
+          taskFile("d.java")
+        }
+      }
     }
     doTest()
   }

@@ -903,3 +903,24 @@
       "edu_plugin_version" : "2023.1-2022.3-SNAPSHOT"
     }
     ```
+    
+16. Task files may now have a `highlight_level` field with two possible values: `ALL_PROBLEMS` and `NONE`.
+    `ALL_PROBLEMS` means that all inspections are run in this file and all issues are highlighted.
+    `NONE` means that no analysis is run in this file, and no problems are highlighted.
+    `ALL_PROBLEMS` is a default value and may be omitted.
+       ```json
+          "files" : {
+            "src/Task.kt" : {
+              "name" : "src/Task.kt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "J75+qots3TIZHX0wYlhd
+            "src/TaskWithNoHighlight.kt" : {
+              "name" : "src/NoH.kt",
+              "placeholders" : [ ],
+              "is_visible" : true,
+              "text" : "ZycH6ysF7mnmM4wNC6D1MA==",
+              "highlight_level" : "NONE"
+            }
+          },
+       ```
