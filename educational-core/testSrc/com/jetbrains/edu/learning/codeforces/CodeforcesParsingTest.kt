@@ -31,6 +31,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("A. Three Problems", task.name)
+    assertEquals("A", task.problemIndex)
     assertEquals("https://codeforces.com/contest/1211/problem/A?locale=en", task.feedbackLink)
     task.checkTaskDescription(1211, 'A')
   }
@@ -47,6 +48,7 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val task = CodeforcesTask.create(htmlElement, lesson, 1)
 
     assertEquals("G. King's Path", task.name)
+    assertEquals("G", task.problemIndex)
     assertEquals("https://codeforces.com/contest/1211/problem/G?locale=en", task.feedbackLink)
     task.checkTaskDescription(1211, 'G')
   }
@@ -72,15 +74,24 @@ class CodeforcesParsingTest : CodeforcesTestCase() {
     val tasks = course.lessons.first().taskList
     assertEquals(9, tasks.size)
 
-    assertEquals("A. Three Problems", tasks[0].name)
-    assertEquals("B. Traveling Around the Golden Ring of Berland", tasks[1].name)
-    assertEquals("C. Ice Cream", tasks[2].name)
-    assertEquals("D. Teams", tasks[3].name)
-    assertEquals("E. Double Permutation Inc.", tasks[4].name)
-    assertEquals("F. kotlinkotlinkotlinkotlin...", tasks[5].name)
-    assertEquals("G. King's Path", tasks[6].name)
-    assertEquals("H. Road Repair in Treeland", tasks[7].name)
-    assertEquals("I. Unusual Graph", tasks[8].name)
+    val expectedTaskNames = listOf(
+      "A. Three Problems",
+      "B. Traveling Around the Golden Ring of Berland",
+      "C. Ice Cream",
+      "D. Teams",
+      "E. Double Permutation Inc.",
+      "F. kotlinkotlinkotlinkotlin...",
+      "G. King's Path",
+      "H. Road Repair in Treeland",
+      "I. Unusual Graph",
+    )
+    val expectedProblemIndices = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I")
+
+    for ((index, task) in tasks.withIndex()) {
+      check(task is CodeforcesTask)
+      assertEquals(expectedTaskNames[index], task.name)
+      assertEquals(expectedProblemIndices[index], task.problemIndex)
+    }
 
     assertEquals("https://codeforces.com/contest/1211/problem/H?locale=en", tasks[7].feedbackLink)
   }

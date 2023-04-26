@@ -6,6 +6,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask.Companion.codeforcesTaskLink
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -13,16 +14,15 @@ import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.NonNls
 
 
-@Suppress("ComponentNotRegistered")
 class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.open.on.site.text")), RightAlignedToolbarAction {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
-    val link = when (task.course) {
-      is CodeforcesCourse -> codeforcesTaskLink(task)
-      is HyperskillCourse -> hyperskillTaskLink(task)
-      else -> error("Only Codeforces and Hyperskill are supported")
+    val link = when {
+      task is CodeforcesTask -> codeforcesTaskLink(task)
+      task.course is HyperskillCourse -> hyperskillTaskLink(task)
+      else -> return
     }
     EduBrowser.getInstance().browse(link)
   }

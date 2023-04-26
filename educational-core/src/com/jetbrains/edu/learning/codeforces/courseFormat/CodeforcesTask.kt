@@ -26,13 +26,18 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTaskBase
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 
 open class CodeforcesTask : OutputTaskBase() {
 
   override val itemType: String = CODEFORCES_TASK_TYPE
+  private var _problemIndex: String? = null
+
+  val problemIndex: String get() = _problemIndex ?: presentableName.substringBefore(".")
+
+  override val course: CodeforcesCourse
+    get() = super.course as CodeforcesCourse
 
   fun getTestFolders(project: Project): Array<out VirtualFile> {
     return getDir(project.courseDir)?.findChild(TEST_DATA_FOLDER)?.children.orEmpty()
@@ -74,7 +79,9 @@ open class CodeforcesTask : OutputTaskBase() {
   companion object {
     private val LOG: Logger = Logger.getInstance(CodeforcesTask::class.java)
 
-    fun create(htmlElement: Element, lesson: Lesson, index: Int): CodeforcesTask {
+    fun create(problemHolder: Element, lesson: Lesson, index: Int): CodeforcesTask {
+      val htmlElement = problemHolder.selectFirst(".problem-statement") ?: error("")
+
       val isStandardIO = htmlElement.select("div.input-file, div.output-file").all { isStandardIOType(it) }
 
       val task = if (isStandardIO) {
@@ -90,6 +97,7 @@ open class CodeforcesTask : OutputTaskBase() {
       // We don't have original problems ids here, so we have to use index to bind them with solutions
       task.id = index
       task.name = htmlElement.select("div.header").select("div.title").text()
+      task._problemIndex = problemHolder.attr("problemindex").takeIf { it.isNotEmpty() }
 
       htmlElement.select("img").forEach {
         var srcValue = it.attr("src")
@@ -121,16 +129,16 @@ open class CodeforcesTask : OutputTaskBase() {
       return task
     }
 
-    fun codeforcesSubmitLink(task: Task): String {
-      val course = task.course as CodeforcesCourse
+    fun codeforcesSubmitLink(task: CodeforcesTask): String {
+      val course = task.course
       return "${course.getContestUrl()}/${CODEFORCES_SUBMIT}?locale=${course.languageCode}" +
              "&programTypeId=${course.programTypeId ?: codeforcesDefaultProgramTypeId(course)}" +
-             "&submittedProblemIndex=${task.presentableName.substringBefore(".")}"
+             "&submittedProblemIndex=${task.problemIndex}"
     }
 
-    fun codeforcesTaskLink(task: Task): String {
-      val course = task.course as CodeforcesCourse
-      return "${course.getContestUrl()}/problem/${task.name.substringBefore(".")}?locale=${course.languageCode}"
+    fun codeforcesTaskLink(task: CodeforcesTask): String {
+      val course = task.course
+      return "${course.getContestUrl()}/problem/${task.problemIndex}?locale=${course.languageCode}"
     }
 
     @Deprecated("Only for backwards compatibility. Use CodeforcesCourse.programTypeId")

@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
 import com.jetbrains.edu.learning.codeforces.api.CodeforcesConnector
 import com.jetbrains.edu.learning.codeforces.authorization.LoginDialog
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
+import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -20,8 +21,13 @@ class CodeforcesSubmissionsProvider : SubmissionsProvider {
   }
 
   override fun loadSubmissions(tasks: List<Task>, courseId: Int): Map<Int, List<StepikBasedSubmission>> {
+    val codeforcesTasks = tasks.filterIsInstance<CodeforcesTask>()
+    require(codeforcesTasks.size == tasks.size) {
+      "`CodeforcesSubmissionsProvider` can load submissions only for `CodeforcesTask`s"
+    }
+
     val (csrfToken, jSessionID) = CodeforcesConnector.getInstance().getCSRFTokenWithJSessionID().onError { return emptyMap() }
-    return CodeforcesConnector.getInstance().getUserSubmissions(courseId, tasks, csrfToken, jSessionID)
+    return CodeforcesConnector.getInstance().getUserSubmissions(courseId, codeforcesTasks, csrfToken, jSessionID)
   }
 
   override fun areSubmissionsAvailable(course: Course): Boolean = course is CodeforcesCourse

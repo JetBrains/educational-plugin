@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesTask
 import com.jetbrains.edu.learning.courseFormat.CheckFeedback
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
@@ -200,10 +199,9 @@ abstract class CodeforcesConnector {
     val jSessionID = account.getSessionId() ?: return Err(EduCoreBundle.message("error.access.denied"))
     val contestId = task.course.id
     val languageCode = task.course.languageCode
-    val programTypeId = (task.course as CodeforcesCourse).programTypeId
-    val submittedProblemIndex = task.presentableName.substringBefore(".")
+    val programTypeId = task.course.programTypeId
 
-    val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, submittedProblemIndex,
+    val submitPage = service.getSubmissionPage(contestId, languageCode, programTypeId, task.problemIndex,
                                                "JSESSIONID=$jSessionID").executeParsingErrors().onError {
       return Err(it)
     }
@@ -213,7 +211,7 @@ abstract class CodeforcesConnector {
 
     val response = service.postSolution(
       csrfToken = csrfToken,
-      submittedProblemIndex = submittedProblemIndex,
+      submittedProblemIndex = task.problemIndex,
       source = solution,
       contestId = contestId,
       programTypeId = programTypeId,
@@ -294,15 +292,15 @@ abstract class CodeforcesConnector {
     if (submissions.isNotEmpty()) SubmissionsManager.getInstance(project).addToSubmissions(task.id, submissions[0])
   }
 
-  fun getUserSubmissions(contestId: Int, tasks: List<Task>, csrfToken: String, jSessionID: String): Map<Int, List<StepikBasedSubmission>> {
+  fun getUserSubmissions(contestId: Int, tasks: List<CodeforcesTask>, csrfToken: String, jSessionID: String): Map<Int, List<StepikBasedSubmission>> {
     if (CodeforcesSettings.getInstance().isLoggedIn()) {
       val body = service.getUserSolutions(CodeforcesSettings.getInstance().account!!.userInfo.handle, contestId)
         .executeParsingErrors().onError { return emptyMap() }.body()
 
-      val submissionsByNames = body?.result?.groupBy { "${it.problem.index}. ${it.problem.name}" }
+      val submissionsByProblemIndex = body?.result?.groupBy { it.problem.index }
 
       return tasks.associate { task ->
-        val taskSubmissions = submissionsByNames?.get(task.name)?.map {
+        val taskSubmissions = submissionsByProblemIndex?.get(task.problemIndex)?.map {
           val mainFileName = task.course.configurator?.courseBuilder?.mainTemplateName
           StepikBasedSubmission().apply {
             this.id = it.id

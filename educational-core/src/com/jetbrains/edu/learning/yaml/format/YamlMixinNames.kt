@@ -172,6 +172,10 @@ object YamlMixinNames {
   @NlsSafe
   const val SECONDS_FROM_CHANGE = "seconds_from_change"
 
+  // codeforces task
+  @NlsSafe
+  const val PROBLEM_INDEX = "problem_index"
+
   // codeforces task with file IO
   @NlsSafe
   const val INPUT_FILE = "input_file"

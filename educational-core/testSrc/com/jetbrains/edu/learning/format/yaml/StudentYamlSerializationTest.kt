@@ -387,7 +387,7 @@ class StudentYamlSerializationTest : EduTestCase() {
     val feedbackUrl = "https://codeforces.com/contest/1218/problem/A?locale=en"
     val status = CheckStatus.Unchecked
 
-    val course = course {
+    val course = course(courseProducer = ::CodeforcesCourse) {
       lesson {
         codeforcesTask {}
       }
