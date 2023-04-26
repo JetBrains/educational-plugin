@@ -8,6 +8,10 @@ import com.jetbrains.edu.learning.ResponseHandler
 
 class MockCodeforcesConnector : CodeforcesConnector() {
   private var _baseUrl: String? = null
+    set(value) {
+      field = value
+      serviceHolder.reset()
+    }
 
   private val helper = MockWebServerHelper(ApplicationManager.getApplication())
 

@@ -23,6 +23,7 @@ import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
+import com.jetbrains.edu.learning.codeforces.update.CodeforcesCourseUpdateChecker
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
@@ -39,9 +40,11 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.impl.FrameworkLessonManagerImpl
+import com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskDescription.ui.TaskDescriptionView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -107,6 +110,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
       val storage = (FrameworkLessonManager.getInstance(project) as FrameworkLessonManagerImpl).storage
       Disposer.dispose(storage)
       YamlLoadingErrorManager.getInstance(project).removeAllErrors()
+
+      MarketplaceUpdateChecker.getInstance(project).course = null
+      HyperskillCourseUpdateChecker.getInstance(project).course = null
+      CodeforcesCourseUpdateChecker.getInstance(project).course = null
     }
     finally {
       super.tearDown()

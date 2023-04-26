@@ -115,7 +115,7 @@ class CodeforcesLoadingTest : CodeforcesTestCase() {
 
     assertEquals(1272, contest.id)
     assertEquals("en", contest.languageCode)
-    assertEquals("Codeforces Round #605 (Div. 3)", contest.name)
+    assertEquals("Codeforces Round 605 (Div. 3)", contest.name)
     assertEquals("https://codeforces.com/contest/1272", contest.getContestUrl())
     assertEquals("""
       A. Three Friends

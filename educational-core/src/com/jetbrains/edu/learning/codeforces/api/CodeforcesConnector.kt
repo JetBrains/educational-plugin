@@ -58,7 +58,9 @@ abstract class CodeforcesConnector {
 
   protected abstract val baseUrl: String
 
-  private val service: CodeforcesService by lazy { service() }
+  protected val serviceHolder: ResettableCachedValue<CodeforcesService> = ResettableCachedValue { service() }
+
+  private val service: CodeforcesService by serviceHolder
 
   private fun service(): CodeforcesService =
     createRetrofitBuilder(baseUrl, connectionPool, customInterceptor = AntiCrawlerInterceptor)
