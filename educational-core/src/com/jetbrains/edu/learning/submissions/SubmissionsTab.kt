@@ -52,6 +52,7 @@ class SubmissionsTab(project: Project) : AdditionalTab(project, SUBMISSIONS_TAB)
       val submissionsManager = SubmissionsManager.getInstance(project)
       val isLoggedIn = submissionsManager.isLoggedIn()
       invokeLater {
+        if (project.isDisposed) return@invokeLater
         updateSubmissionsContent(task, isLoggedIn)
       }
     }, ProcessIOExecutorService.INSTANCE)
