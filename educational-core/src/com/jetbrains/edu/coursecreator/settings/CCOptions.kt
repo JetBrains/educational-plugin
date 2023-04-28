@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
-import javax.swing.ButtonGroup
 import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
@@ -37,12 +36,6 @@ class CCOptions : OptionsProvider {
     CCSettings.getInstance().showSplitEditor()
   )
 
-  init {
-    val buttonGroup = ButtonGroup()
-    buttonGroup.add(htmlRadioButton)
-    buttonGroup.add(markdownRadioButton)
-  }
-
   override fun getDisplayName(): String = EduCoreBundle.message("ccoptions.display.name")
 
   override fun createComponent(): JComponent? {
@@ -50,10 +43,12 @@ class CCOptions : OptionsProvider {
 
     return panel {
       group(displayName) {
-        row {
-          label(EduCoreBundle.message("ccoptions.description.format"))
-          cell(htmlRadioButton)
-          cell(markdownRadioButton)
+        buttonsGroup {
+          row {
+            label(EduCoreBundle.message("ccoptions.description.format"))
+            cell(htmlRadioButton)
+            cell(markdownRadioButton)
+          }
         }
         row { cell(copyTestsCheckBox) }
         if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
