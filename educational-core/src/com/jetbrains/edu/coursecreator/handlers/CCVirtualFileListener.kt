@@ -197,6 +197,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     if (parentStudyItem !is ItemContainer) return false // this is mostly to cast the type, because the actual check is already performed
 
     deserializedItem.name = itemDir.name
+    deserializedItem.parent = parentStudyItem
     deserializedItem.deserializeChildrenIfNeeded(project, parentStudyItem.course)
     deserializedItem.init(parentStudyItem, false)
     parentStudyItem.addItem(deserializedItem)
