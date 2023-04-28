@@ -1,58 +1,54 @@
-package com.jetbrains.edu.coursecreator.settings;
+package com.jetbrains.edu.coursecreator.settings
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 
-@State(name = "CCSettings", storages = @Storage("other.xml"))
-public class CCSettings implements PersistentStateComponent<CCSettings.State> {
-  private CCSettings.State myState = new CCSettings.State();
+@State(name = "CCSettings", storages = [Storage("other.xml")])
+class CCSettings : PersistentStateComponent<CCSettings.State> {
+  private var state = State()
 
-  public static class State {
-    public boolean isHtmlDefault = false;
-    public boolean showSplitEditor = false;
-    public boolean copyTestsInFrameworkLessons = false;
+  class State {
+    var isHtmlDefault = false
+    var showSplitEditor = false
+    var copyTestsInFrameworkLessons = false
   }
 
-  @Nullable
-  @Override
-  public State getState() {
-    return myState;
+  override fun getState(): State {
+    return state
   }
 
-  @Override
-  public void loadState(@NotNull State state) {
-    myState = state;
+  override fun loadState(state: State) {
+    this.state = state
   }
 
-  public boolean useHtmlAsDefaultTaskFormat() {
-    return myState.isHtmlDefault;
+  fun useHtmlAsDefaultTaskFormat(): Boolean {
+    return state.isHtmlDefault
   }
 
-  public void setUseHtmlAsDefaultTaskFormat(final boolean useHtml) {
-    myState.isHtmlDefault = useHtml;
+  fun setUseHtmlAsDefaultTaskFormat(useHtml: Boolean) {
+    state.isHtmlDefault = useHtml
   }
 
-  public boolean showSplitEditor() {
-    return myState.showSplitEditor;
+  fun showSplitEditor(): Boolean {
+    return state.showSplitEditor
   }
 
-  public void setShowSplitEditor(boolean value) {
-    myState.showSplitEditor = value;
+  fun setShowSplitEditor(value: Boolean) {
+    state.showSplitEditor = value
   }
 
-  public boolean copyTestsInFrameworkLessons() {
-    return myState.copyTestsInFrameworkLessons;
+  fun copyTestsInFrameworkLessons(): Boolean {
+    return state.copyTestsInFrameworkLessons
   }
 
-  public void setCopyTestsInFrameworkLessons(boolean value) {
-    myState.copyTestsInFrameworkLessons = value;
+  fun setCopyTestsInFrameworkLessons(value: Boolean) {
+    state.copyTestsInFrameworkLessons = value
   }
 
-  public static CCSettings getInstance() {
-    return ServiceManager.getService(CCSettings.class);
+  companion object {
+    @JvmStatic
+    fun getInstance(): CCSettings = service()
   }
 }
