@@ -20,7 +20,7 @@ class NewHyperskillCourseAction : DumbAwareAction(
 ) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+    CCSettings.getInstance().useHtmlAsDefaultTaskFormat = true
     CCNewCourseDialog(
       EduCoreBundle.message("action.create.course.text", HYPERSKILL),
       EduCoreBundle.message("label.create"),

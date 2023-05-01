@@ -250,7 +250,7 @@ public class EduUtils {
 
   @NotNull
   public static DescriptionFormat getDefaultTaskDescriptionFormat() {
-    return CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? DescriptionFormat.HTML : DescriptionFormat.MD;
+    return CCSettings.getInstance().getUseHtmlAsDefaultTaskFormat() ? DescriptionFormat.HTML : DescriptionFormat.MD;
   }
 
   @Nullable

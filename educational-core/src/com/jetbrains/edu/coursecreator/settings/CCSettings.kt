@@ -1,54 +1,25 @@
 package com.jetbrains.edu.coursecreator.settings
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.*
+import com.intellij.util.xmlb.annotations.OptionTag
 
 @State(name = "CCSettings", storages = [Storage("other.xml")])
-class CCSettings : PersistentStateComponent<CCSettings.State> {
-  private var state = State()
+class CCSettings : SimplePersistentStateComponent<CCSettings.State>(State()) {
 
-  class State {
-    var isHtmlDefault = false
-    var showSplitEditor = false
-    var copyTestsInFrameworkLessons = false
-  }
-
-  override fun getState(): State {
-    return state
-  }
-
-  override fun loadState(state: State) {
-    this.state = state
-  }
-
-  fun useHtmlAsDefaultTaskFormat(): Boolean {
-    return state.isHtmlDefault
-  }
-
-  fun setUseHtmlAsDefaultTaskFormat(useHtml: Boolean) {
-    state.isHtmlDefault = useHtml
-  }
-
-  fun showSplitEditor(): Boolean {
-    return state.showSplitEditor
-  }
-
-  fun setShowSplitEditor(value: Boolean) {
-    state.showSplitEditor = value
-  }
-
-  fun copyTestsInFrameworkLessons(): Boolean {
-    return state.copyTestsInFrameworkLessons
-  }
-
-  fun setCopyTestsInFrameworkLessons(value: Boolean) {
-    state.copyTestsInFrameworkLessons = value
-  }
+  var useHtmlAsDefaultTaskFormat: Boolean by state::isHtmlDefault
+  var showSplitEditor: Boolean by state::showSplitEditor
+  var copyTestsInFrameworkLessons: Boolean by state::copyTestsInFrameworkLessons
 
   companion object {
     @JvmStatic
     fun getInstance(): CCSettings = service()
+  }
+
+  class State : BaseState() {
+    // Custom name is used to keep backward compatibility
+    @get:OptionTag(value = "isHtmlDefault")
+    var isHtmlDefault: Boolean by property(false)
+    var showSplitEditor: Boolean by property(false)
+    var copyTestsInFrameworkLessons: Boolean by property(false)
   }
 }

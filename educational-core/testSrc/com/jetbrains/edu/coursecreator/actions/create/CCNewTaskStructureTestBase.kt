@@ -97,14 +97,8 @@ abstract class CCNewTaskStructureTestBase : EduActionTestCase() {
 
     val frameworkLessonFile = findFile("lesson2")
     withMockCreateStudyItemUi(createMockUi("task3", taskType)) {
-      val settings = CCSettings.getInstance()
-      val copyTestOld = settings.copyTestsInFrameworkLessons()
-      settings.setCopyTestsInFrameworkLessons(false)
-      try {
+      withSettingsValue(CCSettings.getInstance()::copyTestsInFrameworkLessons, false) {
         testAction(CCCreateTask.ACTION_ID, dataContext(frameworkLessonFile))
-      }
-      finally {
-        settings.setCopyTestsInFrameworkLessons(copyTestOld)
       }
     }
     checkTaskStructure("lesson2", "task3", taskStructureWithoutSources)

@@ -1,15 +1,16 @@
 package com.jetbrains.edu.coursecreator.settings
 
+import com.intellij.openapi.options.BoundConfigurable
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.util.NlsSafe
-import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBRadioButton
+import com.intellij.ui.dsl.builder.bind
+import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
-import javax.swing.JComponent
 
 @Suppress("UnstableApiUsage")
 @NlsSafe
@@ -19,64 +20,35 @@ private const val HTML = "Html"
 @NlsSafe
 private const val MARKDOWN = "Markdown"
 
-class CCOptions : OptionsProvider {
+class CCOptions : BoundConfigurable(EduCoreBundle.message("ccoptions.display.name")), OptionsProvider {
 
-  private val htmlRadioButton = JBRadioButton(HTML, CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
-  private val markdownRadioButton = JBRadioButton(MARKDOWN, !CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
+  override fun isAvailable(): Boolean = isCourseCreatorFeaturesEnabled
 
-  private val copyTestsCheckBox = JBCheckBox(
-    EduCoreBundle.message("ccoptions.copy.tests"),
-    CCSettings.getInstance().copyTestsInFrameworkLessons()
-  ).apply {
-    toolTipText = EduCoreBundle.message("ccoptions.copy.tests.tooltip")
-  }
-
-  private val showSplitEditorCheckBox = JBCheckBox(
-    EduCoreBundle.message("ccoptions.split.editor"),
-    CCSettings.getInstance().showSplitEditor()
-  )
-
-  override fun getDisplayName(): String = EduCoreBundle.message("ccoptions.display.name")
-
-  override fun createComponent(): JComponent? {
-    if (!isCourseCreatorFeaturesEnabled) return null
-
+  override fun createPanel(): DialogPanel {
+    val settings = CCSettings.getInstance()
     return panel {
       group(displayName) {
         buttonsGroup {
           row {
             label(EduCoreBundle.message("ccoptions.description.format"))
-            cell(htmlRadioButton)
-            cell(markdownRadioButton)
+            radioButton(HTML, value = true)
+            radioButton(MARKDOWN, value = false)
           }
+        }.bind(settings::useHtmlAsDefaultTaskFormat)
+        row {
+          checkBox(EduCoreBundle.message("ccoptions.copy.tests"))
+            .applyToComponent {
+              toolTipText = EduCoreBundle.message("ccoptions.copy.tests.tooltip")
+            }
+            .bindSelected(settings::copyTestsInFrameworkLessons)
         }
-        row { cell(copyTestsCheckBox) }
         if (isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
-          row { cell(showSplitEditorCheckBox) }
+          row {
+            checkBox(EduCoreBundle.message("ccoptions.split.editor"))
+              .bindSelected(settings::showSplitEditor)
+          }
         }
       }
     }
-  }
-
-  override fun isModified(): Boolean {
-    val settings = CCSettings.getInstance()
-    return htmlRadioButton.isSelected != settings.useHtmlAsDefaultTaskFormat() ||
-           showSplitEditorCheckBox.isSelected != settings.showSplitEditor() ||
-           copyTestsCheckBox.isSelected != settings.copyTestsInFrameworkLessons()
-  }
-
-  override fun apply() {
-    val settings = CCSettings.getInstance()
-    settings.setUseHtmlAsDefaultTaskFormat(htmlRadioButton.isSelected)
-    settings.setShowSplitEditor(showSplitEditorCheckBox.isSelected)
-    settings.setCopyTestsInFrameworkLessons(copyTestsCheckBox.isSelected)
-  }
-
-  override fun reset() {
-    val settings = CCSettings.getInstance()
-    htmlRadioButton.isSelected = settings.useHtmlAsDefaultTaskFormat()
-    markdownRadioButton.isSelected = !settings.useHtmlAsDefaultTaskFormat()
-    showSplitEditorCheckBox.isSelected = settings.showSplitEditor()
-    copyTestsCheckBox.isSelected = settings.copyTestsInFrameworkLessons()
   }
 }

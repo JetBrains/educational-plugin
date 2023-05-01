@@ -90,7 +90,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(TASK_TYPE, Task) {
       val newTaskFiles = LinkedHashMap<String, TaskFile>()
       val testDirs = course.testDirs
       val defaultTestFileName = course.configurator?.testFileName ?: ""
-      val needCopyTests = CCSettings.getInstance().copyTestsInFrameworkLessons()
+      val needCopyTests = CCSettings.getInstance().copyTestsInFrameworkLessons
       for ((path, file) in prevTask.taskFiles) {
         if (needCopyTests || !(testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) {
           newTaskFiles[path] = file.copyForNewTask(prevTaskDir, item)

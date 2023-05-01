@@ -2,9 +2,10 @@ package com.jetbrains.edu.learning.stepik.hyperskill.projectOpen
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.coursecreator.settings.CCSettings
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.hasParams
+import com.jetbrains.edu.learning.pathWithoutPrams
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenStepRequest
@@ -106,14 +107,10 @@ class HyperskillProjectOpenNotRecommendedProblemsTest : HyperskillProjectOpenerT
       }
     }
 
-    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
-    try {
-      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+    withDefaultHtmlTaskDescription {
       mockProjectOpener.open(HyperskillOpenInIdeRequestHandler, HyperskillOpenStepRequest(1, step8146.id, FakeGradleBasedLanguage.id))
     }
-    finally {
-      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
-    }
+
     val fileTree = fileTree {
       dir(HYPERSKILL_TOPICS) {
         dir("Topic title") {

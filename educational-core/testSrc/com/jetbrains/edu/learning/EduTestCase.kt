@@ -51,6 +51,7 @@ import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
+import kotlin.reflect.KMutableProperty0
 
 abstract class EduTestCase : BasePlatformTestCase() {
 
@@ -380,14 +381,18 @@ abstract class EduTestCase : BasePlatformTestCase() {
     }
   }
 
-  fun <T> withDefaultHtmlTaskDescription(action: () -> T): T {
-    val useHtml = CCSettings.getInstance().useHtmlAsDefaultTaskFormat()
-    CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(true)
+  protected fun <T, V> withSettingsValue(property: KMutableProperty0<V>, value: V, action: () -> T): T {
+    val oldValue = property.get()
+    property.set(value)
     return try {
       action()
     }
     finally {
-      CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(useHtml)
+      property.set(oldValue)
     }
+  }
+
+  protected fun <T> withDefaultHtmlTaskDescription(action: () -> T): T {
+    return withSettingsValue(CCSettings.getInstance()::useHtmlAsDefaultTaskFormat, true, action)
   }
 }

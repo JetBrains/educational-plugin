@@ -221,14 +221,8 @@ class CCCreateTaskTest : EduActionTestCase() {
     val lessonFile = findFile(lessonName)
     val newTaskName = "task2"
     withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
-      val settings = CCSettings.getInstance()
-      val copyTestOld = settings.copyTestsInFrameworkLessons()
-      settings.setCopyTestsInFrameworkLessons(copyTests)
-      try {
+      withSettingsValue(CCSettings.getInstance()::copyTestsInFrameworkLessons, copyTests) {
         testAction(CCCreateTask.ACTION_ID, dataContext(lessonFile))
-      }
-      finally {
-        settings.setCopyTestsInFrameworkLessons(copyTestOld)
       }
     }
 

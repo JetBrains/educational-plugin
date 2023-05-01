@@ -32,7 +32,7 @@ class EduSplitFileEditorProvider : FileEditorProvider, DumbAware {
            && previousTaskFile() != null
            && CCUtils.isCourseCreator(project)
            && isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)
-           && CCSettings.getInstance().showSplitEditor()
+           && CCSettings.getInstance().showSplitEditor
   }
 
   private fun TaskFile.previousTaskFile(): TaskFile? {
