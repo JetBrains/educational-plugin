@@ -30,7 +30,10 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.updateEnvironmentSettings
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.exceptions.BrokenPlaceholderException
@@ -54,15 +57,14 @@ class CourseArchiveCreator(
   private val aesKey: String = getAesKey()
 ) : Computable<String?> {
 
-  private val course: Course? = StudyTaskManager.getInstance(project).course
-
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun compute(): String? {
+    val course = StudyTaskManager.getInstance(project).course
     if (course != null && course.isMarketplace && !isUnitTestMode) {
       course.updateCourseItems()
     }
     course?.updateEnvironmentSettings(project)
-    val course = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
+    val courseCopy = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
     val jsonFolder = generateArchiveFolder(project)
                      ?: return EduCoreBundle.message("error.failed.to.generate.course.archive")
 
@@ -75,7 +77,7 @@ class CourseArchiveCreator(
     }
 
     try {
-      prepareCourse(course)
+      prepareCourse(courseCopy)
     }
     catch (e: BrokenPlaceholderException) {
       if (!isUnitTestMode) {
@@ -89,7 +91,7 @@ class CourseArchiveCreator(
       return e.message
     }
     return try {
-      val json = generateJson(jsonFolder, course)
+      val json = generateJson(jsonFolder, courseCopy)
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
       ZipUtil.compressFile(json, File(location))
       synchronize(project)
