@@ -73,8 +73,10 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.VERSION
 
 private val LOG = logger<LocalEduCourseMixin>()
 
-@JsonPropertyOrder(ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
-                   ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION)
+@JsonPropertyOrder(
+  ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS,
+  ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION
+)
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -201,8 +203,10 @@ abstract class LocalLessonMixin {
   private lateinit var contentTags: List<String>
 }
 
-@JsonPropertyOrder(NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN,
-                   TASK_TYPE)
+@JsonPropertyOrder(
+  NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN,
+  TASK_TYPE
+)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -237,8 +241,10 @@ abstract class LocalTaskMixin {
   private lateinit var contentTags: List<String>
 }
 
-@JsonPropertyOrder(CHOICE_OPTIONS, IS_MULTIPLE_CHOICE, MESSAGE_CORRECT, MESSAGE_INCORRECT, QUIZ_HEADER,
-                   NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN, TASK_TYPE)
+@JsonPropertyOrder(
+  CHOICE_OPTIONS, IS_MULTIPLE_CHOICE, MESSAGE_CORRECT, MESSAGE_INCORRECT, QUIZ_HEADER,
+  NAME, CUSTOM_NAME, TAGS, FILES, DESCRIPTION_TEXT, DESCRIPTION_FORMAT, FEEDBACK_LINK, SOLUTION_HIDDEN, TASK_TYPE
+)
 abstract class ChoiceTaskLocalMixin : LocalTaskMixin() {
 
   @JsonProperty
@@ -392,6 +398,7 @@ fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCode
     EduTask.EDU_TASK_TYPE, EduTask.PYCHARM_TASK_TYPE -> {
       objectMapper.treeToValue(node, EduTask::class.java)
     }
+
     OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
     else -> {
       LOG.warning("Unsupported task type $taskType")

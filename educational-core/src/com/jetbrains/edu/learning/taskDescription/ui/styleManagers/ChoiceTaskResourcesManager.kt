@@ -22,7 +22,7 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
 
   // because task object is inserted after html is loaded
   private fun getTaskResources(task: ChoiceTask): Map<String, Any> = mapOf(
-    "text" to task.quizHeader,
+    "text" to task.presentableQuizHeader,
     "selected_variants" to task.selectedVariants,
     "choice_options" to Gson().toJson(task.choiceOptions.map { it.text }),
     "is_multiple_choice" to task.isMultipleChoice,

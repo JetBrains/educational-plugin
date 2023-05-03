@@ -33,7 +33,7 @@ class ChoiceTaskSpecificPanel(task: ChoiceTask) : Wrapper() {
     group: ButtonGroup? = null,
     createBox: (str: String) -> Button
   ) {
-    createTopicForSpecificPanel(task.quizHeader)
+    createTopicForSpecificPanel(task.presentableQuizHeader)
     val isEnabled = task.status != CheckStatus.Failed
     for ((index, option) in task.choiceOptions.withIndex()) {
       val box = createBox(option.text).createButton(index, task, enabled = isEnabled, opaque = false, group)

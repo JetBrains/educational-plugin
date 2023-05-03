@@ -12,9 +12,14 @@ class ChoiceTask : Task {
   var selectedVariants: MutableList<Int> = mutableListOf()
   var messageCorrect: String = message("check.correct.solution")
   var messageIncorrect: String = message("check.incorrect.solution")
-  var quizHeader: String =
-    if (isMultipleChoice) message("course.creator.create.choice.task.multiple.label")
-    else message("course.creator.create.choice.task.single.label")
+  var quizHeader: String? = null
+  val presentableQuizHeader: String
+    get() {
+      val qh = quizHeader
+      if (qh != null) return qh
+      return if (isMultipleChoice) message("course.creator.create.choice.task.multiple.label")
+      else message("course.creator.create.choice.task.single.label")
+    }
 
   var canCheckLocally: Boolean = true
 

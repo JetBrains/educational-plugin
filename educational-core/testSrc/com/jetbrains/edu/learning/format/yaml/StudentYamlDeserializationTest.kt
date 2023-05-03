@@ -239,7 +239,32 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
     assertEquals(EduFormatBundle.message("check.correct.solution"), task.messageCorrect)
     assertEquals(EduFormatBundle.message("check.incorrect.solution"), task.messageIncorrect)
-    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.presentableQuizHeader)
+  }
+
+  fun `test multiple choice task label`() {
+    val yamlContent = """
+    |type: choice
+    |is_multiple_choice: true
+    |options:
+    |- text: 1
+    |  is_correct: true
+    |- text: 2
+    |  is_correct: false
+    |status: Solved
+    |record: 1
+    |selected_options:
+    |- 1
+    |- 2
+    |""".trimMargin()
+    val task = deserializeTask(yamlContent)
+    assertTrue(task is ChoiceTask)
+    assertEquals(CheckStatus.Solved, task.status)
+    assertEquals(1, task.record)
+    assertEquals(mutableListOf(1, 2), (task as ChoiceTask).selectedVariants)
+    assertEquals(EduFormatBundle.message("check.correct.solution"), task.messageCorrect)
+    assertEquals(EduFormatBundle.message("check.incorrect.solution"), task.messageIncorrect)
+    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.multiple.label"), task.presentableQuizHeader)
   }
 
   fun `test can check locally`() {
@@ -265,7 +290,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(mutableListOf(1), task.selectedVariants)
     assertEquals(EduFormatBundle.message("check.correct.solution"), task.messageCorrect)
     assertEquals(EduFormatBundle.message("check.incorrect.solution"), task.messageIncorrect)
-    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.quizHeader)
+    assertEquals(EduFormatBundle.message("course.creator.create.choice.task.single.label"), task.presentableQuizHeader)
   }
 
   fun `test deserialize choice task with custom messages variants`() {
@@ -290,7 +315,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals(CheckStatus.Solved, task.status)
     assertEquals(1, task.record)
     assertEquals(mutableListOf(1), (task as ChoiceTask).selectedVariants)
-    assertEquals("I am a topic", task.quizHeader)
+    assertEquals("I am a topic", task.presentableQuizHeader)
     assertEquals("You are good!", task.messageCorrect)
     assertEquals("You are not good!", task.messageIncorrect)
   }

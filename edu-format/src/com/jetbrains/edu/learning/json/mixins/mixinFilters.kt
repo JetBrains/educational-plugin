@@ -27,9 +27,10 @@ class FeedbackIncorrectFilter {
  */
 @Suppress("EqualsOrHashCode")
 class QuizHeaderFilter {
-  override fun equals(other: Any?): Boolean = (other is String &&
-                                               (other == message("course.creator.create.choice.task.multiple.label") ||
-                                                other == message("course.creator.create.choice.task.single.label")))
+  override fun equals(other: Any?): Boolean = (other == null ||
+                                               (other is String &&
+                                                (other == message("course.creator.create.choice.task.multiple.label") ||
+                                                 other == message("course.creator.create.choice.task.single.label"))))
 }
 
 /**
