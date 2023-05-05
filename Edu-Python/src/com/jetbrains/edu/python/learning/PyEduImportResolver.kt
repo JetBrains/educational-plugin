@@ -1,32 +1,22 @@
-package com.jetbrains.edu.python.learning;
+package com.jetbrains.edu.python.learning
 
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.QualifiedName;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.python.psi.impl.PyImportResolver;
-import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.QualifiedName
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.python.psi.impl.PyImportResolver
+import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext
 
-public class PyEduImportResolver implements PyImportResolver {
-  @Nullable
-  public PsiElement resolveImportReference(@NotNull QualifiedName name, PyQualifiedNameResolveContext context, boolean withRoots) {
-    if (StudyTaskManager.getInstance(context.getProject()).getCourse() == null) {
-      return null;
+class PyEduImportResolver : PyImportResolver {
+  override fun resolveImportReference(
+    name: QualifiedName,
+    context: PyQualifiedNameResolveContext,
+    withRoots: Boolean
+  ): PsiElement? {
+    if (StudyTaskManager.getInstance(context.project).course == null) {
+      return null
     }
-    final String nameString = name.toString();
-    PsiFile containingFile = context.getFootholdFile();
-    if (containingFile == null) return null;
-
-    final PsiDirectory directory = containingFile.getContainingDirectory();
-    if (directory == null) return null;
-    final PsiFile file = directory.findFile(nameString + ".py");
-    if (file != null) {
-      return file;
-    }
-
-    return null;
+    val containingFile = context.footholdFile ?: return null
+    val directory = containingFile.containingDirectory ?: return null
+    return directory.findFile("$name.py")
   }
 }
