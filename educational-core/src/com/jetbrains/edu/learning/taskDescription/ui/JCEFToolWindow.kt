@@ -65,6 +65,7 @@ class JCEFToolWindow(project: Project) : TaskDescriptionToolWindow(project) {
     val html = htmlWithResources(project, taskText, task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
+    taskSpecificJBCefBrowser.component.requestFocus()
   }
 
   companion object {

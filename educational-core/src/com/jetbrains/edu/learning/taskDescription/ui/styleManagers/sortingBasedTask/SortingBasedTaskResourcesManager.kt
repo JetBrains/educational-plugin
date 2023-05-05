@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.taskDescription.ui.styleManagers.sortingBasedTask
 
 import com.google.gson.Gson
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -10,10 +11,12 @@ import com.jetbrains.edu.learning.newproject.ui.asCssColor
 import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskDescription.isNewUI
 import com.jetbrains.edu.learning.taskDescription.ui.MatchingTaskUI
+import com.jetbrains.edu.learning.taskDescription.ui.getSortingShortcutHTML
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleResourcesManager
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TaskResourcesManager
 import kotlinx.css.*
+import kotlinx.css.Float
 import kotlinx.css.properties.LineHeight
 import kotlinx.css.properties.Timing
 import kotlinx.css.properties.s
@@ -30,7 +33,18 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
       "ordering" to Gson().toJson(task.ordering.toList()),
       "upButtonIconPath" to moveUpUrl,
       "downButtonIconPath" to moveDownUrl,
+      "tutorial" to getTutorialHTML(moveUpUrl, moveDownUrl)
     )
+  }
+
+  private fun getTutorialHTML(moveUpUrl: String, moveDownUrl: String): String {
+    //val xIcon = "<label class='textShortcut'>↑</label>"
+    //val yIcon = "<label class='textShortcut'>↓</label>"
+
+    val xIcon = "<img src='${moveUpUrl}' class='imgShortcut'>"
+    val yIcon = "<img src='${moveDownUrl}' class='imgShortcut'>"
+
+    return getSortingShortcutHTML(xIcon, yIcon)
   }
 
   override fun getText(task: T): String {
@@ -46,6 +60,12 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
     get() {
       val styleManager = StyleManager()
       return CSSBuilder().apply {
+        "#keyValueGrid" {
+          display = Display.grid
+          rowGap = RowGap(12.px.value)
+          alignItems = Align.stretch
+          justifyContent = JustifyContent.stretch
+        }
         ".value" {
           display = Display.flex
           flexDirection = FlexDirection.row
@@ -58,14 +78,21 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           borderColor = MatchingTaskUI.Value.borderColor().asCssColor()
           borderRadius = 4.px
         }
+        ".value:focus" {
+          val focusedBorderColor = UIUtil.getFocusedBorderColor().asCssColor().value
+          put("outline", "1px solid $focusedBorderColor")
+          border = "1px solid $focusedBorderColor"
+        }
         label {
-          height = 20.px
-          fontFamily = styleManager.codeFont
+          fontFamily = styleManager.bodyFont
           fontStyle = FontStyle.normal
           fontWeight = FontWeight.lighter
           fontSize = 13.px
           lineHeight = LineHeight(20.px.value)
           color = MatchingTaskUI.Value.foreground().asCssColor()
+        }
+        code {
+          fontFamily = styleManager.codeFont
         }
         ".labelPanel" {
           padding = "0"
@@ -97,6 +124,33 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
         }
         "button:disabled" {
           cursor = Cursor.notAllowed
+        }
+        "#tutorialLabel" {
+          padding = "4px 0"
+          marginBottom = 8.px
+        }
+        "#tutorialLabel > label" {
+          fontSize = 13.px
+          verticalAlign = VerticalAlign.middle
+          lineHeight = LineHeight(16.px.value)
+          color = JBUI.CurrentTheme.ContextHelp.FOREGROUND.asCssColor()
+        }
+        ".shortcut-description" {
+          display = Display.inlineBlock
+          color = MatchingTaskUI.Key.foreground().asCssColor()
+          backgroundColor = MatchingTaskUI.Key.background().asCssColor()
+          borderRadius = 4.px
+          verticalAlign = VerticalAlign.middle
+        }
+        ".imgShortcut" {
+          padding = "2px"
+          height = 16.px
+          width = 16.px
+          float = Float.left
+          verticalAlign = VerticalAlign.middle
+        }
+        ".textShortcut" {
+          padding = "2px 4px"
         }
       }.toString()
     }

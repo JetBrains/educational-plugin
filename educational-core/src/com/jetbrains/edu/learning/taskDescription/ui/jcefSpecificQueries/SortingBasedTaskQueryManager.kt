@@ -45,6 +45,14 @@ abstract class SortingBasedTaskQueryManager<T : SortingBasedTask>(
               ${jsQueryGetOrdering.inject("value")}
             })
           })
+          cards = document.getElementsByClassName('value');
+          [].slice.call(cards).forEach(input => {
+            input.addEventListener('keydown', function (event) {
+              if (event.key != 'ArrowUp' && event.key != 'ArrowDown') return;
+              let value = getOrdering();
+              ${jsQueryGetOrdering.inject("value")}
+            })
+          })
           """.trimIndent(), jcefBrowserUrl, 0
       )
     }

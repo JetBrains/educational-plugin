@@ -20,16 +20,14 @@ class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTa
     get() {
       return super.stylesheet + CSSBuilder().apply {
         "#matchingOptions" {
-          display = Display.grid
           paddingLeft = 8.px
+        }
+        "#keyValueGrid" {
+          columnGap = ColumnGap(8.px.value)
           gridTemplateColumns = GridTemplateColumns(
             GridAutoRows("fit-content(50%)"),
             GridAutoRows.auto
           )
-          justifyContent = JustifyContent.stretch
-          rowGap = RowGap(12.px.value)
-          columnGap = ColumnGap(8.px.value)
-          alignItems = Align.stretch
         }
         ".key" {
           display = Display.table

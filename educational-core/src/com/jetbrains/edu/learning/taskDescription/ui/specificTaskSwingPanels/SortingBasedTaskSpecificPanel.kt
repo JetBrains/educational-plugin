@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.ui.JBColor
 import com.intellij.ui.RoundedLineBorder
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.Wrapper
@@ -13,20 +14,25 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.Gaps
 import com.intellij.ui.dsl.gridLayout.VerticalGaps
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.ui.asCssColor
 import com.jetbrains.edu.learning.taskDescription.ui.MatchingTaskUI
 import com.jetbrains.edu.learning.taskDescription.ui.addBorder
+import com.jetbrains.edu.learning.taskDescription.ui.getSortingShortcutHTML
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.Font
+import java.awt.event.*
 import javax.swing.JPanel
 import javax.swing.text.JTextComponent
 
 class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
   private val emptyBorder = JBUI.Borders.empty(8, 12, 8, 6)
   private val roundedBorderSize = 1
+  private val focusedRoundedBorderSize = 2
 
   private val arcSize = 8
 
@@ -37,8 +43,12 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
 
   private val valueTextComponents = mutableListOf<JTextComponent>()
 
+  private lateinit var firstOptionPanel: JPanel
+  private lateinit var lastOptionPanel: JPanel
+
   init {
     val panel = panel {
+      createShortcutTutorialHint()
       for (index in task.ordering.indices) {
         createOption(task, index)
           .layout(RowLayout.PARENT_GRID)
@@ -47,26 +57,42 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
       align(Align.FILL)
     }.apply {
       isOpaque = false
-      border = JBUI.Borders.empty(15, 0, 10, 10)
+      border = JBUI.Borders.empty(4, 0, 10, 10)
     }
     setContent(panel)
   }
 
   private fun Panel.createOption(task: SortingBasedTask, index: Int): Row = row {
     val optionPanel = createOptionPanel(task, index).apply {
-      addBorder(emptyBorder)
       foreground = MatchingTaskUI.Value.foreground()
       background = MatchingTaskUI.Value.background()
+      isFocusable = true
+      addKeyListener(createValueKeyListener(task, index))
+      addFocusListener(createValueFocusListener())
+      addMouseListener(createMouseListener())
+      recalcOptionPanelBorder()
     }
+
+    if (index == 0) {
+      firstOptionPanel = optionPanel
+    }
+    if (index + 1 == task.options.size) {
+      lastOptionPanel = optionPanel
+    }
+
+    valueTextComponents[index].addMouseListener(object : MouseAdapter() {
+      override fun mousePressed(e: MouseEvent?) {
+        optionPanel.requestFocus()
+      }
+    })
 
     if (task is MatchingTask) {
       val indexPanel = createIndexPanel(task, index).apply {
-        addBorder(emptyBorder)
         foreground = MatchingTaskUI.Key.foreground()
         background = MatchingTaskUI.Key.background()
+        addBorder(emptyBorder)
+        addBorder(RoundedLineBorder(MatchingTaskUI.Key.background(), arcSize, roundedBorderSize))
       }
-
-      indexPanel.addBorder(RoundedLineBorder(MatchingTaskUI.Key.background(), arcSize, roundedBorderSize))
 
       cell(RoundedWrapper(indexPanel, arcSize))
         .widthGroup("IndexPanel")
@@ -74,11 +100,19 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         .customize(Gaps(right = columnGapSize))
     }
 
-    optionPanel.addBorder(RoundedLineBorder(MatchingTaskUI.Value.borderColor(), arcSize, roundedBorderSize))
-
     cell(RoundedWrapper(optionPanel, arcSize))
       .align(Align.FILL)
       .resizableColumn()
+  }
+
+  private fun JPanel.recalcOptionPanelBorder() {
+    border = emptyBorder
+    if (!isFocusOwner) {
+      addBorder(RoundedLineBorder(MatchingTaskUI.Value.borderColor(), arcSize, roundedBorderSize))
+      addBorder(RoundedLineBorder(JBColor.background(), arcSize, focusedRoundedBorderSize - roundedBorderSize))
+    } else {
+      addBorder(RoundedLineBorder(UIUtil.getFocusedBorderColor(), arcSize, focusedRoundedBorderSize))
+    }
   }
 
   private fun createIndexPanel(task: MatchingTask, index: Int): JPanel {
@@ -102,10 +136,10 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         val textComponent = text(task.options[optionIndex])
           .align(AlignY.CENTER)
           .resizableColumn()
-          .apply {
-            component.font = Font(codeFont.name, codeFont.style, 13)
+          .component.apply {
+            font = Font(codeFont.name, codeFont.style, 13)
           }
-          .component
+
         valueTextComponents += textComponent
         cell(createNavigationButtonsPanel(task, index))
           .align(AlignY.CENTER)
@@ -179,5 +213,68 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         e.presentation.isEnabled = index + 1 < task.options.size
       }
     }
+  }
+
+  private fun JPanel.createValueKeyListener(task: SortingBasedTask, index: Int): KeyListener {
+    return object : KeyAdapter() {
+      override fun keyPressed(e: KeyEvent?) {
+        if (e == null) return
+        when {
+          (e.keyCode == KeyEvent.VK_DOWN) -> {
+            if (index + 1 >= task.options.size) {
+              if (!e.isShiftDown) {
+                firstOptionPanel.requestFocus()
+              }
+              return
+            }
+            if (e.isShiftDown) {
+              moveDown(task, index)
+            }
+            transferFocus()
+          }
+          (e.keyCode == KeyEvent.VK_UP) -> {
+            if (index <= 0) {
+              if (!e.isShiftDown) {
+                lastOptionPanel.requestFocus()
+              }
+              return
+            }
+            if (e.isShiftDown) {
+              moveUp(task, index)
+            }
+            transferFocusBackward()
+          }
+        }
+      }
+    }
+  }
+
+  private fun JPanel.createValueFocusListener(): FocusListener {
+    return object : FocusAdapter() {
+      override fun focusGained(e: FocusEvent?) {
+        recalcOptionPanelBorder()
+        repaint()
+      }
+
+      override fun focusLost(e: FocusEvent?) {
+        recalcOptionPanelBorder()
+        repaint()
+      }
+    }
+  }
+
+  private fun JPanel.createMouseListener(): MouseAdapter {
+    return object : MouseAdapter() {
+      override fun mousePressed(e: MouseEvent?) {
+        requestFocus()
+      }
+    }
+  }
+
+  private fun Panel.createShortcutTutorialHint(): Row = row {
+    val xIcon = "<label class='textShortcut'>↑</label>"
+    val yIcon = "<label class='textShortcut'>↓</label>"
+    val attributes = "style='color: ${MatchingTaskUI.Key.foreground().asCssColor().value};'"
+    comment(getSortingShortcutHTML(xIcon, yIcon, attributes))
   }
 }

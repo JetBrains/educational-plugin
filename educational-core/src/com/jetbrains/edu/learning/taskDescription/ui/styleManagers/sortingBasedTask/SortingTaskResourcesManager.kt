@@ -12,12 +12,10 @@ class SortingTaskResourcesManager : SortingBasedTaskResourcesManager<SortingTask
     get() {
       return super.stylesheet + CSSBuilder().apply {
         "#sortingOptions" {
-          display = Display.grid
           paddingLeft = 8.px
+        }
+        "#keyValueGrid" {
           gridTemplateColumns = GridTemplateColumns(GridAutoRows.auto)
-          justifyContent = JustifyContent.stretch
-          rowGap = RowGap(12.px.value)
-          alignItems = Align.stretch
         }
         ".value" {
           gridColumn = GridColumn("1")
