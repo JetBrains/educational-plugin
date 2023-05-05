@@ -1,11 +1,6 @@
-package com.jetbrains.edu.python.learning.checkio.connectors;
+package com.jetbrains.edu.python.learning.checkio.connectors
 
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthRestService;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthRestService
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 
-import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.PY_CHECKIO;
-
-public final class PyCheckiOOAuthRestService extends CheckiOOAuthRestService {
-  private PyCheckiOOAuthRestService() {
-    super(PY_CHECKIO, PyCheckiOOAuthConnector.INSTANCE);
-  }
-}
+class PyCheckiOOAuthRestService : CheckiOOAuthRestService(CheckiONames.PY_CHECKIO, PyCheckiOOAuthConnector)
