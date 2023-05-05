@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
-public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProducer<PyCCRunTestConfiguration> {
+public class PyRunTestsConfigurationProducer extends LazyRunConfigurationProducer<PyCCRunTestConfiguration> {
 
   @Override
   protected boolean setupConfigurationFromContext(@NotNull PyCCRunTestConfiguration configuration,
@@ -50,7 +50,7 @@ public class PyCCRunTestsConfigurationProducer extends LazyRunConfigurationProdu
   @NotNull
   @Override
   public ConfigurationFactory getConfigurationFactory() {
-    return PyCCRunTestsConfigurationType.getInstance().getConfigurationFactories()[0];
+    return PyRunTestsConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   @Nullable

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class PyCCRunTestsConfigurationType implements ConfigurationType {
+public class PyRunTestsConfigurationType implements ConfigurationType {
   @NotNull
   @Override
   public String getDisplayName() {
@@ -34,10 +34,10 @@ public class PyCCRunTestsConfigurationType implements ConfigurationType {
 
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{new PyCCRunTestsConfigurationFactory(this)};
+    return new ConfigurationFactory[]{new PyRunTestsConfigurationFactory(this)};
   }
 
-  public static PyCCRunTestsConfigurationType getInstance() {
-    return ConfigurationTypeUtil.findConfigurationType(PyCCRunTestsConfigurationType.class);
+  public static PyRunTestsConfigurationType getInstance() {
+    return ConfigurationTypeUtil.findConfigurationType(PyRunTestsConfigurationType.class);
   }
 }

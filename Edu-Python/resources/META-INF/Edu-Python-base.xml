@@ -26,8 +26,8 @@
                      enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection" language="Python"/>
-    <configurationType implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationType"/>
-    <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer"/>
+    <configurationType implementation="com.jetbrains.edu.python.learning.run.PyRunTestsConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.edu.python.learning.run.PyRunTestsConfigurationProducer"/>
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">

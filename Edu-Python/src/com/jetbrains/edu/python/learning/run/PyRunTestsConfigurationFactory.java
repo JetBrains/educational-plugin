@@ -7,11 +7,11 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class PyCCRunTestsConfigurationFactory extends ConfigurationFactory {
+public class PyRunTestsConfigurationFactory extends ConfigurationFactory {
   @NonNls
   public static final String CONFIGURATION_ID = "Run Study Tests";
 
-  protected PyCCRunTestsConfigurationFactory(@NotNull ConfigurationType type) {
+  protected PyRunTestsConfigurationFactory(@NotNull ConfigurationType type) {
     super(type);
   }
 

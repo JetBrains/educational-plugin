@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
-import com.jetbrains.edu.python.learning.run.PyCCRunTestsConfigurationProducer
+import com.jetbrains.edu.python.learning.run.PyRunTestsConfigurationProducer
 import java.io.IOException
 
 /**
@@ -41,7 +41,7 @@ import java.io.IOException
 open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : EduTaskCheckerBase(task, envChecker, project) {
 
   override fun createDefaultTestConfigurations(): List<RunnerAndConfigurationSettings> {
-    val producer = RunConfigurationProducer.getInstance(PyCCRunTestsConfigurationProducer::class.java)
+    val producer = RunConfigurationProducer.getInstance(PyRunTestsConfigurationProducer::class.java)
     val taskDir = task.getDir(project.courseDir) ?: return emptyList()
     val testFilePath = task.course.configurator?.testFileName ?: return emptyList()
     val file = taskDir.findFileByRelativePath(testFilePath) ?: return emptyList()
