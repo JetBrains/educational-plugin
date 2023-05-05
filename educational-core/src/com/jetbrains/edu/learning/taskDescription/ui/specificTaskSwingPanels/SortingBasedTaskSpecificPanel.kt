@@ -4,8 +4,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.observable.properties.AtomicProperty
-import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.VerticalFlowLayout
@@ -28,6 +26,7 @@ import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.StyleManager
 import java.awt.Font
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.text.JTextComponent
 import kotlin.math.max
 
 class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
@@ -41,10 +40,9 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
 
   private val codeFont = Font.decode(StyleManager().codeFont)
 
-  private val model: Model
+  private val valueTextComponents = mutableListOf<JTextComponent>()
 
   init {
-    model = Model(task)
     val panel = panel {
       for (index in task.ordering.indices) {
         createOption(task, index)
@@ -127,13 +125,16 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         val optionIndex = task.ordering[index]
         // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER)
         @Suppress("UnstableApiUsage", "DEPRECATION")
-        text(task.options[optionIndex])
-          .bindText(model.getProperty(index))
+
+        val textComponent = text(task.options[optionIndex])
           .verticalAlign(VerticalAlign.CENTER)
           .resizableColumn()
           .apply {
             component.font = Font(codeFont.name, codeFont.style, 13)
           }
+          .component
+
+        valueTextComponents += textComponent
 
 
         // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER) and align(AlignX.RIGHT)
@@ -167,6 +168,20 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     add(actionButton)
   }
 
+  private fun moveUp(task: SortingBasedTask, index: Int) {
+    task.moveOptionUp(index)
+
+    valueTextComponents[index].text = task.options[task.ordering[index]]
+    valueTextComponents[index - 1].text = task.options[task.ordering[index - 1]]
+  }
+
+  private fun moveDown(task: SortingBasedTask, index: Int) {
+    task.moveOptionDown(index)
+
+    valueTextComponents[index].text = task.options[task.ordering[index]]
+    valueTextComponents[index + 1].text = task.options[task.ordering[index + 1]]
+  }
+
   private fun createUpAction(task: SortingBasedTask, index: Int): DumbAwareAction {
     return object : DumbAwareAction(
       EduCoreBundle.lazyMessage("sorting.based.task.move.up"),
@@ -175,10 +190,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
-      override fun actionPerformed(e: AnActionEvent) {
-        task.moveOptionUp(index)
-        model.swapValues(index, index - 1)
-      }
+      override fun actionPerformed(e: AnActionEvent) = moveUp(task, index)
 
       override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = index > 0
@@ -194,30 +206,11 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     ) {
       override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
 
-      override fun actionPerformed(e: AnActionEvent) {
-        task.moveOptionDown(index)
-        model.swapValues(index, index + 1)
-      }
+      override fun actionPerformed(e: AnActionEvent) = moveDown(task, index)
 
       override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = index + 1 < task.options.size
       }
     }
-  }
-
-  private class Model(task: SortingBasedTask) {
-    private val orderedOptions: Array<AtomicProperty<String>> = Array(task.ordering.size) {
-      val optionIndex = task.ordering[it]
-      AtomicProperty(task.options[optionIndex])
-    }
-
-    fun swapValues(i: Int, j: Int) {
-      val s1 = orderedOptions[i].get()
-      val s2 = orderedOptions[j].get()
-      orderedOptions[i].set(s2)
-      orderedOptions[j].set(s1)
-    }
-
-    fun getProperty(index: Int): ObservableMutableProperty<String> = orderedOptions[index]
   }
 }
