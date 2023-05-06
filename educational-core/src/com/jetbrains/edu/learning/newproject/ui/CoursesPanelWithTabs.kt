@@ -29,8 +29,6 @@ class CoursesPanelWithTabs(private val scope: CoroutineScope, private val dispos
   private val sidePanel: CoursesProvidersSidePanel
 
   val languageSettings: LanguageSettings<*>? get() = coursesTab.languageSettings()
-  val locationString get() = coursesTab.locationString()
-  val selectedCourse get() = coursesTab.selectedCourse()
 
   init {
     layout = BorderLayout()

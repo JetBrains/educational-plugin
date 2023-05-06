@@ -22,7 +22,6 @@ class CourseGroupModel {
   private val keyListener: KeyListener = SelectionKeyListener()
 
   var onSelection: () -> Unit = {}
-  var onClick: (Course) -> Boolean = { false }
 
   fun addCourseCard(cardComponent: CourseCardComponent) {
     courseCards.add(cardComponent)
@@ -110,9 +109,6 @@ class CourseGroupModel {
     override fun mouseClicked(event: MouseEvent) {
       if (SwingUtilities.isLeftMouseButton(event)) {
         val cardComponent = getCourseCard(event) ?: return
-        if (onClick(cardComponent.course)) {
-          return
-        }
         IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown {
           IdeFocusManager.getGlobalInstance().requestFocus(cardComponent as Component, true)
         }

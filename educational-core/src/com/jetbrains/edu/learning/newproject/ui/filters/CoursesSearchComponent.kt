@@ -11,7 +11,7 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 class CoursesSearchComponent(
-  val emptySearchText: String,
+  emptySearchText: String,
   val getCoursesGroups: () -> List<CoursesGroup>,
   val updateModel: (List<CoursesGroup>) -> Unit
 ) : JPanel(BorderLayout()) {

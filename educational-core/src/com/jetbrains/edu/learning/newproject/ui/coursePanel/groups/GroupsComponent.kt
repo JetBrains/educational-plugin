@@ -56,9 +56,4 @@ class GroupsComponent(
   fun setSelectionListener(processSelectionChanged: () -> Unit) {
     courseGroupModel.onSelection = processSelectionChanged
   }
-
-  fun setClickListener(onClick: (Course) -> Boolean) {
-    courseGroupModel.onClick = onClick
-  }
-
 }

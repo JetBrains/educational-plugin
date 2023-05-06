@@ -74,10 +74,6 @@ abstract class CoursesListPanel : JPanel(BorderLayout()) {
     groupsComponent.setSelectionListener(processSelectionChanged)
   }
 
-  fun setClickListener(onClick: (Course) -> Boolean) {
-    groupsComponent.setClickListener(onClick)
-  }
-
   fun removeSelection() {
     groupsComponent.removeSelection()
   }
