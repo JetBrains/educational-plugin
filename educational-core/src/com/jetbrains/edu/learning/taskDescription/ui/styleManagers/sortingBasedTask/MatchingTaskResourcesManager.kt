@@ -23,7 +23,7 @@ class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTa
           display = Display.grid
           paddingLeft = 8.px
           gridTemplateColumns = GridTemplateColumns(
-            GridAutoRows.maxContent,
+            GridAutoRows("fit-content(50%)"),
             GridAutoRows.auto
           )
           justifyContent = JustifyContent.stretch
@@ -32,12 +32,15 @@ class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTa
           alignItems = Align.stretch
         }
         ".key" {
-          display = Display.flex
+          display = Display.table
           gridColumn = GridColumn("1")
           padding = "10px 12px 10px 12px"
           background = MatchingTaskUI.Key.background().asCssColor().value
           borderRadius = 4.px
-          alignItems = Align.center
+        }
+        ".keyLabel" {
+          display = Display.tableCell
+          verticalAlign = VerticalAlign.middle
         }
         ".value" {
           gridColumn = GridColumn("2")
