@@ -47,8 +47,10 @@ object MarketplaceNotificationUtils {
 
     notification.addAction(object : AnAction(EduCoreBundle.message("action.install.plugin.in.settings")) {
       override fun actionPerformed(e: AnActionEvent) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(ProjectManager.getInstance().defaultProject,
-                                                          PluginManagerConfigurable::class.java)
+        ShowSettingsUtil.getInstance().showSettingsDialog(
+          ProjectManager.getInstance().defaultProject,
+          PluginManagerConfigurable::class.java
+        )
       }
     })
     notification.notify(null)
@@ -64,7 +66,7 @@ object MarketplaceNotificationUtils {
       override fun actionPerformed(e: AnActionEvent) {
         MarketplaceConnector.getInstance().doAuthorize(Runnable {
           SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
-            MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
+            MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
           }
         })
         notification.notify(project)
@@ -73,29 +75,33 @@ object MarketplaceNotificationUtils {
   }
 
   fun showFailedToFindMarketplaceCourseOnRemoteNotification(project: Project, action: AnAction) {
-    CCNotificationUtils.showErrorNotification(project,
-                                              EduCoreBundle.message("error.failed.to.update"),
-                                              EduCoreBundle.message("marketplace.failed.to.update.no.course"),
-                                              action)
+    CCNotificationUtils.showErrorNotification(
+      project,
+      EduCoreBundle.message("error.failed.to.update"),
+      EduCoreBundle.message("marketplace.failed.to.update.no.course"),
+      action
+    )
   }
 
   fun showAcceptDeveloperAgreementNotification(project: Project, action: () -> AnAction) {
-    CCNotificationUtils.showErrorNotification(project,
-                                              EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
-                                              EduCoreBundle.message("marketplace.plugin.development.agreement.not.accepted"),
-                                              action()
+    CCNotificationUtils.showErrorNotification(
+      project,
+      EduCoreBundle.message("notification.course.creator.failed.to.upload.course.title"),
+      EduCoreBundle.message("marketplace.plugin.development.agreement.not.accepted"),
+      action()
     )
   }
 
   fun showNoRightsToUpdateNotification(project: Project, course: EduCourse, action: () -> Unit) {
     CCNotificationUtils.showErrorNotification(project,
-                                              EduCoreBundle.message("notification.course.creator.access.denied.title"),
-                                              EduCoreBundle.message("notification.course.creator.access.denied.content"),
-                                              NotificationAction.createSimpleExpiring(
-                                                EduCoreBundle.message("notification.course.creator.access.denied.action")) {
-                                                course.convertToLocal()
-                                                action()
-                                              })
+      EduCoreBundle.message("notification.course.creator.access.denied.title"),
+      EduCoreBundle.message("notification.course.creator.access.denied.content"),
+      NotificationAction.createSimpleExpiring(
+        EduCoreBundle.message("notification.course.creator.access.denied.action")
+      ) {
+        course.convertToLocal()
+        action()
+      })
   }
 
   fun showFailedToPushCourseNotification(project: Project, courseName: String) {

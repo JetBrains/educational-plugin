@@ -30,8 +30,10 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   private val LOG = Logger.getInstance(HyperskillOpenInIdeRequestHandler::class.java)
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("hyperskill.loading.project")
 
-  override fun openInExistingProject(request: HyperskillOpenRequest,
-                                     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
+  override fun openInExistingProject(
+    request: HyperskillOpenRequest,
+    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
+  ): Boolean {
     val (project, course) = findExistingProject(findProject, request) ?: return false
     val hyperskillCourse = course as HyperskillCourse
     when (request) {
@@ -67,8 +69,10 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     return true
   }
 
-  private fun findExistingProject(findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
-                                  request: HyperskillOpenRequest): Pair<Project, Course>? {
+  private fun findExistingProject(
+    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?,
+    request: HyperskillOpenRequest
+  ): Pair<Project, Course>? {
     val projectId = request.projectId
     return when (request) {
       is HyperskillOpenStageRequest -> findProject { it.matchesById(projectId) }
@@ -83,14 +87,18 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
   }
 
   private fun Course.isHyperskillProblemsCourse(hyperskillLanguage: String) =
-    this is HyperskillCourse && name in listOf(getProblemsProjectName(hyperskillLanguage),
-                                               getLegacyProblemsProjectName(hyperskillLanguage))
+    this is HyperskillCourse && name in listOf(
+      getProblemsProjectName(hyperskillLanguage),
+      getLegacyProblemsProjectName(hyperskillLanguage)
+    )
 
   private fun Course.matchesById(projectId: Int) = this is HyperskillCourse && hyperskillProject?.id == projectId
 
-  fun createHyperskillCourse(request: HyperskillOpenRequest,
-                             hyperskillLanguage: String,
-                             hyperskillProject: HyperskillProject): Result<HyperskillCourse, CourseValidationResult> {
+  fun createHyperskillCourse(
+    request: HyperskillOpenRequest,
+    hyperskillLanguage: String,
+    hyperskillProject: HyperskillProject
+  ): Result<HyperskillCourse, CourseValidationResult> {
     val eduLanguage = HyperskillLanguages.getEduLanguage(hyperskillLanguage)
                       ?: return Err(ValidationErrorMessage(EduCoreBundle.message("hyperskill.unsupported.language", hyperskillLanguage)))
 
@@ -291,14 +299,14 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
 
     val task = course.getProblem(stepId) ?: return
     val tasks = task.lesson.taskList
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground(course, tasks, true)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
   }
 
   private fun synchronizeProjectOnStageOpening(project: Project, course: HyperskillCourse, tasks: List<Task>) {
     if (isUnitTestMode) {
       return
     }
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground(course, tasks, true)
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground(course, tasks, true)
     HyperskillStartupActivity.synchronizeTopics(project, course)
   }
 }

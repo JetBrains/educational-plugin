@@ -38,15 +38,27 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private var futures: Map<Int, Future<Boolean>> = HashMap()
 
-  open fun loadSolutionsInForeground() {
+  open fun loadSolutionsInBackground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
-    computeUnderProgress(project, EduCoreBundle.message("update.loading.submissions")) { loadAndApplySolutions(course, it) }
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
+      project,
+      EduCoreBundle.message("update.loading.submissions")
+    ) {
+      override fun run(progressIndicator: ProgressIndicator) {
+        loadAndApplySolutions(course, progressIndicator)
+      }
+    })
   }
 
-  fun loadSolutionsInForeground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
-    computeUnderProgress(project, EduCoreBundle.message("update.loading.submissions")) {
-      loadAndApplySolutions(course, tasksToUpdate, it, force)
-    }
+  fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
+    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
+      project,
+      EduCoreBundle.message("update.loading.submissions")
+    ) {
+      override fun run(progressIndicator: ProgressIndicator) {
+        loadAndApplySolutions(course, tasksToUpdate, progressIndicator, force)
+      }
+    })
   }
 
   @VisibleForTesting
@@ -55,10 +67,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     loadAndApplySolutions(course, course.allTasks, progressIndicator)
   }
 
-  private fun loadAndApplySolutions(course: Course,
-                                    tasksToUpdate: List<Task>,
-                                    progressIndicator: ProgressIndicator?,
-                                    force: Boolean = false) {
+  private fun loadAndApplySolutions(
+    course: Course,
+    tasksToUpdate: List<Task>,
+    progressIndicator: ProgressIndicator?,
+    force: Boolean = false
+  ) {
     val submissions = if (progressIndicator != null) {
       ApplicationUtil.runWithCheckCanceled(Callable { loadSubmissions(tasksToUpdate) }, progressIndicator)
     }
@@ -75,11 +89,13 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     }
   }
 
-  protected open fun updateTasks(course: Course,
-                                 tasks: List<Task>,
-                                 submissions: List<Submission>,
-                                 progressIndicator: ProgressIndicator?,
-                                 force: Boolean = false) {
+  protected open fun updateTasks(
+    course: Course,
+    tasks: List<Task>,
+    submissions: List<Submission>,
+    progressIndicator: ProgressIndicator?,
+    force: Boolean = false
+  ) {
     progressIndicator?.isIndeterminate = false
     cancelUnfinishedTasks()
     val tasksToUpdate = tasks.filter { task -> task.hasSolutions() }
@@ -146,8 +162,10 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
         // Suppression is needed here because DialogTitleCapitalization is demanded by the superclass constructor,
         // but the plugin naming with the capital letters used in the notification title
         @Suppress("DialogTitleCapitalization")
-        UpdateNotification(EduCoreBundle.message("notification.update.plugin.title"),
-                           EduCoreBundle.message("notification.update.plugin.apply.solutions.content")).notify(project)
+        UpdateNotification(
+          EduCoreBundle.message("notification.update.plugin.title"),
+          EduCoreBundle.message("notification.update.plugin.apply.solutions.content")
+        ).notify(project)
       }
       EduUtils.synchronize()
       ProjectView.getInstance(project).refresh()
@@ -262,10 +280,12 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
       return solutionDate.isSignificantlyAfter(localTaskModificationDate)
     }
 
-    private fun applySolutions(project: Project,
-                               task: Task,
-                               taskSolutions: TaskSolutions,
-                               force: Boolean) {
+    private fun applySolutions(
+      project: Project,
+      task: Task,
+      taskSolutions: TaskSolutions,
+      force: Boolean
+    ) {
       invokeLater {
         if (project.isDisposed) return@invokeLater
         task.status = taskSolutions.checkStatus

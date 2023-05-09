@@ -18,7 +18,10 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceOpenCourseRequest>() {
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("action.get.course.loading")
 
-  override fun openInExistingProject(request: MarketplaceOpenCourseRequest, findProject: ((Course) -> Boolean) -> Pair<Project, Course>?): Boolean {
+  override fun openInExistingProject(
+    request: MarketplaceOpenCourseRequest,
+    findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
+  ): Boolean {
     val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return false
     val marketplaceCourse = course as? EduCourse ?: return false
     synchronizeCourse(project, marketplaceCourse)
@@ -47,6 +50,6 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     }
     course.checkForUpdates(project, true) {}
 
-    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInForeground()
+    MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
   }
 }

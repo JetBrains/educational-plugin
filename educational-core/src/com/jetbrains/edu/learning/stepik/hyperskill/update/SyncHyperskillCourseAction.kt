@@ -14,8 +14,10 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
-class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("hyperskill.update.project"),
-                                                    EduCoreBundle.lazyMessage("hyperskill.update.project"), null) {
+class SyncHyperskillCourseAction : SyncCourseAction(
+  EduCoreBundle.lazyMessage("hyperskill.update.project"),
+  EduCoreBundle.lazyMessage("hyperskill.update.project"), null
+) {
 
   override val loginWidgetText: String
     get() = EduCoreBundle.message("hyperskill.action.synchronize.project")
@@ -28,7 +30,7 @@ class SyncHyperskillCourseAction : SyncCourseAction(EduCoreBundle.lazyMessage("h
       }
     }
 
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInForeground()
+    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }

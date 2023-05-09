@@ -17,10 +17,10 @@ import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.isVersionCompatible
 
 class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) {
-  override fun loadSolutionsInForeground() {
+  override fun loadSolutionsInBackground() {
     MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
       if (isLoggedIn) {
-        super.loadSolutionsInForeground()
+        super.loadSolutionsInBackground()
       }
     }
   }
@@ -32,12 +32,16 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
     if (!isVersionCompatible(formatVersion)) return TaskSolutions.INCOMPATIBLE
 
     if (lastSubmission !is MarketplaceSubmission)
-      error("Marketplace submission ${lastSubmission.id} for task ${task.name} is not instance " +
-            "of ${MarketplaceSubmission::class.simpleName} class")
+      error(
+        "Marketplace submission ${lastSubmission.id} for task ${task.name} is not instance " +
+        "of ${MarketplaceSubmission::class.simpleName} class"
+      )
 
     if (lastSubmission.courseVersion != task.course.marketplaceCourseVersion) {
-      LOG.info("Marketplace submission ${lastSubmission.id} for task ${task.name} is not up to date. " +
-               "Submission course version: ${lastSubmission.courseVersion}, course version: ${task.course.marketplaceCourseVersion}")
+      LOG.info(
+        "Marketplace submission ${lastSubmission.id} for task ${task.name} is not up to date. " +
+        "Submission course version: ${lastSubmission.courseVersion}, course version: ${task.course.marketplaceCourseVersion}"
+      )
       return TaskSolutions.INCOMPATIBLE
     }
 
@@ -45,6 +49,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
       when (task) {
         is TheoryTask,
         is ChoiceTask -> emptyMap()
+
         is EduTask -> lastSubmission.eduTaskFiles()
         else -> {
           LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
