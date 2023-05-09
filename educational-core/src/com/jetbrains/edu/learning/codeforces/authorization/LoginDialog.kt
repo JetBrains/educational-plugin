@@ -8,6 +8,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames
 import com.jetbrains.edu.learning.codeforces.CodeforcesSettings
@@ -25,20 +26,27 @@ class LoginDialog(private val authorizationPlace: AuthorizationPlace) : DialogWr
     title = EduCoreBundle.message("dialog.title.login.to", CodeforcesNames.CODEFORCES_TITLE)
     setOKButtonText(EduCoreBundle.message("course.dialog.button.login"))
     loginField.emptyText.text = EduCoreBundle.message("label.enter.handle.or.email")
-    isResizable = false
     init()
   }
 
   override fun createCenterPanel(): JComponent {
     return panel {
       row("${EduCoreBundle.message("label.handle.email")}:") {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(loginField)
           .columns(COLUMNS_MEDIUM)
+          .horizontalAlign(HorizontalAlign.FILL)
           .focused()
       }
       row("${EduCoreBundle.message("label.password")}:") {
+        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
+        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(passwordField)
           .columns(COLUMNS_MEDIUM)
+          // Only `.columns(COLUMNS_MEDIUM)` doesn't produce the same width of password and login fields on Windows.
+          // Most likely, it's because of different dot symbol width on different OS
+          .horizontalAlign(HorizontalAlign.FILL)
       }
     }
   }
