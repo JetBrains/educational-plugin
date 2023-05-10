@@ -206,6 +206,15 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
    */
   fun getLanguageSettings(): LanguageSettings<Settings>
 
+  /**
+   * Provides default course project settings for the particular course type.
+   * It's supposed to be used when course project is created without UI (for example, preparing course for Remove Development)
+   *
+   * If it's not possible to provide settings, returns [Err] with the corresponding reason
+   */
+  fun getDefaultSettings(): Result<Settings, String> =
+    Err("Can't provide default project settings. `getDefaultSettings` is not implemented for `${javaClass.name}`")
+
   fun getSupportedLanguageVersions(): List<String> = emptyList()
 
   fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Settings>? = null

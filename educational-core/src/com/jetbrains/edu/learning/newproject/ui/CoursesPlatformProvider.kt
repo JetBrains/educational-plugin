@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.util.ui.UIUtil
@@ -65,12 +66,12 @@ abstract class CoursesPlatformProvider {
       courseMode: CourseMode,
       component: JPanel?,
       errorHandler: (ErrorState) -> Unit
-    ) {
+    ): Project? {
       val (course, location, projectSettings) = courseInfo
 
       // location is null for course preview dialog only
       if (location == null) {
-        return
+        return null
       }
 
       val configurator = course.configurator
@@ -92,11 +93,13 @@ abstract class CoursesPlatformProvider {
           if (project != null) {
             CoursesStorage.getInstance().addCourse(course, location)
           }
+          return project
         }
         catch (e: CourseCantBeStartedException) {
           errorHandler(e.error)
         }
       }
+      return null
     }
   }
 }

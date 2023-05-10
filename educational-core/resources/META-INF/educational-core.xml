@@ -197,6 +197,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+
+    <appStarter id="createCourse" implementation="com.jetbrains.edu.learning.EduCourseCreatorAppStarter"/>
+
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
                         testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
