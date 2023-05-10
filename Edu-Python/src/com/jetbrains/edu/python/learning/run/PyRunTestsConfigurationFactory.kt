@@ -1,28 +1,14 @@
-package com.jetbrains.edu.python.learning.run;
+package com.jetbrains.edu.python.learning.run
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationType
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.openapi.project.Project
 
-public class PyRunTestsConfigurationFactory extends ConfigurationFactory {
-  @NonNls
-  public static final String CONFIGURATION_ID = "Run Study Tests";
-
-  protected PyRunTestsConfigurationFactory(@NotNull ConfigurationType type) {
-    super(type);
+class PyRunTestsConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type) {
+  override fun createTemplateConfiguration(project: Project): RunConfiguration {
+    return PyCCRunTestConfiguration(project, this)
   }
 
-  @NotNull
-  @Override
-  public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-    return new PyCCRunTestConfiguration(project, this);
-  }
-
-  @Override
-  public @NotNull String getId() {
-    return CONFIGURATION_ID;
-  }
+  override fun getId(): String = "Run Study Tests"
 }
