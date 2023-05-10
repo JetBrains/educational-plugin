@@ -76,15 +76,17 @@ class PyCommandLineState private constructor(
 
       val pathToTest = configuration.pathToTest ?: return logAndQuit("Failed to find path to test")
 
-      val testsFile = LocalFileSystem.getInstance().findFileByPath(pathToTest)
-                      ?: return logAndQuit("Failed to find $pathToTest")
+      val testsFile = LocalFileSystem.getInstance().findFileByPath(pathToTest) ?: return logAndQuit("Failed to find $pathToTest")
 
       val task = testsFile.getContainingTask(configuration.project)
                  ?: return logAndQuit("Failed to find task for `${testsFile.path}`")
 
-      val taskDir = task.getDir(configuration.project.courseDir) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
+      val taskDir = task.getDir(configuration.project.courseDir)
+                    ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
 
-      if (configuration.sdk == null) return logAndQuit("Python SDK should not be null while creating instance of PyCCCommandLineState")
+      if (configuration.sdk == null) {
+        return logAndQuit("Python SDK should not be null while creating instance of PyCCCommandLineState")
+      }
       return PyCommandLineState(configuration, environment, task, taskDir)
     }
   }
