@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.checker.TestsOutputParser.TestMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor
 import org.jetbrains.annotations.Nls
 
-class PyCCTestEventsConverter(
+class PyTestEventsConverter(
   testFrameworkName: String,
   consoleProperties: TestConsoleProperties
 ) : OutputToGeneralTestEventsConverter(testFrameworkName, consoleProperties) {

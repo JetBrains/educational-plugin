@@ -15,9 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.python.learning.PyConfigurator
 
-class PyRunTestsConfigurationProducer : LazyRunConfigurationProducer<PyCCRunTestConfiguration>() {
+class PyRunTestsConfigurationProducer : LazyRunConfigurationProducer<PyRunTestConfiguration>() {
   override fun setupConfigurationFromContext(
-    configuration: PyCCRunTestConfiguration,
+    configuration: PyRunTestConfiguration,
     context: ConfigurationContext,
     sourceElement: Ref<PsiElement>
   ): Boolean {
@@ -34,7 +34,7 @@ class PyRunTestsConfigurationProducer : LazyRunConfigurationProducer<PyCCRunTest
     return PyRunTestsConfigurationType.getInstance().configurationFactories[0]
   }
 
-  override fun isConfigurationFromContext(configuration: PyCCRunTestConfiguration, context: ConfigurationContext): Boolean {
+  override fun isConfigurationFromContext(configuration: PyRunTestConfiguration, context: ConfigurationContext): Boolean {
     val path = getTestPath(context)
     return path != null && path == configuration.pathToTest
   }

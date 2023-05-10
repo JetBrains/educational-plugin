@@ -22,12 +22,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PyCCRunTestConfiguration extends PythonRunConfiguration {
+public class PyRunTestConfiguration extends PythonRunConfiguration {
   public static final String PATH_ATTR = "studyTest";
   private final Project myProject;
   private String myPathToTest;
 
-  public PyCCRunTestConfiguration(Project project, ConfigurationFactory factory) {
+  public PyRunTestConfiguration(Project project, ConfigurationFactory factory) {
     super(project, factory);
     myProject = project;
   }
@@ -35,12 +35,12 @@ public class PyCCRunTestConfiguration extends PythonRunConfiguration {
   @Nullable
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
-    return PyCCCommandLineState.createInstance(this, environment);
+    return PyCommandLineState.createInstance(this, environment);
   }
 
   @Override
-  protected SettingsEditor<PyCCRunTestConfiguration> createConfigurationEditor() {
-    return new PyCCSettingsEditor(myProject);
+  protected SettingsEditor<PyRunTestConfiguration> createConfigurationEditor() {
+    return new PySettingsEditor(myProject);
   }
 
   public String getPathToTest() {

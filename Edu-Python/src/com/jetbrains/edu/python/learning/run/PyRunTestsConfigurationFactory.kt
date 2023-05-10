@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 
 class PyRunTestsConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type) {
   override fun createTemplateConfiguration(project: Project): RunConfiguration {
-    return PyCCRunTestConfiguration(project, this)
+    return PyRunTestConfiguration(project, this)
   }
 
   override fun getId(): String = "Run Study Tests"

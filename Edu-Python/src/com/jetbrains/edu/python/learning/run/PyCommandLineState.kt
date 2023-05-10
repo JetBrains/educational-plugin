@@ -34,8 +34,8 @@ import com.jetbrains.python.run.PythonScriptExecution
 import com.jetbrains.python.run.target.HelpersAwareTargetEnvironmentRequest
 import java.util.function.Function
 
-class PyCCCommandLineState private constructor(
-  private val runConfiguration: PyCCRunTestConfiguration,
+class PyCommandLineState private constructor(
+  private val runConfiguration: PyRunTestConfiguration,
   env: ExecutionEnvironment,
   private val task: Task,
   private val taskDir: VirtualFile
@@ -106,11 +106,11 @@ class PyCCCommandLineState private constructor(
   }
 
   companion object {
-    private val LOG = Logger.getInstance(PyCCCommandLineState::class.java)
+    private val LOG = Logger.getInstance(PyCommandLineState::class.java)
 
     @JvmStatic
-    fun createInstance(configuration: PyCCRunTestConfiguration, environment: ExecutionEnvironment): PyCCCommandLineState? {
-      fun logAndQuit(error: String): PyCCCommandLineState? {
+    fun createInstance(configuration: PyRunTestConfiguration, environment: ExecutionEnvironment): PyCommandLineState? {
+      fun logAndQuit(error: String): PyCommandLineState? {
         LOG.warn(error)
         return null
       }
@@ -124,7 +124,7 @@ class PyCCCommandLineState private constructor(
       val taskDir = task.getDir(configuration.project.courseDir) ?: return logAndQuit("Failed to get task dir for `${task.name}` task")
 
       if (configuration.sdk == null) return logAndQuit("Python SDK should not be null while creating instance of PyCCCommandLineState")
-      return PyCCCommandLineState(configuration, environment, task, taskDir)
+      return PyCommandLineState(configuration, environment, task, taskDir)
     }
   }
 }

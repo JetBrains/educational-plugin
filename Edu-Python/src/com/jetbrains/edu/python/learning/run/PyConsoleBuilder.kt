@@ -38,6 +38,6 @@ class PyCCConsoleProperties(
   override fun createTestEventsConverter(
     testFrameworkName: String,
     consoleProperties: TestConsoleProperties
-  ): OutputToGeneralTestEventsConverter = PyCCTestEventsConverter(testFrameworkName, consoleProperties)
+  ): OutputToGeneralTestEventsConverter = PyTestEventsConverter(testFrameworkName, consoleProperties)
 }
 
