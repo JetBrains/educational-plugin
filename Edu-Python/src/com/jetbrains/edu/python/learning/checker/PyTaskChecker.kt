@@ -7,7 +7,6 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.testframework.sm.runner.SMTestProxy
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -26,7 +25,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.python.learning.getCurrentTaskVirtualFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
@@ -104,16 +102,6 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     }
 
     return errorOutput.toString().nullize()
-  }
-
-  override fun onTaskFailed() {
-    super.onTaskFailed()
-    ApplicationManager.getApplication().invokeLater {
-      val taskDir = task.getDir(project.courseDir)
-      if (taskDir == null) return@invokeLater
-      val eduState = project.eduState ?: return@invokeLater
-      CheckUtils.navigateToFailedPlaceholder(eduState, task, taskDir, project)
-    }
   }
 
   companion object {

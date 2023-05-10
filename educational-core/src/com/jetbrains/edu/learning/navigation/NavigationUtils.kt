@@ -154,16 +154,6 @@ object NavigationUtils {
   }
 
   @JvmStatic
-  fun navigateToFirstFailedAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
-    editor.project ?: return
-    for (answerPlaceholder in taskFile.answerPlaceholders) {
-      if (answerPlaceholder.status != CheckStatus.Failed || !answerPlaceholder.isVisible) continue
-      navigateToAnswerPlaceholder(editor, answerPlaceholder)
-      break
-    }
-  }
-
-  @JvmStatic
   fun navigateToAnswerPlaceholder(editor: Editor, answerPlaceholder: AnswerPlaceholder) {
     if (editor.isDisposed) return
     val offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder)

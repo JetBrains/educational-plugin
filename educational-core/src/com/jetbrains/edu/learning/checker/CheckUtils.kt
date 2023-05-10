@@ -7,33 +7,34 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.impl.ExecutionManagerImpl
-import com.intellij.execution.process.*
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.testframework.sm.runner.SMTRunnerEventsListener
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstFailedAnswerPlaceholder
+import com.jetbrains.edu.learning.runReadActionInSmartMode
+import com.jetbrains.edu.learning.toPsiFile
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -50,43 +51,8 @@ object CheckUtils {
     EXECUTION_ERROR_MESSAGE
   )
 
-  private fun hasFailedAnswerPlaceholders(taskFile: TaskFile): Boolean {
-    return taskFile.answerPlaceholders.isNotEmpty() && taskFile.hasFailedPlaceholders()
-  }
-
-  fun navigateToFailedPlaceholder(eduState: EduState, task: Task, taskDir: VirtualFile, project: Project) {
-    val selectedTaskFile = eduState.taskFile
-    var editor = eduState.editor
-    var taskFileToNavigate = selectedTaskFile
-    var fileToNavigate = eduState.virtualFile
-    if (!hasFailedAnswerPlaceholders(selectedTaskFile)) {
-      for ((_, taskFile) in task.taskFiles) {
-        if (hasFailedAnswerPlaceholders(taskFile)) {
-          taskFileToNavigate = taskFile
-          val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-          val fileEditor = virtualFile.getEditor(project) ?: continue
-          editor = fileEditor
-          fileToNavigate = virtualFile
-          break
-        }
-      }
-    }
-    FileEditorManager.getInstance(project).openFile(fileToNavigate, true)
-    ApplicationManager.getApplication().invokeLater {
-      IdeFocusManager.getInstance(project).requestFocus(editor.contentComponent, true)
-    }
-    navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate)
-  }
-
   fun fillWithIncorrect(message: String): String =
     message.nullize(nullizeSpaces = true) ?: EduCoreBundle.message("check.incorrect")
-
-  fun flushWindows(task: Task, taskDir: VirtualFile) {
-    for ((_, taskFile) in task.taskFiles) {
-      val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
-      EduUtils.flushWindows(taskFile, virtualFile)
-    }
-  }
 
   fun createDefaultRunConfiguration(project: Project, task: Task): RunnerAndConfigurationSettings? {
     val taskFile = task.getCodeTaskFile(project) ?: return null
