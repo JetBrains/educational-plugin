@@ -22,12 +22,12 @@ class PyCCConsoleBuilder(
   override fun setViewer(isViewer: Boolean) {}
 
   override fun getConsole(): ConsoleView {
-    val consoleProperties = PyCCConsoleProperties(config, executor)
+    val consoleProperties = PyConsoleProperties(config, executor)
     return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties)
   }
 }
 
-class PyCCConsoleProperties(
+class PyConsoleProperties(
   config: RunConfiguration,
   executor: Executor
 ) : SMTRunnerConsoleProperties(config, TEST_FRAMEWORK_NAME, executor), SMCustomMessagesParsing {
