@@ -1,43 +1,21 @@
-package com.jetbrains.edu.python.learning.run;
+package com.jetbrains.edu.python.learning.run
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.icons.AllIcons;
-import com.jetbrains.edu.python.learning.messages.EduPythonBundle;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationType
+import com.intellij.icons.AllIcons
+import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
+import javax.swing.Icon
 
-import javax.swing.*;
+class PyRunTestsConfigurationType : ConfigurationType {
+  override fun getDisplayName(): String = message("tests.study.run")
 
-public class PyRunTestsConfigurationType implements ConfigurationType {
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return EduPythonBundle.message("tests.study.run");
-  }
+  override fun getConfigurationTypeDescription(): String = message("tests.study.runner")
 
-  @Override
-  public String getConfigurationTypeDescription() {
-    return EduPythonBundle.message("tests.study.runner");
-  }
+  override fun getIcon(): Icon = AllIcons.Actions.Lightning
 
-  @Override
-  public Icon getIcon() {
-    return AllIcons.Actions.Lightning;
-  }
+  override fun getId(): String = "ccruntests"
 
-  @NotNull
-  @Override
-  public String getId() {
-    return "ccruntests";
-  }
-
-  @Override
-  public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{new PyRunTestsConfigurationFactory(this)};
-  }
-
-  public static PyRunTestsConfigurationType getInstance() {
-    return ConfigurationTypeUtil.findConfigurationType(PyRunTestsConfigurationType.class);
+  override fun getConfigurationFactories(): Array<ConfigurationFactory> {
+    return arrayOf(PyRunTestsConfigurationFactory(this))
   }
 }

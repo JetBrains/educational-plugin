@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.learning.run
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.runConfigurationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
@@ -31,7 +32,7 @@ class PyRunTestsConfigurationProducer : LazyRunConfigurationProducer<PyRunTestCo
   }
 
   override fun getConfigurationFactory(): ConfigurationFactory {
-    return PyRunTestsConfigurationType.getInstance().configurationFactories[0]
+    return runConfigurationType<PyRunTestsConfigurationType>().configurationFactories[0]
   }
 
   override fun isConfigurationFromContext(configuration: PyRunTestConfiguration, context: ConfigurationContext): Boolean {
