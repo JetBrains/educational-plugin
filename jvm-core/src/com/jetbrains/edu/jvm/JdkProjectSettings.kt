@@ -5,13 +5,20 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 
@@ -54,9 +61,38 @@ class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjec
 
     private val LOG = logger<JdkProjectSettings>()
 
+    private const val DEFAULT_JDK_PROPERTY: String = "project.jdk"
+    private const val DEFAULT_JDK_NAME_PROPERTY: String = "project.jdk.name"
+
+    private const val DEFAULT_JDK_NAME: String = "jdk"
+
     fun emptySettings(): JdkProjectSettings {
       val configurable = ProjectStructureConfigurable.getInstance(ProjectManager.getInstance().defaultProject)
       return JdkProjectSettings(configurable.projectJdksModel, null)
+    }
+
+    fun defaultSettings(): Result<JdkProjectSettings, String> {
+      // Use `EnvironmentService` instead to get default JDK path and name
+      val jdkPath = System.getProperty(DEFAULT_JDK_PROPERTY) ?: return Err("Failed to find jdk because `$DEFAULT_JDK_PROPERTY` system property is not provided")
+      val jdkName = System.getProperty(DEFAULT_JDK_NAME_PROPERTY, DEFAULT_JDK_NAME)
+
+      var jdk = ProjectJdkTable.getInstance().findJdk(jdkName)
+
+      if (jdk == null) {
+        val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(jdkPath)
+        if (jdkHomeDir == null) {
+          return Err("$jdkPath doesn't exist")
+        }
+        jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, jdkName)
+        if (jdk == null) {
+          return Err("Failed to create JDK for $jdkPath")
+        }
+      }
+
+      val sdksModel = ProjectSdksModel()
+      sdksModel.addSdk(jdk)
+
+      return Ok(JdkProjectSettings(sdksModel, jdk))
     }
   }
 }

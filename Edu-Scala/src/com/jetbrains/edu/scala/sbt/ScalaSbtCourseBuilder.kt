@@ -14,6 +14,7 @@ import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -27,6 +28,8 @@ class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
   override val testTemplateName: String = ScalaSbtConfigurator.TEST_SCALA
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
+
+  override fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings> {
     return ScalaSbtCourseProjectGenerator(this, course)

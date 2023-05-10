@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import org.jetbrains.annotations.NonNls
@@ -35,6 +36,8 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   }
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
+
+  override fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)
