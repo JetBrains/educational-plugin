@@ -60,7 +60,7 @@ class CodeforcesCoursesPanel(
   }
 
   override fun tabDescription(): String {
-    val linkText = """<a href="${CodeforcesNames.CODEFORCES_URL}">${CodeforcesNames.CODEFORCES_TITLE}</a>"""
+    val linkText = """<a href="${CodeforcesNames.CODEFORCES_HELP}">${CodeforcesNames.CODEFORCES_TITLE}</a>"""
     return EduCoreBundle.message("codeforces.courses.description", linkText)
   }
 

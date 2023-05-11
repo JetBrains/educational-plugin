@@ -14,6 +14,6 @@ public class LearnMoreAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    EduBrowser.getInstance().browse("https://www.jetbrains.com/help/education/educational-products.html");
+    EduBrowser.getInstance().browse("https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/jetbrains-academy-plugin.html");
   }
 }

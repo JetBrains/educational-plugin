@@ -34,7 +34,7 @@ Please submit your issues to the JetBrains Academy tracker on [YouTrack](https:/
 * This plugin comes with integration with [JetBrains Academy on Hyperskill](https://hi.hyperskill.org/how-we-teach), a hands-on platform for learning to program.
 * You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html).
 
-[plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-edutools?style=flat-square
-[plugin-downloads-svg]: https://img.shields.io/jetbrains/plugin/d/10081-edutools?style=flat-square
-[plugin-rating-svg]: https://img.shields.io/jetbrains/plugin/r/rating/10081-edutools?style=flat-square
-[plugin-repo]: https://plugins.jetbrains.com/plugin/10081-edutools
+[plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-jetbrains-academy?style=flat-square
+[plugin-downloads-svg]: https://img.shields.io/jetbrains/plugin/d/10081-jetbrains-academy?style=flat-square
+[plugin-rating-svg]: https://img.shields.io/jetbrains/plugin/r/rating/10081-jetbrains-academy?style=flat-square
+[plugin-repo]: https://plugins.jetbrains.com/plugin/10081-jetbrains-academy

@@ -15,7 +15,7 @@ const val HYPERSKILL_DEFAULT_URL = "https://hyperskill.org/"
 const val HYPERSKILL_DEFAULT_HOST = "hyperskill.org"
 const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
 const val JBA_DEFAULT_URL = "https://www.jetbrains.com/academy/"
-const val JBA_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-edutools/docs/jetbrains-academy.html"
+const val JBA_HELP = "${MARKETPLACE_PLUGIN_URL}/10081-jetbrains-academy/docs/jetbrains-academy-on-hyperskill.html"
 const val HYPERSKILL_COMMENT_ANCHOR = "#comment"
 const val HYPERSKILL_SOLUTIONS_ANCHOR = "#solutions"
 

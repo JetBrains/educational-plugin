@@ -19,7 +19,7 @@ public final class CheckiONames {
 
   @NonNls public static final String CHECKIO_TEST_FORM_TARGET_PATH = "/mission/check-html-output";
 
-  @NonNls public static final String CHECKIO_HELP = MARKETPLACE_PLUGIN_URL + "/10081-edutools/docs/checkio-integration.html";
+  @NonNls public static final String CHECKIO_HELP = MARKETPLACE_PLUGIN_URL + "/10081-jetbrains-academy/docs/checkio-integration.html";
 
   @NonNls public static final String PY_CHECKIO_PREFIX = "Py";
   @NonNls public static final String PY_CHECKIO = PY_CHECKIO_PREFIX+ " " + CHECKIO;
