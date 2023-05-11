@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task.Backgroundable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
@@ -40,10 +41,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   open fun loadSolutionsInBackground() {
     val course = StudyTaskManager.getInstance(project).course ?: return
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
-      project,
-      EduCoreBundle.message("update.loading.submissions")
-    ) {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.submissions")) {
       override fun run(progressIndicator: ProgressIndicator) {
         loadAndApplySolutions(course, progressIndicator)
       }
@@ -51,10 +49,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
   }
 
   fun loadSolutionsInBackground(course: Course, tasksToUpdate: List<Task>, force: Boolean) {
-    ProgressManager.getInstance().run(object : com.intellij.openapi.progress.Task.Backgroundable(
-      project,
-      EduCoreBundle.message("update.loading.submissions")
-    ) {
+    ProgressManager.getInstance().run(object : Backgroundable(project, EduCoreBundle.message("update.loading.submissions")) {
       override fun run(progressIndicator: ProgressIndicator) {
         loadAndApplySolutions(course, tasksToUpdate, progressIndicator, force)
       }
