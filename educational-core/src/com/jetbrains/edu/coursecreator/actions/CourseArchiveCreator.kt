@@ -16,7 +16,6 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -26,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.ZipUtil
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils
 import com.jetbrains.edu.coursecreator.CCUtils.generateArchiveFolder
+import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.*
@@ -164,7 +164,7 @@ class CourseArchiveCreator(
    * @return null when course archive was created successfully, non-empty error message otherwise
    */
   fun createArchive(): String? {
-    FileDocumentManager.getInstance().saveAllDocuments()
+    saveOpenedDocuments(project)
     return ApplicationManager.getApplication().runWriteAction<String>(this)
   }
 

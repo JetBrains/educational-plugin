@@ -14,6 +14,7 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProgressManager
@@ -128,6 +129,11 @@ object CCUtils {
     }
     folder?.refresh(false, true)
     return folder
+  }
+
+  fun saveOpenedDocuments(project: Project) {
+    val openDocuments = FileEditorManager.getInstance(project).openFiles.mapNotNull { FileDocumentManager.getInstance().getDocument(it) }
+    openDocuments.forEach { FileDocumentManager.getInstance().saveDocument(it) }
   }
 
   @JvmStatic
