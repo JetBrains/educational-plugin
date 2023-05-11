@@ -51,7 +51,6 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
           file("task.md")
         }
       }
-      file("test_helper.py")
     }
 
     expectedFileTree.assertEquals(rootDir)

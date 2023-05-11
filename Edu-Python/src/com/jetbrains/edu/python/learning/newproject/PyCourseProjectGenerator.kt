@@ -10,8 +10,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
@@ -23,19 +21,11 @@ import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PySdkToInstall
 import com.jetbrains.python.sdk.associateWithModule
 import com.jetbrains.python.sdk.createSdkByGenerateTask
-import java.io.IOException
 
 open class PyCourseProjectGenerator(
   builder: EduCourseBuilder<PyProjectSettings>,
   course: Course
 ) : CourseProjectGenerator<PyProjectSettings>(builder, course) {
-  @Throws(IOException::class)
-  override fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
-    val testHelper = EduNames.TEST_HELPER
-    if (holder.courseDir.findChild(testHelper) != null) return
-    val templateText = getInternalTemplateText("test_helper")
-    createChildFile(holder, holder.courseDir, testHelper, templateText, true)
-  }
 
   override fun afterProjectGenerated(project: Project, projectSettings: PyProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)

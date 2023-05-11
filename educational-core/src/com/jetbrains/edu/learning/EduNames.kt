@@ -12,7 +12,6 @@ object EduNames {
   const val COURSE = "course"
   const val ITEM = "item"
   const val PROJECT = "project"
-  const val TEST_HELPER = "test_helper.py"
   const val COURSE_META_FILE = "course.json"
   const val ADDITIONAL_MATERIALS = "Edu additional materials"
   const val PROJECT_NAME = "PROJECT_NAME"
