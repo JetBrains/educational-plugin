@@ -7,8 +7,8 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.HideableDecorator
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderPanel.Companion.PLACEHOLDER_PANEL_WIDTH
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -52,10 +52,8 @@ open class CCCreateAnswerPlaceholderDialog(
       val dependencyPanel = JPanel(BorderLayout())
       val contentPanel = panel {
         row {
-          // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-          @Suppress("UnstableApiUsage", "DEPRECATION")
           cell(dependencyPathField)
-            .horizontalAlign(HorizontalAlign.FILL)
+            .align(AlignX.FILL)
         }
         row {
           comment(EduCoreBundle.message("ui.dialog.create.answer.placeholder.path.pattern"))

@@ -12,8 +12,6 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.gridLayout.Gaps
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalGaps
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.EducationalCoreIcons
@@ -49,11 +47,7 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
           .layout(RowLayout.PARENT_GRID)
           .customize(VerticalGaps(bottom = rowGapSize))
       }
-      // BACKCOMPAT: 2022.2. Use align(Align.FILL)
-      @Suppress("UnstableApiUsage", "DEPRECATION")
-      horizontalAlign(HorizontalAlign.FILL)
-      @Suppress("UnstableApiUsage", "DEPRECATION")
-      verticalAlign(VerticalAlign.FILL)
+      align(Align.FILL)
     }.apply {
       isOpaque = false
       border = JBUI.Borders.empty(15, 0, 10, 10)
@@ -86,10 +80,8 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
         .customize(Gaps(right = columnGapSize))
     }
 
-    // BACKCOMPAT: 2022.2. Use align(AlignX.FILL)
-    @Suppress("UnstableApiUsage", "DEPRECATION")
     cell(RoundedWrapper(optionPanel, arcSize))
-      .horizontalAlign(HorizontalAlign.FILL)
+      .align(AlignX.FILL)
       .resizableColumn()
   }
 
@@ -108,10 +100,8 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     if (task !is MatchingTask) return null
     return panel {
       row {
-        // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER)
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         text(task.captions[index])
-          .verticalAlign(VerticalAlign.CENTER)
+          .align(AlignY.CENTER)
           .apply {
             component.font = Font(codeFont.name, codeFont.style, 13)
           }
@@ -123,26 +113,17 @@ class SortingBasedTaskSpecificPanel(task: SortingBasedTask) : Wrapper() {
     return panel {
       row {
         val optionIndex = task.ordering[index]
-        // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER)
-        @Suppress("UnstableApiUsage", "DEPRECATION")
-
         val textComponent = text(task.options[optionIndex])
-          .verticalAlign(VerticalAlign.CENTER)
+          .align(AlignY.CENTER)
           .resizableColumn()
           .apply {
             component.font = Font(codeFont.name, codeFont.style, 13)
           }
           .component
-
         valueTextComponents += textComponent
-
-
-        // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER) and align(AlignX.RIGHT)
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(createNavigationsButtonsPanel(task, index))
-          // BACKCOMPAT: 2022.2. Use align(AlignY.CENTER)
-          .verticalAlign(VerticalAlign.CENTER)
-          .horizontalAlign(HorizontalAlign.RIGHT)
+          .align(AlignY.CENTER)
+          .align(AlignX.RIGHT)
       }
       resizableColumn()
     }

@@ -2,8 +2,8 @@ package com.jetbrains.edu.python.learning.run
 
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.run.AbstractPyCommonOptionsForm
 import com.jetbrains.python.run.AbstractPythonRunConfiguration
@@ -30,14 +30,10 @@ class PyCCSettingsEditor(private val project: Project) : SettingsEditor<PyCCRunT
     form = createEnvPanel()
     return panel {
       row(EduPythonBundle.message("run.configuration.path.to.tests")) {
-        // BACKCOMPAT: 2022.2 Replace with `align(Align.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
-        pathToTestFileField = textField().horizontalAlign(HorizontalAlign.FILL).component
+        pathToTestFileField = textField().align(AlignX.FILL).component
       }
       row {
-        // BACKCOMPAT: 2022.2 Replace with `align(Align.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
-        cell(form.mainPanel).horizontalAlign(HorizontalAlign.FILL)
+        cell(form.mainPanel).align(AlignX.FILL)
       }
     }
   }

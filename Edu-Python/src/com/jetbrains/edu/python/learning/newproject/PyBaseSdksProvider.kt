@@ -4,6 +4,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import kotlin.io.path.pathString
 
 /**
  * The idea of this class is to reuse information about sdk version and python language level
@@ -18,7 +19,7 @@ object PyBaseSdksProvider {
     val newDescriptors = mutableMapOf<String, PyBaseSdkDescriptor>()
 
     val flavor = PythonSdkFlavor.getApplicableFlavors(false).first()
-    val sdkPaths = suggestSdkPaths(flavor, context)
+    val sdkPaths = flavor.suggestLocalHomePaths(null, context).map { it.pathString }
     for (sdkPath in sdkPaths) {
       val sdkDescriptor = oldDescriptors[sdkPath]
       if (sdkDescriptor != null) {

@@ -8,11 +8,10 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.ui.dsl.builder.RowLayout
+import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction
 import com.jetbrains.edu.learning.EduNames
@@ -42,22 +41,20 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private fun createPanel(project: Project): DialogPanel {
     return panel {
       row {
-        // BACKCOMPAT: 2022.2 Replace `horizontalAlign(HorizontalAlign.FILL)` with `align(Align.FILL)`
+        // BACKCOMPAT: 2022.3 Replace `validation` with `validationInfo`
         @Suppress("UnstableApiUsage", "DEPRECATION")
         textFieldWithBrowseButton(EduCoreBundle.message("course.creator.create.archive.location.title"),
                                   project, FileChooserDescriptorFactory.createSingleFolderDescriptor())
           .label(EduCoreBundle.message("course.creator.create.archive.panel.location"))
           .bindText(::locationPath)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .validation { validateArchivePath(it.text) }
       }.layout(RowLayout.LABEL_ALIGNED)
       row {
-        // BACKCOMPAT: 2022.2 Replace `horizontalAlign(HorizontalAlign.FILL)` with `align(Align.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         textField()
           .label(EduCoreBundle.message("course.creator.create.archive.panel.author"))
           .bindText(::authorName)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
       }.layout(RowLayout.LABEL_ALIGNED)
       row {
         checkBox(EduCoreBundle.message("course.creator.create.archive.panel.check.all.tasks"))

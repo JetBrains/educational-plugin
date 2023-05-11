@@ -2,14 +2,18 @@ package com.jetbrains.edu.learning.newproject
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.TrustedPaths
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
@@ -37,6 +41,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillC
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 import kotlin.system.measureTimeMillis
 
 /**
@@ -46,7 +51,7 @@ import kotlin.system.measureTimeMillis
 abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,
   protected var course: Course
-) : PlatformCourseProjectGenerator() {
+) {
   private var alreadyEnrolled = false
 
   open fun afterProjectGenerated(project: Project, projectSettings: S) {
@@ -71,6 +76,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   // we use Object instead of S and cast to S when it needed
   fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings): Project? {
     val createdProject = createProject(location) ?: return null
+
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
     afterProjectGenerated(createdProject, castedProjectSettings)
@@ -129,6 +135,37 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     ProjectInspectionProfileManager.getInstance(newProject).initializeComponent()
 
     return newProject
+  }
+
+  protected open suspend fun prepareToOpen(project: Project, module: Module) {
+    NOTIFICATIONS_SILENT_MODE.set(project, true)
+  }
+
+  private fun openNewCourseProject(
+    course: Course,
+    location: Path,
+    prepareToOpenCallback: suspend (Project, Module) -> Unit
+  ): Project? {
+    val task = OpenProjectTask(course, prepareToOpenCallback)
+
+    return ProjectManagerEx.getInstanceEx().openProject(location, task)
+  }
+
+  private fun OpenProjectTask(course: Course, prepareToOpenCallback: suspend (Project, Module) -> Unit): OpenProjectTask {
+    @Suppress("UnstableApiUsage")
+    return OpenProjectTask {
+      forceOpenInNewFrame = true
+      isNewProject = true
+      isProjectCreatedWithWizard = false
+      runConfigurators = true
+      beforeInit = {
+        it.putUserData(EDU_PROJECT_CREATED, true)
+      }
+      preparedToOpen = {
+        StudyTaskManager.getInstance(it.project).course = course
+        prepareToOpenCallback(it.project, it)
+      }
+    }
   }
 
   /**
@@ -193,7 +230,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {}
+  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>, isNewCourse: Boolean) {
+  }
 
   private val isNewCourseCreatorCourse: Boolean
     get() = course.courseMode == CourseMode.EDUCATOR && course.items.isEmpty()
@@ -204,6 +242,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     @JvmField
     val EDU_PROJECT_CREATED = Key.create<Boolean>("edu.projectCreated")
+
     @JvmField
     val COURSE_MODE_TO_CREATE = Key.create<CourseMode>("edu.courseModeToCreate")
     val COURSE_LANGUAGE_ID_TO_CREATE = Key.create<String>("edu.courseLanguageIdToCreate")

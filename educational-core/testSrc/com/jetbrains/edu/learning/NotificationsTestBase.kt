@@ -1,14 +1,17 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotificationProvider
+import com.intellij.ui.EditorNotifications
+import com.intellij.ui.EditorNotificationsImpl
 
-abstract class NotificationsTestBase : PlatformNotificationsTestBase() {
+abstract class NotificationsTestBase : EduTestCase() {
 
   protected inline fun <reified T : EditorNotificationProvider> checkEditorNotification(
     virtualFile: VirtualFile,
@@ -16,6 +19,20 @@ abstract class NotificationsTestBase : PlatformNotificationsTestBase() {
   ) {
     checkEditorNotification(virtualFile, T::class.java, expectedMessage)
   }
+
+  private fun completeEditorNotificationAsyncTasks() {
+    editorNotificationsImpl()?.completeAsyncTasks()
+  }
+
+  private fun <T : EditorNotificationProvider> getNotificationPanels(
+    fileEditor: FileEditor,
+    clazz: Class<T>
+  ): EditorNotificationPanel? {
+    return editorNotificationsImpl()?.getNotificationPanels(fileEditor)?.get(clazz) as? EditorNotificationPanel
+  }
+
+  private fun editorNotificationsImpl(): EditorNotificationsImpl? =
+    EditorNotifications.getInstance(myFixture.project) as? EditorNotificationsImpl
 
   protected inline fun <reified T : EditorNotificationProvider> checkNoEditorNotification(virtualFile: VirtualFile) {
     checkNoEditorNotification(virtualFile, T::class.java)

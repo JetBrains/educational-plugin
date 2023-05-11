@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.codeforces
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.COLUMNS_MEDIUM
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.coursecreator.getDefaultLanguageId
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.codeforces.courseFormat.CodeforcesCourse
@@ -81,10 +81,7 @@ class ChooseCodeforcesContestLanguagesDialog(private val codeforcesCourse: Codef
         .columns(COLUMNS_MEDIUM)
     }
     row {
-      // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-      @Suppress("UnstableApiUsage", "DEPRECATION")
-      cell(courseSettingsPanel)
-        .horizontalAlign(HorizontalAlign.FILL)
+      cell(courseSettingsPanel).align(AlignX.FILL)
     }
   }
 

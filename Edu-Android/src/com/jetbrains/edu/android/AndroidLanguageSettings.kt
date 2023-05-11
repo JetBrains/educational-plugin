@@ -115,7 +115,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
 
   private fun setAndroidSdkLocation(sdkLocation: File) {
     ApplicationUtils.invokeWriteActionAndWait(ModalityState.any()) {
-      setAndroidSdkPath(sdkLocation)
+      IdeSdks.getInstance().setAndroidSdkPath(sdkLocation)
     }
   }
 

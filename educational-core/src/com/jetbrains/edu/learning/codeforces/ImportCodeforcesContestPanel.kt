@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.codeforces
 
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.COLUMNS_LARGE
 import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.codeforces.CodeforcesContestConnector.getContestIdFromLink
 import com.jetbrains.edu.learning.codeforces.CodeforcesNames.CODEFORCES
@@ -31,11 +31,9 @@ class ImportCodeforcesContestPanel {
 
     panel = panel {
       row("${EduCoreBundle.message("label.codeforces.contest.url")}:") {
-        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(contestURLTextField)
           .columns(COLUMNS_LARGE)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .comment(CODEFORCES_HELP_TEXT)
       }
     }

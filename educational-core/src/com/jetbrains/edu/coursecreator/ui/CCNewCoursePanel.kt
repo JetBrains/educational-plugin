@@ -15,9 +15,9 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.text.nullize
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
@@ -111,17 +111,13 @@ class CCNewCoursePanel(
 
     val topPanel = panel {
       row(EduCoreBundle.message("cc.new.course.title")) {
-        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(titleField)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
       }
       row(EduCoreBundle.message("cc.new.course.type")) {
-        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         comboBox(courseData, CourseDataRenderer())
           .enabled(course == null)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .applyToComponent {
             whenItemSelected {
               onCourseDataSelected(it)
@@ -130,10 +126,8 @@ class CCNewCoursePanel(
           .bindItem({ defaultCourseType }, {})
       }
       row(EduCoreBundle.message("cc.new.course.description")) {
-        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         scrollCell(descriptionTextArea)
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
       }
     }
     add(topPanel, BorderLayout.NORTH)

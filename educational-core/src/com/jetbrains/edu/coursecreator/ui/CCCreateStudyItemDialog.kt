@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.jetbrains.edu.coursecreator.CCStudyItemPathInputValidator
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemUiModel
@@ -46,11 +46,9 @@ abstract class CCCreateStudyItemDialogBase(
     return panel {
       if (showNameField()) {
         row("${EduCoreBundle.message("course.creator.new.study.item.label.name")}:") {
-          // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-          @Suppress("UnstableApiUsage", "DEPRECATION")
           cell(nameField)
             .focused()
-            .horizontalAlign(HorizontalAlign.FILL)
+            .align(AlignX.FILL)
         }
       }
       createAdditionalFields(this)

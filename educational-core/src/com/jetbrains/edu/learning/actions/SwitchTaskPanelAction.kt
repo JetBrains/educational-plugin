@@ -6,11 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.ui.dsl.builder.COLUMNS_SHORT
-import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.builder.columns
-import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.builder.*
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.JavaUILibrary
@@ -51,12 +47,10 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
 
     override fun createCenterPanel(): JComponent = panel {
       row(EduCoreBundle.message("ui.label.choose.panel")) {
-        // BACKCOMPAT: 2022.2. Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         comboBox(collectAvailableJavaUiLibraries())
           .columns(COLUMNS_SHORT)
           .resizableColumn()
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .focused()
           .bindItem(
             getter = { EduSettings.getInstance().javaUiLibraryWithCheck },

@@ -2,9 +2,8 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -41,12 +40,8 @@ class CCAddAnswerPlaceholderPanel(@NonNls placeholderText: String) : JPanel() {
     val panel = panel {
       row {
         resizableRow()
-        // BACKCOMPAT: 2022.2.
-        // Use `align(Align.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)` and `verticalAlign(VerticalAlign.FILL)`
-        @Suppress("UnstableApiUsage", "DEPRECATION")
         cell(scrollPane)
-          .horizontalAlign(HorizontalAlign.FILL)
-          .verticalAlign(VerticalAlign.FILL)
+          .align(Align.FILL)
       }
       row { cell(label) }
     }

@@ -54,9 +54,6 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
-// BACKCOMPAT: 2022.2
-val isAtLeast223 = environmentName.toInt() >= 223
-
 val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
 val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
 
@@ -84,7 +81,7 @@ val nodeJsPlugin = "NodeJS"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val platformImagesPlugin = "com.intellij.platform.images"
-val gridImplPlugin = if (isAtLeast223) "intellij.grid.impl" else null
+val gridImplPlugin = "intellij.grid.impl"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
 
 val jvmPlugins = listOf(
@@ -122,8 +119,6 @@ val pythonPlugins = listOfNotNull(
 val changesFile = "changes.html"
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
-
-val javaVersion = if (isAtLeast223) VERSION_17 else VERSION_11
 
 plugins {
   idea
@@ -163,9 +158,8 @@ allprojects {
   }
 
   configure<JavaPluginExtension> {
-    // BACKCOMPAT: 2022.2. Use VERSION_17
-    sourceCompatibility = VERSION_11
-    targetCompatibility = javaVersion
+    sourceCompatibility = VERSION_17
+    targetCompatibility = VERSION_17
   }
   sourceSets {
     main {
@@ -225,11 +219,10 @@ allprojects {
     withType<JavaCompile> { options.encoding = "UTF-8" }
     withType<KotlinCompile> {
       kotlinOptions {
-        jvmTarget = javaVersion.toString()
+        jvmTarget = VERSION_17.toString()
         languageVersion = "1.8"
         // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-        // BACKCOMPAT: 2022.2. Use 1.7
-        apiVersion = "1.6"
+        apiVersion = "1.7"
         freeCompilerArgs = listOf("-Xjvm-default=all")
       }
     }
@@ -467,10 +460,10 @@ project(":") {
     args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=com.jetbrains.edu")
     // Force headless mode to be able to run command on CI
     systemProperty("java.awt.headless", "true")
-    // BACKCOMPAT: 2022.2. Update value to 223 and this comment
+    // BACKCOMPAT: 2022.3. Update value to 231 and this comment
     // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
     // It will be used by TeamCity automation to set minimal IDE version for new events
-    environment("IDEA_BUILD_NUMBER", "222")
+    environment("IDEA_BUILD_NUMBER", "223")
   }
 
   task("configureIdea") {
@@ -646,13 +639,11 @@ project(":jvm-core") {
 }
 
 project(":remote-env") {
-  if (isAtLeast223) {
-    intellij {
-      if (isStudioIDE) {
-        version.set(ideaVersion)
-      }
-      plugins.set(listOf(codeWithMePlugin))
+  intellij {
+    if (isStudioIDE) {
+      version.set(ideaVersion)
     }
+    plugins.set(listOf(codeWithMePlugin))
   }
 
   dependencies {
@@ -986,7 +977,7 @@ fun manifestFile(project: Project, filePath: String? = null): File {
     .flatMap { node ->
       if (node.name() != "module") return@flatMap emptyList()
       val name = node.attribute("name") as? String ?: return@flatMap emptyList()
-      listOfNotNull(resourcesDir.resolve ("$name.xml").takeIf { it.exists() })
+      listOfNotNull(resourcesDir.resolve("$name.xml").takeIf { it.exists() })
     }.firstOrNull() ?: error("Failed to find manifest file for ${project.name} module")
 }
 

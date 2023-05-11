@@ -2,9 +2,9 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bindItemNullable
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -61,14 +61,11 @@ private class SelectTaskDialog(project: Project, private val course: EduCourse) 
       row {
         val tasks = course.allTasks
         selectedTask = tasks.firstOrNull()
-        // BACKCOMPAT: 2022.2.
-        // Use `align(AlignX.FILL)` instead of `horizontalAlign(HorizontalAlign.FILL)`
-        //
         // BACKCOMPAT: 2022.3.
         // Use `bindItem` instead of `bindItemNullable`
         @Suppress("UnstableApiUsage", "DEPRECATION")
         comboBox(tasks, TaskRenderer())
-          .horizontalAlign(HorizontalAlign.FILL)
+          .align(AlignX.FILL)
           .focused()
           .bindItemNullable(::selectedTask)
       }

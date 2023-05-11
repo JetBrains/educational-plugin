@@ -21,6 +21,7 @@ import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.projectView.impl.AbstractProjectViewPaneWithAsyncSupport
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
@@ -58,7 +59,7 @@ import javax.swing.border.EmptyBorder
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
-class CourseViewPane(project: Project) : CourseViewPaneBase(project) {
+class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport(project) {
 
   private val myStudyItemDeleteProvider = CCStudyItemDeleteProvider()
 
