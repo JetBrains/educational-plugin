@@ -1,6 +1,5 @@
 import groovy.util.Node
 import groovy.xml.XmlParser
-import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 import org.jetbrains.intellij.tasks.PatchPluginXmlTask
