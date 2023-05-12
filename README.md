@@ -20,8 +20,8 @@ Learn and teach programming languages such as
 Join a step-by-step course, work on real-world projects, complete missions, participate in contests, or try them all.
 Read the [learner start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/learner-start-guide.html) for more information.
 
-**As an educator**, you can create your own courses and share them with others either privately or publicly. Combine theoretical learning and hands-on practice, test user knowledge with different sets of tasks, and provide extra assistance with feedback and hints.
-
+**As an educator**, you can create your own courses and share them with others either privately or publicly. 
+Combine theoretical learning and hands-on practice, test user knowledge with different sets of tasks, and provide extra assistance with feedback and hints.
 Read the [course creator start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/educator-start-guide.html) for more information.
 
 The best way to learn what this plugin is about is to check out the JetBrains Academy
