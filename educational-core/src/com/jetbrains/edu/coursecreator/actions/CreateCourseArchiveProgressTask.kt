@@ -7,7 +7,6 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
@@ -15,6 +14,7 @@ import com.intellij.openapi.ui.MessageConstants
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.Messages.showYesNoCancelDialog
 import com.jetbrains.edu.coursecreator.CCNotificationUtils
+import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.AUTHOR_NAME
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction.Companion.LAST_ARCHIVE_LOCATION
 import com.jetbrains.edu.coursecreator.actions.checkAllTasks.checkAllTasksInItemContainer
@@ -117,7 +117,7 @@ class CreateCourseArchiveProgressTask(
    * @return null when course archive was created successfully, non-empty error message otherwise
    */
   private fun createCourseArchive(project: Project, location: String): String? {
-    FileDocumentManager.getInstance().saveAllDocuments()
+    saveOpenedDocuments(project)
     return ApplicationManager.getApplication().runWriteAction<String>(CourseArchiveCreator(project, location))
   }
 
