@@ -32,9 +32,11 @@ open class GradleCourseProjectGenerator(
     if (EduGradleUtils.hasCourseHaveGradleKtsFiles(course)) {
       return
     }
-    EduGradleUtils.createProjectGradleFiles(holder,
-                                            gradleCourseBuilder.templates,
-                                            gradleCourseBuilder.templateVariables(holder.courseDir.name))
+    EduGradleUtils.createProjectGradleFiles(
+      holder,
+      gradleCourseBuilder.templates,
+      gradleCourseBuilder.templateVariables(holder.courseDir.name)
+    )
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
@@ -44,9 +46,7 @@ open class GradleCourseProjectGenerator(
   override suspend fun prepareToOpen(project: Project, module: Module) {
     super.prepareToOpen(project, module)
     @Suppress("UnstableApiUsage")
-    (writeAction {
-    GeneratorUtils.removeModule(project, module)
-  })
+    writeAction { GeneratorUtils.removeModule(project, module) }
     PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
   }
 

@@ -43,9 +43,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
   override suspend fun prepareToOpen(project: Project, module: Module) {
     super.prepareToOpen(project, module)
     @Suppress("UnstableApiUsage")
-    (writeAction {
-      GeneratorUtils.removeModule(project, module)
-    })
+    writeAction { GeneratorUtils.removeModule(project, module) }
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
   }
 
