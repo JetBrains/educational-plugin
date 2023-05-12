@@ -3,32 +3,35 @@
 [![JetBrains plugins][plugin-downloads-svg]][plugin-repo]
 [![JetBrains plugins][plugin-rating-svg]][plugin-repo]
 
-## Educational Plugin
+## The JetBrains Academy plugin
 
-This plugin allows learning and teaching programming languages and technologies 
-directly inside JetBrains IDEs based on IntelliJ Platform.
+Learn and teach programming languages such as
+[Kotlin](https://kotlinlang.org/),
+[Java](https://www.java.com),
+[Python](https://www.python.org/),
+[JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript),
+[Rust](https://www.rust-lang.org/),
+[Scala](https://www.scala-lang.org/),
+[C++](https://isocpp.org/),
+[Go](https://golang.org/), and 
+[PHP](https://www.php.net/), through interactive courses right in your JetBrains IDE.
 
-This plugin is bundled into [PyCharm Edu IDE](https://www.jetbrains.com/education/download/#section=pycharm-edu) and [IntelliJ IDEA Edu](https://www.jetbrains.com/education/download/#section=idea).
+**As a learner**, you can study programming while gaining experience with professional development tools. 
+Join a step-by-step course, work on real-world projects, complete missions, participate in contests, or try them all.
+Read the [learner start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/learner-start-guide.html) for more information.
 
-Building and taking courses is currently supported for the following languages: 
- * [Python](https://www.python.org/)
- * [Kotlin](https://kotlinlang.org/)
- * [Java](https://www.java.com)
- * [Scala](https://www.scala-lang.org/)
- * [Rust](https://www.rust-lang.org/)
- * [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
- * [C++](https://isocpp.org/)
- * [Go](https://golang.org/)
+**As an educator**, you can create your own courses and share them with others either privately or publicly. Combine theoretical learning and hands-on practice, test user knowledge with different sets of tasks, and provide extra assistance with feedback and hints.
+
+Read the [course creator start guide](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/educator-start-guide.html) for more information.
 
 The best way to learn what this plugin is about is to check out the JetBrains Academy
-[documentation](https://plugins.jetbrains.com/plugin/10081-edutools/docs).
+[documentation](https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs).
 
 ### Issue tracker
-Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetbrains.com/issues/EDU).
+Please submit your issues to the JetBrains Academy tracker on [YouTrack](https://youtrack.jetbrains.com/issues/JBA).
 
 ### Resources
-* Sources of PyCharm Edu and IntelliJ IDEA Edu are stored in [IntelliJ IDEA repository](https://jetbrains.team/p/idea/code/intellij?path=%2Fedu).
-* This plugin comes with integration with [JetBrains Academy on Hyperskill](https://hi.hyperskill.org/how-we-teach), a project-based learning platform.
+* This plugin comes with integration with [JetBrains Academy on Hyperskill](https://hi.hyperskill.org/how-we-teach), a hands-on platform for learning to program.
 * You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html).
 
 [plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/10081-edutools?style=flat-square
