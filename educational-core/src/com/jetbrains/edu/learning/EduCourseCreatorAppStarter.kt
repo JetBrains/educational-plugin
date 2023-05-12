@@ -14,7 +14,11 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import org.apache.commons.cli.*
 import kotlin.system.exitProcess
 
-abstract class EduCourseCreatorAppStarterBase : ApplicationStarter {
+class EduCourseCreatorAppStarter : ApplicationStarter {
+
+  @Suppress("OVERRIDE_DEPRECATION")
+  override val commandName: String
+    get() = "createCourse"
 
   override fun main(args: List<String>) {
     val cmd = parseArgs(args)
