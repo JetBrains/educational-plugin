@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.json.encrypt.getAesKey
 import com.jetbrains.edu.learning.json.mixins.*
 import com.jetbrains.edu.learning.json.setDateFormat
+import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.updateCourseItems
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.TASK_CONFIG
@@ -60,8 +61,15 @@ class CourseArchiveCreator(
   @Nls(capitalization = Nls.Capitalization.Sentence)
   override fun compute(): String? {
     val course = StudyTaskManager.getInstance(project).course
-    if (course != null && course.isMarketplace && !isUnitTestMode) {
+    if (course != null && course.isMarketplace && !isUnitTestMode && course is EduCourse) {
       course.updateCourseItems()
+      if (course.vendor == null) {
+        LOG.warn("Error: vendor was null at archive creation")
+        if (!course.addVendor()) {
+          LOG.warn("Error: failed to add vendor at archive creation")
+          return "Failed to add vendor"
+        }
+      }
     }
     course?.updateEnvironmentSettings(project)
     val courseCopy = course?.copy() ?: return EduCoreBundle.message("error.unable.to.obtain.course.for.project")
