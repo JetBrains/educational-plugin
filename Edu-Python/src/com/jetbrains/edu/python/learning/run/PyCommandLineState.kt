@@ -1,11 +1,16 @@
 package com.jetbrains.edu.python.learning.run
 
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.Executor
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.target.TargetEnvironment
 import com.intellij.execution.target.TargetEnvironmentRequest
 import com.intellij.execution.target.value.constant
+import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -29,6 +34,17 @@ class PyCommandLineState private constructor(
 ) : PythonCommandLineState(runConfiguration, env) {
   init {
     consoleBuilder = PyConsoleBuilder(runConfiguration, env.executor)
+  }
+
+  @Throws(ExecutionException::class)
+  override fun createAndAttachConsole(project: Project, processHandler: ProcessHandler, executor: Executor): ConsoleView {
+    val console = createConsole(executor)!!
+
+    // Filters are copied from PythonCommandLineState#createAndAttachConsole
+    console.addMessageFilter(createUrlFilter(processHandler))
+
+    console.attachToProcess(processHandler)
+    return console
   }
 
   override fun buildCommandLineParameters(commandLine: GeneralCommandLine) {
