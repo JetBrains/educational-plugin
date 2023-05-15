@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.QualifiedName
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.python.psi.impl.PyImportResolver
 import com.jetbrains.python.psi.resolve.PyQualifiedNameResolveContext
 
@@ -12,7 +12,7 @@ class PyEduImportResolver : PyImportResolver {
     context: PyQualifiedNameResolveContext,
     withRoots: Boolean
   ): PsiElement? {
-    if (StudyTaskManager.getInstance(context.project).course == null) {
+    if (context.project.course == null) {
       return null
     }
     val containingFile = context.footholdFile ?: return null

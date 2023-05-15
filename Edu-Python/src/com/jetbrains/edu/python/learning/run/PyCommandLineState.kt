@@ -20,6 +20,7 @@ import com.jetbrains.python.run.PythonScriptExecution
 import com.jetbrains.python.run.target.HelpersAwareTargetEnvironmentRequest
 import java.util.function.Function
 
+@Suppress("UnstableApiUsage")
 class PyCommandLineState private constructor(
   private val runConfiguration: PyRunTestConfiguration,
   env: ExecutionEnvironment,

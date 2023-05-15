@@ -13,7 +13,7 @@ import com.intellij.execution.ui.ConsoleView
 
 private const val TEST_FRAMEWORK_NAME = "Edu Python Test"
 
-class PyCCConsoleBuilder(
+class PyConsoleBuilder(
   private val config: RunConfiguration,
   private val executor: Executor
 ) : TextConsoleBuilder() {
