@@ -9,7 +9,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -35,7 +35,7 @@ class TabDescriptionPanel(tabDescription: String) : NonOpaquePanel() {
       border = JBUI.Borders.empty()
     }
     add(scrollPane, BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(this, MAIN_BG_COLOR)
+    UIUtil.setBackgroundRecursively(this, SelectCourseBackgoundColor)
   }
 }
 
@@ -44,7 +44,7 @@ open class LoginPanel(
   isVisible: Boolean,
   loginHandler: () -> Unit
 ) : JPanel(BorderLayout()) {
-  private val BACKGROUND_COLOR = JBColor(0xE6EEF7, 0x1C3956)
+  private val BACKGROUND_COLOR = JBColor.namedColor("SelectCourse.LoginPanel.background", 0xE6EEF7, 0x1C3956)
 
   init {
     val hyperlinkLabel = HyperlinkLabel().apply {

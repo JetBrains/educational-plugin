@@ -1,0 +1,100 @@
+{
+  "name" : "JetBrains Academy",
+  "fixed" : true,
+  "ui" : [
+    {
+      "key" : "SelectCourse.CourseCard.hoverBackground",
+      "description" : "The background color for a hovered CourseCardComponent in Select Course dialog",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.CourseCardComponent"
+    },
+    {
+      "key" : "SelectCourse.CourseCard.hoverBackground",
+      "description" : "The background color for a selected CourseCardComponent in Select Course dialog",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.CourseCardComponent"
+    },
+    {
+      "key" : "SelectCourse.foreground",
+      "description" : "The default foreground color for texts in Select Course dialog",
+      "deprecated" : false
+    },
+    {
+      "key" : "SelectCourse.grayForeground",
+      "description" : "The foreground color for gray texts in Select Course dialog",
+      "deprecated" : false
+    },
+    {
+      "key" : "SelectCourse.background",
+      "description" : "The default background color for Select Course dialog",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog"
+    },
+    {
+      "key" : "SelectCourse.Button.fillForeground",
+      "description" : "The foreground color for an opaque button",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
+    },
+    {
+      "key" : "SelectCourse.Button.fillBackground",
+      "description" : "The background color for an opaque button",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
+    },
+    {
+      "key" : "SelectCourse.Button.foreground",
+      "description" : "The foreground color for a transparent button",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
+    },
+    {
+      "key" : "SelectCourse.Button.focusedBackground",
+      "description" : "The background color for a focused button",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
+    },
+    {
+      "key" : "SelectCourse.Button.borderColor",
+      "description" : "The border color for a button",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseButtonBase"
+    },
+    {
+      "key" : "SelectCourse.CoursesGroup.background",
+      "description" : "The background for CoursesGroup header",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroupPanel"
+    },
+    {
+      "key" : "SelectCourse.CoursesGroup.foreground",
+      "description" : "The background for CoursesGroup header",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroupPanel"
+    },
+    {
+      "key" : "SelectCourse.LoginPanel.background",
+      "description" : "Background color for login panel above courses list",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.newproject.ui.LoginPanel"
+    },
+    {
+      "key" : "Submissions.CorrectLabel.foreground",
+      "description" : "A foreground for a correctly solved submission name",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key" : "Component.errorForeground",
+      "description" : "Foreground for error messages in different components",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    },
+    {
+      "key" : "Component.warningForeground",
+      "description" : "Foreground for warning messages in different components",
+      "deprecated" : false,
+      "source" : "com.jetbrains.edu.learning.ui.EduColors"
+    }
+  ]
+}

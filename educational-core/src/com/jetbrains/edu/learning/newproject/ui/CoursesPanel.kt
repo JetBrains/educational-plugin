@@ -13,11 +13,11 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
@@ -74,7 +74,7 @@ abstract class CoursesPanel(
 
   init {
     layout = cardLayout
-    background = MAIN_BG_COLOR
+    background = SelectCourseBackgoundColor
     coursesListDecorator.setSelectionListener { this.processSelectionChanged() }
     this.setNoCoursesPanelDefaultText()
 
@@ -110,7 +110,7 @@ abstract class CoursesPanel(
     val mainPanel = JPanel(BorderLayout()).apply {
       add(searchAndLoginPanel, BorderLayout.PAGE_START)
       add(createSplitPane(), BorderLayout.CENTER)
-      background = MAIN_BG_COLOR
+      background = SelectCourseBackgoundColor
     }
 
     return mainPanel

@@ -8,7 +8,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import com.jetbrains.edu.learning.newproject.ui.getColorFromScheme
 import java.awt.Color
 import java.awt.event.MouseAdapter
@@ -35,7 +35,7 @@ class CoursesGroupPanel(coursesGroup: CoursesGroup, createCourseCard: (Course) -
   private val courseCardsPanel = NonOpaquePanel(VerticalFlowLayout(0, 0))
 
   init {
-    background = MAIN_BG_COLOR
+    background = SelectCourseBackgoundColor
     val name = coursesGroup.name
     val isCollapsible = coursesGroup.courses.size > COLLAPSIBLE_GROUP_SIZE
     add(createTitleLabel(name, isCollapsible))

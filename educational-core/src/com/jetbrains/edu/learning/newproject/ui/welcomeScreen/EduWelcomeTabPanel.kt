@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CourseDeletedListene
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CoursesDialogFontManager
 import com.jetbrains.edu.learning.newproject.ui.GrayTextHtmlPanel
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import org.jetbrains.annotations.NonNls
 import java.awt.*
 import javax.swing.JButton
@@ -93,7 +93,7 @@ class EduWelcomeTabPanel(parentDisposable: Disposable) : JBScrollPane() {
 
     return JPanel().apply {
       layout = GridBagLayout()
-      background = MAIN_BG_COLOR
+      background = SelectCourseBackgoundColor
       val gridBag = GridBag().setDefaultAnchor(GridBagConstraints.CENTER)
       add(contentPanel, gridBag.nextLine())
     }

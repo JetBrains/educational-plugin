@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel.groups
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCourseCardComponent
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -14,7 +14,7 @@ abstract class CoursesListPanel : JPanel(BorderLayout()) {
   val selectedCourse: Course? get() = groupsComponent.selectedValue
 
   init {
-    background = MAIN_BG_COLOR
+    background = SelectCourseBackgoundColor
     this.add(groupsComponent, BorderLayout.CENTER)
   }
 

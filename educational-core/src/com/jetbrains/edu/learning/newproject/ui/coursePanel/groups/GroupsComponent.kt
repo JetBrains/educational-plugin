@@ -6,7 +6,7 @@ import com.intellij.ui.components.JBPanelWithEmptyText
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.CourseCardComponent
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import java.awt.event.ActionListener
 
 class GroupsComponent(
@@ -19,7 +19,7 @@ class GroupsComponent(
     get() = courseGroupModel.selectedCard?.course
 
   init {
-    background = MAIN_BG_COLOR
+    background = SelectCourseBackgoundColor
     emptyText.text = EduCoreBundle.message("course.dialog.no.courses.found")
     emptyText.appendSecondaryText(
       EduCoreBundle.message("course.dialog.no.courses.found.secondary.text"),

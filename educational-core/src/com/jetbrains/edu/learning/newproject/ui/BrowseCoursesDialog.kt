@@ -13,7 +13,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import org.jetbrains.annotations.NonNls
@@ -31,7 +31,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
   init {
     title = EduCoreBundle.message("course.dialog.title")
     init()
-    rootPane.background = MAIN_BG_COLOR
+    rootPane.background = SelectCourseBackgoundColor
     panel.setSidePaneBackground()
 
     Disposer.register(disposable, Disposable { job.cancel() })

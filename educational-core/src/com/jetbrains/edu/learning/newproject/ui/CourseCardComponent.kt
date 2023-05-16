@@ -6,7 +6,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.coursePanel.MAIN_BG_COLOR
+import com.jetbrains.edu.learning.newproject.ui.coursePanel.SelectCourseBackgoundColor
 import com.jetbrains.edu.learning.taskDescription.ui.styleManagers.TypographyManager
 import java.awt.BorderLayout
 import java.awt.Color
@@ -21,12 +21,9 @@ private const val CARD_WIDTH = 80
 private const val CARD_HEIGHT = 70
 private const val LOGO_SIZE = 40
 
-private val HOVER_COLOR: Color = JBColor.namedColor("BrowseCourses.hoverBackground",
-                                                    getColorFromScheme("Plugins.Tab.hoverBackground", JBColor(0xF5F9FF, 0x282A2C)))
-private val SELECTION_COLOR: Color = JBColor.namedColor("BrowseCourses.lightSelectionBackground",
-                                                        getColorFromScheme("Plugins.lightSelectionBackground", JBColor(0xE9EEF5, 0x36393B)))
-val GRAY_COLOR: Color = JBColor.namedColor("BrowseCourses.infoForeground",
-                                           getColorFromScheme("Plugins.tagForeground", JBColor(Gray._120, Gray._135)))
+private val HOVER_COLOR: Color = JBColor.namedColor("SelectCourse.CourseCard.hoverBackground", 0xF5F9FF, 0x282A2C)
+private val SELECTION_COLOR: Color = JBColor.namedColor("SelectCourse.CourseCard.hoverBackground", 0xE9EEF5, 0x36393B)
+val GRAY_COLOR: Color = JBColor.namedColor("SelectCourse.grayForeground", JBColor(Gray._120, Gray._135))
 
 open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
   private val logoComponent: JLabel = JLabel()
@@ -85,7 +82,7 @@ open class CourseCardComponent(val course: Course) : JPanel(BorderLayout()) {
   }
 
   fun updateColors(isSelected: Boolean) {
-    updateColors(if (isSelected) SELECTION_COLOR else MAIN_BG_COLOR)
+    updateColors(if (isSelected) SELECTION_COLOR else SelectCourseBackgoundColor)
   }
 
   private fun updateColors(background: Color) {
