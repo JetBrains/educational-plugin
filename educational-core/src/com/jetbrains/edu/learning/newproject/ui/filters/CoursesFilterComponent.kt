@@ -25,7 +25,7 @@ class CoursesFilterComponent(
     emptyText.appendText(emptySearchText, SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, ListPluginComponent.GRAY_COLOR))
   }
 
-  fun removeBorder() {
+  private fun removeBorder() {
     textEditor.border = JBUI.Borders.empty()
   }
 
