@@ -4,6 +4,7 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
@@ -25,13 +26,11 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
   override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 
   override fun getDefaultSettings(): Result<PyProjectSettings, String> {
-    val sdkPath = System.getProperty(INTERPRETER_PROPERTY)
-      ?: return Err("Failed to find Python interpreter because `$INTERPRETER_PROPERTY` system property is not provided")
-
-    val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkPath)
-
-    val sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkPath, versionString)
-    return Ok(PyProjectSettings(sdk))
+    return findPath(INTERPRETER_PROPERTY, "Python interpreter").flatMap { sdkPath ->
+      val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkPath)
+      val sdk = ProjectJdkImpl(versionString, PyFakeSdkType, sdkPath, versionString)
+      Ok(PyProjectSettings(sdk))
+    }
   }
 
   override fun getSupportedLanguageVersions(): List<String> = getSupprotedVersions()
