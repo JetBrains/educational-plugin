@@ -52,7 +52,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val isEnabled: Boolean
     get() {
       val rustPluginVersion = pluginVersion("org.rust.lang") ?: return false
-      return VersionComparatorUtil.compare(rustPluginVersion, "0.4.188") >= 0
+      return VersionComparatorUtil.compare(rustPluginVersion, "0.4.194") >= 0
     }
 
   override val defaultPlaceholderText: String
