@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -29,6 +30,7 @@ import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.workspace.PackageOrigin
+import org.rust.cargo.toolchain.RsLocalToolchain
 import org.rust.ide.newProject.RsPackageNameValidator
 import org.rust.lang.RsConstants
 import org.rust.lang.core.psi.ext.childrenWithLeaves
@@ -40,6 +42,7 @@ import org.toml.lang.psi.ext.elementType
 import org.toml.lang.psi.ext.kind
 import org.toml.lang.psi.ext.name
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.exists
 
 class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
@@ -48,6 +51,16 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     RsCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()
+
+  override fun getDefaultSettings(): Result<RsProjectSettings, String> {
+    return findPath(DEFAULT_TOOLCHAIN_PROPERTY, "Rust toolchain").flatMap { toolchainPath ->
+      val toolchain = RsLocalToolchain(Paths.get(toolchainPath))
+      if (!toolchain.looksLikeValidToolchain()) {
+        return@flatMap Err("`$toolchainPath` doesn't look like a valid Rust toolchain")
+      }
+      Ok(RsProjectSettings(toolchain))
+    }
+  }
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
     val course = StudyTaskManager.getInstance(project).course ?: return
@@ -316,5 +329,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     private const val LIB_RS = RsConstants.LIB_RS_FILE
     private const val MAIN_RS = RsConstants.MAIN_RS_FILE
     private const val TESTS_RS = "tests.rs"
+
+    private const val DEFAULT_TOOLCHAIN_PROPERTY = "project.rust.toolchain"
   }
 }
