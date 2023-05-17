@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -74,17 +75,19 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
     location: String,
     projectSettings: EduProjectSettings
   ) {
-    val info = CourseCreationInfo(course, location, projectSettings)
-
     var errorMessage: String? = null
-    val project = CoursesPlatformProvider.joinCourse(info, CourseMode.STUDENT, null) {
-      errorMessage = it.message?.message
+    val project = withAutoImportDisabled {
+      val info = CourseCreationInfo(course, location, projectSettings)
+      val project = CoursesPlatformProvider.joinCourse(info, CourseMode.STUDENT, null) {
+        errorMessage = it.message?.message
+      }
+      if (project != null) {
+        @Suppress("UnstableApiUsage")
+        ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
+      }
+      project
     }
-    if (project != null) {
-      @Suppress("UnstableApiUsage")
-      ProjectManagerEx.getInstanceEx().saveAndForceCloseProject(project)
-    }
-    else {
+    if (project == null) {
       val message = buildString {
         append("Failed to create course project")
         if (!errorMessage.isNullOrEmpty()) {
@@ -140,6 +143,18 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
     private fun logErrorAndExit(message: String): Nothing {
       LOG.error(message)
       exitProcess(1)
+    }
+
+    private fun <T> withAutoImportDisabled(action: () -> T): T {
+      val registryValue = Registry.get("external.system.auto.import.disabled")
+      val oldValue = registryValue.asBoolean()
+      registryValue.setValue(true)
+      return try {
+        action()
+      }
+      finally {
+        registryValue.setValue(oldValue)
+      }
     }
   }
 }
