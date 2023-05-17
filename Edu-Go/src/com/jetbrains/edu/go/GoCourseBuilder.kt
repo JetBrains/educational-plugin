@@ -1,5 +1,6 @@
 package com.jetbrains.edu.go
 
+import com.goide.sdk.GoSdk
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
@@ -10,9 +11,9 @@ import com.jetbrains.edu.go.GoConfigurator.Companion.MAIN_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TASK_GO
 import com.jetbrains.edu.go.GoConfigurator.Companion.TEST_GO
 import com.jetbrains.edu.go.messages.EduGoBundle
-import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.EduNames.TEST
-import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.joinPaths
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -23,6 +24,17 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
     GoCourseProjectGenerator(this, course)
 
   override fun getLanguageSettings(): LanguageSettings<GoProjectSettings> = GoLanguageSettings()
+
+  override fun getDefaultSettings(): Result<GoProjectSettings, String> {
+    return findPath(DEFAULT_GO_SDK_PROPERTY, "Go sdk").flatMap { sdkPath ->
+      val sdk = GoSdk.fromHomePath(sdkPath)
+      when {
+        sdk == GoSdk.NULL -> Err("Can't find Go sdk in `$sdkPath`")
+        !sdk.isValid -> Err("`$sdkPath` contains invalid Go sdk")
+        else -> Ok(GoProjectSettings(sdk))
+      }
+    }
+  }
 
   override fun getTestTaskTemplates(course: Course, info: NewStudyItemInfo, withSources: Boolean): List<TemplateFileInfo> {
     val templates = mutableListOf(TemplateFileInfo(TEST_GO, joinPaths(TEST, TEST_GO), false))
@@ -73,5 +85,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
     private const val EDU_TASK_TEMPLATE = "edu_task.go"
     private const val EDU_MAIN_TEMPLATE = "edu_main.go"
+
+    private const val DEFAULT_GO_SDK_PROPERTY = "project.go.sdk"
   }
 }
