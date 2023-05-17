@@ -21,6 +21,17 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
     get() = "createCourse"
 
   override fun main(args: List<String>) {
+    try {
+      doMain(args)
+      ApplicationManagerEx.getApplicationEx().exit(true, true)
+    }
+    catch (e: Throwable) {
+      LOG.error(e)
+      exitProcess(1)
+    }
+  }
+
+  private fun doMain(args: List<String>) {
     val cmd = parseArgs(args)
 
     val projectPath = cmd.getOptionValue(PROJECT_PATH_OPTION)
@@ -56,8 +67,6 @@ class EduCourseCreatorAppStarter : ApplicationStarter {
       is Err -> logErrorAndExit(projectSettings.error)
       is Ok -> createCourseProject(course, projectPath, projectSettings.value)
     }
-
-    ApplicationManagerEx.getApplicationEx().exit(true, true)
   }
 
   private fun createCourseProject(
