@@ -13,36 +13,59 @@
   createCheckboxes(choice_options);
 
   function createCheckboxes(options) {
-    for (var count in options) { //make sure that order is preserved
-      let div = document.createElement('div');
-      div.className = 'labeled_input'
-      var inputElement = document.createElement('input');
-      inputElement.type = inputType;
-      inputElement.name = inputType; //should be the same for radioButtons to be single choice
-      inputElement.id = count; // need unique Ids
-      inputElement.value = count;
-      if (selectedVariants.includes(parseInt(count))) {
-        inputElement.checked = true;
-      }
-      inputElement.addEventListener('change', function (event) {
-        addSelectionListener(this)
-      })
-      var label = document.createElement('label')
-      label.htmlFor = inputElement.id;
-      label.innerHTML = options[count];
-
-      if (isDisabled) {
-        inputElement.className = inputType + " disable"
-        inputElement.disabled = true;
-        fade(label);
-      }
-      else {
-        inputElement.className = inputType
-      }
-      div.appendChild(inputElement)
-      div.appendChild(label)
-      parentElement.appendChild(div);
+    let optionsWrapper = document.createElement('div')
+    optionsWrapper.className = 'optionsBox'
+    for (let count in options) { //make sure that order is preserved
+      optionsWrapper.appendChild(createButtonBox(count))
+      optionsWrapper.appendChild(createLabelBox(count, options))
     }
+    parentElement.appendChild(optionsWrapper)
+  }
+
+  function createButtonBox(count) {
+    let buttonWrapper = document.createElement('div')
+    buttonWrapper.className = 'buttonBox'
+    buttonWrapper.appendChild(createButton(count))
+    return buttonWrapper
+  }
+
+  function createButton(count) {
+    let inputElement = document.createElement('input');
+    inputElement.type = inputType;
+    inputElement.name = inputType; //should be the same for radioButtons to be single choice
+    inputElement.id = count; // need unique Ids
+    inputElement.value = count;
+    if (selectedVariants.includes(parseInt(count))) {
+      inputElement.checked = true;
+    }
+    inputElement.addEventListener('change', function (event) {
+      addSelectionListener(this)
+    })
+    if (isDisabled) {
+      inputElement.className = inputType + " disable"
+      inputElement.disabled = true;
+    }
+    else {
+      inputElement.className = inputType
+    }
+    return inputElement
+  }
+
+  function createLabelBox(count, options) {
+    let labelWrapper = document.createElement('div')
+    labelWrapper.className = 'labelBox'
+    labelWrapper.appendChild(createLabel(count, options))
+    return labelWrapper
+  }
+
+  function createLabel(count, options) {
+    let label = document.createElement('label')
+    label.htmlFor = count;
+    label.innerHTML = options[count];
+    if (isDisabled) {
+      fade(label)
+    }
+    return label
   }
 
   function addSelectionListener(element) {

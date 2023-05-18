@@ -53,13 +53,31 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
       "#choiceOptions" {
         fontFamily = styleManager.bodyFont
         fontSize = if (isJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
-        lineHeight = (styleManager.bodyLineHeight * 1.1).px.lh
+        lineHeight = (1.3).em.lh
         color = styleManager.bodyColor
         textAlign = TextAlign.left
         paddingLeft = 8.px
       }
+      ".optionsBox" {
+        display = Display.grid
+        gridTemplateColumns = GridTemplateColumns(GridAutoRows.minContent, GridAutoRows.auto)
+        justifyContent = JustifyContent.stretch
+        alignItems = Align.stretch
+        columnGap = ColumnGap(0.px.value)
+        rowGap = RowGap(5.px.value)
+      }
+      ".buttonBox" {
+        display = Display.flex
+        gridColumn = GridColumn("1")
+        verticalAlign = VerticalAlign.middle
+        alignItems = Align.center
+      }
+      ".labelBox" {
+        gridColumn = GridColumn("2")
+        verticalAlign = VerticalAlign.middle
+      }
       "#choiceOptions .text" {
-        marginBottom = 7.px
+        padding = "8px"
       }
       "#choiceOptions .checkbox, .radio" {
         marginTop = 2.px
