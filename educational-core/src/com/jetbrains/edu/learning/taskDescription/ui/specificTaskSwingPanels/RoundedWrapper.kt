@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.taskDescription.ui.specificTaskSwingPanels
 
 import com.intellij.ui.components.panels.NonOpaquePanel
-import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.util.ui.GraphicsUtil
 import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.UIUtil
@@ -12,8 +11,7 @@ import javax.swing.JComponent
 class RoundedWrapper(
   component: JComponent,
   private val arcSize: Int = 10,
-  layoutManager: LayoutManager = VerticalLayout(0)
-) : NonOpaquePanel(layoutManager, component) {
+) : NonOpaquePanel(component) {
 
   init {
     background = UIUtil.getPanelBackground()
