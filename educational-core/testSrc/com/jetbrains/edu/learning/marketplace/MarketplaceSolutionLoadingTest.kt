@@ -232,7 +232,74 @@ class MarketplaceSolutionLoadingTest : SolutionLoadingTestBase() {
     checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Unchecked))
   }
 
+  fun `test solution for output task applied`() {
+    configureSubmissionsResponses(getConfiguredSubmissionsList(),
+      mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionCorrect, SECOND_TASK_SUBMISSION_AWS_KEY to solutionWrong))
 
+    val course = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = ::EduCourse, id = 1
+    ) {
+      lesson("lesson1") {
+        outputTask("task1", stepId = 1) {
+          kotlinTaskFile("src/Task.kt", """
+          fun main() {
+              println("OK")
+          }
+        """)
+          taskFile("test/output.txt") {
+            withText("OK!")
+          }
+        }
+        outputTask("task2", stepId = 2) {
+          kotlinTaskFile("src/Task.kt", """
+          fun main() {
+              print("OK")
+          }
+        """)
+          taskFile("test/output.txt") {
+            withText("OK!")
+          }
+        }
+      }
+    }.apply {
+      isMarketplace = true
+      marketplaceCourseVersion = 1
+    } as EduCourse
+    withVirtualFileListener(course) {
+      MarketplaceSolutionLoader.getInstance(project).loadAndApplySolutions(course)
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt", "text from submission solved")
+          }
+          dir("test") {
+            file("Tests.kt", "")
+            file("output.txt", "OK!")
+          }
+          dir("task.md")
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.kt", "text from submission failed")
+          }
+          dir("test") {
+            file("Tests.kt", "")
+            file("output.txt", "OK!")
+          }
+          dir("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+
+    checkTaskStatuses(course.allTasks, listOf(CheckStatus.Solved, CheckStatus.Failed))
+  }
   fun `test solution loading with additional file in the first task`() {
     configureSubmissionsResponses(getConfiguredSubmissionsList(firstStatus = CORRECT, secondStatus = CORRECT),
                                   mapOf(FIRST_TASK_SUBMISSION_AWS_KEY to solutionWithAdditionalFile,

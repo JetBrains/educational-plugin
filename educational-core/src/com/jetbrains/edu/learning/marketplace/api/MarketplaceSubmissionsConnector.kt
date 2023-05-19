@@ -114,7 +114,7 @@ class MarketplaceSubmissionsConnector {
   }
 
   fun postSubmission(project: Project, task: Task): MarketplaceSubmission {
-    val solutionFiles = solutionFilesList(project, task)
+    val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
 
     val course = task.course

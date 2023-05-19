@@ -227,7 +227,7 @@ class MarketplaceSubmission : Submission {
   constructor(taskId: Int, checkStatus: CheckStatus, solutionText: String, solutionFiles: List<SolutionFile>?, courseVersion: Int) {
     this.taskId = taskId
     this.status = checkStatus.rawStatus
-    this.solutionFiles = solutionFiles?.filter { it.isVisible }
+    this.solutionFiles = solutionFiles
     this.courseVersion = courseVersion
     this.solution = solutionText
   }

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.SolutionLoaderBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.Companion.toCheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -50,6 +51,7 @@ class MarketplaceSolutionLoader(project: Project) : SolutionLoaderBase(project) 
         is TheoryTask,
         is ChoiceTask -> emptyMap()
 
+        is OutputTask,
         is EduTask -> lastSubmission.eduTaskFiles()
         else -> {
           LOG.warn("Solutions for task ${task.name} of type ${task::class.simpleName} not loaded")
