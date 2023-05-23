@@ -53,8 +53,8 @@ val clionSandbox = "${project.buildDir.absolutePath}/clion-sandbox"
 val goLandSandbox = "${project.buildDir.absolutePath}/goland-sandbox"
 val phpStormSandbox = "${project.buildDir.absolutePath}/phpstorm-sandbox"
 
-val pythonProPlugin = "Pythonid:${prop("pythonProPluginVersion")}"
-val pythonCommunityPlugin = "PythonCore:${prop("pythonCommunityPluginVersion")}"
+val pythonProPlugin: String by project
+val pythonCommunityPlugin: String by project
 
 val pythonPlugin = when {
   isIdeaIDE -> pythonProPlugin
@@ -65,15 +65,15 @@ val pythonPlugin = when {
 }
 val javaPlugin = "com.intellij.java"
 val kotlinPlugin = "org.jetbrains.kotlin"
-val scalaPlugin = "org.intellij.scala:${prop("scalaPluginVersion")}"
-val rustPlugin = "org.rust.lang:${prop("rustPluginVersion")}"
+val scalaPlugin: String by project
+val rustPlugin: String by project
 val tomlPlugin = "org.toml.lang"
-val goPlugin = "org.jetbrains.plugins.go:${prop("goPluginVersion")}"
+val goPlugin: String by project
 val sqlPlugin = "com.intellij.database"
 val markdownPlugin = "org.intellij.plugins.markdown"
 val githubPlugin = "org.jetbrains.plugins.github"
-val psiViewerPlugin = "PsiViewer:${prop("psiViewerPluginVersion")}"
-val phpPlugin = "com.jetbrains.php:${prop("phpPluginVersion")}"
+val psiViewerPlugin: String by project
+val phpPlugin: String by project
 val intelliLangPlugin = "org.intellij.intelliLang"
 val javaScriptPlugin = "JavaScript"
 val nodeJsPlugin = "NodeJS"
