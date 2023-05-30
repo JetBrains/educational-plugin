@@ -1,14 +1,13 @@
-package com.jetbrains.edu.coursecreator;
+package com.jetbrains.edu.coursecreator
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.project.DumbAware;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.project.DumbAware
+import com.jetbrains.edu.coursecreator.CCUtils.updateActionGroup
 
-@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
-public class CCAnswerPlaceholderActionGroup extends DefaultActionGroup implements DumbAware {
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    CCUtils.updateActionGroup(e);
+@Suppress("ComponentNotRegistered") // educational-core.xml
+class CCAnswerPlaceholderActionGroup : DefaultActionGroup(), DumbAware {
+  override fun update(e: AnActionEvent) {
+    updateActionGroup(e)
   }
 }
