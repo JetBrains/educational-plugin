@@ -1,146 +1,112 @@
-package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill;
+package com.jetbrains.edu.coursecreator.actions.stepik.hyperskill
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task.Modal;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsActions.ActionDescription;
-import com.intellij.openapi.util.NlsActions.ActionText;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.CourseMode;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.VisibleForTesting;
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsActions
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification
+import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
+import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik
+import com.jetbrains.edu.coursecreator.CCUtils.lessonFromDir
+import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.Companion.isCourseCreatorFeaturesEnabled
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
+import com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
+import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveRemoteInfo
+import org.jetbrains.annotations.VisibleForTesting
 
-import static com.jetbrains.edu.coursecreator.CCNotificationUtils.showNotification;
-import static com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash;
-import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
-import static com.jetbrains.edu.learning.EduExperimentalFeatures.CC_HYPERSKILL;
-import static com.jetbrains.edu.learning.ExperimentsKt.isFeatureEnabled;
-import static com.jetbrains.edu.learning.stepik.hyperskill.HyperskillNamesKt.HYPERSKILL;
-
-@SuppressWarnings("ComponentNotRegistered") // Hyperskill.xml
-public class PushHyperskillLesson extends DumbAwareAction {
-  private static final Logger LOG = Logger.getInstance(PushHyperskillLesson.class);
-
-  @ActionDescription
-  public static String getUpdateText() {
-    return EduCoreBundle.message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
-  }
-
-  @ActionText
-  public static String getUpdateTitleText() {
-    return EduCoreBundle.message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
-  }
-
-  @ActionDescription
-  public static String getUploadText() {
-    return EduCoreBundle.message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL);
-  }
-
-  @ActionText
-  public static String getUploadTitleText() {
-    return EduCoreBundle.message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL);
-  }
-
-  public PushHyperskillLesson() {
-    super(addGluingSlash(getUpdateTitleText(), getUploadTitleText()),
-          addGluingSlash(getUpdateText(), getUploadText()),
-          null);
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setEnabledAndVisible(false);
-    if (!isFeatureEnabled(CC_HYPERSKILL) || !CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return;
-
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project == null) return;
-
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof HyperskillCourse)) {
-      return;
-    }
-    final Lesson lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course);
-    if (lesson == null) return;
-
-    if (lesson.getId() > 0) {
-      e.getPresentation().setText(getUpdateTitleText());
+class PushHyperskillLesson : DumbAwareAction(
+  addGluingSlash(updateTitleText, uploadTitleText),
+  addGluingSlash(updateText, uploadText),
+  null
+) {
+  override fun update(e: AnActionEvent) {
+    e.presentation.isEnabledAndVisible = false
+    if (!isFeatureEnabled(CC_HYPERSKILL) || !isCourseCreatorFeaturesEnabled) return
+    val project = e.getData(CommonDataKeys.PROJECT) ?: return
+    val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
+    val lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course) ?: return
+    if (lesson.id > 0) {
+      e.presentation.text = updateTitleText
     }
     else {
-      e.getPresentation().setText(getUploadTitleText());
+      e.presentation.text = uploadTitleText
     }
-    e.getPresentation().setEnabledAndVisible(true);
+    e.presentation.isEnabledAndVisible = true
   }
 
-  @Override
-  public void actionPerformed(@NotNull AnActionEvent e) {
-    final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project == null) return;
-    if (!checkIfAuthorizedToStepik(project, e.getPresentation().getText())) return;
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.getData(CommonDataKeys.PROJECT) ?: return
+    if (!checkIfAuthorizedToStepik(project, e.presentation.text)) return
+    val course = StudyTaskManager.getInstance(project).course as? HyperskillCourse ?: return
+    val lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course) ?: return
+    ProgressManager.getInstance().run(
+      object : Task.Modal(project, message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
+        override fun run(indicator: ProgressIndicator) {
+          indicator.text = message("action.push.custom.lesson.uploading.to", HYPERSKILL, getStepikUrl())
+          doPush(lesson, project)
+          saveRemoteInfo(lesson)
+        }
+      })
+  }
 
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof HyperskillCourse)) {
-      return;
-    }
-    final Lesson lesson = getLesson(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY), project, course);
-    if (lesson == null) return;
+  companion object {
+    private val LOG = Logger.getInstance(PushHyperskillLesson::class.java)
+    val updateText: @NlsActions.ActionDescription String
+      get() = message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL)
+    val updateTitleText: @NlsActions.ActionText String
+      get() = message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL)
+    val uploadText: @NlsActions.ActionDescription String
+      get() = message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL)
+    val uploadTitleText: @NlsActions.ActionText String
+      get() = message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL)
 
-    ProgressManager.getInstance().run(new Modal(project, EduCoreBundle.message("action.push.custom.lesson.uploading", HYPERSKILL), true) {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(EduCoreBundle.message("action.push.custom.lesson.uploading.to", HYPERSKILL, StepikNames.getStepikUrl()));
-        doPush(lesson, project);
-        YamlFormatSynchronizer.saveRemoteInfo(lesson);
+    private fun getLesson(selectedFiles: Array<VirtualFile>?, project: Project, course: Course): Lesson? {
+      if (course.courseMode != CourseMode.EDUCATOR) return null
+      if (selectedFiles == null || selectedFiles.size != 1) {
+        return null
       }
-    });
-  }
-
-  @Nullable
-  private static Lesson getLesson(@Nullable VirtualFile[] selectedFiles, Project project, Course course) {
-    if (!course.getCourseMode().equals(CourseMode.EDUCATOR)) return null;
-    if (selectedFiles == null || selectedFiles.length != 1) {
-      return null;
+      val lessonDir = selectedFiles[0]
+      return if (!lessonDir.isDirectory) {
+        null
+      }
+      else lessonFromDir(course, lessonDir, project)
     }
 
-    VirtualFile lessonDir = selectedFiles[0];
-    if (!lessonDir.isDirectory()) {
-      return null;
-    }
-
-    final Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
-    if (lesson == null) {
-      return null;
-    }
-    return lesson;
-  }
-
-  @VisibleForTesting
-  public static void doPush(Lesson lesson, Project project) {
-    String notification = lesson.getId() > 0 ? EduCoreBundle.message("action.push.custom.lesson.updated", HYPERSKILL)
-                                             : EduCoreBundle.message("action.push.custom.lesson.uploaded", HYPERSKILL);
-    boolean success = lesson.getId() > 0 ? updateLesson(project, lesson, true, -1)
-                                         : postLesson(project, lesson, lesson.getIndex(), -1);
-
-    if (success) {
-      showNotification(project, notification, openOnStepikAction("/lesson/" + lesson.getId()));
-    }
-    else {
-      LOG.error("Failed to update Hyperskill lesson");
+    @VisibleForTesting
+    fun doPush(lesson: Lesson, project: Project) {
+      val notification = if (lesson.id > 0) message("action.push.custom.lesson.updated", HYPERSKILL)
+      else message("action.push.custom.lesson.uploaded", HYPERSKILL)
+      val success = if (lesson.id > 0) {
+        CCStepikConnector.updateLesson(project, lesson, true, -1)
+      }
+      else {
+        CCStepikConnector.postLesson(project, lesson, lesson.index, -1)
+      }
+      if (success) {
+        showNotification(project, notification, CCStepikConnector.openOnStepikAction("/lesson/" + lesson.id))
+      }
+      else {
+        LOG.error("Failed to update Hyperskill lesson")
+      }
     }
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 }
