@@ -5,6 +5,7 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskParameters
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
@@ -33,7 +35,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
     val result = MessageDialogBuilder.yesNo(EduCoreBundle.message("action.Educational.RefreshTask.text"),
                                             EduCoreBundle.message("action.Educational.RefreshTask.progress.dropped")).ask(project)
     if (!result) return
-    revert(project)
+    revert(project, task)
     revertTask()
   }
 
@@ -54,9 +56,10 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
     @NonNls
     const val ACTION_ID: String = "Educational.RefreshTask"
 
+    val EP_NAME: ExtensionPointName<RevertTaskExtension> = ExtensionPointName.create("Educational.revertTaskExtension")
+
     @VisibleForTesting
-    fun revert(project: Project) {
-      val task = project.getCurrentTask() ?: return
+    fun revert(project: Project, task: Task) {
       task.apply {
         revertTaskFiles(project)
         revertTaskParameters(project)
@@ -64,6 +67,11 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       }
 
       updateDependentPlaceholders(project, task)
+
+      EP_NAME.forEachExtensionSafe {
+        it.onTaskReversion(project, task)
+      }
+
       EditorNotifications.getInstance(project).updateAllNotifications()
       Notification("JetBrains Academy", "", EduCoreBundle.message("action.Educational.RefreshTask.result"), NotificationType.INFORMATION)
         .setIcon(EmptyIcon.ICON_16)
@@ -73,5 +81,9 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       TaskDescriptionView.getInstance(project).readyToCheck()
       updateCourseProgress(project)
     }
+  }
+
+  fun interface RevertTaskExtension {
+    fun onTaskReversion(project: Project, task: Task)
   }
 }

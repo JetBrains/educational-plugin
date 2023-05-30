@@ -69,6 +69,10 @@
                     interface="com.jetbrains.edu.learning.navigation.TaskNavigationExtension"
                     dynamic="true"/>
 
+    <extensionPoint qualifiedName="Educational.revertTaskExtension"
+                    interface="com.jetbrains.edu.learning.actions.RevertTaskAction$RevertTaskExtension"
+                    dynamic="true"/>
+
   </extensionPoints>
 
   <actions>

@@ -1,12 +1,16 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.TextRange
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.withEduTestDialog
 
 class PlaceholderDependencyTest : NotificationsTestBase() {
 
@@ -151,7 +155,9 @@ class PlaceholderDependencyTest : NotificationsTestBase() {
     val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
-    RevertTaskAction.revert(project)
+    withEduTestDialog(EduTestDialog(Messages.OK)) {
+      testAction(RevertTaskAction.ACTION_ID)
+    }
 
     checkPlaceholderContent("placeholder", findPlaceholder(1, 0, "task.txt", 0))
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 1))
