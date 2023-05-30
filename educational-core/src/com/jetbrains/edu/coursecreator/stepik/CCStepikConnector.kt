@@ -1,247 +1,217 @@
-package com.jetbrains.edu.coursecreator.stepik;
+package com.jetbrains.edu.coursecreator.stepik
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.AdditionalFilesUtils;
-import com.jetbrains.edu.coursecreator.StudyItemType;
-import com.jetbrains.edu.coursecreator.StudyItemTypeKt;
-import com.jetbrains.edu.learning.EduBrowser;
-import com.jetbrains.edu.learning.OpenApiExtKt;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.ItemContainer;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.ext.StudyItemExtKt;
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.messages.EduCoreBundle;
-import com.jetbrains.edu.learning.stepik.StepSource;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo;
-import com.jetbrains.edu.learning.stepik.api.StepikConnector;
-import com.jetbrains.edu.learning.stepik.api.StepikUnit;
-import com.jetbrains.edu.learning.stepik.course.StepikLesson;
-import org.apache.http.HttpStatus;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
+import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.collectAdditionalLessonInfo
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showFailedToPostItemNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showNoRightsToUpdateOnStepikNotification
+import com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik
+import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.updateOnStepikTitleMessage
+import com.jetbrains.edu.coursecreator.uploadToStepikTitleMessage
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
+import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
+import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.course.StepikLesson
+import org.apache.http.HttpStatus
+import org.jetbrains.annotations.NonNls
+import java.util.stream.Collectors
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.jetbrains.edu.coursecreator.CCNotificationUtils.*;
-import static com.jetbrains.edu.coursecreator.CCUtils.checkIfAuthorizedToStepik;
-import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK;
-
-public class CCStepikConnector {
-  private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
-
-  private CCStepikConnector() { }
+object CCStepikConnector {
+  private val LOG = Logger.getInstance(CCStepikConnector::class.java.name)
 
   // POST methods:
-
-  public static boolean postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
-    Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
-    if (postedLesson == null) return false;
-    postedLesson.setIndex(lesson.getIndex());
-    postedLesson.setItems(lesson.getItems());
-    postedLesson.setParent(lesson.getParent());
-
-    boolean success = true;
-    for (Task task : lesson.getTaskList()) {
-      checkCanceled();
-      success = postTask(project, task, postedLesson.getId()) && success;
+  fun postLesson(project: Project, lesson: Lesson, position: Int, sectionId: Int): Boolean {
+    val postedLesson = postLessonInfo(project, lesson, sectionId, position) ?: return false
+    postedLesson.index = lesson.index
+    postedLesson.items = lesson.items
+    postedLesson.parent = lesson.parent
+    var success = true
+    for (task in lesson.taskList) {
+      checkCanceled()
+      success = postTask(project, task, postedLesson.id) && success
     }
     if (!updateLessonAdditionalInfo(lesson, project)) {
-      showFailedToPostItemNotification(project, lesson, true);
-      return false;
+      showFailedToPostItemNotification(project, lesson, true)
+      return false
     }
-    ItemContainer parent = lesson.getParent();
-    parent.removeItem(lesson);
-    parent.addItem(lesson.getIndex() - 1, postedLesson);
-
-    return success;
+    val parent = lesson.parent
+    parent.removeItem(lesson)
+    parent.addItem(lesson.index - 1, postedLesson)
+    return success
   }
 
-  public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-    final StepikLesson postedLesson = StepikConnector.getInstance().postLesson(lesson);
+  private fun postLessonInfo(project: Project, lesson: Lesson, sectionId: Int, position: Int): Lesson? {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.LESSON_TYPE.uploadToStepikTitleMessage)) return null
+
+    val postedLesson = StepikConnector.getInstance().postLesson(lesson)
     if (postedLesson == null) {
-      showFailedToPostItemNotification(project, lesson, true);
-      return null;
+      showFailedToPostItemNotification(project, lesson, true)
+      return null
     }
     if (sectionId != -1) {
-      postedLesson.setUnitId(postUnit(postedLesson.getId(), position, sectionId, project));
+      postedLesson.unitId = postUnit(postedLesson.id, position, sectionId, project)
     }
     // required to POST additional files and form lesson creation notification link
-    lesson.setId(postedLesson.getId());
-    return postedLesson;
+    lesson.id = postedLesson.id
+    return postedLesson
   }
 
-  public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.LESSON_TYPE))) return lessonId;
-
-    final StepikUnit unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId);
-    if (unit == null || unit.getId() == null) {
-      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.post.unit"));
-      return -1;
+  private fun postUnit(lessonId: Int, position: Int, sectionId: Int, project: Project): Int {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.LESSON_TYPE.uploadToStepikTitleMessage)) return lessonId
+    val unit = StepikConnector.getInstance().postUnit(lessonId, position, sectionId)
+    if (unit?.id == null) {
+      showErrorNotification(project, message("course.creator.stepik.failed.to.post.unit"))
+      return -1
     }
-    return unit.getId();
+    return unit.id ?: return -1
   }
 
-  public static boolean postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUploadToStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
-    // TODO: add meaningful comment to final Success notification that Code tasks were not pushed
-    if (task instanceof CodeTask) return true;
-
-    final StepSource stepSource = StepikConnector.getInstance().postTask(project, task, lessonId);
+  private fun postTask(project: Project, task: Task, lessonId: Int): Boolean {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.TASK_TYPE.uploadToStepikTitleMessage)) return false
+    if (task is CodeTask) return true
+    val stepSource = StepikConnector.getInstance().postTask(project, task, lessonId)
     if (stepSource == null) {
-      showFailedToPostItemNotification(project, task, true);
-      return false;
+      showFailedToPostItemNotification(project, task, true)
+      return false
     }
-    task.setId(stepSource.getId());
-    task.setUpdateDate(stepSource.getUpdateDate());
-    return true;
+    task.id = stepSource.id
+    task.updateDate = stepSource.updateDate
+    return true
   }
 
   // UPDATE methods:
-
-  public static boolean updateLesson(@NotNull final Project project,
-                                     @NotNull final Lesson lesson,
-                                     boolean showNotification,
-                                     int sectionId) {
-    StepikLesson postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId);
+  fun updateLesson(
+    project: Project,
+    lesson: Lesson,
+    showNotification: Boolean,
+    sectionId: Int
+  ): Boolean {
+    val postedLesson = updateLessonInfo(project, lesson, showNotification, sectionId)
     return postedLesson != null &&
-           updateLessonTasks(project, lesson, postedLesson.getStepIds()) &&
-           updateLessonAdditionalInfo(lesson, project);
+           updateLessonTasks(project, lesson, postedLesson.stepIds) &&
+           updateLessonAdditionalInfo(lesson, project)
   }
 
-  public static StepikLesson updateLessonInfo(@NotNull final Project project,
-                                              @NotNull final Lesson lesson,
-                                              boolean showNotification, int sectionId) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return null;
-    // TODO: support case when lesson was removed from Stepik
-
-    final StepikLesson updatedLesson = StepikConnector.getInstance().updateLesson(lesson);
+  private fun updateLessonInfo(
+    project: Project,
+    lesson: Lesson,
+    showNotification: Boolean, sectionId: Int
+  ): StepikLesson? {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.LESSON_TYPE.updateOnStepikTitleMessage)) return null
+    val updatedLesson = StepikConnector.getInstance().updateLesson(lesson)
     if (updatedLesson == null) {
       if (showNotification) {
-        showFailedToPostItemNotification(project, lesson, false);
+        showFailedToPostItemNotification(project, lesson, false)
       }
-      return null;
+      return null
     }
     if (sectionId != -1) {
-      updateUnit(updatedLesson.getUnitId(), lesson.getId(), lesson.getIndex(), sectionId, project);
+      updateUnit(updatedLesson.unitId, lesson.id, lesson.index, sectionId, project)
     }
-
-    return updatedLesson;
+    return updatedLesson
   }
 
-  public static boolean updateLessonAdditionalInfo(@NotNull final Lesson lesson, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return false;
-
-    LessonAdditionalInfo info = AdditionalFilesUtils.collectAdditionalLessonInfo(lesson, project);
-    if (info.isEmpty()) {
-      StepikConnector.getInstance().deleteLessonAttachment(lesson.getId());
-      return true;
+  private fun updateLessonAdditionalInfo(lesson: Lesson, project: Project): Boolean {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.LESSON_TYPE.updateOnStepikTitleMessage)) return false
+    val info = collectAdditionalLessonInfo(lesson, project)
+    if (info.isEmpty) {
+      StepikConnector.getInstance().deleteLessonAttachment(lesson.id)
+      return true
     }
-    updateProgress(EduCoreBundle.message("course.creator.stepik.progress.details.publishing.additional.data", lesson.getPresentableName()));
-    return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED;
+    updateProgress(message("course.creator.stepik.progress.details.publishing.additional.data", lesson.presentableName))
+    return StepikConnector.getInstance().updateLessonAttachment(info, lesson) == HttpStatus.SC_CREATED
   }
 
-  public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.LESSON_TYPE))) return;
-
-    final StepikUnit unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId);
+  private fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int, project: Project) {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.LESSON_TYPE.updateOnStepikTitleMessage)) return
+    val unit = StepikConnector.getInstance().updateUnit(unitId, lessonId, position, sectionId)
     if (unit == null) {
-      showErrorNotification(project, EduCoreBundle.message("course.creator.stepik.failed.to.update.unit"));
+      showErrorNotification(project, message("course.creator.stepik.failed.to.update.unit"))
     }
   }
 
-  private static boolean updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull List<Integer> steps) {
-    final Set<Integer> localTasksIds = localLesson.getTaskList()
+  private fun updateLessonTasks(project: Project, localLesson: Lesson, steps: List<Int>): Boolean {
+    val localTasksIds = localLesson.taskList
       .stream()
-      .map(task -> task.getId())
-      .filter(id -> id > 0)
-      .collect(Collectors.toSet());
-
-    final List<Integer> taskIdsToDelete = steps.stream()
-      .filter(id -> !localTasksIds.contains(id))
-      .collect(Collectors.toList());
+      .map { task: Task -> task.id }
+      .filter { id: Int -> id > 0 }
+      .collect(Collectors.toSet())
+    val taskIdsToDelete = steps.stream()
+      .filter { id: Int -> !localTasksIds.contains(id) }
+      .collect(Collectors.toList())
 
     // Remove all tasks from Stepik which are not in our lessons now
-    for (Integer step : taskIdsToDelete) {
-      StepikConnector.getInstance().deleteTask(step);
+    for (step in taskIdsToDelete) {
+      StepikConnector.getInstance().deleteTask(step)
     }
-
-    boolean success = true;
-    for (Task task : localLesson.getTaskList()) {
-      checkCanceled();
-      success = (task.getId() > 0 ? updateTask(project, task) : postTask(project, task, localLesson.getId())) && success;
+    var success = true
+    for (task in localLesson.taskList) {
+      checkCanceled()
+      success = (if (task.id > 0) updateTask(project, task) else postTask(project, task, localLesson.id)) && success
     }
-    return success;
+    return success
   }
 
-  public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
-    if (!checkIfAuthorizedToStepik(project, StudyItemTypeKt.getUpdateOnStepikTitleMessage(StudyItemType.TASK_TYPE))) return false;
-    VirtualFile taskDir = StudyItemExtKt.getDir(task, OpenApiExtKt.getCourseDir(project));
-    if (taskDir == null) return false;
-
-    final int responseCode = StepikConnector.getInstance().updateTask(project, task);
-
-    switch (responseCode) {
-      case HttpStatus.SC_OK:
-        StepSource step = StepikConnector.getInstance().getStep(task.getId());
+  private fun updateTask(project: Project, task: Task): Boolean {
+    if (!checkIfAuthorizedToStepik(project, StudyItemType.TASK_TYPE.updateOnStepikTitleMessage)) return false
+    task.getDir(project.courseDir) ?: return false
+    return when (StepikConnector.getInstance().updateTask(project, task)) {
+      HttpStatus.SC_OK -> {
+        val step = StepikConnector.getInstance().getStep(task.id)
         if (step != null) {
-          task.setUpdateDate(step.getUpdateDate());
+          task.updateDate = step.updateDate
         }
         else {
-          LOG.warn(String.format("Failed to get step for task '%s' with id %d while setting an update date", task.getName(), task.getId()));
+          LOG.warn("Failed to get step for task '${task.name}' with id ${task.id} while setting an update date")
         }
-        return true;
-      case HttpStatus.SC_NOT_FOUND:
-        // TODO: support case when lesson was removed from Stepik too
-        return postTask(project, task, task.getLesson().getId());
-      case HttpStatus.SC_FORBIDDEN:
-        showNoRightsToUpdateOnStepikNotification(project);
-        return false;
-      default:
-        showFailedToPostItemNotification(project, task, false);
-        return false;
+        true
+      }
+
+      HttpStatus.SC_NOT_FOUND ->
+        postTask(project, task, task.lesson.id)
+
+      HttpStatus.SC_FORBIDDEN -> {
+        showNoRightsToUpdateOnStepikNotification(project)
+        false
+      }
+
+      else -> {
+        showFailedToPostItemNotification(project, task, false)
+        false
+      }
     }
   }
 
   // helper methods:
-
-  @SuppressWarnings("UnstableApiUsage")
-  private static void updateProgress(@NlsContexts.ProgressDetails @NotNull String text) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    if (indicator != null) {
-      indicator.checkCanceled();
-      indicator.setText2(text);
-    }
+  private fun updateProgress(text: @NlsContexts.ProgressDetails String) {
+    val indicator = ProgressManager.getInstance().progressIndicator ?: return
+    indicator.checkCanceled()
+    indicator.text2 = text
   }
 
-  public static AnAction openOnStepikAction(@NotNull @NonNls String url) {
-    return new AnAction(EduCoreBundle.message("action.open.on.text", STEPIK)) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        EduBrowser.getInstance().browse(StepikNames.getStepikUrl() + url);
+  fun openOnStepikAction(url: @NonNls String): AnAction {
+    return object : AnAction(message("action.open.on.text", STEPIK)) {
+      override fun actionPerformed(e: AnActionEvent) {
+        EduBrowser.getInstance().browse(getStepikUrl() + url)
       }
-    };
+    }
   }
 
-  private static void checkCanceled() {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    if (indicator != null) {
-      indicator.checkCanceled();
-    }
+  private fun checkCanceled() {
+    val indicator = ProgressManager.getInstance().progressIndicator
+    indicator?.checkCanceled()
   }
 }
