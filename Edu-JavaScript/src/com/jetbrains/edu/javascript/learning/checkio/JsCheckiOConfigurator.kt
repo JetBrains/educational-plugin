@@ -25,10 +25,11 @@ class JsCheckiOConfigurator : JsConfigurator(), CheckiOConnectorProvider {
 
   override val isCourseCreatorEnabled: Boolean = false
 
-  override fun getOAuthConnector(): CheckiOOAuthConnector = JsCheckiOOAuthConnector
-
   override fun beforeCourseStarted(course: Course) {
     val contentGenerator = CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector)
     getCourseFromServerUnderProgress(contentGenerator, course as CheckiOCourse, JsCheckiOSettings.getInstance().account, JS_CHECKIO_URL)
   }
+
+  override val oAuthConnector: CheckiOOAuthConnector
+    get() = JsCheckiOOAuthConnector
 }

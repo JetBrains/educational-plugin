@@ -31,11 +31,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveRemoteInfo
 import org.jetbrains.annotations.VisibleForTesting
 
-class PushHyperskillLesson : DumbAwareAction(
-  addGluingSlash(updateTitleText, uploadTitleText),
-  addGluingSlash(updateText, uploadText),
-  null
-) {
+class PushHyperskillLesson : DumbAwareAction(addGluingSlash(updateTitleText, uploadTitleText)) {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     if (!isFeatureEnabled(CC_HYPERSKILL) || !isCourseCreatorFeaturesEnabled) return
@@ -68,12 +64,8 @@ class PushHyperskillLesson : DumbAwareAction(
 
   companion object {
     private val LOG = Logger.getInstance(PushHyperskillLesson::class.java)
-    val updateText: @NlsActions.ActionDescription String
-      get() = message("item.update.on.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL)
     val updateTitleText: @NlsActions.ActionText String
       get() = message("item.update.on.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL)
-    val uploadText: @NlsActions.ActionDescription String
-      get() = message("item.upload.to.0.lesson.custom", StepikNames.STEPIK, HYPERSKILL)
     val uploadTitleText: @NlsActions.ActionText String
       get() = message("item.upload.to.0.lesson.custom.title", StepikNames.STEPIK, HYPERSKILL)
 

@@ -1,9 +1,7 @@
-package com.jetbrains.edu.learning.checkio;
+package com.jetbrains.edu.learning.checkio
 
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector
 
-public interface CheckiOConnectorProvider {
-  @NotNull
-  CheckiOOAuthConnector getOAuthConnector();
+interface CheckiOConnectorProvider {
+  val oAuthConnector: CheckiOOAuthConnector
 }
